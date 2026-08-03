@@ -225,7 +225,11 @@ export default function QuestionBankPage() {
 
   const exportCsv = async () => {
     try {
-      const r = await api.post('/questions/export', filters, { responseType: 'blob' });
+      const payload: Record<string, any> = {};
+      Object.entries(filters).forEach(([k, v]) => {
+        if (v !== '' && v !== null && v !== undefined) payload[k] = v;
+      });
+      const r = await api.post('/questions/export', payload, { responseType: 'blob' });
       const url = URL.createObjectURL(r.data);
       const a = document.createElement('a');
       a.href = url;

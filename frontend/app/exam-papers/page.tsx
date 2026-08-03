@@ -1,336 +1,325 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
+import {
+  Archive,
+  Eye,
+  FileText,
+  KeyRound,
+  Printer,
+  RotateCcw,
+  Send,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
-import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { ConfirmModal } from '../../components/ConfirmModal';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
-import { FileText, Sparkles, Eye, Trash2 } from 'lucide-react';
-import { ExamPaper, ExamSchedule } from '../../types';
+import api from '../../lib/api';
+import { getAuthUser } from '../../lib/auth';
+import { ExamPaper, ExamSchedule, User } from '../../types';
+
+const statusStyle = {
+  DRAFT: { label: 'Bản nháp', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+  PUBLISHED: { label: 'Đã phát hành', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  ARCHIVED: { label: 'Đã lưu trữ', className: 'bg-slate-100 text-slate-600 border-slate-200' },
+};
+
+const initialForm = {
+  examScheduleId: '',
+  paperCode: '001',
+  durationMinutes: '60',
+  easyCount: '0',
+  mediumCount: '2',
+  hardCount: '0',
+};
+
+function escapeHtml(value: unknown) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 export default function ExamPapersPage() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [papers, setPapers] = useState<ExamPaper[]>([]);
+  const [formData, setFormData] = useState(initialForm);
+  const [selectedPaper, setSelectedPaper] = useState<ExamPaper | null>(null);
+  const [showAnswers, setShowAnswers] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // Form State
-  const [formData, setFormData] = useState({
-    examScheduleId: '',
-    paperCode: '001',
-    durationMinutes: '60',
-    easyCount: '2',
-    mediumCount: '2',
-    hardCount: '1',
+  const [creating, setCreating] = useState(false);
+  const [busyId, setBusyId] = useState<number | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info' | 'success';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'warning',
+    onConfirm: () => {},
   });
 
-  // Modal Detail State
-  const [selectedPaper, setSelectedPaper] = useState<any>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
-  const [creating, setCreating] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
-      return;
-    }
-    setCurrentUser(u);
-    fetchData();
-  }, [router]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
-      const [resSchedules, resPapers] = await Promise.all([
-        api.get('/exam-schedules'),
-        api.get('/exam-papers'),
+      const [scheduleResponse, paperResponse] = await Promise.all([
+        api.get<ExamSchedule[]>('/exam-schedules'),
+        api.get<ExamPaper[]>('/exam-papers'),
       ]);
-      setSchedules(resSchedules.data);
-      setPapers(resPapers.data);
-      if (resSchedules.data.length > 0) {
-        setFormData((prev) => ({ ...prev, examScheduleId: resSchedules.data[0].id.toString() }));
-      }
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
+      setSchedules(scheduleResponse.data);
+      setPapers(paperResponse.data);
+      setFormData((previous) => ({
+        ...previous,
+        examScheduleId: previous.examScheduleId || String(scheduleResponse.data[0]?.id || ''),
+      }));
+    } catch (error: any) {
+      setToast({ message: error.message || 'Không tải được dữ liệu đề thi.', type: 'error' });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleCreateRandom = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.examScheduleId) {
-      setToast({ message: 'Vui lòng chọn lịch thi.', type: 'error' });
+  useEffect(() => {
+    const user = getAuthUser();
+    if (!user) return void router.replace('/login');
+    if (!['ADMIN', 'TEACHER'].includes(user.role)) {
+      return void router.replace('/student/exam-schedule');
+    }
+    setCurrentUser(user);
+    fetchData();
+  }, [fetchData, router]);
+
+  const createPaper = async (event: FormEvent) => {
+    event.preventDefault();
+    const questionCount =
+      Number(formData.easyCount) + Number(formData.mediumCount) + Number(formData.hardCount);
+    if (!formData.examScheduleId || questionCount < 1) {
+      setToast({ message: 'Hãy chọn lịch thi và ít nhất một câu hỏi.', type: 'error' });
       return;
     }
-
     setCreating(true);
     try {
-      const res = await api.post('/exam-papers/create-random', {
-        examScheduleId: parseInt(formData.examScheduleId, 10),
-        paperCode: formData.paperCode,
-        durationMinutes: parseInt(formData.durationMinutes, 10),
-        easyCount: parseInt(formData.easyCount, 10),
-        mediumCount: parseInt(formData.mediumCount, 10),
-        hardCount: parseInt(formData.hardCount, 10),
+      const response = await api.post<ExamPaper>('/exam-papers/create-random', {
+        examScheduleId: Number(formData.examScheduleId),
+        paperCode: formData.paperCode.trim(),
+        durationMinutes: Number(formData.durationMinutes),
+        easyCount: Number(formData.easyCount),
+        mediumCount: Number(formData.mediumCount),
+        hardCount: Number(formData.hardCount),
       });
-
-      setToast({ message: 'Tạo đề thi ngẫu nhiên thành công!', type: 'success' });
-      fetchData();
-      // Auto open detail
-      setSelectedPaper(res.data);
-      setIsDetailModalOpen(true);
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
+      setSelectedPaper(response.data);
+      setShowAnswers(false);
+      setToast({ message: `Đã tạo đề ${response.data.paperCode} ở trạng thái bản nháp.`, type: 'success' });
+      setFormData((previous) => ({ ...previous, paperCode: String(Number(previous.paperCode) + 1).padStart(3, '0') }));
+      await fetchData();
+    } catch (error: any) {
+      setToast({ message: error.message, type: 'error' });
     } finally {
       setCreating(false);
     }
   };
 
   const openDetail = async (id: number) => {
+    setBusyId(id);
     try {
-      const res = await api.get(`/exam-papers/${id}`);
-      setSelectedPaper(res.data);
-      setIsDetailModalOpen(true);
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
+      const response = await api.get<ExamPaper>(`/exam-papers/${id}`);
+      setSelectedPaper(response.data);
+      setShowAnswers(false);
+    } catch (error: any) {
+      setToast({ message: error.message, type: 'error' });
+    } finally {
+      setBusyId(null);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Xóa đề thi này?')) return;
-    try {
-      await api.delete(`/exam-papers/${id}`);
-      setToast({ message: 'Đã xóa đề thi!', type: 'success' });
-      fetchData();
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
-    }
+  const runAction = async (
+    paper: ExamPaper,
+    action: 'publish' | 'archive' | 'restore' | 'delete',
+  ) => {
+    const titles = {
+      publish: 'Phát hành đề thi',
+      archive: 'Lưu trữ đề thi',
+      restore: 'Khôi phục đề thi',
+      delete: 'Xóa bản nháp đề thi',
+    };
+    const messages = {
+      publish: `Phát hành đề ${paper.paperCode}? Sau khi phát hành không thể xóa đề.`,
+      archive: `Lưu trữ đề ${paper.paperCode}?`,
+      restore: `Khôi phục đề ${paper.paperCode} về bản nháp?`,
+      delete: `Xóa bản nháp ${paper.paperCode}? Đề sẽ không còn xuất hiện trong danh sách.`,
+    };
+    const types: Record<string, 'danger' | 'warning' | 'info' | 'success'> = {
+      publish: 'success',
+      archive: 'warning',
+      restore: 'info',
+      delete: 'danger',
+    };
+
+    setConfirmModal({
+      isOpen: true,
+      title: titles[action],
+      message: messages[action],
+      type: types[action],
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        setBusyId(paper.id);
+        try {
+          if (action === 'delete') await api.delete(`/exam-papers/${paper.id}`);
+          else await api.post(`/exam-papers/${paper.id}/${action}`);
+          setSelectedPaper(null);
+          setToast({ message: 'Thao tác đề thi thành công.', type: 'success' });
+          await fetchData();
+        } catch (error: any) {
+          setToast({ message: error.message, type: 'error' });
+        } finally {
+          setBusyId(null);
+        }
+      },
+    });
   };
+
+  const printPaper = (withAnswers: boolean) => {
+    if (!selectedPaper) return;
+    const printable = window.open('', '_blank', 'width=900,height=720');
+    if (!printable) {
+      setToast({ message: 'Trình duyệt đang chặn cửa sổ in.', type: 'error' });
+      return;
+    }
+    const questions = selectedPaper.questions?.map((item) => {
+      const options = item.question.options?.map((option) => `
+        <div class="${withAnswers && option.isCorrect ? 'correct' : ''}">
+          ${escapeHtml(option.label)}. ${escapeHtml(option.content)}
+          ${withAnswers && option.isCorrect ? '<strong> ✓ Đáp án đúng</strong>' : ''}
+        </div>`).join('') || '';
+      return `<section><h3>Câu ${item.questionOrder} (${item.score} điểm)</h3><p>${escapeHtml(item.question.content)}</p>${options}</section>`;
+    }).join('') || '';
+    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(selectedPaper.paperCode)}</title><style>
+      body{font-family:Arial,sans-serif;max-width:800px;margin:32px auto;color:#0f172a;line-height:1.5}
+      header{text-align:center;border-bottom:2px solid #0f172a;padding-bottom:16px;margin-bottom:24px}
+      section{margin:0 0 22px;page-break-inside:avoid} h1{font-size:22px} h3{font-size:15px;margin-bottom:6px}
+      p{margin:6px 0 10px} section div{padding:4px 8px}.correct{background:#dcfce7;color:#166534}
+      .meta{font-size:13px;color:#475569} @media print{body{margin:0}}
+    </style></head><body><header><h1>${withAnswers ? 'ĐÁP ÁN - ' : ''}${escapeHtml(selectedPaper.title)}</h1>
+      <div class="meta">Mã đề: ${escapeHtml(selectedPaper.paperCode)} · Thời gian: ${selectedPaper.durationMinutes} phút · Tổng điểm: ${selectedPaper.totalScore}</div>
+    </header>${questions}<script>window.onload=()=>window.print();</script></body></html>`);
+    printable.document.close();
+  };
+
+  const isAdmin = currentUser?.role === 'ADMIN';
 
   return (
-    <AppShell user={currentUser} title="Tạo đề thi ngẫu nhiên">
-      <div className="flex min-h-screen flex-col min-w-0">
+    <AppShell user={currentUser} title="Quản lý đề thi">
+      <main className="mx-auto w-full max-w-[1500px] p-4 md:p-6 xl:p-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-slate-900">Quản lý đề thi</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            {isAdmin ? 'Tạo, kiểm tra, phát hành và lưu trữ đề thi.' : 'Tạo và quản lý các đề thi do bạn phụ trách.'}
+          </p>
+        </div>
 
-        <main className="p-8 max-w-7xl w-full mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Form Creation Column */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-purple-600" />
-                Rút đề thi ngẫu nhiên
-              </h2>
-
-              <form onSubmit={handleCreateRandom} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">1. Chọn lịch thi</label>
-                  <select
-                    value={formData.examScheduleId}
-                    onChange={(e) => setFormData({ ...formData, examScheduleId: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-purple-500 font-medium"
-                  >
-                    {schedules.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.subject?.subjectName} ({s.subject?.subjectCode})
-                      </option>
-                    ))}
-                  </select>
+        <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
+            <h2 className="mb-5 flex items-center gap-2 font-bold text-slate-900">
+              <Sparkles className="h-5 w-5 text-violet-600" /> Rút đề ngẫu nhiên
+            </h2>
+            <form onSubmit={createPaper} className="space-y-4">
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Lịch thi</span>
+                <select required value={formData.examScheduleId} onChange={(event) => setFormData({ ...formData, examScheduleId: event.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-sky-500">
+                  {!schedules.length && <option value="">Chưa có lịch thi</option>}
+                  {schedules.map((schedule) => <option key={schedule.id} value={schedule.id}>{schedule.subject?.subjectName} ({schedule.subject?.subjectCode})</option>)}
+                </select>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <label><span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Mã đề</span><input required maxLength={30} value={formData.paperCode} onChange={(event) => setFormData({ ...formData, paperCode: event.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500" /></label>
+                <label><span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Thời gian</span><input type="number" min={15} max={300} required value={formData.durationMinutes} onChange={(event) => setFormData({ ...formData, durationMinutes: event.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500" /></label>
+              </div>
+              <div className="border-t border-slate-100 pt-4">
+                <p className="mb-2 text-xs font-semibold uppercase text-slate-600">Ma trận độ khó</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    ['easyCount', 'Câu dễ', 'text-emerald-700'],
+                    ['mediumCount', 'Trung bình', 'text-amber-700'],
+                    ['hardCount', 'Câu khó', 'text-rose-700'],
+                  ].map(([key, label, color]) => (
+                    <label key={key}><span className={`mb-1 block text-[11px] font-medium ${color}`}>{label}</span><input type="number" min={0} max={200} required value={formData[key as keyof typeof formData]} onChange={(event) => setFormData({ ...formData, [key]: event.target.value })} className="w-full rounded-xl border border-slate-200 px-2 py-2 text-center text-sm font-bold outline-none focus:border-sky-500" /></label>
+                  ))}
                 </div>
+              </div>
+              <button disabled={creating || !schedules.length} className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50">
+                <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : 'Tạo đề thi'}
+              </button>
+            </form>
+          </section>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Mã đề thi</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.paperCode}
-                      onChange={(e) => setFormData({ ...formData, paperCode: e.target.value })}
-                      placeholder="Mã đề, VD: 001"
-                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-purple-500 font-bold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Thời gian (Phút)</label>
-                    <input
-                      type="number"
-                      required
-                      min={15}
-                      max={180}
-                      value={formData.durationMinutes}
-                      onChange={(e) => setFormData({ ...formData, durationMinutes: e.target.value })}
-                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-purple-500 font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div className="border-t border-slate-100 pt-3">
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-2">Ma trận độ khó câu hỏi:</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <span className="text-xs font-medium text-emerald-600 block mb-1">Số câu Dễ</span>
-                      <input
-                        type="number"
-                        min={0}
-                        required
-                        value={formData.easyCount}
-                        onChange={(e) => setFormData({ ...formData, easyCount: e.target.value })}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none text-center font-bold"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-xs font-medium text-amber-600 block mb-1">Số câu TB</span>
-                      <input
-                        type="number"
-                        min={0}
-                        required
-                        value={formData.mediumCount}
-                        onChange={(e) => setFormData({ ...formData, mediumCount: e.target.value })}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none text-center font-bold"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-xs font-medium text-rose-600 block mb-1">Số câu Khó</span>
-                      <input
-                        type="number"
-                        min={0}
-                        required
-                        value={formData.hardCount}
-                        onChange={(e) => setFormData({ ...formData, hardCount: e.target.value })}
-                        className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none text-center font-bold"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={creating}
-                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-purple-500/25 transition duration-200 text-sm disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>{creating ? 'Đang khởi tạo đề...' : 'Tạo đề thi random'}</span>
-                </button>
-              </form>
+          <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-8">
+            <div className="mb-4 flex items-center justify-between">
+              <div><h2 className="flex items-center gap-2 font-bold text-slate-900"><FileText className="h-5 w-5 text-sky-600" /> Danh sách đề thi</h2><p className="mt-1 text-xs text-slate-500">{isAdmin ? 'Tất cả đề thi trong hệ thống' : 'Chỉ hiển thị đề do bạn tạo'}</p></div>
+              <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{papers.length} đề</span>
             </div>
-
-            {/* Existing Exam Papers List Column */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-sky-600" />
-                Danh sách Đề thi đã khởi tạo
-              </h2>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold uppercase text-xs">
-                    <tr>
-                      <th className="px-4 py-3">Mã đề</th>
-                      <th className="px-4 py-3">Tên đề thi</th>
-                      <th className="px-4 py-3">Thời gian</th>
-                      <th className="px-4 py-3">Tổng điểm</th>
-                      <th className="px-4 py-3">Số câu hỏi</th>
-                      <th className="px-4 py-3 text-right">Chi tiết</th>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-600"><tr><th className="px-3 py-3">Mã đề</th><th className="px-3 py-3">Tên đề</th><th className="px-3 py-3">Người tạo</th><th className="px-3 py-3">Trạng thái</th><th className="px-3 py-3">Cấu trúc</th><th className="px-3 py-3 text-right">Thao tác</th></tr></thead>
+                <tbody className="divide-y divide-slate-100">
+                  {loading ? <tr><td colSpan={6} className="px-3 py-10 text-center text-slate-400">Đang tải danh sách đề thi...</td></tr> : !papers.length ? <tr><td colSpan={6} className="px-3 py-10 text-center text-slate-400">Chưa có đề thi phù hợp.</td></tr> : papers.map((paper) => (
+                    <tr key={paper.id} className="hover:bg-slate-50/70">
+                      <td className="px-3 py-3 font-bold text-violet-700">{paper.paperCode}</td>
+                      <td className="max-w-64 px-3 py-3"><p className="truncate font-semibold text-slate-800" title={paper.title}>{paper.title}</p><p className="text-xs text-slate-500">{paper.examSchedule?.subject?.subjectCode}</p></td>
+                      <td className="px-3 py-3 text-slate-600">{paper.createdBy?.username}</td>
+                      <td className="px-3 py-3"><span className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[paper.status].className}`}>{statusStyle[paper.status].label}</span></td>
+                      <td className="px-3 py-3 text-xs text-slate-600">{paper._count?.questions || 0} câu · {paper.totalScore} điểm · {paper.durationMinutes} phút</td>
+                      <td className="px-3 py-3"><div className="flex justify-end gap-1">
+                        <button disabled={busyId === paper.id} onClick={() => openDetail(paper.id)} title="Xem chi tiết" className="rounded-lg p-2 text-sky-600 hover:bg-sky-50"><Eye className="h-4 w-4" /></button>
+                        {isAdmin && paper.status === 'DRAFT' && <button onClick={() => runAction(paper, 'publish')} title="Phát hành" className="rounded-lg p-2 text-emerald-600 hover:bg-emerald-50"><Send className="h-4 w-4" /></button>}
+                        {isAdmin && paper.status !== 'ARCHIVED' && <button onClick={() => runAction(paper, 'archive')} title="Lưu trữ" className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"><Archive className="h-4 w-4" /></button>}
+                        {isAdmin && paper.status === 'ARCHIVED' && <button onClick={() => runAction(paper, 'restore')} title="Khôi phục" className="rounded-lg p-2 text-violet-600 hover:bg-violet-50"><RotateCcw className="h-4 w-4" /></button>}
+                        {paper.status === 'DRAFT' && <button onClick={() => runAction(paper, 'delete')} title="Xóa bản nháp" className="rounded-lg p-2 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>}
+                      </div></td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {loading ? (
-                      <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
-                          Đang tải danh sách đề thi...
-                        </td>
-                      </tr>
-                    ) : papers.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
-                          Chưa có đề thi nào.
-                        </td>
-                      </tr>
-                    ) : (
-                      papers.map((paper) => (
-                        <tr key={paper.id} className="hover:bg-slate-50 transition">
-                          <td className="px-4 py-3 font-extrabold text-purple-600">{paper.paperCode}</td>
-                          <td className="px-4 py-3 font-semibold text-slate-800">{paper.title}</td>
-                          <td className="px-4 py-3 font-medium">{paper.durationMinutes} phút</td>
-                          <td className="px-4 py-3 font-bold text-emerald-600">{paper.totalScore} điểm</td>
-                          <td className="px-4 py-3 font-semibold">{paper._count?.questions || 0} câu</td>
-                          <td className="px-4 py-3 text-right space-x-2">
-                            <button
-                              onClick={() => openDetail(paper.id)}
-                              className="p-1.5 hover:bg-sky-50 text-sky-600 rounded-lg transition"
-                              title="Xem chi tiết"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            {currentUser?.role === 'ADMIN' && (
-                              <button
-                                onClick={() => handleDelete(paper.id)}
-                                className="p-1.5 hover:bg-red-50 text-red-600 rounded-lg transition"
-                                title="Xóa"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <Modal isOpen={Boolean(selectedPaper)} onClose={() => setSelectedPaper(null)} title={selectedPaper ? `Chi tiết đề thi ${selectedPaper.paperCode}` : 'Chi tiết đề thi'}>
+        {selectedPaper && <div className="space-y-5">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-bold text-slate-900">{selectedPaper.title}</h3><p className="mt-1 text-xs text-slate-500">{selectedPaper.examSchedule?.examPeriod?.name} · {selectedPaper.examSchedule?.subject?.subjectName}</p></div><span className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[selectedPaper.status].className}`}>{statusStyle[selectedPaper.status].label}</span></div>
+            <div className="mt-3 flex flex-wrap gap-3 text-xs font-medium text-slate-600"><span>{selectedPaper.durationMinutes} phút</span><span>{selectedPaper.totalScore} điểm</span><span>{selectedPaper.questions?.length || 0} câu</span><span>Người tạo: {selectedPaper.createdBy?.username}</span></div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button onClick={() => printPaper(false)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"><Printer className="h-3.5 w-3.5" /> In đề thi</button>
+              <button onClick={() => printPaper(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"><KeyRound className="h-3.5 w-3.5" /> In đáp án</button>
+              <button onClick={() => setShowAnswers((value) => !value)} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">{showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}</button>
             </div>
           </div>
-        </main>
-      </div>
-
-      {/* Exam Paper Detail Modal */}
-      <Modal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        title={selectedPaper ? `Chi tiết Đề thi (Mã đề: ${selectedPaper.paperCode})` : 'Chi tiết đề thi'}
-      >
-        {selectedPaper && (
-          <div className="space-y-6">
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <h3 className="font-bold text-slate-900 text-base mb-1">{selectedPaper.title}</h3>
-              <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-600 mt-2">
-                <span>Môn thi: {selectedPaper.examSchedule?.subject?.subjectName}</span>
-                <span>Thời gian làm bài: {selectedPaper.durationMinutes} phút</span>
-                <span>Tổng điểm: {selectedPaper.totalScore} điểm</span>
-                <span>Tổng số câu: {selectedPaper.questions?.length} câu</span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {selectedPaper.questions?.map((pq: any) => (
-                <div key={pq.id} className="border border-slate-200 rounded-xl p-4 bg-white">
-                  <p className="font-bold text-sm text-slate-900 mb-2">
-                    Câu {pq.questionOrder}. ({pq.score} điểm) {pq.question?.content}
-                  </p>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    {pq.question?.options?.map((opt: any) => (
-                      <div
-                        key={opt.id}
-                        className={`p-2 rounded-lg border ${
-                          opt.isCorrect ? 'bg-emerald-50 border-emerald-300 font-bold text-emerald-800' : 'bg-slate-50 border-slate-200'
-                        }`}
-                      >
-                        {opt.optionLabel}. {opt.optionContent}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="max-h-[55vh] space-y-3 overflow-y-auto pr-1">
+            {selectedPaper.questions?.map((item) => <article key={item.id} className="rounded-xl border border-slate-200 p-4"><p className="text-sm font-semibold text-slate-900">Câu {item.questionOrder}. ({item.score} điểm) {item.question.content}</p><div className="mt-3 grid gap-2 sm:grid-cols-2">{item.question.options?.map((option) => <div key={option.id} className={`rounded-lg border p-2 text-xs ${showAnswers && option.isCorrect ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>{option.label}. {option.content}{showAnswers && option.isCorrect && ' ✓'}</div>)}</div>{showAnswers && item.question.explanation && <p className="mt-3 rounded-lg bg-sky-50 p-2 text-xs text-sky-800"><strong>Giải thích:</strong> {item.question.explanation}</p>}</article>)}
           </div>
-        )}
+        </div>}
       </Modal>
-
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+      />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </AppShell>
   );

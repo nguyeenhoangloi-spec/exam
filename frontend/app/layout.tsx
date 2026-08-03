@@ -8,7 +8,24 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  if (localStorage.getItem('sidebar-collapsed') === 'true') {
+                    document.documentElement.classList.add('sidebar-collapsed');
+                  } else {
+                    document.documentElement.classList.remove('sidebar-collapsed');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="bg-slate-50 min-h-screen">{children}</body>
     </html>
   );

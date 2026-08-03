@@ -47,6 +47,12 @@ enum QuestionHistoryAction {
   BULK_UPDATE
 }
 
+enum ExamPaperStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
@@ -346,11 +352,19 @@ model ExamPaper {
   title           String
   durationMinutes Int
   totalScore      Float
+  status          ExamPaperStatus @default(DRAFT)
+  publishedAt     DateTime?
+  archivedAt      DateTime?
+  deletedAt       DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
   createdById     Int
   createdBy       User         @relation("UserExamPapers", fields: [createdById], references: [id], onDelete: Cascade)
 
   questions ExamPaperQuestion[]
 
+  @@unique([examScheduleId, paperCode])
+  @@index([status, deletedAt])
   @@map("exam_papers")
 }
 

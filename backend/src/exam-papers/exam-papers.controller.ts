@@ -1,33 +1,62 @@
-import { Controller, Post, Get, Delete, Body, Param, Query, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
-import { ExamPapersService } from './exam-papers.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
+import { CreateRandomExamPaperDto, ExamPaperQueryDto } from './dto/exam-paper.dto';
+import { ExamPapersService } from './exam-papers.service';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('exam-papers')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN', 'TEACHER')
 export class ExamPapersController {
   constructor(private readonly examPapersService: ExamPapersService) {}
 
-  @Roles('ADMIN', 'TEACHER')
   @Post('create-random')
-  createRandom(@Request() req: any, @Body() body: any) {
+  createRandom(@Request() req: any, @Body() body: CreateRandomExamPaperDto) {
     return this.examPapersService.createRandom(req.user, body);
   }
 
   @Get()
-  findAll(@Query('examScheduleId') examScheduleId?: string) {
-    return this.examPapersService.findAll(examScheduleId ? parseInt(examScheduleId, 10) : undefined);
+  findAll(@Request() req: any, @Query() query: ExamPaperQueryDto) {
+    return this.examPapersService.findAll(req.user, query.examScheduleId);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.examPapersService.findOne(id);
+  findOne(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examPapersService.findOne(req.user, id);
   }
 
   @Roles('ADMIN')
+  @Post(':id/publish')
+  publish(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examPapersService.publish(req.user, id);
+  }
+
+  @Roles('ADMIN')
+  @Post(':id/archive')
+  archive(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examPapersService.archive(req.user, id);
+  }
+
+  @Roles('ADMIN')
+  @Post(':id/restore')
+  restore(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examPapersService.restore(req.user, id);
+  }
+
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.examPapersService.remove(id);
+  remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examPapersService.remove(req.user, id);
   }
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { ConfirmModal } from '../../components/ConfirmModal';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { Plus, Trash2, Edit } from 'lucide-react';
@@ -95,15 +96,38 @@ export default function ClassesPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Xóa lớp học này?')) return;
-    try {
-      await api.delete(`/classes/${id}`);
-      setToast({ message: 'Đã xóa lớp học!', type: 'success' });
-      fetchData();
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
-    }
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info' | 'success';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'danger',
+    onConfirm: () => {},
+  });
+
+  const handleDelete = (id: number) => {
+    const cls = classes.find((c) => c.id === id);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xóa Lớp học',
+      message: `Bạn có chắc chắn muốn xóa lớp ${cls?.name || ''}? Hành động này không thể hoàn tác.`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.delete(`/classes/${id}`);
+          setToast({ message: 'Đã xóa lớp học thành công!', type: 'success' });
+          fetchData();
+        } catch (err: any) {
+          setToast({ message: err.message, type: 'error' });
+        }
+      },
+    });
   };
 
   return (
@@ -246,6 +270,14 @@ export default function ClassesPage() {
         </form>
       </Modal>
 
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+      />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </AppShell>
   );

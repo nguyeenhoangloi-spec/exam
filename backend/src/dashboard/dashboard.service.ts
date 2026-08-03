@@ -139,7 +139,16 @@ export class DashboardService {
                   _count: { select: { examRoomStudents: true, supervisors: true } },
                 },
               },
-              _count: { select: { examPapers: true } },
+              _count: {
+                select: {
+                  examPapers: {
+                    where: {
+                      deletedAt: null,
+                      status: { not: 'ARCHIVED' },
+                    },
+                  },
+                },
+              },
             },
           },
         },

@@ -8,8 +8,6 @@ import {
   BookOpen,
   Building2,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   DoorOpen,
   FileText,
@@ -17,6 +15,8 @@ import {
   HelpCircle,
   Layers,
   LayoutDashboard,
+  PanelLeftClose,
+  PanelLeftOpen,
   School,
   ShieldCheck,
   UserCheck,
@@ -27,7 +27,8 @@ import { User } from '../types';
 interface SidebarProps {
   user: User | null;
   collapsed: boolean;
-  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  onToggle: () => void;
+  isToggling: boolean;
   mobileOpen: boolean;
   onMobileClose: () => void;
 }
@@ -35,7 +36,8 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({
   user,
   collapsed,
-  setCollapsed,
+  onToggle,
+  isToggling,
   mobileOpen,
   onMobileClose,
 }) => {
@@ -69,50 +71,124 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-visible border-r border-slate-800 bg-slate-900 text-slate-100 shadow-xl transition-[width,transform] duration-300 ease-in-out ${
-        collapsed ? 'w-[260px] md:w-[76px]' : 'w-[260px]'
-      } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-visible border-r border-slate-800 bg-slate-900 text-slate-100 shadow-xl ${
+        isToggling ? 'transition-[width,transform] duration-300 ease-in-out' : ''
+      } ${collapsed ? 'w-[260px] md:w-[72px]' : 'w-[260px]'} ${
+        mobileOpen ? 'translate-x-0' : '-translate-x-full'
+      } md:translate-x-0`}
     >
-      <div className={`flex h-20 shrink-0 items-center border-b border-slate-800 ${collapsed ? 'gap-3 px-5 md:justify-center md:px-3' : 'gap-3 px-5'}`}>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 font-bold text-white shadow-lg">EX</div>
-        {(!collapsed || mobileOpen) && <div className={`min-w-0 ${collapsed ? 'md:hidden' : ''}`}><h1 className="truncate text-base font-bold tracking-wide text-white">KHẢO THÍ SV</h1><p className="truncate text-xs text-slate-400">Hệ thống quản lý</p></div>}
+      {/* Header Section with Integrated Toggle Button */}
+      <div className="flex h-20 shrink-0 items-center justify-between border-b border-slate-800 px-4">
+        <div className="flex items-center">
+          {/* Logo EX or Toggle Button in Collapsed Mode */}
+          {collapsed ? (
+            <button
+              type="button"
+              aria-label="Mở rộng thanh bên"
+              onClick={onToggle}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+              title="Mở rộng thanh bên"
+            >
+              <PanelLeftOpen className="h-5 w-5" />
+            </button>
+          ) : (
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 font-bold text-white shadow-lg">
+              EX
+            </div>
+          )}
+
+          {/* Title Text */}
+          <div
+            className={`sidebar-text-node ml-3 min-w-0 flex-1 overflow-hidden ${
+              isToggling ? 'transition-all duration-300 ease-in-out' : ''
+            } ${collapsed ? 'opacity-0 max-w-0 pointer-events-none md:hidden' : 'opacity-100 max-w-[150px]'}`}
+          >
+            <h1 className="truncate text-base font-bold tracking-wide text-white">KHẢO THÍ SV</h1>
+            <p className="truncate text-xs text-slate-400">Hệ thống quản lý</p>
+          </div>
+        </div>
+
+        {/* Integrated Header Panel Button (Visible when expanded) */}
+        {!collapsed && (
+          <button
+            type="button"
+            aria-label="Thu gọn thanh bên"
+            onClick={onToggle}
+            className="hidden md:flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-800 bg-slate-800/40 text-slate-400 transition-colors hover:border-slate-700 hover:bg-slate-800 hover:text-white active:scale-95"
+            title="Thu gọn thanh bên"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
-      <nav className={`flex-1 overflow-y-auto no-scrollbar py-4 ${collapsed ? 'px-4 md:px-3' : 'px-4'}`} aria-label="Điều hướng chính">
+      {/* Navigation list */}
+      <nav className="flex-1 overflow-y-auto no-scrollbar px-4 py-4" aria-label="Điều hướng chính">
         <div className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = isItemActive(item.href);
             return (
-              <Link 
-                key={item.href} 
-                href={item.href} 
+              <Link
+                key={item.href}
+                href={item.href}
                 prefetch={true}
                 onMouseEnter={() => router.prefetch(item.href)}
                 onFocus={() => router.prefetch(item.href)}
-                title={collapsed ? item.name : undefined} 
-                onClick={onMobileClose} 
-                className={`group relative flex h-11 items-center rounded-xl text-sm font-medium transition-colors ${collapsed ? 'gap-3 px-3 md:justify-center md:px-0' : 'gap-3 px-3'} ${isActive ? 'bg-sky-600 text-white shadow-md shadow-sky-900/40' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+                title={collapsed ? item.name : undefined}
+                onClick={onMobileClose}
+                className={`group relative flex h-11 items-center rounded-xl text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-sky-600 text-white shadow-md shadow-sky-900/40'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
               >
-                <Icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
-                {(!collapsed || mobileOpen) && <span className={`truncate whitespace-nowrap ${collapsed ? 'md:hidden' : ''}`}>{item.name}</span>}
-                {collapsed && <span role="tooltip" className="pointer-events-none absolute left-[calc(100%+12px)] z-[60] hidden whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover:block">{item.name}</span>}
+                {/* Fixed Icon Box at X = 16px */}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                  <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
+                </div>
+                {/* Text Label - Fades & Clips Smoothly */}
+                <span
+                  className={`sidebar-text-node ml-1 truncate whitespace-nowrap ${
+                    isToggling ? 'transition-all duration-300 ease-in-out' : ''
+                  } ${collapsed ? 'opacity-0 max-w-0 overflow-hidden md:hidden' : 'opacity-100 max-w-[170px]'}`}
+                >
+                  {item.name}
+                </span>
+                {collapsed && (
+                  <span
+                    role="tooltip"
+                    className="pointer-events-none absolute left-[calc(100%+12px)] z-[60] hidden whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover:block"
+                  >
+                    {item.name}
+                  </span>
+                )}
               </Link>
             );
           })}
         </div>
       </nav>
 
-      <div className={`shrink-0 border-t border-slate-800 bg-slate-950/50 ${collapsed ? 'p-4 md:p-3' : 'p-4'}`}>
-        <div className={`flex items-center ${collapsed ? 'gap-3 px-2 md:justify-center md:px-0' : 'gap-3 px-2'}`}>
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-sky-400">{user?.username?.substring(0, 2).toUpperCase() || 'US'}</div>
-          {(!collapsed || mobileOpen) && <div className={`min-w-0 overflow-hidden ${collapsed ? 'md:hidden' : ''}`}><p className="truncate text-sm font-medium text-white">{user?.username}</p><span className="mt-1 inline-block rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-400">{role}</span></div>}
+      {/* Footer User Info */}
+      <div className="shrink-0 border-t border-slate-800 bg-slate-950/50 p-4">
+        <div className="flex items-center">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-sky-400">
+              {user?.username?.substring(0, 2).toUpperCase() || 'US'}
+            </div>
+          </div>
+          <div
+            className={`sidebar-text-node ml-1 min-w-0 flex-1 overflow-hidden ${
+              isToggling ? 'transition-all duration-300 ease-in-out' : ''
+            } ${collapsed ? 'opacity-0 max-w-0 pointer-events-none md:hidden' : 'opacity-100 max-w-[170px]'}`}
+          >
+            <p className="truncate text-sm font-medium text-white">{user?.username}</p>
+            <span className="mt-0.5 inline-block rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-400">
+              {role}
+            </span>
+          </div>
         </div>
       </div>
-
-      <button type="button" aria-label={collapsed ? 'Mở rộng thanh bên' : 'Thu gọn thanh bên'} onClick={() => setCollapsed((value) => !value)} className="absolute -right-4 top-8 z-[60] hidden h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-200 shadow-lg transition-colors hover:bg-sky-600 md:flex">
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </button>
     </aside>
   );
 };

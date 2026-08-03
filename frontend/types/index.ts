@@ -164,6 +164,13 @@ export interface ExamPaper {
   title: string;
   durationMinutes: number;
   totalScore: number;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  publishedAt?: string;
+  archivedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  createdById: number;
+  createdBy?: Pick<User, 'id' | 'username' | 'role'>;
   examSchedule?: ExamSchedule;
   questions?: ExamPaperQuestion[];
   _count?: {

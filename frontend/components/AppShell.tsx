@@ -12,27 +12,39 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [hasLoadedPreference, setHasLoadedPreference] = useState(false);
-
-  useEffect(() => {
-    setCollapsed(window.localStorage.getItem('sidebar-collapsed') === 'true');
-    setHasLoadedPreference(true);
-  }, []);
-
-  useEffect(() => {
-    if (hasLoadedPreference) {
-      window.localStorage.setItem('sidebar-collapsed', String(collapsed));
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem('sidebar-collapsed') === 'true';
     }
-  }, [collapsed, hasLoadedPreference]);
+    return false;
+  });
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+
+  const handleToggle = () => {
+    setIsToggling(true);
+    setCollapsed((prev) => !prev);
+    setTimeout(() => setIsToggling(false), 350);
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('sidebar-collapsed', String(collapsed));
+      if (collapsed) {
+        document.documentElement.classList.add('sidebar-collapsed');
+      } else {
+        document.documentElement.classList.remove('sidebar-collapsed');
+      }
+    }
+  }, [collapsed]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <Sidebar
         user={user}
         collapsed={collapsed}
-        setCollapsed={setCollapsed}
+        onToggle={handleToggle}
+        isToggling={isToggling}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
       />
@@ -47,9 +59,9 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
       )}
 
       <div
-        className={`min-h-screen min-w-0 pt-[72px] transition-[margin] duration-300 ease-in-out ${
-          collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'
-        }`}
+        className={`app-shell-main min-h-screen min-w-0 pt-[72px] ${
+          isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
+        } ${collapsed ? 'md:ml-[72px]' : 'md:ml-[260px]'}`}
       >
         <Header user={user} title={title} collapsed={collapsed} onMenuClick={() => setMobileOpen(true)} />
         {children}

@@ -7,7 +7,7 @@ interface ConfirmModalProps {
   onConfirm: (reason?: string) => void;
   title: string;
   message: string;
-  type?: 'danger' | 'success' | 'warning';
+  type?: 'danger' | 'success' | 'warning' | 'info';
   requireReason?: boolean;
   reasonPlaceholder?: string;
   confirmText?: string;

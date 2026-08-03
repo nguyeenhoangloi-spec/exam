@@ -155,42 +155,49 @@ export class UpdateQuestionDto {
 
 export class QuestionQueryDto {
   @IsOptional()
-  @Transform(({ value }) => String(value).trim())
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value).trim()))
   @IsString()
   @MaxLength(200)
   search?: string;
 
   @IsOptional()
-  @Type(() => Number)
+  @Transform(({ value }) => (value === '' || value === null ? undefined : Number(value)))
   @IsInt()
   @Min(1)
   subjectId?: number;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsUUID()
   chapterId?: string;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsIn(TYPES)
   type?: any;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsIn(DIFFICULTIES)
   difficulty?: any;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsIn(BLOOMS)
   bloomLevel?: any;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsIn(STATUSES)
   status?: any;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsDateString()
   fromDate?: string;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsDateString()
   toDate?: string;
 

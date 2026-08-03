@@ -38,3 +38,19 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Zero Flash SSR Rules for Collapsed Sidebar */
+html.sidebar-collapsed aside.sidebar-aside {
+  width: 72px !important;
+}
+
+html.sidebar-collapsed div.app-shell-main {
+  margin-left: 72px !important;
+}
+
+html.sidebar-collapsed .sidebar-text-node {
+  opacity: 0 !important;
+  max-width: 0 !important;
+  pointer-events: none !important;
+  display: none !important;
+}
