@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/exam-rooms/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/exam-rooms/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,50 +11,15 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/login/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
+      "static/chunks/app/page.js"
     ],
     "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/page.js"
-    ],
-    "/departments/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/departments/page.js"
-    ],
-    "/classes/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/classes/page.js"
-    ],
-    "/exam-schedules/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/exam-schedules/page.js"
-    ],
-    "/exam-arrangement/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/exam-arrangement/page.js"
-    ],
-    "/exam-supervisors/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/exam-supervisors/page.js"
-    ],
-    "/question-bank/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/question-bank/page.js"
-    ],
-    "/exam-rooms/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/exam-rooms/page.js"
     ]
   }
 }
