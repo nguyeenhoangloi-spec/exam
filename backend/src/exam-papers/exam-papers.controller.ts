@@ -12,7 +12,7 @@ export class ExamPapersController {
   @Roles('ADMIN', 'TEACHER')
   @Post('create-random')
   createRandom(@Request() req: any, @Body() body: any) {
-    return this.examPapersService.createRandom(req.user.id, body);
+    return this.examPapersService.createRandom(req.user, body);
   }
 
   @Get()

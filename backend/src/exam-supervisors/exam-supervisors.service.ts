@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ExamSupervisorsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
-  async assign(data: { examScheduleRoomId: number; teacherId: number; role?: string; note?: string }) {
+  async assign(actor: { id: number }, data: { examScheduleRoomId: number; teacherId: number; role?: string; note?: string }) {
     // 1. Kiểm tra giảng viên tồn tại
     const teacher = await this.prisma.teacher.findUnique({
       where: { id: data.teacherId },
@@ -66,19 +67,27 @@ export class ExamSupervisorsService {
       );
     }
 
-    return this.prisma.examSupervisor.create({
-      data: {
+    return this.prisma.$transaction(async (tx) => {
+      const assignment = await tx.examSupervisor.create({ data: {
         examScheduleRoomId: data.examScheduleRoomId,
         teacherId: data.teacherId,
         role: data.role || 'SUPERVISOR_1',
         note: data.note,
-      },
-      include: {
+      }, include: {
         teacher: true,
         examScheduleRoom: {
           include: { room: true, examSchedule: { include: { subject: true } } },
         },
-      },
+      } });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'ASSIGN',
+        entityType: 'EXAM_SUPERVISOR',
+        entityId: assignment.id,
+        description: `Đã phân công giám thị ${assignment.teacher.fullName} tại phòng ${assignment.examScheduleRoom.room.roomCode}`,
+        metadata: { examScheduleRoomId: data.examScheduleRoomId, teacherId: data.teacherId },
+      }, tx);
+      return assignment;
     });
   }
 

@@ -36,6 +36,18 @@ export default function ExamPeriodsPage() {
       return;
     }
     setCurrentUser(u);
+    if (new URLSearchParams(window.location.search).get('action') === 'create' && u.role === 'ADMIN') {
+      setEditingPeriod(null);
+      setFormData({
+        name: '',
+        semester: 'HK1',
+        schoolYear: '2025-2026',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
+        status: 'UPCOMING',
+      });
+      setIsModalOpen(true);
+    }
     fetchData();
   }, [router]);
 

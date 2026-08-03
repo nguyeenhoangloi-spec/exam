@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ExamArrangementService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
-  async autoArrange(examScheduleId: number, roomIds: number[]) {
+  async autoArrange(actor: { id: number }, examScheduleId: number, roomIds: number[]) {
     if (!roomIds || roomIds.length === 0) {
       throw new BadRequestException('Vui lòng chọn ít nhất một phòng thi.');
     }
@@ -81,20 +82,21 @@ export class ExamArrangementService {
     }
 
     // 4. Xóa kết quả xếp phòng cũ của lịch thi này (nếu có)
-    const existingScheduleRooms = await this.prisma.examScheduleRoom.findMany({
+    return this.prisma.$transaction(async (tx) => {
+    const existingScheduleRooms = await tx.examScheduleRoom.findMany({
       where: { examScheduleId },
       select: { id: true },
     });
     const existingScheduleRoomIds = existingScheduleRooms.map((r) => r.id);
 
     if (existingScheduleRoomIds.length > 0) {
-      await this.prisma.examSupervisor.deleteMany({
+      await tx.examSupervisor.deleteMany({
         where: { examScheduleRoomId: { in: existingScheduleRoomIds } },
       });
-      await this.prisma.examRoomStudent.deleteMany({
+      await tx.examRoomStudent.deleteMany({
         where: { examScheduleRoomId: { in: existingScheduleRoomIds } },
       });
-      await this.prisma.examScheduleRoom.deleteMany({
+      await tx.examScheduleRoom.deleteMany({
         where: { examScheduleId },
       });
     }
@@ -107,7 +109,7 @@ export class ExamArrangementService {
     for (const room of rooms) {
       if (studentIndex >= students.length) break;
 
-      const scheduleRoom = await this.prisma.examScheduleRoom.create({
+      const scheduleRoom = await tx.examScheduleRoom.create({
         data: {
           examScheduleId,
           roomId: room.id,
@@ -120,7 +122,7 @@ export class ExamArrangementService {
         const student = students[studentIndex++];
         const sbd = `SBD${String(currentSbdNumber++).padStart(4, '0')}`;
 
-        const roomStudent = await this.prisma.examRoomStudent.create({
+        const roomStudent = await tx.examRoomStudent.create({
           data: {
             examScheduleRoomId: scheduleRoom.id,
             studentId: student.id,
@@ -147,7 +149,7 @@ export class ExamArrangementService {
       }
     }
 
-    return {
+    const result = {
       message: 'Xếp sinh viên vào phòng thi tự động thành công!',
       summary: {
         totalStudents: students.length,
@@ -159,6 +161,16 @@ export class ExamArrangementService {
       },
       details: arrangementResults,
     };
+    await this.audit.write({
+      actorId: actor.id,
+      action: 'ARRANGE',
+      entityType: 'EXAM_SCHEDULE',
+      entityId: examScheduleId,
+      description: `Đã xếp phòng thi cho môn ${schedule.subject.subjectName}`,
+      metadata: { roomIds, totalStudents: students.length },
+    }, tx);
+    return result;
+    });
   }
 
   async getArrangementResults(examScheduleId: number) {

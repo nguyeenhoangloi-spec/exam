@@ -6,7 +6,9 @@
     "install:all": "npm install --prefix backend && npm install --prefix frontend",
     "db:migrate": "npm run prisma:migrate --prefix backend",
     "seed": "npm run seed --prefix backend",
-    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run start:dev --prefix backend\" \"npm run dev --prefix frontend\""
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run start:dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run start:prod --prefix backend\" \"npm run start --prefix frontend\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

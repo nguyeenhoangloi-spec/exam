@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { BloomLevel, Prisma, QuestionDifficulty, QuestionHistoryAction, QuestionStatus, QuestionType } from '@prisma/client';
 import { createHash } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
 import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
 
@@ -15,7 +16,10 @@ const include = {
 
 @Injectable()
 export class QuestionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
   private access(a: Actor) { if (!['ADMIN', 'TEACHER'].includes(a.role)) throw new ForbiddenException('Không có quyền truy cập.'); }
   private json(v: unknown) { return JSON.parse(JSON.stringify(v)) as Prisma.InputJsonValue; }
   private async current(id: string) {
@@ -85,7 +89,9 @@ export class QuestionsService {
         score: d.score, explanation: d.explanation || null, keywords: d.keywords || null, status: QuestionStatus.DRAFT, createdById: a.id,
         options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) }, statistic: { create: {} },
       }, include });
-      await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.CREATE, newData: this.json(q), changedById: a.id } }); return q;
+      await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.CREATE, newData: this.json(q), changedById: a.id } });
+      await this.audit.write({ actorId: a.id, action: 'CREATE', entityType: 'QUESTION', entityId: q.id, description: `Đã tạo câu hỏi ${q.code}`, metadata: { questionCode: q.code } }, tx);
+      return q;
     });
   }
   async update(a: Actor, id: string, d: UpdateQuestionDto) {
@@ -102,7 +108,9 @@ export class QuestionsService {
         ...(d.keywords !== undefined && { keywords: d.keywords || null }),
         ...(d.options && { options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) } }),
       }, include });
-      await tx.questionHistory.create({ data: { questionId: id, action: QuestionHistoryAction.UPDATE, oldData: this.json(old), newData: this.json(q), changedById: a.id } }); return q;
+      await tx.questionHistory.create({ data: { questionId: id, action: QuestionHistoryAction.UPDATE, oldData: this.json(old), newData: this.json(q), changedById: a.id } });
+      await this.audit.write({ actorId: a.id, action: 'UPDATE', entityType: 'QUESTION', entityId: id, description: `Đã cập nhật câu hỏi ${q.code}`, metadata: { questionCode: q.code } }, tx);
+      return q;
     });
   }
   async duplicate(a: Actor, id: string) {
@@ -118,7 +126,23 @@ export class QuestionsService {
     if ((action === QuestionHistoryAction.ARCHIVE || action === QuestionHistoryAction.RESTORE) && a.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được thực hiện.');
     return this.prisma.$transaction(async tx => {
       const q = await tx.question.update({ where: { id }, data: { status: to, rejectionReason: action === QuestionHistoryAction.REJECT ? note : null, approvedById: action === QuestionHistoryAction.APPROVE ? a.id : old.approvedById, approvedAt: action === QuestionHistoryAction.APPROVE ? new Date() : old.approvedAt, archivedAt: action === QuestionHistoryAction.ARCHIVE ? new Date() : action === QuestionHistoryAction.RESTORE ? null : old.archivedAt, isActive: to !== QuestionStatus.ARCHIVED }, include });
-      await tx.questionHistory.create({ data: { questionId: id, action, oldData: this.json(old), newData: this.json(q), note, changedById: a.id } }); return q;
+      await tx.questionHistory.create({ data: { questionId: id, action, oldData: this.json(old), newData: this.json(q), note, changedById: a.id } });
+      const labels: Partial<Record<QuestionHistoryAction, string>> = {
+        SUBMIT: 'Đã gửi duyệt',
+        APPROVE: 'Đã duyệt',
+        REJECT: 'Đã từ chối',
+        ARCHIVE: 'Đã lưu trữ',
+        RESTORE: 'Đã khôi phục',
+      };
+      await this.audit.write({
+        actorId: a.id,
+        action,
+        entityType: 'QUESTION',
+        entityId: id,
+        description: `${labels[action] || 'Đã thao tác với'} câu hỏi ${q.code}`,
+        metadata: { questionCode: q.code, note: note || null },
+      }, tx);
+      return q;
     });
   }
   submit(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.SUBMIT, [QuestionStatus.DRAFT, QuestionStatus.REJECTED], QuestionStatus.PENDING); }

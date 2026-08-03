@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ExamSchedulesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   async findAll(examPeriodId?: number) {
     const where: any = {};
@@ -45,7 +46,7 @@ export class ExamSchedulesService {
     return schedule;
   }
 
-  async create(data: {
+  async create(actor: { id: number }, data: {
     examPeriodId: number;
     subjectId: number;
     examDate: string;
@@ -91,8 +92,8 @@ export class ExamSchedulesService {
       );
     }
 
-    return this.prisma.examSchedule.create({
-      data: {
+    return this.prisma.$transaction(async (tx) => {
+      const schedule = await tx.examSchedule.create({ data: {
         examPeriodId: data.examPeriodId,
         subjectId: data.subjectId,
         examDate: new Date(data.examDate),
@@ -101,15 +102,16 @@ export class ExamSchedulesService {
         examType: data.examType || 'TRAC_NGHIEM',
         status: data.status || 'SCHEDULED',
         note: data.note,
-      },
-      include: {
+      }, include: {
         examPeriod: true,
         subject: true,
-      },
+      } });
+      await this.audit.write({ actorId: actor.id, action: 'CREATE', entityType: 'EXAM_SCHEDULE', entityId: schedule.id, description: `Đã tạo lịch thi môn ${schedule.subject.subjectName}` }, tx);
+      return schedule;
     });
   }
 
-  async update(id: number, data: any) {
+  async update(actor: { id: number }, id: number, data: any) {
     const existing = await this.findOne(id);
 
     const startTime = data.startTime || existing.startTime;
@@ -136,18 +138,22 @@ export class ExamSchedulesService {
       }
     }
 
-    return this.prisma.examSchedule.update({
-      where: { id },
-      data: {
+    return this.prisma.$transaction(async (tx) => {
+      const schedule = await tx.examSchedule.update({ where: { id }, data: {
         ...data,
         examDate: data.examDate ? new Date(data.examDate) : undefined,
-      },
-      include: { examPeriod: true, subject: true },
+      }, include: { examPeriod: true, subject: true } });
+      await this.audit.write({ actorId: actor.id, action: 'UPDATE', entityType: 'EXAM_SCHEDULE', entityId: schedule.id, description: `Đã cập nhật lịch thi môn ${schedule.subject.subjectName}` }, tx);
+      return schedule;
     });
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
-    return this.prisma.examSchedule.delete({ where: { id } });
+  async remove(actor: { id: number }, id: number) {
+    const existing = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      const removed = await tx.examSchedule.delete({ where: { id } });
+      await this.audit.write({ actorId: actor.id, action: 'DELETE', entityType: 'EXAM_SCHEDULE', entityId: id, description: `Đã xóa lịch thi môn ${existing.subject.subjectName}` }, tx);
+      return removed;
+    });
   }
 }

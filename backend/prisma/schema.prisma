@@ -64,6 +64,7 @@ model User {
   approvedQuestions Question[]        @relation("ApprovedQuestions")
   createdExamPapers ExamPaper[]       @relation("UserExamPapers")
   questionHistories QuestionHistory[] @relation("QuestionHistoryActor")
+  auditLogs         AuditLog[]         @relation("AuditLogActor")
 
   @@map("users")
 }
@@ -364,4 +365,20 @@ model ExamPaperQuestion {
   usedAt        DateTime  @default(now())
 
   @@map("exam_paper_questions")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     Int?
+  actor       User?    @relation("AuditLogActor", fields: [actorId], references: [id], onDelete: SetNull)
+  action      String
+  entityType  String
+  entityId    String?
+  description String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
 }

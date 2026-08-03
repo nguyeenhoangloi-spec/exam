@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ExamPapersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   async createRandom(
-    userId: number,
+    actor: { id: number },
     data: {
       examScheduleId: number;
       paperCode: string;
@@ -88,7 +89,7 @@ export class ExamPapersService {
           title,
           durationMinutes: data.durationMinutes || 60,
           totalScore,
-          createdById: userId,
+          createdById: actor.id,
           questions: {
             create: shuffledFinalQuestions.map((q, index) => ({
               questionId: q.id,
@@ -108,6 +109,14 @@ export class ExamPapersService {
         },
       });
 
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'CREATE',
+        entityType: 'EXAM_PAPER',
+        entityId: examPaper.id,
+        description: `Đã tạo đề thi ${examPaper.paperCode}`,
+        metadata: { paperCode: examPaper.paperCode, examScheduleId: data.examScheduleId },
+      }, tx);
       return examPaper;
     });
   }

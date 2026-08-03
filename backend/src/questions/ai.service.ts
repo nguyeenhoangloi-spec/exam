@@ -1,4 +1,6 @@
 import { BadGatewayException, BadRequestException, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import * as mammoth from 'mammoth';
+const pdfParse = require('pdf-parse');
 import { PrismaService } from '../prisma/prisma.service';
 import { GenerateAiQuestionsDto, QuestionOptionDto } from './dto/question.dto';
 import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
@@ -16,7 +18,7 @@ export class AiQuestionsService {
     });
     if (!chapter) throw new BadRequestException('Chương không thuộc môn học đã chọn.');
 
-    const model = process.env.GEMINI_MODEL?.trim() || 'gemini-2.0-flash';
+    const model = process.env.GEMINI_MODEL?.trim() || 'gemini-3.6-flash';
     const timeout = Number(process.env.GEMINI_TIMEOUT_MS || 30000);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
@@ -89,5 +91,23 @@ export class AiQuestionsService {
     } finally {
       clearTimeout(timer);
     }
+  }
+
+  async extractDocumentText(file: Express.Multer.File): Promise<{ text: string }> {
+    if (!file) throw new BadRequestException('Vui lòng chọn tệp tài liệu.');
+    const ext = file.originalname.toLowerCase();
+    let text = '';
+    if (ext.endsWith('.txt') || ext.endsWith('.md')) {
+      text = file.buffer.toString('utf-8');
+    } else if (ext.endsWith('.docx')) {
+      const res = await mammoth.extractRawText({ buffer: file.buffer });
+      text = res.value || '';
+    } else if (ext.endsWith('.pdf')) {
+      const res = await pdfParse(file.buffer);
+      text = res.text || '';
+    } else {
+      throw new BadRequestException('Chỉ hỗ trợ tệp .txt, .md, .docx, .pdf');
+    }
+    return { text: text.trim().slice(0, 8000) };
   }
 }

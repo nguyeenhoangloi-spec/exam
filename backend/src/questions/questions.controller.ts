@@ -39,6 +39,15 @@ const csvUpload = FileInterceptor('file', {
     callback(file.originalname.toLowerCase().endsWith('.csv') ? null : new BadRequestException('Chỉ chấp nhận file CSV.'), file.originalname.toLowerCase().endsWith('.csv')),
 });
 
+const docUpload = FileInterceptor('file', {
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => {
+    const ext = file.originalname.toLowerCase();
+    const ok = ext.endsWith('.txt') || ext.endsWith('.md') || ext.endsWith('.docx') || ext.endsWith('.pdf');
+    callback(ok ? null : new BadRequestException('Chỉ chấp nhận file .txt, .md, .docx, .pdf.'), ok);
+  },
+});
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'TEACHER')
 @Controller('questions')
@@ -110,6 +119,12 @@ export class QuestionsController {
   @Post('ai-save')
   saveAi(@Request() req: any, @Body() body: SaveAiQuestionsDto) {
     return this.questions.saveAi(req.user, body);
+  }
+
+  @Post('ai-extract-text')
+  @UseInterceptors(FileInterceptor('file'))
+  extractText(@UploadedFile() file: Express.Multer.File) {
+    return this.ai.extractDocumentText(file);
   }
 
   @Post()

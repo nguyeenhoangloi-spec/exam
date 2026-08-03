@@ -3,12 +3,14 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private audit: AuditService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -40,6 +42,16 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload);
+
+    if (user.role === 'ADMIN') {
+      await this.audit.write({
+        actorId: user.id,
+        action: 'LOGIN',
+        entityType: 'AUTH',
+        entityId: user.id,
+        description: 'Đã đăng nhập trang quản trị',
+      });
+    }
 
     const { password, ...userWithoutPassword } = user;
 

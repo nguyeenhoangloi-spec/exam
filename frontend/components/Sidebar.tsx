@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   BookMarked,
   BookOpen,
@@ -40,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onMobileClose,
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const role = user?.role || 'STUDENT';
 
   const adminNav = [
@@ -77,13 +78,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {(!collapsed || mobileOpen) && <div className={`min-w-0 ${collapsed ? 'md:hidden' : ''}`}><h1 className="truncate text-base font-bold tracking-wide text-white">KHẢO THÍ SV</h1><p className="truncate text-xs text-slate-400">Hệ thống quản lý</p></div>}
       </div>
 
-      <nav className={`flex-1 overflow-y-auto py-4 ${collapsed ? 'px-4 md:px-3' : 'px-4'}`} aria-label="Điều hướng chính">
+      <nav className={`flex-1 overflow-y-auto no-scrollbar py-4 ${collapsed ? 'px-4 md:px-3' : 'px-4'}`} aria-label="Điều hướng chính">
         <div className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = isItemActive(item.href);
             return (
-              <Link key={item.href} href={item.href} title={collapsed ? item.name : undefined} onClick={onMobileClose} className={`group relative flex h-11 items-center rounded-xl text-sm font-medium transition-colors ${collapsed ? 'gap-3 px-3 md:justify-center md:px-0' : 'gap-3 px-3'} ${isActive ? 'bg-sky-600 text-white shadow-md shadow-sky-900/40' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+              <Link 
+                key={item.href} 
+                href={item.href} 
+                prefetch={true}
+                onMouseEnter={() => router.prefetch(item.href)}
+                onFocus={() => router.prefetch(item.href)}
+                title={collapsed ? item.name : undefined} 
+                onClick={onMobileClose} 
+                className={`group relative flex h-11 items-center rounded-xl text-sm font-medium transition-colors ${collapsed ? 'gap-3 px-3 md:justify-center md:px-0' : 'gap-3 px-3'} ${isActive ? 'bg-sky-600 text-white shadow-md shadow-sky-900/40' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+              >
                 <Icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
                 {(!collapsed || mobileOpen) && <span className={`truncate whitespace-nowrap ${collapsed ? 'md:hidden' : ''}`}>{item.name}</span>}
                 {collapsed && <span role="tooltip" className="pointer-events-none absolute left-[calc(100%+12px)] z-[60] hidden whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover:block">{item.name}</span>}

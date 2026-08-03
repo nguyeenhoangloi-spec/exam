@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { ExamArrangementService } from './exam-arrangement.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -11,8 +11,8 @@ export class ExamArrangementController {
 
   @Roles('ADMIN')
   @Post('auto-arrange')
-  autoArrange(@Body() body: { examScheduleId: number; roomIds: number[] }) {
-    return this.examArrangementService.autoArrange(body.examScheduleId, body.roomIds);
+  autoArrange(@Request() req: any, @Body() body: { examScheduleId: number; roomIds: number[] }) {
+    return this.examArrangementService.autoArrange(req.user, body.examScheduleId, body.roomIds);
   }
 
   @Get('result')

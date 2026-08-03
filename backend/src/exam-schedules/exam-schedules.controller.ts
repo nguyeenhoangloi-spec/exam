@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { ExamSchedulesService } from './exam-schedules.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -21,19 +21,19 @@ export class ExamSchedulesController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: any) {
-    return this.examSchedulesService.create(body);
+  create(@Request() req: any, @Body() body: any) {
+    return this.examSchedulesService.create(req.user, body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
-    return this.examSchedulesService.update(id, body);
+  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return this.examSchedulesService.update(req.user, id, body);
   }
 
   @Roles('ADMIN')
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.examSchedulesService.remove(id);
+  remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examSchedulesService.remove(req.user, id);
   }
 }

@@ -15,11 +15,14 @@ import { ExamArrangementModule } from './exam-arrangement/exam-arrangement.modul
 import { ExamSupervisorsModule } from './exam-supervisors/exam-supervisors.module';
 import { QuestionsModule } from './questions/questions.module';
 import { ExamPapersModule } from './exam-papers/exam-papers.module';
+import { AuditModule } from './audit/audit.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+    AuditModule,
     AuthModule,
     UsersModule,
     DepartmentsModule,
@@ -34,6 +37,7 @@ import { ExamPapersModule } from './exam-papers/exam-papers.module';
     ExamSupervisorsModule,
     QuestionsModule,
     ExamPapersModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

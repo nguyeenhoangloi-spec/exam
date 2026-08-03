@@ -21,6 +21,7 @@ export default function ExamSchedulesPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<ExamSchedule | null>(null);
+  const [viewingSchedule, setViewingSchedule] = useState<ExamSchedule | null>(null);
   const [formData, setFormData] = useState({
     examPeriodId: '',
     subjectId: '',
@@ -55,6 +56,27 @@ export default function ExamSchedulesPage() {
       setSchedules(resSchedules.data);
       if (resPeriods.data.length > 0) {
         setSelectedPeriodId(resPeriods.data[0].id.toString());
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('action') === 'create') {
+        setEditingSchedule(null);
+        setFormData({
+          examPeriodId: resPeriods.data[0]?.id?.toString() || '',
+          subjectId: resSubjects.data[0]?.id?.toString() || '',
+          examDate: resPeriods.data[0]?.startDate
+            ? new Date(resPeriods.data[0].startDate).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0],
+          startTime: '08:00',
+          endTime: '09:30',
+          examType: 'TRAC_NGHIEM',
+          note: '',
+        });
+        setIsModalOpen(true);
+      }
+      const viewId = Number(params.get('view'));
+      if (viewId) {
+        const detail = await api.get(`/exam-schedules/${viewId}`);
+        setViewingSchedule(detail.data);
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
@@ -375,6 +397,35 @@ export default function ExamSchedulesPage() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        isOpen={Boolean(viewingSchedule)}
+        onClose={() => setViewingSchedule(null)}
+        title="Chi tiết lịch thi"
+      >
+        {viewingSchedule && (
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="text-xs font-semibold uppercase text-slate-500">Môn thi</p>
+              <p className="mt-1 font-semibold text-slate-900">{viewingSchedule.subject?.subjectName} ({viewingSchedule.subject?.subjectCode})</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><p className="text-xs font-semibold uppercase text-slate-500">Kỳ thi</p><p className="mt-1 text-slate-700">{viewingSchedule.examPeriod?.name}</p></div>
+              <div><p className="text-xs font-semibold uppercase text-slate-500">Ngày thi</p><p className="mt-1 text-slate-700">{new Date(viewingSchedule.examDate).toLocaleDateString('vi-VN')}</p></div>
+              <div><p className="text-xs font-semibold uppercase text-slate-500">Thời gian</p><p className="mt-1 text-slate-700">{viewingSchedule.startTime}–{viewingSchedule.endTime}</p></div>
+              <div><p className="text-xs font-semibold uppercase text-slate-500">Hình thức</p><p className="mt-1 text-slate-700">{viewingSchedule.examType}</p></div>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase text-slate-500">Phòng thi</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {viewingSchedule.examScheduleRooms?.length
+                  ? viewingSchedule.examScheduleRooms.map((room: any) => <span key={room.id} className="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">{room.room.roomCode} · {room.examRoomStudents?.length || 0} SV</span>)
+                  : <span className="text-slate-500">Chưa xếp phòng</span>}
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

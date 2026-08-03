@@ -1,131 +1,167 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
-import { Users, GraduationCap, BookOpen, Clock, DoorOpen, HelpCircle } from 'lucide-react';
+import { Modal } from '../../components/Modal';
+import { Toast } from '../../components/Toast';
+import { DashboardWelcome } from '../../components/dashboard/DashboardWelcome';
+import { DashboardStatistics } from '../../components/dashboard/DashboardStatistics';
+import { ExamScheduleChart } from '../../components/dashboard/ExamScheduleChart';
+import { QuestionStatusChart } from '../../components/dashboard/QuestionStatusChart';
+import { UpcomingExamList } from '../../components/dashboard/UpcomingExamList';
+import { PendingQuestionList } from '../../components/dashboard/PendingQuestionList';
+import { ExamProgressOverview } from '../../components/dashboard/ExamProgressOverview';
+import { RecentActivityList } from '../../components/dashboard/RecentActivityList';
+import { QuickActions } from '../../components/dashboard/QuickActions';
+import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton';
+import { DashboardErrorState } from '../../components/dashboard/DashboardErrorState';
+import { DashboardOverview } from '../../types/dashboard';
 import { User } from '../../types';
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [stats, setStats] = useState<any>({
-    totalStudents: 0,
-    totalTeachers: 0,
-    totalSubjects: 0,
-    totalExamSchedules: 0,
-    totalExamRooms: 0,
-    pendingQuestions: 0,
-  });
+  const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [busyId, setBusyId] = useState('');
+  const [rejecting, setRejecting] = useState<{ id: string; code: string } | null>(null);
+  const [reason, setReason] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const loadOverview = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.get<DashboardOverview>('/dashboard/overview');
+      setOverview(response.data);
+    } catch (requestError: any) {
+      setError(requestError.message || 'Không tải được dữ liệu tổng quan.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const currentUser = getAuthUser();
     if (!currentUser) {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
     if (currentUser.role !== 'ADMIN') {
-      if (currentUser.role === 'TEACHER') router.push('/teacher/assignments');
-      else router.push('/student/exam-schedule');
+      router.replace(currentUser.role === 'TEACHER' ? '/teacher/assignments' : '/student/exam-schedule');
       return;
     }
     setUser(currentUser);
+    loadOverview();
+  }, [loadOverview, router]);
 
-    fetchStats();
-  }, [router]);
-
-  const fetchStats = async () => {
+  const approve = async (id: string, code: string) => {
+    if (!window.confirm(`Duyệt câu hỏi ${code}?`)) return;
+    setBusyId(id);
     try {
-      const res = await api.get('/users/dashboard-stats');
-      setStats(res.data);
-    } catch (err) {
-      console.error('Failed to load stats', err);
+      await api.post(`/questions/${id}/approve`);
+      setToast({ message: `Đã duyệt câu hỏi ${code}.`, type: 'success' });
+      await loadOverview();
+    } catch (actionError: any) {
+      setToast({ message: actionError.message, type: 'error' });
     } finally {
-      setLoading(false);
+      setBusyId('');
     }
   };
 
-  const statCards = [
-    { title: 'Tổng sinh viên', value: stats.totalStudents, icon: Users, color: 'bg-blue-500', link: '/students' },
-    { title: 'Tổng giảng viên', value: stats.totalTeachers, icon: GraduationCap, color: 'bg-emerald-500', link: '/teachers' },
-    { title: 'Tổng môn học', value: stats.totalSubjects, icon: BookOpen, color: 'bg-purple-500', link: '/subjects' },
-    { title: 'Tổng lịch thi', value: stats.totalExamSchedules, icon: Clock, color: 'bg-amber-500', link: '/exam-schedules' },
-    { title: 'Tổng phòng thi', value: stats.totalExamRooms, icon: DoorOpen, color: 'bg-indigo-500', link: '/exam-rooms' },
-    { title: 'Câu hỏi chờ duyệt', value: stats.pendingQuestions, icon: HelpCircle, color: 'bg-rose-500', link: '/question-bank' },
-  ];
+  const reject = async () => {
+    if (!rejecting || reason.trim().length < 3) {
+      setToast({ message: 'Lý do từ chối phải có ít nhất 3 ký tự.', type: 'error' });
+      return;
+    }
+    setBusyId(rejecting.id);
+    try {
+      await api.post(`/questions/${rejecting.id}/reject`, { reason: reason.trim() });
+      setToast({ message: `Đã từ chối câu hỏi ${rejecting.code}.`, type: 'success' });
+      setRejecting(null);
+      setReason('');
+      await loadOverview();
+    } catch (actionError: any) {
+      setToast({ message: actionError.message, type: 'error' });
+    } finally {
+      setBusyId('');
+    }
+  };
 
   return (
     <AppShell user={user} title="Admin Dashboard - Thống kê tổng quan">
-      <div className="flex min-h-screen flex-col min-w-0">
-
-        <main className="p-8 max-w-7xl w-full mx-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-800">Chào mừng trở lại, {user?.username}! 👋</h1>
-            <p className="text-slate-500 text-sm mt-1">Tổng hợp báo cáo và trạng thái các danh mục trong hệ thống khảo thí.</p>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-32 bg-white rounded-2xl animate-pulse shadow-sm p-6 border border-gray-100"></div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {statCards.map((card, idx) => {
-                const Icon = card.icon;
-                return (
-                  <div
-                    key={idx}
-                    onClick={() => router.push(card.link)}
-                    className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-slate-100 flex items-center justify-between cursor-pointer group"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-slate-500 mb-1">{card.title}</p>
-                      <h3 className="text-3xl font-extrabold text-slate-800 group-hover:text-sky-600 transition">
-                        {card.value}
-                      </h3>
-                    </div>
-                    <div className={`w-14 h-14 rounded-2xl ${card.color} text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition duration-200`}>
-                      <Icon className="w-7 h-7" />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Quick Actions Panel */}
-          <div className="mt-10 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-xl">
-            <h3 className="text-lg font-bold mb-2">Tác vụ quản trị nhanh</h3>
-            <p className="text-slate-400 text-sm mb-6">Thực hiện các thao tác quản lý lịch thi, phân phòng và tạo đề thi.</p>
-
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => router.push('/exam-arrangement')}
-                className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-white rounded-xl text-sm font-semibold shadow-md transition"
-              >
-                Xếp phòng thi tự động
-              </button>
-              <button
-                onClick={() => router.push('/exam-supervisors')}
-                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-sm font-semibold shadow-md transition"
-              >
-                Phân công giám thị
-              </button>
-              <button
-                onClick={() => router.push('/exam-papers')}
-                className="px-5 py-2.5 bg-purple-500 hover:bg-purple-400 text-white rounded-xl text-sm font-semibold shadow-md transition"
-              >
-                Rút đề thi ngẫu nhiên
-              </button>
+      <main className="mx-auto w-full max-w-[1600px] p-4 md:p-6 xl:p-8">
+        {loading ? (
+          <DashboardSkeleton />
+        ) : error || !overview ? (
+          <DashboardErrorState message={error || 'Dữ liệu Dashboard không khả dụng.'} onRetry={loadOverview} />
+        ) : (
+          <div className="space-y-6">
+            <DashboardWelcome
+              username={user?.username || 'admin'}
+              examCount={overview.today.examCount}
+              pendingQuestionCount={overview.today.pendingQuestionCount}
+            />
+            <DashboardStatistics summary={overview.summary} />
+            <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
+              <ExamScheduleChart data={overview.examChart} />
+              <QuestionStatusChart data={overview.questionStatus} />
+              <UpcomingExamList exams={overview.upcomingExams} />
+              <PendingQuestionList
+                questions={overview.pendingQuestions}
+                canReview={user?.role === 'ADMIN'}
+                busyId={busyId}
+                onApprove={approve}
+                onReject={(id, code) => {
+                  setRejecting({ id, code });
+                  setReason('');
+                }}
+              />
+              <ExamProgressOverview periods={overview.examProgress} />
+              <RecentActivityList activities={overview.recentActivities} />
+              <QuickActions />
             </div>
           </div>
-        </main>
-      </div>
+        )}
+      </main>
+
+      <Modal
+        isOpen={Boolean(rejecting)}
+        onClose={() => {
+          setRejecting(null);
+          setReason('');
+        }}
+        title={`Từ chối câu hỏi ${rejecting?.code || ''}`}
+      >
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="reject-reason" className="mb-1.5 block text-sm font-semibold text-slate-700">
+              Lý do từ chối
+            </label>
+            <textarea
+              id="reject-reason"
+              rows={4}
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+              placeholder="Nhập lý do để người tạo chỉnh sửa câu hỏi..."
+              className="w-full resize-none rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+            />
+          </div>
+          <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
+            <button type="button" onClick={() => setRejecting(null)} className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+              Hủy
+            </button>
+            <button type="button" disabled={Boolean(busyId)} onClick={reject} className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50">
+              Xác nhận từ chối
+            </button>
+          </div>
+        </div>
+      </Modal>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </AppShell>
   );
 }

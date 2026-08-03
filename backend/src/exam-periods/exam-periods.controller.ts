@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { ExamPeriodsService } from './exam-periods.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -21,19 +21,19 @@ export class ExamPeriodsController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: any) {
-    return this.examPeriodsService.create(body);
+  create(@Request() req: any, @Body() body: any) {
+    return this.examPeriodsService.create(req.user, body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
-    return this.examPeriodsService.update(id, body);
+  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return this.examPeriodsService.update(req.user, id, body);
   }
 
   @Roles('ADMIN')
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.examPeriodsService.remove(id);
+  remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examPeriodsService.remove(req.user, id);
   }
 }

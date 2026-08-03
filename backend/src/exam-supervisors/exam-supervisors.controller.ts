@@ -1,4 +1,4 @@
-import { Controller, Post, Delete, Get, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Delete, Get, Body, Param, Query, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { ExamSupervisorsService } from './exam-supervisors.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -11,8 +11,8 @@ export class ExamSupervisorsController {
 
   @Roles('ADMIN')
   @Post('assign')
-  assign(@Body() body: { examScheduleRoomId: number; teacherId: number; role?: string; note?: string }) {
-    return this.examSupervisorsService.assign(body);
+  assign(@Request() req: any, @Body() body: { examScheduleRoomId: number; teacherId: number; role?: string; note?: string }) {
+    return this.examSupervisorsService.assign(req.user, body);
   }
 
   @Get()
