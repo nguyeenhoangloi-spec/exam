@@ -1,0 +1,8 @@
+{
+  "/classes/page": "app/classes/page.js",
+  "/exam-rooms/page": "app/exam-rooms/page.js",
+  "/exam-schedules/page": "app/exam-schedules/page.js",
+  "/exam-supervisors/page": "app/exam-supervisors/page.js",
+  "/exam-arrangement/page": "app/exam-arrangement/page.js",
+  "/question-bank/page": "app/question-bank/page.js"
+}
