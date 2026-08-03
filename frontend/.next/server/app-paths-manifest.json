@@ -1,5 +1,11 @@
 {
-  "/exam-rooms/page": "app/exam-rooms/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/page": "app/page.js"
+  "/exam-papers/page": "app/exam-papers/page.js",
+  "/exam-rooms/page": "app/exam-rooms/page.js",
+  "/exam-supervisors/page": "app/exam-supervisors/page.js",
+  "/subjects/page": "app/subjects/page.js",
+  "/exam-schedules/page": "app/exam-schedules/page.js",
+  "/exam-arrangement/page": "app/exam-arrangement/page.js",
+  "/question-bank/page": "app/question-bank/page.js",
+  "/exam-periods/page": "app/exam-periods/page.js"
 }
