@@ -35,6 +35,7 @@ export default function QuestionBankPage() {
   const [selected, setSelected] = useState<string[]>([]);
   const [detail, setDetail] = useState<Question | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<Question | null>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -68,6 +69,7 @@ export default function QuestionBankPage() {
 
   const action = async (q: Question, name: string) => {
     try {
+      if (name === 'edit') { setEditing((await api.get(`/questions/${q.id}`)).data); setFormOpen(true); return; }
       if (name === 'delete') { if (!confirm(`Xóa mềm ${q.code}?`)) return; await api.delete(`/questions/${q.id}`); }
       else if (name === 'reject') { const reason = prompt('Nhập lý do từ chối (tối thiểu 3 ký tự):'); if (!reason) return; await api.post(`/questions/${q.id}/reject`, { reason }); }
       else { if (name === 'approve' && !confirm(`Duyệt ${q.code}?`)) return; await api.post(`/questions/${q.id}/${name}`); }
@@ -82,12 +84,12 @@ export default function QuestionBankPage() {
     <main className="mx-auto w-full max-w-[1500px] p-4 md:p-8">
       <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Ngân hàng câu hỏi</h1><p className="text-sm text-slate-500">Quản lý, phê duyệt và tái sử dụng câu hỏi khảo thí.</p></div>
       <QuestionStatistics counts={counts} />
-      <section className="my-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex flex-col gap-3 xl:flex-row"><QuestionSearch value={search} onChange={setSearch} /><QuestionToolbar onAdd={()=>setFormOpen(true)} onImport={()=>setImportOpen(true)} onAi={()=>setAiOpen(true)} onExport={exportCsv} /></div><QuestionFilters value={filters} subjects={subjects} onChange={next=>{setFilters(next);setPage(1);}} /></section>
+      <section className="my-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex flex-col gap-3 xl:flex-row"><QuestionSearch value={search} onChange={setSearch} /><QuestionToolbar onAdd={()=>{setEditing(null);setFormOpen(true);}} onImport={()=>setImportOpen(true)} onAi={()=>setAiOpen(true)} onExport={exportCsv} /></div><QuestionFilters value={filters} subjects={subjects} onChange={next=>{setFilters(next);setPage(1);}} /></section>
       <QuestionBulkAction count={selected.length} onAction={bulk} onClear={()=>setSelected([])} />
       {loading ? <div className="space-y-3">{[1,2,3].map(i=><div key={i} className="h-36 animate-pulse rounded-2xl bg-slate-200" />)}</div> : error ? <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700">{error}<button onClick={load} className="ml-3 underline">Thử lại</button></div> : !questions.length ? <div className="rounded-2xl border bg-white p-12 text-center text-slate-500">Không có câu hỏi phù hợp.</div> : <div className="space-y-3">{questions.map(q=><QuestionCard key={q.id} question={q} selected={selected.includes(q.id)} onSelect={v=>setSelected(v?[...selected,q.id]:selected.filter(id=>id!==q.id))} onDetail={()=>showDetail(q.id)} onAction={name=>action(q,name)} isAdmin={user?.role==='ADMIN'} />)}</div>}
       <QuestionPagination page={page} totalPages={totalPages} limit={limit} onPage={setPage} onLimit={v=>{setLimit(v);setPage(1);}} />
     </main>
-    <QuestionFormDialog open={formOpen} subjects={subjects} onClose={()=>setFormOpen(false)} onSaved={load} />
+    <QuestionFormDialog open={formOpen} subjects={subjects} question={editing} onClose={()=>{setFormOpen(false);setEditing(null);}} onSaved={load} />
     <QuestionDetailDialog question={detail} onClose={()=>setDetail(null)} />
     <QuestionImportWizard open={importOpen} onClose={()=>setImportOpen(false)} onDone={load} />
     <QuestionAIWizard open={aiOpen} subjects={subjects} onClose={()=>setAiOpen(false)} onDone={load} />

@@ -101,7 +101,7 @@ Hệ thống đã có file seed mẫu tạo sẵn các tài khoản:
      ```env
      PORT=3001
      DATABASE_URL="postgresql://postgres:postgres@localhost:5432/exam_db?schema=public"
-     JWT_SECRET="exam_management_super_secret_jwt_key_2026"
+     JWT_SECRET="replace-with-a-long-random-secret"
      JWT_EXPIRES_IN="7d"
      ```
 

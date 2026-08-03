@@ -50,4 +50,5 @@ node_modules
 
 # Local database migration artifacts
 /backend/prisma/dev.db
+/backend/prisma/*.sqlite-backup
 /backend/prisma/data-export/
