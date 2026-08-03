@@ -28,23 +28,23 @@ export declare class UsersService {
         student: {
             id: number;
             email: string;
+            studentCode: string;
             userId: number;
             fullName: string;
-            phone: string | null;
-            studentCode: string;
             gender: string;
             dateOfBirth: Date;
+            phone: string | null;
             classId: number;
         };
         teacher: {
             id: number;
             email: string;
             departmentId: number;
-            teacherCode: string;
             userId: number;
             fullName: string;
-            degree: string;
             phone: string | null;
+            teacherCode: string;
+            degree: string;
         };
     }>;
 }

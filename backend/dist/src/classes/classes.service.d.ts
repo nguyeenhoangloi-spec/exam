@@ -26,12 +26,12 @@ export declare class ClassesService {
         students: {
             id: number;
             email: string;
+            studentCode: string;
             userId: number;
             fullName: string;
-            phone: string | null;
-            studentCode: string;
             gender: string;
             dateOfBirth: Date;
+            phone: string | null;
             classId: number;
         }[];
     } & {

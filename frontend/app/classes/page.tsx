@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { Sidebar } from '../../components/Sidebar';
-import { Header } from '../../components/Header';
+import { AppShell } from '../../components/AppShell';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { Plus, Trash2, Edit } from 'lucide-react';
@@ -108,10 +107,8 @@ export default function ClassesPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar user={currentUser} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header user={currentUser} title="Quản lý Lớp học" />
+    <AppShell user={currentUser} title="Quản lý Lớp học">
+      <div className="flex min-h-screen flex-col min-w-0">
 
         <main className="p-8 max-w-7xl w-full mx-auto">
           <div className="flex items-center justify-between gap-4 mb-6">
@@ -250,6 +247,6 @@ export default function ClassesPage() {
       </Modal>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </div>
+    </AppShell>
   );
 }

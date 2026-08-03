@@ -1,41 +1,33 @@
-import { QuestionsService } from './questions.service';
+import { Response } from 'express';
 import { AiQuestionsService } from './ai.service';
+import { BulkActionDto, CreateQuestionDto, GenerateAiQuestionsDto, QuestionQueryDto, RejectQuestionDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
+import { QuestionsService } from './questions.service';
 export declare class QuestionsController {
-    private readonly questionsService;
+    private readonly questions;
     private readonly ai;
-    constructor(questionsService: QuestionsService, ai: AiQuestionsService);
-    import(req: any, file: any): Promise<{
-        imported: number;
-        errors: any[];
-    }>;
-    generate(body: any): Promise<any>;
-    extractDocument(file: any): Promise<{
-        text: any;
-        fileName: any;
-    }>;
-    findAll(subjectId?: string, chapter?: string, difficulty?: string, status?: string): Promise<({
+    constructor(questions: QuestionsService, ai: AiQuestionsService);
+    findAll(req: any, query: QuestionQueryDto): Promise<({
         subject: {
             id: number;
-            departmentId: number;
             subjectCode: string;
             subjectName: string;
             credits: number;
+            departmentId: number;
         };
         createdBy: {
             id: number;
             username: string;
-            role: string;
         };
         options: {
             id: number;
+            questionId: number;
             optionLabel: string;
             optionContent: string;
             isCorrect: boolean;
-            questionId: number;
         }[];
     } & {
         id: number;
-        status: string;
+        code: string | null;
         subjectId: number;
         chapter: number;
         content: string;
@@ -43,31 +35,74 @@ export declare class QuestionsController {
         difficulty: string;
         score: number;
         explanation: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
         createdById: number;
+        approvedById: number | null;
     })[]>;
-    findOne(id: number): Promise<{
+    statistics(req: any): any;
+    filterOptions(req: any): any;
+    template(): any;
+    export(req: any, query: QuestionQueryDto, res: Response): Promise<void>;
+    bulk(req: any, body: BulkActionDto): any;
+    preview(req: any, file: Express.Multer.File): any;
+    confirm(req: any, file: Express.Multer.File, raw: any): any;
+    generateAi(body: GenerateAiQuestionsDto): Promise<any>;
+    saveAi(req: any, body: SaveAiQuestionsDto): any;
+    create(req: any, body: CreateQuestionDto): Promise<{
         subject: {
             id: number;
-            departmentId: number;
             subjectCode: string;
             subjectName: string;
             credits: number;
+            departmentId: number;
+        };
+        options: {
+            id: number;
+            questionId: number;
+            optionLabel: string;
+            optionContent: string;
+            isCorrect: boolean;
+        }[];
+    } & {
+        id: number;
+        code: string | null;
+        subjectId: number;
+        chapter: number;
+        content: string;
+        questionType: string;
+        difficulty: string;
+        score: number;
+        explanation: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
+        createdById: number;
+        approvedById: number | null;
+    }>;
+    findOne(req: any, id: string): Promise<{
+        subject: {
+            id: number;
+            subjectCode: string;
+            subjectName: string;
+            credits: number;
+            departmentId: number;
         };
         createdBy: {
             id: number;
             username: string;
-            role: string;
         };
         options: {
             id: number;
+            questionId: number;
             optionLabel: string;
             optionContent: string;
             isCorrect: boolean;
-            questionId: number;
         }[];
     } & {
         id: number;
-        status: string;
+        code: string | null;
         subjectId: number;
         chapter: number;
         content: string;
@@ -75,53 +110,30 @@ export declare class QuestionsController {
         difficulty: string;
         score: number;
         explanation: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
         createdById: number;
+        approvedById: number | null;
     }>;
-    create(req: any, body: any): Promise<{
+    update(req: any, id: string, body: UpdateQuestionDto): Promise<{
         subject: {
             id: number;
-            departmentId: number;
             subjectCode: string;
             subjectName: string;
             credits: number;
-        };
-        options: {
-            id: number;
-            optionLabel: string;
-            optionContent: string;
-            isCorrect: boolean;
-            questionId: number;
-        }[];
-    } & {
-        id: number;
-        status: string;
-        subjectId: number;
-        chapter: number;
-        content: string;
-        questionType: string;
-        difficulty: string;
-        score: number;
-        explanation: string | null;
-        createdById: number;
-    }>;
-    update(id: number, body: any): Promise<{
-        subject: {
-            id: number;
             departmentId: number;
-            subjectCode: string;
-            subjectName: string;
-            credits: number;
         };
         options: {
             id: number;
+            questionId: number;
             optionLabel: string;
             optionContent: string;
             isCorrect: boolean;
-            questionId: number;
         }[];
     } & {
         id: number;
-        status: string;
+        code: string | null;
         subjectId: number;
         chapter: number;
         content: string;
@@ -129,28 +141,17 @@ export declare class QuestionsController {
         difficulty: string;
         score: number;
         explanation: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
         createdById: number;
+        approvedById: number | null;
     }>;
-    approve(id: number, body: {
-        status?: string;
-    }): Promise<{
-        subject: {
-            id: number;
-            departmentId: number;
-            subjectCode: string;
-            subjectName: string;
-            credits: number;
-        };
-        options: {
-            id: number;
-            optionLabel: string;
-            optionContent: string;
-            isCorrect: boolean;
-            questionId: number;
-        }[];
-    } & {
+    duplicate(req: any, id: string): any;
+    submit(req: any, id: string): any;
+    approve(req: any, id: string): Promise<{
         id: number;
-        status: string;
+        code: string | null;
         subjectId: number;
         chapter: number;
         content: string;
@@ -158,11 +159,18 @@ export declare class QuestionsController {
         difficulty: string;
         score: number;
         explanation: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
         createdById: number;
+        approvedById: number | null;
     }>;
-    remove(id: number): Promise<{
+    reject(req: any, id: string, body: RejectQuestionDto): any;
+    archive(req: any, id: string): any;
+    restore(req: any, id: string): any;
+    remove(req: any, id: string): Promise<{
         id: number;
-        status: string;
+        code: string | null;
         subjectId: number;
         chapter: number;
         content: string;
@@ -170,6 +178,10 @@ export declare class QuestionsController {
         difficulty: string;
         score: number;
         explanation: string | null;
+        status: string;
+        createdAt: Date;
+        updatedAt: Date;
         createdById: number;
+        approvedById: number | null;
     }>;
 }

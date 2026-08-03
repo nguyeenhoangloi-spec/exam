@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { Sidebar } from '../../components/Sidebar';
-import { Header } from '../../components/Header';
+import { AppShell } from '../../components/AppShell';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { FileText, Sparkles, Eye, Trash2 } from 'lucide-react';
@@ -115,10 +114,8 @@ export default function ExamPapersPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar user={currentUser} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header user={currentUser} title="Tạo đề thi ngẫu nhiên" />
+    <AppShell user={currentUser} title="Tạo đề thi ngẫu nhiên">
+      <div className="flex min-h-screen flex-col min-w-0">
 
         <main className="p-8 max-w-7xl w-full mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -335,6 +332,6 @@ export default function ExamPapersPage() {
       </Modal>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </div>
+    </AppShell>
   );
 }

@@ -1,11 +1,7 @@
+import { PrismaService } from '../prisma/prisma.service';
+import { GenerateAiQuestionsDto } from './dto/question.dto';
 export declare class AiQuestionsService {
-    extractDocument(file: any): Promise<any>;
-    generate(input: {
-        subject: string;
-        chapter: number;
-        count: number;
-        difficulty: string;
-        prompt: string;
-    }): Promise<any>;
-    private generateLocalFallbackQuestions;
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    generate(input: GenerateAiQuestionsDto): Promise<any>;
 }

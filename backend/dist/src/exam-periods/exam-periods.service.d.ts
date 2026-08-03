@@ -27,13 +27,13 @@ export declare class ExamPeriodsService {
         } & {
             id: number;
             status: string;
+            subjectId: number;
             examDate: Date;
             startTime: string;
             endTime: string;
             examType: string;
             note: string | null;
             examPeriodId: number;
-            subjectId: number;
         })[];
     } & {
         id: number;

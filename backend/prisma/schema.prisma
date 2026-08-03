@@ -1,12 +1,50 @@
-// Prisma Schema for Student Exam Management System (SQLite / PostgreSQL compatible)
+// Prisma Schema for Student Exam Management System (PostgreSQL)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  FILL_BLANK
+  ESSAY
+}
+enum QuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+enum BloomLevel {
+  REMEMBER
+  UNDERSTAND
+  APPLY
+  ANALYZE
+}
+enum QuestionStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+enum QuestionHistoryAction {
+  CREATE
+  UPDATE
+  SUBMIT
+  APPROVE
+  REJECT
+  ARCHIVE
+  DUPLICATE
+  RESTORE
+  DELETE
+  BULK_UPDATE
 }
 
 model User {
@@ -22,8 +60,10 @@ model User {
   student Student?
   teacher Teacher?
 
-  createdQuestions  Question[]  @relation("UserQuestions")
-  createdExamPapers ExamPaper[] @relation("UserExamPapers")
+  createdQuestions  Question[]        @relation("UserQuestions")
+  approvedQuestions Question[]        @relation("ApprovedQuestions")
+  createdExamPapers ExamPaper[]       @relation("UserExamPapers")
+  questionHistories QuestionHistory[] @relation("QuestionHistoryActor")
 
   @@map("users")
 }
@@ -99,8 +139,25 @@ model Subject {
   studentSubjects StudentSubject[]
   examSchedules   ExamSchedule[]
   questions       Question[]
+  chapters        Chapter[]
 
   @@map("subjects")
+}
+
+model Chapter {
+  id String @id @default(uuid())
+  subjectId Int
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  code String
+  name String
+  order Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  questions Question[]
+
+  @@unique([subjectId, code])
+  @@unique([subjectId, order])
+  @@map("chapters")
 }
 
 model StudentSubject {
@@ -202,34 +259,82 @@ model ExamSupervisor {
 }
 
 model Question {
-  id           Int     @id @default(autoincrement())
-  subjectId    Int
-  subject      Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  chapter      Int
-  content      String
-  questionType String  @default("SINGLE_CHOICE")
-  difficulty   String  @default("MEDIUM")
-  score        Float   @default(0.25)
-  explanation  String?
-  status       String  @default("PENDING")
-  createdById  Int
-  createdBy    User    @relation("UserQuestions", fields: [createdById], references: [id], onDelete: Cascade)
+  id                String @id @default(uuid())
+  code              String @unique
+  subjectId         Int
+  subject           Subject @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  chapterId         String
+  chapter           Chapter @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  content           String
+  normalizedContent String
+  type              QuestionType
+  difficulty        QuestionDifficulty @default(MEDIUM)
+  bloomLevel        BloomLevel @default(UNDERSTAND)
+  score             Float    @default(0.25)
+  explanation       String?
+  keywords          String?
+  status            QuestionStatus @default(DRAFT)
+  rejectionReason   String?
+  isActive          Boolean @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+  approvedAt        DateTime?
+  archivedAt        DateTime?
+  createdById       Int
+  createdBy         User     @relation("UserQuestions", fields: [createdById], references: [id], onDelete: Restrict)
+  approvedById      Int?
+  approvedBy        User?    @relation("ApprovedQuestions", fields: [approvedById], references: [id], onDelete: SetNull)
 
   options            QuestionOption[]
   examPaperQuestions ExamPaperQuestion[]
+  histories          QuestionHistory[]
+  statistic          QuestionStatistic?
 
+  @@index([subjectId, chapterId, status])
+  @@index([createdById, createdAt])
   @@map("questions")
 }
 
-model QuestionOption {
-  id            Int      @id @default(autoincrement())
-  questionId    Int
-  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  optionLabel   String
-  optionContent String
-  isCorrect     Boolean  @default(false)
+model QuestionHistory {
+  id          String @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  action      QuestionHistoryAction
+  oldData     Json?
+  newData     Json?
+  note        String?
+  createdAt   DateTime @default(now())
+  changedById Int
+  changedBy   User     @relation("QuestionHistoryActor", fields: [changedById], references: [id], onDelete: Restrict)
 
+  @@index([questionId, createdAt])
+  @@map("question_histories")
+}
+
+model QuestionOption {
+  id String @id @default(uuid())
+  questionId String
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label String
+  content String
+  isCorrect Boolean @default(false)
+  order Int
+
+  @@unique([questionId, order])
   @@map("question_options")
+}
+
+model QuestionStatistic {
+  id String @id @default(uuid())
+  questionId String @unique
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  usedCount Int @default(0)
+  totalAnswers Int @default(0)
+  correctAnswers Int @default(0)
+  lastUsedAt DateTime?
+  updatedAt DateTime @updatedAt
+  @@map("question_statistics")
 }
 
 model ExamPaper {
@@ -252,10 +357,11 @@ model ExamPaperQuestion {
   id            Int       @id @default(autoincrement())
   examPaperId   Int
   examPaper     ExamPaper @relation(fields: [examPaperId], references: [id], onDelete: Cascade)
-  questionId    Int
+  questionId    String
   question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionOrder Int
   score         Float
+  usedAt        DateTime  @default(now())
 
   @@map("exam_paper_questions")
 }

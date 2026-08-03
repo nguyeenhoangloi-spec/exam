@@ -21,12 +21,17 @@ exports.AuthModule = AuthModule = __decorate([
         imports: [
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.registerAsync({
-                useFactory: () => ({
-                    secret: process.env.JWT_SECRET || 'exam_management_super_secret_jwt_key_2026',
-                    signOptions: {
-                        expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-                    },
-                }),
+                useFactory: () => {
+                    if (!process.env.JWT_SECRET) {
+                        throw new Error('JWT_SECRET chưa được cấu hình.');
+                    }
+                    return {
+                        secret: process.env.JWT_SECRET,
+                        signOptions: {
+                            expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+                        },
+                    };
+                },
             }),
         ],
         controllers: [auth_controller_1.AuthController],

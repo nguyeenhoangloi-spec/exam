@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const prisma = new PrismaClient();
 
@@ -98,73 +102,30 @@ async function main() {
   const cnttDept = await prisma.department.upsert({
     where: { code: 'CNTT' },
     update: {},
-    create: {
-      code: 'CNTT',
-      name: 'Khoa Công nghệ thông tin',
-    },
+    create: { code: 'CNTT', name: 'Khoa Công nghệ Thông tin' },
   });
 
   const dtvtDept = await prisma.department.upsert({
     where: { code: 'DTVT' },
     update: {},
-    create: {
-      code: 'DTVT',
-      name: 'Khoa Điện tử viễn thông',
-    },
+    create: { code: 'DTVT', name: 'Khoa Điện tử Viễn thông' },
   });
 
   // 3. Classes
-  const classCntt = await prisma.class.upsert({
-    where: { code: 'CNTT-K65' },
+  const class1 = await prisma.class.upsert({
+    where: { code: 'CNTT2021A' },
     update: {},
-    create: {
-      code: 'CNTT-K65',
-      name: 'Lớp CNTT K65',
-      departmentId: cnttDept.id,
-    },
+    create: { code: 'CNTT2021A', name: 'Lớp CNTT K2021-A', departmentId: cnttDept.id },
   });
 
-  const classDtvt = await prisma.class.upsert({
-    where: { code: 'DTVT-K65' },
+  const class2 = await prisma.class.upsert({
+    where: { code: 'CNTT2021B' },
     update: {},
-    create: {
-      code: 'DTVT-K65',
-      name: 'Lớp DTVT K65',
-      departmentId: dtvtDept.id,
-    },
+    create: { code: 'CNTT2021B', name: 'Lớp CNTT K2021-B', departmentId: cnttDept.id },
   });
 
-  // 4. Teachers
-  const teacher1 = await prisma.teacher.upsert({
-    where: { teacherCode: 'GV001' },
-    update: {},
-    create: {
-      teacherCode: 'GV001',
-      fullName: 'Nguyễn Văn A',
-      degree: 'Tiến sĩ',
-      email: 'nguyenvana@school.edu.vn',
-      phone: '0987654321',
-      departmentId: cnttDept.id,
-      userId: teacher1User.id,
-    },
-  });
-
-  const teacher2 = await prisma.teacher.upsert({
-    where: { teacherCode: 'GV002' },
-    update: {},
-    create: {
-      teacherCode: 'GV002',
-      fullName: 'Trần Thị B',
-      degree: 'Thạc sĩ',
-      email: 'tranthib@school.edu.vn',
-      phone: '0912345678',
-      departmentId: cnttDept.id,
-      userId: teacher2User.id,
-    },
-  });
-
-  // 5. Students
-  const student1 = await prisma.student.upsert({
+  // 4. Students
+  const s1 = await prisma.student.upsert({
     where: { studentCode: 'SV001' },
     update: {},
     create: {
@@ -173,13 +134,13 @@ async function main() {
       gender: 'Nam',
       dateOfBirth: new Date('2003-05-15'),
       email: 'levanc@student.edu.vn',
-      phone: '0933111222',
-      classId: classCntt.id,
+      phone: '0912345678',
+      classId: class1.id,
       userId: student1User.id,
     },
   });
 
-  const student2 = await prisma.student.upsert({
+  const s2 = await prisma.student.upsert({
     where: { studentCode: 'SV002' },
     update: {},
     create: {
@@ -188,48 +149,77 @@ async function main() {
       gender: 'Nữ',
       dateOfBirth: new Date('2003-08-20'),
       email: 'phamthid@student.edu.vn',
-      phone: '0933222333',
-      classId: classCntt.id,
+      phone: '0923456789',
+      classId: class1.id,
       userId: student2User.id,
     },
   });
 
-  const student3 = await prisma.student.upsert({
+  const s3 = await prisma.student.upsert({
     where: { studentCode: 'SV003' },
     update: {},
     create: {
       studentCode: 'SV003',
       fullName: 'Hoàng Văn E',
       gender: 'Nam',
-      dateOfBirth: new Date('2003-02-10'),
+      dateOfBirth: new Date('2003-11-02'),
       email: 'hoangvane@student.edu.vn',
-      phone: '0933333444',
-      classId: classCntt.id,
+      phone: '0934567890',
+      classId: class2.id,
       userId: student3User.id,
     },
   });
 
-  const student4 = await prisma.student.upsert({
+  const s4 = await prisma.student.upsert({
     where: { studentCode: 'SV004' },
     update: {},
     create: {
       studentCode: 'SV004',
       fullName: 'Vũ Thị F',
       gender: 'Nữ',
-      dateOfBirth: new Date('2003-11-25'),
+      dateOfBirth: new Date('2003-02-28'),
       email: 'vuthif@student.edu.vn',
-      phone: '0933444555',
-      classId: classDtvt.id,
+      phone: '0945678901',
+      classId: class2.id,
       userId: student4User.id,
+    },
+  });
+
+  // 5. Teachers
+  const t1 = await prisma.teacher.upsert({
+    where: { teacherCode: 'GV001' },
+    update: {},
+    create: {
+      teacherCode: 'GV001',
+      fullName: 'Nguyễn Văn A',
+      degree: 'Thạc sĩ',
+      email: 'nguyenvana@school.edu.vn',
+      phone: '0901112223',
+      departmentId: cnttDept.id,
+      userId: teacher1User.id,
+    },
+  });
+
+  const t2 = await prisma.teacher.upsert({
+    where: { teacherCode: 'GV002' },
+    update: {},
+    create: {
+      teacherCode: 'GV002',
+      fullName: 'Trần Thị B',
+      degree: 'Tiến sĩ',
+      email: 'tranthib@school.edu.vn',
+      phone: '0902223334',
+      departmentId: cnttDept.id,
+      userId: teacher2User.id,
     },
   });
 
   // 6. Subjects
   const subject1 = await prisma.subject.upsert({
-    where: { subjectCode: 'INT1001' },
+    where: { subjectCode: 'LTHDT' },
     update: {},
     create: {
-      subjectCode: 'INT1001',
+      subjectCode: 'LTHDT',
       subjectName: 'Lập trình hướng đối tượng',
       credits: 3,
       departmentId: cnttDept.id,
@@ -237,10 +227,10 @@ async function main() {
   });
 
   const subject2 = await prisma.subject.upsert({
-    where: { subjectCode: 'INT1002' },
+    where: { subjectCode: 'CSDL' },
     update: {},
     create: {
-      subjectCode: 'INT1002',
+      subjectCode: 'CSDL',
       subjectName: 'Cơ sở dữ liệu',
       credits: 3,
       departmentId: cnttDept.id,
@@ -248,89 +238,87 @@ async function main() {
   });
 
   // 7. StudentSubjects
-  await prisma.studentSubject.deleteMany();
-  await prisma.studentSubject.createMany({
-    data: [
-      { studentId: student1.id, subjectId: subject1.id, semester: 'HK1', schoolYear: '2025-2026', status: 'ELIGIBLE' },
-      { studentId: student2.id, subjectId: subject1.id, semester: 'HK1', schoolYear: '2025-2026', status: 'ELIGIBLE' },
-      { studentId: student3.id, subjectId: subject1.id, semester: 'HK1', schoolYear: '2025-2026', status: 'ELIGIBLE' },
-      { studentId: student4.id, subjectId: subject1.id, semester: 'HK1', schoolYear: '2025-2026', status: 'ELIGIBLE' },
-      { studentId: student1.id, subjectId: subject2.id, semester: 'HK1', schoolYear: '2025-2026', status: 'ELIGIBLE' },
-      { studentId: student2.id, subjectId: subject2.id, semester: 'HK1', schoolYear: '2025-2026', status: 'ELIGIBLE' },
-    ],
-  });
+  for (const s of [s1, s2, s3, s4]) {
+    for (const sub of [subject1, subject2]) {
+      await prisma.studentSubject.create({
+        data: {
+          studentId: s.id,
+          subjectId: sub.id,
+          semester: '1',
+          schoolYear: '2025-2026',
+          status: 'ELIGIBLE',
+        },
+      });
+    }
+  }
 
-  // 8. ExamRooms
-  const room1 = await prisma.examRoom.upsert({
-    where: { roomCode: 'P101' },
-    update: {},
-    create: {
-      roomCode: 'P101',
-      roomName: 'Phòng thi P101',
-      building: 'Nhà A2',
-      capacity: 40,
-      roomType: 'THI_LY_THUYET',
-      status: 'AVAILABLE',
-    },
-  });
-
-  const room2 = await prisma.examRoom.upsert({
-    where: { roomCode: 'P102' },
-    update: {},
-    create: {
-      roomCode: 'P102',
-      roomName: 'Phòng thi P102',
-      building: 'Nhà A2',
-      capacity: 30,
-      roomType: 'THI_LY_THUYET',
-      status: 'AVAILABLE',
-    },
-  });
-
-  const room3 = await prisma.examRoom.upsert({
-    where: { roomCode: 'PM201' },
-    update: {},
-    create: {
-      roomCode: 'PM201',
-      roomName: 'Phòng Máy PM201',
-      building: 'Nhà B1',
-      capacity: 50,
-      roomType: 'THI_MAY_TINH',
-      status: 'AVAILABLE',
-    },
-  });
-
-  // 9. ExamPeriod
+  // 8. ExamPeriod
   const period = await prisma.examPeriod.create({
     data: {
-      name: 'Kỳ thi Cuối học kỳ 1 (2025-2026)',
-      semester: 'HK1',
+      name: 'Kỳ thi Cuối kỳ 1 (2025-2026)',
+      semester: '1',
       schoolYear: '2025-2026',
-      startDate: new Date('2026-08-01'),
-      endDate: new Date('2026-08-30'),
-      status: 'ONGOING',
+      startDate: new Date('2026-06-01'),
+      endDate: new Date('2026-06-15'),
+      status: 'SCHEDULED',
     },
   });
 
-  // 10. ExamSchedule
-  const schedule = await prisma.examSchedule.create({
+  // 9. ExamSchedule
+  await prisma.examSchedule.create({
     data: {
       examPeriodId: period.id,
       subjectId: subject1.id,
-      examDate: new Date('2026-08-15'),
+      examDate: new Date('2026-06-05'),
       startTime: '08:00',
       endTime: '09:30',
       examType: 'TRAC_NGHIEM',
       status: 'SCHEDULED',
-      note: 'Thi trắc nghiệm tập trung',
     },
   });
 
-  // 11. Questions & QuestionOptions for INT1001
+  await prisma.examSchedule.create({
+    data: {
+      examPeriodId: period.id,
+      subjectId: subject2.id,
+      examDate: new Date('2026-06-07'),
+      startTime: '13:30',
+      endTime: '15:00',
+      examType: 'TRAC_NGHIEM',
+      status: 'SCHEDULED',
+    },
+  });
+
+  // 10. ExamRooms
+  await prisma.examRoom.upsert({
+    where: { roomCode: 'P101' },
+    update: {},
+    create: {
+      roomCode: 'P101',
+      roomName: 'Phòng 101',
+      building: 'Nhà A2',
+      capacity: 40,
+      roomType: 'THI_LY_THUYET',
+    },
+  });
+
+  await prisma.examRoom.upsert({
+    where: { roomCode: 'P102' },
+    update: {},
+    create: {
+      roomCode: 'P102',
+      roomName: 'Phòng 102',
+      building: 'Nhà A2',
+      capacity: 40,
+      roomType: 'THI_LY_THUYET',
+    },
+  });
+
+  // 11. Questions
   await prisma.questionOption.deleteMany();
   await prisma.question.deleteMany();
 
-  const q1 = await prisma.question.create({
+  await prisma.question.create({
     data: {
       subjectId: subject1.id,
       chapter: 1,
@@ -352,7 +340,7 @@ async function main() {
     },
   });
 
-  const q2 = await prisma.question.create({
+  await prisma.question.create({
     data: {
       subjectId: subject1.id,
       chapter: 1,
@@ -374,7 +362,7 @@ async function main() {
     },
   });
 
-  const q3 = await prisma.question.create({
+  await prisma.question.create({
     data: {
       subjectId: subject1.id,
       chapter: 2,
@@ -391,72 +379,6 @@ async function main() {
           { optionLabel: 'B', optionContent: 'Cùng tên nhưng khác danh sách tham số trong cùng một lớp', isCorrect: true },
           { optionLabel: 'C', optionContent: 'Phương thức lớp con ghi đè phương thức lớp cha', isCorrect: false },
           { optionLabel: 'D', optionContent: 'Phương thức static gọi phương thức instance', isCorrect: false },
-        ],
-      },
-    },
-  });
-
-  const q4 = await prisma.question.create({
-    data: {
-      subjectId: subject1.id,
-      chapter: 2,
-      content: 'Ghi đè phương thức (Method Overriding) yêu cầu điều kiện gì?',
-      questionType: 'SINGLE_CHOICE',
-      difficulty: 'MEDIUM',
-      score: 0.25,
-      explanation: 'Phương thức ở lớp con phải có cùng tên và cùng tham số với phương thức ở lớp cha.',
-      status: 'APPROVED',
-      createdById: teacher2User.id,
-      options: {
-        create: [
-          { optionLabel: 'A', optionContent: 'Cùng chữ ký phương thức giữa lớp con và lớp cha', isCorrect: true },
-          { optionLabel: 'B', optionContent: 'Khác tên phương thức', isCorrect: false },
-          { optionLabel: 'C', optionContent: 'Phải dùng từ khóa private', isCorrect: false },
-          { optionLabel: 'D', optionContent: 'Không được truyền tham số', isCorrect: false },
-        ],
-      },
-    },
-  });
-
-  const q5 = await prisma.question.create({
-    data: {
-      subjectId: subject1.id,
-      chapter: 3,
-      content: 'Trong thiết kế phần mềm, nguyên lý SOLID thì chữ S đại diện cho nguyên lý nào?',
-      questionType: 'SINGLE_CHOICE',
-      difficulty: 'HARD',
-      score: 0.25,
-      explanation: 'Single Responsibility Principle - Nguyên lý đơn trách nhiệm.',
-      status: 'APPROVED',
-      createdById: teacher2User.id,
-      options: {
-        create: [
-          { optionLabel: 'A', optionContent: 'Single Responsibility Principle', isCorrect: true },
-          { optionLabel: 'B', optionContent: 'Subclass Substitution Principle', isCorrect: false },
-          { optionLabel: 'C', optionContent: 'Shared State Principle', isCorrect: false },
-          { optionLabel: 'D', optionContent: 'Sequential Execution Principle', isCorrect: false },
-        ],
-      },
-    },
-  });
-
-  const q6 = await prisma.question.create({
-    data: {
-      subjectId: subject1.id,
-      chapter: 3,
-      content: 'Mô hình thiết kế Singleton đảm bảo điều gì?',
-      questionType: 'SINGLE_CHOICE',
-      difficulty: 'HARD',
-      score: 0.25,
-      explanation: 'Singleton chỉ cho phép một thể hiện duy nhất của class tồn tại trong ứng dụng.',
-      status: 'PENDING',
-      createdById: teacher2User.id,
-      options: {
-        create: [
-          { optionLabel: 'A', optionContent: 'Có thể tạo vô số thể hiện', isCorrect: false },
-          { optionLabel: 'B', optionContent: 'Một lớp chỉ có duy nhất một instance duy nhất', isCorrect: true },
-          { optionLabel: 'C', optionContent: 'Dữ liệu được lưu trữ ngầm', isCorrect: false },
-          { optionLabel: 'D', optionContent: 'Không thể khởi tạo thuộc tính static', isCorrect: false },
         ],
       },
     },

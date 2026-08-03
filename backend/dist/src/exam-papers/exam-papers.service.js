@@ -17,75 +17,77 @@ let ExamPapersService = class ExamPapersService {
         this.prisma = prisma;
     }
     async createRandom(userId, data) {
-        const schedule = await this.prisma.examSchedule.findUnique({
-            where: { id: data.examScheduleId },
-            include: { subject: true },
-        });
-        if (!schedule) {
-            throw new common_1.NotFoundException('Không tìm thấy lịch thi.');
-        }
-        const subjectId = schedule.subjectId;
-        const approvedQuestions = await this.prisma.question.findMany({
-            where: {
-                subjectId,
-                status: 'APPROVED',
-            },
-            include: { options: true },
-        });
-        const easyQuestions = approvedQuestions.filter((q) => q.difficulty === 'EASY');
-        const mediumQuestions = approvedQuestions.filter((q) => q.difficulty === 'MEDIUM');
-        const hardQuestions = approvedQuestions.filter((q) => q.difficulty === 'HARD');
-        if (easyQuestions.length < data.easyCount) {
-            throw new common_1.BadRequestException(`Ngân hàng câu hỏi không đủ câu dễ (EASY). Yêu cầu: ${data.easyCount}, hiện có: ${easyQuestions.length} câu đã duyệt.`);
-        }
-        if (mediumQuestions.length < data.mediumCount) {
-            throw new common_1.BadRequestException(`Ngân hàng câu hỏi không đủ câu trung bình (MEDIUM). Yêu cầu: ${data.mediumCount}, hiện có: ${mediumQuestions.length} câu đã duyệt.`);
-        }
-        if (hardQuestions.length < data.hardCount) {
-            throw new common_1.BadRequestException(`Ngân hàng câu hỏi không đủ câu khó (HARD). Yêu cầu: ${data.hardCount}, hiện có: ${hardQuestions.length} câu đã duyệt.`);
-        }
-        const shuffleArray = (array) => {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+        return this.prisma.$transaction(async (tx) => {
+            const schedule = await tx.examSchedule.findUnique({
+                where: { id: data.examScheduleId },
+                include: { subject: true },
+            });
+            if (!schedule) {
+                throw new common_1.NotFoundException('Không tìm thấy lịch thi.');
             }
-            return arr;
-        };
-        const selectedEasy = shuffleArray(easyQuestions).slice(0, data.easyCount);
-        const selectedMedium = shuffleArray(mediumQuestions).slice(0, data.mediumCount);
-        const selectedHard = shuffleArray(hardQuestions).slice(0, data.hardCount);
-        const selectedQuestions = [...selectedEasy, ...selectedMedium, ...selectedHard];
-        const shuffledFinalQuestions = shuffleArray(selectedQuestions);
-        const totalScore = shuffledFinalQuestions.reduce((acc, q) => acc + (q.score || 0.25), 0);
-        const title = data.title || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${data.paperCode}`;
-        const examPaper = await this.prisma.examPaper.create({
-            data: {
-                examScheduleId: data.examScheduleId,
-                paperCode: data.paperCode,
-                title,
-                durationMinutes: data.durationMinutes || 60,
-                totalScore,
-                createdById: userId,
-                questions: {
-                    create: shuffledFinalQuestions.map((q, index) => ({
-                        questionId: q.id,
-                        questionOrder: index + 1,
-                        score: q.score || 0.25,
-                    })),
+            const subjectId = schedule.subjectId;
+            const approvedQuestions = await tx.question.findMany({
+                where: {
+                    subjectId,
+                    status: 'APPROVED',
                 },
-            },
-            include: {
-                examSchedule: { include: { subject: true } },
-                questions: {
-                    include: {
-                        question: { include: { options: true } },
+                include: { options: true },
+            });
+            const easyQuestions = approvedQuestions.filter((q) => q.difficulty === 'EASY');
+            const mediumQuestions = approvedQuestions.filter((q) => q.difficulty === 'MEDIUM');
+            const hardQuestions = approvedQuestions.filter((q) => q.difficulty === 'HARD');
+            if (easyQuestions.length < data.easyCount) {
+                throw new common_1.BadRequestException(`Ngân hàng câu hỏi không đủ câu dễ (EASY). Yêu cầu: ${data.easyCount}, hiện có: ${easyQuestions.length} câu đã duyệt.`);
+            }
+            if (mediumQuestions.length < data.mediumCount) {
+                throw new common_1.BadRequestException(`Ngân hàng câu hỏi không đủ câu trung bình (MEDIUM). Yêu cầu: ${data.mediumCount}, hiện có: ${mediumQuestions.length} câu đã duyệt.`);
+            }
+            if (hardQuestions.length < data.hardCount) {
+                throw new common_1.BadRequestException(`Ngân hàng câu hỏi không đủ câu khó (HARD). Yêu cầu: ${data.hardCount}, hiện có: ${hardQuestions.length} câu đã duyệt.`);
+            }
+            const shuffleArray = (array) => {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            };
+            const selectedEasy = shuffleArray(easyQuestions).slice(0, data.easyCount);
+            const selectedMedium = shuffleArray(mediumQuestions).slice(0, data.mediumCount);
+            const selectedHard = shuffleArray(hardQuestions).slice(0, data.hardCount);
+            const selectedQuestions = [...selectedEasy, ...selectedMedium, ...selectedHard];
+            const shuffledFinalQuestions = shuffleArray(selectedQuestions);
+            const totalScore = shuffledFinalQuestions.reduce((acc, q) => acc + (q.score || 0.25), 0);
+            const title = data.title || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${data.paperCode}`;
+            const examPaper = await tx.examPaper.create({
+                data: {
+                    examScheduleId: data.examScheduleId,
+                    paperCode: data.paperCode,
+                    title,
+                    durationMinutes: data.durationMinutes || 60,
+                    totalScore,
+                    createdById: userId,
+                    questions: {
+                        create: shuffledFinalQuestions.map((q, index) => ({
+                            questionId: q.id,
+                            questionOrder: index + 1,
+                            score: q.score || 0.25,
+                        })),
                     },
-                    orderBy: { questionOrder: 'asc' },
                 },
-            },
+                include: {
+                    examSchedule: { include: { subject: true } },
+                    questions: {
+                        include: {
+                            question: { include: { options: true } },
+                        },
+                        orderBy: { questionOrder: 'asc' },
+                    },
+                },
+            });
+            return examPaper;
         });
-        return examPaper;
     }
     async findAll(examScheduleId) {
         const where = {};

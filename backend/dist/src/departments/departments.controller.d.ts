@@ -24,11 +24,11 @@ export declare class DepartmentsController {
             id: number;
             email: string;
             departmentId: number;
-            teacherCode: string;
             userId: number;
             fullName: string;
-            degree: string;
             phone: string | null;
+            teacherCode: string;
+            degree: string;
         }[];
         subjects: {
             id: number;

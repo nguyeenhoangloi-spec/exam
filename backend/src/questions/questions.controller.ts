@@ -1,82 +1,164 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseIntPipe, UseGuards, Request, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as XLSX from 'xlsx';
-import { QuestionsService } from './questions.service';
+import { Response } from 'express';
+import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
 import { AiQuestionsService } from './ai.service';
+import {
+  BulkActionDto,
+  CreateQuestionDto,
+  GenerateAiQuestionsDto,
+  ImportConfirmDto,
+  QuestionQueryDto,
+  RejectQuestionDto,
+  SaveAiQuestionsDto,
+  UpdateQuestionDto,
+} from './dto/question.dto';
+import { QuestionsService } from './questions.service';
+
+const csvUpload = FileInterceptor('file', {
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) =>
+    callback(file.originalname.toLowerCase().endsWith('.csv') ? null : new BadRequestException('Chỉ chấp nhận file CSV.'), file.originalname.toLowerCase().endsWith('.csv')),
+});
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN', 'TEACHER')
 @Controller('questions')
 export class QuestionsController {
-  constructor(private readonly questionsService: QuestionsService, private readonly ai: AiQuestionsService) {}
-
-  @Roles('ADMIN', 'TEACHER')
-  @Post('import')
-  @UseInterceptors(FileInterceptor('file'))
-  async import(@Request() req: any, @UploadedFile() file: any) {
-    if (!file) throw new Error('Vui lòng chọn file Excel hoặc CSV.');
-    const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: '' });
-    return this.questionsService.bulkCreate(req.user.id, rows);
-  }
-
-  @Roles('ADMIN', 'TEACHER')
-  @Post('ai-generate')
-  generate(@Body() body: any) { return this.ai.generate(body); }
-
-  @Roles('ADMIN', 'TEACHER')
-  @Post('extract-document')
-  @UseInterceptors(FileInterceptor('file'))
-  async extractDocument(@UploadedFile() file: any) {
-    if (!file) throw new Error('Vui lòng chọn file Word hoặc PDF.');
-    const text = await this.ai.extractDocument(file);
-    if (!text.trim()) throw new Error('Không đọc được nội dung tài liệu.');
-    return { text: text.slice(0, 120000), fileName: file.originalname };
-  }
+  constructor(
+    private readonly questions: QuestionsService,
+    private readonly ai: AiQuestionsService,
+  ) {}
 
   @Get()
-  findAll(
-    @Query('subjectId') subjectId?: string,
-    @Query('chapter') chapter?: string,
-    @Query('difficulty') difficulty?: string,
-    @Query('status') status?: string,
-  ) {
-    return this.questionsService.findAll({
-      subjectId: subjectId ? parseInt(subjectId, 10) : undefined,
-      chapter: chapter ? parseInt(chapter, 10) : undefined,
-      difficulty,
-      status,
-    });
+  findAll(@Request() req: any, @Query() query: QuestionQueryDto) {
+    return this.questions.findAll(req.user, query);
+  }
+
+  @Get('statistics')
+  statistics(@Request() req: any) {
+    return this.questions.statistics(req.user);
+  }
+
+  @Get('filter-options')
+  filterOptions(@Request() req: any) {
+    return this.questions.filterOptions(req.user);
+  }
+
+  @Get('import/template')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  @Header('Content-Disposition', 'attachment; filename="question-import-template.csv"')
+  template() {
+    return this.questions.importTemplate();
+  }
+
+  @Post('export')
+  async export(@Request() req: any, @Body() query: QuestionQueryDto, @Res() res: Response) {
+    const csv = await this.questions.exportCsv(req.user, query);
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="questions.csv"');
+    res.send(csv);
+  }
+
+  @Post('bulk-action')
+  bulk(@Request() req: any, @Body() body: BulkActionDto) {
+    return this.questions.bulkAction(req.user, body);
+  }
+
+  @Post('import/preview')
+  @UseInterceptors(csvUpload)
+  preview(@Request() req: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('Vui lòng chọn file CSV.');
+    return this.questions.importPreview(req.user, file);
+  }
+
+  @Post('import/confirm')
+  @UseInterceptors(csvUpload)
+  confirm(@Request() req: any, @UploadedFile() file: Express.Multer.File, @Body() raw: any) {
+    if (!file) throw new BadRequestException('Vui lòng gửi lại file CSV.');
+    const body: ImportConfirmDto = {
+      hash: raw.hash,
+      rows: Array.isArray(raw.rows) ? raw.rows.map(Number) : JSON.parse(raw.rows || '[]').map(Number),
+      overrideDuplicate: raw.overrideDuplicate === true || raw.overrideDuplicate === 'true',
+    };
+    return this.questions.importConfirm(req.user, file, body);
+  }
+
+  @Post('ai-generate')
+  generateAi(@Body() body: GenerateAiQuestionsDto) {
+    return this.ai.generate(body);
+  }
+
+  @Post('ai-save')
+  saveAi(@Request() req: any, @Body() body: SaveAiQuestionsDto) {
+    return this.questions.saveAi(req.user, body);
+  }
+
+  @Post()
+  create(@Request() req: any, @Body() body: CreateQuestionDto) {
+    return this.questions.create(req.user, body);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.questionsService.findOne(id);
+  findOne(@Request() req: any, @Param('id') id: string) {
+    return this.questions.findOne(req.user, id);
   }
 
-  @Roles('ADMIN', 'TEACHER')
-  @Post()
-  create(@Request() req: any, @Body() body: any) {
-    return this.questionsService.create(req.user.id, body);
-  }
-
-  @Roles('ADMIN', 'TEACHER')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
-    return this.questionsService.update(id, body);
+  update(@Request() req: any, @Param('id') id: string, @Body() body: UpdateQuestionDto) {
+    return this.questions.update(req.user, id, body);
   }
 
-  @Roles('ADMIN', 'TEACHER')
-  @Patch(':id/approve')
-  approve(@Param('id', ParseIntPipe) id: number, @Body() body: { status?: string }) {
-    return this.questionsService.approve(id, body?.status || 'APPROVED');
+  @Post(':id/duplicate')
+  duplicate(@Request() req: any, @Param('id') id: string) {
+    return this.questions.duplicate(req.user, id);
   }
 
-  @Roles('ADMIN')
+  @Post(':id/submit')
+  submit(@Request() req: any, @Param('id') id: string) {
+    return this.questions.submit(req.user, id);
+  }
+
+  @Post(':id/approve')
+  approve(@Request() req: any, @Param('id') id: string) {
+    return this.questions.approve(req.user, id);
+  }
+
+  @Post(':id/reject')
+  reject(@Request() req: any, @Param('id') id: string, @Body() body: RejectQuestionDto) {
+    return this.questions.reject(req.user, id, body.reason);
+  }
+
+  @Post(':id/archive')
+  archive(@Request() req: any, @Param('id') id: string) {
+    return this.questions.archive(req.user, id);
+  }
+
+  @Post(':id/restore')
+  restore(@Request() req: any, @Param('id') id: string) {
+    return this.questions.restore(req.user, id);
+  }
+
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.questionsService.remove(id);
+  remove(@Request() req: any, @Param('id') id: string) {
+    return this.questions.remove(req.user, id);
   }
 }

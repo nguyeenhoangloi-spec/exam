@@ -26,18 +26,6 @@ export declare class SubjectsService {
             name: string;
             code: string;
         };
-        questions: {
-            id: number;
-            status: string;
-            subjectId: number;
-            chapter: number;
-            content: string;
-            questionType: string;
-            difficulty: string;
-            score: number;
-            explanation: string | null;
-            createdById: number;
-        }[];
     } & {
         id: number;
         departmentId: number;
@@ -45,6 +33,11 @@ export declare class SubjectsService {
         subjectName: string;
         credits: number;
     }>;
+    findChapters(subjectId: number): Promise<{
+        id: number;
+        name: string;
+        order: number;
+    }[]>;
     create(data: {
         subjectCode: string;
         subjectName: string;

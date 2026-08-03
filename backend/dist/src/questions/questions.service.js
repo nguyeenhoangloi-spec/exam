@@ -12,11 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const question_validation_1 = require("./question-validation");
 let QuestionsService = class QuestionsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll(query) {
+    async findAll(actor, query) {
         const where = {};
         if (query?.subjectId)
             where.subjectId = Number(query.subjectId);
@@ -26,59 +27,54 @@ let QuestionsService = class QuestionsService {
             where.difficulty = query.difficulty;
         if (query?.status)
             where.status = query.status;
+        if (query?.search) {
+            where.content = { contains: query.search };
+        }
         return this.prisma.question.findMany({
             where,
             include: {
                 subject: true,
                 options: true,
-                createdBy: { select: { id: true, username: true, role: true } },
+                createdBy: { select: { id: true, username: true } },
             },
-            orderBy: { id: 'desc' },
+            orderBy: { createdAt: 'desc' },
         });
     }
-    async findOne(id) {
+    async findOne(actor, id) {
         const question = await this.prisma.question.findUnique({
-            where: { id },
+            where: { id: Number(id) },
             include: {
                 subject: true,
                 options: true,
-                createdBy: { select: { id: true, username: true, role: true } },
+                createdBy: { select: { id: true, username: true } },
             },
         });
         if (!question)
             throw new common_1.NotFoundException('Không tìm thấy câu hỏi.');
         return question;
     }
-    async create(userId, data) {
-        if (!data.options || data.options.length < 2) {
-            throw new common_1.BadRequestException('Câu hỏi trắc nghiệm phải có ít nhất 2 phương án lựa chọn.');
+    async create(actor, data) {
+        if (!['ADMIN', 'TEACHER'].includes(actor.role)) {
+            throw new common_1.ForbiddenException('Bạn không có quyền tạo câu hỏi.');
         }
-        const questionType = data.questionType || 'SINGLE_CHOICE';
-        if (questionType === 'SINGLE_CHOICE') {
-            const correctCount = data.options.filter((opt) => opt.isCorrect).length;
-            if (correctCount !== 1) {
-                throw new common_1.BadRequestException('Câu hỏi chọn 1 đáp án (SINGLE_CHOICE) phải có duy nhất 1 đáp án đúng.');
-            }
-        }
-        const subject = await this.prisma.subject.findUnique({ where: { id: data.subjectId } });
-        if (!subject)
-            throw new common_1.NotFoundException('Môn học không tồn tại.');
+        const options = data.options || [];
+        (0, question_validation_1.validateQuestionOptions)(data.questionType || 'SINGLE_CHOICE', options);
         return this.prisma.question.create({
             data: {
-                subjectId: data.subjectId,
-                chapter: data.chapter || 1,
+                subjectId: Number(data.subjectId),
+                chapter: Number(data.chapter || 1),
                 content: data.content,
-                questionType,
+                questionType: data.questionType || 'SINGLE_CHOICE',
                 difficulty: data.difficulty || 'MEDIUM',
-                score: data.score || 0.25,
-                explanation: data.explanation,
-                status: 'PENDING',
-                createdById: userId,
+                score: Number(data.score || 0.25),
+                explanation: data.explanation || null,
+                status: actor.role === 'ADMIN' ? 'APPROVED' : 'PENDING',
+                createdById: actor.id,
                 options: {
-                    create: data.options.map((opt) => ({
-                        optionLabel: opt.optionLabel,
-                        optionContent: opt.optionContent,
-                        isCorrect: opt.isCorrect || false,
+                    create: options.map((opt) => ({
+                        optionLabel: opt.optionLabel || opt.label || 'A',
+                        optionContent: opt.optionContent || opt.content || '',
+                        isCorrect: Boolean(opt.isCorrect),
                     })),
                 },
             },
@@ -88,90 +84,74 @@ let QuestionsService = class QuestionsService {
             },
         });
     }
-    async bulkCreate(userId, rows) {
-        const subjects = await this.prisma.subject.findMany();
-        const subjectMap = new Map(subjects.map((s) => [s.subjectCode.toLowerCase(), s]));
-        const valid = [], errors = [];
-        const seen = new Set();
-        rows.forEach((row, i) => {
-            const line = i + 2;
-            const subject = subjectMap.get(String(row.subjectCode || '').trim().toLowerCase()) ||
-                subjects.find((s) => s.subjectName.toLowerCase() === String(row.subjectName || '').trim().toLowerCase());
-            const options = ['A', 'B', 'C', 'D'].map((label) => String(row[label] || '').trim());
-            const correct = String(row.correctAnswer || '').trim().toUpperCase();
-            const key = String(row.content || '').trim().toLowerCase();
-            const rowErrors = [];
-            if (!subject)
-                rowErrors.push('Môn học không tồn tại (dùng subjectCode hoặc subjectName)');
-            if (!key)
-                rowErrors.push('Thiếu nội dung câu hỏi');
-            if (options.some((o) => !o))
-                rowErrors.push('Thiếu một trong các đáp án A/B/C/D');
-            if (!['A', 'B', 'C', 'D'].includes(correct))
-                rowErrors.push('Đáp án đúng phải là A, B, C hoặc D');
-            if (!['EASY', 'MEDIUM', 'HARD'].includes(String(row.difficulty || 'MEDIUM').toUpperCase()))
-                rowErrors.push('Độ khó không hợp lệ');
-            if (seen.has(key))
-                rowErrors.push('Trùng câu hỏi trong file');
-            if (rowErrors.length)
-                errors.push({ line, errors: rowErrors });
-            else {
-                seen.add(key);
-                valid.push({ subjectId: subject.id, chapter: Number(row.chapter || 1), content: String(row.content).trim(), difficulty: String(row.difficulty || 'MEDIUM').toUpperCase(), score: Number(row.score || 0.25), explanation: row.explanation ? String(row.explanation) : undefined, options: options.map((content, j) => ({ optionLabel: ['A', 'B', 'C', 'D'][j], optionContent: content, isCorrect: correct === ['A', 'B', 'C', 'D'][j] })) });
-            }
-        });
-        const duplicates = await this.prisma.question.findMany({ where: { content: { in: valid.map((v) => v.content) } }, select: { content: true } });
-        const duplicateSet = new Set(duplicates.map((q) => q.content.trim().toLowerCase()));
-        const toCreate = valid.filter((v) => !duplicateSet.has(v.content.trim().toLowerCase()));
-        valid.forEach((v, i) => { if (duplicateSet.has(v.content.trim().toLowerCase()))
-            errors.push({ line: i + 2, errors: ['Câu hỏi đã tồn tại trong ngân hàng'] }); });
-        await this.prisma.$transaction(toCreate.map((data) => this.prisma.question.create({ data: { ...data, status: 'PENDING', createdById: userId, options: { create: data.options } } })));
-        return { imported: toCreate.length, errors };
-    }
-    async update(id, data) {
-        await this.findOne(id);
+    async update(actor, id, data) {
+        await this.findOne(actor, id);
         if (data.options) {
-            if (data.options.length < 2) {
-                throw new common_1.BadRequestException('Câu hỏi trắc nghiệm phải có ít nhất 2 phương án lựa chọn.');
-            }
-            const questionType = data.questionType || 'SINGLE_CHOICE';
-            if (questionType === 'SINGLE_CHOICE') {
-                const correctCount = data.options.filter((opt) => opt.isCorrect).length;
-                if (correctCount !== 1) {
-                    throw new common_1.BadRequestException('Câu hỏi chọn 1 đáp án phải có đúng 1 đáp án đúng.');
-                }
-            }
-            await this.prisma.questionOption.deleteMany({ where: { questionId: id } });
+            (0, question_validation_1.validateQuestionOptions)(data.questionType || 'SINGLE_CHOICE', data.options);
+            await this.prisma.questionOption.deleteMany({ where: { questionId: Number(id) } });
         }
-        const { options, ...questionData } = data;
+        const updateData = {};
+        if (data.subjectId)
+            updateData.subjectId = Number(data.subjectId);
+        if (data.chapter)
+            updateData.chapter = Number(data.chapter);
+        if (data.content)
+            updateData.content = data.content;
+        if (data.questionType)
+            updateData.questionType = data.questionType;
+        if (data.difficulty)
+            updateData.difficulty = data.difficulty;
+        if (data.score !== undefined)
+            updateData.score = Number(data.score);
+        if (data.explanation !== undefined)
+            updateData.explanation = data.explanation;
+        if (data.status)
+            updateData.status = data.status;
+        if (data.options) {
+            updateData.options = {
+                create: data.options.map((opt) => ({
+                    optionLabel: opt.optionLabel || opt.label || 'A',
+                    optionContent: opt.optionContent || opt.content || '',
+                    isCorrect: Boolean(opt.isCorrect),
+                })),
+            };
+        }
         return this.prisma.question.update({
-            where: { id },
-            data: {
-                ...questionData,
-                options: options
-                    ? {
-                        create: options.map((opt) => ({
-                            optionLabel: opt.optionLabel,
-                            optionContent: opt.optionContent,
-                            isCorrect: opt.isCorrect || false,
-                        })),
-                    }
-                    : undefined,
+            where: { id: Number(id) },
+            data: updateData,
+            include: {
+                subject: true,
+                options: true,
             },
-            include: { subject: true, options: true },
         });
     }
-    async approve(id, status = 'APPROVED') {
-        await this.findOne(id);
+    async approve(actor, id, status = 'APPROVED') {
+        if (actor.role !== 'ADMIN') {
+            throw new common_1.ForbiddenException('Chỉ ADMIN mới có quyền duyệt câu hỏi.');
+        }
+        await this.findOne(actor, id);
         return this.prisma.question.update({
-            where: { id },
-            data: { status },
-            include: { subject: true, options: true },
+            where: { id: Number(id) },
+            data: {
+                status,
+                approvedById: actor.id,
+            },
         });
     }
-    async remove(id) {
-        await this.findOne(id);
-        return this.prisma.question.delete({ where: { id } });
+    async remove(actor, id) {
+        await this.findOne(actor, id);
+        return this.prisma.question.delete({ where: { id: Number(id) } });
+    }
+    async saveBatch(actor, data) {
+        if (!data.questions || !Array.isArray(data.questions)) {
+            throw new common_1.BadRequestException('Danh sách câu hỏi không hợp lệ.');
+        }
+        const createdList = [];
+        for (const item of data.questions) {
+            const created = await this.create(actor, item);
+            createdList.push(created);
+        }
+        return createdList;
     }
 };
 exports.QuestionsService = QuestionsService;

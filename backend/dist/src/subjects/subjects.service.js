@@ -28,11 +28,23 @@ let SubjectsService = class SubjectsService {
     async findOne(id) {
         const subject = await this.prisma.subject.findUnique({
             where: { id },
-            include: { department: true, questions: true },
+            include: { department: true },
         });
         if (!subject)
             throw new common_1.NotFoundException('Không tìm thấy môn học.');
         return subject;
+    }
+    async findChapters(subjectId) {
+        const subject = await this.prisma.subject.findUnique({ where: { id: subjectId } });
+        if (!subject)
+            throw new common_1.NotFoundException('Không tìm thấy môn học.');
+        return [
+            { id: 1, name: 'Chương 1: Tổng quan và Khái niệm cơ bản', order: 1 },
+            { id: 2, name: 'Chương 2: Kiến trúc và Kỹ thuật cốt lõi', order: 2 },
+            { id: 3, name: 'Chương 3: Thiết kế và Tối ưu hóa hệ thống', order: 3 },
+            { id: 4, name: 'Chương 4: Ứng dụng thực tế và Bảo mật', order: 4 },
+            { id: 5, name: 'Chương 5: Tổng kết và Đánh giá', order: 5 },
+        ];
     }
     async create(data) {
         const existing = await this.prisma.subject.findUnique({

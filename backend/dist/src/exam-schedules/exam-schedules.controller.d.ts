@@ -10,10 +10,19 @@ export declare class ExamSchedulesController {
             subjectName: string;
             credits: number;
         };
+        examPeriod: {
+            id: number;
+            status: string;
+            name: string;
+            semester: string;
+            schoolYear: string;
+            startDate: Date;
+            endDate: Date;
+        };
         examScheduleRooms: ({
             _count: {
-                supervisors: number;
                 examRoomStudents: number;
+                supervisors: number;
             };
             room: {
                 id: number;
@@ -29,25 +38,16 @@ export declare class ExamSchedulesController {
             examScheduleId: number;
             roomId: number;
         })[];
-        examPeriod: {
-            id: number;
-            status: string;
-            name: string;
-            semester: string;
-            schoolYear: string;
-            startDate: Date;
-            endDate: Date;
-        };
     } & {
         id: number;
         status: string;
+        subjectId: number;
         examDate: Date;
         startTime: string;
         endTime: string;
         examType: string;
         note: string | null;
         examPeriodId: number;
-        subjectId: number;
     })[]>;
     findOne(id: number): Promise<{
         subject: {
@@ -57,25 +57,16 @@ export declare class ExamSchedulesController {
             subjectName: string;
             credits: number;
         };
+        examPeriod: {
+            id: number;
+            status: string;
+            name: string;
+            semester: string;
+            schoolYear: string;
+            startDate: Date;
+            endDate: Date;
+        };
         examScheduleRooms: ({
-            supervisors: ({
-                teacher: {
-                    id: number;
-                    email: string;
-                    departmentId: number;
-                    teacherCode: string;
-                    userId: number;
-                    fullName: string;
-                    degree: string;
-                    phone: string | null;
-                };
-            } & {
-                id: number;
-                role: string;
-                note: string | null;
-                examScheduleRoomId: number;
-                teacherId: number;
-            })[];
             examRoomStudents: ({
                 student: {
                     class: {
@@ -87,21 +78,39 @@ export declare class ExamSchedulesController {
                 } & {
                     id: number;
                     email: string;
+                    studentCode: string;
                     userId: number;
                     fullName: string;
-                    phone: string | null;
-                    studentCode: string;
                     gender: string;
                     dateOfBirth: Date;
+                    phone: string | null;
                     classId: number;
                 };
             } & {
                 id: number;
                 status: string;
-                examScheduleRoomId: number;
                 studentId: number;
+                examScheduleRoomId: number;
                 examNumber: string;
                 seatNumber: number;
+            })[];
+            supervisors: ({
+                teacher: {
+                    id: number;
+                    email: string;
+                    departmentId: number;
+                    userId: number;
+                    fullName: string;
+                    phone: string | null;
+                    teacherCode: string;
+                    degree: string;
+                };
+            } & {
+                id: number;
+                role: string;
+                note: string | null;
+                examScheduleRoomId: number;
+                teacherId: number;
             })[];
             room: {
                 id: number;
@@ -117,15 +126,6 @@ export declare class ExamSchedulesController {
             examScheduleId: number;
             roomId: number;
         })[];
-        examPeriod: {
-            id: number;
-            status: string;
-            name: string;
-            semester: string;
-            schoolYear: string;
-            startDate: Date;
-            endDate: Date;
-        };
         examPapers: {
             id: number;
             createdById: number;
@@ -138,13 +138,13 @@ export declare class ExamSchedulesController {
     } & {
         id: number;
         status: string;
+        subjectId: number;
         examDate: Date;
         startTime: string;
         endTime: string;
         examType: string;
         note: string | null;
         examPeriodId: number;
-        subjectId: number;
     }>;
     create(body: any): Promise<{
         subject: {
@@ -166,13 +166,13 @@ export declare class ExamSchedulesController {
     } & {
         id: number;
         status: string;
+        subjectId: number;
         examDate: Date;
         startTime: string;
         endTime: string;
         examType: string;
         note: string | null;
         examPeriodId: number;
-        subjectId: number;
     }>;
     update(id: number, body: any): Promise<{
         subject: {
@@ -194,23 +194,23 @@ export declare class ExamSchedulesController {
     } & {
         id: number;
         status: string;
+        subjectId: number;
         examDate: Date;
         startTime: string;
         endTime: string;
         examType: string;
         note: string | null;
         examPeriodId: number;
-        subjectId: number;
     }>;
     remove(id: number): Promise<{
         id: number;
         status: string;
+        subjectId: number;
         examDate: Date;
         startTime: string;
         endTime: string;
         examType: string;
         note: string | null;
         examPeriodId: number;
-        subjectId: number;
     }>;
 }

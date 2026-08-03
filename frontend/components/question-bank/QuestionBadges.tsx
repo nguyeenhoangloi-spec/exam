@@ -1,0 +1,6 @@
+const statusStyles: Record<string, string> = { DRAFT: 'bg-slate-100 text-slate-700', PENDING: 'bg-amber-100 text-amber-800', APPROVED: 'bg-emerald-100 text-emerald-800', REJECTED: 'bg-rose-100 text-rose-800', ARCHIVED: 'bg-indigo-100 text-indigo-800' };
+const difficultyStyles: Record<string, string> = { EASY: 'bg-emerald-50 text-emerald-700', MEDIUM: 'bg-amber-50 text-amber-700', HARD: 'bg-rose-50 text-rose-700' };
+const typeLabels: Record<string, string> = { SINGLE_CHOICE: 'Một đáp án', MULTIPLE_CHOICE: 'Nhiều đáp án', TRUE_FALSE: 'Đúng/Sai', FILL_BLANK: 'Điền khuyết', ESSAY: 'Tự luận' };
+export const QuestionStatusBadge = ({ status }: { status: string }) => <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${statusStyles[status] || statusStyles.DRAFT}`}>{status}</span>;
+export const QuestionDifficultyBadge = ({ difficulty }: { difficulty: string }) => <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${difficultyStyles[difficulty] || difficultyStyles.MEDIUM}`}>{difficulty}</span>;
+export const QuestionTypeBadge = ({ type }: { type: string }) => <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700">{typeLabels[type] || type}</span>;

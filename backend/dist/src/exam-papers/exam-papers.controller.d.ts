@@ -15,6 +15,9 @@ export declare class ExamPapersController {
             } & {
                 id: number;
                 status: string;
+                createdAt: Date;
+                updatedAt: Date;
+                code: string | null;
                 subjectId: number;
                 chapter: number;
                 content: string;
@@ -23,12 +26,14 @@ export declare class ExamPapersController {
                 score: number;
                 explanation: string | null;
                 createdById: number;
+                approvedById: number | null;
             };
         } & {
             id: number;
             score: number;
             questionId: number;
             questionOrder: number;
+            usedAt: Date;
             examPaperId: number;
         })[];
         examSchedule: {
@@ -42,13 +47,13 @@ export declare class ExamPapersController {
         } & {
             id: number;
             status: string;
+            subjectId: number;
             examDate: Date;
             startTime: string;
             endTime: string;
             examType: string;
             note: string | null;
             examPeriodId: number;
-            subjectId: number;
         };
     } & {
         id: number;
@@ -71,13 +76,13 @@ export declare class ExamPapersController {
         } & {
             id: number;
             status: string;
+            subjectId: number;
             examDate: Date;
             startTime: string;
             endTime: string;
             examType: string;
             note: string | null;
             examPeriodId: number;
-            subjectId: number;
         };
         createdBy: {
             id: number;
@@ -108,6 +113,9 @@ export declare class ExamPapersController {
             } & {
                 id: number;
                 status: string;
+                createdAt: Date;
+                updatedAt: Date;
+                code: string | null;
                 subjectId: number;
                 chapter: number;
                 content: string;
@@ -116,12 +124,14 @@ export declare class ExamPapersController {
                 score: number;
                 explanation: string | null;
                 createdById: number;
+                approvedById: number | null;
             };
         } & {
             id: number;
             score: number;
             questionId: number;
             questionOrder: number;
+            usedAt: Date;
             examPaperId: number;
         })[];
         examSchedule: {
@@ -144,13 +154,13 @@ export declare class ExamPapersController {
         } & {
             id: number;
             status: string;
+            subjectId: number;
             examDate: Date;
             startTime: string;
             endTime: string;
             examType: string;
             note: string | null;
             examPeriodId: number;
-            subjectId: number;
         };
         createdBy: {
             id: number;

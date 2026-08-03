@@ -22,11 +22,11 @@ export declare class TeachersService {
         id: number;
         email: string;
         departmentId: number;
-        teacherCode: string;
         userId: number;
         fullName: string;
-        degree: string;
         phone: string | null;
+        teacherCode: string;
+        degree: string;
     })[]>;
     findOne(id: number): Promise<{
         user: {
@@ -66,13 +66,13 @@ export declare class TeachersService {
                 } & {
                     id: number;
                     status: string;
+                    subjectId: number;
                     examDate: Date;
                     startTime: string;
                     endTime: string;
                     examType: string;
                     note: string | null;
                     examPeriodId: number;
-                    subjectId: number;
                 };
                 room: {
                     id: number;
@@ -99,11 +99,11 @@ export declare class TeachersService {
         id: number;
         email: string;
         departmentId: number;
-        teacherCode: string;
         userId: number;
         fullName: string;
-        degree: string;
         phone: string | null;
+        teacherCode: string;
+        degree: string;
     }>;
     create(data: {
         teacherCode: string;
@@ -134,11 +134,11 @@ export declare class TeachersService {
         id: number;
         email: string;
         departmentId: number;
-        teacherCode: string;
         userId: number;
         fullName: string;
-        degree: string;
         phone: string | null;
+        teacherCode: string;
+        degree: string;
     }>;
     update(id: number, data: {
         fullName?: string;
@@ -166,11 +166,11 @@ export declare class TeachersService {
         id: number;
         email: string;
         departmentId: number;
-        teacherCode: string;
         userId: number;
         fullName: string;
-        degree: string;
         phone: string | null;
+        teacherCode: string;
+        degree: string;
     }>;
     remove(id: number): Promise<{
         message: string;

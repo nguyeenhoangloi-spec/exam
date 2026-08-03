@@ -1,179 +1,164 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BloomLevel, Prisma, QuestionDifficulty, QuestionHistoryAction, QuestionStatus, QuestionType } from '@prisma/client';
+import { createHash } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
+import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
+
+type Actor = { id: number; role: string };
+const include = {
+  subject: true, chapter: true, options: { orderBy: { order: 'asc' as const } },
+  createdBy: { select: { id: true, username: true } },
+  approvedBy: { select: { id: true, username: true } }, statistic: true,
+  histories: { orderBy: { createdAt: 'desc' as const }, include: { changedBy: { select: { id: true, username: true } } } },
+};
 
 @Injectable()
 export class QuestionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
+  private access(a: Actor) { if (!['ADMIN', 'TEACHER'].includes(a.role)) throw new ForbiddenException('Không có quyền truy cập.'); }
+  private json(v: unknown) { return JSON.parse(JSON.stringify(v)) as Prisma.InputJsonValue; }
+  private async current(id: string) {
+    const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include: { options: true, statistic: true } });
+    if (!q) throw new NotFoundException('Không tìm thấy câu hỏi.');
+    return q;
+  }
+  private edit(a: Actor, q: { createdById: number; status: QuestionStatus }) {
+    if (a.role === 'ADMIN') return;
+    if (q.createdById !== a.id) throw new ForbiddenException('Chỉ được sửa câu hỏi của mình.');
+    if (q.status !== QuestionStatus.DRAFT && q.status !== QuestionStatus.REJECTED) throw new BadRequestException('Chỉ sửa được câu nháp hoặc bị từ chối.');
+  }
+  private async chapter(subjectId: number, chapterId: string) {
+    if (!await this.prisma.chapter.findFirst({ where: { id: chapterId, subjectId } })) throw new BadRequestException('Chương không thuộc môn học.');
+  }
+  private async code(tx: Prisma.TransactionClient) {
+    const r = await tx.$queryRaw<Array<{ value: bigint }>>`SELECT nextval('question_code_seq') value`;
+    return `Q${Number(r[0].value).toString().padStart(6, '0')}`;
+  }
+  private async duplicates(content: string, exclude = '') {
+    const normalized = normalizeQuestionContent(content);
+    return this.prisma.$queryRaw<Array<{ id: string; code: string; content: string; similarity: number }>>`
+      SELECT id,code,content,similarity("normalizedContent",${normalized})::float similarity FROM questions
+      WHERE "deletedAt" IS NULL AND (${exclude}='' OR id::text<>${exclude})
+      AND ("normalizedContent"=${normalized} OR similarity("normalizedContent",${normalized})>0.90)
+      ORDER BY similarity DESC LIMIT 10`;
+  }
+  private async noDuplicate(a: Actor, content: string, override = false, exclude = '') {
+    const found = await this.duplicates(content, exclude);
+    if (found.length && !(override && a.role === 'ADMIN')) throw new ConflictException({ message: 'Câu hỏi trùng hoặc tương đồng trên 90%.', duplicates: found });
+  }
 
-  async findAll(query?: { subjectId?: number; chapter?: number; difficulty?: string; status?: string }) {
-    const where: any = {};
-    if (query?.subjectId) where.subjectId = Number(query.subjectId);
-    if (query?.chapter) where.chapter = Number(query.chapter);
-    if (query?.difficulty) where.difficulty = query.difficulty;
-    if (query?.status) where.status = query.status;
-
-    return this.prisma.question.findMany({
-      where,
-      include: {
-        subject: true,
-        options: true,
-        createdBy: { select: { id: true, username: true, role: true } },
-      },
-      orderBy: { id: 'desc' },
+  async findAll(a: Actor, q: QuestionQueryDto) {
+    this.access(a); const page = q.page || 1, limit = q.limit || 20;
+    const where: Prisma.QuestionWhereInput = {
+      deletedAt: null, ...(q.subjectId && { subjectId: q.subjectId }), ...(q.chapterId && { chapterId: q.chapterId }),
+      ...(q.type && { type: q.type }), ...(q.difficulty && { difficulty: q.difficulty }), ...(q.bloomLevel && { bloomLevel: q.bloomLevel }),
+      ...(q.status && { status: q.status }),
+      ...(q.search && { OR: [{ content: { contains: q.search, mode: 'insensitive' as const } }, { code: { contains: q.search, mode: 'insensitive' as const } }] }),
+      ...((q.fromDate || q.toDate) && { createdAt: { ...(q.fromDate && { gte: new Date(q.fromDate) }), ...(q.toDate && { lte: new Date(`${q.toDate}T23:59:59.999Z`) }) } }),
+    };
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, createdBy: { select: { id: true, username: true } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
+      this.prisma.question.count({ where }),
+    ]);
+    return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
+  }
+  async statistics(a: Actor) {
+    this.access(a); const rows = await this.prisma.question.groupBy({ by: ['status'], where: { deletedAt: null }, _count: { _all: true } });
+    const out: any = { total: 0, DRAFT: 0, PENDING: 0, APPROVED: 0, REJECTED: 0, ARCHIVED: 0 };
+    rows.forEach(r => { out[r.status] = r._count._all; out.total += r._count._all; }); return out;
+  }
+  async filterOptions(a: Actor) {
+    this.access(a); return { subjects: await this.prisma.subject.findMany({ include: { chapters: { orderBy: { order: 'asc' } } }, orderBy: { subjectName: 'asc' } }), types: Object.values(QuestionType), difficulties: Object.values(QuestionDifficulty), bloomLevels: Object.values(BloomLevel), statuses: Object.values(QuestionStatus) };
+  }
+  async findOne(a: Actor, id: string) {
+    this.access(a); const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include });
+    if (!q) throw new NotFoundException('Không tìm thấy câu hỏi.');
+    return { ...q, statistic: q.statistic ? { ...q.statistic, correctRate: q.statistic.totalAnswers ? q.statistic.correctAnswers / q.statistic.totalAnswers : null } : null };
+  }
+  async create(a: Actor, d: CreateQuestionDto) {
+    this.access(a); await this.chapter(d.subjectId, d.chapterId); validateQuestionOptions(d.type, d.options); await this.noDuplicate(a, d.content, d.overrideDuplicate);
+    return this.prisma.$transaction(async tx => {
+      const q = await tx.question.create({ data: {
+        code: await this.code(tx), subjectId: d.subjectId, chapterId: d.chapterId, content: d.content.trim(),
+        normalizedContent: normalizeQuestionContent(d.content), type: d.type, difficulty: d.difficulty, bloomLevel: d.bloomLevel,
+        score: d.score, explanation: d.explanation || null, keywords: d.keywords || null, status: QuestionStatus.DRAFT, createdById: a.id,
+        options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) }, statistic: { create: {} },
+      }, include });
+      await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.CREATE, newData: this.json(q), changedById: a.id } }); return q;
     });
   }
-
-  async findOne(id: number) {
-    const question = await this.prisma.question.findUnique({
-      where: { id },
-      include: {
-        subject: true,
-        options: true,
-        createdBy: { select: { id: true, username: true, role: true } },
-      },
-    });
-    if (!question) throw new NotFoundException('Không tìm thấy câu hỏi.');
-    return question;
-  }
-
-  async create(
-    userId: number,
-    data: {
-      subjectId: number;
-      chapter: number;
-      content: string;
-      questionType?: string;
-      difficulty?: string;
-      score?: number;
-      explanation?: string;
-      options: { optionLabel: string; optionContent: string; isCorrect: boolean }[];
-    },
-  ) {
-    // 1. Kiểm tra options >= 2
-    if (!data.options || data.options.length < 2) {
-      throw new BadRequestException('Câu hỏi trắc nghiệm phải có ít nhất 2 phương án lựa chọn.');
-    }
-
-    const questionType = data.questionType || 'SINGLE_CHOICE';
-
-    // 2. Nếu SINGLE_CHOICE, chỉ có đúng 1 đáp án đúng
-    if (questionType === 'SINGLE_CHOICE') {
-      const correctCount = data.options.filter((opt) => opt.isCorrect).length;
-      if (correctCount !== 1) {
-        throw new BadRequestException('Câu hỏi chọn 1 đáp án (SINGLE_CHOICE) phải có duy nhất 1 đáp án đúng.');
-      }
-    }
-
-    // 3. Môn học tồn tại
-    const subject = await this.prisma.subject.findUnique({ where: { id: data.subjectId } });
-    if (!subject) throw new NotFoundException('Môn học không tồn tại.');
-
-    return this.prisma.question.create({
-      data: {
-        subjectId: data.subjectId,
-        chapter: data.chapter || 1,
-        content: data.content,
-        questionType,
-        difficulty: data.difficulty || 'MEDIUM',
-        score: data.score || 0.25,
-        explanation: data.explanation,
-        status: 'PENDING',
-        createdById: userId,
-        options: {
-          create: data.options.map((opt) => ({
-            optionLabel: opt.optionLabel,
-            optionContent: opt.optionContent,
-            isCorrect: opt.isCorrect || false,
-          })),
-        },
-      },
-      include: {
-        subject: true,
-        options: true,
-      },
+  async update(a: Actor, id: string, d: UpdateQuestionDto) {
+    const old = await this.current(id); this.edit(a, old);
+    const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId ?? old.chapterId; await this.chapter(subjectId, chapterId);
+    validateQuestionOptions(d.type ?? old.type, d.options ?? old.options); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
+    return this.prisma.$transaction(async tx => {
+      if (d.options) await tx.questionOption.deleteMany({ where: { questionId: id } });
+      const q = await tx.question.update({ where: { id }, data: {
+        ...(d.subjectId && { subjectId: d.subjectId }), ...(d.chapterId && { chapterId: d.chapterId }),
+        ...(d.content && { content: d.content.trim(), normalizedContent: normalizeQuestionContent(d.content) }),
+        ...(d.type && { type: d.type }), ...(d.difficulty && { difficulty: d.difficulty }), ...(d.bloomLevel && { bloomLevel: d.bloomLevel }),
+        ...(d.score !== undefined && { score: d.score }), ...(d.explanation !== undefined && { explanation: d.explanation || null }),
+        ...(d.keywords !== undefined && { keywords: d.keywords || null }),
+        ...(d.options && { options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) } }),
+      }, include });
+      await tx.questionHistory.create({ data: { questionId: id, action: QuestionHistoryAction.UPDATE, oldData: this.json(old), newData: this.json(q), changedById: a.id } }); return q;
     });
   }
-
-  async bulkCreate(userId: number, rows: any[]) {
-    const subjects = await this.prisma.subject.findMany();
-    const subjectMap = new Map(subjects.map((s) => [s.subjectCode.toLowerCase(), s]));
-    const valid: any[] = [], errors: any[] = [];
-    const seen = new Set<string>();
-    rows.forEach((row, i) => {
-      const line = i + 2;
-      const subject = subjectMap.get(String(row.subjectCode || '').trim().toLowerCase()) ||
-        subjects.find((s) => s.subjectName.toLowerCase() === String(row.subjectName || '').trim().toLowerCase());
-      const options = ['A', 'B', 'C', 'D'].map((label) => String(row[label] || '').trim());
-      const correct = String(row.correctAnswer || '').trim().toUpperCase();
-      const key = String(row.content || '').trim().toLowerCase();
-      const rowErrors: string[] = [];
-      if (!subject) rowErrors.push('Môn học không tồn tại (dùng subjectCode hoặc subjectName)');
-      if (!key) rowErrors.push('Thiếu nội dung câu hỏi');
-      if (options.some((o) => !o)) rowErrors.push('Thiếu một trong các đáp án A/B/C/D');
-      if (!['A', 'B', 'C', 'D'].includes(correct)) rowErrors.push('Đáp án đúng phải là A, B, C hoặc D');
-      if (!['EASY', 'MEDIUM', 'HARD'].includes(String(row.difficulty || 'MEDIUM').toUpperCase())) rowErrors.push('Độ khó không hợp lệ');
-      if (seen.has(key)) rowErrors.push('Trùng câu hỏi trong file');
-      if (rowErrors.length) errors.push({ line, errors: rowErrors });
-      else { seen.add(key); valid.push({ subjectId: subject!.id, chapter: Number(row.chapter || 1), content: String(row.content).trim(), difficulty: String(row.difficulty || 'MEDIUM').toUpperCase(), score: Number(row.score || 0.25), explanation: row.explanation ? String(row.explanation) : undefined, options: options.map((content, j) => ({ optionLabel: ['A','B','C','D'][j], optionContent: content, isCorrect: correct === ['A','B','C','D'][j] })) }); }
-    });
-    const duplicates = await this.prisma.question.findMany({ where: { content: { in: valid.map((v) => v.content) } }, select: { content: true } });
-    const duplicateSet = new Set(duplicates.map((q) => q.content.trim().toLowerCase()));
-    const toCreate = valid.filter((v) => !duplicateSet.has(v.content.trim().toLowerCase()));
-    valid.forEach((v, i) => { if (duplicateSet.has(v.content.trim().toLowerCase())) errors.push({ line: i + 2, errors: ['Câu hỏi đã tồn tại trong ngân hàng'] }); });
-    await this.prisma.$transaction(toCreate.map((data) => this.prisma.question.create({ data: { ...data, status: 'PENDING', createdById: userId, options: { create: data.options } } })));
-    return { imported: toCreate.length, errors };
-  }
-
-  async update(id: number, data: any) {
-    await this.findOne(id);
-
-    if (data.options) {
-      if (data.options.length < 2) {
-        throw new BadRequestException('Câu hỏi trắc nghiệm phải có ít nhất 2 phương án lựa chọn.');
-      }
-      const questionType = data.questionType || 'SINGLE_CHOICE';
-      if (questionType === 'SINGLE_CHOICE') {
-        const correctCount = data.options.filter((opt: any) => opt.isCorrect).length;
-        if (correctCount !== 1) {
-          throw new BadRequestException('Câu hỏi chọn 1 đáp án phải có đúng 1 đáp án đúng.');
-        }
-      }
-
-      // Re-create options
-      await this.prisma.questionOption.deleteMany({ where: { questionId: id } });
-    }
-
-    const { options, ...questionData } = data;
-
-    return this.prisma.question.update({
-      where: { id },
-      data: {
-        ...questionData,
-        options: options
-          ? {
-              create: options.map((opt: any) => ({
-                optionLabel: opt.optionLabel,
-                optionContent: opt.optionContent,
-                isCorrect: opt.isCorrect || false,
-              })),
-            }
-          : undefined,
-      },
-      include: { subject: true, options: true },
+  async duplicate(a: Actor, id: string) {
+    const old = await this.current(id); return this.prisma.$transaction(async tx => {
+      const q = await tx.question.create({ data: { code: await this.code(tx), subjectId: old.subjectId, chapterId: old.chapterId, content: `${old.content} (Bản sao)`, normalizedContent: `${old.normalizedContent} ban sao ${Date.now()}`, type: old.type, difficulty: old.difficulty, bloomLevel: old.bloomLevel, score: old.score, explanation: old.explanation, keywords: old.keywords, createdById: a.id, options: { create: old.options.map(o => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order })) }, statistic: { create: {} } }, include });
+      await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.DUPLICATE, note: `Từ ${old.code}`, changedById: a.id } }); return q;
     });
   }
-
-  async approve(id: number, status: string = 'APPROVED') {
-    await this.findOne(id);
-    return this.prisma.question.update({
-      where: { id },
-      data: { status },
-      include: { subject: true, options: true },
+  private async transition(a: Actor, id: string, action: QuestionHistoryAction, from: QuestionStatus[], to: QuestionStatus, note?: string) {
+    const old = await this.current(id); if (!from.includes(old.status)) throw new BadRequestException(`Không thể chuyển ${old.status} sang ${to}.`);
+    if (action === QuestionHistoryAction.SUBMIT) this.edit(a, old);
+    if ((action === QuestionHistoryAction.APPROVE || action === QuestionHistoryAction.REJECT) && a.role === 'TEACHER' && old.createdById === a.id) throw new ForbiddenException('Không được tự duyệt câu hỏi.');
+    if ((action === QuestionHistoryAction.ARCHIVE || action === QuestionHistoryAction.RESTORE) && a.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được thực hiện.');
+    return this.prisma.$transaction(async tx => {
+      const q = await tx.question.update({ where: { id }, data: { status: to, rejectionReason: action === QuestionHistoryAction.REJECT ? note : null, approvedById: action === QuestionHistoryAction.APPROVE ? a.id : old.approvedById, approvedAt: action === QuestionHistoryAction.APPROVE ? new Date() : old.approvedAt, archivedAt: action === QuestionHistoryAction.ARCHIVE ? new Date() : action === QuestionHistoryAction.RESTORE ? null : old.archivedAt, isActive: to !== QuestionStatus.ARCHIVED }, include });
+      await tx.questionHistory.create({ data: { questionId: id, action, oldData: this.json(old), newData: this.json(q), note, changedById: a.id } }); return q;
     });
   }
-
-  async remove(id: number) {
-    await this.findOne(id);
-    return this.prisma.question.delete({ where: { id } });
+  submit(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.SUBMIT, [QuestionStatus.DRAFT, QuestionStatus.REJECTED], QuestionStatus.PENDING); }
+  approve(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.APPROVE, [QuestionStatus.PENDING], QuestionStatus.APPROVED); }
+  reject(a: Actor, id: string, reason: string) { return this.transition(a, id, QuestionHistoryAction.REJECT, [QuestionStatus.PENDING], QuestionStatus.REJECTED, reason); }
+  archive(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.ARCHIVE, [QuestionStatus.DRAFT, QuestionStatus.PENDING, QuestionStatus.APPROVED, QuestionStatus.REJECTED], QuestionStatus.ARCHIVED); }
+  restore(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.RESTORE, [QuestionStatus.ARCHIVED], QuestionStatus.DRAFT); }
+  async remove(a: Actor, id: string) {
+    if (a.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được xóa.'); const old = await this.current(id);
+    if (old.statistic?.usedCount || await this.prisma.examPaperQuestion.count({ where: { questionId: id } })) throw new BadRequestException('Câu đã dùng; hãy lưu trữ.');
+    return this.prisma.$transaction(async tx => { await tx.questionHistory.create({ data: { questionId: id, action: QuestionHistoryAction.DELETE, oldData: this.json(old), changedById: a.id } }); return tx.question.update({ where: { id }, data: { deletedAt: new Date(), isActive: false } }); });
   }
+  async bulkAction(a: Actor, d: BulkActionDto) {
+    const errors: any[] = []; let successCount = 0;
+    for (const id of d.ids) try {
+      if (d.action === 'APPROVE') await this.approve(a, id); else if (d.action === 'REJECT') await this.reject(a, id, d.reason!);
+      else if (d.action === 'ARCHIVE') await this.archive(a, id); else if (d.action === 'RESTORE') await this.restore(a, id);
+      else { const q = await this.current(id); this.edit(a, q); if (d.chapterId) await this.chapter(q.subjectId, d.chapterId); await this.prisma.question.update({ where: { id }, data: d.difficulty ? { difficulty: d.difficulty } : { chapterId: d.chapterId } }); }
+      successCount++;
+    } catch (e: any) { errors.push({ id, message: e?.response?.message || e.message }); }
+    return { successCount, failedCount: errors.length, errors };
+  }
+  async exportCsv(a: Actor, q: QuestionQueryDto) {
+    const r = await this.findAll(a, { ...q, page: 1, limit: 100 }); const esc = (v: any) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    return '\uFEFFcode,subject,chapter,type,difficulty,bloomLevel,content,score,status\r\n' + r.data.map(x => [x.code, x.subject.subjectCode, x.chapter.code, x.type, x.difficulty, x.bloomLevel, x.content, x.score, x.status].map(esc).join(',')).join('\r\n');
+  }
+  importTemplate() { return '\uFEFFsubjectCode,chapterCode,type,difficulty,bloomLevel,content,score,optionA,correctA,optionB,correctB,optionC,correctC,optionD,correctD,explanation\r\nCNTT01,CH1,SINGLE_CHOICE,EASY,REMEMBER,"Câu hỏi mẫu hợp lệ?",0.25,"Đáp án A",true,"Đáp án B",false,"Đáp án C",false,"Đáp án D",false,"Giải thích mẫu"\r\nCNTT01,CH1,TRUE_FALSE,EASY,UNDERSTAND,"Mệnh đề mẫu là đúng.",0.25,"Đúng",true,"Sai",false,,,,,"Giải thích"'; }
+  private csv(file: Express.Multer.File) {
+    const lines = file.buffer.toString('utf8').replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean); const headers = lines.shift()!.split(',');
+    return lines.map((line, i) => ({ row: i + 2, data: Object.fromEntries(headers.map((h, x) => [h.trim(), line.match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]*))(?:,|$)/g)?.[x]?.replace(/^\"|\",?$|,$/g, '').replace(/\"\"/g, '"') || ''])) }));
+  }
+  async importPreview(a: Actor, file: Express.Multer.File) {
+    this.access(a); const rows = this.csv(file); if (!rows.length || rows.length > 1000) throw new BadRequestException('CSV phải có 1-1000 dòng.');
+    const out = []; for (const row of rows) { const v: any = row.data; const subject = await this.prisma.subject.findUnique({ where: { subjectCode: v.subjectCode } }); const chapter = subject ? await this.prisma.chapter.findFirst({ where: { subjectId: subject.id, code: v.chapterCode } }) : null; const errors = []; if (!subject) errors.push('Môn không tồn tại'); if (!chapter) errors.push('Chương không hợp lệ'); if (!v.content) errors.push('Thiếu nội dung'); out.push({ ...row, subjectId: subject?.id, chapterId: chapter?.id, errors, duplicates: v.content ? await this.duplicates(v.content) : [] }); }
+    return { hash: createHash('sha256').update(file.buffer).digest('hex'), rows: out };
+  }
+  async importConfirm(a: Actor, file: Express.Multer.File, d: ImportConfirmDto) {
+    if (createHash('sha256').update(file.buffer).digest('hex') !== d.hash) throw new BadRequestException('File đã thay đổi.'); const p = await this.importPreview(a, file); const selected = p.rows.filter(x => d.rows.includes(x.row));
+    if (!selected.length || selected.some(x => x.errors.length)) throw new BadRequestException('Dòng chọn có lỗi.'); if (selected.some(x => x.duplicates.length) && !(d.overrideDuplicate && a.role === 'ADMIN')) throw new ConflictException('Có câu trùng.');
+    const created = []; for (const x of selected) { const v: any = x.data; const opts = ['A','B','C','D'].filter(k => v[`option${k}`]).map((k,i) => ({ label:k, content:v[`option${k}`], isCorrect:v[`correct${k}`]==='true', order:i })); created.push(await this.create(a, { subjectId:x.subjectId!, chapterId:x.chapterId!, content:v.content, type:v.type, difficulty:v.difficulty || 'MEDIUM', bloomLevel:v.bloomLevel || 'UNDERSTAND', score:Number(v.score || .25), explanation:v.explanation, options:opts, overrideDuplicate:d.overrideDuplicate })); } return { importedCount: created.length, data: created };
+  }
+  async saveAi(a: Actor, d: SaveAiQuestionsDto) { const out = []; for (const q of d.questions) out.push(await this.create(a, q)); return out; }
 }

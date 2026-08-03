@@ -12,11 +12,11 @@ export declare class ExamSupervisorsController {
             id: number;
             email: string;
             departmentId: number;
-            teacherCode: string;
             userId: number;
             fullName: string;
-            degree: string;
             phone: string | null;
+            teacherCode: string;
+            degree: string;
         };
         examScheduleRoom: {
             examSchedule: {
@@ -30,13 +30,13 @@ export declare class ExamSupervisorsController {
             } & {
                 id: number;
                 status: string;
+                subjectId: number;
                 examDate: Date;
                 startTime: string;
                 endTime: string;
                 examType: string;
                 note: string | null;
                 examPeriodId: number;
-                subjectId: number;
             };
             room: {
                 id: number;
@@ -64,11 +64,11 @@ export declare class ExamSupervisorsController {
             id: number;
             email: string;
             departmentId: number;
-            teacherCode: string;
             userId: number;
             fullName: string;
-            degree: string;
             phone: string | null;
+            teacherCode: string;
+            degree: string;
         };
         examScheduleRoom: {
             room: {

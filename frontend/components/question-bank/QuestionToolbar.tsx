@@ -1,0 +1,4 @@
+import { Download, Plus, Sparkles, Upload } from 'lucide-react';
+export function QuestionToolbar({ onAdd, onImport, onAi, onExport }: { onAdd: () => void; onImport: () => void; onAi: () => void; onExport: () => void }) {
+  return <div className="flex flex-wrap gap-2"><button onClick={onExport} className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm"><Download className="h-4 w-4" />Xuất CSV</button><button onClick={onImport} className="flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-sm text-white"><Upload className="h-4 w-4" />Import</button><button onClick={onAi} className="flex items-center gap-2 rounded-xl bg-violet-600 px-3 py-2 text-sm text-white"><Sparkles className="h-4 w-4" />Tạo bằng AI</button><button onClick={onAdd} className="flex items-center gap-2 rounded-xl bg-sky-600 px-3 py-2 text-sm font-semibold text-white"><Plus className="h-4 w-4" />Thêm câu hỏi</button></div>;
+}

@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { Sidebar } from '../../components/Sidebar';
-import { Header } from '../../components/Header';
+import { AppShell } from '../../components/AppShell';
 import { Users, GraduationCap, BookOpen, Clock, DoorOpen, HelpCircle } from 'lucide-react';
 import { User } from '../../types';
 
@@ -59,10 +58,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar user={user} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header user={user} title="Admin Dashboard - Thống kê tổng quan" />
+    <AppShell user={user} title="Admin Dashboard - Thống kê tổng quan">
+      <div className="flex min-h-screen flex-col min-w-0">
 
         <main className="p-8 max-w-7xl w-full mx-auto">
           <div className="mb-8">
@@ -129,6 +126,6 @@ export default function DashboardPage() {
           </div>
         </main>
       </div>
-    </div>
+    </AppShell>
   );
 }

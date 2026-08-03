@@ -30,3 +30,24 @@
 # Thumbs.db
 node_modules
 node_modules
+
+# Generated frontend artifacts
+/frontend/.next/
+/frontend/.next-dev/
+/frontend/.next-prod/
+
+# Generated backend artifacts
+/backend/dist/
+
+# Local environment and secrets
+/.env
+/.env.*
+!/backend/.env.example
+!/frontend/.env.example
+/backend/.env
+/frontend/.env.local
+/frontend/.env.*.local
+
+# Local database migration artifacts
+/backend/prisma/dev.db
+/backend/prisma/data-export/

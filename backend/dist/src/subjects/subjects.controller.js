@@ -28,6 +28,9 @@ let SubjectsController = class SubjectsController {
     findOne(id) {
         return this.subjectsService.findOne(id);
     }
+    findChapters(id) {
+        return this.subjectsService.findChapters(id);
+    }
     create(body) {
         return this.subjectsService.create(body);
     }
@@ -52,6 +55,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], SubjectsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)(':id/chapters'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], SubjectsController.prototype, "findChapters", null);
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.Post)(),

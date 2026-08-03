@@ -28,12 +28,12 @@ export declare class StudentsService {
     } & {
         id: number;
         email: string;
+        studentCode: string;
         userId: number;
         fullName: string;
-        phone: string | null;
-        studentCode: string;
         gender: string;
         dateOfBirth: Date;
+        phone: string | null;
         classId: number;
     })[]>;
     findOne(id: number): Promise<{
@@ -72,18 +72,18 @@ export declare class StudentsService {
             status: string;
             semester: string;
             schoolYear: string;
-            subjectId: number;
             studentId: number;
+            subjectId: number;
         })[];
     } & {
         id: number;
         email: string;
+        studentCode: string;
         userId: number;
         fullName: string;
-        phone: string | null;
-        studentCode: string;
         gender: string;
         dateOfBirth: Date;
+        phone: string | null;
         classId: number;
     }>;
     create(data: {
@@ -116,12 +116,12 @@ export declare class StudentsService {
     } & {
         id: number;
         email: string;
+        studentCode: string;
         userId: number;
         fullName: string;
-        phone: string | null;
-        studentCode: string;
         gender: string;
         dateOfBirth: Date;
+        phone: string | null;
         classId: number;
     }>;
     update(id: number, data: {
@@ -151,12 +151,12 @@ export declare class StudentsService {
     } & {
         id: number;
         email: string;
+        studentCode: string;
         userId: number;
         fullName: string;
-        phone: string | null;
-        studentCode: string;
         gender: string;
         dateOfBirth: Date;
+        phone: string | null;
         classId: number;
     }>;
     remove(id: number): Promise<{

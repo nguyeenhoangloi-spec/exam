@@ -18,24 +18,6 @@ export declare class ExamArrangementController {
         details: any[];
     }>;
     getResults(examScheduleId: number): Promise<({
-        supervisors: ({
-            teacher: {
-                id: number;
-                email: string;
-                departmentId: number;
-                teacherCode: string;
-                userId: number;
-                fullName: string;
-                degree: string;
-                phone: string | null;
-            };
-        } & {
-            id: number;
-            role: string;
-            note: string | null;
-            examScheduleRoomId: number;
-            teacherId: number;
-        })[];
         examRoomStudents: ({
             student: {
                 class: {
@@ -47,21 +29,39 @@ export declare class ExamArrangementController {
             } & {
                 id: number;
                 email: string;
+                studentCode: string;
                 userId: number;
                 fullName: string;
-                phone: string | null;
-                studentCode: string;
                 gender: string;
                 dateOfBirth: Date;
+                phone: string | null;
                 classId: number;
             };
         } & {
             id: number;
             status: string;
-            examScheduleRoomId: number;
             studentId: number;
+            examScheduleRoomId: number;
             examNumber: string;
             seatNumber: number;
+        })[];
+        supervisors: ({
+            teacher: {
+                id: number;
+                email: string;
+                departmentId: number;
+                userId: number;
+                fullName: string;
+                phone: string | null;
+                teacherCode: string;
+                degree: string;
+            };
+        } & {
+            id: number;
+            role: string;
+            note: string | null;
+            examScheduleRoomId: number;
+            teacherId: number;
         })[];
         room: {
             id: number;

@@ -66,10 +66,19 @@ export interface Subject {
   credits: number;
   departmentId: number;
   department?: Department;
+  chapters?: Chapter[];
   _count?: {
     questions?: number;
     examSchedules?: number;
   };
+}
+
+export interface Chapter {
+  id: string;
+  subjectId: number;
+  code: string;
+  name: string;
+  order: number;
 }
 
 export interface ExamPeriod {
@@ -108,25 +117,38 @@ export interface ExamRoom {
 }
 
 export interface QuestionOption {
-  id?: number;
-  optionLabel: string;
-  optionContent: string;
+  id?: string;
+  label: string;
+  content: string;
   isCorrect: boolean;
+  order: number;
+  optionLabel?: string;
+  optionContent?: string;
 }
 
 export interface Question {
-  id: number;
+  id: string;
+  code: string;
   subjectId: number;
   subject?: Subject;
-  chapter: number;
+  chapterId: string;
+  chapter?: Chapter;
   content: string;
-  questionType: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE';
+  type: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'FILL_BLANK' | 'ESSAY';
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  bloomLevel: 'REMEMBER' | 'UNDERSTAND' | 'APPLY' | 'ANALYZE';
   score: number;
   explanation?: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
   options: QuestionOption[];
   createdById: number;
+  createdBy?: Pick<User, 'id' | 'username' | 'role'>;
+  keywords?: string;
+  rejectionReason?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _count?: { examPaperQuestions: number };
+  statistic?: { usedCount: number; totalAnswers: number; correctAnswers: number; lastUsedAt?: string; correctRate?: number | null };
 }
 
 export interface ExamPaperQuestion {

@@ -11,23 +11,23 @@ export declare class AuthService {
             student: {
                 id: number;
                 email: string;
+                studentCode: string;
                 userId: number;
                 fullName: string;
-                phone: string | null;
-                studentCode: string;
                 gender: string;
                 dateOfBirth: Date;
+                phone: string | null;
                 classId: number;
             };
             teacher: {
                 id: number;
                 email: string;
                 departmentId: number;
-                teacherCode: string;
                 userId: number;
                 fullName: string;
-                degree: string;
                 phone: string | null;
+                teacherCode: string;
+                degree: string;
             };
             id: number;
             username: string;
@@ -49,12 +49,12 @@ export declare class AuthService {
         } & {
             id: number;
             email: string;
+            studentCode: string;
             userId: number;
             fullName: string;
-            phone: string | null;
-            studentCode: string;
             gender: string;
             dateOfBirth: Date;
+            phone: string | null;
             classId: number;
         };
         teacher: {
@@ -67,11 +67,11 @@ export declare class AuthService {
             id: number;
             email: string;
             departmentId: number;
-            teacherCode: string;
             userId: number;
             fullName: string;
-            degree: string;
             phone: string | null;
+            teacherCode: string;
+            degree: string;
         };
         id: number;
         username: string;

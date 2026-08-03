@@ -1,0 +1,11 @@
+import { Archive, Check, Copy, Eye, Send, Trash2, X } from 'lucide-react';
+import { Question } from '../../types';
+import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
+export function QuestionCard({ question: q, selected, onSelect, onDetail, onAction, isAdmin }: { question: Question; selected: boolean; onSelect: (v: boolean) => void; onDetail: () => void; onAction: (action: string) => void; isAdmin: boolean }) {
+  return <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="flex items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><input type="checkbox" checked={selected} onChange={e => onSelect(e.target.checked)} /><b className="text-sky-700">{q.code}</b><span className="rounded bg-slate-100 px-2 py-1 text-xs">{q.subject?.subjectName}</span><span className="rounded bg-slate-100 px-2 py-1 text-xs">{q.chapter?.name}</span><QuestionTypeBadge type={q.type} /><QuestionDifficultyBadge difficulty={q.difficulty} /><QuestionStatusBadge status={q.status} /></div>
+      <div className="flex gap-1">{q.status === 'DRAFT' && <button title="Gửi duyệt" onClick={() => onAction('submit')} className="p-2"><Send className="h-4 w-4" /></button>}{q.status === 'PENDING' && <><button title="Duyệt" onClick={() => onAction('approve')} className="p-2 text-emerald-600"><Check className="h-4 w-4" /></button><button title="Từ chối" onClick={() => onAction('reject')} className="p-2 text-rose-600"><X className="h-4 w-4" /></button></>}<button title="Chi tiết" onClick={onDetail} className="p-2"><Eye className="h-4 w-4" /></button><button title="Nhân bản" onClick={() => onAction('duplicate')} className="p-2"><Copy className="h-4 w-4" /></button>{isAdmin && <><button title="Lưu trữ" onClick={() => onAction('archive')} className="p-2"><Archive className="h-4 w-4" /></button><button title="Xóa" onClick={() => onAction('delete')} className="p-2 text-rose-600"><Trash2 className="h-4 w-4" /></button></>}</div></div>
+    <button onClick={onDetail} className="mt-4 text-left font-semibold text-slate-800">{q.content}</button>
+    <p className="mt-3 text-xs text-slate-500">Người tạo: {q.createdBy?.username || '—'} · {q.statistic?.usedCount ? `Đã dùng ${q.statistic.usedCount} lần` : 'Chưa sử dụng'}</p>
+  </article>;
+}

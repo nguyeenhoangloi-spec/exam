@@ -19,6 +19,11 @@ export class SubjectsController {
     return this.subjectsService.findOne(id);
   }
 
+  @Get(':id/chapters')
+  findChapters(@Param('id', ParseIntPipe) id: number) {
+    return this.subjectsService.findChapters(id);
+  }
+
   @Roles('ADMIN')
   @Post()
   create(@Body() body: { subjectCode: string; subjectName: string; credits: number; departmentId: number }) {
