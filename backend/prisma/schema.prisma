@@ -1,0 +1,261 @@
+// Prisma Schema for Student Exam Management System (SQLite / PostgreSQL compatible)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  role      String   @default("STUDENT")
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student?
+  teacher Teacher?
+
+  createdQuestions  Question[]  @relation("UserQuestions")
+  createdExamPapers ExamPaper[] @relation("UserExamPapers")
+
+  @@map("users")
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  code String @unique
+  name String
+
+  classes  Class[]
+  teachers Teacher[]
+  subjects Subject[]
+
+  @@map("departments")
+}
+
+model Class {
+  id           Int        @id @default(autoincrement())
+  code         String     @unique
+  name         String
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  students Student[]
+
+  @@map("classes")
+}
+
+model Student {
+  id          Int      @id @default(autoincrement())
+  studentCode String   @unique
+  fullName    String
+  gender      String
+  dateOfBirth DateTime
+  email       String
+  phone       String?
+  classId     Int
+  class       Class    @relation(fields: [classId], references: [id])
+  userId      Int      @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  studentSubjects  StudentSubject[]
+  examRoomStudents ExamRoomStudent[]
+
+  @@map("students")
+}
+
+model Teacher {
+  id           Int        @id @default(autoincrement())
+  teacherCode  String     @unique
+  fullName     String
+  degree       String
+  email        String
+  phone        String?
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  userId       Int        @unique
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  supervisors ExamSupervisor[]
+
+  @@map("teachers")
+}
+
+model Subject {
+  id           Int        @id @default(autoincrement())
+  subjectCode  String     @unique
+  subjectName  String
+  credits      Int
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  studentSubjects StudentSubject[]
+  examSchedules   ExamSchedule[]
+  questions       Question[]
+
+  @@map("subjects")
+}
+
+model StudentSubject {
+  id         Int     @id @default(autoincrement())
+  studentId  Int
+  student    Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId  Int
+  subject    Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  semester   String
+  schoolYear String
+  status     String  @default("ELIGIBLE")
+
+  @@map("student_subjects")
+}
+
+model ExamPeriod {
+  id         Int      @id @default(autoincrement())
+  name       String
+  semester   String
+  schoolYear String
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("UPCOMING")
+
+  examSchedules ExamSchedule[]
+
+  @@map("exam_periods")
+}
+
+model ExamSchedule {
+  id           Int        @id @default(autoincrement())
+  examPeriodId Int
+  examPeriod   ExamPeriod @relation(fields: [examPeriodId], references: [id], onDelete: Cascade)
+  subjectId    Int
+  subject      Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  examDate     DateTime
+  startTime    String
+  endTime      String
+  examType     String     @default("TRAC_NGHIEM")
+  status       String     @default("SCHEDULED")
+  note         String?
+
+  examScheduleRooms ExamScheduleRoom[]
+  examPapers        ExamPaper[]
+
+  @@map("exam_schedules")
+}
+
+model ExamRoom {
+  id       Int    @id @default(autoincrement())
+  roomCode String @unique
+  roomName String
+  building String
+  capacity Int
+  roomType String @default("THI_LY_THUYET")
+  status   String @default("AVAILABLE")
+
+  examScheduleRooms ExamScheduleRoom[]
+
+  @@map("exam_rooms")
+}
+
+model ExamScheduleRoom {
+  id             Int          @id @default(autoincrement())
+  examScheduleId Int
+  examSchedule   ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  roomId         Int
+  room           ExamRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  examRoomStudents ExamRoomStudent[]
+  supervisors      ExamSupervisor[]
+
+  @@map("exam_schedule_rooms")
+}
+
+model ExamRoomStudent {
+  id                 Int              @id @default(autoincrement())
+  examScheduleRoomId Int
+  examScheduleRoom   ExamScheduleRoom @relation(fields: [examScheduleRoomId], references: [id], onDelete: Cascade)
+  studentId          Int
+  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  examNumber         String
+  seatNumber         Int
+  status             String           @default("ASSIGNED")
+
+  @@map("exam_room_students")
+}
+
+model ExamSupervisor {
+  id                 Int              @id @default(autoincrement())
+  examScheduleRoomId Int
+  examScheduleRoom   ExamScheduleRoom @relation(fields: [examScheduleRoomId], references: [id], onDelete: Cascade)
+  teacherId          Int
+  teacher            Teacher          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  role               String           @default("SUPERVISOR_1")
+  note               String?
+
+  @@map("exam_supervisors")
+}
+
+model Question {
+  id           Int     @id @default(autoincrement())
+  subjectId    Int
+  subject      Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  chapter      Int
+  content      String
+  questionType String  @default("SINGLE_CHOICE")
+  difficulty   String  @default("MEDIUM")
+  score        Float   @default(0.25)
+  explanation  String?
+  status       String  @default("PENDING")
+  createdById  Int
+  createdBy    User    @relation("UserQuestions", fields: [createdById], references: [id], onDelete: Cascade)
+
+  options            QuestionOption[]
+  examPaperQuestions ExamPaperQuestion[]
+
+  @@map("questions")
+}
+
+model QuestionOption {
+  id            Int      @id @default(autoincrement())
+  questionId    Int
+  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionLabel   String
+  optionContent String
+  isCorrect     Boolean  @default(false)
+
+  @@map("question_options")
+}
+
+model ExamPaper {
+  id              Int          @id @default(autoincrement())
+  examScheduleId  Int
+  examSchedule    ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  paperCode       String
+  title           String
+  durationMinutes Int
+  totalScore      Float
+  createdById     Int
+  createdBy       User         @relation("UserExamPapers", fields: [createdById], references: [id], onDelete: Cascade)
+
+  questions ExamPaperQuestion[]
+
+  @@map("exam_papers")
+}
+
+model ExamPaperQuestion {
+  id            Int       @id @default(autoincrement())
+  examPaperId   Int
+  examPaper     ExamPaper @relation(fields: [examPaperId], references: [id], onDelete: Cascade)
+  questionId    Int
+  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionOrder Int
+  score         Float
+
+  @@map("exam_paper_questions")
+}
