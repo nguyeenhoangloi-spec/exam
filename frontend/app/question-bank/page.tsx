@@ -8,7 +8,7 @@ import { Sidebar } from '../../components/Sidebar';
 import { Header } from '../../components/Header';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
-import { Plus, Check, Trash2, Filter } from 'lucide-react';
+import { Plus, Check, Trash2, Filter, Upload, Sparkles, Download } from 'lucide-react';
 import { Question, Subject } from '../../types';
 
 export default function QuestionBankPage() {
@@ -25,6 +25,11 @@ export default function QuestionBankPage() {
 
   // Modal & Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [aiData, setAiData] = useState({ subjectId: '', chapter: '1', count: '5', difficulty: 'MEDIUM', prompt: '' });
+  const [aiQuestions, setAiQuestions] = useState<any[]>([]);
+  const [documentName, setDocumentName] = useState('');
   const [formData, setFormData] = useState({
     subjectId: '',
     chapter: '1',
@@ -156,6 +161,12 @@ export default function QuestionBankPage() {
     }
   };
 
+  const downloadTemplate = () => { const url = URL.createObjectURL(new Blob(['subjectCode,chapter,content,A,B,C,D,correctAnswer,difficulty,score,explanation\nCNTT,1,2+2 bằng bao nhiêu?,3,4,5,6,B,EASY,0.25,Phép cộng cơ bản\n'], { type: 'text/csv;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = 'mau-ngan-hang-cau-hoi.csv'; a.click(); URL.revokeObjectURL(url); };
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; setImporting(true); const data = new FormData(); data.append('file', file); try { const res = await api.post('/questions/import', data, { headers: { 'Content-Type': 'multipart/form-data' } }); setToast({ message: `Đã nhập ${res.data.imported} câu; ${res.data.errors.length} dòng lỗi.`, type: res.data.errors.length ? 'error' : 'success' }); fetchQuestions(); } catch (err: any) { setToast({ message: err.message, type: 'error' }); } finally { setImporting(false); e.target.value = ''; } };
+  const generateAi = async (e: React.FormEvent) => { e.preventDefault(); try { const res = await api.post('/questions/ai-generate', { ...aiData, subject: subjects.find(s => s.id.toString() === aiData.subjectId)?.subjectName, chapter: Number(aiData.chapter), count: Number(aiData.count) }); setAiQuestions(res.data); } catch (err: any) { setToast({ message: err.message, type: 'error' }); } };
+  const uploadDocument = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const data = new FormData(); data.append('file', file); try { const res = await api.post('/questions/extract-document', data, { headers: { 'Content-Type': 'multipart/form-data' } }); setAiData(p => ({ ...p, prompt: res.data.text })); setDocumentName(res.data.fileName); setToast({ message: 'Đã đọc tài liệu, AI sẽ dựa trên nội dung này.', type: 'success' }); } catch (err: any) { setToast({ message: err.message, type: 'error' }); } e.target.value = ''; };
+  const saveAi = async () => { try { for (const q of aiQuestions) await api.post('/questions', { subjectId: Number(aiData.subjectId), chapter: Number(aiData.chapter), difficulty: aiData.difficulty, content: q.content, explanation: q.explanation, options: q.options }); setToast({ message: 'Đã lưu câu AI, đang chờ duyệt.', type: 'success' }); setIsAiOpen(false); fetchQuestions(); } catch (err: any) { setToast({ message: err.message, type: 'error' }); } };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar user={currentUser} />
@@ -202,12 +213,16 @@ export default function QuestionBankPage() {
                   <option value="APPROVED">Đã duyệt (APPROVED)</option>
                 </select>
 
+                {(currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER') && <>
+                <button onClick={downloadTemplate} className="flex items-center gap-2 bg-slate-700 text-white px-3 py-2 rounded-xl text-sm"><Download className="w-4 h-4" /> Mẫu CSV</button>
+                <label className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-xl text-sm cursor-pointer"><Upload className="w-4 h-4" /> {importing ? 'Đang nhập...' : 'Import'}<input type="file" accept=".csv,.xlsx,.xls" onChange={handleImport} hidden /></label>
+                <button onClick={() => { setAiData(p => ({ ...p, subjectId: subjects[0]?.id.toString() || '' })); setIsAiOpen(true); }} className="flex items-center gap-2 bg-violet-600 text-white px-3 py-2 rounded-xl text-sm"><Sparkles className="w-4 h-4" /> Tạo bằng AI</button>
                 <button
                   onClick={fetchQuestions}
                   className="px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-medium hover:bg-slate-700 transition"
                 >
                   Lọc
-                </button>
+                </button></>}
               </div>
 
               {(currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER') && (
@@ -432,6 +447,21 @@ export default function QuestionBankPage() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      <Modal isOpen={isAiOpen} onClose={() => setIsAiOpen(false)} title="Tạo câu hỏi nháp bằng AI">
+        <form onSubmit={generateAi} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <select className="border rounded-xl p-2" value={aiData.subjectId} onChange={e => setAiData({...aiData, subjectId:e.target.value})}>{subjects.map(s => <option key={s.id} value={s.id}>{s.subjectName}</option>)}</select>
+            <input className="border rounded-xl p-2" type="number" min="1" value={aiData.chapter} onChange={e=>setAiData({...aiData,chapter:e.target.value})} placeholder="Chương" />
+            <input className="border rounded-xl p-2" type="number" min="1" max="50" value={aiData.count} onChange={e=>setAiData({...aiData,count:e.target.value})} placeholder="Số câu" />
+            <select className="border rounded-xl p-2" value={aiData.difficulty} onChange={e=>setAiData({...aiData,difficulty:e.target.value})}><option value="EASY">Dễ</option><option value="MEDIUM">Trung bình</option><option value="HARD">Khó</option></select>
+          </div>
+          <textarea required rows={4} className="w-full border rounded-xl p-3" value={aiData.prompt} onChange={e=>setAiData({...aiData,prompt:e.target.value})} placeholder="Nhập chủ đề hoặc dán nội dung tài liệu..." />
+          <label className="inline-flex items-center gap-2 border border-violet-300 text-violet-700 px-3 py-2 rounded-xl text-sm cursor-pointer"><Upload className="w-4 h-4" />{documentName || 'Upload Word/PDF'}<input type="file" accept=".docx,.pdf" onChange={uploadDocument} hidden /></label>
+          <button className="bg-violet-600 text-white px-4 py-2 rounded-xl">Sinh câu hỏi</button>
+        </form>
+        {aiQuestions.length > 0 && <div className="mt-5 space-y-3 max-h-80 overflow-auto">{aiQuestions.map((q,i)=><div key={i} className="border rounded-xl p-3"><label className="flex gap-2"><input type="checkbox" defaultChecked onChange={e=>{if(!e.target.checked)setAiQuestions(aiQuestions.filter((_,j)=>j!==i));}}/><span className="font-semibold">{q.content}</span></label><div className="text-sm text-slate-500 mt-2">{q.options?.map((o:any)=><div key={o.optionLabel} className={o.isCorrect?'text-emerald-700 font-bold':''}>{o.optionLabel}. {o.optionContent}</div>)}</div></div>)}<button type="button" onClick={saveAi} className="bg-emerald-600 text-white px-4 py-2 rounded-xl">Lưu câu đã chọn</button></div>}
       </Modal>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
