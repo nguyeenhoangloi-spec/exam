@@ -101,6 +101,21 @@ export default function ExamPapersPage() {
     fetchData();
   }, [fetchData, router]);
 
+  const selectedSchedule = schedules.find((schedule) => String(schedule.id) === formData.examScheduleId);
+  const scheduleDuration = selectedSchedule
+    ? (() => {
+        const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
+        const [endHour, endMinute] = selectedSchedule.endTime.split(':').map(Number);
+        return endHour * 60 + endMinute - (startHour * 60 + startMinute);
+      })()
+    : 0;
+
+  useEffect(() => {
+    if (scheduleDuration > 0 && Number(formData.durationMinutes) > scheduleDuration) {
+      setFormData((previous) => ({ ...previous, durationMinutes: String(scheduleDuration) }));
+    }
+  }, [scheduleDuration, formData.durationMinutes]);
+
   const handleDurationChange = (duration: string) => {
     if (duration === '60') {
       setFormData((previous) => ({
@@ -310,9 +325,11 @@ export default function ExamPapersPage() {
                   >
                     <option value="60">60 phút (40 câu)</option>
                     <option value="90">90 phút (60 câu)</option>
+                    {scheduleDuration > 0 && scheduleDuration !== 60 && scheduleDuration !== 90 && <option value={scheduleDuration}>{scheduleDuration} phút (theo lịch thi)</option>}
                   </select>
                 </label>
               </div>
+              {scheduleDuration > 0 && <p className="-mt-2 text-xs font-medium text-slate-500">Lịch thi cho phép tối đa {scheduleDuration} phút ({selectedSchedule?.startTime}–{selectedSchedule?.endTime}).</p>}
 
               <div className="border-t border-slate-100 pt-4">
                 <div className="mb-2 flex items-center justify-between">

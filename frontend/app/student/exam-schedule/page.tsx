@@ -161,7 +161,7 @@ export default function StudentExamSchedulePage() {
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                   {item.examType === 'TRAC_NGHIEM' && (
                     <button
-                      onClick={() => router.push(`/student/online-exam/${item.id}/lobby`)}
+                      onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
                       className="flex items-center gap-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 px-3.5 py-1.5 rounded-xl shadow-xs transition"
                     >
                       <span>Thi Trực Tuyến</span>

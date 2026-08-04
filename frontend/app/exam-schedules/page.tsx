@@ -25,6 +25,7 @@ import {
   CheckCircle2,
   Users,
   Sparkles,
+  XCircle,
 } from 'lucide-react';
 import { ExamSchedule, ExamPeriod, Subject } from '../../types';
 
@@ -45,6 +46,8 @@ export default function ExamSchedulesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [drawerSchedule, setDrawerSchedule] = useState<ExamSchedule | null>(null);
   const [editingSchedule, setEditingSchedule] = useState<ExamSchedule | null>(null);
+  const [questionCount, setQuestionCount] = useState('40');
+  const [autoEndTime, setAutoEndTime] = useState(false);
   const [formData, setFormData] = useState({
     examPeriodId: '',
     subjectId: '',
@@ -88,6 +91,8 @@ export default function ExamSchedulesPage() {
       const authUser = getAuthUser();
       if (params.get('action') === 'create' && authUser?.role === 'ADMIN') {
         setEditingSchedule(null);
+        setQuestionCount('40');
+        setAutoEndTime(true);
         setFormData({
           examPeriodId: resPeriods.data[0]?.id ? String(resPeriods.data[0].id) : '',
           subjectId: resSubjects.data[0]?.id ? String(resSubjects.data[0].id) : '',
@@ -128,6 +133,8 @@ export default function ExamSchedulesPage() {
 
   const openAddModal = () => {
     setEditingSchedule(null);
+    setQuestionCount('40');
+    setAutoEndTime(true);
     setFormData({
       examPeriodId: selectedPeriodId || (periods[0]?.id ? String(periods[0].id) : ''),
       subjectId: subjects[0]?.id ? String(subjects[0].id) : '',
@@ -142,6 +149,8 @@ export default function ExamSchedulesPage() {
 
   const openEditModal = (sch: ExamSchedule) => {
     setEditingSchedule(sch);
+    setQuestionCount(sch.endTime === '09:30' ? '60' : '40');
+    setAutoEndTime(false);
     setFormData({
       examPeriodId: String(sch.examPeriodId),
       subjectId: String(sch.subjectId),
@@ -152,6 +161,22 @@ export default function ExamSchedulesPage() {
       note: sch.note || '',
     });
     setIsModalOpen(true);
+  };
+
+  const durationForQuestions = (value: string) => (value === '60' ? 90 : 60);
+  const endTimeFromStart = (start: string, minutes: number) => {
+    const [hour, minute] = start.split(':').map(Number);
+    const total = hour * 60 + minute + minutes;
+    return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+  };
+  const changeStartTime = (startTime: string) => setFormData((previous) => ({
+    ...previous,
+    startTime,
+    ...(autoEndTime ? { endTime: endTimeFromStart(startTime, durationForQuestions(questionCount)) } : {}),
+  }));
+  const changeQuestionCount = (value: string) => {
+    setQuestionCount(value);
+    if (autoEndTime) setFormData((previous) => ({ ...previous, endTime: endTimeFromStart(previous.startTime, durationForQuestions(value)) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -223,6 +248,26 @@ export default function ExamSchedulesPage() {
         try {
           await api.delete(`/exam-schedules/${id}`);
           setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
+          void fetchInitialData();
+        } catch (err: any) {
+          setToast({ message: err.message, type: 'error' });
+        }
+      },
+    });
+  };
+
+  const handleCancel = (id: number) => {
+    const sch = schedules.find((schedule) => schedule.id === id);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Hủy lịch thi',
+      message: `Hủy lịch thi môn ${sch?.subject?.subjectName || ''}? Dữ liệu phòng, giám thị và đề thi vẫn được giữ để tra cứu.`,
+      type: 'warning',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.patch(`/exam-schedules/${id}`, { status: 'CANCELLED' });
+          setToast({ message: 'Đã hủy lịch thi. Dữ liệu lịch sử vẫn được giữ.', type: 'success' });
           void fetchInitialData();
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
@@ -411,6 +456,13 @@ export default function ExamSchedulesPage() {
                                   <Edit className="h-4 w-4" />
                                 </button>
                                 <button
+                                  onClick={() => handleCancel(sch.id)}
+                                  className="p-1.5 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition"
+                                  title="Hủy lịch (giữ dữ liệu)"
+                                >
+                                  <XCircle className="h-4 w-4" />
+                                </button>
+                                <button
                                   onClick={() => handleDelete(sch.id)}
                                   className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
                                   title="Xóa"
@@ -478,6 +530,15 @@ export default function ExamSchedulesPage() {
             </div>
           </div>
 
+          {!editingSchedule && <div className="rounded-xl border border-sky-100 bg-sky-50 p-3">
+            <label className="block text-xs font-bold uppercase text-sky-700 mb-1">Số câu dự kiến</label>
+            <select value={questionCount} onChange={(e) => changeQuestionCount(e.target.value)} className="w-full rounded-xl border border-sky-200 bg-white px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none">
+              <option value="40">40 câu (60 phút)</option>
+              <option value="60">60 câu (90 phút)</option>
+            </select>
+            <p className="mt-1 text-xs text-sky-700">Giờ kết thúc sẽ tự động tính theo giờ bắt đầu.</p>
+          </div>}
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Giờ bắt đầu</label>
@@ -485,7 +546,7 @@ export default function ExamSchedulesPage() {
                 type="time"
                 required
                 value={formData.startTime}
-                onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                onChange={(e) => changeStartTime(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
               />
             </div>
@@ -495,7 +556,7 @@ export default function ExamSchedulesPage() {
                 type="time"
                 required
                 value={formData.endTime}
-                onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                onChange={(e) => { setAutoEndTime(false); setFormData({ ...formData, endTime: e.target.value }); }}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
               />
             </div>

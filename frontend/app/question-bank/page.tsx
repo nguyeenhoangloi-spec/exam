@@ -270,14 +270,30 @@ export default function QuestionBankPage() {
           </div>
           <QuestionFilters value={filters} subjects={subjects} onChange={next => { setFilters(next); setPage(1); }} />
         </section>
-        <QuestionBulkAction
-          totalCount={questions.length}
-          selectedCount={selected.length}
-          allSelected={questions.length > 0 && selected.length === questions.length}
-          onToggleAll={() => setSelected(selected.length === questions.length ? [] : questions.map(q => q.id))}
-          onAction={bulk}
-          onClear={() => setSelected([])}
-        />
+        {(() => {
+          const selectedQuestions = questions.filter((q) => selected.includes(q.id));
+          const canApprove = selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'REJECTED'].includes(q.status));
+          const canReject = selectedQuestions.some((q) => ['DRAFT', 'PENDING'].includes(q.status));
+          const canRestore = selectedQuestions.some((q) => ['ARCHIVED', 'REJECTED'].includes(q.status));
+          const canArchive = selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'].includes(q.status));
+          const canDelete = user?.role === 'ADMIN';
+
+          return (
+            <QuestionBulkAction
+              totalCount={questions.length}
+              selectedCount={selected.length}
+              allSelected={questions.length > 0 && selected.length === questions.length}
+              canApprove={canApprove}
+              canReject={canReject}
+              canRestore={canRestore}
+              canArchive={canArchive}
+              canDelete={canDelete}
+              onToggleAll={() => setSelected(selected.length === questions.length ? [] : questions.map((q) => q.id))}
+              onAction={bulk}
+              onClear={() => setSelected([])}
+            />
+          );
+        })()}
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => <div key={i} className="h-36 animate-pulse rounded-2xl bg-slate-200" />)}

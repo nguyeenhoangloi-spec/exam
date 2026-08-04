@@ -183,6 +183,8 @@ export interface ExamPaper {
 
 export interface PersonalScheduleItem {
   id: number;
+  scheduleId?: number;
+  examScheduleId?: number;
   examNumber: string;
   registrationNumber?: string;
   seatNumber: number;

@@ -27,12 +27,16 @@ export default function StudentExamLobbyPage() {
       const res = await onlineExamService.checkEligibility(scheduleId);
       setEligibility(res);
 
+      if (!res.isEligible) {
+        setError(res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.');
+      }
+
       if (res.existingAttempt && ['IN_PROGRESS', 'DISCONNECTED'].includes(res.existingAttempt.status)) {
         sessionStorage.setItem('attemptToken', res.existingAttempt.attemptToken);
         router.push(`/student/online-exam/${res.existingAttempt.attemptToken}/take`);
       }
     } catch (err: any) {
-      setError(err.message || 'Không thể kiểm tra điều kiện dự thi');
+      setError(err.response?.data?.message || err.message || 'Không thể kiểm tra điều kiện dự thi');
     } finally {
       setLoading(false);
     }
@@ -55,7 +59,7 @@ export default function StudentExamLobbyPage() {
       sessionStorage.setItem('attemptToken', res.attemptToken);
       router.push(`/student/online-exam/${res.attemptToken}/take`);
     } catch (err: any) {
-      setError(err.message || 'Không thể bắt đầu làm bài thi');
+      setError(err.response?.data?.message || err.message || 'Không thể bắt đầu làm bài thi');
       setStarting(false);
     }
   };
@@ -69,9 +73,10 @@ export default function StudentExamLobbyPage() {
     );
   }
 
-  const schedule = eligibility?.schedule;
+  const examInfo = eligibility?.examInfo;
+  const schedule = eligibility?.schedule || examInfo;
   const student = eligibility?.student;
-  const config = schedule?.onlineExamConfig;
+  const config = schedule?.onlineExamConfig || examInfo;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12">

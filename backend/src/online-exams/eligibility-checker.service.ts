@@ -221,12 +221,29 @@ export class EligibilityCheckerService {
       );
     }
 
-    // Kiểm tra cấu hình thi online đã được thiết lập chưa
-    const config = schedule.onlineExamConfig;
+    // Kiểm tra cấu hình thi online và Đề thi chính thức đã được phát hành chưa
+    let config = schedule.onlineExamConfig;
     if (!config || !config.examPaper) {
+      const publishedPaper = await this.prisma.examPaper.findFirst({
+        where: { examScheduleId: scheduleId, status: 'PUBLISHED', deletedAt: null },
+        include: { questions: true },
+        orderBy: { publishedAt: 'desc' },
+      });
+
+      if (publishedPaper) {
+        config = await this.prisma.onlineExamConfig.upsert({
+          where: { examScheduleId: scheduleId },
+          update: { examPaperId: publishedPaper.id },
+          create: { examScheduleId: scheduleId, examPaperId: publishedPaper.id },
+          include: { examPaper: true },
+        });
+      }
+    }
+
+    if (!config || !config.examPaper || config.examPaper.status !== 'PUBLISHED') {
       return this.fail(
         EligibilityErrorCode.EXAM_NOT_CONFIGURED,
-        'Kỳ thi chưa được cấu hình hệ thống thi trực tuyến hoặc chưa có đề thi chính thức',
+        'Ca thi chưa được Quản trị viên/Giảng viên chọn và phát hành đề thi chính thức (PUBLISHED).',
         { student, schedule },
       );
     }
@@ -235,11 +252,9 @@ export class EligibilityCheckerService {
     // BƯỚC 5: Kiểm tra thời gian
     // ─────────────────────────────────────────
     const serverTime = new Date();
-
-    // Xây dựng datetime từ examDate + startTime/endTime string ("HH:mm")
     const examStartTime = this.buildExamDateTime(schedule.examDate, schedule.startTime);
     const examEndTime = this.buildExamDateTime(schedule.examDate, schedule.endTime);
-    const lateEntryDeadline = new Date(examStartTime.getTime() + config.lateEntryWindowMinutes * 60 * 1000);
+    const lateEntryDeadline = new Date(examStartTime.getTime() + (config.lateEntryWindowMinutes || 60) * 60 * 1000);
 
     // Chưa đến giờ thi
     if (serverTime < examStartTime) {

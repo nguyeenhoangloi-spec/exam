@@ -7,6 +7,11 @@ interface QuestionBulkActionProps {
   totalCount: number;
   selectedCount: number;
   allSelected: boolean;
+  canApprove?: boolean;
+  canReject?: boolean;
+  canRestore?: boolean;
+  canArchive?: boolean;
+  canDelete?: boolean;
   onToggleAll: () => void;
   onAction: (action: string) => void;
   onClear: () => void;
@@ -16,6 +21,11 @@ export function QuestionBulkAction({
   totalCount,
   selectedCount,
   allSelected,
+  canApprove = true,
+  canReject = true,
+  canRestore = true,
+  canArchive = true,
+  canDelete = true,
   onToggleAll,
   onAction,
   onClear,
@@ -62,45 +72,55 @@ export function QuestionBulkAction({
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-slate-500 text-[11px] font-bold">Thao tác hàng loạt:</span>
 
-          <button
-            type="button"
-            onClick={() => onAction('APPROVE')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-          >
-            <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt hàng loạt
-          </button>
+          {canApprove && (
+            <button
+              type="button"
+              onClick={() => onAction('APPROVE')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt hàng loạt
+            </button>
+          )}
 
-          <button
-            type="button"
-            onClick={() => onAction('RESTORE')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-          >
-            <RotateCcw className="h-3.5 w-3.5" /> Khôi phục hàng loạt
-          </button>
+          {canRestore && (
+            <button
+              type="button"
+              onClick={() => onAction('RESTORE')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            >
+              <RotateCcw className="h-3.5 w-3.5" /> Khôi phục hàng loạt
+            </button>
+          )}
 
-          <button
-            type="button"
-            onClick={() => onAction('REJECT')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-          >
-            <XCircle className="h-3.5 w-3.5" /> Từ chối hàng loạt
-          </button>
+          {canReject && (
+            <button
+              type="button"
+              onClick={() => onAction('REJECT')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            >
+              <XCircle className="h-3.5 w-3.5" /> Từ chối hàng loạt
+            </button>
+          )}
 
-          <button
-            type="button"
-            onClick={() => onAction('ARCHIVE')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-          >
-            <Archive className="h-3.5 w-3.5" /> Lưu trữ
-          </button>
+          {canArchive && (
+            <button
+              type="button"
+              onClick={() => onAction('ARCHIVE')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            >
+              <Archive className="h-3.5 w-3.5" /> Lưu trữ
+            </button>
+          )}
 
-          <button
-            type="button"
-            onClick={() => onAction('DELETE')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-          >
-            <Trash2 className="h-3.5 w-3.5" /> Xóa đã chọn
-          </button>
+          {canDelete && (
+            <button
+              type="button"
+              onClick={() => onAction('DELETE')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            >
+              <Trash2 className="h-3.5 w-3.5" /> Xóa đã chọn
+            </button>
+          )}
         </div>
       )}
     </div>

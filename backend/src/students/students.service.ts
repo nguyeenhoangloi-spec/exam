@@ -175,6 +175,8 @@ export class StudentsService {
 
     return roomStudents.map((rs) => ({
       id: rs.id,
+      scheduleId: rs.examScheduleRoom.examSchedule.id,
+      examScheduleId: rs.examScheduleRoom.examSchedule.id,
       examNumber: rs.examNumber,
       seatNumber: rs.seatNumber,
       status: rs.status,

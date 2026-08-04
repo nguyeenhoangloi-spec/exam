@@ -265,14 +265,30 @@ export class ExamPapersService {
         data: { status: ExamPaperStatus.PUBLISHED, publishedAt: new Date(), archivedAt: null },
         include: paperDetailInclude,
       });
+
+      await tx.onlineExamConfig.upsert({
+        where: { examScheduleId: paper.examScheduleId },
+        update: { examPaperId: id },
+        create: {
+          examScheduleId: paper.examScheduleId,
+          examPaperId: id,
+          requireFullscreen: true,
+          preventTabSwitch: true,
+          preventCopyPaste: true,
+          shuffleQuestions: true,
+          shuffleOptions: true,
+        },
+      });
+
       await this.audit.write({
         actorId: actor.id,
         action: 'PUBLISH',
         entityType: 'EXAM_PAPER',
         entityId: id,
-        description: `Đã phát hành đề thi ${paper.paperCode}`,
-        metadata: { paperCode: paper.paperCode },
+        description: `Đã phát hành đề thi ${paper.paperCode} và kích hoạt ca thi trực tuyến`,
+        metadata: { paperCode: paper.paperCode, examScheduleId: paper.examScheduleId },
       }, tx);
+
       return updated;
     });
   }
