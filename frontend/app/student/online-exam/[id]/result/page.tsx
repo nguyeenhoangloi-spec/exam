@@ -125,9 +125,9 @@ export default function StudentExamResultPage() {
                 </span>
               </div>
             ) : (
-              <p className="text-xs text-slate-400 italic pt-1">
-                * Kết quả điểm thi đang được cập nhật.
-              </p>
+              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-xs">
+                🔒 <strong>Quy chế công bố điểm thi:</strong> Điểm số chính thức sẽ được công bố sau khi ca thi kết thúc{result.examEndTime ? ` (Dự kiến lúc ${result.examEndTime})` : ''}.
+              </div>
             )}
           </div>
         </div>

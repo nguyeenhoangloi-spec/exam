@@ -635,7 +635,11 @@ export class OnlineExamsService {
       where: { id: attemptId },
       include: {
         student: true,
-        onlineExamConfig: true,
+        onlineExamConfig: {
+          include: {
+            examSchedule: true,
+          },
+        },
         incidents: true,
       },
     });
@@ -644,13 +648,37 @@ export class OnlineExamsService {
       throw new ForbiddenException('Không có quyền xem kết quả phiên thi này');
     }
 
+    const config = attempt.onlineExamConfig;
+    const schedule = config?.examSchedule;
+    const now = new Date();
+
+    let isExamEnded = false;
+    let examEndTimeStr = '';
+
+    if (schedule) {
+      const [hours, minutes] = (schedule.endTime || '23:59').split(':').map(Number);
+      const dt = new Date(schedule.examDate);
+      dt.setHours(hours, minutes, 0, 0);
+      isExamEnded = now >= dt;
+      examEndTimeStr = `${schedule.endTime} ngày ${new Date(schedule.examDate).toLocaleDateString('vi-VN')}`;
+    } else {
+      isExamEnded = true;
+    }
+
+    const canShowScore =
+      Boolean(config?.showResultImmediately) ||
+      isExamEnded ||
+      attempt.status === 'GRADED';
+
     return {
       attemptId: attempt.id,
       status: attempt.status,
       submittedAt: attempt.submittedAt,
-      totalScore: attempt.totalScore ?? 0,
+      totalScore: canShowScore ? (attempt.totalScore ?? 0) : null,
       maxScore: attempt.maxScore ?? 10,
-      showResultImmediately: true,
+      showResultImmediately: canShowScore,
+      isExamEnded,
+      examEndTime: examEndTimeStr,
       isFlagged: attempt.isFlagged,
       incidents: attempt.incidents,
     };
