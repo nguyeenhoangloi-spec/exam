@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { ArrayMinSize, IsArray, IsIn, IsInt, IsOptional, IsString, MaxLength, Min, ValidateNested } from 'class-validator';
 
 export class AssignSupervisorDto {
   @Type(() => Number)
@@ -34,4 +34,34 @@ export class FindSupervisorsDto {
   @IsInt()
   @Min(1)
   examScheduleId?: number;
+}
+
+export class AutoSupervisorPreviewDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  examScheduleId: number;
+}
+
+export class AutoSupervisorProposalDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  examScheduleRoomId: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  teacherId: number;
+
+  @IsIn(['SUPERVISOR_1', 'SUPERVISOR_2'])
+  role: 'SUPERVISOR_1' | 'SUPERVISOR_2';
+}
+
+export class AutoSupervisorAcceptDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => AutoSupervisorProposalDto)
+  proposals: AutoSupervisorProposalDto[];
 }

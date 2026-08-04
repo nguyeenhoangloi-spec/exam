@@ -24,6 +24,7 @@ import {
   Eye,
   CheckCircle2,
   Users,
+  Sparkles,
 } from 'lucide-react';
 import { ExamSchedule, ExamPeriod, Subject } from '../../types';
 
@@ -36,6 +37,9 @@ export default function ExamSchedulesPage() {
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [autoProposal, setAutoProposal] = useState<any | null>(null);
+  const [selectedAutoSubjectIds, setSelectedAutoSubjectIds] = useState<number[]>([]);
+  const [autoLoading, setAutoLoading] = useState(false);
 
   // Modals & Drawers
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -172,6 +176,41 @@ export default function ExamSchedulesPage() {
     }
   };
 
+  const previewAutoSchedule = async () => {
+    if (!selectedPeriodId) return;
+    setAutoLoading(true);
+    try {
+      const res = await api.post('/exam-schedules/auto-preview', { examPeriodId: Number(selectedPeriodId) });
+      setAutoProposal(res.data);
+      setSelectedAutoSubjectIds(res.data.proposals.map((proposal: any) => proposal.subjectId));
+      setToast({ message: 'Đã tạo phương án xếp lịch xem trước. Chưa ghi dữ liệu.', type: 'success' });
+    } catch (err: any) {
+      setToast({ message: err.message || 'Không thể tạo phương án xếp lịch', type: 'error' });
+    } finally {
+      setAutoLoading(false);
+    }
+  };
+
+  const acceptAutoSchedule = async () => {
+    if (!autoProposal?.proposals?.length) return;
+    setAutoLoading(true);
+    try {
+      const proposals = autoProposal.proposals
+        .filter((proposal: any) => selectedAutoSubjectIds.includes(proposal.subjectId))
+        .map((proposal: any) => ({ examPeriodId: proposal.examPeriodId, subjectId: proposal.subjectId, examDate: proposal.examDate, startTime: proposal.startTime, endTime: proposal.endTime, examType: proposal.examType }));
+      if (!proposals.length) return;
+      await api.post('/exam-schedules/auto-apply', { proposals });
+      setAutoProposal(null);
+      setSelectedAutoSubjectIds([]);
+      setToast({ message: 'Đã lưu phương án xếp lịch tự động.', type: 'success' });
+      await fetchInitialData();
+    } catch (err: any) {
+      setToast({ message: err.message || 'Phương án đã thay đổi, vui lòng xem lại', type: 'error' });
+    } finally {
+      setAutoLoading(false);
+    }
+  };
+
   const handleDelete = (id: number) => {
     const sch = schedules.find((s) => s.id === id);
     setConfirmModal({
@@ -247,15 +286,33 @@ export default function ExamSchedulesPage() {
                 <Download className="h-4 w-4" /> Xuất Danh sách
               </button>
               {currentUser?.role === 'ADMIN' && (
+                <>
+                <button type="button" onClick={() => void previewAutoSchedule()} disabled={autoLoading} className="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-medium text-violet-700 hover:bg-violet-100 disabled:opacity-50">
+                  <Sparkles className="h-4 w-4" /> {autoLoading ? 'Đang đề xuất...' : 'Xếp lịch tự động'}
+                </button>
                 <button
                   onClick={openAddModal}
                   className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
                 >
                   <Plus className="h-4 w-4" /> Thêm Ca thi Mới
                 </button>
+                </>
               )}
             </div>
           </div>
+
+          {autoProposal && currentUser?.role === 'ADMIN' && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div><p className="font-bold">Phương án xếp lịch xem trước · điểm {autoProposal.score}/100</p><p className="text-xs">{autoProposal.rationale}</p></div>
+                <button type="button" onClick={() => void acceptAutoSchedule()} disabled={autoLoading || !selectedAutoSubjectIds.length} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">Xác nhận lưu đã chọn</button>
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                {autoProposal.proposals.map((proposal: any) => <label key={proposal.subjectId} className="flex items-center gap-2 rounded-lg border border-amber-200 bg-white p-2 text-xs"><input type="checkbox" checked={selectedAutoSubjectIds.includes(proposal.subjectId)} onChange={(event) => setSelectedAutoSubjectIds((current) => event.target.checked ? [...current, proposal.subjectId] : current.filter((id) => id !== proposal.subjectId))} /><span><b>{proposal.subjectCode}</b> · {new Date(proposal.examDate).toLocaleDateString('vi-VN')} · {proposal.startTime}-{proposal.endTime}</span></label>)}
+              </div>
+              {autoProposal.unassigned?.length > 0 && <p className="mt-2 text-rose-700">Chưa thể xếp {autoProposal.unassigned.length} môn.</p>}
+            </div>
+          )}
 
           {/* KPI Analytics Header */}
           <KPICards items={kpiItems} />

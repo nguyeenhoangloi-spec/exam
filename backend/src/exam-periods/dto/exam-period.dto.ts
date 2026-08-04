@@ -1,6 +1,6 @@
 import { IsDateString, IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
-const periodStatuses = ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED'] as const;
+const periodStatuses = ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED', 'LOCKED'] as const;
 
 export class CreateExamPeriodDto {
   @IsString()

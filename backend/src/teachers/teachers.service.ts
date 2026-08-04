@@ -1,10 +1,20 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class TeachersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
+
+  async setLock(actor: { id: number }, id: number, locked: boolean) {
+    const teacher = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({ where: { id: teacher.userId }, data: { status: locked ? 'LOCKED' : 'ACTIVE' }, include: { teacher: true } });
+      await this.audit.write({ actorId: actor.id, action: locked ? 'LOCK' : 'UNLOCK', entityType: 'TEACHER', entityId: id, description: `${locked ? 'Đã khóa' : 'Đã mở khóa'} giảng viên ${teacher.fullName}` }, tx);
+      return updated;
+    });
+  }
 
   async findAll() {
     return this.prisma.teacher.findMany({
@@ -95,6 +105,9 @@ export class TeachersService {
     },
   ) {
     const teacher = await this.findOne(id);
+    if (teacher.user.status === 'LOCKED') {
+      throw new BadRequestException('Giảng viên đã khóa, chỉ được mở khóa trước khi thay đổi.');
+    }
     return this.prisma.$transaction(async (tx) => {
       if (data.teacherCode && data.teacherCode !== teacher.teacherCode) {
         const existingTeacher = await tx.teacher.findUnique({ where: { teacherCode: data.teacherCode } });

@@ -31,9 +31,9 @@ const initialForm = {
   examScheduleId: '',
   paperCode: '001',
   durationMinutes: '60',
-  easyCount: '0',
-  mediumCount: '2',
-  hardCount: '0',
+  easyCount: '16',
+  mediumCount: '16',
+  hardCount: '8',
 };
 
 function escapeHtml(value: unknown) {
@@ -101,23 +101,63 @@ export default function ExamPapersPage() {
     fetchData();
   }, [fetchData, router]);
 
+  const handleDurationChange = (duration: string) => {
+    if (duration === '60') {
+      setFormData((previous) => ({
+        ...previous,
+        durationMinutes: '60',
+        easyCount: '16',
+        mediumCount: '16',
+        hardCount: '8',
+      }));
+    } else if (duration === '90') {
+      setFormData((previous) => ({
+        ...previous,
+        durationMinutes: '90',
+        easyCount: '24',
+        mediumCount: '24',
+        hardCount: '12',
+      }));
+    } else {
+      setFormData((previous) => ({ ...previous, durationMinutes: duration }));
+    }
+  };
+
+  const currentTotal =
+    Number(formData.easyCount) + Number(formData.mediumCount) + Number(formData.hardCount);
+  const requiredTotal =
+    Number(formData.durationMinutes) === 60 ? 40 : Number(formData.durationMinutes) === 90 ? 60 : 0;
+  const isValidTotal = requiredTotal === 0 || currentTotal === requiredTotal;
+
   const createPaper = async (event: FormEvent) => {
     event.preventDefault();
-    const questionCount =
-      Number(formData.easyCount) + Number(formData.mediumCount) + Number(formData.hardCount);
-    if (!formData.examScheduleId || questionCount < 1) {
+    if (!formData.examScheduleId || currentTotal < 1) {
       setToast({ message: 'Hãy chọn lịch thi và ít nhất một câu hỏi.', type: 'error' });
+      return;
+    }
+    if (requiredTotal > 0 && currentTotal !== requiredTotal) {
+      setToast({
+        message: `Đề thi ${formData.durationMinutes} phút phải có đúng ${requiredTotal} câu hỏi (hiện tại: ${currentTotal} câu).`,
+        type: 'error',
+      });
       return;
     }
     setCreating(true);
     try {
-      const response = await api.post<ExamPaper>('/exam-papers/create-random', {
+      const payload = {
         examScheduleId: Number(formData.examScheduleId),
         paperCode: formData.paperCode.trim(),
         durationMinutes: Number(formData.durationMinutes),
         easyCount: Number(formData.easyCount),
         mediumCount: Number(formData.mediumCount),
         hardCount: Number(formData.hardCount),
+      };
+      const preview = await api.post<any>('/exam-papers/preview-random', payload);
+      const approved = window.confirm(`Phương án đề ${preview.data.paper.paperCode} có ${preview.data.paper.questionCount} câu, tổng ${preview.data.paper.totalScore} điểm. Xác nhận lưu?`);
+      if (!approved) return;
+      const response = await api.post<ExamPaper>('/exam-papers/create-random', {
+        ...payload,
+        confirm: true,
       });
       setSelectedPaper(response.data);
       setShowAnswers(false);
@@ -238,21 +278,64 @@ export default function ExamPapersPage() {
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <label><span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Mã đề</span><input required maxLength={30} value={formData.paperCode} onChange={(event) => setFormData({ ...formData, paperCode: event.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500" /></label>
-                <label><span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Thời gian</span><input type="number" min={15} max={300} required value={formData.durationMinutes} onChange={(event) => setFormData({ ...formData, durationMinutes: event.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500" /></label>
+                <label>
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Thời gian làm bài</span>
+                  <select
+                    required
+                    value={formData.durationMinutes}
+                    onChange={(event) => handleDurationChange(event.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-sky-500"
+                  >
+                    <option value="60">60 phút (40 câu)</option>
+                    <option value="90">90 phút (60 câu)</option>
+                  </select>
+                </label>
               </div>
+
               <div className="border-t border-slate-100 pt-4">
-                <p className="mb-2 text-xs font-semibold uppercase text-slate-600">Ma trận độ khó</p>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase text-slate-600">Ma trận độ khó</p>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                      isValidTotal
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-rose-50 text-rose-700 border border-rose-200'
+                    }`}
+                  >
+                    Tổng: {currentTotal} / {requiredTotal} câu {isValidTotal ? '✓' : `(Cần ${requiredTotal} câu)`}
+                  </span>
+                </div>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     ['easyCount', 'Câu dễ', 'text-emerald-700'],
                     ['mediumCount', 'Trung bình', 'text-amber-700'],
                     ['hardCount', 'Câu khó', 'text-rose-700'],
                   ].map(([key, label, color]) => (
-                    <label key={key}><span className={`mb-1 block text-[11px] font-medium ${color}`}>{label}</span><input type="number" min={0} max={200} required value={formData[key as keyof typeof formData]} onChange={(event) => setFormData({ ...formData, [key]: event.target.value })} className="w-full rounded-xl border border-slate-200 px-2 py-2 text-center text-sm font-bold outline-none focus:border-sky-500" /></label>
+                    <label key={key}>
+                      <span className={`mb-1 block text-[11px] font-medium ${color}`}>{label}</span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={200}
+                        required
+                        value={formData[key as keyof typeof formData]}
+                        onChange={(event) => setFormData({ ...formData, [key]: event.target.value })}
+                        className="w-full rounded-xl border border-slate-200 px-2 py-2 text-center text-sm font-bold outline-none focus:border-sky-500"
+                      />
+                    </label>
                   ))}
                 </div>
+                {!isValidTotal && (
+                  <p className="mt-2 text-center text-xs font-semibold text-rose-600">
+                    ⚠️ Tổng số câu ({currentTotal}) phải bằng đúng {requiredTotal} câu với đề {formData.durationMinutes} phút.
+                  </p>
+                )}
               </div>
-              <button disabled={creating || !schedules.length} className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50">
+
+              <button
+                disabled={creating || !schedules.length || !isValidTotal}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
                 <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : 'Tạo đề thi'}
               </button>
             </form>

@@ -22,6 +22,16 @@ export class TeachersController {
     return this.teachersService.findAll();
   }
 
+  @Post(':id/lock')
+  lock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.teachersService.setLock(req.user, id, true);
+  }
+
+  @Post(':id/unlock')
+  unlock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.teachersService.setLock(req.user, id, false);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.teachersService.findOne(id);

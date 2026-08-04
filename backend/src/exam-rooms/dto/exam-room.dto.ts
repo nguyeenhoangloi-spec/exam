@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
-const roomStatuses = ['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE'] as const;
+const roomStatuses = ['AVAILABLE', 'MAINTENANCE', 'UNAVAILABLE', 'LOCKED'] as const;
 
 export class CreateExamRoomDto {
   @IsString()

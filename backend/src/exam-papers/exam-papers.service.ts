@@ -67,10 +67,18 @@ export class ExamPapersService {
     return result;
   }
 
-  async createRandom(actor: Actor, data: CreateRandomExamPaperDto) {
+  async createRandom(actor: Actor, data: CreateRandomExamPaperDto, persist = true) {
     const requestedCount = data.easyCount + data.mediumCount + data.hardCount;
     if (requestedCount < 1) {
       throw new BadRequestException('Đề thi phải có ít nhất một câu hỏi.');
+    }
+
+    if (data.durationMinutes === 60 && requestedCount !== 40) {
+      throw new BadRequestException(`Đề thi 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
+    }
+
+    if (data.durationMinutes === 90 && requestedCount !== 60) {
+      throw new BadRequestException(`Đề thi 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -79,6 +87,7 @@ export class ExamPapersService {
         include: {
           subject: true,
           examPeriod: true,
+          examPapers: { where: { deletedAt: null }, select: { status: true } },
           examScheduleRooms: {
             where: { supervisors: { some: { teacher: { userId: actor.id } } } },
             select: { id: true },
@@ -86,8 +95,11 @@ export class ExamPapersService {
         },
       });
       if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
-      if (['CANCELLED', 'COMPLETED'].includes(schedule.status)) {
+      if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(schedule.status)) {
         throw new BadRequestException('Không thể tạo đề cho lịch thi đã hủy hoặc hoàn thành.');
+      }
+      if (schedule.examPapers.some((paper) => paper.status === ExamPaperStatus.PUBLISHED)) {
+        throw new BadRequestException('Lịch thi đã có đề công bố, không được tạo lại đề tự động.');
       }
       if (actor.role === 'TEACHER' && schedule.examScheduleRooms.length === 0) {
         throw new ForbiddenException('Bạn chỉ được tạo đề cho lịch thi mà mình được phân công.');
@@ -133,6 +145,17 @@ export class ExamPapersService {
       ];
       const shortage = requirements.find((item) => item.available < item.requested);
       if (shortage) {
+        if (!persist) {
+          return {
+            preview: true,
+            isValid: false,
+            message: `Không đủ câu ${shortage.label} theo ma trận.`,
+            errors: [`Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`],
+            warnings: [],
+            alternatives: [{ rationale: `Giảm số câu ${shortage.label} xuống ${shortage.available} hoặc bổ sung câu đã duyệt.` }],
+            paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount },
+          };
+        }
         throw new BadRequestException(
           `Không đủ câu ${shortage.label} đã duyệt. Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`,
         );
@@ -146,6 +169,19 @@ export class ExamPapersService {
       const totalScore = selectedQuestions.reduce((sum, question) => sum + question.score, 0);
       const paperCode = data.paperCode.trim();
       const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;
+
+      if (!persist) {
+        return {
+          preview: true,
+          message: 'Đã tạo phương án đề thi. Chưa ghi dữ liệu.',
+          schedule: { id: schedule.id, subjectName: schedule.subject.subjectName, examDate: schedule.examDate, startTime: schedule.startTime, endTime: schedule.endTime },
+          paper: { paperCode, title, durationMinutes: data.durationMinutes, totalScore, questionCount: selectedQuestions.length },
+          questions: selectedQuestions.map((question, index) => ({ id: question.id, code: question.code, content: question.content, difficulty: question.difficulty, score: question.score, order: index + 1 })),
+          rationale: 'Chọn ngẫu nhiên câu đã duyệt theo đúng ma trận độ khó đã nhập.',
+          warnings: [],
+          alternatives: [{ rationale: 'Có thể chạy lại xem trước để tạo một bộ câu ngẫu nhiên khác cùng ma trận.' }],
+        };
+      }
 
       const examPaper = await tx.examPaper.create({
         data: {
@@ -189,6 +225,10 @@ export class ExamPapersService {
       }, tx);
       return examPaper;
     });
+  }
+
+  async previewRandom(actor: Actor, data: CreateRandomExamPaperDto) {
+    return this.createRandom(actor, data, false);
   }
 
   async findAll(actor: Actor, examScheduleId?: number) {

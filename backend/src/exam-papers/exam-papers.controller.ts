@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -24,7 +25,13 @@ export class ExamPapersController {
 
   @Post('create-random')
   createRandom(@Request() req: any, @Body() body: CreateRandomExamPaperDto) {
+    if (body.confirm !== true) throw new BadRequestException('Phải xem trước và xác nhận ma trận đề trước khi lưu.');
     return this.examPapersService.createRandom(req.user, body);
+  }
+
+  @Post('preview-random')
+  previewRandom(@Request() req: any, @Body() body: CreateRandomExamPaperDto) {
+    return this.examPapersService.previewRandom(req.user, body);
   }
 
   @Get()

@@ -17,11 +17,36 @@ import {
   Users,
   ShieldCheck,
   CheckCircle2,
+  AlertCircle,
+  History,
+  Trash2,
+  Printer,
+  Grid,
+  List,
+  FileSpreadsheet,
+  RotateCcw,
 } from 'lucide-react';
-import { ExamPeriod, ExamSchedule, ExamRoom } from '../../types';
+import { ExamPeriod, ExamSchedule } from '../../types';
+
+type RoomAvailability = {
+  id: number;
+  roomCode: string;
+  roomName: string;
+  capacity: number;
+  building: string;
+  roomType: string;
+  status: string;
+  isAvailable: boolean;
+  conflictingSubject: string | null;
+  busyReason: string | null;
+};
 
 type ArrangementResult = {
   message: string;
+  preview?: boolean;
+  warnings?: string[];
+  errors?: string[];
+  unassigned?: Array<{ studentId: number; studentCode: string; fullName: string; reason: string }>;
   summary: {
     totalStudents: number;
     totalRoomsAssigned: number;
@@ -43,12 +68,21 @@ type ArrangementResult = {
   }>;
 };
 
+function escapeHtml(val: unknown) {
+  return String(val ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export default function ExamArrangementPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
-  const [rooms, setRooms] = useState<ExamRoom[]>([]);
+  const [rooms, setRooms] = useState<RoomAvailability[]>([]);
 
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>('');
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
@@ -56,6 +90,12 @@ export default function ExamArrangementPage() {
 
   const [arranging, setArranging] = useState(false);
   const [result, setResult] = useState<ArrangementResult | null>(null);
+
+  // Advanced features state
+  const [activeTab, setActiveTab] = useState<'arrange' | 'history'>('arrange');
+  const [historyLogs, setHistoryLogs] = useState<any[]>([]);
+  const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
+  const [filterRoomCode, setFilterRoomCode] = useState<string>('ALL');
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
@@ -72,6 +112,73 @@ export default function ExamArrangementPage() {
     onConfirm: () => {},
   });
 
+  const fetchRoomAvailability = useCallback(async (scheduleId: string) => {
+    if (!scheduleId) return;
+    try {
+      const res = await api.get<RoomAvailability[]>(`/exam-arrangement/room-availability?examScheduleId=${scheduleId}`);
+      setRooms(res.data);
+      // Auto select available rooms by default
+      const availableIds = res.data.filter((r) => r.isAvailable).map((r) => r.id);
+      setSelectedRoomIds(availableIds);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải trạng thái phòng thi', type: 'error' });
+    }
+  }, []);
+
+  const fetchExistingResults = useCallback(async (scheduleId: string) => {
+    if (!scheduleId) {
+      setResult(null);
+      return;
+    }
+    try {
+      const res = await api.get(`/exam-arrangement/result?examScheduleId=${scheduleId}`);
+      if (res.data && res.data.length > 0) {
+        const details: any[] = [];
+        let totalCount = 0;
+        const currentSched = schedules.find((s) => s.id.toString() === scheduleId);
+
+        res.data.forEach((sr: any) => {
+          sr.examRoomStudents?.forEach((ers: any) => {
+            totalCount += 1;
+            details.push({
+              id: ers.id,
+              examNumber: ers.student?.studentCode || 'SBN',
+              seatNumber: ers.seatNumber,
+              studentCode: ers.student?.studentCode,
+              fullName: ers.student?.fullName,
+              className: ers.student?.class?.className || '---',
+              roomCode: sr.room?.roomCode || sr.examRoom?.roomCode,
+              roomName: sr.room?.roomName || sr.examRoom?.roomName || sr.room?.roomCode,
+              building: sr.room?.building || sr.examRoom?.building || '---',
+            });
+          });
+        });
+
+        if (details.length > 0) {
+          setResult({
+            message: 'Dữ liệu xếp phòng hiện tại từ hệ thống',
+            preview: false,
+            summary: {
+              totalStudents: totalCount,
+              totalRoomsAssigned: res.data.length,
+              subjectCode: currentSched?.subject?.subjectCode || '---',
+              subjectName: currentSched?.subject?.subjectName || '---',
+              examDate: currentSched?.examDate ? new Date(currentSched.examDate).toLocaleDateString('vi-VN') : '---',
+              timeSlot: `${currentSched?.startTime || ''} - ${currentSched?.endTime || ''}`,
+            },
+            details,
+          });
+        } else {
+          setResult(null);
+        }
+      } else {
+        setResult(null);
+      }
+    } catch (err) {
+      setResult(null);
+    }
+  }, [schedules]);
+
   const fetchSchedules = useCallback(async (periodId: string) => {
     if (!periodId) {
       setSchedules([]);
@@ -81,22 +188,30 @@ export default function ExamArrangementPage() {
     try {
       const res = await api.get(`/exam-schedules?examPeriodId=${periodId}`);
       setSchedules(res.data);
-      setSelectedScheduleId(res.data[0]?.id?.toString() || '');
-      setSelectedRoomIds([]);
-      setResult(null);
+      if (res.data.length > 0) {
+        const firstSchedId = res.data[0].id.toString();
+        setSelectedScheduleId(firstSchedId);
+        await fetchRoomAvailability(firstSchedId);
+        await fetchExistingResults(firstSchedId);
+      }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải danh sách ca thi', type: 'error' });
+    }
+  }, [fetchExistingResults, fetchRoomAvailability]);
+
+  const fetchHistory = useCallback(async () => {
+    try {
+      const res = await api.get('/exam-arrangement/history');
+      setHistoryLogs(res.data);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải nhật ký xếp phòng', type: 'error' });
     }
   }, []);
 
   const fetchData = useCallback(async () => {
     try {
-      const [resPeriods, resRooms] = await Promise.all([
-        api.get('/exam-periods'),
-        api.get('/exam-rooms'),
-      ]);
+      const resPeriods = await api.get('/exam-periods');
       setPeriods(resPeriods.data);
-      setRooms(resRooms.data);
 
       if (resPeriods.data.length > 0) {
         const periodId = resPeriods.data[0].id.toString();
@@ -104,7 +219,7 @@ export default function ExamArrangementPage() {
         await fetchSchedules(periodId);
       }
     } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
+      setToast({ message: err.message || 'Lỗi tải dữ liệu ban đầu', type: 'error' });
     }
   }, [fetchSchedules]);
 
@@ -116,54 +231,101 @@ export default function ExamArrangementPage() {
     }
     setCurrentUser(u);
     void fetchData();
-  }, [fetchData, router]);
+    void fetchHistory();
+  }, [fetchData, fetchHistory, router]);
 
-  const handleToggleRoom = (roomId: number) => {
-    if (selectedRoomIds.includes(roomId)) {
-      setSelectedRoomIds(selectedRoomIds.filter((id) => id !== roomId));
+  const handleScheduleChange = async (scheduleId: string) => {
+    setSelectedScheduleId(scheduleId);
+    setResult(null);
+    await fetchRoomAvailability(scheduleId);
+    await fetchExistingResults(scheduleId);
+  };
+
+  const handleToggleRoom = (r: RoomAvailability) => {
+    if (!r.isAvailable) {
+      setToast({ message: `Phòng ${r.roomName || r.roomCode} bị bận (${r.busyReason}).`, type: 'error' });
+      return;
+    }
+    if (selectedRoomIds.includes(r.id)) {
+      setSelectedRoomIds(selectedRoomIds.filter((id) => id !== r.id));
     } else {
-      setSelectedRoomIds([...selectedRoomIds, roomId]);
+      setSelectedRoomIds([...selectedRoomIds, r.id]);
     }
   };
 
-  const promptArrangement = (e: React.FormEvent) => {
+  const selectAvailableOnly = () => {
+    const availableIds = rooms.filter((r) => r.isAvailable).map((r) => r.id);
+    setSelectedRoomIds(availableIds);
+    setToast({ message: `Đã chọn ${availableIds.length} phòng trống.`, type: 'success' });
+  };
+
+  const runPreview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedScheduleId) {
       setToast({ message: 'Vui lòng chọn ca thi', type: 'error' });
       return;
     }
     if (selectedRoomIds.length === 0) {
-      setToast({ message: 'Vui lòng chọn ít nhất 1 phòng thi', type: 'error' });
+      setToast({ message: 'Vui lòng chọn ít nhất 1 phòng thi trống', type: 'error' });
       return;
     }
 
-    setConfirmModal({
-      isOpen: true,
-      title: 'Kích hoạt Xếp lịch thi Tự động',
-      message: `Hệ thống sẽ tự động thuật toán phân bổ thí sinh và phòng thi đã chọn. Bạn có muốn tiếp tục?`,
-      type: 'warning',
-      onConfirm: () => runArrangement(),
-    });
-  };
-
-  const runArrangement = async () => {
-    setConfirmModal((prev) => ({ ...prev, isOpen: false }));
     setArranging(true);
     setResult(null);
     try {
-      const res = await api.post<ArrangementResult>('/exam-arrangement/auto-arrange', {
+      const res = await api.post<ArrangementResult>('/exam-arrangement/preview', {
         examScheduleId: Number(selectedScheduleId),
         roomIds: selectedRoomIds,
       });
       setResult(res.data);
-      const refreshedSchedules = await api.get(`/exam-schedules?examPeriodId=${selectedPeriodId}`);
-      setSchedules(refreshedSchedules.data);
-      setToast({ message: res.data.message, type: 'success' });
+      setToast({ message: 'Đã tạo phương án xem trước. Bấm "Xác nhận lưu" để ghi dữ liệu.', type: 'success' });
     } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi khi xếp lịch thi', type: 'error' });
+      setToast({ message: err.message || 'Lỗi khi tạo phương án xem trước', type: 'error' });
     } finally {
       setArranging(false);
     }
+  };
+
+  const runSaveArrangement = async () => {
+    setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    setArranging(true);
+    try {
+      const res = await api.post<ArrangementResult>('/exam-arrangement/auto-arrange', {
+        examScheduleId: Number(selectedScheduleId),
+        roomIds: selectedRoomIds,
+        confirm: true,
+      });
+      setResult(res.data);
+      setToast({ message: res.data.message || 'Đã lưu phương án xếp phòng thành công!', type: 'success' });
+      await fetchExistingResults(selectedScheduleId);
+      await fetchHistory();
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi khi lưu phương án xếp phòng', type: 'error' });
+    } finally {
+      setArranging(false);
+    }
+  };
+
+  const handleResetArrangement = () => {
+    const currentSched = schedules.find((s) => s.id.toString() === selectedScheduleId);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Hủy & Reset Xếp phòng thi',
+      message: `Bạn có chắc chắn muốn HỦY và XÓA TOÀN BỘ dữ liệu xếp phòng cho ca thi ${currentSched?.subject?.subjectName || ''}? Thao tác này không thể hoàn tác.`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.delete(`/exam-arrangement/reset/${selectedScheduleId}`);
+          setToast({ message: 'Đã hủy xếp phòng cho ca thi thành công!', type: 'success' });
+          setResult(null);
+          await fetchRoomAvailability(selectedScheduleId);
+          await fetchHistory();
+        } catch (err: any) {
+          setToast({ message: err.message || 'Lỗi khi hủy xếp phòng', type: 'error' });
+        }
+      },
+    });
   };
 
   const roomSummaries = useMemo(() => {
@@ -182,35 +344,130 @@ export default function ExamArrangementPage() {
     [rooms, selectedRoomIds],
   );
 
+  const availableCount = useMemo(() => rooms.filter((r) => r.isAvailable).length, [rooms]);
+
+  const printDoorList = () => {
+    if (!result || !result.details.length) return;
+    const printable = window.open('', '_blank', 'width=900,height=720');
+    if (!printable) {
+      setToast({ message: 'Trình duyệt đang chặn cửa sổ in.', type: 'error' });
+      return;
+    }
+
+    const currentSched = schedules.find((s) => s.id.toString() === selectedScheduleId);
+    const filterDetails = filterRoomCode === 'ALL'
+      ? result.details
+      : result.details.filter((d) => d.roomCode === filterRoomCode);
+
+    const roomGroups = new Map<string, typeof filterDetails>();
+    filterDetails.forEach((d) => {
+      const group = roomGroups.get(d.roomCode) || [];
+      group.push(d);
+      roomGroups.set(d.roomCode, group);
+    });
+
+    const pages = Array.from(roomGroups.entries()).map(([roomCode, students]) => {
+      const roomInfo = rooms.find((r) => r.roomCode === roomCode);
+      const rows = students.map((st, i) => `
+        <tr>
+          <td style="text-align:center;">${i + 1}</td>
+          <td style="text-align:center;font-weight:bold;">SBN-${String(i + 1).padStart(3, '0')}</td>
+          <td style="font-weight:bold;color:#1e3a8a;">${escapeHtml(st.studentCode)}</td>
+          <td style="font-weight:bold;">${escapeHtml(st.fullName)}</td>
+          <td>${escapeHtml(st.className)}</td>
+          <td style="text-align:center;font-weight:bold;color:#0284c7;">Ghế #${st.seatNumber}</td>
+        </tr>
+      `).join('');
+
+      return `
+        <div className="page" style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;">
+          <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;">
+            <h2 style="margin:0;font-size:18px;text-transform:uppercase;color:#0f172a;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2>
+            <h1 style="margin:4px 0 0;font-size:24px;color:#1e66f5;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1>
+            <p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(currentSched?.subject?.subjectName)}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(currentSched?.examDate || Date.now()).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6">
+            <thead>
+              <tr style="background:#f1f5f9;color:#0f172a;text-align:left;">
+                <th style="width:40px;text-align:center;">STT</th>
+                <th style="width:70px;text-align:center;">MÃ SBN</th>
+                <th style="width:100px;">MÃ SV</th>
+                <th>HỌ VÀ TÊN</th>
+                <th style="width:90px;">LỚP SH</th>
+                <th style="width:70px;text-align:center;">VỊ TRÍ</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="margin-top:20px;display:flex;justify-between;font-size:12px;">
+            <div>Tổng số thí sinh: <strong>${students.length}</strong> / ${roomInfo?.capacity || 40} chỗ</div>
+            <div>Cán bộ coi thi ký tên: ....................</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Danh sách dán cửa</title><style>
+      body{font-family:Arial,sans-serif;margin:20px;color:#0f172a}
+      @media print{body{margin:0}}
+    </style></head><body>${pages}<script>window.onload=()=>window.print();</script></body></html>`);
+    printable.document.close();
+  };
+
   const kpiItems: KPICardItem[] = [
     { title: 'Ca thi đang chọn', value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn', subtext: `${schedules.length} ca thi trong kỳ`, icon: Zap, color: 'sky' },
-    { title: 'Phòng được chọn', value: selectedRoomIds.length, subtext: 'Sẽ được kiểm tra trùng lịch khi xếp', icon: ShieldCheck, color: 'emerald' },
-    { title: 'Sức chứa đã chọn', value: `${selectedCapacity} chỗ`, subtext: 'Tổng sức chứa các phòng đã chọn', icon: Users, color: 'indigo' },
-    { title: 'Kết quả gần nhất', value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp', subtext: result ? result.summary.subjectName : 'Chọn tham số để bắt đầu', icon: CheckCircle2, color: 'purple' },
+    { title: 'Phòng thi khả dụng', value: `${availableCount}/${rooms.length}`, subtext: 'Trạng thái rảnh trong khung giờ', icon: DoorOpen, color: 'emerald' },
+    { title: 'Sức chứa đã chọn', value: `${selectedCapacity} chỗ`, subtext: `${selectedRoomIds.length} phòng đang được chọn`, icon: Users, color: 'indigo' },
+    { title: 'Kết quả phân bổ', value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp', subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu', icon: CheckCircle2, color: 'purple' },
   ];
+
+  const filteredDetails = useMemo(() => {
+    if (!result) return [];
+    if (filterRoomCode === 'ALL') return result.details;
+    return result.details.filter((d) => d.roomCode === filterRoomCode);
+  }, [filterRoomCode, result]);
 
   return (
     <AppShell user={currentUser} title="Xếp Lịch Thi Tự Động">
       <main className="w-full px-6 py-6 space-y-6">
-        {/* Header */}
+        {/* Header & Tab Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-slate-500 font-medium">Tự động ghép nối môn thi, phân bổ sinh viên vào phòng máy tính và ngăn ngừa trùng lịch</p>
+            <p className="text-xs text-slate-500 font-medium">Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử</p>
+          </div>
+          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs font-bold shadow-2xs">
+            <button
+              onClick={() => setActiveTab('arrange')}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
+                activeTab === 'arrange' ? 'bg-[#1e66f5] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Thực hiện Xếp phòng
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
+                activeTab === 'history' ? 'bg-[#1e66f5] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <History className="h-3.5 w-3.5" /> Lịch sử & Nhật ký ({historyLogs.length})
+            </button>
           </div>
         </div>
 
-          {/* KPI Analytics Header */}
-          <KPICards items={kpiItems} />
+        {/* KPI Analytics Header */}
+        <KPICards items={kpiItems} />
 
-          {/* Form Setup */}
+        {activeTab === 'arrange' ? (
+          /* Main Arrangement Form & Matrix Workspace */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Setup parameters */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+            {/* Left Column: Parameter Selection & Room Availability List */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
               <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <Layers className="h-4 w-4 text-sky-600" /> Tham số Thuật toán
               </h3>
 
-              <form onSubmit={promptArrangement} className="space-y-4">
+              <form onSubmit={runPreview} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 mb-1">Kỳ thi Trường</label>
                   <select
@@ -233,110 +490,343 @@ export default function ExamArrangementPage() {
                   <label className="block text-xs font-bold text-slate-500 mb-1">Ca thi Cần Xếp phòng</label>
                   <select
                     value={selectedScheduleId}
-                    onChange={(e) => setSelectedScheduleId(e.target.value)}
+                    onChange={(e) => void handleScheduleChange(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
                   >
                     {schedules.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.subject?.subjectName} ({s.startTime} - {s.endTime})
+                        {s.subject?.subjectName} ({s.subject?.subjectCode}) · {new Date(s.examDate).toLocaleDateString('vi-VN')} ({s.startTime}-{s.endTime})
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-2">Chọn Phòng thi khả dụng</label>
-                  <div className="max-h-48 overflow-y-auto space-y-2 rounded-xl border border-slate-200 p-3 bg-slate-50/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
+                    <button
+                      type="button"
+                      onClick={selectAvailableOnly}
+                      className="text-[11px] font-bold text-[#1e66f5] hover:underline"
+                    >
+                      Chọn phòng trống ({availableCount})
+                    </button>
+                  </div>
+
+                  <div className="max-h-56 overflow-y-auto space-y-2 rounded-xl border border-slate-200 p-2.5 bg-slate-50/60">
                     {rooms.map((r) => {
                       const isSelected = selectedRoomIds.includes(r.id);
                       return (
                         <div
                           key={r.id}
-                          onClick={() => handleToggleRoom(r.id)}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition text-xs ${
-                            isSelected
-                              ? 'border-sky-500 bg-sky-50 text-sky-900 font-bold'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                          onClick={() => handleToggleRoom(r)}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${
+                            !r.isAvailable
+                              ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
+                              : isSelected
+                              ? 'border-sky-500 bg-sky-50 text-sky-900 font-bold shadow-2xs cursor-pointer'
+                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 cursor-pointer'
                           }`}
                         >
-                          <div className="flex items-center gap-2">
-                            <DoorOpen className="h-4 w-4 text-slate-400" />
-                            <span>{r.roomName || r.roomCode}</span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-rose-500' : isSelected ? 'text-[#1e66f5]' : 'text-slate-400'}`} />
+                            <span className="truncate">{r.roomName || r.roomCode}</span>
                           </div>
-                          <span className="text-[11px] font-semibold text-slate-500">{r.capacity} chỗ</span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[11px] font-semibold text-slate-500">{r.capacity} chỗ</span>
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                                r.isAvailable
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  : 'bg-rose-100 text-rose-800 border border-rose-300'
+                              }`}
+                            >
+                              {r.isAvailable ? 'TRỐNG' : r.busyReason || 'BẬN'}
+                            </span>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={arranging}
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50"
-                >
-                  <Sparkles className="h-4 w-4" /> {arranging ? 'Đang chạy thuật toán...' : 'Kích hoạt Xếp lịch thi'}
-                </button>
+                <div className="pt-2 space-y-2">
+                  <button
+                    type="submit"
+                    disabled={arranging}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98"
+                  >
+                    <Sparkles className="h-4 w-4" /> {arranging ? 'Đang chạy thuật toán...' : 'Xem trước phương án'}
+                  </button>
+
+                  {result && (
+                    <button
+                      type="button"
+                      onClick={handleResetArrangement}
+                      className="w-full flex items-center justify-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 font-semibold py-2 px-3 rounded-xl text-xs transition"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Hủy phương án xếp phòng (Reset)
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
 
-            {/* Right: Results View */}
+            {/* Right Column: Results & Interactive Matrix View */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm min-h-[400px]">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 mb-4 flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-emerald-600" /> Kết quả Phân bổ Phòng thi
-                </h3>
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs min-h-[500px] flex flex-col justify-between">
+                <div>
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-emerald-600" /> Kết quả & Ma trận Chỗ ngồi
+                    </h3>
 
-                {!result ? (
-                  <div className="flex flex-col items-center justify-center py-16 text-center text-slate-400">
-                    <Sparkles className="h-12 w-12 text-slate-300 mb-3" />
-                    <p className="text-sm font-medium">Chọn tham số bên trái và bấm Kích hoạt để xem kết quả xếp phòng tự động</p>
+                    {result && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* View Switcher */}
+                        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-1 text-xs font-semibold">
+                          <button
+                            type="button"
+                            onClick={() => setViewMode('matrix')}
+                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${
+                              viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
+                            }`}
+                          >
+                            <Grid className="h-3.5 w-3.5" /> Sơ đồ chỗ ngồi
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setViewMode('table')}
+                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${
+                              viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
+                            }`}
+                          >
+                            <List className="h-3.5 w-3.5" /> Danh sách bảng
+                          </button>
+                        </div>
+
+                        {/* Print Door List */}
+                        <button
+                          type="button"
+                          onClick={printDoorList}
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition"
+                        >
+                          <Printer className="h-3.5 w-3.5 text-sky-600" /> In dán cửa (A4)
+                        </button>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-xs font-semibold text-emerald-900 space-y-1">
-                      <p className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
-                        <CheckCircle className="h-4 w-4 text-emerald-600" /> Xếp phòng hoàn tất!
-                      </p>
-                      <p>Tổng số sinh viên được phân bổ: {result.summary.totalStudents} sinh viên</p>
-                      <p>Tổng số phòng thi sử dụng: {roomSummaries.length} phòng</p>
-                    </div>
 
-                    <div className="rounded-xl border border-slate-200 overflow-hidden">
-                      <table className="w-full text-left text-xs text-slate-600">
-                        <thead className="bg-slate-100 text-slate-700 font-bold uppercase">
-                          <tr>
-                            <th className="p-3">Phòng thi</th>
-                            <th className="p-3">Sức chứa</th>
-                            <th className="p-3">Số SV xếp vào</th>
-                            <th className="p-3">Trạng thái</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 bg-white">
-                          {roomSummaries.map((room) => {
-                            const roomObj = rooms.find((r) => r.roomCode === room.roomCode);
-                            return (
-                              <tr key={room.roomCode} className="hover:bg-slate-50">
-                                <td className="p-3 font-bold text-slate-900">{room.roomName || room.roomCode}</td>
-                                <td className="p-3">{roomObj?.capacity} chỗ</td>
-                                <td className="p-3 font-bold text-sky-700">{room.assigned} sinh viên</td>
-                                <td className="p-3">
-                                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                                    <CheckCircle2 className="h-3 w-3" /> Thành công
-                                  </span>
-                                </td>
+                  {!result ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center text-slate-400">
+                      <Sparkles className="h-12 w-12 text-slate-300 mb-3" />
+                      <p className="text-sm font-medium">Chọn Ca thi và các phòng trống bên trái, bấm &quot;Xem trước phương án&quot; để tạo ma trận chỗ ngồi tự động</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-5">
+                      {/* Summary Banner */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-xs font-semibold text-emerald-900">
+                        <div>
+                          <p className="text-sm font-extrabold text-emerald-950 flex items-center gap-1.5">
+                            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600" /> {result.message}
+                          </p>
+                          <p className="mt-1 text-slate-700 font-medium">
+                            Môn thi: <strong>{result.summary.subjectName}</strong> ({result.summary.subjectCode}) · Ngày: {result.summary.examDate} ({result.summary.timeSlot})
+                          </p>
+                          <p className="mt-0.5 text-emerald-800">
+                            Đã xếp: <strong>{result.summary.totalStudents} thí sinh</strong> vào <strong>{roomSummaries.length} phòng thi</strong>.
+                          </p>
+                        </div>
+
+                        {result.preview && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setConfirmModal({
+                                isOpen: true,
+                                title: 'Xác nhận Lưu Phương án Xếp phòng',
+                                message: 'Kết quả sẽ được ghi chính thức vào cơ sở dữ liệu. Bạn có chắc chắn?',
+                                type: 'warning',
+                                onConfirm: runSaveArrangement,
+                              })
+                            }
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 shadow-sm transition"
+                          >
+                            <CheckCircle className="h-4 w-4" /> Xác nhận lưu phương án
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Filter by Room */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-500">Lọc theo Phòng:</span>
+                          <select
+                            value={filterRoomCode}
+                            onChange={(e) => setFilterRoomCode(e.target.value)}
+                            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:bg-white"
+                          >
+                            <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
+                            {roomSummaries.map((rm) => (
+                              <option key={rm.roomCode} value={rm.roomCode}>
+                                {rm.roomName || rm.roomCode} ({rm.assigned} SV)
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <span className="text-xs font-semibold text-slate-500">Hiển thị {filteredDetails.length} thí sinh</span>
+                      </div>
+
+                      {/* View Mode 1: Interactive Seat Grid Matrix */}
+                      {viewMode === 'matrix' && (
+                        <div className="space-y-6">
+                          {roomSummaries
+                            .filter((rm) => filterRoomCode === 'ALL' || rm.roomCode === filterRoomCode)
+                            .map((room) => {
+                              const studentsInRoom = result.details.filter((d) => d.roomCode === room.roomCode);
+                              const roomObj = rooms.find((r) => r.roomCode === room.roomCode);
+                              return (
+                                <div key={room.roomCode} className="rounded-2xl border border-slate-200/90 bg-slate-50/50 p-4 space-y-3">
+                                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                                    <div className="flex items-center gap-2">
+                                      <DoorOpen className="h-4 w-4 text-[#1e66f5]" />
+                                      <h4 className="font-extrabold text-slate-900 text-sm">
+                                        PHÒNG {room.roomName || room.roomCode} ({room.building})
+                                      </h4>
+                                    </div>
+                                    <span className="text-xs font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+                                      {studentsInRoom.length} / {roomObj?.capacity || 40} Ghế đã xếp
+                                    </span>
+                                  </div>
+
+                                  {/* Seat Matrix Grid */}
+                                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 pt-1">
+                                    {studentsInRoom.map((st) => (
+                                      <div
+                                        key={st.id}
+                                        className="rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs hover:border-blue-300 transition text-left space-y-1"
+                                      >
+                                        <div className="flex items-center justify-between text-[10px]">
+                                          <span className="font-extrabold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded-md">
+                                            Ghế #{st.seatNumber}
+                                          </span>
+                                          <span className="font-medium text-slate-400">{st.className}</span>
+                                        </div>
+                                        <p className="font-bold text-slate-900 text-xs truncate" title={st.fullName}>
+                                          {st.fullName}
+                                        </p>
+                                        <p className="text-[11px] font-semibold text-slate-500 font-mono">
+                                          {st.studentCode}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      )}
+
+                      {/* View Mode 2: Detailed Table */}
+                      {viewMode === 'table' && (
+                        <div className="overflow-x-auto rounded-xl border border-slate-200">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-slate-100 text-slate-700 font-bold uppercase text-[11px]">
+                              <tr>
+                                <th className="p-3">Phòng</th>
+                                <th className="p-3 text-center">Vị trí</th>
+                                <th className="p-3">Mã SV</th>
+                                <th className="p-3">Họ và tên</th>
+                                <th className="p-3">Lớp SH</th>
                               </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 bg-white">
+                              {filteredDetails.map((st) => (
+                                <tr key={st.id} className="hover:bg-slate-50">
+                                  <td className="p-3 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
+                                  <td className="p-3 text-center font-extrabold text-sky-700">Ghế #{st.seatNumber}</td>
+                                  <td className="p-3 font-mono font-semibold text-slate-800">{st.studentCode}</td>
+                                  <td className="p-3 font-bold text-slate-900">{st.fullName}</td>
+                                  <td className="p-3 text-slate-600 font-medium">{st.className}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </main>
+        ) : (
+          /* Tab 2: Arrangement Audit Logs & History */
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <History className="h-5 w-5 text-sky-600" /> Nhật ký thao tác & Lịch sử Xếp phòng thi
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi</p>
+              </div>
+              <button
+                onClick={fetchHistory}
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#1e66f5] hover:underline"
+              >
+                <RotateCcw className="h-3.5 w-3.5" /> Tải lại Nhật ký
+              </button>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-200/80">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
+                  <tr>
+                    <th className="p-3">Thời gian</th>
+                    <th className="p-3">Người thực hiện</th>
+                    <th className="p-3">Hành động</th>
+                    <th className="p-3">Mô tả chi tiết</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {!historyLogs.length ? (
+                    <tr>
+                      <td colSpan={4} className="p-8 text-center text-slate-400">
+                        Chưa có lịch sử thao tác xếp phòng.
+                      </td>
+                    </tr>
+                  ) : (
+                    historyLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-slate-50 transition">
+                        <td className="p-3 font-medium text-slate-500 whitespace-nowrap">
+                          {new Date(log.createdAt).toLocaleString('vi-VN')}
+                        </td>
+                        <td className="p-3 font-bold text-slate-800 whitespace-nowrap">
+                          {log.actor?.username || 'Admin'} ({log.actor?.role || 'SYSTEM'})
+                        </td>
+                        <td className="p-3 whitespace-nowrap">
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                              log.action === 'ARRANGE'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : log.action === 'RESET_ARRANGEMENT'
+                                ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                : 'bg-sky-50 text-sky-700 border border-sky-200'
+                            }`}
+                          >
+                            {log.action}
+                          </span>
+                        </td>
+                        <td className="p-3 text-slate-700 font-medium">{log.description}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </main>
 
       {/* Confirm Popup */}
       <ConfirmModal

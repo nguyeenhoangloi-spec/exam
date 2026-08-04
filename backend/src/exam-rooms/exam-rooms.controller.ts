@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { ExamRoomsService } from './exam-rooms.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -19,6 +19,16 @@ export class ExamRoomsController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.examRoomsService.findOne(id);
+  }
+
+  @Post(':id/lock')
+  lock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examRoomsService.setLock(req.user, id, true);
+  }
+
+  @Post(':id/unlock')
+  unlock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examRoomsService.setLock(req.user, id, false);
   }
 
   @Roles('ADMIN')

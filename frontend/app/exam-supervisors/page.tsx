@@ -37,6 +37,9 @@ export default function ExamSupervisorsPage() {
   const [drawerSupervisor, setDrawerSupervisor] = useState<any | null>(null);
 
   const [assignedSupervisors, setAssignedSupervisors] = useState<any[]>([]);
+  const [autoProposal, setAutoProposal] = useState<any | null>(null);
+  const [selectedAutoProposalKeys, setSelectedAutoProposalKeys] = useState<string[]>([]);
+  const [autoLoading, setAutoLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -69,6 +72,8 @@ export default function ExamSupervisorsPage() {
     try {
       const res = await api.get(`/exam-schedules/${scheduleId}`);
       setSelectedSchedule(res.data);
+      setAutoProposal(null);
+      setSelectedAutoProposalKeys([]);
       const firstRoomId = res.data.examScheduleRooms?.[0]?.id?.toString() || '';
       setSelectedScheduleRoomId(firstRoomId);
       await fetchSupervisors(firstRoomId);
@@ -127,6 +132,41 @@ export default function ExamSupervisorsPage() {
       await selectSchedule(selectedSchedule.id);
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi phân công giám thị', type: 'error' });
+    }
+  };
+
+  const previewAutoAssign = async () => {
+    if (!selectedSchedule?.id) return;
+    setAutoLoading(true);
+    try {
+      const res = await api.post('/exam-supervisors/auto-preview', { examScheduleId: selectedSchedule.id });
+      setAutoProposal(res.data);
+      setSelectedAutoProposalKeys(res.data.proposals.map((proposal: any) => `${proposal.examScheduleRoomId}-${proposal.role}`));
+      setToast({ message: 'Đã tạo phương án giám thị xem trước. Chưa ghi dữ liệu.', type: 'success' });
+    } catch (err: any) {
+      setToast({ message: err.message || 'Không thể tạo phương án tự động', type: 'error' });
+    } finally {
+      setAutoLoading(false);
+    }
+  };
+
+  const acceptAutoAssign = async () => {
+    if (!autoProposal?.proposals?.length) return;
+    setAutoLoading(true);
+    try {
+      const proposals = autoProposal.proposals
+        .filter((proposal: any) => selectedAutoProposalKeys.includes(`${proposal.examScheduleRoomId}-${proposal.role}`))
+        .map((proposal: any) => ({ examScheduleRoomId: proposal.examScheduleRoomId, teacherId: proposal.teacherId, role: proposal.role }));
+      if (!proposals.length) return;
+      await api.post('/exam-supervisors/auto-assign', { proposals });
+      setAutoProposal(null);
+      setSelectedAutoProposalKeys([]);
+      setToast({ message: 'Đã lưu phương án phân công tự động.', type: 'success' });
+      await selectSchedule(selectedSchedule.id);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Phương án đã thay đổi, vui lòng xem lại', type: 'error' });
+    } finally {
+      setAutoLoading(false);
     }
   };
 
@@ -276,6 +316,24 @@ export default function ExamSupervisorsPage() {
                   <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 mb-4 flex items-center gap-2">
                     <UserPlus className="h-4 w-4 text-emerald-600" /> Thêm Phân công Giám thị
                   </h3>
+                  <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+                    <button type="button" onClick={() => void previewAutoAssign()} disabled={autoLoading || !selectedSchedule?.id} className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-100 disabled:opacity-50">
+                      {autoLoading ? 'Đang tạo phương án...' : 'Đề xuất tự động'}
+                    </button>
+                  </div>
+                  {autoProposal && (
+                    <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                      <p className="font-bold">Phương án xem trước · điểm {autoProposal.score}/100</p>
+                      <div className="mt-2 space-y-1">
+                        {autoProposal.proposals.map((proposal: any) => {
+                          const key = `${proposal.examScheduleRoomId}-${proposal.role}`;
+                          return <label key={key} className="flex items-center gap-2"><input type="checkbox" checked={selectedAutoProposalKeys.includes(key)} onChange={(event) => setSelectedAutoProposalKeys((current) => event.target.checked ? [...current, key] : current.filter((item) => item !== key))} />{proposal.roomCode} · {proposal.teacherName} · {proposal.role}</label>;
+                        })}
+                      </div>
+                      {autoProposal.unassigned?.length > 0 && <p className="mt-2 text-rose-700">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>}
+                      <button type="button" onClick={() => void acceptAutoAssign()} disabled={autoLoading || !selectedAutoProposalKeys.length} className="mt-3 rounded-lg bg-emerald-600 px-3 py-2 font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">Xác nhận lưu phương án đã chọn</button>
+                    </div>
+                  )}
                   <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-500 mb-1">Giảng viên coi thi</label>

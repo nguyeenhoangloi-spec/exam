@@ -1,9 +1,19 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ExamRoomsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
+
+  async setLock(actor: { id: number }, id: number, locked: boolean) {
+    const room = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.examRoom.update({ where: { id }, data: { status: locked ? 'LOCKED' : 'AVAILABLE' } });
+      await this.audit.write({ actorId: actor.id, action: locked ? 'LOCK' : 'UNLOCK', entityType: 'EXAM_ROOM', entityId: id, description: `${locked ? 'Đã khóa' : 'Đã mở khóa'} phòng ${room.roomCode}` }, tx);
+      return updated;
+    });
+  }
 
   async findAll() {
     return this.prisma.examRoom.findMany({
@@ -35,8 +45,11 @@ export class ExamRoomsService {
     return this.prisma.examRoom.create({ data });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: any, allowUnlock = false) {
     const room = await this.findOne(id);
+    if (room.status === 'LOCKED' && !allowUnlock) {
+      throw new BadRequestException('Phòng thi đã khóa, chỉ được mở khóa trước khi thay đổi.');
+    }
     if (data.capacity !== undefined) {
       if (!Number.isInteger(data.capacity) || data.capacity < 1) {
         throw new BadRequestException('Sức chứa phòng phải là số nguyên dương.');

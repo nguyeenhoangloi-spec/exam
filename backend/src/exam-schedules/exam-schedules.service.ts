@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { Prisma } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateExamScheduleDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
+import { AutoScheduleProposalDto, CreateExamScheduleDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
 
 type Actor = { id: number; role?: string };
 type ScheduleData = CreateExamScheduleDto | UpdateExamScheduleDto;
@@ -20,6 +20,175 @@ export class ExamSchedulesService {
         }
         throw error;
       });
+  }
+
+  /** Read-only validation report used before any bulk scheduling/arrangement action. */
+  async conflicts(examPeriodId?: number) {
+    const schedules = await this.prisma.examSchedule.findMany({
+      where: examPeriodId ? { examPeriodId } : undefined,
+      include: {
+        subject: true,
+        examPeriod: true,
+        examScheduleRooms: {
+          include: {
+            room: true,
+            examRoomStudents: { select: { studentId: true } },
+            supervisors: { select: { teacherId: true } },
+          },
+        },
+      },
+      orderBy: [{ examDate: 'asc' }, { startTime: 'asc' }],
+    });
+    const errors: Array<{ code: string; scheduleIds: number[]; message: string }> = [];
+    const warnings: Array<{ code: string; scheduleIds: number[]; message: string }> = [];
+    const overlaps = (a: any, b: any) => a.examDate.toISOString().slice(0, 10) === b.examDate.toISOString().slice(0, 10)
+      && a.startTime < b.endTime && a.endTime > b.startTime
+      && a.status !== 'CANCELLED' && b.status !== 'CANCELLED';
+
+    for (const schedule of schedules) {
+      const periodStart = this.dayRange(schedule.examPeriod.startDate).start;
+      const periodEnd = this.dayRange(schedule.examPeriod.endDate).end;
+      if (schedule.examDate < periodStart || schedule.examDate >= periodEnd) {
+        errors.push({ code: 'OUTSIDE_PERIOD', scheduleIds: [schedule.id], message: `Lịch ${schedule.id} nằm ngoài thời gian kỳ thi.` });
+      }
+      for (const room of schedule.examScheduleRooms) {
+        if (room.examRoomStudents.length > room.room.capacity) {
+          errors.push({ code: 'CAPACITY', scheduleIds: [schedule.id], message: `Phòng ${room.room.roomCode} vượt sức chứa.` });
+        }
+        if (room.supervisors.length < 2) {
+          errors.push({ code: 'MISSING_SUPERVISOR', scheduleIds: [schedule.id], message: `Phòng ${room.room.roomCode} chưa đủ 2 giám thị.` });
+        }
+      }
+    }
+    for (let i = 0; i < schedules.length; i += 1) {
+      for (let j = i + 1; j < schedules.length; j += 1) {
+        const a = schedules[i];
+        const b = schedules[j];
+        if (!overlaps(a, b)) continue;
+        if (a.subjectId === b.subjectId) {
+          errors.push({ code: 'SUBJECT_TIME_OVERLAP', scheduleIds: [a.id, b.id], message: `Môn ${a.subject.subjectName} có hai lịch trùng giờ.` });
+        }
+        const aRooms = new Set(a.examScheduleRooms.map((room) => room.roomId));
+        const sharedRoom = b.examScheduleRooms.find((room) => aRooms.has(room.roomId));
+        if (sharedRoom) {
+          errors.push({ code: 'ROOM_TIME_OVERLAP', scheduleIds: [a.id, b.id], message: `Phòng ${sharedRoom.room.roomCode} bị trùng lịch.` });
+        }
+        const aStudents = new Set(a.examScheduleRooms.flatMap((room) => room.examRoomStudents.map((student) => student.studentId)));
+        const sharedStudent = b.examScheduleRooms.some((room) => room.examRoomStudents.some((student) => aStudents.has(student.studentId)));
+        if (sharedStudent) {
+          errors.push({ code: 'STUDENT_TIME_OVERLAP', scheduleIds: [a.id, b.id], message: 'Có sinh viên bị xếp vào hai lịch thi trùng giờ.' });
+        }
+        const aTeachers = new Set(a.examScheduleRooms.flatMap((room) => room.supervisors.map((supervisor) => supervisor.teacherId)));
+        const sharedTeacher = b.examScheduleRooms.some((room) => room.supervisors.some((supervisor) => aTeachers.has(supervisor.teacherId)));
+        if (sharedTeacher) {
+          errors.push({ code: 'TEACHER_TIME_OVERLAP', scheduleIds: [a.id, b.id], message: 'Có giảng viên bị phân công hai lịch trùng giờ.' });
+        }
+      }
+    }
+    if (schedules.length > 1) warnings.push({ code: 'SOFT_BALANCE', scheduleIds: schedules.map((schedule) => schedule.id), message: 'Có thể cân bằng lại các ca thi để giảm lịch liên tiếp trong cùng ngày.' });
+    const score = Math.max(0, 100 - errors.length * 15 - warnings.length * 3);
+    return {
+      generatedAt: new Date().toISOString(),
+      examPeriodId: examPeriodId ?? null,
+      score,
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      unassigned: [],
+      alternatives: errors.length ? [{ action: 'REVIEW_CONFLICTS', rationale: 'Đổi khung giờ/phòng hoặc hủy lịch xung đột trước khi lưu phương án.' }] : [{ action: 'BALANCE_SLOTS', rationale: 'Có thể chạy lại báo cáo sau khi bổ sung lịch mới để cân bằng tải.' }],
+      rationale: 'Báo cáo chỉ đọc; không thay đổi lịch, phòng, sinh viên hoặc giám thị.',
+    };
+  }
+
+  async previewAutoSchedule(examPeriodId: number, subjectIds?: number[]) {
+    const period = await this.prisma.examPeriod.findUnique({ where: { id: examPeriodId } });
+    if (!period) throw new NotFoundException('Không tìm thấy kỳ thi.');
+    if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(period.status)) throw new BadRequestException('Không thể đề xuất lịch cho kỳ thi đã hủy, hoàn thành hoặc đã khóa.');
+    const existing = await this.prisma.examSchedule.findMany({
+      where: { examPeriodId, status: { not: 'CANCELLED' } },
+      include: { subject: true },
+    });
+    const activeSubjectIds = subjectIds?.length ? subjectIds : (await this.prisma.subject.findMany({ select: { id: true } })).map((subject) => subject.id);
+    const existingSubjectIds = new Set(existing.map((schedule) => schedule.subjectId));
+    const targetIds = activeSubjectIds.filter((id) => !existingSubjectIds.has(id));
+    const subjects = await this.prisma.subject.findMany({ where: { id: { in: targetIds } }, select: { id: true, subjectCode: true, subjectName: true } });
+    const enrollmentSubjectIds = Array.from(new Set([...targetIds, ...existing.map((schedule) => schedule.subjectId)]));
+    const enrollments = await this.prisma.studentSubject.findMany({ where: { subjectId: { in: enrollmentSubjectIds }, semester: period.semester, schoolYear: period.schoolYear, status: 'ELIGIBLE' }, select: { subjectId: true, studentId: true } });
+    const studentBySubject = new Map<number, Set<number>>();
+    for (const enrollment of enrollments) {
+      if (!studentBySubject.has(enrollment.subjectId)) studentBySubject.set(enrollment.subjectId, new Set());
+      studentBySubject.get(enrollment.subjectId)!.add(enrollment.studentId);
+    }
+    const slots = [['08:00', '09:30'], ['10:00', '11:30'], ['13:30', '15:00'], ['15:30', '17:00']];
+    const proposals: Array<AutoScheduleProposalDto & { subjectCode: string; subjectName: string; score: number }> = [];
+    const unassigned: Array<{ subjectId: number; subjectName?: string; reason: string }> = [];
+    const alternativePlans: Array<{ subjectId: number; subjectName: string; examDate: string; startTime: string; endTime: string; score: number; rationale: string }> = [];
+    const planned: any[] = [];
+    const periodStart = this.dayRange(period.startDate).start;
+    const periodEnd = this.dayRange(period.endDate).start;
+    const overlaps = (a: any, date: Date, startTime: string, endTime: string) => a.status !== 'CANCELLED'
+      && new Date(a.examDate).toISOString().slice(0, 10) === date.toISOString().slice(0, 10)
+      && a.startTime < endTime && a.endTime > startTime;
+    for (const subject of subjects) {
+      const students = studentBySubject.get(subject.id) || new Set<number>();
+      if (!students.size) {
+        unassigned.push({ subjectId: subject.id, subjectName: subject.subjectName, reason: 'Không có sinh viên đủ điều kiện thi trong kỳ.' });
+        continue;
+      }
+      const options: Array<{ date: Date; startTime: string; endTime: string; score: number }> = [];
+      for (let date = new Date(periodStart); date <= periodEnd; date.setUTCDate(date.getUTCDate() + 1)) {
+        for (const [startTime, endTime] of slots) {
+          const sameSlot = [...existing, ...planned].filter((schedule) => overlaps(schedule, date, startTime, endTime));
+          const studentConflict = sameSlot.some((schedule) => {
+            const other = studentBySubject.get(schedule.subjectId);
+            return other && [...students].some((studentId) => other.has(studentId));
+          });
+          if (studentConflict) continue;
+          const dayLoad = sameSlot.length;
+          const score = 100 - dayLoad * 8 - (date.getUTCDay() === 0 ? 5 : 0);
+          options.push({ date: new Date(date), startTime, endTime, score });
+        }
+      }
+      options.sort((a, b) => b.score - a.score || a.date.getTime() - b.date.getTime() || a.startTime.localeCompare(b.startTime));
+      const best = options[0];
+      if (!best) {
+        unassigned.push({ subjectId: subject.id, subjectName: subject.subjectName, reason: 'Không còn khung giờ không xung đột.' });
+        continue;
+      }
+      const proposal = { examPeriodId, subjectId: subject.id, examDate: best.date.toISOString(), startTime: best.startTime, endTime: best.endTime, examType: 'TRAC_NGHIEM' as const, subjectCode: subject.subjectCode, subjectName: subject.subjectName, score: best.score };
+      proposals.push(proposal);
+      for (const alternative of options.slice(1, 4)) alternativePlans.push({ subjectId: subject.id, subjectName: subject.subjectName, examDate: alternative.date.toISOString(), startTime: alternative.startTime, endTime: alternative.endTime, score: alternative.score, rationale: 'Khung giờ hợp lệ thay thế, điểm tối ưu thấp hơn phương án chính.' });
+      planned.push(proposal);
+    }
+    return {
+      preview: true,
+      examPeriod: { id: period.id, name: period.name, startDate: period.startDate, endDate: period.endDate },
+      score: proposals.length ? Math.round(proposals.reduce((sum, proposal) => sum + proposal.score, 0) / proposals.length) : 0,
+      isValid: unassigned.length === 0,
+      proposals,
+      errors: [],
+      warnings: proposals.length > 1 ? ['Các môn được dàn đều theo các khung giờ còn trống.'] : [],
+      unassigned,
+      alternatives: alternativePlans.length ? alternativePlans : [{ rationale: unassigned.length ? 'Mở rộng ngày thi hoặc thêm khung giờ trong kỳ.' : 'Có thể chạy lại preview để chọn phương án khung giờ khác.' }],
+      rationale: 'Ưu tiên khung giờ không trùng sinh viên, sau đó tối ưu tải lịch trong ngày.',
+    };
+  }
+
+  async acceptAutoSchedule(actor: Actor, proposals: AutoScheduleProposalDto[]) {
+    if (!proposals?.length) throw new BadRequestException('Phương án không có lịch để lưu.');
+    return this.serializable(async (tx) => {
+      const created: any[] = [];
+      for (const proposal of proposals) {
+        const period = await this.validatePeriodDate(tx, proposal.examPeriodId, proposal.examDate);
+        if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(period.status)) throw new BadRequestException('Không thể lưu lịch vào kỳ thi đã hủy, hoàn thành hoặc đã khóa.');
+        const subject = await this.subject(tx, proposal.subjectId);
+        await this.validateNoConflicts(tx, { subjectId: proposal.subjectId, examDate: proposal.examDate, startTime: proposal.startTime, endTime: proposal.endTime, periodId: period.id });
+        const schedule = await tx.examSchedule.create({ data: { examPeriodId: period.id, subjectId: subject.id, examDate: this.dayRange(proposal.examDate).start, startTime: proposal.startTime, endTime: proposal.endTime, examType: proposal.examType || 'TRAC_NGHIEM', status: 'SCHEDULED' }, include: { subject: true, examPeriod: true } });
+        created.push(schedule);
+        await this.audit.write({ actorId: actor.id, action: 'AUTO_SCHEDULE', entityType: 'EXAM_SCHEDULE', entityId: schedule.id, description: `Đã lưu lịch thi tự động cho môn ${subject.subjectName}`, metadata: { proposal: { examPeriodId: proposal.examPeriodId, subjectId: proposal.subjectId, examDate: proposal.examDate, startTime: proposal.startTime, endTime: proposal.endTime } } }, tx);
+      }
+      return { successCount: created.length, failedCount: 0, data: created };
+    });
   }
 
   async findAll(actor: Actor, examPeriodId?: number) {
@@ -220,8 +389,14 @@ export class ExamSchedulesService {
     });
   }
 
-  async update(actor: Actor, id: number, data: UpdateExamScheduleDto) {
+  async update(actor: Actor, id: number, data: UpdateExamScheduleDto, allowUnlock = false) {
     const existing = await this.findOne(actor, id);
+    if (existing.status === 'LOCKED' && !allowUnlock) {
+      throw new BadRequestException('Lịch thi đã khóa, chỉ được mở khóa trước khi thay đổi.');
+    }
+    if (existing.examPapers.some((paper) => paper.status === 'PUBLISHED' && !paper.deletedAt)) {
+      throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi.');
+    }
     const subjectId = data.subjectId ?? existing.subjectId;
     const periodId = data.examPeriodId ?? existing.examPeriodId;
     const examDate = data.examDate ?? existing.examDate;

@@ -3,7 +3,7 @@ import { ExamSchedulesService } from './exam-schedules.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { CreateExamScheduleDto, FindExamSchedulesDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
+import { AutoScheduleAcceptDto, AutoSchedulePreviewDto, CreateExamScheduleDto, FindExamSchedulesDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -15,6 +15,36 @@ export class ExamSchedulesController {
   @Roles('ADMIN', 'TEACHER')
   findAll(@Request() req: any, @Query() query: FindExamSchedulesDto) {
     return this.examSchedulesService.findAll(req.user, query.examPeriodId);
+  }
+
+  @Get('conflicts')
+  @Roles('ADMIN')
+  conflicts(@Query() query: FindExamSchedulesDto) {
+    return this.examSchedulesService.conflicts(query.examPeriodId);
+  }
+
+  @Post('auto-preview')
+  @Roles('ADMIN')
+  autoPreview(@Body() body: AutoSchedulePreviewDto) {
+    return this.examSchedulesService.previewAutoSchedule(body.examPeriodId, body.subjectIds);
+  }
+
+  @Post('auto-apply')
+  @Roles('ADMIN')
+  autoApply(@Request() req: any, @Body() body: AutoScheduleAcceptDto) {
+    return this.examSchedulesService.acceptAutoSchedule(req.user, body.proposals);
+  }
+
+  @Post(':id/lock')
+  @Roles('ADMIN')
+  lock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examSchedulesService.update(req.user, id, { status: 'LOCKED' });
+  }
+
+  @Post(':id/unlock')
+  @Roles('ADMIN')
+  unlock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examSchedulesService.update(req.user, id, { status: 'SCHEDULED' }, true);
   }
 
   @Get(':id')

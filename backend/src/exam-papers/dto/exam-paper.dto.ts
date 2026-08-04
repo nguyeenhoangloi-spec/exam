@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
 
 export class CreateRandomExamPaperDto {
   @Type(() => Number)
@@ -40,6 +40,10 @@ export class CreateRandomExamPaperDto {
   @Min(0)
   @Max(200)
   hardCount: number;
+
+  @IsOptional()
+  @IsBoolean()
+  confirm?: boolean;
 }
 
 export class ExamPaperQueryDto {
