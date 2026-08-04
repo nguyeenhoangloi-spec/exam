@@ -149,4 +149,17 @@ export class OnlineExamsController {
   ) {
     return this.onlineExamsService.submitAppeal(req.user.id, attemptId, dto.reason);
   }
+
+  /**
+   * GET /online-exams/schedule/:scheduleId/grade-report
+   * Báo cáo tổng hợp điểm thi cho Giảng viên & Admin
+   */
+  @Get('schedule/:scheduleId/grade-report')
+  @Roles('ADMIN', 'TEACHER')
+  getGradeReport(
+    @Request() req: any,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+  ) {
+    return this.onlineExamsService.getGradeReport(req.user, scheduleId);
+  }
 }

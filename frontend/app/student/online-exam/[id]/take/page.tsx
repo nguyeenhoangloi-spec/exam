@@ -208,7 +208,11 @@ export default function StudentExamTakePage() {
         const batch = [...eventQueue.current];
         eventQueue.current = [];
         try {
-          await onlineExamService.recordEvents(token, batch);
+          const proctoringResult = await onlineExamService.recordEvents(token, batch);
+          if (proctoringResult.autoSubmitted && attemptData?.attemptId) {
+            sessionStorage.removeItem('attemptToken');
+            router.push(`/student/online-exam/${attemptData.attemptId}/result`);
+          }
         } catch (e) {
           console.warn('Failed to send proctoring events', e);
         }
@@ -224,7 +228,7 @@ export default function StudentExamTakePage() {
       document.removeEventListener('contextmenu', handleContextMenu);
       clearInterval(eventInterval);
     };
-  }, [tokenFromUrl, attemptData]);
+  }, [tokenFromUrl, attemptData, router]);
 
   const handleSelectOption = (questionId: string, optionId: string, isMultipleChoice: boolean) => {
     const current = answers[questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false, version: 0 };

@@ -483,6 +483,10 @@ export class OnlineExamsService {
       throw new ForbiddenException('Phiên thi không hợp lệ');
     }
 
+    if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'INVALIDATED', 'TERMINATED'].includes(attempt.status)) {
+      return { success: false, currentRiskScore: attempt.riskScore, isFlagged: attempt.isFlagged, autoSubmitted: true };
+    }
+
     let addedRisk = 0;
     const policy = attempt.onlineExamConfig.securityPolicy;
 
@@ -520,10 +524,28 @@ export class OnlineExamsService {
       },
     });
 
+    const violationLimit = Math.max(1, attempt.onlineExamConfig.maxAllowedViolations || 5);
+    const recordedEvents = await this.prisma.proctoringEvent.count({ where: { attemptId: attempt.id } });
+    if (recordedEvents >= violationLimit) {
+      const submitted = await this.submitAttempt(studentUserId, attemptToken, true);
+      return {
+        success: true,
+        currentRiskScore: newRiskScore,
+        isFlagged: true,
+        autoSubmitted: true,
+        violationLimit,
+        recordedEvents,
+        status: submitted.status,
+      };
+    }
+
     return {
       success: true,
       currentRiskScore: newRiskScore,
       isFlagged: shouldFlag,
+      autoSubmitted: false,
+      violationLimit,
+      recordedEvents,
     };
   }
 
@@ -667,6 +689,129 @@ export class OnlineExamsService {
       success: true,
       message: 'Gửi giải trình thành công. Ban tổ chức thi sẽ xem xét.',
       incident,
+    };
+  }
+
+  /**
+   * Báo cáo Tổng hợp Điểm & Kết quả Ca thi cho Giảng viên/Admin
+   */
+  async getGradeReport(actor: any, scheduleId: number) {
+    const schedule: any = await this.prisma.examSchedule.findUnique({
+      where: { id: scheduleId },
+      include: {
+        subject: true,
+        examPeriod: true,
+        examScheduleRooms: {
+          include: {
+            examRoomStudents: {
+              include: {
+                student: {
+                  include: { class: true, user: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!schedule) {
+      throw new NotFoundException('Không tìm thấy lịch thi');
+    }
+
+    const attempts: any[] = await this.prisma.examAttempt.findMany({
+      where: {
+        onlineExamConfig: {
+          examScheduleId: scheduleId,
+        },
+      },
+      include: {
+        student: { include: { class: true, user: true } },
+        incidents: true,
+      },
+    });
+
+    const candidatesMap = new Map<number, any>();
+
+    // Khởi tạo danh sách từ danh sách phòng thi
+    for (const room of schedule.examScheduleRooms || []) {
+      for (const rs of room.examRoomStudents || []) {
+        const st = rs.student;
+        if (st && !candidatesMap.has(st.id)) {
+          candidatesMap.set(st.id, {
+            studentId: st.id,
+            studentCode: st.studentCode,
+            fullName: st.fullName || st.user?.username || 'Sinh viên',
+            className: st.class?.name || 'Chưa phân lớp',
+            status: 'ABSENT',
+            totalScore: 0,
+            maxScore: 10,
+            submittedAt: null,
+            violationCount: 0,
+          });
+        }
+      }
+    }
+
+    // Ghép dữ liệu bài làm của sinh viên
+    for (const att of attempts) {
+      const st = att.student;
+      if (!st) continue;
+      const existing = candidatesMap.get(st.id) || {
+        studentId: st.id,
+        studentCode: st.studentCode,
+        fullName: st.fullName || st.user?.username || 'Sinh viên',
+        className: st.class?.name || 'Chưa phân lớp',
+      };
+
+      candidatesMap.set(st.id, {
+        ...existing,
+        status: att.status,
+        totalScore: att.totalScore || 0,
+        maxScore: att.maxScore || 10,
+        submittedAt: att.submittedAt,
+        violationCount: att.incidents?.length || 0,
+      });
+    }
+
+    const candidates = Array.from(candidatesMap.values());
+    const submittedCandidates = candidates.filter((c) =>
+      ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes(c.status),
+    );
+
+    const totalAssigned = candidates.length;
+    const totalSubmitted = submittedCandidates.length;
+    const totalAbsent = totalAssigned - totalSubmitted;
+
+    const scores = submittedCandidates.map((c) => c.totalScore);
+    const avgScore = scores.length ? Number((scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)) : 0;
+    const highestScore = scores.length ? Math.max(...scores) : 0;
+    const lowestScore = scores.length ? Math.min(...scores) : 0;
+
+    const passCount = submittedCandidates.filter((c) => c.totalScore >= 5.0).length;
+    const passRate = totalSubmitted ? Number(((passCount / totalSubmitted) * 100).toFixed(1)) : 0;
+
+    return {
+      schedule: {
+        id: schedule.id,
+        subjectName: schedule.subject?.subjectName,
+        subjectCode: schedule.subject?.subjectCode,
+        periodName: schedule.examPeriod?.name,
+        examDate: schedule.examDate,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
+      },
+      stats: {
+        totalAssigned,
+        totalSubmitted,
+        totalAbsent,
+        avgScore,
+        highestScore,
+        lowestScore,
+        passCount,
+        passRate,
+      },
+      candidates,
     };
   }
 }

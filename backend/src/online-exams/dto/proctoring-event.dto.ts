@@ -1,4 +1,5 @@
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { EventSeverity, ProctoringEventType } from '@prisma/client';
 
 export class ProctoringEventDto {
@@ -24,5 +25,9 @@ export class ProctoringEventDto {
 
 export class ProctoringEventsBatchDto {
   @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(100)
+  @ValidateNested({ each: true })
+  @Type(() => ProctoringEventDto)
   events: ProctoringEventDto[];
 }

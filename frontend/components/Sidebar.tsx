@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
+  BarChart3,
   BookMarked,
   BookOpen,
   Building2,
@@ -60,11 +61,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { name: 'Phân công Giám thị', href: '/exam-supervisors', icon: UserCheck },
     { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
     { name: 'Tạo đề thi', href: '/exam-papers', icon: FileText },
+    { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
   ];
   const teacherNav = [
     { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
     { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
     { name: 'Tạo đề thi', href: '/exam-papers', icon: FileText },
+    { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
   ];
   const studentNav = [{ name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: BookMarked }];
   const navItems = (role === 'ADMIN' ? adminNav : role === 'TEACHER' ? teacherNav : studentNav).filter((item) =>
