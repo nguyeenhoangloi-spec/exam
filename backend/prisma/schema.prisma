@@ -295,6 +295,7 @@ model ExamSupervisor {
   teacherId          Int
   teacher            Teacher          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   role               String           @default("SUPERVISOR_1")
+  status             String           @default("PENDING")
   note               String?
 
   @@map("exam_supervisors")

@@ -7,13 +7,11 @@ import {
   Eye,
   FileText,
   KeyRound,
-  Layers,
   Printer,
   RotateCcw,
   Send,
   Sparkles,
   Trash2,
-  BookOpen,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '../../components/AppShell';
@@ -32,7 +30,6 @@ const statusStyle = {
 };
 
 const initialForm = {
-  mode: 'CENTRALIZED' as 'CENTRALIZED' | 'CLASS_QUIZ',
   examScheduleId: '',
   paperCode: '101',
   durationMinutes: '60',
@@ -322,36 +319,10 @@ export default function ExamPapersPage() {
               <Sparkles className="h-5 w-5 text-violet-600" /> Rút đề thi ngẫu nhiên
             </h2>
 
-            {/* Mode Selection Tabs */}
-            <div className="mb-5 grid grid-cols-2 gap-1.5 rounded-xl bg-slate-100 p-1 text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, mode: 'CENTRALIZED' })}
-                className={`inline-flex items-center justify-center gap-1.5 rounded-lg py-2 transition ${
-                  formData.mode === 'CENTRALIZED'
-                    ? 'bg-white text-violet-700 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <BookOpen className="h-3.5 w-3.5" /> Kỳ thi tập trung
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, mode: 'CLASS_QUIZ' })}
-                className={`inline-flex items-center justify-center gap-1.5 rounded-lg py-2 transition ${
-                  formData.mode === 'CLASS_QUIZ'
-                    ? 'bg-white text-sky-700 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Layers className="h-3.5 w-3.5" /> Quiz Lớp học
-              </button>
-            </div>
-
             <form onSubmit={createPaper} className="space-y-4">
               <label className="block">
                 <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">
-                  {formData.mode === 'CENTRALIZED' ? 'Lịch thi tập trung' : 'Môn học / Lớp giảng dạy'}
+                  Lịch thi tập trung
                 </span>
                 <select
                   required

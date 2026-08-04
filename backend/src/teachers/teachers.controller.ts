@@ -17,6 +17,22 @@ export class TeachersController {
     return this.teachersService.getMyAssignments(req.user.id);
   }
 
+  @Roles('TEACHER')
+  @Patch('my-assignments/:id/status')
+  updateAssignmentStatus(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { status: string; note?: string },
+  ) {
+    return this.teachersService.updateAssignmentStatus(req.user.id, id, body.status, body.note);
+  }
+
+  @Roles('TEACHER')
+  @Get('my-assignments/:id/attendance-sheet')
+  getAttendanceSheet(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.teachersService.getAttendanceSheet(req.user.id, id);
+  }
+
   @Get()
   findAll() {
     return this.teachersService.findAll();

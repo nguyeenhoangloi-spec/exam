@@ -171,7 +171,10 @@ export class TeachersService {
     return assignments.map((a) => ({
       id: a.id,
       role: a.role,
+      status: a.status || 'PENDING',
       note: a.note,
+      examScheduleRoomId: a.examScheduleRoomId,
+      scheduleId: a.examScheduleRoom.examScheduleId,
       subjectCode: a.examScheduleRoom.examSchedule.subject.subjectCode,
       subjectName: a.examScheduleRoom.examSchedule.subject.subjectName,
       examDate: a.examScheduleRoom.examSchedule.examDate,
@@ -182,5 +185,90 @@ export class TeachersService {
       building: a.examScheduleRoom.room.building,
       periodName: a.examScheduleRoom.examSchedule.examPeriod.name,
     }));
+  }
+
+  async updateAssignmentStatus(userId: number, assignmentId: number, status: string, note?: string) {
+    const teacher = await this.prisma.teacher.findUnique({ where: { userId } });
+    if (!teacher) throw new NotFoundException('Không tìm thấy giảng viên.');
+
+    const supervisor = await this.prisma.examSupervisor.findFirst({
+      where: { id: assignmentId, teacherId: teacher.id },
+    });
+
+    if (!supervisor) {
+      throw new NotFoundException('Không tìm thấy phân công coi thi.');
+    }
+
+    return this.prisma.examSupervisor.update({
+      where: { id: assignmentId },
+      data: {
+        status,
+        ...(note !== undefined && { note }),
+      },
+    });
+  }
+
+  async getAttendanceSheet(userId: number, assignmentId: number) {
+    const teacher = await this.prisma.teacher.findUnique({ where: { userId } });
+    if (!teacher) throw new NotFoundException('Không tìm thấy giảng viên.');
+
+    const supervisor: any = await this.prisma.examSupervisor.findFirst({
+      where: { id: assignmentId, teacherId: teacher.id },
+      include: {
+        examScheduleRoom: {
+          include: {
+            room: true,
+            examSchedule: {
+              include: {
+                subject: true,
+                examPeriod: true,
+              },
+            },
+            examRoomStudents: {
+              include: {
+                student: {
+                  include: { class: true, user: true },
+                },
+              },
+              orderBy: { seatNumber: 'asc' },
+            },
+          },
+        },
+      },
+    });
+
+    if (!supervisor) {
+      throw new NotFoundException('Không tìm thấy phân công coi thi.');
+    }
+
+    const room = supervisor.examScheduleRoom;
+    const schedule = room.examSchedule;
+
+    return {
+      assignmentId,
+      role: supervisor.role,
+      status: supervisor.status,
+      room: {
+        roomCode: room.room.roomCode,
+        roomName: room.room.roomName,
+        building: room.room.building,
+        capacity: room.room.capacity,
+      },
+      schedule: {
+        subjectName: schedule.subject.subjectName,
+        subjectCode: schedule.subject.subjectCode,
+        periodName: schedule.examPeriod.name,
+        examDate: schedule.examDate,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
+      },
+      students: (room.examRoomStudents || []).map((rs: any) => ({
+        seatNumber: rs.seatNumber,
+        examNumber: rs.examNumber,
+        studentCode: rs.student.studentCode,
+        fullName: rs.student.fullName || rs.student.user?.username || 'Sinh viên',
+        className: rs.student.class?.name || 'Chưa phân lớp',
+      })),
+    };
   }
 }
