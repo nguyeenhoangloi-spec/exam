@@ -114,6 +114,9 @@ export interface ExamRoom {
   capacity: number;
   roomType: string;
   status: string;
+  code?: string;
+  name?: string;
+  location?: string;
 }
 
 export interface QuestionOption {
