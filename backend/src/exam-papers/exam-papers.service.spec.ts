@@ -13,7 +13,7 @@ describe('ExamPapersService permissions', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('giới hạn danh sách TEACHER theo người tạo', async () => {
+  it('giới hạn danh sách TEACHER theo người tạo và đề đã phát hành', async () => {
     prisma.examPaper.findMany.mockResolvedValue([]);
     await service.findAll({ id: 7, role: 'TEACHER' }, 2);
 
@@ -22,7 +22,8 @@ describe('ExamPapersService permissions', () => {
         where: expect.objectContaining({
           deletedAt: null,
           examScheduleId: 2,
-          createdById: 7,
+          OR: [{ createdById: 7 }, { status: 'PUBLISHED' }],
+          examSchedule: { deletedAt: null },
         }),
       }),
     );
@@ -36,7 +37,7 @@ describe('ExamPapersService permissions', () => {
     expect(call.where).toEqual({ deletedAt: null, examSchedule: { deletedAt: null } });
   });
 
-  it('không cho TEACHER xem đề của người khác', async () => {
+  it('không cho TEACHER xem đề bản nháp của người khác', async () => {
     prisma.examPaper.findFirst.mockResolvedValue({
       id: 1,
       createdById: 99,

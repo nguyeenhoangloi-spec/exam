@@ -474,6 +474,37 @@ export class ExamSchedulesService {
     });
   }
 
+  async reopenEntry(actor: Actor, id: number, minutes: number) {
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được mở lại thời gian vào thi.');
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 24 * 60) {
+      throw new BadRequestException('Thời gian mở lại phải từ 1 đến 1440 phút.');
+    }
+    return this.serializable(async (tx) => {
+      const schedule = await tx.examSchedule.findFirst({
+        where: { id, deletedAt: null },
+        include: { subject: true, onlineExamConfig: true, examPapers: { where: { deletedAt: null, status: 'PUBLISHED' }, orderBy: { publishedAt: 'desc' }, take: 1 } },
+      });
+      if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi đang hoạt động.');
+      if (schedule.status === 'CANCELLED' || schedule.status === 'LOCKED') throw new BadRequestException('Không thể mở lại lịch đã hủy hoặc khóa.');
+      const paper = schedule.onlineExamConfig?.examPaperId ?? schedule.examPapers[0]?.id;
+      if (!paper) throw new BadRequestException('Lịch thi chưa có đề thi PUBLISHED để mở lại.');
+      const config = await tx.onlineExamConfig.upsert({
+        where: { examScheduleId: id },
+        update: { lateEntryWindowMinutes: minutes },
+        create: { examScheduleId: id, examPaperId: paper, lateEntryWindowMinutes: minutes },
+      });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'REOPEN_ENTRY',
+        entityType: 'EXAM_SCHEDULE',
+        entityId: id,
+        description: `Đã mở lại thời gian vào thi môn ${schedule.subject.subjectName} thêm ${minutes} phút`,
+        metadata: { lateEntryWindowMinutes: minutes },
+      }, tx);
+      return { scheduleId: id, lateEntryWindowMinutes: config.lateEntryWindowMinutes, message: `Đã mở lại thời gian vào thi trong ${minutes} phút.` };
+    });
+  }
+
   async findTrash(actor: Actor, examPeriodId?: number) {
     if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được xem thùng rác lịch thi.');
     return this.prisma.examSchedule.findMany({

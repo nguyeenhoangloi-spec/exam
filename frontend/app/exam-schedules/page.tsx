@@ -27,6 +27,7 @@ import {
   Sparkles,
   XCircle,
   RotateCcw,
+  Unlock,
 } from 'lucide-react';
 import { ExamSchedule, ExamPeriod, Subject } from '../../types';
 
@@ -307,6 +308,26 @@ export default function ExamSchedulesPage() {
     });
   };
 
+  const handleReopenEntry = (id: number) => {
+    const schedule = schedules.find((item) => item.id === id);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Mở lại thời gian vào thi',
+      message: `Mở lại cho sinh viên vào thi môn ${schedule?.subject?.subjectName || ''} trong 60 phút? Thao tác này sẽ được ghi vào lịch sử quản trị.`,
+      type: 'warning',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/exam-schedules/${id}/reopen-entry`, { minutes: 60 });
+          setToast({ message: 'Đã mở lại thời gian vào thi trong 60 phút.', type: 'success' });
+          await fetchInitialData();
+        } catch (err: any) {
+          setToast({ message: err.message, type: 'error' });
+        }
+      },
+    });
+  };
+
   const exportCsv = () => {
     const headers = 'Môn thi,Mã môn,Ngày thi,Giờ thi,Hình thức,Ghi chú\n';
     const rows = filteredSchedules
@@ -499,6 +520,15 @@ export default function ExamSchedulesPage() {
                                 >
                                   <XCircle className="h-4 w-4" />
                                 </button>
+                                {sch.examType === 'TRAC_NGHIEM' && (
+                                  <button
+                                    onClick={() => handleReopenEntry(sch.id)}
+                                    className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+                                    title="Mở lại thời gian vào thi"
+                                  >
+                                    <Unlock className="h-4 w-4" />
+                                  </button>
+                                )}
                                 <button
                                   onClick={() => handleDelete(sch.id)}
                                   className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"

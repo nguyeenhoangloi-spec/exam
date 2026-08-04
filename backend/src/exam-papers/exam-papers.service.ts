@@ -183,47 +183,59 @@ export class ExamPapersService {
         };
       }
 
-      const examPaper = await tx.examPaper.create({
-        data: {
-          examScheduleId: data.examScheduleId,
-          paperCode,
-          title,
-          durationMinutes: data.durationMinutes,
-          totalScore,
-          status: ExamPaperStatus.DRAFT,
-          createdById: actor.id,
-          questions: {
-            create: selectedQuestions.map((question, index) => ({
-              questionId: question.id,
-              questionOrder: index + 1,
-              score: question.score,
-            })),
-          },
-        },
-        include: paperDetailInclude,
-      });
+      const count = Math.min(Math.max(data.variantCount || 1, 1), 10);
+      const createdPapers: any[] = [];
 
-      for (const question of selectedQuestions) {
-        await tx.questionStatistic.upsert({
-          where: { questionId: question.id },
-          create: { questionId: question.id, usedCount: 1, lastUsedAt: new Date() },
-          update: { usedCount: { increment: 1 }, lastUsedAt: new Date() },
+      for (let v = 1; v <= count; v++) {
+        const vCode = count > 1 ? `${paperCode}-${100 + v}` : paperCode;
+        const vTitle = count > 1 ? `${title} (Mã đề ${100 + v})` : title;
+        const shuffledQuestions = count > 1 ? [...selectedQuestions].sort(() => Math.random() - 0.5) : selectedQuestions;
+
+        const examPaper = await tx.examPaper.create({
+          data: {
+            examScheduleId: data.examScheduleId,
+            paperCode: vCode,
+            title: vTitle,
+            durationMinutes: data.durationMinutes,
+            totalScore,
+            status: ExamPaperStatus.DRAFT,
+            createdById: actor.id,
+            questions: {
+              create: shuffledQuestions.map((question, index) => ({
+                questionId: question.id,
+                questionOrder: index + 1,
+                score: question.score,
+              })),
+            },
+          },
+          include: paperDetailInclude,
         });
+
+        for (const question of selectedQuestions) {
+          await tx.questionStatistic.upsert({
+            where: { questionId: question.id },
+            create: { questionId: question.id, usedCount: 1, lastUsedAt: new Date() },
+            update: { usedCount: { increment: 1 }, lastUsedAt: new Date() },
+          });
+        }
+
+        await this.audit.write({
+          actorId: actor.id,
+          action: 'CREATE',
+          entityType: 'EXAM_PAPER',
+          entityId: examPaper.id,
+          description: `Đã tạo đề thi ${examPaper.paperCode}`,
+          metadata: {
+            paperCode: examPaper.paperCode,
+            examScheduleId: data.examScheduleId,
+            questionCount: selectedQuestions.length,
+          },
+        }, tx);
+
+        createdPapers.push(examPaper);
       }
 
-      await this.audit.write({
-        actorId: actor.id,
-        action: 'CREATE',
-        entityType: 'EXAM_PAPER',
-        entityId: examPaper.id,
-        description: `Đã tạo đề thi ${examPaper.paperCode}`,
-        metadata: {
-          paperCode: examPaper.paperCode,
-          examScheduleId: data.examScheduleId,
-          questionCount: selectedQuestions.length,
-        },
-      }, tx);
-      return examPaper;
+      return count === 1 ? createdPapers[0] : createdPapers;
     });
   }
 
@@ -236,7 +248,7 @@ export class ExamPapersService {
       deletedAt: null,
       examSchedule: { deletedAt: null },
       ...(examScheduleId && { examScheduleId }),
-      ...(actor.role === 'TEACHER' && { createdById: actor.id }),
+      ...(actor.role === 'TEACHER' && { OR: [{ createdById: actor.id }, { status: ExamPaperStatus.PUBLISHED }] }),
     };
     return this.prisma.examPaper.findMany({
       where,

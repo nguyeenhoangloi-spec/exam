@@ -3,7 +3,7 @@ import { ExamSchedulesService } from './exam-schedules.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { AutoScheduleAcceptDto, AutoSchedulePreviewDto, CreateExamScheduleDto, FindExamSchedulesDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
+import { AutoScheduleAcceptDto, AutoSchedulePreviewDto, CreateExamScheduleDto, FindExamSchedulesDto, ReopenEntryDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -75,6 +75,12 @@ export class ExamSchedulesController {
   @Delete(':id')
   remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
     return this.examSchedulesService.remove(req.user, id);
+  }
+
+  @Post(':id/reopen-entry')
+  @Roles('ADMIN')
+  reopenEntry(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: ReopenEntryDto) {
+    return this.examSchedulesService.reopenEntry(req.user, id, body.minutes ?? 60);
   }
 
   @Post(':id/restore')

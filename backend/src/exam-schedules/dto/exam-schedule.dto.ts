@@ -86,6 +86,14 @@ export class FindExamSchedulesDto {
   examPeriodId?: number;
 }
 
+export class ReopenEntryDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  minutes?: number;
+}
+
 export class AutoSchedulePreviewDto {
   @Type(() => Number)
   @IsInt()

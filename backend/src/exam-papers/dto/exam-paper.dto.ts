@@ -44,6 +44,13 @@ export class CreateRandomExamPaperDto {
   @IsOptional()
   @IsBoolean()
   confirm?: boolean;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  variantCount?: number;
 }
 
 export class ExamPaperQueryDto {

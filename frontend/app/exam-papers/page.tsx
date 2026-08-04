@@ -3,14 +3,17 @@
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import {
   Archive,
+  Download,
   Eye,
   FileText,
   KeyRound,
+  Layers,
   Printer,
   RotateCcw,
   Send,
   Sparkles,
   Trash2,
+  BookOpen,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '../../components/AppShell';
@@ -19,6 +22,7 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
+import { exportExamPaperToWord } from '../../lib/export-docx';
 import { ExamPaper, ExamSchedule, User } from '../../types';
 
 const statusStyle = {
@@ -28,22 +32,15 @@ const statusStyle = {
 };
 
 const initialForm = {
+  mode: 'CENTRALIZED' as 'CENTRALIZED' | 'CLASS_QUIZ',
   examScheduleId: '',
-  paperCode: '001',
+  paperCode: '101',
   durationMinutes: '60',
   easyCount: '16',
   mediumCount: '16',
   hardCount: '8',
+  variantCount: '1',
 };
-
-function escapeHtml(value: unknown) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
 
 export default function ExamPapersPage() {
   const router = useRouter();
@@ -157,7 +154,10 @@ export default function ExamPapersPage() {
       });
       return;
     }
+
+    const variantCount = Number(formData.variantCount) || 1;
     setCreating(true);
+
     try {
       const payload = {
         examScheduleId: Number(formData.examScheduleId),
@@ -166,33 +166,45 @@ export default function ExamPapersPage() {
         easyCount: Number(formData.easyCount),
         mediumCount: Number(formData.mediumCount),
         hardCount: Number(formData.hardCount),
+        variantCount,
       };
+
       const preview = await api.post<any>('/exam-papers/preview-random', payload);
       if (preview.data.isValid === false) {
         setToast({ message: preview.data.message || 'Không đủ câu hỏi theo ma trận.', type: 'error' });
         return;
       }
+
       const paperCode = preview.data.paper?.paperCode || payload.paperCode;
       const questionCount = preview.data.paper?.questionCount || (payload.easyCount + payload.mediumCount + payload.hardCount);
       const totalScore = preview.data.paper?.totalScore ?? (questionCount * 0.25);
 
       setConfirmModal({
         isOpen: true,
-        title: 'Xác nhận tạo đề thi',
-        message: `Phương án đề ${paperCode} gồm ${questionCount} câu hỏi (Tổng điểm: ${totalScore} điểm). Bạn có muốn tạo đề thi này ở trạng thái bản nháp không?`,
+        title: variantCount > 1 ? `Tạo ${variantCount} Mã Đề Thi Đảo Câu` : 'Xác nhận tạo đề thi',
+        message: `Hệ thống sẽ sinh ${variantCount > 1 ? `${variantCount} mã đề thi khác nhau (tự động đảo câu hỏi & đáp án)` : `1 đề thi mã số ${paperCode}`} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
         type: 'info',
         onConfirm: async () => {
           setConfirmModal((prev) => ({ ...prev, isOpen: false }));
           setCreating(true);
           try {
-            const response = await api.post<ExamPaper>('/exam-papers/create-random', {
+            const response = await api.post<any>('/exam-papers/create-random', {
               ...payload,
               confirm: true,
             });
-            setSelectedPaper(response.data);
+
+            const createdPaper = Array.isArray(response.data) ? response.data[0] : response.data;
+            setSelectedPaper(createdPaper);
             setShowAnswers(false);
-            setToast({ message: `Đã tạo đề ${response.data.paperCode} ở trạng thái bản nháp.`, type: 'success' });
-            setFormData((previous) => ({ ...previous, paperCode: String(Number(previous.paperCode) + 1).padStart(3, '0') }));
+            setToast({
+              message: variantCount > 1 ? `🎉 Đã tạo thành công ${variantCount} mã đề thi đảo câu!` : `Đã tạo đề ${createdPaper.paperCode} ở trạng thái bản nháp.`,
+              type: 'success',
+            });
+
+            setFormData((previous) => ({
+              ...previous,
+              paperCode: String(Number(previous.paperCode) + variantCount).padStart(3, '0'),
+            }));
             await fetchData();
           } catch (error: any) {
             setToast({ message: error.message, type: 'error' });
@@ -267,31 +279,34 @@ export default function ExamPapersPage() {
     });
   };
 
-  const printPaper = (withAnswers: boolean) => {
+  const handleExportWord = (includeAnswerKey: boolean) => {
     if (!selectedPaper) return;
-    const printable = window.open('', '_blank', 'width=900,height=720');
-    if (!printable) {
-      setToast({ message: 'Trình duyệt đang chặn cửa sổ in.', type: 'error' });
-      return;
-    }
-    const questions = selectedPaper.questions?.map((item) => {
-      const options = item.question.options?.map((option) => `
-        <div class="${withAnswers && option.isCorrect ? 'correct' : ''}">
-          ${escapeHtml(option.label)}. ${escapeHtml(option.content)}
-          ${withAnswers && option.isCorrect ? '<strong> ✓ Đáp án đúng</strong>' : ''}
-        </div>`).join('') || '';
-      return `<section><h3>Câu ${item.questionOrder} (${item.score} điểm)</h3><p>${escapeHtml(item.question.content)}</p>${options}</section>`;
-    }).join('') || '';
-    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(selectedPaper.paperCode)}</title><style>
-      body{font-family:Arial,sans-serif;max-width:800px;margin:32px auto;color:#0f172a;line-height:1.5}
-      header{text-align:center;border-bottom:2px solid #0f172a;padding-bottom:16px;margin-bottom:24px}
-      section{margin:0 0 22px;page-break-inside:avoid} h1{font-size:22px} h3{font-size:15px;margin-bottom:6px}
-      p{margin:6px 0 10px} section div{padding:4px 8px}.correct{background:#dcfce7;color:#166534}
-      .meta{font-size:13px;color:#475569} @media print{body{margin:0}}
-    </style></head><body><header><h1>${withAnswers ? 'ĐÁP ÁN - ' : ''}${escapeHtml(selectedPaper.title)}</h1>
-      <div class="meta">Mã đề: ${escapeHtml(selectedPaper.paperCode)} · Thời gian: ${selectedPaper.durationMinutes} phút · Tổng điểm: ${selectedPaper.totalScore}</div>
-    </header>${questions}<script>window.onload=()=>window.print();</script></body></html>`);
-    printable.document.close();
+    const exportData = {
+      paperCode: selectedPaper.paperCode,
+      title: selectedPaper.title,
+      subjectName: selectedPaper.examSchedule?.subject?.subjectName || 'Môn học',
+      subjectCode: selectedPaper.examSchedule?.subject?.subjectCode || 'MH001',
+      durationMinutes: selectedPaper.durationMinutes,
+      totalScore: selectedPaper.totalScore,
+      questions: (selectedPaper.questions || []).map((qItem) => ({
+        order: qItem.questionOrder,
+        code: qItem.question.code,
+        content: qItem.question.content,
+        score: qItem.score,
+        explanation: qItem.question.explanation || undefined,
+        options: (qItem.question.options || []).map((opt) => ({
+          label: opt.label,
+          content: opt.content,
+          isCorrect: opt.isCorrect,
+        })),
+      })),
+    };
+
+    exportExamPaperToWord(exportData, includeAnswerKey);
+    setToast({
+      message: `Đã xuất File Word Đề thi ${selectedPaper.paperCode} ${includeAnswerKey ? 'kèm Bảng đáp án' : ''} thành công!`,
+      type: 'success',
+    });
   };
 
   const isAdmin = currentUser?.role === 'ADMIN';
@@ -301,35 +316,99 @@ export default function ExamPapersPage() {
       <main className="w-full px-6 py-6 space-y-6">
 
         <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
+          {/* Creation Form Panel */}
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
-            <h2 className="mb-5 flex items-center gap-2 font-bold text-slate-900">
-              <Sparkles className="h-5 w-5 text-violet-600" /> Rút đề ngẫu nhiên
+            <h2 className="mb-4 flex items-center gap-2 font-bold text-slate-900">
+              <Sparkles className="h-5 w-5 text-violet-600" /> Rút đề thi ngẫu nhiên
             </h2>
+
+            {/* Mode Selection Tabs */}
+            <div className="mb-5 grid grid-cols-2 gap-1.5 rounded-xl bg-slate-100 p-1 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, mode: 'CENTRALIZED' })}
+                className={`inline-flex items-center justify-center gap-1.5 rounded-lg py-2 transition ${
+                  formData.mode === 'CENTRALIZED'
+                    ? 'bg-white text-violet-700 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <BookOpen className="h-3.5 w-3.5" /> Kỳ thi tập trung
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, mode: 'CLASS_QUIZ' })}
+                className={`inline-flex items-center justify-center gap-1.5 rounded-lg py-2 transition ${
+                  formData.mode === 'CLASS_QUIZ'
+                    ? 'bg-white text-sky-700 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Layers className="h-3.5 w-3.5" /> Quiz Lớp học
+              </button>
+            </div>
+
             <form onSubmit={createPaper} className="space-y-4">
               <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Lịch thi</span>
-                <select required value={formData.examScheduleId} onChange={(event) => setFormData({ ...formData, examScheduleId: event.target.value })} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-sky-500">
+                <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">
+                  {formData.mode === 'CENTRALIZED' ? 'Lịch thi tập trung' : 'Môn học / Lớp giảng dạy'}
+                </span>
+                <select
+                  required
+                  value={formData.examScheduleId}
+                  onChange={(event) => setFormData({ ...formData, examScheduleId: event.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-sky-500 font-semibold"
+                >
                   {!schedules.length && <option value="">Chưa có lịch thi</option>}
-                  {schedules.map((schedule) => <option key={schedule.id} value={schedule.id}>{schedule.subject?.subjectName} ({schedule.subject?.subjectCode})</option>)}
+                  {schedules.map((schedule) => (
+                    <option key={schedule.id} value={schedule.id}>
+                      {schedule.subject?.subjectName} ({schedule.subject?.subjectCode}) - Kíp {schedule.startTime}
+                    </option>
+                  ))}
                 </select>
               </label>
+
               <div className="grid grid-cols-2 gap-3">
-                <label><span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Mã đề</span><input required maxLength={30} value={formData.paperCode} onChange={(event) => setFormData({ ...formData, paperCode: event.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500" /></label>
                 <label>
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Thời gian làm bài</span>
-                  <select
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Mã đề gốc</span>
+                  <input
                     required
-                    value={formData.durationMinutes}
-                    onChange={(event) => handleDurationChange(event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-sky-500"
+                    maxLength={30}
+                    value={formData.paperCode}
+                    onChange={(event) => setFormData({ ...formData, paperCode: event.target.value })}
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500"
+                  />
+                </label>
+                <label>
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Sinh số lượng mã đề</span>
+                  <select
+                    value={formData.variantCount}
+                    onChange={(e) => setFormData({ ...formData, variantCount: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-sky-700 outline-none focus:border-sky-500"
                   >
-                    <option value="60">60 phút (40 câu)</option>
-                    <option value="90">90 phút (60 câu)</option>
-                    {scheduleDuration > 0 && scheduleDuration !== 60 && scheduleDuration !== 90 && <option value={scheduleDuration}>{scheduleDuration} phút (theo lịch thi)</option>}
+                    <option value="1">1 mã đề độc lập</option>
+                    <option value="2">2 mã đề (101, 102)</option>
+                    <option value="4">4 mã đề (101, 102, 103, 104)</option>
+                    <option value="6">6 mã đề (101-106)</option>
                   </select>
                 </label>
               </div>
-              {scheduleDuration > 0 && <p className="-mt-2 text-xs font-medium text-slate-500">Lịch thi cho phép tối đa {scheduleDuration} phút ({selectedSchedule?.startTime}–{selectedSchedule?.endTime}).</p>}
+
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Thời gian làm bài</span>
+                <select
+                  required
+                  value={formData.durationMinutes}
+                  onChange={(event) => handleDurationChange(event.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-sky-500"
+                >
+                  <option value="60">60 phút (40 câu)</option>
+                  <option value="90">90 phút (60 câu)</option>
+                  {scheduleDuration > 0 && scheduleDuration !== 60 && scheduleDuration !== 90 && (
+                    <option value={scheduleDuration}>{scheduleDuration} phút (theo lịch thi)</option>
+                  )}
+                </select>
+              </label>
 
               <div className="border-t border-slate-100 pt-4">
                 <div className="mb-2 flex items-center justify-between">
@@ -344,6 +423,7 @@ export default function ExamPapersPage() {
                     Tổng: {currentTotal} / {requiredTotal} câu {isValidTotal ? '✓' : `(Cần ${requiredTotal} câu)`}
                   </span>
                 </div>
+
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     ['easyCount', 'Câu dễ', 'text-emerald-700'],
@@ -364,47 +444,132 @@ export default function ExamPapersPage() {
                     </label>
                   ))}
                 </div>
-                {!isValidTotal && (
-                  <p className="mt-2 text-center text-xs font-semibold text-rose-600">
-                    ⚠️ Tổng số câu ({currentTotal}) phải bằng đúng {requiredTotal} câu với đề {formData.durationMinutes} phút.
-                  </p>
-                )}
               </div>
 
               <button
                 disabled={creating || !schedules.length || !isValidTotal}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : 'Tạo đề thi'}
+                <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : `Tạo ${Number(formData.variantCount) > 1 ? `${formData.variantCount} Mã Đề Đảo Câu` : 'Đề Thi'}`}
               </button>
             </form>
           </section>
 
+          {/* Paper List Panel */}
           <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-8">
             <div className="mb-4 flex items-center justify-between">
-              <div><h2 className="flex items-center gap-2 font-bold text-slate-900"><FileText className="h-5 w-5 text-sky-600" /> Danh sách đề thi</h2><p className="mt-1 text-xs text-slate-500">{isAdmin ? 'Tất cả đề thi trong hệ thống' : 'Chỉ hiển thị đề do bạn tạo'}</p></div>
-              <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{papers.length} đề</span>
+              <div>
+                <h2 className="flex items-center gap-2 font-bold text-slate-900">
+                  <FileText className="h-5 w-5 text-sky-600" /> Danh sách đề thi
+                </h2>
+                <p className="mt-1 text-xs text-slate-500">
+                  {isAdmin ? 'Tất cả đề thi trong hệ thống' : 'Đề thi do bạn tạo và Đề thi đã phát hành'}
+                </p>
+              </div>
+              <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                {papers.length} đề
+              </span>
             </div>
+
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left text-sm">
-                <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-600"><tr><th className="px-3 py-3">Mã đề</th><th className="px-3 py-3">Tên đề</th><th className="px-3 py-3">Người tạo</th><th className="px-3 py-3">Trạng thái</th><th className="px-3 py-3">Cấu trúc</th><th className="px-3 py-3 text-right">Thao tác</th></tr></thead>
+                <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-600">
+                  <tr>
+                    <th className="px-3 py-3">Mã đề</th>
+                    <th className="px-3 py-3">Tên đề</th>
+                    <th className="px-3 py-3">Người tạo</th>
+                    <th className="px-3 py-3">Trạng thái</th>
+                    <th className="px-3 py-3">Cấu trúc</th>
+                    <th className="px-3 py-3 text-right">Thao tác</th>
+                  </tr>
+                </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {loading ? <tr><td colSpan={6} className="px-3 py-10 text-center text-slate-400">Đang tải danh sách đề thi...</td></tr> : !papers.length ? <tr><td colSpan={6} className="px-3 py-10 text-center text-slate-400">Chưa có đề thi phù hợp.</td></tr> : papers.map((paper) => (
-                    <tr key={paper.id} className="hover:bg-slate-50/70">
-                      <td className="px-3 py-3 font-bold text-violet-700">{paper.paperCode}</td>
-                      <td className="max-w-64 px-3 py-3"><p className="truncate font-semibold text-slate-800" title={paper.title}>{paper.title}</p><p className="text-xs text-slate-500">{paper.examSchedule?.subject?.subjectCode}</p></td>
-                      <td className="px-3 py-3 text-slate-600">{paper.createdBy?.username}</td>
-                      <td className="px-3 py-3"><span className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[paper.status].className}`}>{statusStyle[paper.status].label}</span></td>
-                      <td className="px-3 py-3 text-xs text-slate-600">{paper._count?.questions || 0} câu · {paper.totalScore} điểm · {paper.durationMinutes} phút</td>
-                      <td className="px-3 py-3"><div className="flex justify-end gap-1">
-                        <button disabled={busyId === paper.id} onClick={() => openDetail(paper.id)} title="Xem chi tiết" className="rounded-lg p-2 text-sky-600 hover:bg-sky-50"><Eye className="h-4 w-4" /></button>
-                        {isAdmin && paper.status === 'DRAFT' && <button onClick={() => runAction(paper, 'publish')} title="Phát hành" className="rounded-lg p-2 text-emerald-600 hover:bg-emerald-50"><Send className="h-4 w-4" /></button>}
-                        {isAdmin && paper.status !== 'ARCHIVED' && <button onClick={() => runAction(paper, 'archive')} title="Lưu trữ" className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"><Archive className="h-4 w-4" /></button>}
-                        {isAdmin && paper.status === 'ARCHIVED' && <button onClick={() => runAction(paper, 'restore')} title="Khôi phục" className="rounded-lg p-2 text-violet-600 hover:bg-violet-50"><RotateCcw className="h-4 w-4" /></button>}
-                        {paper.status === 'DRAFT' && <button onClick={() => runAction(paper, 'delete')} title="Xóa bản nháp" className="rounded-lg p-2 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>}
-                      </div></td>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={6} className="px-3 py-10 text-center text-slate-400">
+                        Đang tải danh sách đề thi...
+                      </td>
                     </tr>
-                  ))}
+                  ) : !papers.length ? (
+                    <tr>
+                      <td colSpan={6} className="px-3 py-10 text-center text-slate-400">
+                        Chưa có đề thi phù hợp.
+                      </td>
+                    </tr>
+                  ) : (
+                    papers.map((paper) => (
+                      <tr key={paper.id} className="hover:bg-slate-50/70">
+                        <td className="px-3 py-3 font-bold text-violet-700">{paper.paperCode}</td>
+                        <td className="max-w-64 px-3 py-3">
+                          <p className="truncate font-semibold text-slate-800" title={paper.title}>
+                            {paper.title}
+                          </p>
+                          <p className="text-xs text-slate-500">{paper.examSchedule?.subject?.subjectCode}</p>
+                        </td>
+                        <td className="px-3 py-3 text-slate-600">{paper.createdBy?.username}</td>
+                        <td className="px-3 py-3">
+                          <span
+                            className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${
+                              statusStyle[paper.status].className
+                            }`}
+                          >
+                            {statusStyle[paper.status].label}
+                          </span>
+                        </td>
+                        <td className="px-3 py-3 text-xs text-slate-600">
+                          {paper._count?.questions || 0} câu · {paper.totalScore} điểm · {paper.durationMinutes} phút
+                        </td>
+                        <td className="px-3 py-3">
+                          <div className="flex justify-end gap-1">
+                            <button
+                              disabled={busyId === paper.id}
+                              onClick={() => openDetail(paper.id)}
+                              title="Xem chi tiết & Xuất Word"
+                              className="rounded-lg p-2 text-sky-600 hover:bg-sky-50"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                            {isAdmin && paper.status === 'DRAFT' && (
+                              <button
+                                onClick={() => runAction(paper, 'publish')}
+                                title="Phát hành đề thi"
+                                className="rounded-lg p-2 text-emerald-600 hover:bg-emerald-50"
+                              >
+                                <Send className="h-4 w-4" />
+                              </button>
+                            )}
+                            {isAdmin && paper.status !== 'ARCHIVED' && (
+                              <button
+                                onClick={() => runAction(paper, 'archive')}
+                                title="Lưu trữ"
+                                className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+                              >
+                                <Archive className="h-4 w-4" />
+                              </button>
+                            )}
+                            {isAdmin && paper.status === 'ARCHIVED' && (
+                              <button
+                                onClick={() => runAction(paper, 'restore')}
+                                title="Khôi phục"
+                                className="rounded-lg p-2 text-violet-600 hover:bg-violet-50"
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                              </button>
+                            )}
+                            {paper.status === 'DRAFT' && (
+                              <button
+                                onClick={() => runAction(paper, 'delete')}
+                                title="Xóa bản nháp"
+                                className="rounded-lg p-2 text-rose-600 hover:bg-rose-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -412,22 +577,93 @@ export default function ExamPapersPage() {
         </div>
       </main>
 
-      <Modal isOpen={Boolean(selectedPaper)} onClose={() => setSelectedPaper(null)} title={selectedPaper ? `Chi tiết đề thi ${selectedPaper.paperCode}` : 'Chi tiết đề thi'}>
-        {selectedPaper && <div className="space-y-5">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-bold text-slate-900">{selectedPaper.title}</h3><p className="mt-1 text-xs text-slate-500">{selectedPaper.examSchedule?.examPeriod?.name} · {selectedPaper.examSchedule?.subject?.subjectName}</p></div><span className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[selectedPaper.status].className}`}>{statusStyle[selectedPaper.status].label}</span></div>
-            <div className="mt-3 flex flex-wrap gap-3 text-xs font-medium text-slate-600"><span>{selectedPaper.durationMinutes} phút</span><span>{selectedPaper.totalScore} điểm</span><span>{selectedPaper.questions?.length || 0} câu</span><span>Người tạo: {selectedPaper.createdBy?.username}</span></div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button onClick={() => printPaper(false)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"><Printer className="h-3.5 w-3.5" /> In đề thi</button>
-              <button onClick={() => printPaper(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"><KeyRound className="h-3.5 w-3.5" /> In đáp án</button>
-              <button onClick={() => setShowAnswers((value) => !value)} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">{showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}</button>
+      {/* Detail Modal with Word Export & Answers */}
+      <Modal
+        isOpen={Boolean(selectedPaper)}
+        onClose={() => setSelectedPaper(null)}
+        title={selectedPaper ? `Chi tiết đề thi ${selectedPaper.paperCode}` : 'Chi tiết đề thi'}
+      >
+        {selectedPaper && (
+          <div className="space-y-5">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-bold text-slate-900">{selectedPaper.title}</h3>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {selectedPaper.examSchedule?.examPeriod?.name} · {selectedPaper.examSchedule?.subject?.subjectName}
+                  </p>
+                </div>
+                <span
+                  className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${
+                    statusStyle[selectedPaper.status].className
+                  }`}
+                >
+                  {statusStyle[selectedPaper.status].label}
+                </span>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-3 text-xs font-medium text-slate-600">
+                <span>{selectedPaper.durationMinutes} phút</span>
+                <span>{selectedPaper.totalScore} điểm</span>
+                <span>{selectedPaper.questions?.length || 0} câu</span>
+                <span>Người tạo: {selectedPaper.createdBy?.username}</span>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleExportWord(false)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition shadow-2xs"
+                >
+                  <Download className="h-3.5 w-3.5" /> Xuất Word Đề Thi (.doc)
+                </button>
+                <button
+                  onClick={() => handleExportWord(true)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition shadow-2xs"
+                >
+                  <KeyRound className="h-3.5 w-3.5" /> Xuất Word + Bảng Đáp Án
+                </button>
+                <button
+                  onClick={() => setShowAnswers((value) => !value)}
+                  className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700"
+                >
+                  {showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án màn hình'}
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[55vh] space-y-3 overflow-y-auto pr-1">
+              {selectedPaper.questions?.map((item) => (
+                <article key={item.id} className="rounded-xl border border-slate-200 p-4">
+                  <p className="text-sm font-semibold text-slate-900">
+                    Câu {item.questionOrder}. ({item.score} điểm) {item.question.content}
+                  </p>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {item.question.options?.map((option) => (
+                      <div
+                        key={option.id}
+                        className={`rounded-lg border p-2 text-xs ${
+                          showAnswers && option.isCorrect
+                            ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800'
+                            : 'border-slate-200 bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        {option.label}. {option.content}
+                        {showAnswers && option.isCorrect && ' ✓'}
+                      </div>
+                    ))}
+                  </div>
+                  {showAnswers && item.question.explanation && (
+                    <p className="mt-3 rounded-lg bg-sky-50 p-2 text-xs text-sky-800">
+                      <strong>Giải thích:</strong> {item.question.explanation}
+                    </p>
+                  )}
+                </article>
+              ))}
             </div>
           </div>
-          <div className="max-h-[55vh] space-y-3 overflow-y-auto pr-1">
-            {selectedPaper.questions?.map((item) => <article key={item.id} className="rounded-xl border border-slate-200 p-4"><p className="text-sm font-semibold text-slate-900">Câu {item.questionOrder}. ({item.score} điểm) {item.question.content}</p><div className="mt-3 grid gap-2 sm:grid-cols-2">{item.question.options?.map((option) => <div key={option.id} className={`rounded-lg border p-2 text-xs ${showAnswers && option.isCorrect ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>{option.label}. {option.content}{showAnswers && option.isCorrect && ' ✓'}</div>)}</div>{showAnswers && item.question.explanation && <p className="mt-3 rounded-lg bg-sky-50 p-2 text-xs text-sky-800"><strong>Giải thích:</strong> {item.question.explanation}</p>}</article>)}
-          </div>
-        </div>}
+        )}
       </Modal>
+
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
