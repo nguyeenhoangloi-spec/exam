@@ -151,17 +151,13 @@ export default function ExamArrangementPage() {
 
   return (
     <AppShell user={currentUser} title="Xếp Lịch Thi Tự Động">
-      <div className="flex min-h-screen flex-col min-w-0 bg-slate-50/50">
-        <main className="p-8 max-w-7xl w-full mx-auto space-y-6">
-          {/* Header */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-amber-500" /> Thuật toán Xếp lịch thi & Phòng thi Tự động
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">Tự động ghép nối môn thi, phân bổ sinh viên vào phòng máy tính và ngăn ngừa trùng lịch</p>
-            </div>
+      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Tự động ghép nối môn thi, phân bổ sinh viên vào phòng máy tính và ngăn ngừa trùng lịch</p>
           </div>
+        </div>
 
           {/* KPI Analytics Header */}
           <KPICards items={kpiItems} />
@@ -301,7 +297,6 @@ export default function ExamArrangementPage() {
             </div>
           </div>
         </main>
-      </div>
 
       {/* Confirm Popup */}
       <ConfirmModal

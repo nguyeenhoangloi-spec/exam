@@ -183,14 +183,12 @@ export default function ExamSupervisorsPage() {
 
   return (
     <AppShell user={currentUser} title="Phân công Giám thị">
-      <div className="flex min-h-screen flex-col min-w-0 bg-slate-50/50">
-        <main className="p-8 max-w-7xl w-full mx-auto space-y-6">
-          {/* Header Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">Điều phối & Phân công Giám thị Coi thi</h1>
-              <p className="text-xs text-slate-500 mt-0.5">Phân công cán bộ coi thi 1, cán bộ coi thi 2 cho từng phòng thi</p>
-            </div>
+      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+        {/* Header Actions */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Phân công cán bộ coi thi 1, cán bộ coi thi 2 cho từng phòng thi</p>
+          </div>
             <button
               onClick={exportCsv}
               className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
@@ -372,7 +370,6 @@ export default function ExamSupervisorsPage() {
             </div>
           </div>
         </main>
-      </div>
 
       {/* Supervisor Drawer */}
       <ProfileDrawer

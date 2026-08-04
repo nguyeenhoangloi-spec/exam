@@ -44,11 +44,9 @@ export default function ReportsPage() {
 
   return (
     <AppShell user={user} title="Báo cáo tổng quan">
-      <main className="mx-auto w-full max-w-[1600px] p-4 md:p-6 xl:p-8">
-        <div className="mb-6">
-          <p className="text-sm font-semibold text-sky-700">Báo cáo quản trị</p>
-          <h1 className="mt-1 text-2xl font-bold text-slate-900">Tổng quan hệ thống khảo thí</h1>
-          <p className="mt-1 text-sm text-slate-500">Số liệu được tổng hợp trực tiếp từ PostgreSQL tại thời điểm xem báo cáo.</p>
+      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+        <div>
+          <p className="text-xs text-slate-500 font-medium">Số liệu được tổng hợp trực tiếp từ PostgreSQL tại thời điểm hiện tại</p>
         </div>
         {loading ? <DashboardSkeleton /> : error || !data ? (
           <DashboardErrorState message={error || 'Báo cáo không khả dụng.'} onRetry={load} />

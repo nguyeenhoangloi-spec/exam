@@ -221,13 +221,7 @@ export default function ExamPapersPage() {
 
   return (
     <AppShell user={currentUser} title="Quản lý đề thi">
-      <main className="mx-auto w-full max-w-[1500px] p-4 md:p-6 xl:p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-900">Quản lý đề thi</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {isAdmin ? 'Tạo, kiểm tra, phát hành và lưu trữ đề thi.' : 'Tạo và quản lý các đề thi do bạn phụ trách.'}
-          </p>
-        </div>
+      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
 
         <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">

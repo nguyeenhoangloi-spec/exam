@@ -186,14 +186,12 @@ export default function SubjectsPage() {
 
   return (
     <AppShell user={currentUser} title="Quản lý Môn học">
-      <div className="flex min-h-screen flex-col min-w-0 bg-slate-50/50">
-        <main className="p-8 max-w-7xl w-full mx-auto space-y-6">
-          {/* Header Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">Danh mục Môn học Đào tạo</h1>
-              <p className="text-xs text-slate-500 mt-0.5">Quản lý các môn học, tín chỉ, ma trận đề thi và ngân hàng câu hỏi</p>
-            </div>
+      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+        {/* Header Actions */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs text-slate-500 font-medium">Quản lý các môn học, tín chỉ, ma trận đề thi và ngân hàng câu hỏi</p>
+          </div>
             <div className="flex flex-wrap gap-2.5">
               <button
                 onClick={exportCsv}
@@ -318,7 +316,6 @@ export default function SubjectsPage() {
             )}
           </div>
         </main>
-      </div>
 
       {/* Edit/Add Modal */}
       <Modal
