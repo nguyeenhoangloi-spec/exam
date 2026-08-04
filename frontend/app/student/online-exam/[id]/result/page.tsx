@@ -117,16 +117,16 @@ export default function StudentExamResultPage() {
               </span>
             </div>
 
-            {result.showResultImmediately && result.totalScore !== null ? (
-              <div className="flex justify-between pt-2 text-base font-bold">
-                <span className="text-slate-300">Điểm đạt được:</span>
-                <span className="text-emerald-400 text-xl font-mono">
-                  {result.totalScore} / {result.maxScore}
+            {result.totalScore !== undefined && result.totalScore !== null ? (
+              <div className="flex justify-between pt-3 border-t border-slate-800 text-base font-bold">
+                <span className="text-slate-300">Điểm số đạt được:</span>
+                <span className="text-emerald-400 text-2xl font-mono">
+                  {result.totalScore} / {result.maxScore || 10} điểm
                 </span>
               </div>
             ) : (
               <p className="text-xs text-slate-400 italic pt-1">
-                * Kết quả điểm thi chính thức sẽ được công bố sau khi kỳ thi kết thúc.
+                * Kết quả điểm thi đang được cập nhật.
               </p>
             )}
           </div>

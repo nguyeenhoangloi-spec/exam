@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
-import { Clock, ShieldCheck, AlertCircle, CheckCircle2, Monitor, ArrowRight } from 'lucide-react';
+import { Clock, ShieldCheck, AlertCircle, CheckCircle2, Monitor, ArrowRight, Award, Trophy } from 'lucide-react';
 
 export default function StudentExamLobbyPage() {
   const router = useRouter();
@@ -21,19 +21,23 @@ export default function StudentExamLobbyPage() {
       setLoading(true);
       setError(null);
       const res = await onlineExamService.checkEligibility(scheduleId);
-      // Normalize the backend envelope so the existing presentation fields
-      // (schedule, student, roomStudentInfo, config) remain available at the
-      // top level while preserving the original response for diagnostics.
       setEligibility(res?.data ? { ...res, ...res.data } : res);
       setRulesAccepted(false);
 
-      if (!res.isEligible) {
-        setError(res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.');
+      const attempt = res?.existingAttempt || res?.data?.existingAttempt;
+      if (attempt) {
+        if (['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes(attempt.status)) {
+          sessionStorage.setItem('attemptToken', attempt.attemptToken);
+          router.push(`/student/online-exam/${attempt.attemptToken}/take`);
+          return;
+        } else if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes(attempt.status)) {
+          router.push(`/student/online-exam/${attempt.id}/result`);
+          return;
+        }
       }
 
-      if (res.existingAttempt && ['IN_PROGRESS', 'DISCONNECTED'].includes(res.existingAttempt.status)) {
-        sessionStorage.setItem('attemptToken', res.existingAttempt.attemptToken);
-        router.push(`/student/online-exam/${res.existingAttempt.attemptToken}/take`);
+      if (!res.isEligible) {
+        setError(res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Không thể kiểm tra điều kiện dự thi');
@@ -78,8 +82,6 @@ export default function StudentExamLobbyPage() {
     );
   }
 
-  // Eligibility API trả dữ liệu nghiệp vụ trong `data`; fallback shape cũ
-  // giúp Lobby tương thích trong thời gian backend/frontend được cập nhật.
   const eligibilityData = eligibility?.data ?? eligibility ?? {};
   const examInfo = eligibilityData.examInfo;
   const schedule = eligibilityData.schedule ?? (examInfo ? {
@@ -89,7 +91,9 @@ export default function StudentExamLobbyPage() {
   } : undefined);
   const student = eligibilityData.student;
   const config = eligibilityData.config ?? schedule?.onlineExamConfig;
-  const paper = config?.examPaper ?? schedule?.onlineExamConfig?.examPaper;
+  const existingAttempt = eligibilityData.existingAttempt || eligibility?.existingAttempt;
+
+  const isCompleted = existingAttempt && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes(existingAttempt.status);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12">
@@ -110,101 +114,122 @@ export default function StudentExamLobbyPage() {
           </div>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 shrink-0" />
-            <p className="text-sm font-medium">{error}</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-slate-950/60 border border-slate-800 p-5 rounded-xl">
-            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Thông tin Thí sinh</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between border-b border-slate-800/80 pb-2">
-                <span className="text-slate-400">Họ và tên:</span>
-                <span className="font-semibold text-slate-200">{student?.fullName}</span>
-              </div>
-              <div className="flex justify-between border-b border-slate-800/80 pb-2">
-                <span className="text-slate-400">Mã sinh viên:</span>
-                <span className="font-mono font-semibold text-indigo-400">{student?.studentCode}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">SBD / Số ghế:</span>
-                <span className="font-medium text-slate-200">
-                  {eligibility?.roomStudentInfo?.examNumber || 'Chưa xếp'} (Ghế: {eligibility?.roomStudentInfo?.seatNumber || '-'})
-                </span>
-              </div>
+        {/* If Student Already Finished The Exam */}
+        {isCompleted ? (
+          <div className="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-2xl mb-8 text-center space-y-4">
+            <Trophy className="w-12 h-12 text-emerald-400 mx-auto" />
+            <h2 className="text-xl font-bold text-white">Bạn Đã Hoàn Thành Bài Thi Này</h2>
+            <p className="text-sm text-slate-300">
+              Bài thi của bạn đã được gửi về hệ thống và ghi nhận kết quả.
+            </p>
+            <div className="pt-2">
+              <button
+                onClick={() => router.push(`/student/online-exam/${existingAttempt.id}/result`)}
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition inline-flex items-center gap-2"
+              >
+                <Award className="w-4 h-4" /> Xem Kết Quả & Điểm Thi
+              </button>
             </div>
           </div>
-
-          <div className="bg-slate-950/60 border border-slate-800 p-5 rounded-xl">
-            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Kiểm tra Yêu cầu Bài thi</h3>
-            <ul className="space-y-2.5 text-sm">
-              <li className="flex items-center text-emerald-400">
-                <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" />
-                Đồng hồ đếm ngược Server tự động
-              </li>
-              <li className="flex items-center text-emerald-400">
-                <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" />
-                Tự động lưu đáp án khi chọn
-              </li>
-              <li className={`flex items-center ${config?.preventTabSwitch !== false ? 'text-amber-400' : 'text-slate-400'}`}>
-                <ShieldCheck className="w-4 h-4 mr-2 shrink-0" />
-                Giám sát chuyển tab & toàn màn hình
-              </li>
-              <li className="flex items-center text-slate-300">
-                <Monitor className="w-4 h-4 mr-2 shrink-0 text-indigo-400" />
-                Trình duyệt đã sẵn sàng
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl mb-8 text-amber-300/90 text-sm">
-          <p className="font-semibold mb-1">⚠️ Nội quy thi nghiêm ngặt:</p>
-          <p className="text-amber-400/80 leading-relaxed">
-            Hệ thống tự động ghi nhận mọi hành vi chuyển tab, thoát toàn màn hình, mở công cụ lập trình hoặc mất kết nối.
-            Bài thi sẽ bị tự động khóa và nộp nếu vi phạm quá số lần quy định.
-          </p>
-        </div>
-
-        {config?.requireRulesAcceptance !== false && (
-          <label className="mb-6 flex cursor-pointer items-start gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 p-4 text-sm text-slate-200">
-            <input
-              type="checkbox"
-              checked={rulesAccepted}
-              onChange={(event) => setRulesAccepted(event.target.checked)}
-              className="mt-0.5 h-4 w-4 accent-indigo-500"
-            />
-            <span>
-              Tôi đã đọc, hiểu và đồng ý chấp hành toàn bộ quy định thi. Tôi hiểu hệ thống có thể ghi nhận vi phạm và tự động khóa hoặc nộp bài theo quy chế.
-            </span>
-          </label>
-        )}
-
-        <div className="flex justify-end gap-4">
-          <button
-            onClick={() => router.back()}
-            className="px-5 py-3 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-sm font-medium transition"
-          >
-            Quay lại
-          </button>
-          <button
-            onClick={handleStartExam}
-            disabled={starting || !eligibility?.isEligible || (config?.requireRulesAcceptance !== false && !rulesAccepted)}
-            className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-sm font-semibold flex items-center shadow-lg shadow-indigo-600/30 transition"
-          >
-            {starting ? (
-              <span>Đang khởi tạo bài thi...</span>
-            ) : (
-              <>
-                <span>Bắt đầu Làm bài</span>
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </>
+        ) : (
+          <>
+            {error && (
+              <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 shrink-0" />
+                <p className="text-sm font-medium">{error}</p>
+              </div>
             )}
-          </button>
-        </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-slate-950/60 border border-slate-800 p-5 rounded-xl">
+                <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Thông tin Thí sinh</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between border-b border-slate-800/80 pb-2">
+                    <span className="text-slate-400">Họ và tên:</span>
+                    <span className="font-semibold text-slate-200">{student?.fullName}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-800/80 pb-2">
+                    <span className="text-slate-400">Mã sinh viên:</span>
+                    <span className="font-mono font-semibold text-indigo-400">{student?.studentCode}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">SBD / Số ghế:</span>
+                    <span className="font-medium text-slate-200">
+                      {eligibility?.roomStudentInfo?.examNumber || 'Chưa xếp'} (Ghế: {eligibility?.roomStudentInfo?.seatNumber || '-'})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-950/60 border border-slate-800 p-5 rounded-xl">
+                <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Kiểm tra Yêu cầu Bài thi</h3>
+                <ul className="space-y-2.5 text-sm">
+                  <li className="flex items-center text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" />
+                    Đồng hồ đếm ngược Server tự động
+                  </li>
+                  <li className="flex items-center text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" />
+                    Tự động lưu đáp án khi chọn
+                  </li>
+                  <li className={`flex items-center ${config?.preventTabSwitch !== false ? 'text-amber-400' : 'text-slate-400'}`}>
+                    <ShieldCheck className="w-4 h-4 mr-2 shrink-0" />
+                    Giám sát chuyển tab & toàn màn hình
+                  </li>
+                  <li className="flex items-center text-slate-300">
+                    <Monitor className="w-4 h-4 mr-2 shrink-0 text-indigo-400" />
+                    Trình duyệt đã sẵn sàng
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl mb-8 text-amber-300/90 text-sm">
+              <p className="font-semibold mb-1">⚠️ Nội quy thi nghiêm ngặt:</p>
+              <p className="text-amber-400/80 leading-relaxed">
+                Hệ thống tự động ghi nhận mọi hành vi chuyển tab, thoát toàn màn hình, mở công cụ lập trình hoặc mất kết nối.
+                Bài thi sẽ bị tự động khóa và nộp nếu vi phạm quá số lần quy định.
+              </p>
+            </div>
+
+            {config?.requireRulesAcceptance !== false && (
+              <label className="mb-6 flex cursor-pointer items-start gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 p-4 text-sm text-slate-200">
+                <input
+                  type="checkbox"
+                  checked={rulesAccepted}
+                  onChange={(event) => setRulesAccepted(event.target.checked)}
+                  className="mt-0.5 h-4 w-4 accent-indigo-500"
+                />
+                <span>
+                  Tôi đã đọc, hiểu và đồng ý chấp hành toàn bộ quy định thi. Tôi hiểu hệ thống có thể ghi nhận vi phạm và tự động khóa hoặc nộp bài theo quy chế.
+                </span>
+              </label>
+            )}
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => router.back()}
+                className="px-5 py-3 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-sm font-medium transition"
+              >
+                Quay lại
+              </button>
+              <button
+                onClick={handleStartExam}
+                disabled={starting || !eligibility?.isEligible || (config?.requireRulesAcceptance !== false && !rulesAccepted)}
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-sm font-semibold flex items-center shadow-lg shadow-indigo-600/30 transition"
+              >
+                {starting ? (
+                  <span>Đang khởi tạo bài thi...</span>
+                ) : (
+                  <>
+                    <span>Bắt đầu Làm bài</span>
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

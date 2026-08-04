@@ -37,6 +37,7 @@ export class OnlineExamsService {
         isEligible: false,
         errorCode: result.errorCode,
         reason: result.reason,
+        existingAttempt: result.data?.existingAttempt,
         examInfo: result.data?.schedule
           ? {
               subjectName: result.data.schedule.subject?.subjectName,
@@ -571,7 +572,9 @@ export class OnlineExamsService {
       return {
         message: 'Bài thi đã được nộp từ trước',
         status: attempt.status,
-        totalScore: attempt.onlineExamConfig.showResultImmediately ? attempt.totalScore : null,
+        totalScore: attempt.totalScore ?? 0,
+        maxScore: attempt.maxScore ?? 10,
+        showResultImmediately: true,
       };
     }
 
@@ -618,8 +621,9 @@ export class OnlineExamsService {
       message: isAutoSubmit ? 'Bài thi đã tự động nộp do hết giờ' : 'Nộp bài thi thành công',
       status: updated.status,
       submittedAt: updated.submittedAt,
-      totalScore: attempt.onlineExamConfig.showResultImmediately ? calculatedScore : null,
-      maxScore: attempt.maxScore,
+      totalScore: calculatedScore,
+      maxScore: attempt.maxScore ?? 10,
+      showResultImmediately: true,
     };
   }
 
@@ -644,9 +648,9 @@ export class OnlineExamsService {
       attemptId: attempt.id,
       status: attempt.status,
       submittedAt: attempt.submittedAt,
-      totalScore: attempt.onlineExamConfig.showResultImmediately ? attempt.totalScore : null,
-      maxScore: attempt.maxScore,
-      showResultImmediately: attempt.onlineExamConfig.showResultImmediately,
+      totalScore: attempt.totalScore ?? 0,
+      maxScore: attempt.maxScore ?? 10,
+      showResultImmediately: true,
       isFlagged: attempt.isFlagged,
       incidents: attempt.incidents,
     };

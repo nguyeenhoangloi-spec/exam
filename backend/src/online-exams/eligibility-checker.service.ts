@@ -249,43 +249,7 @@ export class EligibilityCheckerService {
     }
 
     // ─────────────────────────────────────────
-    // BƯỚC 5: Kiểm tra thời gian
-    // ─────────────────────────────────────────
-    const serverTime = new Date();
-    const examStartTime = this.buildExamDateTime(schedule.examDate, schedule.startTime);
-    const examEndTime = this.buildExamDateTime(schedule.examDate, schedule.endTime);
-    const lateEntryDeadline = new Date(examStartTime.getTime() + (config.lateEntryWindowMinutes || 60) * 60 * 1000);
-
-    // Chưa đến giờ thi
-    if (serverTime < examStartTime) {
-      const diffSeconds = Math.floor((examStartTime.getTime() - serverTime.getTime()) / 1000);
-      return this.fail(
-        EligibilityErrorCode.EXAM_NOT_STARTED,
-        `Chưa đến giờ thi. Kỳ thi bắt đầu lúc ${this.formatTime(examStartTime)}`,
-        { student, schedule, config, examStartTime, examEndTime, serverTime },
-      );
-    }
-
-    // Đã quá giờ vào thi (trễ hơn cửa sổ cho phép vào muộn)
-    if (serverTime > lateEntryDeadline) {
-      return this.fail(
-        EligibilityErrorCode.EXAM_LATE_ENTRY_EXPIRED,
-        `Đã quá thời hạn vào thi. Chỉ cho phép vào muộn tối đa ${config.lateEntryWindowMinutes} phút`,
-        { student, schedule, config, examStartTime, examEndTime, serverTime },
-      );
-    }
-
-    // Kỳ thi đã kết thúc
-    if (serverTime > examEndTime) {
-      return this.fail(
-        EligibilityErrorCode.EXAM_ENDED,
-        `Kỳ thi đã kết thúc lúc ${this.formatTime(examEndTime)}`,
-        { student, schedule, config, examEndTime, serverTime },
-      );
-    }
-
-    // ─────────────────────────────────────────
-    // BƯỚC 6: Kiểm tra lượt thi & phiên thi hiện tại
+    // BƯỚC 5: Kiểm tra lượt thi & phiên thi hiện tại
     // ─────────────────────────────────────────
     const allAttempts = await this.prisma.examAttempt.findMany({
       where: {
@@ -320,7 +284,43 @@ export class EligibilityCheckerService {
       return this.fail(
         EligibilityErrorCode.MAX_ATTEMPTS_EXCEEDED,
         `Đã sử dụng hết ${config.maxAttempts} lần thi được phép`,
-        { student, schedule, config },
+        { student, schedule, config, existingAttempt: completedAttempts[0] },
+      );
+    }
+
+    // ─────────────────────────────────────────
+    // BƯỚC 6: Kiểm tra thời gian
+    // ─────────────────────────────────────────
+    const serverTime = new Date();
+    const examStartTime = this.buildExamDateTime(schedule.examDate, schedule.startTime);
+    const examEndTime = this.buildExamDateTime(schedule.examDate, schedule.endTime);
+    const lateEntryDeadline = new Date(examStartTime.getTime() + (config.lateEntryWindowMinutes || 60) * 60 * 1000);
+
+    // Chưa đến giờ thi
+    if (serverTime < examStartTime) {
+      const diffSeconds = Math.floor((examStartTime.getTime() - serverTime.getTime()) / 1000);
+      return this.fail(
+        EligibilityErrorCode.EXAM_NOT_STARTED,
+        `Chưa đến giờ thi. Kỳ thi bắt đầu lúc ${this.formatTime(examStartTime)}`,
+        { student, schedule, config, examStartTime, examEndTime, serverTime, existingAttempt: activeAttempt },
+      );
+    }
+
+    // Đã quá giờ vào thi (trễ hơn cửa sổ cho phép vào muộn)
+    if (serverTime > lateEntryDeadline) {
+      return this.fail(
+        EligibilityErrorCode.EXAM_LATE_ENTRY_EXPIRED,
+        `Đã quá thời hạn vào thi. Chỉ cho phép vào muộn tối đa ${config.lateEntryWindowMinutes} phút`,
+        { student, schedule, config, examStartTime, examEndTime, serverTime, existingAttempt: activeAttempt },
+      );
+    }
+
+    // Kỳ thi đã kết thúc
+    if (serverTime > examEndTime) {
+      return this.fail(
+        EligibilityErrorCode.EXAM_ENDED,
+        `Kỳ thi đã kết thúc lúc ${this.formatTime(examEndTime)}`,
+        { student, schedule, config, examEndTime, serverTime, existingAttempt: activeAttempt },
       );
     }
 

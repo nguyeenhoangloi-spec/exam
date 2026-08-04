@@ -200,7 +200,7 @@ export default function TeacherAssignmentsPage() {
     { title: 'Tổng ca coi thi', value: assignments.length, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'sky' },
     { title: 'Giám thị 1 (Chính)', value: sup1Count, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, color: 'emerald', trend: 'Đạt chuẩn' },
     { title: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length}`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, color: 'indigo' },
-    { title: 'Quy chế coi thi', value: 'Có mặt -15p', subtext: 'Điểm danh thí sinh', icon: Award, color: 'purple' },
+    { title: 'Thời gian tập trung', value: 'Trước 15 phút', subtext: 'Chuẩn bị & điểm danh', icon: Clock, color: 'purple' },
   ];
 
   return (
