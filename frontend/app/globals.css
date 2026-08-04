@@ -39,18 +39,21 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Zero Flash SSR Rules for Collapsed Sidebar */
-html.sidebar-collapsed aside.sidebar-aside {
-  width: 72px !important;
-}
+/* Keep the persisted collapsed state from flashing on desktop.  Mobile uses a
+   full-width drawer, so these overrides must never apply below md. */
+@media (min-width: 768px) {
+  html.sidebar-collapsed aside.sidebar-aside {
+    width: 76px !important;
+  }
 
-html.sidebar-collapsed div.app-shell-main {
-  margin-left: 72px !important;
-}
+  html.sidebar-collapsed div.app-shell-main {
+    margin-left: 76px !important;
+  }
 
-html.sidebar-collapsed .sidebar-text-node {
-  opacity: 0 !important;
-  max-width: 0 !important;
-  pointer-events: none !important;
-  display: none !important;
+  html.sidebar-collapsed .sidebar-text-node {
+    opacity: 0 !important;
+    max-width: 0 !important;
+    pointer-events: none !important;
+    display: none !important;
+  }
 }

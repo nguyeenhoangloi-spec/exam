@@ -57,35 +57,38 @@ export class StudentsService {
     const username = data.username || data.studentCode;
     const rawPassword = data.password || '123456';
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
+    if (Number.isNaN(new Date(data.dateOfBirth).getTime())) throw new BadRequestException('Ngày sinh không hợp lệ.');
 
-    const user = await this.prisma.user.create({
-      data: {
-        username,
-        password: hashedPassword,
-        email: data.email,
-        role: 'STUDENT',
-        status: 'ACTIVE',
-      },
-    });
-
-    return this.prisma.student.create({
-      data: {
-        studentCode: data.studentCode,
-        fullName: data.fullName,
-        gender: data.gender,
-        dateOfBirth: new Date(data.dateOfBirth),
-        email: data.email,
-        phone: data.phone,
-        classId: data.classId,
-        userId: user.id,
-      },
-      include: { class: true, user: true },
+    return this.prisma.$transaction(async (tx) => {
+      const [classItem, existingUser] = await Promise.all([
+        tx.class.findUnique({ where: { id: data.classId } }),
+        tx.user.findFirst({ where: { OR: [{ username }, { email: data.email }] } }),
+      ]);
+      if (!classItem) throw new BadRequestException('Lớp học được chọn không tồn tại.');
+      if (existingUser) throw new BadRequestException('Tên đăng nhập hoặc email đã tồn tại.');
+      const user = await tx.user.create({
+        data: { username, password: hashedPassword, email: data.email, role: 'STUDENT', status: 'ACTIVE' },
+      });
+      return tx.student.create({
+        data: {
+          studentCode: data.studentCode,
+          fullName: data.fullName,
+          gender: data.gender,
+          dateOfBirth: new Date(data.dateOfBirth),
+          email: data.email,
+          phone: data.phone,
+          classId: data.classId,
+          userId: user.id,
+        },
+        include: { class: true, user: true },
+      });
     });
   }
 
   async update(
     id: number,
     data: {
+      studentCode?: string;
       fullName?: string;
       gender?: string;
       dateOfBirth?: string;
@@ -96,26 +99,44 @@ export class StudentsService {
   ) {
     const student = await this.findOne(id);
 
-    return this.prisma.student.update({
-      where: { id },
-      data: {
-        fullName: data.fullName,
-        gender: data.gender,
-        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
-        email: data.email,
-        phone: data.phone,
-        classId: data.classId,
-      },
-      include: { class: true, user: true },
+    if (data.dateOfBirth && Number.isNaN(new Date(data.dateOfBirth).getTime())) throw new BadRequestException('Ngày sinh không hợp lệ.');
+    return this.prisma.$transaction(async (tx) => {
+      if (data.studentCode && data.studentCode !== student.studentCode) {
+        const existingStudent = await tx.student.findUnique({ where: { studentCode: data.studentCode } });
+        if (existingStudent) throw new BadRequestException('Mã sinh viên đã tồn tại.');
+      }
+      if (data.classId && !await tx.class.findUnique({ where: { id: data.classId } })) {
+        throw new BadRequestException('Lớp học được chọn không tồn tại.');
+      }
+      if (data.email && data.email !== student.email) {
+        const existingUser = await tx.user.findFirst({ where: { email: data.email, id: { not: student.userId } } });
+        if (existingUser) throw new BadRequestException('Email đã được sử dụng.');
+        await tx.user.update({ where: { id: student.userId }, data: { email: data.email } });
+      }
+      return tx.student.update({
+        where: { id },
+        data: {
+          studentCode: data.studentCode,
+          fullName: data.fullName,
+          gender: data.gender,
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
+          email: data.email,
+          phone: data.phone,
+          classId: data.classId,
+        },
+        include: { class: true, user: true },
+      });
     });
   }
 
   async remove(id: number) {
     const student = await this.findOne(id);
-    await this.prisma.student.delete({ where: { id } });
-    if (student.userId) {
-      await this.prisma.user.delete({ where: { id: student.userId } }).catch(() => {});
-    }
+    const assignedExams = await this.prisma.examRoomStudent.count({ where: { studentId: id } });
+    if (assignedExams > 0) throw new BadRequestException('Không thể xóa sinh viên đã được xếp lịch thi.');
+    await this.prisma.$transaction(async (tx) => {
+      await tx.student.delete({ where: { id } });
+      await tx.user.delete({ where: { id: student.userId } });
+    });
     return { message: 'Đã xóa sinh viên thành công' };
   }
 
@@ -126,7 +147,10 @@ export class StudentsService {
     if (!student) throw new NotFoundException('Không tìm thấy thông tin sinh viên.');
 
     const roomStudents = await this.prisma.examRoomStudent.findMany({
-      where: { studentId: student.id },
+      where: {
+        studentId: student.id,
+        examScheduleRoom: { examSchedule: { status: { not: 'CANCELLED' } } },
+      },
       include: {
         examScheduleRoom: {
           include: {

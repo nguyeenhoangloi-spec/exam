@@ -3,6 +3,7 @@ import { DepartmentsService } from './departments.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -22,13 +23,13 @@ export class DepartmentsController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: { code: string; name: string }) {
+  create(@Body() body: CreateDepartmentDto) {
     return this.departmentsService.create(body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: { code?: string; name?: string }) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateDepartmentDto) {
     return this.departmentsService.update(id, body);
   }
 

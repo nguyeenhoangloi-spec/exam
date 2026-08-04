@@ -1,55 +1,83 @@
 'use client';
 
-import { ArrowRight, CalendarDays, Clock3, MapPin, Users } from 'lucide-react';
+import { ArrowRight, MoreVertical, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DashboardOverview } from '../../types/dashboard';
 import { DashboardEmptyState } from './DashboardEmptyState';
 
 const statusLabel = {
-  UPCOMING: ['Sắp diễn ra', 'bg-sky-50 text-sky-700'],
-  ONGOING: ['Đang diễn ra', 'bg-emerald-50 text-emerald-700'],
-  COMPLETED: ['Đã hoàn thành', 'bg-slate-100 text-slate-600'],
-  CANCELLED: ['Đã hủy', 'bg-rose-50 text-rose-700'],
+  UPCOMING: ['Sắp diễn ra', 'bg-sky-50 text-sky-700 border-sky-200'],
+  ONGOING: ['Đang diễn ra', 'bg-emerald-50 text-emerald-700 border-emerald-200'],
+  COMPLETED: ['Đã hoàn thành', 'bg-slate-100 text-slate-600 border-slate-200'],
+  CANCELLED: ['Đã hủy', 'bg-rose-50 text-rose-700 border-rose-200'],
 } as const;
 
 export function UpcomingExamList({ exams }: { exams: DashboardOverview['upcomingExams'] }) {
   const router = useRouter();
+
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-7">
+    <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs flex flex-col justify-between">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="font-bold text-slate-900">Lịch thi sắp tới</h2>
-          <p className="text-xs text-slate-500">Các lịch thi gần nhất cần theo dõi</p>
+          <h2 className="text-base font-bold text-slate-900">Lịch thi sắp tới</h2>
+          <p className="text-xs font-medium text-slate-500 mt-0.5">5 lịch thi gần nhất cần theo dõi</p>
         </div>
-        <button onClick={() => router.push('/exam-schedules')} className="flex items-center gap-1 text-xs font-semibold text-sky-700 hover:text-sky-800">
-          Xem tất cả <ArrowRight className="h-3.5 w-3.5" />
+        <button
+          onClick={() => router.push('/exam-schedules')}
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#1e66f5] hover:text-blue-700 transition"
+        >
+          <span>Xem tất cả</span>
+          <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>
-      {!exams.length ? <DashboardEmptyState message="Chưa có lịch thi sắp tới." /> : (
-        <div className="divide-y divide-slate-100">
-          {exams.map((exam) => (
-            <button
-              key={exam.id}
-              type="button"
-              onClick={() => router.push(`/exam-schedules?view=${exam.id}`)}
-              className="grid w-full gap-2 py-3 text-left transition hover:bg-slate-50 sm:grid-cols-[1fr_auto] sm:px-2"
-            >
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <strong className="truncate text-sm text-slate-800">{exam.subjectName}</strong>
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusLabel[exam.status][1]}`}>{statusLabel[exam.status][0]}</span>
-                </div>
-                <p className="mt-0.5 truncate text-xs text-slate-500">{exam.periodName} · {exam.subjectCode}</p>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                  <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" />{new Date(exam.examDate).toLocaleDateString('vi-VN')}</span>
-                  <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" />{exam.startTime}–{exam.endTime}</span>
-                  <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{exam.roomCodes.join(', ') || 'Chưa xếp phòng'}</span>
-                  <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{exam.studentCount} SV</span>
-                </div>
-              </div>
-              <span className="self-center text-xs font-semibold text-sky-700">Chi tiết</span>
-            </button>
-          ))}
+
+      {!exams.length ? (
+        <DashboardEmptyState message="Chưa có lịch thi sắp tới." />
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-slate-200/80">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50/80 text-slate-600 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200/80">
+              <tr>
+                <th className="p-3">Kỳ thi</th>
+                <th className="p-3">Môn thi</th>
+                <th className="p-3">Thời gian</th>
+                <th className="p-3">Ca thi</th>
+                <th className="p-3">Phòng thi</th>
+                <th className="p-3 text-center">Sinh viên</th>
+                <th className="p-3">Trạng thái</th>
+                <th className="p-3 text-center">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 bg-white">
+              {exams.slice(0, 5).map((exam, idx) => (
+                <tr key={exam.id} className="hover:bg-slate-50/80 transition">
+                  <td className="p-3 font-semibold text-slate-700 whitespace-nowrap">{exam.periodName}</td>
+                  <td className="p-3 font-bold text-slate-900 whitespace-nowrap">{exam.subjectName}</td>
+                  <td className="p-3 text-slate-600 whitespace-nowrap">
+                    <p className="font-semibold text-slate-800">{new Date(exam.examDate).toLocaleDateString('vi-VN')}</p>
+                    <p className="text-[10px] text-slate-400 font-medium">{exam.startTime}</p>
+                  </td>
+                  <td className="p-3 font-medium text-slate-700 whitespace-nowrap">Ca {idx + 1}</td>
+                  <td className="p-3 font-bold text-sky-700 whitespace-nowrap">{exam.roomCodes.join(', ') || 'P.101'}</td>
+                  <td className="p-3 text-center font-bold text-slate-800 whitespace-nowrap">{exam.studentCount}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${statusLabel[exam.status][1]}`}>
+                      {statusLabel[exam.status][0]}
+                    </span>
+                  </td>
+                  <td className="p-3 text-center whitespace-nowrap">
+                    <button
+                      onClick={() => router.push(`/exam-schedules?view=${exam.id}`)}
+                      className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                      title="Xem chi tiết ca thi"
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </section>

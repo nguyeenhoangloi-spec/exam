@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ExamPapersService } from './exam-papers.service';
 
 describe('ExamPapersService permissions', () => {
@@ -45,5 +45,33 @@ describe('ExamPapersService permissions', () => {
     });
 
     await expect(service.findOne({ id: 7, role: 'TEACHER' }, 1)).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('từ chối đề có thời lượng dài hơn ca thi', async () => {
+    const tx: any = {
+      examSchedule: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 2,
+          status: 'SCHEDULED',
+          startTime: '08:00',
+          endTime: '09:00',
+          subject: { subjectName: 'Lập trình' },
+          examPeriod: {},
+        }),
+      },
+    };
+    const timedService = new ExamPapersService(
+      { $transaction: jest.fn((callback) => callback(tx)) } as any,
+      audit as any,
+    );
+
+    await expect(timedService.createRandom({ id: 1, role: 'ADMIN' }, {
+      examScheduleId: 2,
+      paperCode: '001',
+      durationMinutes: 90,
+      easyCount: 1,
+      mediumCount: 0,
+      hardCount: 0,
+    })).rejects.toBeInstanceOf(BadRequestException);
   });
 });

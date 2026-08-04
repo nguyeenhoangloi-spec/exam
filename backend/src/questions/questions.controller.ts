@@ -6,6 +6,7 @@ import {
   Get,
   Header,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -17,6 +18,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { validateOrReject } from 'class-validator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -101,13 +103,19 @@ export class QuestionsController {
 
   @Post('import/confirm')
   @UseInterceptors(csvUpload)
-  confirm(@Request() req: any, @UploadedFile() file: Express.Multer.File, @Body() raw: any) {
+  async confirm(@Request() req: any, @UploadedFile() file: Express.Multer.File, @Body() raw: any) {
     if (!file) throw new BadRequestException('Vui lòng gửi lại file CSV.');
-    const body: ImportConfirmDto = {
-      hash: raw.hash,
-      rows: Array.isArray(raw.rows) ? raw.rows.map(Number) : JSON.parse(raw.rows || '[]').map(Number),
-      overrideDuplicate: raw.overrideDuplicate === true || raw.overrideDuplicate === 'true',
-    };
+    let body: ImportConfirmDto;
+    try {
+      body = Object.assign(new ImportConfirmDto(), {
+        hash: raw.hash,
+        rows: Array.isArray(raw.rows) ? raw.rows.map(Number) : JSON.parse(raw.rows || '[]').map(Number),
+        overrideDuplicate: raw.overrideDuplicate === true || raw.overrideDuplicate === 'true',
+      });
+      await validateOrReject(body);
+    } catch {
+      throw new BadRequestException('Dữ liệu xác nhận import không hợp lệ.');
+    }
     return this.questions.importConfirm(req.user, file, body);
   }
 
@@ -122,8 +130,9 @@ export class QuestionsController {
   }
 
   @Post('ai-extract-text')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(docUpload)
   extractText(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('Vui lòng chọn tài liệu để trích xuất.');
     return this.ai.extractDocumentText(file);
   }
 
@@ -133,47 +142,47 @@ export class QuestionsController {
   }
 
   @Get(':id')
-  findOne(@Request() req: any, @Param('id') id: string) {
+  findOne(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.findOne(req.user, id);
   }
 
   @Patch(':id')
-  update(@Request() req: any, @Param('id') id: string, @Body() body: UpdateQuestionDto) {
+  update(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string, @Body() body: UpdateQuestionDto) {
     return this.questions.update(req.user, id, body);
   }
 
   @Post(':id/duplicate')
-  duplicate(@Request() req: any, @Param('id') id: string) {
+  duplicate(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.duplicate(req.user, id);
   }
 
   @Post(':id/submit')
-  submit(@Request() req: any, @Param('id') id: string) {
+  submit(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.submit(req.user, id);
   }
 
   @Post(':id/approve')
-  approve(@Request() req: any, @Param('id') id: string) {
+  approve(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.approve(req.user, id);
   }
 
   @Post(':id/reject')
-  reject(@Request() req: any, @Param('id') id: string, @Body() body: RejectQuestionDto) {
+  reject(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string, @Body() body: RejectQuestionDto) {
     return this.questions.reject(req.user, id, body.reason);
   }
 
   @Post(':id/archive')
-  archive(@Request() req: any, @Param('id') id: string) {
+  archive(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.archive(req.user, id);
   }
 
   @Post(':id/restore')
-  restore(@Request() req: any, @Param('id') id: string) {
+  restore(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.restore(req.user, id);
   }
 
   @Delete(':id')
-  remove(@Request() req: any, @Param('id') id: string) {
+  remove(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.remove(req.user, id);
   }
 }

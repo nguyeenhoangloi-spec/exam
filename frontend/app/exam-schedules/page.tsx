@@ -213,12 +213,22 @@ export default function ExamSchedulesPage() {
     URL.revokeObjectURL(url);
   };
 
-  // KPI Items
+  const totalAssignedRooms = schedules.reduce((total, schedule) => total + (schedule.examScheduleRooms?.length || 0), 0);
+  const totalSupervisorSlots = totalAssignedRooms * 2;
+  const totalAssignedSupervisors = schedules.reduce(
+    (total, schedule) => total + (schedule.examScheduleRooms || []).reduce(
+      (roomTotal: number, scheduleRoom: any) => roomTotal + (scheduleRoom._count?.supervisors || 0),
+      0,
+    ),
+    0,
+  );
+  const publishedSchedules = schedules.filter((schedule) => schedule.status === 'SCHEDULED' || schedule.status === 'ONGOING').length;
+
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng ca thi đã lập', value: schedules.length, subtext: 'Tất cả các môn thi', icon: Calendar, color: 'sky' },
     { title: 'Thi trắc nghiệm máy', value: schedules.filter((s) => s.examType === 'TRAC_NGHIEM').length, subtext: 'Chấm điểm tự động', icon: Monitor, color: 'emerald' },
-    { title: 'Giám thị phân công', value: '100% Đã xếp', subtext: 'Cán bộ coi thi', icon: Users, color: 'indigo' },
-    { title: 'Trạng thái Lịch thi', value: 'Đã công bố', subtext: 'Cho sinh viên xem', icon: CheckCircle2, color: 'purple' },
+    { title: 'Giám thị phân công', value: `${totalAssignedSupervisors}/${totalSupervisorSlots}`, subtext: totalSupervisorSlots ? 'Số vị trí giám thị đã gán' : 'Chưa xếp phòng thi', icon: Users, color: 'indigo' },
+    { title: 'Lịch đang hiệu lực', value: publishedSchedules, subtext: 'Lịch đã lập hoặc đang diễn ra', icon: CheckCircle2, color: 'purple' },
   ];
 
   return (

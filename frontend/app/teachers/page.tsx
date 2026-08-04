@@ -201,9 +201,9 @@ export default function TeachersPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng giảng viên', value: teachers.length, subtext: 'Trực thuộc các Khoa', icon: GraduationCap, color: 'sky' },
-    { title: 'Trình độ TS / GS', value: '83.3%', subtext: 'Tỷ lệ trình độ cao', icon: Award, color: 'indigo', trend: 'Đạt chuẩn Bộ GD' },
-    { title: 'Ca coi thi phân công', value: '12 ca', subtext: 'Kỳ thi HK1 (2025-2026)', icon: ShieldCheck, color: 'emerald' },
-    { title: 'Câu hỏi đóng góp', value: '48 câu', subtext: 'Ngân hàng câu hỏi', icon: HelpCircle, color: 'purple' },
+    { title: 'Có học vị khai báo', value: teachers.filter((teacher) => Boolean(teacher.degree?.trim())).length, subtext: 'Theo hồ sơ giảng viên', icon: Award, color: 'indigo' },
+    { title: 'Đã thuộc khoa', value: teachers.filter((teacher) => Boolean(teacher.departmentId)).length, subtext: 'Có đơn vị quản lý', icon: ShieldCheck, color: 'emerald' },
+    { title: 'Giảng viên đang hiển thị', value: filteredTeachers.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: HelpCircle, color: 'purple' },
   ];
 
   return (
@@ -474,22 +474,6 @@ export default function TeachersPage() {
           { label: 'Khoa trực thuộc', value: drawerTeacher?.department?.name, icon: Building2 },
           { label: 'Email công vụ', value: drawerTeacher?.email, icon: Mail },
           { label: 'Số điện thoại', value: drawerTeacher?.phone || '---', icon: Phone },
-        ]}
-        extraSections={[
-          {
-            title: 'Lịch Phân công Giám thị Coi thi',
-            content: (
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-200 p-3">
-                  <div>
-                    <p className="font-bold text-slate-800">Phòng thi PM201 - Ca 1 (08:00 - 09:30)</p>
-                    <p className="text-slate-500 mt-0.5">Kỳ thi HK1 (2025-2026) · Môn OOP</p>
-                  </div>
-                  <span className="rounded-full bg-sky-50 px-2 py-1 font-bold text-sky-700 text-[10px]">Giám thị 1</span>
-                </div>
-              </div>
-            ),
-          },
         ]}
       />
 

@@ -3,6 +3,7 @@ import { ExamRoomsService } from './exam-rooms.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateExamRoomDto, UpdateExamRoomDto } from './dto/exam-room.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -22,13 +23,13 @@ export class ExamRoomsController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateExamRoomDto) {
     return this.examRoomsService.create(body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateExamRoomDto) {
     return this.examRoomsService.update(id, body);
   }
 

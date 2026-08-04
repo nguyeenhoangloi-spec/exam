@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -35,7 +35,10 @@ export class DepartmentsService {
   }
 
   async remove(id: number) {
-    await this.findOne(id);
+    const department = await this.findOne(id);
+    if (department.classes.length || department.teachers.length || department.subjects.length) {
+      throw new BadRequestException('Không thể xóa khoa còn lớp học, giảng viên hoặc môn học.');
+    }
     return this.prisma.department.delete({ where: { id } });
   }
 }

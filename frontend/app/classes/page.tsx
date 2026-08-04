@@ -145,8 +145,8 @@ export default function ClassesPage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số lớp học', value: classes.length, subtext: 'Chính quy K65 - K66', icon: School, color: 'sky' },
     { title: 'Khoa đào tạo', value: departments.length, subtext: 'Các khoa chuyên ngành', icon: Building2, color: 'indigo' },
-    { title: 'Tổng sinh viên', value: '8 sinh viên', subtext: 'Đã phân chia lớp', icon: Users, color: 'emerald' },
-    { title: 'Cố vấn học tập', value: '100% Đã gán', subtext: 'Giảng viên chủ nhiệm', icon: GraduationCap, color: 'purple' },
+    { title: 'Tổng sinh viên', value: classes.reduce((total, item: any) => total + (item._count?.students || 0), 0), subtext: 'Theo danh sách lớp hiện có', icon: Users, color: 'emerald' },
+    { title: 'Lớp có sinh viên', value: classes.filter((item: any) => (item._count?.students || 0) > 0).length, subtext: 'Lớp đang có dữ liệu sinh viên', icon: GraduationCap, color: 'purple' },
   ];
 
   return (
@@ -347,8 +347,8 @@ export default function ClassesPage() {
           { label: 'Mã lớp', value: drawerClass?.code, icon: School },
           { label: 'Tên lớp học', value: drawerClass?.name },
           { label: 'Khoa trực thuộc', value: drawerClass?.department?.name, icon: Building2 },
-          { label: 'Cố vấn học tập', value: 'GS.TS Nguyễn Văn A', icon: GraduationCap },
-          { label: 'Sĩ số', value: '40 sinh viên', icon: Users },
+          { label: 'Cố vấn học tập', value: 'Chưa có dữ liệu phân công', icon: GraduationCap },
+          { label: 'Sĩ số', value: `${(drawerClass as any)?._count?.students || 0} sinh viên`, icon: Users },
         ]}
       />
 

@@ -52,6 +52,13 @@ export class DashboardService {
     const todayEnd = new Date(`${current.dateKey}T23:59:59.999Z`);
     const chartStart = new Date(Date.UTC(current.year, current.month - 5, 1));
     const chartEnd = new Date(Date.UTC(current.year, current.month + 1, 1));
+    const upcomingWhere = {
+      status: { notIn: ['CANCELLED', 'COMPLETED'] },
+      OR: [
+        { examDate: { gt: todayEnd } },
+        { examDate: { gte: todayStart, lte: todayEnd }, endTime: { gte: current.timeKey } },
+      ],
+    };
 
     const [
       totalStudents,
@@ -77,7 +84,7 @@ export class DashboardService {
       this.prisma.class.count(),
       this.prisma.examRoom.count({ where: { status: 'AVAILABLE' } }),
       this.prisma.examSchedule.count({
-        where: { examDate: { gte: todayStart }, status: { notIn: ['CANCELLED', 'COMPLETED'] } },
+        where: upcomingWhere,
       }),
       this.prisma.question.count({ where: { status: QuestionStatus.PENDING, deletedAt: null } }),
       this.prisma.examSchedule.count({
@@ -87,6 +94,7 @@ export class DashboardService {
         SELECT date_trunc('month', "examDate") AS month, COUNT(*)::bigint AS count
         FROM "exam_schedules"
         WHERE "examDate" >= ${chartStart} AND "examDate" < ${chartEnd}
+          AND "status" <> 'CANCELLED'
         GROUP BY date_trunc('month', "examDate")
         ORDER BY month ASC
       `,
@@ -96,7 +104,7 @@ export class DashboardService {
         _count: { _all: true },
       }),
       this.prisma.examSchedule.findMany({
-        where: { examDate: { gte: todayStart }, status: { notIn: ['CANCELLED', 'COMPLETED'] } },
+        where: upcomingWhere,
         take: 5,
         orderBy: [{ examDate: 'asc' }, { startTime: 'asc' }],
         include: {
@@ -132,6 +140,7 @@ export class DashboardService {
         orderBy: { startDate: 'asc' },
         include: {
           examSchedules: {
+            where: { status: { not: 'CANCELLED' } },
             select: {
               id: true,
               examScheduleRooms: {

@@ -93,7 +93,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <AppShell user={user} title="Admin Dashboard - Thống kê tổng quan">
+    <AppShell user={user} title="Tổng quan">
       <main className="w-full px-6 py-6 space-y-6">
         {loading ? (
           <DashboardSkeleton />
@@ -101,29 +101,56 @@ export default function DashboardPage() {
           <DashboardErrorState message={error || 'Dữ liệu Dashboard không khả dụng.'} onRetry={loadOverview} />
         ) : (
           <div className="space-y-6">
+            {/* Top Welcome Banner Card */}
             <DashboardWelcome
-              username={user?.username || 'admin'}
+              username={user?.username || 'Admin'}
               examCount={overview.today.examCount}
               pendingQuestionCount={overview.today.pendingQuestionCount}
             />
+
+            {/* 6 KPI Cards Row */}
             <DashboardStatistics summary={overview.summary} />
-            <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
-              <ExamScheduleChart data={overview.examChart} />
-              <QuestionStatusChart data={overview.questionStatus} />
-              <UpcomingExamList exams={overview.upcomingExams} />
-              <PendingQuestionList
-                questions={overview.pendingQuestions}
-                canReview={user?.role === 'ADMIN'}
-                busyId={busyId}
-                onApprove={approve}
-                onReject={(id, code) => {
-                  setRejecting({ id, code });
-                  setReason('');
-                }}
-              />
-              <ExamProgressOverview periods={overview.examProgress} />
-              <RecentActivityList activities={overview.recentActivities} />
-              <QuickActions />
+
+            {/* Row 1: Bar Chart (Left) + Donut Chart (Right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
+                <ExamScheduleChart data={overview.examChart} />
+              </div>
+              <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
+                <QuestionStatusChart data={overview.questionStatus} />
+              </div>
+            </div>
+
+            {/* Row 2: Upcoming Exams Table (Left) + Pending Questions Table (Right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-6 flex flex-col">
+                <UpcomingExamList exams={overview.upcomingExams} />
+              </div>
+              <div className="lg:col-span-6 flex flex-col">
+                <PendingQuestionList
+                  questions={overview.pendingQuestions}
+                  canReview={user?.role === 'ADMIN'}
+                  busyId={busyId}
+                  onApprove={approve}
+                  onReject={(id, code) => {
+                    setRejecting({ id, code });
+                    setReason('');
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Row 3: Progress Stepper (Left) + Recent Activity (Center) + Quick Actions (Right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-4 flex flex-col">
+                <ExamProgressOverview periods={overview.examProgress} />
+              </div>
+              <div className="lg:col-span-4 flex flex-col">
+                <RecentActivityList activities={overview.recentActivities} />
+              </div>
+              <div className="lg:col-span-4 flex flex-col">
+                <QuickActions />
+              </div>
             </div>
           </div>
         )}
@@ -152,15 +179,25 @@ export default function DashboardPage() {
             />
           </div>
           <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
-            <button type="button" onClick={() => setRejecting(null)} className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+            <button
+              type="button"
+              onClick={() => setRejecting(null)}
+              className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+            >
               Hủy
             </button>
-            <button type="button" disabled={Boolean(busyId)} onClick={reject} className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50">
+            <button
+              type="button"
+              disabled={Boolean(busyId)}
+              onClick={reject}
+              className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+            >
               Xác nhận từ chối
             </button>
           </div>
         </div>
       </Modal>
+
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </AppShell>
   );

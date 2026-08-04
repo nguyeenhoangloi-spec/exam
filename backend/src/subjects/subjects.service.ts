@@ -34,16 +34,29 @@ export class SubjectsService {
     if (await this.prisma.subject.findUnique({ where: { subjectCode: data.subjectCode } })) {
       throw new BadRequestException('Mã môn học đã tồn tại.');
     }
+    if (!await this.prisma.department.findUnique({ where: { id: data.departmentId } })) {
+      throw new BadRequestException('Khoa được chọn không tồn tại.');
+    }
     return this.prisma.subject.create({ data, include: { department: true } });
   }
 
   async update(id: number, data: { subjectCode?: string; subjectName?: string; credits?: number; departmentId?: number }) {
     await this.findOne(id);
+    if (data.departmentId !== undefined && !await this.prisma.department.findUnique({ where: { id: data.departmentId } })) {
+      throw new BadRequestException('Khoa được chọn không tồn tại.');
+    }
     return this.prisma.subject.update({ where: { id }, data, include: { department: true } });
   }
 
   async remove(id: number) {
-    await this.findOne(id);
+    const subject = await this.prisma.subject.findUnique({
+      where: { id },
+      include: { _count: { select: { studentSubjects: true, questions: true, examSchedules: true } } },
+    });
+    if (!subject) throw new NotFoundException('Không tìm thấy môn học.');
+    if (subject._count.studentSubjects || subject._count.questions || subject._count.examSchedules) {
+      throw new BadRequestException('Không thể xóa môn học đã có sinh viên đăng ký, câu hỏi hoặc lịch thi.');
+    }
     return this.prisma.subject.delete({ where: { id } });
   }
 }

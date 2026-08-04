@@ -182,12 +182,15 @@ export default function ExamPeriodsPage() {
     URL.revokeObjectURL(url);
   };
 
-  // KPI Items
+  const ongoingPeriods = periods.filter((period) => period.status === 'ONGOING').length;
+  const plannedPeriods = periods.filter((period) => period.status === 'UPCOMING' || period.status === 'ONGOING').length;
+  const schoolYears = new Set(periods.map((period) => period.schoolYear)).size;
+
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số Kỳ thi', value: periods.length, subtext: 'Kế hoạch khảo thí', icon: Calendar, color: 'sky' },
-    { title: 'Kỳ thi Hiện tại', value: 'HK1 2025-2026', subtext: 'Đang diễn ra', icon: Clock, color: 'emerald', trend: 'Đang mở đăng ký' },
-    { title: 'Năm học Đào tạo', value: '2025 - 2026', subtext: 'Chương trình chính quy', icon: Award, color: 'indigo' },
-    { title: 'Tiến độ Chuẩn bị', value: '100% Sẵn sàng', subtext: 'Đã lập lịch thi', icon: CheckCircle2, color: 'purple' },
+    { title: 'Kỳ thi đang diễn ra', value: ongoingPeriods, subtext: 'Theo trạng thái kỳ thi', icon: Clock, color: 'emerald' },
+    { title: 'Năm học có dữ liệu', value: schoolYears, subtext: 'Năm học trong danh sách kỳ thi', icon: Award, color: 'indigo' },
+    { title: 'Kỳ đang chuẩn bị', value: plannedPeriods, subtext: 'Sắp diễn ra hoặc đang diễn ra', icon: CheckCircle2, color: 'purple' },
   ];
 
   return (

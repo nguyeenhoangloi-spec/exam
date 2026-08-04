@@ -1,42 +1,55 @@
 'use client';
 
-import { BarChart3, BookPlus, CalendarPlus, ClipboardPlus, FilePlus2, Import, ShieldCheck, UsersRound } from 'lucide-react';
+import {
+  CalendarPlus,
+  Clock,
+  Layers,
+  UserCheck,
+  FilePlus,
+  FileText,
+  Upload,
+  BarChart3,
+  LucideIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-const actions = [
-  { title: 'Tạo kỳ thi', description: 'Mở kỳ thi mới', icon: CalendarPlus, route: '/exam-periods?action=create' },
-  { title: 'Tạo lịch thi', description: 'Lập lịch môn thi', icon: ClipboardPlus, route: '/exam-schedules?action=create' },
-  { title: 'Xếp phòng thi', description: 'Sắp chỗ tự động', icon: UsersRound, route: '/exam-arrangement' },
-  { title: 'Phân công giám thị', description: 'Bố trí coi thi', icon: ShieldCheck, route: '/exam-supervisors' },
-  { title: 'Tạo câu hỏi', description: 'Thêm câu hỏi mới', icon: BookPlus, route: '/question-bank?action=create' },
-  { title: 'Tạo đề thi', description: 'Rút đề ngẫu nhiên', icon: FilePlus2, route: '/exam-papers' },
-  { title: 'Import câu hỏi', description: 'Nhập dữ liệu CSV', icon: Import, route: '/question-bank?action=import' },
-  { title: 'Xem báo cáo', description: 'Tổng hợp hệ thống', icon: BarChart3, route: '/reports' },
+interface QuickActionItem {
+  title: string;
+  icon: LucideIcon;
+  route: string;
+  tone: string;
+}
+
+const actions: QuickActionItem[] = [
+  { title: 'Tạo kỳ thi', icon: CalendarPlus, route: '/exam-periods?action=create', tone: 'bg-blue-50 text-blue-600 hover:bg-blue-100' },
+  { title: 'Tạo ca thi', icon: Clock, route: '/exam-schedules?action=create', tone: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' },
+  { title: 'Xếp phòng thi', icon: Layers, route: '/exam-arrangement', tone: 'bg-purple-50 text-purple-600 hover:bg-purple-100' },
+  { title: 'Phân công GV', icon: UserCheck, route: '/exam-supervisors', tone: 'bg-amber-50 text-amber-600 hover:bg-amber-100' },
+  { title: 'Tạo câu hỏi', icon: FilePlus, route: '/question-bank?action=create', tone: 'bg-rose-50 text-rose-600 hover:bg-rose-100' },
+  { title: 'Tạo đề thi', icon: FileText, route: '/exam-papers', tone: 'bg-teal-50 text-teal-600 hover:bg-teal-100' },
+  { title: 'Import dữ liệu', icon: Upload, route: '/question-bank?action=import', tone: 'bg-sky-50 text-sky-600 hover:bg-sky-100' },
+  { title: 'Xem báo cáo', icon: BarChart3, route: '/reports', tone: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100' },
 ];
 
 export function QuickActions() {
   const router = useRouter();
+
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-5">
+    <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs flex flex-col justify-between">
       <div className="mb-4">
-        <h2 className="font-bold text-slate-900">Tác vụ quản trị nhanh</h2>
-        <p className="text-xs text-slate-500">Đi tới chức năng thường dùng</p>
+        <h2 className="text-base font-bold text-slate-900">Tác vụ quản trị nhanh</h2>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {actions.map(({ title, description, icon: Icon, route }) => (
+
+      <div className="grid grid-cols-2 gap-3">
+        {actions.map(({ title, icon: Icon, route, tone }) => (
           <button
             key={title}
             type="button"
             onClick={() => router.push(route)}
-            className="group flex min-w-0 items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-left transition hover:border-sky-200 hover:bg-sky-50"
+            className={`group flex items-center justify-center gap-2 rounded-xl p-3.5 text-center transition shadow-2xs hover:shadow-xs active:scale-98 ${tone}`}
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sky-700 shadow-sm">
-              <Icon className="h-4 w-4" />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-xs font-semibold text-slate-800">{title}</span>
-              <span className="block truncate text-[10px] text-slate-500">{description}</span>
-            </span>
+            <Icon className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs font-bold text-slate-800 group-hover:text-slate-900">{title}</span>
           </button>
         ))}
       </div>

@@ -178,6 +178,7 @@ model StudentSubject {
   status     String  @default("ELIGIBLE")
 
   @@map("student_subjects")
+  @@unique([studentId, subjectId, semester, schoolYear])
 }
 
 model ExamPeriod {
@@ -238,6 +239,7 @@ model ExamScheduleRoom {
   supervisors      ExamSupervisor[]
 
   @@map("exam_schedule_rooms")
+  @@unique([examScheduleId, roomId])
 }
 
 model ExamRoomStudent {
@@ -251,6 +253,8 @@ model ExamRoomStudent {
   status             String           @default("ASSIGNED")
 
   @@map("exam_room_students")
+  @@unique([examScheduleRoomId, studentId])
+  @@unique([examScheduleRoomId, seatNumber])
 }
 
 model ExamSupervisor {
@@ -263,6 +267,8 @@ model ExamSupervisor {
   note               String?
 
   @@map("exam_supervisors")
+  @@unique([examScheduleRoomId, teacherId])
+  @@unique([examScheduleRoomId, role])
 }
 
 model Question {
@@ -378,6 +384,8 @@ model ExamPaperQuestion {
   score         Float
   usedAt        DateTime  @default(now())
 
+  @@unique([examPaperId, questionId])
+  @@unique([examPaperId, questionOrder])
   @@map("exam_paper_questions")
 }
 

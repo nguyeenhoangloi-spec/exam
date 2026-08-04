@@ -75,9 +75,9 @@ export default function StudentExamSchedulePage() {
 
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số môn thi', value: schedules.length, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'sky' },
-    { title: 'Đã xếp phòng thi', value: schedules.length, subtext: 'Đủ điều kiện dự thi', icon: CheckCircle2, color: 'emerald', trend: '100% Đạt' },
-    { title: 'Hình thức thi', value: 'Thi Máy tính', subtext: 'Trắc nghiệm tự động', icon: BookOpen, color: 'indigo' },
-    { title: 'Trạng thái SBD', value: 'Đã cấp SBD', subtext: 'Sẵn sàng dự thi', icon: Award, color: 'purple' },
+    { title: 'Đã xếp phòng thi', value: schedules.filter((schedule) => Boolean(schedule.roomCode || schedule.roomName)).length, subtext: 'Theo lịch thi đã được xếp', icon: CheckCircle2, color: 'emerald' },
+    { title: 'Môn thi trắc nghiệm', value: schedules.filter((schedule) => schedule.examType === 'TRAC_NGHIEM').length, subtext: 'Theo lịch thi cá nhân', icon: BookOpen, color: 'indigo' },
+    { title: 'Đã cấp số báo danh', value: schedules.filter((schedule) => Boolean(schedule.examNumber || schedule.registrationNumber)).length, subtext: 'Theo lịch thi hiện có', icon: Award, color: 'purple' },
   ];
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, CalendarClock, DoorOpen, GraduationCap, HelpCircle, LucideIcon, Users } from 'lucide-react';
+import { BookOpen, CalendarClock, DoorOpen, GraduationCap, FileText, Users, ArrowRight, LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DashboardOverview, DashboardSummaryItem } from '../../types/dashboard';
 
@@ -10,12 +10,12 @@ const cards: Array<{
   icon: LucideIcon;
   tone: string;
 }> = [
-  { key: 'students', title: 'Tổng sinh viên', icon: Users, tone: 'bg-sky-50 text-sky-700' },
-  { key: 'lecturers', title: 'Tổng giảng viên', icon: GraduationCap, tone: 'bg-emerald-50 text-emerald-700' },
-  { key: 'subjects', title: 'Tổng môn học', icon: BookOpen, tone: 'bg-violet-50 text-violet-700' },
-  { key: 'examRooms', title: 'Tổng phòng thi', icon: DoorOpen, tone: 'bg-indigo-50 text-indigo-700' },
-  { key: 'upcomingExams', title: 'Lịch thi sắp tới', icon: CalendarClock, tone: 'bg-amber-50 text-amber-700' },
-  { key: 'pendingQuestions', title: 'Câu hỏi chờ duyệt', icon: HelpCircle, tone: 'bg-rose-50 text-rose-700' },
+  { key: 'students', title: 'Tổng sinh viên', icon: Users, tone: 'bg-blue-50 text-blue-600' },
+  { key: 'lecturers', title: 'Tổng giảng viên', icon: GraduationCap, tone: 'bg-emerald-50 text-emerald-600' },
+  { key: 'subjects', title: 'Tổng môn học', icon: BookOpen, tone: 'bg-purple-50 text-purple-600' },
+  { key: 'examRooms', title: 'Tổng phòng thi', icon: DoorOpen, tone: 'bg-amber-50 text-amber-600' },
+  { key: 'upcomingExams', title: 'Kỳ thi sắp tới', icon: CalendarClock, tone: 'bg-sky-50 text-sky-600' },
+  { key: 'pendingQuestions', title: 'Câu hỏi chờ duyệt', icon: FileText, tone: 'bg-rose-50 text-rose-600' },
 ];
 
 export function DashboardStatCard({
@@ -34,25 +34,30 @@ export function DashboardStatCard({
     <button
       type="button"
       onClick={() => router.push(item.route)}
-      className="group min-h-28 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-md"
+      className="group flex flex-col justify-between min-h-[140px] rounded-2xl border border-slate-200/90 bg-white p-4 text-left shadow-xs transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">{item.total.toLocaleString('vi-VN')}</p>
+      <div>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
+            <Icon className="h-5 w-5" />
+          </span>
         </div>
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
-          <Icon className="h-5 w-5" />
-        </span>
+        <p className="truncate text-xs font-semibold text-slate-500">{title}</p>
+        <p className="mt-1 text-2xl font-black text-slate-900 tracking-tight">{item.total.toLocaleString('vi-VN')}</p>
+        <p className="mt-0.5 truncate text-[11px] font-medium text-slate-400">{item.description || 'Đang hoạt động'}</p>
       </div>
-      <p className="mt-2 truncate text-xs text-slate-500">{item.description || 'Đang cập nhật'}</p>
+
+      <div className="mt-3 flex items-center justify-end gap-1 text-[11px] font-bold text-[#1e66f5] group-hover:text-blue-700">
+        <span>Xem chi tiết</span>
+        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+      </div>
     </button>
   );
 }
 
 export function DashboardStatistics({ summary }: { summary: DashboardOverview['summary'] }) {
   return (
-    <section className="grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
+    <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       {cards.map((card) => (
         <DashboardStatCard key={card.key} {...card} item={summary[card.key]} />
       ))}

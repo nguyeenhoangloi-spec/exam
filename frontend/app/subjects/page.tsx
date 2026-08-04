@@ -180,8 +180,8 @@ export default function SubjectsPage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số môn học', value: subjects.length, subtext: 'Chương trình đào tạo', icon: BookOpen, color: 'sky' },
     { title: 'Tổng số tín chỉ', value: `${subjects.reduce((sum, s) => sum + s.credits, 0)} Tín`, subtext: 'Số tín chỉ tích lũy', icon: Award, color: 'indigo' },
-    { title: 'Số chương học', value: '17 Chương', subtext: 'Phân bổ trong đề thi', icon: Layers, color: 'purple' },
-    { title: 'Tỷ lệ phủ ngân hàng', value: '100%', subtext: 'Đã sẵn sàng thi', icon: CheckCircle2, color: 'emerald', trend: 'Đã tạo ma trận đề' },
+    { title: 'Môn có tín chỉ', value: subjects.filter((subject) => subject.credits > 0).length, subtext: 'Dữ liệu môn học đã khai báo', icon: Layers, color: 'purple' },
+    { title: 'Môn có khoa quản lý', value: subjects.filter((subject) => Boolean(subject.departmentId)).length, subtext: 'Theo dữ liệu môn học hiện có', icon: CheckCircle2, color: 'emerald' },
   ];
 
   return (

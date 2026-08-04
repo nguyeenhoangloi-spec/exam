@@ -3,6 +3,7 @@ import { ClassesService } from './classes.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateClassDto, UpdateClassDto } from './dto/class.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -22,13 +23,13 @@ export class ClassesController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: { code: string; name: string; departmentId: number }) {
+  create(@Body() body: CreateClassDto) {
     return this.classesService.create(body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: { code?: string; name?: string; departmentId?: number }) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateClassDto) {
     return this.classesService.update(id, body);
   }
 

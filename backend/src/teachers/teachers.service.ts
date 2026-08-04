@@ -58,34 +58,35 @@ export class TeachersService {
     const username = data.username || data.teacherCode;
     const rawPassword = data.password || '123456';
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
-
-    const user = await this.prisma.user.create({
-      data: {
-        username,
-        password: hashedPassword,
-        email: data.email,
-        role: 'TEACHER',
-        status: 'ACTIVE',
-      },
-    });
-
-    return this.prisma.teacher.create({
-      data: {
-        teacherCode: data.teacherCode,
-        fullName: data.fullName,
-        degree: data.degree,
-        email: data.email,
-        phone: data.phone,
-        departmentId: data.departmentId,
-        userId: user.id,
-      },
-      include: { department: true, user: true },
+    return this.prisma.$transaction(async (tx) => {
+      const [department, existingUser] = await Promise.all([
+        tx.department.findUnique({ where: { id: data.departmentId } }),
+        tx.user.findFirst({ where: { OR: [{ username }, { email: data.email }] } }),
+      ]);
+      if (!department) throw new BadRequestException('Khoa được chọn không tồn tại.');
+      if (existingUser) throw new BadRequestException('Tên đăng nhập hoặc email đã tồn tại.');
+      const user = await tx.user.create({
+        data: { username, password: hashedPassword, email: data.email, role: 'TEACHER', status: 'ACTIVE' },
+      });
+      return tx.teacher.create({
+        data: {
+          teacherCode: data.teacherCode,
+          fullName: data.fullName,
+          degree: data.degree,
+          email: data.email,
+          phone: data.phone,
+          departmentId: data.departmentId,
+          userId: user.id,
+        },
+        include: { department: true, user: true },
+      });
     });
   }
 
   async update(
     id: number,
     data: {
+      teacherCode?: string;
       fullName?: string;
       degree?: string;
       email?: string;
@@ -93,21 +94,31 @@ export class TeachersService {
       departmentId?: number;
     },
   ) {
-    await this.findOne(id);
-
-    return this.prisma.teacher.update({
-      where: { id },
-      data,
-      include: { department: true, user: true },
+    const teacher = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      if (data.teacherCode && data.teacherCode !== teacher.teacherCode) {
+        const existingTeacher = await tx.teacher.findUnique({ where: { teacherCode: data.teacherCode } });
+        if (existingTeacher) throw new BadRequestException('Mã giảng viên đã tồn tại.');
+      }
+      if (data.departmentId && !await tx.department.findUnique({ where: { id: data.departmentId } })) {
+        throw new BadRequestException('Khoa được chọn không tồn tại.');
+      }
+      if (data.email && data.email !== teacher.email) {
+        const existingUser = await tx.user.findFirst({ where: { email: data.email, id: { not: teacher.userId } } });
+        if (existingUser) throw new BadRequestException('Email đã được sử dụng.');
+        await tx.user.update({ where: { id: teacher.userId }, data: { email: data.email } });
+      }
+      return tx.teacher.update({ where: { id }, data, include: { department: true, user: true } });
     });
   }
 
   async remove(id: number) {
     const teacher = await this.findOne(id);
-    await this.prisma.teacher.delete({ where: { id } });
-    if (teacher.userId) {
-      await this.prisma.user.delete({ where: { id: teacher.userId } }).catch(() => {});
-    }
+    if (teacher.supervisors.length > 0) throw new BadRequestException('Không thể xóa giảng viên đã có phân công coi thi.');
+    await this.prisma.$transaction(async (tx) => {
+      await tx.teacher.delete({ where: { id } });
+      await tx.user.delete({ where: { id: teacher.userId } });
+    });
     return { message: 'Đã xóa giảng viên thành công' };
   }
 
@@ -118,7 +129,10 @@ export class TeachersService {
     if (!teacher) throw new NotFoundException('Không tìm thấy thông tin giảng viên.');
 
     const assignments = await this.prisma.examSupervisor.findMany({
-      where: { teacherId: teacher.id },
+      where: {
+        teacherId: teacher.id,
+        examScheduleRoom: { examSchedule: { status: { not: 'CANCELLED' } } },
+      },
       include: {
         examScheduleRoom: {
           include: {

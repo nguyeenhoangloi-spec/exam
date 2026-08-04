@@ -3,6 +3,7 @@ import { ExamPeriodsService } from './exam-periods.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateExamPeriodDto, UpdateExamPeriodDto } from './dto/exam-period.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -22,13 +23,13 @@ export class ExamPeriodsController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Request() req: any, @Body() body: any) {
+  create(@Request() req: any, @Body() body: CreateExamPeriodDto) {
     return this.examPeriodsService.create(req.user, body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateExamPeriodDto) {
     return this.examPeriodsService.update(req.user, id, body);
   }
 

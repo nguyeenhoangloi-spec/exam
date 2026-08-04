@@ -124,7 +124,7 @@ export default function ExamSupervisorsPage() {
       });
       setToast({ message: 'Phân công giám thị thành công!', type: 'success' });
       setNote('');
-      await fetchSupervisors(selectedScheduleRoomId);
+      await selectSchedule(selectedSchedule.id);
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi phân công giám thị', type: 'error' });
     }
@@ -142,7 +142,7 @@ export default function ExamSupervisorsPage() {
         try {
           await api.delete(`/exam-supervisors/${id}`);
           setToast({ message: 'Đã hủy phân công giám thị thành công!', type: 'success' });
-          await fetchSupervisors(selectedScheduleRoomId);
+          await selectSchedule(selectedSchedule.id);
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
         }
@@ -154,12 +154,13 @@ export default function ExamSupervisorsPage() {
     const headers = 'Môn thi,Phòng thi,Giám thị,Học vị,Vai trò,Ghi chú\n';
     const rows = assignedSupervisors
       .map(
-        (s) =>
-          `"${selectedSchedule?.subject?.subjectName || ''}","${
-            s.examScheduleRoom?.examRoom?.roomName || ''
-          }","${s.teacher?.fullName || ''}","${s.teacher?.degree || 'TS'}","${
+        (s) => {
+          const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
+          const rName = roomObj?.roomName || roomObj?.roomCode || '';
+          return `"${selectedSchedule?.subject?.subjectName || ''}","${rName}","${s.teacher?.fullName || ''}","${s.teacher?.degree || 'TS'}","${
             s.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'
-          }","${s.note || ''}"`,
+          }","${s.note || ''}"`;
+        },
       )
       .join('\n');
     const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
@@ -171,12 +172,20 @@ export default function ExamSupervisorsPage() {
     URL.revokeObjectURL(url);
   };
 
-  // KPI Items
+  const selectedRooms = selectedSchedule?.examScheduleRooms || [];
+  const totalAssignments = selectedRooms.reduce(
+    (total: number, scheduleRoom: any) => total + (scheduleRoom.supervisors?.length || 0),
+    0,
+  );
+  const requiredAssignments = selectedRooms.length * 2;
+  const coverage = requiredAssignments ? Math.round((totalAssignments / requiredAssignments) * 100) : 0;
+  const fullyAssignedRooms = selectedRooms.filter((scheduleRoom: any) => (scheduleRoom.supervisors?.length || 0) >= 2).length;
+
   const kpiItems: KPICardItem[] = [
-    { title: 'Tổng ca coi thi', value: assignedSupervisors.length || 2, subtext: 'Kỳ thi HK1 (2025-2026)', icon: ShieldCheck, color: 'sky' },
-    { title: 'Giảng viên làm nhiệm vụ', value: teachers.length, subtext: 'Cán bộ coi thi đã gán', icon: GraduationCap, color: 'emerald' },
-    { title: 'Tỷ lệ phủ giám thị', value: '100% Đủ bộ', subtext: 'Mỗi phòng 2 giám thị', icon: CheckCircle2, color: 'indigo', trend: 'Đạt chuẩn Khảo thí' },
-    { title: 'Trạng thái xác nhận', value: 'Đã xác nhận', subtext: 'Đã gửi thông báo', icon: UserCheck, color: 'purple' },
+    { title: 'Lượt phân công', value: totalAssignments, subtext: selectedSchedule ? `Lịch thi đang chọn: ${selectedRooms.length} phòng` : 'Chọn lịch thi để xem', icon: ShieldCheck, color: 'sky' },
+    { title: 'Giảng viên khả dụng', value: teachers.length, subtext: 'Danh sách giảng viên hệ thống', icon: GraduationCap, color: 'emerald' },
+    { title: 'Tỷ lệ phủ giám thị', value: `${coverage}%`, subtext: requiredAssignments ? `${totalAssignments}/${requiredAssignments} vị trí đã gán` : 'Chưa có phòng thi', icon: CheckCircle2, color: 'indigo' },
+    { title: 'Phòng đủ giám thị', value: `${fullyAssignedRooms}/${selectedRooms.length}`, subtext: 'Mỗi phòng cần 2 giám thị', icon: UserCheck, color: 'purple' },
   ];
 
   return (
@@ -245,11 +254,16 @@ export default function ExamSupervisorsPage() {
                   }}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
                 >
-                  {selectedSchedule?.examScheduleRooms?.map((sr: any) => (
-                    <option key={sr.id} value={sr.id}>
-                      Phòng: {sr.examRoom?.roomName || sr.examRoom?.roomCode} (Sức chứa: {sr.examRoom?.capacity})
-                    </option>
-                  ))}
+                  {selectedSchedule?.examScheduleRooms?.map((sr: any) => {
+                    const roomObj = sr.room || sr.examRoom;
+                    const name = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || roomObj?.code || '---';
+                    const capacity = roomObj?.capacity ?? '---';
+                    return (
+                      <option key={sr.id} value={sr.id}>
+                        Phòng: {name} (Sức chứa: {capacity} chỗ)
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             </div>
@@ -382,7 +396,15 @@ export default function ExamSupervisorsPage() {
           { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode },
           { label: 'Học vị / Học hàm', value: drawerSupervisor?.teacher?.degree || 'TS', icon: GraduationCap },
           { label: 'Nhiệm vụ phân công', value: drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Cán bộ coi thi chính (Giám thị 1)' : 'Cán bộ coi thi phụ (Giám thị 2)', icon: ShieldCheck },
-          { label: 'Phòng coi thi', value: selectedSchedule?.examScheduleRooms?.[0]?.examRoom?.roomName || 'PM201', icon: DoorOpen },
+          {
+            label: 'Phòng coi thi',
+            value: (() => {
+              const currentSup = assignedSupervisors.find((item) => item.id === drawerSupervisor?.id);
+              const roomObj = currentSup?.examScheduleRoom?.room || currentSup?.examScheduleRoom?.examRoom;
+              return roomObj?.roomName || roomObj?.roomCode || 'Chưa xác định';
+            })(),
+            icon: DoorOpen,
+          },
         ]}
       />
 

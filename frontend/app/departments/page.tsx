@@ -123,9 +123,9 @@ export default function DepartmentsPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số Khoa/Viện', value: departments.length, subtext: 'Trực thuộc Trường', icon: Building2, color: 'sky' },
-    { title: 'Đội ngũ Giảng viên', value: '6 Giảng viên', subtext: 'Cán bộ giảng dạy', icon: GraduationCap, color: 'indigo' },
-    { title: 'Sinh viên đào tạo', value: '8 Sinh viên', subtext: 'Theo dõi khảo thí', icon: Users, color: 'emerald' },
-    { title: 'Trạng thái Đơn vị', value: '100% Hoạt động', subtext: 'Đã chuẩn hóa mã', icon: CheckCircle2, color: 'purple' },
+    { title: 'Khoa đang hiển thị', value: filteredDepartments.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: GraduationCap, color: 'indigo' },
+    { title: 'Mã khoa hợp lệ', value: departments.filter((department) => Boolean(department.code?.trim())).length, subtext: 'Có mã định danh', icon: Users, color: 'emerald' },
+    { title: 'Đơn vị có tên', value: departments.filter((department) => Boolean(department.name?.trim())).length, subtext: 'Dữ liệu đã khai báo tên', icon: CheckCircle2, color: 'purple' },
   ];
 
   return (

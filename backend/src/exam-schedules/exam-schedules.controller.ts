@@ -3,6 +3,7 @@ import { ExamSchedulesService } from './exam-schedules.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateExamScheduleDto, FindExamSchedulesDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -12,25 +13,25 @@ export class ExamSchedulesController {
 
   @Get()
   @Roles('ADMIN', 'TEACHER')
-  findAll(@Query('examPeriodId') examPeriodId?: string) {
-    return this.examSchedulesService.findAll(examPeriodId ? parseInt(examPeriodId, 10) : undefined);
+  findAll(@Request() req: any, @Query() query: FindExamSchedulesDto) {
+    return this.examSchedulesService.findAll(req.user, query.examPeriodId);
   }
 
   @Get(':id')
   @Roles('ADMIN', 'TEACHER')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.examSchedulesService.findOne(id);
+  findOne(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examSchedulesService.findOne(req.user, id);
   }
 
   @Roles('ADMIN')
   @Post()
-  create(@Request() req: any, @Body() body: any) {
+  create(@Request() req: any, @Body() body: CreateExamScheduleDto) {
     return this.examSchedulesService.create(req.user, body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateExamScheduleDto) {
     return this.examSchedulesService.update(req.user, id, body);
   }
 

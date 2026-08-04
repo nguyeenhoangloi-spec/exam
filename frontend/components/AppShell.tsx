@@ -16,12 +16,10 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return window.localStorage.getItem('sidebar-collapsed') === 'true';
-    }
-    return false;
-  });
+  // Keep the server and first client render identical.  The persisted setting
+  // is restored only after hydration, while the CSS rule handles the desktop
+  // transition without affecting the mobile drawer.
+  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
 
@@ -32,14 +30,12 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('sidebar-collapsed', String(collapsed));
-      if (collapsed) {
-        document.documentElement.classList.add('sidebar-collapsed');
-      } else {
-        document.documentElement.classList.remove('sidebar-collapsed');
-      }
-    }
+    setCollapsed(window.localStorage.getItem('sidebar-collapsed') === 'true');
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('sidebar-collapsed', String(collapsed));
+    document.documentElement.classList.toggle('sidebar-collapsed', collapsed);
   }, [collapsed]);
 
   const isDenied = Boolean(user && !canAccessPath(user.role, pathname));
@@ -77,7 +73,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
       <div
         className={`app-shell-main min-h-screen min-w-0 pt-[72px] ${
           isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
-        } ${collapsed ? 'md:ml-[72px]' : 'md:ml-[260px]'}`}
+        } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
       >
         <Header user={user} title={title} collapsed={collapsed} onMenuClick={() => setMobileOpen(true)} />
         {children}

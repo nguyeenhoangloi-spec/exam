@@ -76,11 +76,27 @@ export class ExamPapersService {
     return this.prisma.$transaction(async (tx) => {
       const schedule = await tx.examSchedule.findUnique({
         where: { id: data.examScheduleId },
-        include: { subject: true, examPeriod: true },
+        include: {
+          subject: true,
+          examPeriod: true,
+          examScheduleRooms: {
+            where: { supervisors: { some: { teacher: { userId: actor.id } } } },
+            select: { id: true },
+          },
+        },
       });
       if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
       if (['CANCELLED', 'COMPLETED'].includes(schedule.status)) {
         throw new BadRequestException('Không thể tạo đề cho lịch thi đã hủy hoặc hoàn thành.');
+      }
+      if (actor.role === 'TEACHER' && schedule.examScheduleRooms.length === 0) {
+        throw new ForbiddenException('Bạn chỉ được tạo đề cho lịch thi mà mình được phân công.');
+      }
+      const [startHour, startMinute] = schedule.startTime.split(':').map(Number);
+      const [endHour, endMinute] = schedule.endTime.split(':').map(Number);
+      const scheduleDuration = ((endHour * 60) + endMinute) - ((startHour * 60) + startMinute);
+      if (!Number.isFinite(scheduleDuration) || scheduleDuration < 1 || data.durationMinutes > scheduleDuration) {
+        throw new BadRequestException('Thời lượng đề thi không được vượt quá thời gian của lịch thi.');
       }
 
       const duplicateCode = await tx.examPaper.findFirst({

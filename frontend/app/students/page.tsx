@@ -203,9 +203,9 @@ export default function StudentsPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng sinh viên', value: students.length, subtext: 'Chính quy K65 - K66', icon: Users, color: 'sky' },
-    { title: 'Đang học tập', value: students.length, subtext: 'Đủ ĐK Khảo thí', icon: CheckCircle2, color: 'emerald', trend: '100% Hợp lệ' },
+    { title: 'Có lớp học', value: students.filter((student) => Boolean(student.classId)).length, subtext: 'Sinh viên đã được phân lớp', icon: CheckCircle2, color: 'emerald' },
     { title: 'Số lớp học', value: classes.length, subtext: 'Đào tạo chuyên ngành', icon: School, color: 'indigo' },
-    { title: 'Tỷ lệ thi đạt', value: '98.5%', subtext: 'Kỳ thi mới nhất', icon: Award, color: 'purple' },
+    { title: 'Sinh viên đang hiển thị', value: filteredStudents.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: Award, color: 'purple' },
   ];
 
   return (
@@ -483,22 +483,6 @@ export default function StudentsPage() {
           { label: 'Lớp học', value: drawerStudent?.class?.name, icon: School },
           { label: 'Email', value: drawerStudent?.email, icon: Mail },
           { label: 'Số điện thoại', value: drawerStudent?.phone || '---', icon: Phone },
-        ]}
-        extraSections={[
-          {
-            title: 'Trạng thái Đăng ký Khảo thí',
-            content: (
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between rounded-xl bg-emerald-50 p-3 text-emerald-800 font-medium">
-                  <span className="flex items-center gap-1.5 font-bold">
-                    <CheckCircle2 className="h-4 w-4" /> Đủ điều kiện thi HK1 (2025-2026)
-                  </span>
-                  <span className="font-bold">Đã duyệt</span>
-                </div>
-                <p className="text-slate-500">Sinh viên đã hoàn thành đóng học phí và tích lũy đủ 100% số tiết tham gia lớp học.</p>
-              </div>
-            ),
-          },
         ]}
       />
 

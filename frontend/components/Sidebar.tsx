@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside
       className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-hidden border-r border-slate-800 bg-slate-900 text-slate-100 shadow-xl ${
         isToggling ? 'transition-[width,transform] duration-300 ease-in-out' : ''
-      } ${collapsed ? 'w-[260px] md:w-[72px]' : 'w-[260px]'} ${
+      } ${collapsed ? 'w-[260px] md:w-[76px]' : 'w-[260px]'} ${
         mobileOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0`}
     >
@@ -103,11 +103,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Title Text */}
           <div
             className={`sidebar-text-node ml-3 min-w-0 flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
-              collapsed ? 'opacity-0 max-w-0 pointer-events-none' : 'opacity-100 max-w-[150px]'
+              collapsed ? 'opacity-0 max-w-0 pointer-events-none' : 'opacity-100 max-w-[170px]'
             }`}
           >
-            <h1 className="truncate text-base font-bold tracking-wide text-white">KHẢO THÍ SV</h1>
-            <p className="truncate text-xs text-slate-400">Hệ thống quản lý</p>
+            <h1 className="truncate text-xs font-black tracking-wider text-white uppercase leading-tight">HỆ THỐNG</h1>
+            <h2 className="truncate text-xs font-black tracking-wider text-sky-400 uppercase leading-tight">QUẢN LÝ KHẢO THÍ</h2>
           </div>
         </div>
 
@@ -126,8 +126,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation list */}
-      <nav className="flex-1 overflow-y-auto no-scrollbar px-4 py-4" aria-label="Điều hướng chính">
-        <div className="space-y-1">
+      <nav className="flex-1 overflow-y-auto no-scrollbar px-3 py-4 space-y-1" aria-label="Điều hướng chính">
+        <div>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = isItemActive(item.href);
@@ -140,10 +140,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onFocus={() => router.prefetch(item.href)}
                 title={collapsed ? item.name : undefined}
                 onClick={onMobileClose}
-                className={`group relative flex h-11 items-center rounded-xl text-sm font-medium transition-colors ${
+                className={`group relative flex h-10 items-center rounded-xl text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-sky-600 text-white shadow-md shadow-sky-900/40'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#1e66f5] text-white shadow-md shadow-blue-900/30'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 {/* Fixed Icon Box at X = 16px */}

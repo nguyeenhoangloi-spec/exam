@@ -187,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className={`fixed right-0 top-0 z-40 h-[72px] border-b border-slate-200/90 bg-white/95 shadow-[0_1px_3px_rgba(15,23,42,0.05)] backdrop-blur transition-all duration-300 ${
-        collapsed ? 'left-0 md:left-[72px]' : 'left-0 md:left-[260px]'
+        collapsed ? 'left-0 md:left-[76px]' : 'left-0 md:left-[260px]'
       }`}
     >
       <div ref={containerRef} className="mx-auto flex h-full w-full items-center gap-3 px-4 md:px-6">
@@ -202,17 +202,17 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           <div className="min-w-0">
-            <p className="hidden truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400 sm:block">
-              {role === 'ADMIN' ? 'Quản trị' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'} / Trang hiện tại
+            <h1 className="truncate text-lg font-bold tracking-tight text-slate-900">{title}</h1>
+            <p className="hidden truncate text-xs font-medium text-slate-500 sm:block">
+              Trang chủ / {title}
             </p>
-            <h1 className="truncate text-base font-bold tracking-tight text-slate-800 sm:text-lg">{title}</h1>
           </div>
         </div>
 
         <div className="relative hidden min-w-0 flex-1 justify-center lg:flex">
           <div
-            className={`relative w-full max-w-[440px] rounded-xl border bg-slate-50 transition ${
-              searchOpen ? 'border-sky-400 bg-white ring-4 ring-sky-100' : 'border-slate-200 hover:border-slate-300'
+            className={`relative w-full max-w-[480px] rounded-xl border bg-slate-50/80 transition ${
+              searchOpen ? 'border-sky-500 bg-white ring-4 ring-sky-100/60' : 'border-slate-200 hover:border-slate-300'
             }`}
           >
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -233,9 +233,9 @@ export const Header: React.FC<HeaderProps> = ({
                   navigateTo(filteredCommands[0].href);
                 }
               }}
-              aria-label="Tìm nhanh chức năng"
-              placeholder="Tìm nhanh chức năng..."
-              className="h-10 w-full rounded-xl bg-transparent pl-10 pr-16 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+              aria-label="Tìm kiếm sinh viên, kỳ thi, phòng thi..."
+              placeholder="Tìm kiếm sinh viên, kỳ thi, phòng thi..."
+              className="h-10 w-full rounded-xl bg-transparent pl-10 pr-16 text-sm text-slate-700 outline-none placeholder:text-slate-400 font-medium"
             />
             {search ? (
               <button

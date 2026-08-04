@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 
@@ -11,8 +12,13 @@ export class ExamArrangementService {
       throw new BadRequestException('Vui lòng chọn ít nhất một phòng thi.');
     }
 
+    // All reads and writes are in one serializable transaction.  This keeps
+    // two concurrent administrators from assigning the same room/student
+    // after both requests have observed the old, apparently-free state.
+    try {
+    return await this.prisma.$transaction(async (tx) => {
     // 1. Lấy lịch thi
-    const schedule = await this.prisma.examSchedule.findUnique({
+    const schedule = await tx.examSchedule.findUnique({
       where: { id: examScheduleId },
       include: { subject: true, examPeriod: true },
     });
@@ -20,11 +26,16 @@ export class ExamArrangementService {
     if (!schedule) {
       throw new NotFoundException('Không tìm thấy lịch thi.');
     }
+    if (['CANCELLED', 'COMPLETED'].includes(schedule.status)) {
+      throw new BadRequestException('Không thể xếp phòng cho lịch thi đã hủy hoặc đã hoàn thành.');
+    }
 
     // 2. Lấy danh sách sinh viên đăng ký môn học và đủ điều kiện
-    const studentSubjects = await this.prisma.studentSubject.findMany({
+    const studentSubjects = await tx.studentSubject.findMany({
       where: {
         subjectId: schedule.subjectId,
+        semester: schedule.examPeriod.semester,
+        schoolYear: schedule.examPeriod.schoolYear,
         status: 'ELIGIBLE',
       },
       include: {
@@ -42,22 +53,27 @@ export class ExamArrangementService {
     }
 
     const students = studentSubjects.map((ss) => ss.student);
+    const duplicateStudentIds = students.filter((student, index) => students.findIndex((item) => item.id === student.id) !== index);
+    if (duplicateStudentIds.length > 0) {
+      throw new BadRequestException('Dữ liệu đăng ký môn học có sinh viên bị lặp. Hãy xử lý dữ liệu trước khi xếp phòng.');
+    }
 
     // 3. Kiểm tra phòng thi
-    const rooms = await this.prisma.examRoom.findMany({
-      where: { id: { in: roomIds } },
+    const rooms = await tx.examRoom.findMany({
+      where: { id: { in: roomIds }, status: 'AVAILABLE' },
     });
 
-    if (rooms.length !== roomIds.length) {
-      throw new BadRequestException('Một hoặc nhiều phòng thi được chọn không tồn tại.');
+    if (rooms.length !== roomIds.length || new Set(roomIds).size !== roomIds.length) {
+      throw new BadRequestException('Một hoặc nhiều phòng thi không tồn tại, không khả dụng hoặc bị chọn lặp.');
     }
 
     // Check phòng có bị trùng thời gian ở lịch thi khác không
-    const overlappingScheduleRooms = await this.prisma.examScheduleRoom.findMany({
+    const overlappingScheduleRooms = await tx.examScheduleRoom.findMany({
       where: {
         roomId: { in: roomIds },
         examScheduleId: { not: examScheduleId },
         examSchedule: {
+          status: { not: 'CANCELLED' },
           examDate: schedule.examDate,
           AND: [
             { startTime: { lt: schedule.endTime } },
@@ -73,6 +89,29 @@ export class ExamArrangementService {
       throw new BadRequestException(`Phòng thi [${busyRoomCodes}] đã có lịch thi khác trùng khung giờ (${schedule.startTime} - ${schedule.endTime}).`);
     }
 
+    const studentConflict = await tx.examRoomStudent.findFirst({
+      where: {
+        studentId: { in: students.map((student) => student.id) },
+        examScheduleRoom: {
+          examScheduleId: { not: examScheduleId },
+          examSchedule: {
+            status: { not: 'CANCELLED' },
+            examDate: schedule.examDate,
+            AND: [
+              { startTime: { lt: schedule.endTime } },
+              { endTime: { gt: schedule.startTime } },
+            ],
+          },
+        },
+      },
+      include: { student: true },
+    });
+    if (studentConflict) {
+      throw new BadRequestException(
+        `Sinh viên ${studentConflict.student.studentCode} đã được xếp vào một lịch thi trùng khung giờ.`,
+      );
+    }
+
     // Kiểm tra tổng sức chứa các phòng
     const totalCapacity = rooms.reduce((acc, r) => acc + r.capacity, 0);
     if (totalCapacity < students.length) {
@@ -81,8 +120,14 @@ export class ExamArrangementService {
       );
     }
 
+    const existingSupervisors = await tx.examSupervisor.count({
+      where: { examScheduleRoom: { examScheduleId } },
+    });
+    if (existingSupervisors > 0) {
+      throw new BadRequestException('Lịch thi đã có phân công giám thị. Hãy hủy phân công trước khi xếp lại phòng.');
+    }
+
     // 4. Xóa kết quả xếp phòng cũ của lịch thi này (nếu có)
-    return this.prisma.$transaction(async (tx) => {
     const existingScheduleRooms = await tx.examScheduleRoom.findMany({
       where: { examScheduleId },
       select: { id: true },
@@ -103,6 +148,7 @@ export class ExamArrangementService {
 
     // 5. Tiến hành chia sinh viên vào các phòng và tạo exam_schedule_rooms
     const arrangementResults: any[] = [];
+    let assignedRoomCount = 0;
     let studentIndex = 0;
     let currentSbdNumber = 1;
 
@@ -115,6 +161,7 @@ export class ExamArrangementService {
           roomId: room.id,
         },
       });
+      assignedRoomCount += 1;
 
       const studentsInThisRoomCount = Math.min(room.capacity, students.length - studentIndex);
 
@@ -153,7 +200,7 @@ export class ExamArrangementService {
       message: 'Xếp sinh viên vào phòng thi tự động thành công!',
       summary: {
         totalStudents: students.length,
-        totalRoomsAssigned: rooms.length,
+        totalRoomsAssigned: assignedRoomCount,
         subjectCode: schedule.subject.subjectCode,
         subjectName: schedule.subject.subjectName,
         examDate: schedule.examDate,
@@ -170,7 +217,13 @@ export class ExamArrangementService {
       metadata: { roomIds, totalStudents: students.length },
     }, tx);
     return result;
-    });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    } catch (error: any) {
+      if (error?.code === 'P2034') {
+        throw new ConflictException('Dữ liệu xếp phòng vừa thay đổi bởi thao tác khác. Vui lòng tải lại và thử lại.');
+      }
+      throw error;
+    }
   }
 
   async getArrangementResults(examScheduleId: number) {

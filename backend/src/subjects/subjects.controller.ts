@@ -3,6 +3,7 @@ import { SubjectsService } from './subjects.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateSubjectDto, UpdateSubjectDto } from './dto/subject.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -27,13 +28,13 @@ export class SubjectsController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: { subjectCode: string; subjectName: string; credits: number; departmentId: number }) {
+  create(@Body() body: CreateSubjectDto) {
     return this.subjectsService.create(body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateSubjectDto) {
     return this.subjectsService.update(id, body);
   }
 

@@ -3,6 +3,7 @@ import { TeachersService } from './teachers.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateTeacherDto, UpdateTeacherDto } from './dto/teacher.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -28,13 +29,13 @@ export class TeachersController {
 
   @Roles('ADMIN')
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateTeacherDto) {
     return this.teachersService.create(body);
   }
 
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateTeacherDto) {
     return this.teachersService.update(id, body);
   }
 
