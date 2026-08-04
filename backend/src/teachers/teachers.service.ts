@@ -191,12 +191,29 @@ export class TeachersService {
     const teacher = await this.prisma.teacher.findUnique({ where: { userId } });
     if (!teacher) throw new NotFoundException('Không tìm thấy giảng viên.');
 
-    const supervisor = await this.prisma.examSupervisor.findFirst({
+    const supervisor: any = await this.prisma.examSupervisor.findFirst({
       where: { id: assignmentId, teacherId: teacher.id },
+      include: {
+        examScheduleRoom: {
+          include: { examSchedule: true },
+        },
+      },
     });
 
     if (!supervisor) {
       throw new NotFoundException('Không tìm thấy phân công coi thi.');
+    }
+
+    if (supervisor.status === 'CONFIRMED') {
+      throw new BadRequestException('Ca thi này đã được xác nhận và khóa. Thầy/Cô không thể thay đổi.');
+    }
+
+    const examDate = new Date(supervisor.examScheduleRoom?.examSchedule?.examDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (examDate.getTime() < today.getTime()) {
+      throw new BadRequestException('Ca thi đã quá thời hạn. Không thể điều chỉnh trạng thái.');
     }
 
     return this.prisma.examSupervisor.update({

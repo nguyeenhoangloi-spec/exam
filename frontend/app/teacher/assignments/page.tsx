@@ -239,89 +239,99 @@ export default function TeacherAssignmentsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {assignments.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 relative overflow-hidden hover:shadow-md transition space-y-4"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">
-                    {item.subjectCode}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                        item.status === 'CONFIRMED'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : item.status === 'CHANGE_REQUESTED'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-slate-100 text-slate-600 border border-slate-200'
-                      }`}
-                    >
-                      {item.status === 'CONFIRMED'
-                        ? '✓ Đã xác nhận'
-                        : item.status === 'CHANGE_REQUESTED'
-                        ? '🔄 Xin đổi ca'
-                        : '⏳ Chờ xác nhận'}
-                    </span>
-                    <span
-                      className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                        item.role === 'SUPERVISOR_1'
-                          ? 'bg-sky-50 text-sky-800 border border-sky-200'
-                          : 'bg-indigo-50 text-indigo-800 border border-indigo-200'
-                      }`}
-                    >
-                      {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
-                    </span>
-                  </div>
-                </div>
+            {assignments.map((item) => {
+              const examTime = new Date(item.examDate).getTime();
+              const todayTime = new Date().setHours(0, 0, 0, 0);
+              const isExpired = examTime < todayTime;
+              const isLocked = item.status === 'CONFIRMED' || item.status === 'CHANGE_REQUESTED' || isExpired;
 
-                <h3 className="text-base font-bold text-slate-900 line-clamp-1">{item.subjectName}</h3>
-
-                <div className="space-y-2 text-xs text-slate-600">
-                  <div className="flex items-center gap-2.5">
-                    <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>
-                      Ngày thi: <strong className="text-slate-800">{new Date(item.examDate).toLocaleDateString('vi-VN')}</strong>
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2.5">
-                    <Clock className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>
-                      Ca thi: <strong className="text-sky-700 font-bold">{item.startTime} - {item.endTime}</strong>
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2.5">
-                    <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>
-                      Phòng thi: <strong className="text-emerald-700 font-bold">{item.roomName || item.roomCode}</strong> {item.building && `(${item.building})`}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Actions Bar */}
-                <div className="pt-3 border-t border-slate-100 space-y-2">
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 relative overflow-hidden hover:shadow-md transition space-y-4"
+                >
                   <div className="flex items-center justify-between gap-2">
-                    <button
-                      disabled={busyId === item.id || item.status === 'CONFIRMED'}
-                      onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
-                      className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 text-xs font-bold rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 disabled:opacity-50 transition"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      {item.status === 'CONFIRMED' ? 'Đã xác nhận' : 'Xác nhận nhận ca'}
-                    </button>
-
-                    <button
-                      disabled={busyId === item.id || item.status === 'CHANGE_REQUESTED'}
-                      onClick={() => handleUpdateStatus(item.id, 'CHANGE_REQUESTED')}
-                      className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 disabled:opacity-50 transition"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      Xin đổi ca
-                    </button>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">
+                      {item.subjectCode}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                          isExpired
+                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                            : item.status === 'CONFIRMED'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : item.status === 'CHANGE_REQUESTED'
+                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}
+                      >
+                        {isExpired
+                          ? '🔒 Quá hạn ca thi'
+                          : item.status === 'CONFIRMED'
+                          ? '🔒 Đã xác nhận (Đã khóa)'
+                          : item.status === 'CHANGE_REQUESTED'
+                          ? '🔒 Xin đổi ca (Đã khóa)'
+                          : '⏳ Chờ xác nhận'}
+                      </span>
+                      <span
+                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                          item.role === 'SUPERVISOR_1'
+                            ? 'bg-sky-50 text-sky-800 border border-sky-200'
+                            : 'bg-indigo-50 text-indigo-800 border border-indigo-200'
+                        }`}
+                      >
+                        {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
+                      </span>
+                    </div>
                   </div>
+
+                  <h3 className="text-base font-bold text-slate-900 line-clamp-1">{item.subjectName}</h3>
+
+                  <div className="space-y-2 text-xs text-slate-600">
+                    <div className="flex items-center gap-2.5">
+                      <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>
+                        Ngày thi: <strong className="text-slate-800">{new Date(item.examDate).toLocaleDateString('vi-VN')}</strong>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <Clock className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>
+                        Ca thi: <strong className="text-sky-700 font-bold">{item.startTime} - {item.endTime}</strong>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>
+                        Phòng thi: <strong className="text-emerald-700 font-bold">{item.roomName || item.roomCode}</strong> {item.building && `(${item.building})`}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div className="pt-3 border-t border-slate-100 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <button
+                        disabled={busyId === item.id || isLocked}
+                        onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
+                        className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 text-xs font-bold rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        {item.status === 'CONFIRMED' ? 'Đã khóa ca thi' : 'Xác nhận nhận ca'}
+                      </button>
+
+                      <button
+                        disabled={busyId === item.id || isLocked}
+                        onClick={() => handleUpdateStatus(item.id, 'CHANGE_REQUESTED')}
+                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Xin đổi ca
+                      </button>
+                    </div>
 
                   <div className="flex items-center justify-between pt-1">
                     <button
@@ -340,7 +350,8 @@ export default function TeacherAssignmentsPage() {
                   </div>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         )}
       </main>
