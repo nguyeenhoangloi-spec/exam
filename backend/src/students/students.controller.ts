@@ -5,6 +5,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN')
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}

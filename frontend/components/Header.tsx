@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { Role, User } from '../types';
+import { canAccessPath, workspaceRoutes } from '../lib/access';
 
 interface HeaderProps {
   user: User | null;
@@ -68,12 +69,6 @@ const roleLabels: Record<Role, string> = {
   STUDENT: 'Sinh viên',
 };
 
-const workspaceRoutes: Record<Role, string> = {
-  ADMIN: '/dashboard',
-  TEACHER: '/teacher/assignments',
-  STUDENT: '/student/exam-schedule',
-};
-
 export const Header: React.FC<HeaderProps> = ({
   user,
   title = 'Hệ thống Quản lý Khảo thí',
@@ -98,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
     .join('');
 
   const availableCommands = useMemo(
-    () => (role ? navigationCommands.filter((command) => command.roles.includes(role)) : []),
+    () => (role ? navigationCommands.filter((command) => command.roles.includes(role) && canAccessPath(role, command.href)) : []),
     [role],
   );
 

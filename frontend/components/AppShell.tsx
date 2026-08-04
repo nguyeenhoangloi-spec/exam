@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { User } from '../types';
+import { canAccessPath, workspaceRoutes } from '../lib/access';
 
 interface AppShellProps {
   user: User | null;
@@ -12,6 +14,8 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return window.localStorage.getItem('sidebar-collapsed') === 'true';
@@ -37,6 +41,18 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
       }
     }
   }, [collapsed]);
+
+  const isDenied = Boolean(user && !canAccessPath(user.role, pathname));
+
+  useEffect(() => {
+    if (user && isDenied) {
+      router.replace(workspaceRoutes[user.role]);
+    }
+  }, [isDenied, router, user]);
+
+  if (isDenied) {
+    return <div className="min-h-screen bg-slate-50" aria-live="polite" />;
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">

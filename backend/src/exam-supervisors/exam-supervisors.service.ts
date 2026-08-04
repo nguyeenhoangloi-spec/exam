@@ -91,18 +91,33 @@ export class ExamSupervisorsService {
     });
   }
 
-  async remove(id: number) {
-    const supervisor = await this.prisma.examSupervisor.findUnique({ where: { id } });
+  async remove(actor: { id: number }, id: number) {
+    const supervisor = await this.prisma.examSupervisor.findUnique({
+      where: { id },
+      include: { teacher: true, examScheduleRoom: { include: { room: true } } },
+    });
     if (!supervisor) throw new NotFoundException('Không tìm thấy bản ghi phân công giám thị.');
 
-    return this.prisma.examSupervisor.delete({ where: { id } });
+    return this.prisma.$transaction(async (tx) => {
+      const removed = await tx.examSupervisor.delete({ where: { id } });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'DELETE',
+        entityType: 'EXAM_SUPERVISOR',
+        entityId: id,
+        description: `Đã hủy phân công giám thị ${supervisor.teacher.fullName} tại phòng ${supervisor.examScheduleRoom.room.roomCode}`,
+        metadata: { examScheduleRoomId: supervisor.examScheduleRoomId, teacherId: supervisor.teacherId },
+      }, tx);
+      return removed;
+    });
   }
 
-  async getSupervisorsBySchedule(examScheduleId: number) {
+  async getSupervisors(query: { examScheduleRoomId?: number; examScheduleId?: number }) {
     return this.prisma.examSupervisor.findMany({
       where: {
         examScheduleRoom: {
-          examScheduleId,
+          ...(query.examScheduleRoomId ? { id: query.examScheduleRoomId } : {}),
+          ...(query.examScheduleId ? { examScheduleId: query.examScheduleId } : {}),
         },
       },
       include: {

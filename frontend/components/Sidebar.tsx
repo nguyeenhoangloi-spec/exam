@@ -23,6 +23,7 @@ import {
   Users,
 } from 'lucide-react';
 import { User } from '../types';
+import { canAccessPath } from '../lib/access';
 
 interface SidebarProps {
   user: User | null;
@@ -66,12 +67,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { name: 'Tạo đề thi', href: '/exam-papers', icon: FileText },
   ];
   const studentNav = [{ name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: BookMarked }];
-  const navItems = role === 'ADMIN' ? adminNav : role === 'TEACHER' ? teacherNav : studentNav;
+  const navItems = (role === 'ADMIN' ? adminNav : role === 'TEACHER' ? teacherNav : studentNav).filter((item) =>
+    canAccessPath(role, item.href),
+  );
   const isItemActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
 
   return (
     <aside
-      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-visible border-r border-slate-800 bg-slate-900 text-slate-100 shadow-xl ${
+      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-hidden border-r border-slate-800 bg-slate-900 text-slate-100 shadow-xl ${
         isToggling ? 'transition-[width,transform] duration-300 ease-in-out' : ''
       } ${collapsed ? 'w-[260px] md:w-[72px]' : 'w-[260px]'} ${
         mobileOpen ? 'translate-x-0' : '-translate-x-full'
@@ -99,9 +102,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Title Text */}
           <div
-            className={`sidebar-text-node ml-3 min-w-0 flex-1 overflow-hidden ${
-              isToggling ? 'transition-all duration-300 ease-in-out' : ''
-            } ${collapsed ? 'opacity-0 max-w-0 pointer-events-none md:hidden' : 'opacity-100 max-w-[150px]'}`}
+            className={`sidebar-text-node ml-3 min-w-0 flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
+              collapsed ? 'opacity-0 max-w-0 pointer-events-none' : 'opacity-100 max-w-[150px]'
+            }`}
           >
             <h1 className="truncate text-base font-bold tracking-wide text-white">KHẢO THÍ SV</h1>
             <p className="truncate text-xs text-slate-400">Hệ thống quản lý</p>
@@ -149,20 +152,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 {/* Text Label - Fades & Clips Smoothly */}
                 <span
-                  className={`sidebar-text-node ml-1 truncate whitespace-nowrap ${
-                    isToggling ? 'transition-all duration-300 ease-in-out' : ''
-                  } ${collapsed ? 'opacity-0 max-w-0 overflow-hidden md:hidden' : 'opacity-100 max-w-[170px]'}`}
+                  className={`sidebar-text-node ml-1 truncate whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+                    collapsed ? 'opacity-0 max-w-0 pointer-events-none' : 'opacity-100 max-w-[170px]'
+                  }`}
                 >
                   {item.name}
                 </span>
-                {collapsed && (
-                  <span
-                    role="tooltip"
-                    className="pointer-events-none absolute left-[calc(100%+12px)] z-[60] hidden whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover:block"
-                  >
-                    {item.name}
-                  </span>
-                )}
               </Link>
             );
           })}
@@ -178,9 +173,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
           <div
-            className={`sidebar-text-node ml-1 min-w-0 flex-1 overflow-hidden ${
-              isToggling ? 'transition-all duration-300 ease-in-out' : ''
-            } ${collapsed ? 'opacity-0 max-w-0 pointer-events-none md:hidden' : 'opacity-100 max-w-[170px]'}`}
+            className={`sidebar-text-node ml-1 min-w-0 flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
+              collapsed ? 'opacity-0 max-w-0 pointer-events-none' : 'opacity-100 max-w-[170px]'
+            }`}
           >
             <p className="truncate text-sm font-medium text-white">{user?.username}</p>
             <span className="mt-0.5 inline-block rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-400">

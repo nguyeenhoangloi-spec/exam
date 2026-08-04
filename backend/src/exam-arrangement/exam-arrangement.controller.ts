@@ -3,15 +3,16 @@ import { ExamArrangementService } from './exam-arrangement.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { AutoArrangeDto } from './dto/auto-arrange.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN')
 @Controller('exam-arrangement')
 export class ExamArrangementController {
   constructor(private readonly examArrangementService: ExamArrangementService) {}
 
-  @Roles('ADMIN')
   @Post('auto-arrange')
-  autoArrange(@Request() req: any, @Body() body: { examScheduleId: number; roomIds: number[] }) {
+  autoArrange(@Request() req: any, @Body() body: AutoArrangeDto) {
     return this.examArrangementService.autoArrange(req.user, body.examScheduleId, body.roomIds);
   }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -12,15 +12,36 @@ import {
   Layers,
   Sparkles,
   CheckCircle,
-  AlertTriangle,
   DoorOpen,
-  Calendar,
   Zap,
   Users,
   ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
 import { ExamPeriod, ExamSchedule, ExamRoom } from '../../types';
+
+type ArrangementResult = {
+  message: string;
+  summary: {
+    totalStudents: number;
+    totalRoomsAssigned: number;
+    subjectCode: string;
+    subjectName: string;
+    examDate: string;
+    timeSlot: string;
+  };
+  details: Array<{
+    id: number;
+    examNumber: string;
+    seatNumber: number;
+    studentCode: string;
+    fullName: string;
+    className: string;
+    roomCode: string;
+    roomName: string;
+    building: string;
+  }>;
+};
 
 export default function ExamArrangementPage() {
   const router = useRouter();
@@ -34,7 +55,7 @@ export default function ExamArrangementPage() {
   const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
 
   const [arranging, setArranging] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<ArrangementResult | null>(null);
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
@@ -51,17 +72,24 @@ export default function ExamArrangementPage() {
     onConfirm: () => {},
   });
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
+  const fetchSchedules = useCallback(async (periodId: string) => {
+    if (!periodId) {
+      setSchedules([]);
+      setSelectedScheduleId('');
       return;
     }
-    setCurrentUser(u);
-    fetchData();
-  }, [router]);
+    try {
+      const res = await api.get(`/exam-schedules?examPeriodId=${periodId}`);
+      setSchedules(res.data);
+      setSelectedScheduleId(res.data[0]?.id?.toString() || '');
+      setSelectedRoomIds([]);
+      setResult(null);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải danh sách ca thi', type: 'error' });
+    }
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [resPeriods, resRooms] = await Promise.all([
         api.get('/exam-periods'),
@@ -73,27 +101,22 @@ export default function ExamArrangementPage() {
       if (resPeriods.data.length > 0) {
         const periodId = resPeriods.data[0].id.toString();
         setSelectedPeriodId(periodId);
-        fetchSchedules(periodId);
+        await fetchSchedules(periodId);
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
     }
-  };
+  }, [fetchSchedules]);
 
-  const fetchSchedules = async (periodId: string) => {
-    if (!periodId) return;
-    try {
-      const res = await api.get(`/exam-schedules?examPeriodId=${periodId}`);
-      setSchedules(res.data);
-      if (res.data.length > 0) {
-        setSelectedScheduleId(res.data[0].id.toString());
-      } else {
-        setSelectedScheduleId('');
-      }
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải danh sách ca thi', type: 'error' });
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      router.push('/login');
+      return;
     }
-  };
+    setCurrentUser(u);
+    void fetchData();
+  }, [fetchData, router]);
 
   const handleToggleRoom = (roomId: number) => {
     if (selectedRoomIds.includes(roomId)) {
@@ -128,12 +151,14 @@ export default function ExamArrangementPage() {
     setArranging(true);
     setResult(null);
     try {
-      const res = await api.post('/exam-arrangement/arrange', {
+      const res = await api.post<ArrangementResult>('/exam-arrangement/auto-arrange', {
         examScheduleId: Number(selectedScheduleId),
-        examRoomIds: selectedRoomIds,
+        roomIds: selectedRoomIds,
       });
       setResult(res.data);
-      setToast({ message: 'Xếp lịch thi tự động thành công!', type: 'success' });
+      const refreshedSchedules = await api.get(`/exam-schedules?examPeriodId=${selectedPeriodId}`);
+      setSchedules(refreshedSchedules.data);
+      setToast({ message: res.data.message, type: 'success' });
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi khi xếp lịch thi', type: 'error' });
     } finally {
@@ -141,12 +166,27 @@ export default function ExamArrangementPage() {
     }
   };
 
-  // KPI Items
+  const roomSummaries = useMemo(() => {
+    const summaries = new Map<string, { roomCode: string; roomName: string; building: string; assigned: number }>();
+    result?.details.forEach((item) => {
+      const key = item.roomCode;
+      const current = summaries.get(key) || { roomCode: item.roomCode, roomName: item.roomName, building: item.building, assigned: 0 };
+      current.assigned += 1;
+      summaries.set(key, current);
+    });
+    return Array.from(summaries.values());
+  }, [result]);
+
+  const selectedCapacity = useMemo(
+    () => rooms.filter((room) => selectedRoomIds.includes(room.id)).reduce((sum, room) => sum + room.capacity, 0),
+    [rooms, selectedRoomIds],
+  );
+
   const kpiItems: KPICardItem[] = [
-    { title: 'Thuật toán Xếp lịch', value: 'Smart AI Solver', subtext: 'Tối ưu sức chứa & phòng máy', icon: Zap, color: 'sky' },
-    { title: 'Trùng lịch & Phòng', value: '0% Trùng lặp', subtext: 'Kiểm soát trùng thời gian', icon: ShieldCheck, color: 'emerald', trend: 'Đạt chuẩn 100%' },
-    { title: 'Sức chứa phân bổ', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} Chỗ thi`, subtext: 'Hạ tầng phòng thi có sẵn', icon: Users, color: 'indigo' },
-    { title: 'Trạng thái Động cơ', value: 'Sẵn sàng xếp', subtext: 'Chờ lệnh kích hoạt', icon: CheckCircle2, color: 'purple' },
+    { title: 'Ca thi đang chọn', value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn', subtext: `${schedules.length} ca thi trong kỳ`, icon: Zap, color: 'sky' },
+    { title: 'Phòng được chọn', value: selectedRoomIds.length, subtext: 'Sẽ được kiểm tra trùng lịch khi xếp', icon: ShieldCheck, color: 'emerald' },
+    { title: 'Sức chứa đã chọn', value: `${selectedCapacity} chỗ`, subtext: 'Tổng sức chứa các phòng đã chọn', icon: Users, color: 'indigo' },
+    { title: 'Kết quả gần nhất', value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp', subtext: result ? result.summary.subjectName : 'Chọn tham số để bắt đầu', icon: CheckCircle2, color: 'purple' },
   ];
 
   return (
@@ -177,7 +217,7 @@ export default function ExamArrangementPage() {
                     value={selectedPeriodId}
                     onChange={(e) => {
                       setSelectedPeriodId(e.target.value);
-                      fetchSchedules(e.target.value);
+                      void fetchSchedules(e.target.value);
                     }}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
                   >
@@ -258,8 +298,8 @@ export default function ExamArrangementPage() {
                       <p className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
                         <CheckCircle className="h-4 w-4 text-emerald-600" /> Xếp phòng hoàn tất!
                       </p>
-                      <p>Tổng số sinh viên được phân bổ: {result.totalStudents || 40} sinh viên</p>
-                      <p>Tổng số phòng thi sử dụng: {result.roomsUsed || selectedRoomIds.length} phòng</p>
+                      <p>Tổng số sinh viên được phân bổ: {result.summary.totalStudents} sinh viên</p>
+                      <p>Tổng số phòng thi sử dụng: {roomSummaries.length} phòng</p>
                     </div>
 
                     <div className="rounded-xl border border-slate-200 overflow-hidden">
@@ -273,13 +313,13 @@ export default function ExamArrangementPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 bg-white">
-                          {selectedRoomIds.map((rId) => {
-                            const roomObj = rooms.find((r) => r.id === rId);
+                          {roomSummaries.map((room) => {
+                            const roomObj = rooms.find((r) => r.roomCode === room.roomCode);
                             return (
-                              <tr key={rId} className="hover:bg-slate-50">
-                                <td className="p-3 font-bold text-slate-900">{roomObj?.roomName || roomObj?.roomCode}</td>
+                              <tr key={room.roomCode} className="hover:bg-slate-50">
+                                <td className="p-3 font-bold text-slate-900">{room.roomName || room.roomCode}</td>
                                 <td className="p-3">{roomObj?.capacity} chỗ</td>
-                                <td className="p-3 font-bold text-sky-700">40 sinh viên</td>
+                                <td className="p-3 font-bold text-sky-700">{room.assigned} sinh viên</td>
                                 <td className="p-3">
                                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                                     <CheckCircle2 className="h-3 w-3" /> Thành công

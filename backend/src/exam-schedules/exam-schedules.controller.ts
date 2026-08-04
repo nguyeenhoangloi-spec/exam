@@ -5,16 +5,19 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN')
 @Controller('exam-schedules')
 export class ExamSchedulesController {
   constructor(private readonly examSchedulesService: ExamSchedulesService) {}
 
   @Get()
+  @Roles('ADMIN', 'TEACHER')
   findAll(@Query('examPeriodId') examPeriodId?: string) {
     return this.examSchedulesService.findAll(examPeriodId ? parseInt(examPeriodId, 10) : undefined);
   }
 
   @Get(':id')
+  @Roles('ADMIN', 'TEACHER')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.examSchedulesService.findOne(id);
   }

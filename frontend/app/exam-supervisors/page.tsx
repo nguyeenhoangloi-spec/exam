@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -52,17 +52,32 @@ export default function ExamSupervisorsPage() {
     onConfirm: () => {},
   });
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
+  const fetchSupervisors = useCallback(async (scheduleRoomId: string) => {
+    if (!scheduleRoomId) {
+      setAssignedSupervisors([]);
       return;
     }
-    setCurrentUser(u);
-    fetchData();
-  }, [router]);
+    try {
+      const res = await api.get(`/exam-supervisors?examScheduleRoomId=${scheduleRoomId}`);
+      setAssignedSupervisors(res.data);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải danh sách giám thị', type: 'error' });
+    }
+  }, []);
 
-  const fetchData = async () => {
+  const selectSchedule = useCallback(async (scheduleId: number) => {
+    try {
+      const res = await api.get(`/exam-schedules/${scheduleId}`);
+      setSelectedSchedule(res.data);
+      const firstRoomId = res.data.examScheduleRooms?.[0]?.id?.toString() || '';
+      setSelectedScheduleRoomId(firstRoomId);
+      await fetchSupervisors(firstRoomId);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải chi tiết ca thi', type: 'error' });
+    }
+  }, [fetchSupervisors]);
+
+  const fetchData = useCallback(async () => {
     try {
       const [resSchedules, resTeachers] = await Promise.all([
         api.get('/exam-schedules'),
@@ -76,39 +91,22 @@ export default function ExamSupervisorsPage() {
       }
 
       if (resSchedules.data.length > 0) {
-        selectSchedule(resSchedules.data[0].id);
+        await selectSchedule(resSchedules.data[0].id);
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
     }
-  };
+  }, [selectSchedule]);
 
-  const selectSchedule = async (scheduleId: number) => {
-    try {
-      const res = await api.get(`/exam-schedules/${scheduleId}`);
-      setSelectedSchedule(res.data);
-      if (res.data.examScheduleRooms && res.data.examScheduleRooms.length > 0) {
-        const roomId = res.data.examScheduleRooms[0].id.toString();
-        setSelectedScheduleRoomId(roomId);
-        fetchSupervisors(roomId);
-      } else {
-        setSelectedScheduleRoomId('');
-        setAssignedSupervisors([]);
-      }
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải chi tiết ca thi', type: 'error' });
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      router.push('/login');
+      return;
     }
-  };
-
-  const fetchSupervisors = async (scheduleRoomId: string) => {
-    if (!scheduleRoomId) return;
-    try {
-      const res = await api.get(`/exam-supervisors?examScheduleRoomId=${scheduleRoomId}`);
-      setAssignedSupervisors(res.data);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải danh sách giám thị', type: 'error' });
-    }
-  };
+    setCurrentUser(u);
+    void fetchData();
+  }, [fetchData, router]);
 
   const handleAssign = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,7 +116,7 @@ export default function ExamSupervisorsPage() {
     }
 
     try {
-      await api.post('/exam-supervisors', {
+      await api.post('/exam-supervisors/assign', {
         examScheduleRoomId: Number(selectedScheduleRoomId),
         teacherId: Number(selectedTeacherId),
         role,
@@ -126,7 +124,7 @@ export default function ExamSupervisorsPage() {
       });
       setToast({ message: 'Phân công giám thị thành công!', type: 'success' });
       setNote('');
-      fetchSupervisors(selectedScheduleRoomId);
+      await fetchSupervisors(selectedScheduleRoomId);
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi phân công giám thị', type: 'error' });
     }
@@ -144,7 +142,7 @@ export default function ExamSupervisorsPage() {
         try {
           await api.delete(`/exam-supervisors/${id}`);
           setToast({ message: 'Đã hủy phân công giám thị thành công!', type: 'success' });
-          fetchSupervisors(selectedScheduleRoomId);
+          await fetchSupervisors(selectedScheduleRoomId);
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
         }
@@ -212,7 +210,7 @@ export default function ExamSupervisorsPage() {
                 <label className="block text-xs font-bold text-slate-500 mb-1">Ca thi Môn học</label>
                 <select
                   value={selectedSchedule?.id || ''}
-                  onChange={(e) => selectSchedule(Number(e.target.value))}
+                  onChange={(e) => void selectSchedule(Number(e.target.value))}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
                 >
                   {schedules.map((s) => (
@@ -243,7 +241,7 @@ export default function ExamSupervisorsPage() {
                   value={selectedScheduleRoomId}
                   onChange={(e) => {
                     setSelectedScheduleRoomId(e.target.value);
-                    fetchSupervisors(e.target.value);
+                    void fetchSupervisors(e.target.value);
                   }}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
                 >

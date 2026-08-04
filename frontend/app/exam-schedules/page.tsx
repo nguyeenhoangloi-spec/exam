@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -67,17 +67,7 @@ export default function ExamSchedulesPage() {
     onConfirm: () => {},
   });
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
-      return;
-    }
-    setCurrentUser(u);
-    fetchInitialData();
-  }, [router]);
-
-  const fetchInitialData = async () => {
+  const fetchInitialData = useCallback(async () => {
     try {
       const [resPeriods, resSubjects, resSchedules] = await Promise.all([
         api.get('/exam-periods'),
@@ -93,14 +83,34 @@ export default function ExamSchedulesPage() {
       const params = new URLSearchParams(window.location.search);
       const authUser = getAuthUser();
       if (params.get('action') === 'create' && authUser?.role === 'ADMIN') {
-        openAddModal();
+        setEditingSchedule(null);
+        setFormData({
+          examPeriodId: resPeriods.data[0]?.id ? String(resPeriods.data[0].id) : '',
+          subjectId: resSubjects.data[0]?.id ? String(resSubjects.data[0].id) : '',
+          examDate: new Date().toISOString().split('T')[0],
+          startTime: '08:00',
+          endTime: '09:30',
+          examType: 'TRAC_NGHIEM',
+          note: 'Thi trắc nghiệm máy tính',
+        });
+        setIsModalOpen(true);
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      router.push('/login');
+      return;
+    }
+    setCurrentUser(u);
+    void fetchInitialData();
+  }, [fetchInitialData, router]);
 
   const filteredSchedules = schedules.filter((s) => {
     const matchPeriod = selectedPeriodId ? String(s.examPeriodId) === selectedPeriodId : true;
@@ -156,7 +166,7 @@ export default function ExamSchedulesPage() {
         setToast({ message: 'Tạo lịch thi mới thành công!', type: 'success' });
       }
       setIsModalOpen(false);
-      fetchInitialData();
+      void fetchInitialData();
     } catch (err: any) {
       setToast({ message: err.message, type: 'error' });
     }
@@ -174,7 +184,7 @@ export default function ExamSchedulesPage() {
         try {
           await api.delete(`/exam-schedules/${id}`);
           setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
-          fetchInitialData();
+          void fetchInitialData();
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
         }
