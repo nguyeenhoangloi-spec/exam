@@ -23,6 +23,12 @@ export class ExamSchedulesController {
     return this.examSchedulesService.conflicts(query.examPeriodId);
   }
 
+  @Get('trash')
+  @Roles('ADMIN')
+  trash(@Request() req: any, @Query() query: FindExamSchedulesDto) {
+    return this.examSchedulesService.findTrash(req.user, query.examPeriodId);
+  }
+
   @Post('auto-preview')
   @Roles('ADMIN')
   autoPreview(@Body() body: AutoSchedulePreviewDto) {
@@ -69,5 +75,11 @@ export class ExamSchedulesController {
   @Delete(':id')
   remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
     return this.examSchedulesService.remove(req.user, id);
+  }
+
+  @Post(':id/restore')
+  @Roles('ADMIN')
+  restore(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.examSchedulesService.restore(req.user, id);
   }
 }

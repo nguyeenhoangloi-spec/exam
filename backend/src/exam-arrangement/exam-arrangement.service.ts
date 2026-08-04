@@ -89,6 +89,7 @@ export class ExamArrangementService {
         examScheduleId: { not: examScheduleId },
         examSchedule: {
           status: { not: 'CANCELLED' },
+          deletedAt: null,
           examDate: schedule.examDate,
           AND: [
             { startTime: { lt: schedule.endTime } },
@@ -111,6 +112,7 @@ export class ExamArrangementService {
           examScheduleId: { not: examScheduleId },
           examSchedule: {
             status: { not: 'CANCELLED' },
+            deletedAt: null,
             examDate: schedule.examDate,
             AND: [
               { startTime: { lt: schedule.endTime } },
@@ -288,6 +290,8 @@ export class ExamArrangementService {
   }
 
   async getArrangementResults(examScheduleId: number) {
+    const schedule = await this.prisma.examSchedule.findFirst({ where: { id: examScheduleId, deletedAt: null }, select: { id: true } });
+    if (!schedule) throw new NotFoundException('Không tìm thấy ca thi.');
     const scheduleRooms = await this.prisma.examScheduleRoom.findMany({
       where: { examScheduleId },
       include: {
@@ -308,8 +312,8 @@ export class ExamArrangementService {
   }
 
   async getRoomAvailability(examScheduleId: number) {
-    const schedule = await this.prisma.examSchedule.findUnique({
-      where: { id: examScheduleId },
+    const schedule = await this.prisma.examSchedule.findFirst({
+      where: { id: examScheduleId, deletedAt: null },
       include: { subject: true },
     });
     if (!schedule) throw new NotFoundException('Không tìm thấy ca thi.');
@@ -323,6 +327,7 @@ export class ExamArrangementService {
         examScheduleId: { not: examScheduleId },
         examSchedule: {
           status: { not: 'CANCELLED' },
+          deletedAt: null,
           examDate: schedule.examDate,
           AND: [
             { startTime: { lt: schedule.endTime } },
@@ -351,8 +356,8 @@ export class ExamArrangementService {
   }
 
   async resetArrangement(actor: { id: number }, examScheduleId: number) {
-    const schedule = await this.prisma.examSchedule.findUnique({
-      where: { id: examScheduleId },
+    const schedule = await this.prisma.examSchedule.findFirst({
+      where: { id: examScheduleId, deletedAt: null },
       include: { examPapers: { select: { status: true, deletedAt: true } } },
     });
     if (!schedule) throw new NotFoundException('Không tìm thấy ca thi.');

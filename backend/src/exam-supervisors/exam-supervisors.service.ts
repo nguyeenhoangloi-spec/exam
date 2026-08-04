@@ -8,8 +8,8 @@ export class ExamSupervisorsService {
   constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   async previewAutoAssign(examScheduleId: number) {
-    const schedule = await this.prisma.examSchedule.findUnique({
-      where: { id: examScheduleId },
+    const schedule = await this.prisma.examSchedule.findFirst({
+      where: { id: examScheduleId, deletedAt: null },
       include: { subject: true, examPapers: { where: { deletedAt: null }, select: { status: true } }, examScheduleRooms: { include: { room: true, supervisors: true } } },
     });
     if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
@@ -21,7 +21,7 @@ export class ExamSupervisorsService {
       orderBy: { teacherCode: 'asc' },
     });
     const busy = await this.prisma.examSupervisor.findMany({
-      where: { examScheduleRoom: { examSchedule: { status: { not: 'CANCELLED' }, examDate: schedule.examDate, startTime: { lt: schedule.endTime }, endTime: { gt: schedule.startTime } } } },
+      where: { examScheduleRoom: { examSchedule: { status: { not: 'CANCELLED' }, deletedAt: null, examDate: schedule.examDate, startTime: { lt: schedule.endTime }, endTime: { gt: schedule.startTime } } } },
       select: { teacherId: true },
     });
     const loads = await this.prisma.examSupervisor.groupBy({ by: ['teacherId'], _count: { _all: true } });
@@ -76,7 +76,7 @@ export class ExamSupervisorsService {
           if (teacher.user.status !== 'ACTIVE' || room.supervisors.length >= 2 || room.supervisors.some((item) => item.role === proposal.role || item.teacherId === proposal.teacherId)) {
             throw new ConflictException(`Phương án phân công phòng ${room.room.roomCode} không còn hợp lệ.`);
           }
-          const overlap = await tx.examSupervisor.findFirst({ where: { teacherId: proposal.teacherId, examScheduleRoom: { examSchedule: { id: { not: room.examScheduleId }, status: { not: 'CANCELLED' }, examDate: room.examSchedule.examDate, startTime: { lt: room.examSchedule.endTime }, endTime: { gt: room.examSchedule.startTime } } } } });
+          const overlap = await tx.examSupervisor.findFirst({ where: { teacherId: proposal.teacherId, examScheduleRoom: { examSchedule: { id: { not: room.examScheduleId }, status: { not: 'CANCELLED' }, deletedAt: null, examDate: room.examSchedule.examDate, startTime: { lt: room.examSchedule.endTime }, endTime: { gt: room.examSchedule.startTime } } } } });
           if (overlap) throw new ConflictException(`Giảng viên ${teacher.fullName} vừa bị trùng lịch coi thi.`);
           const assignment = await tx.examSupervisor.create({ data: { examScheduleRoomId: room.id, teacherId: teacher.id, role: proposal.role }, include: { teacher: true, examScheduleRoom: { include: { room: true } } } });
           created.push(assignment);
@@ -120,6 +120,7 @@ export class ExamSupervisorsService {
     if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(scheduleRoom.examSchedule.status)) {
       throw new BadRequestException('Không thể phân công giám thị cho lịch thi đã hủy hoặc hoàn thành.');
     }
+    if (scheduleRoom.examSchedule.deletedAt) throw new NotFoundException('Lich thi da nam trong thung rac.');
     if (scheduleRoom.examSchedule.examPapers.some((paper) => paper.status === 'PUBLISHED')) {
       throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi phân công.');
     }
@@ -145,6 +146,7 @@ export class ExamSupervisorsService {
         examScheduleRoom: {
           examSchedule: {
             status: { not: 'CANCELLED' },
+            deletedAt: null,
             examDate: scheduleRoom.examSchedule.examDate,
             AND: [
               { startTime: { lt: scheduleRoom.examSchedule.endTime } },
@@ -226,6 +228,7 @@ export class ExamSupervisorsService {
         examScheduleRoom: {
           ...(query.examScheduleRoomId ? { id: query.examScheduleRoomId } : {}),
           ...(query.examScheduleId ? { examScheduleId: query.examScheduleId } : {}),
+          examSchedule: { deletedAt: null },
         },
       },
       include: {

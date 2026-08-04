@@ -135,8 +135,8 @@ export class EligibilityCheckerService {
     // ─────────────────────────────────────────
     // BƯỚC 2: Tải lịch thi và cấu hình online
     // ─────────────────────────────────────────
-    const schedule = await this.prisma.examSchedule.findUnique({
-      where: { id: scheduleId },
+    const schedule = await this.prisma.examSchedule.findFirst({
+      where: { id: scheduleId, deletedAt: null },
       include: {
         examPeriod: true,
         subject: true,

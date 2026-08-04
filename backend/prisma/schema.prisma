@@ -70,6 +70,7 @@ model User {
   createdQuestions  Question[]        @relation("UserQuestions")
   approvedQuestions Question[]        @relation("ApprovedQuestions")
   createdExamPapers ExamPaper[]       @relation("UserExamPapers")
+  deletedExamSchedules ExamSchedule[] @relation("ExamScheduleDeletedBy")
   questionHistories QuestionHistory[] @relation("QuestionHistoryActor")
   auditLogs         AuditLog[]         @relation("AuditLogActor")
 
@@ -232,12 +233,16 @@ model ExamSchedule {
   examType     String     @default("TRAC_NGHIEM")
   status       String     @default("SCHEDULED")
   note         String?
+  deletedAt    DateTime?
+  deletedById  Int?
+  deletedBy    User?      @relation("ExamScheduleDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   examScheduleRooms ExamScheduleRoom[]
   examPapers        ExamPaper[]
   onlineExamConfig  OnlineExamConfig?
 
   @@map("exam_schedules")
+  @@index([deletedAt])
 }
 
 model ExamRoom {
@@ -659,4 +664,3 @@ model ExamIncident {
 
   @@map("exam_incidents")
 }
-

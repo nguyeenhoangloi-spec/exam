@@ -82,8 +82,8 @@ export class ExamPapersService {
     }
 
     return this.prisma.$transaction(async (tx) => {
-      const schedule = await tx.examSchedule.findUnique({
-        where: { id: data.examScheduleId },
+      const schedule = await tx.examSchedule.findFirst({
+        where: { id: data.examScheduleId, deletedAt: null },
         include: {
           subject: true,
           examPeriod: true,
@@ -234,6 +234,7 @@ export class ExamPapersService {
   async findAll(actor: Actor, examScheduleId?: number) {
     const where: Prisma.ExamPaperWhereInput = {
       deletedAt: null,
+      examSchedule: { deletedAt: null },
       ...(examScheduleId && { examScheduleId }),
       ...(actor.role === 'TEACHER' && { createdById: actor.id }),
     };

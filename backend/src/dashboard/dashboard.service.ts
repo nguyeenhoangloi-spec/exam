@@ -88,13 +88,14 @@ export class DashboardService {
       }),
       this.prisma.question.count({ where: { status: QuestionStatus.PENDING, deletedAt: null } }),
       this.prisma.examSchedule.count({
-        where: { examDate: { gte: todayStart, lte: todayEnd }, status: { notIn: ['CANCELLED', 'COMPLETED'] } },
+        where: { examDate: { gte: todayStart, lte: todayEnd }, status: { notIn: ['CANCELLED', 'COMPLETED'] }, deletedAt: null },
       }),
       this.prisma.$queryRaw<MonthlyCount[]>`
         SELECT date_trunc('month', "examDate") AS month, COUNT(*)::bigint AS count
         FROM "exam_schedules"
         WHERE "examDate" >= ${chartStart} AND "examDate" < ${chartEnd}
           AND "status" <> 'CANCELLED'
+          AND "deletedAt" IS NULL
         GROUP BY date_trunc('month', "examDate")
         ORDER BY month ASC
       `,
@@ -104,7 +105,7 @@ export class DashboardService {
         _count: { _all: true },
       }),
       this.prisma.examSchedule.findMany({
-        where: upcomingWhere,
+        where: { ...upcomingWhere, deletedAt: null },
         take: 5,
         orderBy: [{ examDate: 'asc' }, { startTime: 'asc' }],
         include: {
@@ -140,7 +141,7 @@ export class DashboardService {
         orderBy: { startDate: 'asc' },
         include: {
           examSchedules: {
-            where: { status: { not: 'CANCELLED' } },
+            where: { status: { not: 'CANCELLED' }, deletedAt: null },
             select: {
               id: true,
               examScheduleRooms: {

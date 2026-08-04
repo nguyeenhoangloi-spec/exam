@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -25,7 +25,7 @@ export class ExamSchedulesService {
   /** Read-only validation report used before any bulk scheduling/arrangement action. */
   async conflicts(examPeriodId?: number) {
     const schedules = await this.prisma.examSchedule.findMany({
-      where: examPeriodId ? { examPeriodId } : undefined,
+      where: examPeriodId ? { examPeriodId, deletedAt: null } : { deletedAt: null },
       include: {
         subject: true,
         examPeriod: true,
@@ -105,7 +105,7 @@ export class ExamSchedulesService {
     if (!period) throw new NotFoundException('Không tìm thấy kỳ thi.');
     if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(period.status)) throw new BadRequestException('Không thể đề xuất lịch cho kỳ thi đã hủy, hoàn thành hoặc đã khóa.');
     const existing = await this.prisma.examSchedule.findMany({
-      where: { examPeriodId, status: { not: 'CANCELLED' } },
+      where: { examPeriodId, status: { not: 'CANCELLED' }, deletedAt: null },
       include: { subject: true },
     });
     const activeSubjectIds = subjectIds?.length ? subjectIds : (await this.prisma.subject.findMany({ select: { id: true } })).map((subject) => subject.id);
@@ -194,6 +194,7 @@ export class ExamSchedulesService {
   async findAll(actor: Actor, examPeriodId?: number) {
     return this.prisma.examSchedule.findMany({
       where: {
+        deletedAt: null,
         ...(examPeriodId ? { examPeriodId } : {}),
         ...(actor.role === 'TEACHER' ? {
           examScheduleRooms: {
@@ -214,6 +215,7 @@ export class ExamSchedulesService {
     const schedule = await this.prisma.examSchedule.findFirst({
       where: {
         id,
+        deletedAt: null,
         ...(actor.role === 'TEACHER' ? {
           examScheduleRooms: {
             some: { supervisors: { some: { teacher: { userId: actor.id } } } },
@@ -290,6 +292,7 @@ export class ExamSchedulesService {
       where: {
         ...(input.id ? { id: { not: input.id } } : {}),
         status: { not: 'CANCELLED' },
+        deletedAt: null,
         examDate: { gte: start, lt: end },
         startTime: { lt: input.endTime },
         endTime: { gt: input.startTime },
@@ -338,6 +341,7 @@ export class ExamSchedulesService {
           examScheduleId: input.id ? { not: input.id } : undefined,
           examSchedule: {
             status: { not: 'CANCELLED' },
+            deletedAt: null,
             examDate: { gte: start, lt: end },
             startTime: { lt: input.endTime },
             endTime: { gt: input.startTime },
@@ -454,19 +458,69 @@ export class ExamSchedulesService {
 
   async remove(actor: Actor, id: number) {
     const existing = await this.findOne(actor, id);
-    if (existing.examScheduleRooms.length > 0 || existing.examPapers.length > 0) {
-      throw new BadRequestException('Không thể xóa lịch đã xếp phòng hoặc đã có đề thi. Hãy cập nhật trạng thái hủy thay vì xóa.');
-    }
     return this.prisma.$transaction(async (tx) => {
-      const removed = await tx.examSchedule.delete({ where: { id } });
+      const removed = await tx.examSchedule.update({
+        where: { id },
+        data: { deletedAt: new Date(), deletedById: actor.id, status: 'CANCELLED' },
+      });
       await this.audit.write({
         actorId: actor.id,
         action: 'DELETE',
         entityType: 'EXAM_SCHEDULE',
         entityId: id,
-        description: `Đã xóa lịch thi môn ${existing.subject.subjectName}`,
+        description: `Đã đưa lịch thi môn ${existing.subject.subjectName} vào thùng rác`,
       }, tx);
       return removed;
+    });
+  }
+
+  async findTrash(actor: Actor, examPeriodId?: number) {
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được xem thùng rác lịch thi.');
+    return this.prisma.examSchedule.findMany({
+      where: { deletedAt: { not: null }, ...(examPeriodId ? { examPeriodId } : {}) },
+      include: {
+        examPeriod: true,
+        subject: true,
+        deletedBy: { select: { id: true, username: true } },
+        examScheduleRooms: { include: { room: true, _count: { select: { examRoomStudents: true, supervisors: true } } } },
+        examPapers: { where: { deletedAt: null }, select: { id: true, paperCode: true, status: true } },
+      },
+      orderBy: { deletedAt: 'desc' },
+    });
+  }
+
+  async restore(actor: Actor, id: number) {
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được khôi phục lịch thi.');
+    const existing = await this.prisma.examSchedule.findFirst({
+      where: { id, deletedAt: { not: null } },
+      include: { subject: true, examScheduleRooms: { select: { roomId: true } } },
+    });
+    if (!existing) throw new NotFoundException('Không tìm thấy lịch thi trong thùng rác.');
+    await this.validatePeriodDate(this.prisma, existing.examPeriodId, existing.examDate);
+    this.assertTimeRange(existing.startTime, existing.endTime);
+    await this.validateNoConflicts(this.prisma, {
+      id,
+      subjectId: existing.subjectId,
+      examDate: existing.examDate,
+      startTime: existing.startTime,
+      endTime: existing.endTime,
+      periodId: existing.examPeriodId,
+      roomIds: existing.examScheduleRooms.map((room) => room.roomId),
+    });
+    return this.serializable(async (tx) => {
+      const restored = await tx.examSchedule.update({
+        where: { id },
+        data: { deletedAt: null, deletedById: null, status: 'SCHEDULED' },
+        include: { examPeriod: true, subject: true },
+      });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'RESTORE',
+        entityType: 'EXAM_SCHEDULE',
+        entityId: id,
+        description: `Đã khôi phục lịch thi môn ${restored.subject.subjectName}`,
+      }, tx);
+      return restored;
     });
   }
 }

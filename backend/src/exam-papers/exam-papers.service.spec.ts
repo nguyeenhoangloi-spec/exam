@@ -33,7 +33,7 @@ describe('ExamPapersService permissions', () => {
     await service.findAll({ id: 1, role: 'ADMIN' });
 
     const call = prisma.examPaper.findMany.mock.calls[0][0];
-    expect(call.where).toEqual({ deletedAt: null });
+    expect(call.where).toEqual({ deletedAt: null, examSchedule: { deletedAt: null } });
   });
 
   it('không cho TEACHER xem đề của người khác', async () => {

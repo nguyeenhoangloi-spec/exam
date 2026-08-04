@@ -26,6 +26,7 @@ import {
   Users,
   Sparkles,
   XCircle,
+  RotateCcw,
 } from 'lucide-react';
 import { ExamSchedule, ExamPeriod, Subject } from '../../types';
 
@@ -33,6 +34,8 @@ export default function ExamSchedulesPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
+  const [trashSchedules, setTrashSchedules] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'active' | 'trash'>('active');
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>('');
@@ -76,14 +79,16 @@ export default function ExamSchedulesPage() {
 
   const fetchInitialData = useCallback(async () => {
     try {
-      const [resPeriods, resSubjects, resSchedules] = await Promise.all([
+      const [resPeriods, resSubjects, resSchedules, resTrash] = await Promise.all([
         api.get('/exam-periods'),
         api.get('/subjects'),
         api.get('/exam-schedules'),
+        getAuthUser()?.role === 'ADMIN' ? api.get('/exam-schedules/trash') : Promise.resolve({ data: [] }),
       ]);
       setPeriods(resPeriods.data);
       setSubjects(resSubjects.data);
       setSchedules(resSchedules.data);
+      setTrashSchedules(resTrash.data);
       if (resPeriods.data.length > 0) {
         setSelectedPeriodId(resPeriods.data[0].id.toString());
       }
@@ -130,6 +135,12 @@ export default function ExamSchedulesPage() {
       subCode.toLowerCase().includes(search.toLowerCase());
     return matchPeriod && matchSearch;
   });
+  const filteredTrashSchedules = trashSchedules.filter((s) => {
+    const matchPeriod = selectedPeriodId ? String(s.examPeriodId) === selectedPeriodId : true;
+    const value = `${s.subject?.subjectName || ''} ${s.subject?.subjectCode || ''}`.toLowerCase();
+    return matchPeriod && value.includes(search.toLowerCase());
+  });
+  const displaySchedules = activeTab === 'trash' ? filteredTrashSchedules : filteredSchedules;
 
   const openAddModal = () => {
     setEditingSchedule(null);
@@ -240,14 +251,14 @@ export default function ExamSchedulesPage() {
     const sch = schedules.find((s) => s.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa Lịch thi',
-      message: `Bạn có chắc chắn muốn xóa lịch thi môn ${sch?.subject?.subjectName || ''}? Hành động này không thể hoàn tác.`,
+      title: 'Đưa lịch vào thùng rác',
+      message: `Đưa lịch thi môn ${sch?.subject?.subjectName || ''} vào thùng rác? Dữ liệu phòng, giám thị và đề thi liên quan sẽ được giữ để khôi phục.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/exam-schedules/${id}`);
-          setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
+          setToast({ message: 'Đã đưa lịch thi vào thùng rác.', type: 'success' });
           void fetchInitialData();
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
@@ -269,6 +280,26 @@ export default function ExamSchedulesPage() {
           await api.patch(`/exam-schedules/${id}`, { status: 'CANCELLED' });
           setToast({ message: 'Đã hủy lịch thi. Dữ liệu lịch sử vẫn được giữ.', type: 'success' });
           void fetchInitialData();
+        } catch (err: any) {
+          setToast({ message: err.message, type: 'error' });
+        }
+      },
+    });
+  };
+
+  const handleRestore = (id: number) => {
+    const schedule = trashSchedules.find((item) => item.id === id);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Khôi phục lịch thi',
+      message: `Khôi phục lịch thi môn ${schedule?.subject?.subjectName || ''}? Hệ thống sẽ kiểm tra lại toàn bộ xung đột trước khi khôi phục.`,
+      type: 'info',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/exam-schedules/${id}/restore`);
+          setToast({ message: 'Đã khôi phục lịch thi thành công.', type: 'success' });
+          await fetchInitialData();
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
         }
@@ -362,6 +393,11 @@ export default function ExamSchedulesPage() {
           {/* KPI Analytics Header */}
           <KPICards items={kpiItems} />
 
+          {currentUser?.role === 'ADMIN' && <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+            <button type="button" onClick={() => setActiveTab('active')} className={`rounded-xl px-4 py-2 text-sm font-semibold ${activeTab === 'active' ? 'bg-sky-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Đang hoạt động ({schedules.length})</button>
+            <button type="button" onClick={() => setActiveTab('trash')} className={`rounded-xl px-4 py-2 text-sm font-semibold ${activeTab === 'trash' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Thùng rác ({trashSchedules.length})</button>
+          </div>}
+
           {/* Search & Filter Bar */}
           <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="relative flex-1 min-w-[260px]">
@@ -398,7 +434,7 @@ export default function ExamSchedulesPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             {loading ? (
               <div className="p-12 text-center text-slate-500 text-sm">Đang tải lịch thi...</div>
-            ) : filteredSchedules.length === 0 ? (
+            ) : displaySchedules.length === 0 ? (
               <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy ca thi phù hợp.</div>
             ) : (
               <div className="overflow-x-auto">
@@ -414,7 +450,7 @@ export default function ExamSchedulesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
-                    {filteredSchedules.map((sch) => (
+                    {displaySchedules.map((sch) => (
                       <tr key={sch.id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="p-4 pl-6 font-bold text-slate-900 flex items-center gap-2">
                           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
@@ -436,7 +472,7 @@ export default function ExamSchedulesPage() {
                             <Monitor className="h-3.5 w-3.5" /> {sch.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm Online' : 'Tự luận'}
                           </span>
                         </td>
-                        <td className="p-4 text-xs text-slate-500">{sch.note || '---'}</td>
+                        <td className="p-4 text-xs text-slate-500">{activeTab === 'trash' ? <>{(sch as any).deletedBy?.username || 'ADMIN'} · {(sch as any).deletedAt ? new Date((sch as any).deletedAt).toLocaleString('vi-VN') : '---'}<br />Phòng: {sch.examScheduleRooms?.length || 0} · Đề: {(sch as any).examPapers?.length || 0}</> : (sch.note || '---')}</td>
                         <td className="p-4 pr-6 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             <button
@@ -446,7 +482,8 @@ export default function ExamSchedulesPage() {
                             >
                               <Eye className="h-4 w-4" />
                             </button>
-                            {currentUser?.role === 'ADMIN' && (
+                            {currentUser?.role === 'ADMIN' && activeTab === 'trash' && <button onClick={() => handleRestore(sch.id)} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition" title="Khôi phục lịch"><RotateCcw className="h-4 w-4" /></button>}
+                            {currentUser?.role === 'ADMIN' && activeTab === 'active' && (
                               <>
                                 <button
                                   onClick={() => openEditModal(sch)}
