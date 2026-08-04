@@ -153,17 +153,39 @@ export default function ExamPapersPage() {
         hardCount: Number(formData.hardCount),
       };
       const preview = await api.post<any>('/exam-papers/preview-random', payload);
-      const approved = window.confirm(`Phương án đề ${preview.data.paper.paperCode} có ${preview.data.paper.questionCount} câu, tổng ${preview.data.paper.totalScore} điểm. Xác nhận lưu?`);
-      if (!approved) return;
-      const response = await api.post<ExamPaper>('/exam-papers/create-random', {
-        ...payload,
-        confirm: true,
+      if (preview.data.isValid === false) {
+        setToast({ message: preview.data.message || 'Không đủ câu hỏi theo ma trận.', type: 'error' });
+        return;
+      }
+      const paperCode = preview.data.paper?.paperCode || payload.paperCode;
+      const questionCount = preview.data.paper?.questionCount || (payload.easyCount + payload.mediumCount + payload.hardCount);
+      const totalScore = preview.data.paper?.totalScore ?? (questionCount * 0.25);
+
+      setConfirmModal({
+        isOpen: true,
+        title: 'Xác nhận tạo đề thi',
+        message: `Phương án đề ${paperCode} gồm ${questionCount} câu hỏi (Tổng điểm: ${totalScore} điểm). Bạn có muốn tạo đề thi này ở trạng thái bản nháp không?`,
+        type: 'info',
+        onConfirm: async () => {
+          setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+          setCreating(true);
+          try {
+            const response = await api.post<ExamPaper>('/exam-papers/create-random', {
+              ...payload,
+              confirm: true,
+            });
+            setSelectedPaper(response.data);
+            setShowAnswers(false);
+            setToast({ message: `Đã tạo đề ${response.data.paperCode} ở trạng thái bản nháp.`, type: 'success' });
+            setFormData((previous) => ({ ...previous, paperCode: String(Number(previous.paperCode) + 1).padStart(3, '0') }));
+            await fetchData();
+          } catch (error: any) {
+            setToast({ message: error.message, type: 'error' });
+          } finally {
+            setCreating(false);
+          }
+        },
       });
-      setSelectedPaper(response.data);
-      setShowAnswers(false);
-      setToast({ message: `Đã tạo đề ${response.data.paperCode} ở trạng thái bản nháp.`, type: 'success' });
-      setFormData((previous) => ({ ...previous, paperCode: String(Number(previous.paperCode) + 1).padStart(3, '0') }));
-      await fetchData();
     } catch (error: any) {
       setToast({ message: error.message, type: 'error' });
     } finally {

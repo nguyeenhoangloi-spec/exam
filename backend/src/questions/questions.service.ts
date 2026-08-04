@@ -41,11 +41,38 @@ export class QuestionsService {
   }
   private async duplicates(content: string, exclude = '') {
     const normalized = normalizeQuestionContent(content);
-    return this.prisma.$queryRaw<Array<{ id: string; code: string; content: string; similarity: number }>>`
-      SELECT id,code,content,similarity("normalizedContent",${normalized})::float similarity FROM questions
-      WHERE "deletedAt" IS NULL AND (${exclude}='' OR id::text<>${exclude})
-      AND ("normalizedContent"=${normalized} OR similarity("normalizedContent",${normalized})>0.90)
-      ORDER BY similarity DESC LIMIT 10`;
+    try {
+      return await this.prisma.$queryRaw<Array<{ id: string; code: string; content: string; similarity: number }>>`
+        SELECT id,code,content,similarity("normalizedContent",${normalized})::float similarity FROM questions
+        WHERE "deletedAt" IS NULL AND (${exclude}='' OR id::text<>${exclude})
+        AND ("normalizedContent"=${normalized} OR similarity("normalizedContent",${normalized})>0.90)
+        ORDER BY similarity DESC LIMIT 10`;
+    } catch {
+      const exact = await this.prisma.question.findMany({
+        where: { normalizedContent: normalized, deletedAt: null, ...(exclude && { id: { not: exclude } }) },
+        select: { id: true, code: true, content: true },
+        take: 10,
+      });
+      return exact.map(q => ({ ...q, similarity: 1.0 }));
+    }
+  }
+
+  async saveAi(a: Actor, d: SaveAiQuestionsDto) {
+    this.access(a);
+    for (const question of d.questions) {
+      await this.chapter(question.subjectId, question.chapterId);
+      validateQuestionOptions(question.type, question.options);
+      if (!Number.isFinite(question.score) || question.score < 0.01 || question.score > 100) {
+        throw new BadRequestException('Điểm câu hỏi AI không hợp lệ.');
+      }
+    }
+    return this.prisma.$transaction(async (tx) => {
+      const created: any[] = [];
+      for (const question of d.questions) {
+        created.push(await this.createInTransaction(tx, a, question));
+      }
+      return created;
+    });
   }
   private async noDuplicate(a: Actor, content: string, override = false, exclude = '') {
     const found = await this.duplicates(content, exclude);
@@ -152,8 +179,8 @@ export class QuestionsService {
     });
   }
   submit(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.SUBMIT, [QuestionStatus.DRAFT, QuestionStatus.REJECTED], QuestionStatus.PENDING); }
-  approve(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.APPROVE, [QuestionStatus.PENDING], QuestionStatus.APPROVED); }
-  reject(a: Actor, id: string, reason: string) { return this.transition(a, id, QuestionHistoryAction.REJECT, [QuestionStatus.PENDING], QuestionStatus.REJECTED, reason); }
+  approve(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.APPROVE, [QuestionStatus.PENDING, QuestionStatus.DRAFT], QuestionStatus.APPROVED); }
+  reject(a: Actor, id: string, reason: string) { return this.transition(a, id, QuestionHistoryAction.REJECT, [QuestionStatus.PENDING, QuestionStatus.DRAFT], QuestionStatus.REJECTED, reason); }
   archive(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.ARCHIVE, [QuestionStatus.DRAFT, QuestionStatus.PENDING, QuestionStatus.APPROVED, QuestionStatus.REJECTED], QuestionStatus.ARCHIVED); }
   restore(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.RESTORE, [QuestionStatus.ARCHIVED], QuestionStatus.DRAFT); }
   async remove(a: Actor, id: string) {
@@ -171,6 +198,7 @@ export class QuestionsService {
     for (const id of d.ids) try {
       if (d.action === 'APPROVE') await this.approve(a, id); else if (d.action === 'REJECT') await this.reject(a, id, d.reason!);
       else if (d.action === 'ARCHIVE') await this.archive(a, id); else if (d.action === 'RESTORE') await this.restore(a, id);
+      else if (d.action === 'DELETE') await this.remove(a, id);
       else {
         const q = await this.current(id); this.edit(a, q); if (d.chapterId) await this.chapter(q.subjectId, d.chapterId);
         await this.prisma.$transaction(async tx => {
@@ -222,32 +250,6 @@ export class QuestionsService {
         rows.push(await this.createInTransaction(tx, a, payload));
       }
       return rows;
-    });
-    return { importedCount: created.length, data: created };
-  }
-  async saveAi(a: Actor, d: SaveAiQuestionsDto) {
-    this.access(a);
-    for (const question of d.questions) {
-      await this.chapter(question.subjectId, question.chapterId);
-      validateQuestionOptions(question.type, question.options);
-      if (!Number.isFinite(question.score) || question.score < 0.01 || question.score > 100) {
-        throw new BadRequestException('Điểm câu hỏi AI không hợp lệ.');
-      }
-    }
-    return this.prisma.$transaction(async (tx) => {
-      const created: any[] = [];
-      for (const question of d.questions) {
-        const normalizedContent = normalizeQuestionContent(question.content);
-        const duplicates = await tx.$queryRaw<Array<{ id: string }>>`
-          SELECT id FROM questions WHERE "deletedAt" IS NULL
-          AND ("normalizedContent" = ${normalizedContent} OR similarity("normalizedContent", ${normalizedContent}) > 0.90)
-          LIMIT 1`;
-        if (duplicates.length && !(question.overrideDuplicate && a.role === 'ADMIN')) {
-          throw new ConflictException('Có câu hỏi AI trùng hoặc tương đồng với dữ liệu hiện có.');
-        }
-        created.push(await this.createInTransaction(tx, a, question));
-      }
-      return created;
     });
   }
 }

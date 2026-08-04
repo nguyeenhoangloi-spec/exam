@@ -42,7 +42,7 @@ export class ExamArrangementService {
       },
       include: {
         student: {
-          include: { class: true },
+          include: { class: { include: { department: true } } },
         },
       },
       orderBy: {
@@ -59,6 +59,13 @@ export class ExamArrangementService {
     if (duplicateStudentIds.length > 0) {
       throw new BadRequestException('Dữ liệu đăng ký môn học có sinh viên bị lặp. Hãy xử lý dữ liệu trước khi xếp phòng.');
     }
+
+    // Fetch major subject curriculum mapping for the subject being arranged
+    const majorSubjects = await tx.majorSubject.findMany({
+      where: { subjectId: schedule.subjectId },
+      include: { department: true },
+    });
+    const majorSubjectMap = new Map(majorSubjects.map((ms) => [ms.departmentId, ms]));
 
     // 3. Kiểm tra phòng thi
     const rooms = await tx.examRoom.findMany({
@@ -201,6 +208,13 @@ export class ExamArrangementService {
             })
           : null;
 
+        const deptId = student.class.departmentId;
+        const majorSub = majorSubjectMap.get(deptId);
+        const requirementType = majorSub ? majorSub.type : 'ELECTIVE';
+        const requirementLabel = majorSub
+          ? `${student.class.department.name} • ${majorSub.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}`
+          : `${student.class.department.name} • Tự chọn ngoài khung`;
+
         arrangementResults.push({
           id: roomStudent?.id ?? 0,
           examNumber: sbd,
@@ -208,6 +222,9 @@ export class ExamArrangementService {
           studentCode: student.studentCode,
           fullName: student.fullName,
           className: student.class.name,
+          departmentName: student.class.department.name,
+          requirementType,
+          requirementLabel,
           roomCode: room.roomCode,
           roomName: room.roomName,
           building: room.building,

@@ -62,6 +62,9 @@ type ArrangementResult = {
     studentCode: string;
     fullName: string;
     className: string;
+    departmentName?: string;
+    requirementType?: string;
+    requirementLabel?: string;
     roomCode: string;
     roomName: string;
     building: string;
@@ -718,6 +721,19 @@ export default function ExamArrangementPage() {
                                         <p className="text-[11px] font-semibold text-slate-500 font-mono">
                                           {st.studentCode}
                                         </p>
+                                        {st.requirementLabel && (
+                                          <div className="pt-0.5">
+                                            <span
+                                              className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border ${
+                                                st.requirementType === 'MANDATORY'
+                                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                  : 'bg-purple-50 text-purple-700 border-purple-200'
+                                              }`}
+                                            >
+                                              {st.requirementLabel}
+                                            </span>
+                                          </div>
+                                        )}
                                       </div>
                                     ))}
                                   </div>
@@ -738,6 +754,7 @@ export default function ExamArrangementPage() {
                                 <th className="p-3">Mã SV</th>
                                 <th className="p-3">Họ và tên</th>
                                 <th className="p-3">Lớp SH</th>
+                                <th className="p-3">Khung Đào tạo Ngành</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 bg-white">
@@ -748,6 +765,21 @@ export default function ExamArrangementPage() {
                                   <td className="p-3 font-mono font-semibold text-slate-800">{st.studentCode}</td>
                                   <td className="p-3 font-bold text-slate-900">{st.fullName}</td>
                                   <td className="p-3 text-slate-600 font-medium">{st.className}</td>
+                                  <td className="p-3">
+                                    {st.requirementLabel ? (
+                                      <span
+                                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                                          st.requirementType === 'MANDATORY'
+                                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                            : 'bg-purple-50 text-purple-700 border-purple-200'
+                                        }`}
+                                      >
+                                        {st.requirementLabel}
+                                      </span>
+                                    ) : (
+                                      <span className="text-slate-400 font-medium">Chưa phân loại</span>
+                                    )}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>

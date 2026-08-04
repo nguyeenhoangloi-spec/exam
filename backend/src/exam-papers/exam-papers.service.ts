@@ -153,7 +153,7 @@ export class ExamPapersService {
             errors: [`Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`],
             warnings: [],
             alternatives: [{ rationale: `Giảm số câu ${shortage.label} xuống ${shortage.available} hoặc bổ sung câu đã duyệt.` }],
-            paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount },
+            paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount, totalScore: requestedCount * 0.25 },
           };
         }
         throw new BadRequestException(

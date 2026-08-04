@@ -3,7 +3,7 @@ import { DepartmentsService } from './departments.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
+import { CreateDepartmentDto, UpdateDepartmentDto, AddCurriculumSubjectDto } from './dto/department.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -14,6 +14,11 @@ export class DepartmentsController {
   @Get()
   findAll() {
     return this.departmentsService.findAll();
+  }
+
+  @Get(':id/curriculum')
+  getCurriculum(@Param('id', ParseIntPipe) id: number) {
+    return this.departmentsService.getCurriculum(id);
   }
 
   @Get(':id')
@@ -28,9 +33,27 @@ export class DepartmentsController {
   }
 
   @Roles('ADMIN')
+  @Post(':id/curriculum')
+  addSubjectToCurriculum(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: AddCurriculumSubjectDto,
+  ) {
+    return this.departmentsService.addSubjectToCurriculum(id, body);
+  }
+
+  @Roles('ADMIN')
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateDepartmentDto) {
     return this.departmentsService.update(id, body);
+  }
+
+  @Roles('ADMIN')
+  @Delete(':id/curriculum/:subjectId')
+  removeSubjectFromCurriculum(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('subjectId', ParseIntPipe) subjectId: number,
+  ) {
+    return this.departmentsService.removeSubjectFromCurriculum(id, subjectId);
   }
 
   @Roles('ADMIN')

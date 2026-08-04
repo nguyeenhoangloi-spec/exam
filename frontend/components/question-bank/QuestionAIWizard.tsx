@@ -51,6 +51,10 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
       await api.post('/questions/ai-save', { questions: items.map(({ duplicate, ...q }) => q) });
       onDone();
       onClose();
+    } catch (e: any) {
+      const msg = e.response?.data?.message;
+      const text = Array.isArray(msg) ? msg.join(', ') : (typeof msg === 'string' ? msg : e.message || 'Không thể lưu câu hỏi AI.');
+      setUploadStatus(`❌ Lỗi lưu câu hỏi: ${text}`);
     } finally {
       setBusy(false);
     }

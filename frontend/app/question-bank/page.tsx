@@ -197,12 +197,25 @@ export default function QuestionBankPage() {
   const bulk = async (name: string) => {
     const isReject = name === 'REJECT';
     const isDelete = name === 'DELETE';
-    const actionLabel = name === 'APPROVE' ? 'duyệt' : name === 'REJECT' ? 'từ chối' : name === 'DELETE' ? 'xóa' : 'thực hiện';
+    const actionLabel = name === 'APPROVE' ? 'duyệt' : name === 'REJECT' ? 'từ chối' : name === 'DELETE' ? 'xóa' : name === 'RESTORE' ? 'khôi phục' : name === 'ARCHIVE' ? 'lưu trữ' : 'thực hiện';
+    const eligible = (q: Question) => {
+      if (name === 'APPROVE' || name === 'REJECT') return ['PENDING', 'DRAFT'].includes(q.status);
+      if (name === 'ARCHIVE') return ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'].includes(q.status);
+      if (name === 'RESTORE') return ['ARCHIVED', 'REJECTED'].includes(q.status);
+      return true;
+    };
+    const selectedQuestions = questions.filter(q => selected.includes(q.id));
+    const actionIds = selectedQuestions.filter(eligible).map(q => q.id);
+    const skipped = selected.length - actionIds.length;
+    if (!actionIds.length) {
+      setToast({ message: `Không có câu hỏi phù hợp để ${actionLabel}. Hãy kiểm tra trạng thái câu hỏi đã chọn.`, type: 'error' });
+      return;
+    }
 
     setConfirmConfig({
       isOpen: true,
       title: `Thao tác hàng loạt: ${name}`,
-      message: `Bạn có chắc chắn muốn ${actionLabel} ${selected.length} câu hỏi đã chọn?`,
+      message: `Bạn có chắc chắn muốn ${actionLabel} ${actionIds.length} câu hỏi phù hợp?${skipped ? ` ${skipped} câu không phù hợp sẽ được bỏ qua.` : ''}`,
       type: isDelete || isReject ? 'danger' : 'success',
       requireReason: isReject,
       reasonPlaceholder: 'Nhập lý do từ chối hàng loạt...',
@@ -210,9 +223,9 @@ export default function QuestionBankPage() {
       onConfirm: async (reason) => {
         closeConfirm();
         try {
-          const r = await api.post('/questions/bulk-action', { ids: selected, action: name, reason });
+          const r = await api.post('/questions/bulk-action', { ids: actionIds, action: name, reason });
           setToast({
-            message: `Thành công ${r.data.successCount}, thất bại ${r.data.failedCount}`,
+            message: `Thành công ${r.data.successCount}, thất bại ${r.data.failedCount}${skipped ? `, bỏ qua ${skipped}` : ''}.`,
             type: r.data.failedCount ? 'error' : 'success',
           });
           load();
@@ -257,7 +270,14 @@ export default function QuestionBankPage() {
           </div>
           <QuestionFilters value={filters} subjects={subjects} onChange={next => { setFilters(next); setPage(1); }} />
         </section>
-        <QuestionBulkAction count={selected.length} onAction={bulk} onClear={() => setSelected([])} />
+        <QuestionBulkAction
+          totalCount={questions.length}
+          selectedCount={selected.length}
+          allSelected={questions.length > 0 && selected.length === questions.length}
+          onToggleAll={() => setSelected(selected.length === questions.length ? [] : questions.map(q => q.id))}
+          onAction={bulk}
+          onClear={() => setSelected([])}
+        />
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => <div key={i} className="h-36 animate-pulse rounded-2xl bg-slate-200" />)}

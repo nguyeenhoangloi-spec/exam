@@ -1,0 +1,47 @@
+export const QUESTION_TYPE_LABELS: Record<string, string> = {
+  SINGLE_CHOICE: 'Trắc nghiệm (1 đáp án)',
+  MULTIPLE_CHOICE: 'Trắc nghiệm (Nhiều đáp án)',
+  TRUE_FALSE: 'Đúng / Sai',
+  FILL_BLANK: 'Điền từ vào chỗ trống',
+  ESSAY: 'Tự luận',
+};
+
+export const DIFFICULTY_LABELS: Record<string, string> = {
+  EASY: 'Dễ',
+  MEDIUM: 'Trung bình',
+  HARD: 'Khó',
+};
+
+export const BLOOM_LABELS: Record<string, string> = {
+  REMEMBER: 'Nhận biết (Remember)',
+  UNDERSTAND: 'Thông hiểu (Understand)',
+  APPLY: 'Vận dụng (Apply)',
+  ANALYZE: 'Phân tích (Analyze)',
+  EVALUATE: 'Đánh giá (Evaluate)',
+  CREATE: 'Sáng tạo (Create)',
+};
+
+export const QUESTION_STATUS_LABELS: Record<string, string> = {
+  DRAFT: 'Bản nháp',
+  PENDING_APPROVAL: 'Chờ duyệt',
+  PENDING: 'Chờ duyệt',
+  APPROVED: 'Đã duyệt',
+  REJECTED: 'Từ chối',
+  ARCHIVED: 'Ngừng sử dụng',
+};
+
+export const EXAM_STATUS_LABELS: Record<string, string> = {
+  DRAFT: 'Bản nháp',
+  PUBLISHED: 'Đã công bố',
+  SCHEDULED: 'Đã xếp lịch',
+  IN_PROGRESS: 'Đang diễn ra',
+  COMPLETED: 'Đã kết thúc',
+  CANCELLED: 'Đã hủy',
+};
+
+export const USER_ROLE_LABELS: Record<string, string> = {
+  ADMIN: 'Quản trị viên',
+  TEACHER: 'Giảng viên',
+  STUDENT: 'Sinh viên',
+  PROCTOR: 'Cán bộ coi thi',
+};

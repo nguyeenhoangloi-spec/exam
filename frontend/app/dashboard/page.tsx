@@ -18,6 +18,7 @@ import { RecentActivityList } from '../../components/dashboard/RecentActivityLis
 import { QuickActions } from '../../components/dashboard/QuickActions';
 import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton';
 import { DashboardErrorState } from '../../components/dashboard/DashboardErrorState';
+import { ConfirmModal } from '../../components/ConfirmModal';
 import { DashboardOverview } from '../../types/dashboard';
 import { User } from '../../types';
 
@@ -28,6 +29,19 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState('');
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info' | 'success';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'success',
+    onConfirm: () => {},
+  });
   const [rejecting, setRejecting] = useState<{ id: string; code: string } | null>(null);
   const [reason, setReason] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -59,18 +73,26 @@ export default function DashboardPage() {
     loadOverview();
   }, [loadOverview, router]);
 
-  const approve = async (id: string, code: string) => {
-    if (!window.confirm(`Duyệt câu hỏi ${code}?`)) return;
-    setBusyId(id);
-    try {
-      await api.post(`/questions/${id}/approve`);
-      setToast({ message: `Đã duyệt câu hỏi ${code}.`, type: 'success' });
-      await loadOverview();
-    } catch (actionError: any) {
-      setToast({ message: actionError.message, type: 'error' });
-    } finally {
-      setBusyId('');
-    }
+  const approve = (id: string, code: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Duyệt Câu Hỏi',
+      message: `Bạn có chắc chắn muốn duyệt câu hỏi ${code}?`,
+      type: 'success',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        setBusyId(id);
+        try {
+          await api.post(`/questions/${id}/approve`);
+          setToast({ message: `Đã duyệt câu hỏi ${code}.`, type: 'success' });
+          await loadOverview();
+        } catch (actionError: any) {
+          setToast({ message: actionError.message, type: 'error' });
+        } finally {
+          setBusyId('');
+        }
+      },
+    });
   };
 
   const reject = async () => {
@@ -197,6 +219,15 @@ export default function DashboardPage() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+      />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </AppShell>

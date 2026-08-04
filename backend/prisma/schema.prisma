@@ -76,14 +76,20 @@ model User {
   @@map("users")
 }
 
+enum SubjectRequirementType {
+  MANDATORY
+  ELECTIVE
+}
+
 model Department {
   id   Int    @id @default(autoincrement())
   code String @unique
   name String
 
-  classes  Class[]
-  teachers Teacher[]
-  subjects Subject[]
+  classes       Class[]
+  teachers      Teacher[]
+  subjects      Subject[]
+  majorSubjects MajorSubject[]
 
   @@map("departments")
 }
@@ -149,8 +155,25 @@ model Subject {
   examSchedules   ExamSchedule[]
   questions       Question[]
   chapters        Chapter[]
+  majorSubjects   MajorSubject[]
 
   @@map("subjects")
+}
+
+model MajorSubject {
+  id                  Int                    @id @default(autoincrement())
+  departmentId        Int
+  department          Department             @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  subjectId           Int
+  subject             Subject                @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  type                SubjectRequirementType @default(MANDATORY)
+  recommendedSemester Int                    @default(1)
+  note                String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  @@unique([departmentId, subjectId])
+  @@map("major_subjects")
 }
 
 model Chapter {

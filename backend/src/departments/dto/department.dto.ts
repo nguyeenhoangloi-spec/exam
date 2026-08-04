@@ -15,3 +15,17 @@ export class UpdateDepartmentDto {
   @IsOptional() @IsString() @MinLength(2) @MaxLength(255)
   name?: string;
 }
+
+export class AddCurriculumSubjectDto {
+  @IsString()
+  subjectId: number;
+
+  @IsOptional() @IsString()
+  type?: 'MANDATORY' | 'ELECTIVE';
+
+  @IsOptional()
+  recommendedSemester?: number;
+
+  @IsOptional() @IsString()
+  note?: string;
+}

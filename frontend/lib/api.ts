@@ -56,9 +56,8 @@ api.interceptors.response.use(
         window.location.href = '/login';
       }
     }
-    const message =
-      error.response?.data?.message ||
-      (Array.isArray(error.response?.data?.message) ? error.response.data.message.join(', ') : 'Đã có lỗi xảy ra');
+    const rawMessage = error.response?.data?.message;
+    const message = Array.isArray(rawMessage) ? rawMessage.join(', ') : (rawMessage || 'Đã có lỗi xảy ra');
     return Promise.reject(new Error(message));
   },
 );
