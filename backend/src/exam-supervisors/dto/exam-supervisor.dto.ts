@@ -34,6 +34,20 @@ export class FindSupervisorsDto {
   @IsInt()
   @Min(1)
   examScheduleId?: number;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+}
+
+export class UpdateSupervisorStatusDto {
+  @IsIn(['CONFIRMED', 'CHANGE_REQUESTED', 'REJECTED', 'CHANGE_APPROVED', 'COMPLETED', 'ABSENT'])
+  status: 'CONFIRMED' | 'CHANGE_REQUESTED' | 'REJECTED' | 'CHANGE_APPROVED' | 'COMPLETED' | 'ABSENT';
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  note?: string;
 }
 
 export class AutoSupervisorPreviewDto {

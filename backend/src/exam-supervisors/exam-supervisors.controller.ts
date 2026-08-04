@@ -1,9 +1,9 @@
-import { BadRequestException, Controller, Post, Delete, Get, Body, Param, Query, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Delete, Get, Patch, Body, Param, Query, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { ExamSupervisorsService } from './exam-supervisors.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { AssignSupervisorDto, AutoSupervisorAcceptDto, AutoSupervisorPreviewDto, FindSupervisorsDto } from './dto/exam-supervisor.dto';
+import { AssignSupervisorDto, AutoSupervisorAcceptDto, AutoSupervisorPreviewDto, FindSupervisorsDto, UpdateSupervisorStatusDto } from './dto/exam-supervisor.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -28,10 +28,16 @@ export class ExamSupervisorsController {
 
   @Get()
   find(@Query() query: FindSupervisorsDto) {
-    if (!query.examScheduleRoomId && !query.examScheduleId) {
-      throw new BadRequestException('Cần cung cấp examScheduleRoomId hoặc examScheduleId.');
-    }
     return this.examSupervisorsService.getSupervisors(query);
+  }
+
+  @Patch(':id/status')
+  updateStatus(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateSupervisorStatusDto,
+  ) {
+    return this.examSupervisorsService.updateSupervisorStatus(req.user, id, body);
   }
 
   @Delete(':id')

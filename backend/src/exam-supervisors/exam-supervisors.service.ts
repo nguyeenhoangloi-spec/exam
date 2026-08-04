@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { UpdateSupervisorStatusDto } from './dto/exam-supervisor.dto';
 
 @Injectable()
 export class ExamSupervisorsService {
@@ -174,6 +175,7 @@ export class ExamSupervisorsService {
         teacherId: data.teacherId,
         role: data.role || 'SUPERVISOR_1',
         note: data.note,
+        status: 'PENDING',
       }, include: {
         teacher: true,
         examScheduleRoom: {
@@ -222,9 +224,65 @@ export class ExamSupervisorsService {
     });
   }
 
-  async getSupervisors(query: { examScheduleRoomId?: number; examScheduleId?: number }) {
+  async updateSupervisorStatus(actor: { id: number }, id: number, dto: UpdateSupervisorStatusDto) {
+    const supervisor = await this.prisma.examSupervisor.findUnique({
+      where: { id },
+      include: { teacher: true, examScheduleRoom: { include: { room: true } } },
+    });
+    if (!supervisor) throw new NotFoundException('Không tìm thấy bản ghi phân công giám thị.');
+
+    if (dto.status === 'CHANGE_APPROVED') {
+      // Hủy phân công cũ để Admin gán giảng viên mới
+      await this.prisma.examSupervisor.delete({ where: { id } });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'APPROVE_CHANGE',
+        entityType: 'EXAM_SUPERVISOR',
+        entityId: id,
+        description: `Admin đã chấp nhận yêu cầu đổi ca của ${supervisor.teacher.fullName} tại phòng ${supervisor.examScheduleRoom.room.roomCode} (đã gỡ gán cũ)`,
+      });
+      return { message: 'Đã chấp nhận đổi ca và gỡ phân công cũ thành công.' };
+    }
+
+    let targetStatus = dto.status;
+    let note = dto.note ?? supervisor.note;
+    if (dto.status === 'REJECTED') {
+      targetStatus = 'CONFIRMED';
+      note = `${supervisor.note || ''} (Admin từ chối yêu cầu đổi ca)`;
+    }
+
+    const updated = await this.prisma.examSupervisor.update({
+      where: { id },
+      data: {
+        status: targetStatus,
+        note: note,
+      },
+      include: {
+        teacher: true,
+        examScheduleRoom: {
+          include: {
+            room: true,
+            examSchedule: { include: { subject: true, examPeriod: true } },
+          },
+        },
+      },
+    });
+
+    await this.audit.write({
+      actorId: actor.id,
+      action: 'UPDATE_STATUS',
+      entityType: 'EXAM_SUPERVISOR',
+      entityId: id,
+      description: `Cập nhật trạng thái phân công coi thi của ${supervisor.teacher.fullName} thành ${targetStatus}`,
+    });
+
+    return updated;
+  }
+
+  async getSupervisors(query: { examScheduleRoomId?: number; examScheduleId?: number; status?: string }) {
     return this.prisma.examSupervisor.findMany({
       where: {
+        ...(query.status ? { status: query.status } : {}),
         examScheduleRoom: {
           ...(query.examScheduleRoomId ? { id: query.examScheduleRoomId } : {}),
           ...(query.examScheduleId ? { examScheduleId: query.examScheduleId } : {}),
@@ -234,9 +292,18 @@ export class ExamSupervisorsService {
       include: {
         teacher: true,
         examScheduleRoom: {
-          include: { room: true },
+          include: {
+            room: true,
+            examSchedule: {
+              include: {
+                subject: true,
+                examPeriod: true,
+              },
+            },
+          },
         },
       },
+      orderBy: { id: 'desc' },
     });
   }
 }
