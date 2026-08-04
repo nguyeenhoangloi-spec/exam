@@ -243,7 +243,7 @@ export default function QuestionBankPage() {
 
   return (
     <AppShell user={user} title="Ngân hàng câu hỏi">
-      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+      <main className="w-full px-6 py-6 space-y-6">
         <QuestionStatistics counts={counts} />
         <section className="my-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-3 xl:flex-row">

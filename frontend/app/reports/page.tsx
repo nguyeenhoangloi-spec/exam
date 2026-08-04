@@ -44,7 +44,7 @@ export default function ReportsPage() {
 
   return (
     <AppShell user={user} title="Báo cáo tổng quan">
-      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+      <main className="w-full px-6 py-6 space-y-6">
         <div>
           <p className="text-xs text-slate-500 font-medium">Số liệu được tổng hợp trực tiếp từ PostgreSQL tại thời điểm hiện tại</p>
         </div>

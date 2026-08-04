@@ -94,7 +94,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell user={user} title="Admin Dashboard - Thống kê tổng quan">
-      <main className="mx-auto w-full max-w-[1600px] p-4 md:p-6 xl:p-8">
+      <main className="w-full px-6 py-6 space-y-6">
         {loading ? (
           <DashboardSkeleton />
         ) : error || !overview ? (

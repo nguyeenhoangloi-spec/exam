@@ -130,7 +130,7 @@ export default function DepartmentsPage() {
 
   return (
     <AppShell user={currentUser} title="Quản lý Khoa">
-      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+      <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>

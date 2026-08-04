@@ -221,7 +221,7 @@ export default function ExamPapersPage() {
 
   return (
     <AppShell user={currentUser} title="Quản lý đề thi">
-      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+      <main className="w-full px-6 py-6 space-y-6">
 
         <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">

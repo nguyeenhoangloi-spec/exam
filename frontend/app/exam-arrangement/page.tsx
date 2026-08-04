@@ -151,7 +151,7 @@ export default function ExamArrangementPage() {
 
   return (
     <AppShell user={currentUser} title="Xếp Lịch Thi Tự Động">
-      <main className="px-6 py-6 space-y-6 max-w-7xl w-full mx-auto">
+      <main className="w-full px-6 py-6 space-y-6">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
