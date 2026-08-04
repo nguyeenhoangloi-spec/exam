@@ -17,6 +17,8 @@ import { QuestionsModule } from './questions/questions.module';
 import { ExamPapersModule } from './exam-papers/exam-papers.module';
 import { AuditModule } from './audit/audit.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { OnlineExamsModule } from './online-exams/online-exams.module';
+import { ProctorModule } from './proctor/proctor.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     QuestionsModule,
     ExamPapersModule,
     DashboardModule,
+    OnlineExamsModule,
+    ProctorModule,
   ],
 })
 export class AppModule {}

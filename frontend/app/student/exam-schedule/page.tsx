@@ -158,12 +158,20 @@ export default function StudentExamSchedulePage() {
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                  {item.examType === 'TRAC_NGHIEM' && (
+                    <button
+                      onClick={() => router.push(`/student/online-exam/${item.id}/lobby`)}
+                      className="flex items-center gap-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 px-3.5 py-1.5 rounded-xl shadow-xs transition"
+                    >
+                      <span>Thi Trực Tuyến</span>
+                    </button>
+                  )}
                   <button
                     onClick={() => setDrawerSchedule(item)}
-                    className="flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-800 hover:bg-sky-50 px-3 py-1.5 rounded-xl transition"
+                    className="flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-800 hover:bg-sky-50 px-3 py-1.5 rounded-xl transition ml-auto"
                   >
-                    <Eye className="w-3.5 h-3.5" /> Xem chi tiết ca thi
+                    <Eye className="w-3.5 h-3.5" /> Xem chi tiết
                   </button>
                 </div>
               </div>
