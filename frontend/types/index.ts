@@ -184,6 +184,7 @@ export interface ExamPaper {
 export interface PersonalScheduleItem {
   id: number;
   examNumber: string;
+  registrationNumber?: string;
   seatNumber: number;
   status: string;
   subjectCode: string;

@@ -37,27 +37,27 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
           {/* Header */}
-          <div className="relative bg-slate-900 px-6 py-8 text-white">
+          <div className="relative bg-slate-900 px-6 py-6 text-white">
             <button
               onClick={onClose}
-              className="absolute right-4 top-4 rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition"
+              className="absolute right-4 top-4 z-10 rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition"
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-xl font-bold text-white shadow-lg">
+            <div className="flex items-center gap-3.5 pr-8">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-lg font-bold text-white shadow-lg">
                 {avatarText}
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h2 className="truncate text-xl font-bold text-white">{title}</h2>
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="truncate text-lg font-bold text-white max-w-[180px]" title={title}>{title}</h2>
                   {badge && (
-                    <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${badge.className}`}>
+                    <span className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${badge.className}`}>
                       {badge.label}
                     </span>
                   )}
                 </div>
-                {subtitle && <p className="mt-1 truncate text-xs font-medium text-slate-300">{subtitle}</p>}
+                {subtitle && <p className="truncate text-xs font-medium text-slate-300">{subtitle}</p>}
               </div>
             </div>
           </div>
