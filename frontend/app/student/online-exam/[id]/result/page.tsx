@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { CheckCircle2, AlertCircle, FileText, Send, ArrowLeft } from 'lucide-react';
@@ -18,12 +18,7 @@ export default function StudentExamResultPage() {
   const [submittingAppeal, setSubmittingAppeal] = useState(false);
   const [appealSuccess, setAppealSuccess] = useState(false);
 
-  useEffect(() => {
-    if (!attemptId) return;
-    loadResult();
-  }, [attemptId]);
-
-  const loadResult = async () => {
+  const loadResult = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -34,7 +29,12 @@ export default function StudentExamResultPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [attemptId]);
+
+  useEffect(() => {
+    if (!attemptId) return;
+    void loadResult();
+  }, [attemptId, loadResult]);
 
   const handleSendAppeal = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Clock, ShieldCheck, AlertCircle, CheckCircle2, Monitor, ArrowRight } from 'lucide-react';
@@ -14,18 +14,18 @@ export default function StudentExamLobbyPage() {
   const [error, setError] = useState<string | null>(null);
   const [eligibility, setEligibility] = useState<any>(null);
   const [starting, setStarting] = useState(false);
+  const [rulesAccepted, setRulesAccepted] = useState(false);
 
-  useEffect(() => {
-    if (!scheduleId) return;
-    loadEligibility();
-  }, [scheduleId]);
-
-  const loadEligibility = async () => {
+  const loadEligibility = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const res = await onlineExamService.checkEligibility(scheduleId);
-      setEligibility(res);
+      // Normalize the backend envelope so the existing presentation fields
+      // (schedule, student, roomStudentInfo, config) remain available at the
+      // top level while preserving the original response for diagnostics.
+      setEligibility(res?.data ? { ...res, ...res.data } : res);
+      setRulesAccepted(false);
 
       if (!res.isEligible) {
         setError(res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.');
@@ -40,7 +40,12 @@ export default function StudentExamLobbyPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, scheduleId]);
+
+  useEffect(() => {
+    if (!scheduleId) return;
+    void loadEligibility();
+  }, [loadEligibility, scheduleId]);
 
   const handleStartExam = async () => {
     try {
@@ -55,7 +60,7 @@ export default function StudentExamLobbyPage() {
         }
       }
 
-      const res = await onlineExamService.startAttempt(scheduleId, navigator.userAgent);
+      const res = await onlineExamService.startAttempt(scheduleId, navigator.userAgent, undefined, rulesAccepted);
       sessionStorage.setItem('attemptToken', res.attemptToken);
       router.push(`/student/online-exam/${res.attemptToken}/take`);
     } catch (err: any) {
@@ -73,10 +78,18 @@ export default function StudentExamLobbyPage() {
     );
   }
 
-  const examInfo = eligibility?.examInfo;
-  const schedule = eligibility?.schedule || examInfo;
-  const student = eligibility?.student;
-  const config = schedule?.onlineExamConfig || examInfo;
+  // Eligibility API trả dữ liệu nghiệp vụ trong `data`; fallback shape cũ
+  // giúp Lobby tương thích trong thời gian backend/frontend được cập nhật.
+  const eligibilityData = eligibility?.data ?? eligibility ?? {};
+  const examInfo = eligibilityData.examInfo;
+  const schedule = eligibilityData.schedule ?? (examInfo ? {
+    subject: { subjectName: examInfo.subjectName, subjectCode: examInfo.subjectCode },
+    examPeriod: { name: examInfo.examPeriodName },
+    onlineExamConfig: { examPaper: { durationMinutes: examInfo.durationMinutes } },
+  } : undefined);
+  const student = eligibilityData.student;
+  const config = eligibilityData.config ?? schedule?.onlineExamConfig;
+  const paper = config?.examPaper ?? schedule?.onlineExamConfig?.examPaper;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12">
@@ -156,6 +169,20 @@ export default function StudentExamLobbyPage() {
           </p>
         </div>
 
+        {config?.requireRulesAcceptance !== false && (
+          <label className="mb-6 flex cursor-pointer items-start gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 p-4 text-sm text-slate-200">
+            <input
+              type="checkbox"
+              checked={rulesAccepted}
+              onChange={(event) => setRulesAccepted(event.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-indigo-500"
+            />
+            <span>
+              Tôi đã đọc, hiểu và đồng ý chấp hành toàn bộ quy định thi. Tôi hiểu hệ thống có thể ghi nhận vi phạm và tự động khóa hoặc nộp bài theo quy chế.
+            </span>
+          </label>
+        )}
+
         <div className="flex justify-end gap-4">
           <button
             onClick={() => router.back()}
@@ -165,7 +192,7 @@ export default function StudentExamLobbyPage() {
           </button>
           <button
             onClick={handleStartExam}
-            disabled={starting || !eligibility?.isEligible}
+            disabled={starting || !eligibility?.isEligible || (config?.requireRulesAcceptance !== false && !rulesAccepted)}
             className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-sm font-semibold flex items-center shadow-lg shadow-indigo-600/30 transition"
           >
             {starting ? (

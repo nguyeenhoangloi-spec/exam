@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Users, Clock, AlertTriangle, RefreshCw, ShieldAlert, PlusCircle, Unlock, FileSpreadsheet } from 'lucide-react';
@@ -22,20 +22,21 @@ export default function ProctorDashboardPage() {
   const [reason, setReason] = useState('');
   const [incidentDecision, setIncidentDecision] = useState('UNDER_REVIEW');
   const [processing, setProcessing] = useState(false);
+  const loadDashboardRef = useRef<((isBackground?: boolean) => Promise<void>) | null>(null);
 
   useEffect(() => {
     if (!scheduleRoomId) return;
-    loadDashboard();
+    void loadDashboardRef.current?.();
 
     // Long polling 3s để tự động cập nhật tiến độ sinh viên theo realtime
     const interval = setInterval(() => {
-      loadDashboard(true);
+      void loadDashboardRef.current?.(true);
     }, 3000);
 
     return () => clearInterval(interval);
   }, [scheduleRoomId]);
 
-  const loadDashboard = async (isBackground = false) => {
+  const loadDashboard = useCallback(async (isBackground = false) => {
     try {
       if (!isBackground) setLoading(true);
       const res = await onlineExamService.getLiveDashboard(scheduleRoomId);
@@ -46,7 +47,8 @@ export default function ProctorDashboardPage() {
     } finally {
       if (!isBackground) setLoading(false);
     }
-  };
+  }, [scheduleRoomId]);
+  loadDashboardRef.current = loadDashboard;
 
   const handleAction = async () => {
     if (!selectedStudent?.attempt?.id) return;

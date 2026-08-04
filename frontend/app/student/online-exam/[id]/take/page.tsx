@@ -26,6 +26,18 @@ export default function StudentExamTakePage() {
   const pendingAnswersToSave = useRef<Record<string, AnswerItem>>({});
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const handleAutoSubmit = useCallback(async () => {
+    const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
+    if (!token || !attemptData) return;
+
+    try {
+      await onlineExamService.submitAttempt(token);
+      router.push(`/student/online-exam/${attemptData.attemptId}/result`);
+    } catch (err) {
+      console.error('Auto submit failed:', err);
+    }
+  }, [attemptData, router, tokenFromUrl]);
+
   useEffect(() => {
     const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
     if (!token) {
@@ -78,7 +90,7 @@ export default function StudentExamTakePage() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remainingSeconds, attemptData]);
+  }, [remainingSeconds, attemptData, handleAutoSubmit]);
 
   useEffect(() => {
     const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
@@ -96,7 +108,7 @@ export default function StudentExamTakePage() {
     }, 15000);
 
     return () => clearInterval(hbInterval);
-  }, [tokenFromUrl]);
+  }, [handleAutoSubmit, tokenFromUrl]);
 
   const triggerAutoSave = useCallback(
     (questionId: string, selectedOptionIds: string[], textAnswer: string, isFlagged: boolean, currentVersion: number) => {
@@ -254,18 +266,6 @@ export default function StudentExamTakePage() {
     } catch (err: any) {
       alert(err.message || 'Không thể nộp bài');
       setSubmitting(false);
-    }
-  };
-
-  const handleAutoSubmit = async () => {
-    const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
-    if (!token) return;
-
-    try {
-      await onlineExamService.submitAttempt(token);
-      router.push(`/student/online-exam/${attemptData.attemptId}/result`);
-    } catch (err) {
-      console.error('Auto submit failed:', err);
     }
   };
 

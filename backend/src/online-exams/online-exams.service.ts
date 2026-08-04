@@ -40,9 +40,20 @@ export class OnlineExamsService {
         examInfo: result.data?.schedule
           ? {
               subjectName: result.data.schedule.subject?.subjectName,
+              subjectCode: result.data.schedule.subject?.subjectCode,
+              examPeriodName: result.data.schedule.examPeriod?.name,
               examDate: result.data.schedule.examDate,
               startTime: result.data.schedule.startTime,
               endTime: result.data.schedule.endTime,
+            }
+          : undefined,
+        student: result.data?.student
+          ? {
+              id: result.data.student.id,
+              studentCode: result.data.student.studentCode,
+              fullName: result.data.student.fullName,
+              examNumber: result.data.roomStudentInfo?.examNumber,
+              seatNumber: result.data.roomStudentInfo?.seatNumber,
             }
           : undefined,
       };
@@ -54,6 +65,8 @@ export class OnlineExamsService {
       reason: 'Sinh viên đủ điều kiện tham gia thi',
       examInfo: {
         subjectName: d.schedule?.subject?.subjectName,
+        subjectCode: d.schedule?.subject?.subjectCode,
+        examPeriodName: d.schedule?.examPeriod?.name,
         examDate: d.schedule?.examDate,
         startTime: d.schedule?.startTime,
         endTime: d.schedule?.endTime,

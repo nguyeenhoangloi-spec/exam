@@ -153,8 +153,11 @@ export class QuestionsService {
     });
   }
   private async transition(a: Actor, id: string, action: QuestionHistoryAction, from: QuestionStatus[], to: QuestionStatus, note?: string) {
-    const old = await this.current(id); if (!from.includes(old.status)) throw new BadRequestException(`Không thể chuyển ${old.status} sang ${to}.`);
-    if (action === QuestionHistoryAction.SUBMIT) this.edit(a, old);
+    const old = await this.current(id);
+    if (!from.includes(old.status)) throw new BadRequestException(`Không thể chuyển ${old.status} sang ${to}.`);
+    if (action === QuestionHistoryAction.SUBMIT) {
+      if (old.status !== QuestionStatus.DRAFT && old.status !== QuestionStatus.REJECTED) throw new BadRequestException('Chỉ gửi duyệt được câu nháp hoặc bị từ chối.');
+    }
     if ((action === QuestionHistoryAction.APPROVE || action === QuestionHistoryAction.REJECT) && a.role === 'TEACHER' && old.createdById === a.id) throw new ForbiddenException('Không được tự duyệt câu hỏi.');
     if ((action === QuestionHistoryAction.ARCHIVE || action === QuestionHistoryAction.RESTORE) && a.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được thực hiện.');
     return this.prisma.$transaction(async tx => {
@@ -196,7 +199,8 @@ export class QuestionsService {
   async bulkAction(a: Actor, d: BulkActionDto) {
     const errors: any[] = []; let successCount = 0;
     for (const id of d.ids) try {
-      if (d.action === 'APPROVE') await this.approve(a, id); else if (d.action === 'REJECT') await this.reject(a, id, d.reason!);
+      if (d.action === 'SUBMIT') await this.submit(a, id);
+      else if (d.action === 'APPROVE') await this.approve(a, id); else if (d.action === 'REJECT') await this.reject(a, id, d.reason!);
       else if (d.action === 'ARCHIVE') await this.archive(a, id); else if (d.action === 'RESTORE') await this.restore(a, id);
       else if (d.action === 'DELETE') await this.remove(a, id);
       else {

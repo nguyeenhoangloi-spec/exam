@@ -272,17 +272,26 @@ export default function QuestionBankPage() {
         </section>
         {(() => {
           const selectedQuestions = questions.filter((q) => selected.includes(q.id));
-          const canApprove = selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'REJECTED'].includes(q.status));
-          const canReject = selectedQuestions.some((q) => ['DRAFT', 'PENDING'].includes(q.status));
-          const canRestore = selectedQuestions.some((q) => ['ARCHIVED', 'REJECTED'].includes(q.status));
-          const canArchive = selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'].includes(q.status));
-          const canDelete = user?.role === 'ADMIN';
+          const isAdmin = user?.role === 'ADMIN';
+
+          // Teachers and users can submit DRAFT or REJECTED questions for approval
+          const canSubmit = selectedQuestions.some((q) => ['DRAFT', 'REJECTED'].includes(q.status));
+
+          // ONLY ADMIN can Approve, Reject, Restore, or Archive questions
+          const canApprove = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'REJECTED'].includes(q.status));
+          const canReject = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING'].includes(q.status));
+          const canRestore = isAdmin && selectedQuestions.some((q) => ['ARCHIVED', 'REJECTED'].includes(q.status));
+          const canArchive = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'].includes(q.status));
+          
+          // ADMIN can delete any selected question; TEACHER can delete DRAFT questions
+          const canDelete = isAdmin || selectedQuestions.every((q) => q.status === 'DRAFT');
 
           return (
             <QuestionBulkAction
               totalCount={questions.length}
               selectedCount={selected.length}
               allSelected={questions.length > 0 && selected.length === questions.length}
+              canSubmit={canSubmit}
               canApprove={canApprove}
               canReject={canReject}
               canRestore={canRestore}

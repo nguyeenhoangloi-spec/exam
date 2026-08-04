@@ -236,7 +236,7 @@ export class BulkActionDto {
   @IsUUID('4', { each: true })
   ids: string[];
 
-  @IsIn(['APPROVE', 'REJECT', 'ARCHIVE', 'RESTORE', 'DELETE', 'CHANGE_DIFFICULTY', 'CHANGE_CHAPTER'])
+  @IsIn(['SUBMIT', 'APPROVE', 'REJECT', 'ARCHIVE', 'RESTORE', 'DELETE', 'CHANGE_DIFFICULTY', 'CHANGE_CHAPTER'])
   action: string;
 
   @ValidateIf((o) => o.action === 'REJECT')

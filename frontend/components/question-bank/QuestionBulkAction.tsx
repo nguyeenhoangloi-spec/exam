@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, XCircle, Archive, Trash2, RotateCcw, CheckSquare, X } from 'lucide-react';
+import { CheckCircle2, XCircle, Archive, Trash2, RotateCcw, CheckSquare, X, Send } from 'lucide-react';
 
 interface QuestionBulkActionProps {
   totalCount: number;
   selectedCount: number;
   allSelected: boolean;
+  canSubmit?: boolean;
   canApprove?: boolean;
   canReject?: boolean;
   canRestore?: boolean;
@@ -21,11 +22,12 @@ export function QuestionBulkAction({
   totalCount,
   selectedCount,
   allSelected,
-  canApprove = true,
-  canReject = true,
-  canRestore = true,
-  canArchive = true,
-  canDelete = true,
+  canSubmit = false,
+  canApprove = false,
+  canReject = false,
+  canRestore = false,
+  canArchive = false,
+  canDelete = false,
   onToggleAll,
   onAction,
   onClear,
@@ -71,6 +73,16 @@ export function QuestionBulkAction({
       {selectedCount > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-slate-500 text-[11px] font-bold">Thao tác hàng loạt:</span>
+
+          {canSubmit && (
+            <button
+              type="button"
+              onClick={() => onAction('SUBMIT')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3.5 py-1.5 font-bold shadow-2xs transition"
+            >
+              <Send className="h-3.5 w-3.5" /> Gửi duyệt hàng loạt
+            </button>
+          )}
 
           {canApprove && (
             <button
