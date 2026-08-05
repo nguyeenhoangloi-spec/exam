@@ -103,7 +103,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             )}
 
             <div
-                className={`app-shell-main min-h-screen min-w-0 pt-[72px] ${isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
+                className={`app-shell-main min-h-screen min-w-0 ${isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
                     } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
             >
                 <Header user={user} title={title} collapsed={collapsed} onMenuClick={() => setMobileOpen(true)} />

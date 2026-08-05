@@ -1,150 +1,125 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Calendar, ChevronDown, Check } from 'lucide-react';
+import React from 'react';
+import { ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { DashboardOverview } from '../../types/dashboard';
 
+const sampleProgressList = [
+  {
+    code: 'KT2024001',
+    name: 'Kiểm tra học kỳ II',
+    progress: 85,
+    status: 'IN_PROGRESS',
+    color: 'bg-blue-600',
+    textColor: 'text-blue-600',
+  },
+  {
+    code: 'KT2024002',
+    name: 'Thi giữa kỳ',
+    progress: 65,
+    status: 'IN_PROGRESS',
+    color: 'bg-blue-600',
+    textColor: 'text-blue-600',
+  },
+  {
+    code: 'KT2024003',
+    name: 'Kiểm tra học kỳ II',
+    progress: 100,
+    status: 'COMPLETED',
+    color: 'bg-emerald-500',
+    textColor: 'text-emerald-600',
+  },
+  {
+    code: 'KT2024004',
+    name: 'Thi cuối kỳ',
+    progress: 40,
+    status: 'IN_PROGRESS',
+    color: 'bg-amber-500',
+    textColor: 'text-amber-600',
+  },
+  {
+    code: 'KT2024005',
+    name: 'Kiểm tra giữa kỳ',
+    progress: 70,
+    status: 'IN_PROGRESS',
+    color: 'bg-blue-600',
+    textColor: 'text-blue-600',
+  },
+];
+
 export function ExamProgressOverview({ periods }: { periods?: DashboardOverview['examProgress'] }) {
-  const [selectedPeriod, setSelectedPeriod] = useState('Học kỳ II năm 2024 - 2025');
+  const router = useRouter();
 
-  const activePeriod = (periods && periods.length > 0) ? periods[0] : null;
-
-  const totalSchedules = activePeriod?.totalSchedules || 120;
-  const arrangedSchedules = activePeriod?.arrangedSchedules || 85;
-  const supervisedSchedules = activePeriod?.supervisedSchedules || 76;
-  const completedSchedules = activePeriod?.completedSchedules || 45;
-
-  const arrangedPct = totalSchedules ? Math.round((arrangedSchedules / totalSchedules) * 1000) / 10 : 70.8;
-  const supervisedPct = totalSchedules ? Math.round((supervisedSchedules / totalSchedules) * 1000) / 10 : 63.3;
-  const completedPct = totalSchedules ? Math.round((completedSchedules / totalSchedules) * 1000) / 10 : 37.5;
-  const overallPct = activePeriod?.paperProgress || 63.3;
-
-  const steps = [
-    { num: 1, name: 'Tạo kỳ thi', status: 'COMPLETED', label: 'Hoàn thành' },
-    { num: 2, name: 'Tạo lịch thi', status: 'COMPLETED', label: 'Hoàn thành' },
-    { num: 3, name: 'Xếp phòng', status: 'IN_PROGRESS', label: 'Đang thực hiện' },
-    { num: 4, name: 'Phân công giám thị', status: 'IN_PROGRESS', label: 'Đang thực hiện' },
-    { num: 5, name: 'Tạo đề thi', status: 'PENDING', label: 'Chưa thực hiện' },
-    { num: 6, name: 'Tổ chức thi', status: 'PENDING', label: 'Chưa thực hiện' },
-    { num: 7, name: 'Nhập & công bố điểm', status: 'PENDING', label: 'Chưa thực hiện' },
-  ];
+  const list = (periods && periods.length > 0)
+    ? periods.slice(0, 5).map((p, idx) => {
+        const pct = Math.min(100, Math.max(0, p.paperProgress || (idx === 2 ? 100 : idx === 3 ? 40 : 75)));
+        const isComplete = pct === 100;
+        const isAmber = pct < 50;
+        const periodItem = p as any;
+        return {
+          code: periodItem.periodCode || `KT202400${idx + 1}`,
+          name: p.name || periodItem.periodName || 'Kiểm tra học kỳ II',
+          progress: pct,
+          status: isComplete ? 'COMPLETED' : 'IN_PROGRESS',
+          color: isComplete ? 'bg-emerald-500' : isAmber ? 'bg-amber-500' : 'bg-blue-600',
+          textColor: isComplete ? 'text-emerald-600' : isAmber ? 'text-amber-600' : 'text-blue-600',
+        };
+      })
+    : sampleProgressList;
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5 h-full flex flex-col justify-between">
-      {/* Top Header & Dropdown */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-        <div>
-          <h3 className="text-sm font-black text-slate-900 tracking-tight">
-            Tình hình tổ chức kỳ thi: {selectedPeriod}
-          </h3>
-          <p className="text-[11px] font-medium text-slate-500 mt-0.5 flex items-center gap-1.5">
-            <span>Thời gian: <strong>01/04/2025 - 30/06/2025</strong></span>
-          </p>
-        </div>
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 className="text-base font-black text-slate-900">Tiến độ tổ chức kỳ thi</h3>
 
-        <div className="relative shrink-0">
-          <select
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 pr-8 text-xs font-bold text-slate-800 outline-none hover:bg-slate-100 transition cursor-pointer"
-          >
-            <option value="Học kỳ II năm 2024 - 2025">Học kỳ II năm 2024 - 2025</option>
-            <option value="Học kỳ I năm 2024 - 2025">Học kỳ I năm 2024 - 2025</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
-        </div>
+        <button
+          type="button"
+          onClick={() => router.push('/exam-periods')}
+          className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+        >
+          <span>Xem chi tiết</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
       </div>
 
-      {/* Metrics Row & Overall Progress */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-        {/* 4 Numbers */}
-        <div className="md:col-span-8 grid grid-cols-4 gap-2 text-center">
-          <div>
-            <span className="text-xl font-black text-slate-900 block">{totalSchedules}</span>
-            <span className="text-[11px] font-bold text-slate-500 block">Tổng lịch thi</span>
-          </div>
-          <div>
-            <span className="text-xl font-black text-slate-900 block">{arrangedSchedules}</span>
-            <span className="text-[11px] font-bold text-slate-500 block">Đã xếp phòng</span>
-            <span className="text-[10px] font-semibold text-slate-400">({arrangedPct}%)</span>
-          </div>
-          <div>
-            <span className="text-xl font-black text-slate-900 block">{supervisedSchedules}</span>
-            <span className="text-[11px] font-bold text-slate-500 block">Đã phân công</span>
-            <span className="text-[10px] font-semibold text-slate-400">({supervisedPct}%)</span>
-          </div>
-          <div>
-            <span className="text-xl font-black text-slate-900 block">{completedSchedules}</span>
-            <span className="text-[11px] font-bold text-slate-500 block">Hoàn tất</span>
-            <span className="text-[10px] font-semibold text-slate-400">({completedPct}%)</span>
-          </div>
-        </div>
+      {/* Progress Bars List */}
+      <div className="space-y-4 my-auto">
+        {list.map((item) => (
+          <div key={item.code} className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-extrabold text-slate-800 truncate pr-2">
+                <span className="font-black text-slate-900">{item.code}</span> - {item.name}
+              </span>
+              <span className={`font-black text-xs ${item.textColor} shrink-0`}>
+                {item.progress}%
+              </span>
+            </div>
 
-        {/* Overall Progress Bar */}
-        <div className="md:col-span-4 space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-700">Tiến độ tổng thể</span>
-            <span className="text-base font-black text-blue-600">{overallPct}%</span>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${item.color}`}
+                style={{ width: `${item.progress}%` }}
+              />
+            </div>
           </div>
-          <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-            <div
-              className="h-full rounded-full bg-blue-600 transition-all duration-500 shadow-xs"
-              style={{ width: `${overallPct}%` }}
-            />
-          </div>
-          <div className="text-right">
-            <span className="inline-flex rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 text-[10px] font-extrabold">
-              Đang thực hiện
-            </span>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* 7 Horizontal Step Circles Connected by Line */}
-      <div className="pt-2">
-        <div className="relative flex items-start justify-between">
-          {/* Line behind circles */}
-          <div className="absolute left-6 right-6 top-3 h-0.5 bg-slate-200 -z-0" />
-
-          {steps.map((step) => {
-            const isCompleted = step.status === 'COMPLETED';
-            const isInProgress = step.status === 'IN_PROGRESS';
-
-            return (
-              <div key={step.num} className="relative z-10 flex flex-col items-center text-center max-w-[85px]">
-                {/* Number Circle */}
-                <div
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-black transition-transform duration-200 hover:scale-110 ${
-                    isCompleted
-                      ? 'bg-emerald-500 text-white shadow-2xs'
-                      : isInProgress
-                      ? 'bg-blue-600 text-white shadow-2xs ring-3 ring-blue-100'
-                      : 'bg-slate-200 text-slate-600'
-                  }`}
-                >
-                  {step.num}
-                </div>
-
-                {/* Step Name */}
-                <span className="mt-1.5 text-[11px] font-extrabold text-slate-800 leading-tight">
-                  {step.name}
-                </span>
-
-                {/* Status Label Pill */}
-                <span
-                  className={`mt-1 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${
-                    isCompleted
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : isInProgress
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'bg-slate-100 text-slate-500'
-                  }`}
-                >
-                  {step.label}
-                </span>
-              </div>
-            );
-          })}
+      {/* Footer Legend matching mockup */}
+      <div className="flex items-center justify-center gap-4 border-t border-slate-100 pt-3 text-xs font-bold text-slate-600">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-slate-300 inline-block" />
+          <span>Chưa bắt đầu</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-blue-600 inline-block" />
+          <span>Đang thực hiện</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block" />
+          <span>Hoàn thành</span>
         </div>
       </div>
     </div>

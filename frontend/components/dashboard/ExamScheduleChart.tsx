@@ -3,43 +3,46 @@
 import React, { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, LabelList } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { ChevronDown, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { ChevronDown } from 'lucide-react';
 
-const mock7Days = [
-  { label: '17/05', count: 12 },
-  { label: '18/05', count: 18 },
-  { label: '19/05', count: 15 },
-  { label: '20/05', count: 20 },
-  { label: '21/05', count: 17 },
-  { label: '22/05', count: 14 },
-  { label: '23/05', count: 8 },
+const mock7DaysMockup = [
+  { label: '24/05', count: 3 },
+  { label: '25/05', count: 5 },
+  { label: '26/05', count: 2 },
+  { label: '27/05', count: 8 },
+  { label: '28/05', count: 4 },
+  { label: '29/05', count: 2 },
+  { label: '30/05', count: 1 },
 ];
 
 export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChart'] }) {
-  const router = useRouter();
-  const [timeFilter, setTimeFilter] = useState('7 ngày qua');
+  const [timeFilter, setTimeFilter] = useState('7 ngày tới');
 
-  const chartData = (data && data.length > 0 && data.some((x) => x.count > 0)) ? data : mock7Days;
+  const chartData = (data && data.length > 0 && data.some((x) => x.count > 0)) ? data : mock7DaysMockup;
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3 h-full flex flex-col justify-between">
-      {/* Header & Filter */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-        <h3 className="text-sm font-black text-slate-900">Số ca thi theo ngày</h3>
+      {/* Header & Dropdown Filter */}
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 className="text-sm sm:text-base font-black text-slate-900">Lịch thi trong 7 ngày tới</h3>
 
         <div className="relative">
           <select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-100 transition cursor-pointer"
+            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
-            <option value="7 ngày qua">7 ngày qua</option>
-            <option value="30 ngày qua">30 ngày qua</option>
-            <option value="Theo kỳ">Theo kỳ</option>
+            <option value="7 ngày tới">7 ngày tới</option>
+            <option value="14 ngày tới">14 ngày tới</option>
+            <option value="30 ngày tới">30 ngày tới</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
         </div>
+      </div>
+
+      {/* Y-axis title label */}
+      <div className="text-[10px] font-bold text-slate-400 pl-1 -mb-2">
+        Số lượng
       </div>
 
       {/* Chart Canvas */}
@@ -51,13 +54,15 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
               dataKey="label"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }}
+              tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
             />
             <YAxis
               allowDecimals={false}
+              domain={[0, 15]}
+              ticks={[0, 3, 6, 9, 12, 15]}
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }}
+              tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
             />
             <Tooltip
               cursor={{ fill: '#f8fafc' }}
@@ -68,30 +73,21 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
                 fontSize: '12px',
                 fontWeight: 700,
               }}
-              formatter={(value) => [`${value} ca thi`, 'Số ca thi']}
+              formatter={(value) => [`${value} kỳ thi`, 'Số kỳ thi']}
             />
             <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} maxBarSize={28}>
-              <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '11px', fontWeight: '800' }} />
+              <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '11px', fontWeight: '900' }} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Legend & Link */}
-      <div className="flex items-center justify-between border-t border-slate-100 pt-2 text-[11px]">
-        <div className="flex items-center gap-1.5 font-bold text-slate-700">
-          <span className="h-2.5 w-2.5 rounded-xs bg-blue-600 inline-block" />
-          <span>Số ca thi</span>
+      {/* Center Legend */}
+      <div className="flex items-center justify-center border-t border-slate-100 pt-2 text-xs">
+        <div className="flex items-center gap-1.5 font-extrabold text-slate-800">
+          <span className="h-3 w-3 rounded-xs bg-blue-600 inline-block" />
+          <span>Số kỳ thi</span>
         </div>
-
-        <button
-          type="button"
-          onClick={() => router.push('/exam-schedules')}
-          className="inline-flex items-center gap-1 font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
-        >
-          <span>Xem chi tiết</span>
-          <ArrowRight className="h-3 w-3" />
-        </button>
       </div>
     </div>
   );

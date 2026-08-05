@@ -1,116 +1,110 @@
 'use client';
 
-import React from 'react';
-import { Calendar, Eye, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Eye, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
 
-const sampleExams = [
+const sampleExamsMockup = [
   {
     id: 1,
-    examDate: '24/05/2025',
-    startTime: '07:30',
-    subjectName: 'Cấu trúc dữ liệu',
-    className: 'CNTT K15A',
-    roomCode: 'A201',
-    studentCount: 120,
-    supervisorCount: '2/2',
-    status: 'READY',
+    code: 'KT2024001',
+    name: 'Kiểm tra học kỳ II',
+    date: '24/05/2024',
+    time: '08:00',
+    rooms: 'P.101 - P.105',
+    students: 120,
+    status: 'UPCOMING', // Sắp diễn ra
   },
   {
     id: 2,
-    examDate: '24/05/2025',
-    startTime: '13:30',
-    subjectName: 'Cơ sở dữ liệu',
-    className: 'CNTT K15B',
-    roomCode: 'A202',
-    studentCount: 110,
-    supervisorCount: '1/2',
-    status: 'MISSING_SUPERVISOR',
+    code: 'KT2024002',
+    name: 'Thi giữa kỳ',
+    date: '25/05/2024',
+    time: '08:00',
+    rooms: 'P.201 - P.203',
+    students: 98,
+    status: 'UPCOMING', // Sắp diễn ra
   },
   {
     id: 3,
-    examDate: '25/05/2025',
-    startTime: '07:30',
-    subjectName: 'Toán cao cấp',
-    className: 'Kinh tế K15A',
-    roomCode: 'B101',
-    studentCount: 95,
-    supervisorCount: '0/2',
-    status: 'NOT_ARRANGED',
+    code: 'KT2024003',
+    name: 'Kiểm tra học kỳ II',
+    date: '26/05/2024',
+    time: '13:30',
+    rooms: 'P.301 - P.304',
+    students: 150,
+    status: 'ARRANGED', // Đã xếp phòng
   },
   {
     id: 4,
-    examDate: '25/05/2025',
-    startTime: '13:30',
-    subjectName: 'Tiếng Anh 2',
-    className: 'CNTT K15C',
-    roomCode: '-',
-    studentCount: 80,
-    supervisorCount: '0/2',
-    status: 'NOT_ARRANGED',
+    code: 'KT2024004',
+    name: 'Thi cuối kỳ',
+    date: '27/05/2024',
+    time: '07:30',
+    rooms: 'P.102 - P.107',
+    students: 200,
+    status: 'UNARRANGED', // Chưa xếp phòng
   },
   {
     id: 5,
-    examDate: '26/05/2025',
-    startTime: '07:30',
-    subjectName: 'Lập trình Web',
-    className: 'CNTT K15A',
-    roomCode: 'C301',
-    studentCount: 120,
-    supervisorCount: '2/2',
-    status: 'READY',
+    code: 'KT2024005',
+    name: 'Kiểm tra giữa kỳ',
+    date: '28/05/2024',
+    time: '09:00',
+    rooms: 'P.202 - P.205',
+    students: 180,
+    status: 'ARRANGED', // Đã xếp phòng
   },
 ];
 
 export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomingExams'] }) {
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const list = (exams && exams.length > 0)
     ? exams.slice(0, 5).map((ex, idx) => ({
         id: ex.id,
-        examDate: ex.examDate ? (() => {
+        code: `KT202400${idx + 1}`,
+        name: ex.subjectName || 'Kiểm tra học kỳ II',
+        date: ex.examDate ? (() => {
           const parts = ex.examDate.split('T')[0].split('-');
           return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : ex.examDate;
-        })() : '24/05/2025',
-        startTime: ex.startTime || '07:30',
-        subjectName: ex.subjectName || 'Cấu trúc dữ liệu',
-        className: 'CNTT K15A',
-        roomCode: ex.roomCodes?.[0] || 'A201',
-        studentCount: ex.studentCount || 120,
-        supervisorCount: idx % 2 === 0 ? '2/2' : '1/2',
-        status: idx === 0 || idx === 4 ? 'READY' : idx === 1 ? 'MISSING_SUPERVISOR' : 'NOT_ARRANGED',
+        })() : '24/05/2024',
+        time: ex.startTime || '08:00',
+        rooms: ex.roomCodes?.length ? ex.roomCodes.join(' - ') : `P.${101 + idx} - P.${105 + idx}`,
+        students: ex.studentCount || 120,
+        status: idx < 2 ? 'UPCOMING' : idx === 3 ? 'UNARRANGED' : 'ARRANGED',
       }))
-    : sampleExams;
+    : sampleExamsMockup;
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-base font-black text-slate-900">Lịch thi sắp tới</h3>
+        <h3 className="text-base font-black text-slate-900">Kỳ thi sắp tới</h3>
 
         <button
           type="button"
-          onClick={() => router.push('/exam-schedules')}
+          onClick={() => router.push('/exam-periods')}
           className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
-          <span>Xem toàn bộ</span>
+          <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>
 
       {/* Table Container with smooth scrollbar */}
       <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-        <table className="w-full min-w-[580px] text-left text-xs">
-          <thead className="bg-slate-50/90 text-slate-600 font-extrabold uppercase tracking-wider text-[10.5px] border-b border-slate-200/80">
+        <table className="w-full min-w-[620px] text-left text-xs">
+          <thead className="bg-slate-50/90 text-slate-600 font-extrabold text-[11px] border-b border-slate-200/80">
             <tr>
-              <th className="py-2.5 px-2.5 whitespace-nowrap">Ngày thi</th>
-              <th className="py-2.5 px-2 whitespace-nowrap">Giờ thi</th>
-              <th className="py-2.5 px-2.5 whitespace-nowrap">Môn thi</th>
-              <th className="py-2.5 px-2 whitespace-nowrap">Lớp/Nhóm</th>
-              <th className="py-2.5 px-2 whitespace-nowrap">Phòng thi</th>
-              <th className="py-2.5 px-1.5 text-center whitespace-nowrap">SV</th>
-              <th className="py-2.5 px-1.5 text-center whitespace-nowrap">Giám thị</th>
+              <th className="py-2.5 px-2.5 whitespace-nowrap">Mã kỳ thi</th>
+              <th className="py-2.5 px-2.5 whitespace-nowrap">Tên kỳ thi</th>
+              <th className="py-2.5 px-2 text-center whitespace-nowrap">Ngày thi</th>
+              <th className="py-2.5 px-2 text-center whitespace-nowrap">Giờ bắt đầu</th>
+              <th className="py-2.5 px-2 text-center whitespace-nowrap">Phòng thi</th>
+              <th className="py-2.5 px-2 text-center whitespace-nowrap">Thí sinh</th>
               <th className="py-2.5 px-2 text-center whitespace-nowrap">Trạng thái</th>
               <th className="py-2.5 px-1.5 text-center whitespace-nowrap">Thao tác</th>
             </tr>
@@ -118,24 +112,23 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
           <tbody className="divide-y divide-slate-100 bg-white font-semibold text-slate-800 text-xs">
             {list.map((exam) => (
               <tr key={exam.id} className="hover:bg-blue-50/30 transition">
-                <td className="py-2.5 px-2.5 whitespace-nowrap font-bold text-slate-800">{exam.examDate}</td>
-                <td className="py-2.5 px-2 text-slate-600 whitespace-nowrap font-medium">{exam.startTime}</td>
-                <td className="py-2.5 px-2.5 font-black text-slate-900 whitespace-nowrap">{exam.subjectName}</td>
-                <td className="py-2.5 px-2 text-slate-600 whitespace-nowrap font-medium">{exam.className}</td>
-                <td className="py-2.5 px-2 font-bold text-blue-700 whitespace-nowrap">{exam.roomCode}</td>
-                <td className="py-2.5 px-1.5 text-center font-black text-slate-900 whitespace-nowrap">{exam.studentCount}</td>
-                <td className="py-2.5 px-1.5 text-center whitespace-nowrap text-slate-700 font-bold">{exam.supervisorCount}</td>
+                <td className="py-2.5 px-2.5 whitespace-nowrap font-bold text-slate-700">{exam.code}</td>
+                <td className="py-2.5 px-2.5 font-black text-slate-900 whitespace-nowrap">{exam.name}</td>
+                <td className="py-2.5 px-2 text-center whitespace-nowrap font-medium text-slate-600">{exam.date}</td>
+                <td className="py-2.5 px-2 text-center whitespace-nowrap font-medium text-slate-600">{exam.time}</td>
+                <td className="py-2.5 px-2 text-center font-bold text-slate-700 whitespace-nowrap">{exam.rooms}</td>
+                <td className="py-2.5 px-2 text-center font-black text-slate-900 whitespace-nowrap">{exam.students}</td>
                 <td className="py-2.5 px-2 text-center whitespace-nowrap">
-                  {exam.status === 'READY' ? (
-                    <span className="inline-flex rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-[9.5px] font-extrabold">
-                      Đã sẵn sàng
+                  {exam.status === 'UPCOMING' ? (
+                    <span className="inline-flex rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 text-[10px] font-extrabold">
+                      Sắp diễn ra
                     </span>
-                  ) : exam.status === 'MISSING_SUPERVISOR' ? (
-                    <span className="inline-flex rounded-full bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 text-[9.5px] font-extrabold">
-                      Thiếu giám thị
+                  ) : exam.status === 'ARRANGED' ? (
+                    <span className="inline-flex rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-extrabold">
+                      Đã xếp phòng
                     </span>
                   ) : (
-                    <span className="inline-flex rounded-full bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 text-[9.5px] font-extrabold">
+                    <span className="inline-flex rounded-full bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-0.5 text-[10px] font-extrabold">
                       Chưa xếp phòng
                     </span>
                   )}
@@ -154,6 +147,46 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Footer Pagination matching mockup */}
+      <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs font-semibold text-slate-500">
+        <span>Hiển thị 1-5 trong 8 kỳ thi</span>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentPage(1)}
+            className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold ${
+              currentPage === 1 ? 'bg-blue-600 text-white' : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            1
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentPage(2)}
+            className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold ${
+              currentPage === 2 ? 'bg-blue-600 text-white' : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            2
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 cursor-pointer"
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
     </div>
   );

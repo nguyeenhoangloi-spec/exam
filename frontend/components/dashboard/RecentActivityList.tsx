@@ -3,55 +3,60 @@
 import React from 'react';
 import {
   ArrowRight,
-  CalendarPlus,
+  FilePlus,
   CheckCircle2,
-  FileQuestion,
-  FileText,
-  Layers,
+  CalendarPlus,
+  Clock,
+  Bell,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
 
-const sampleActivities = [
+const sampleActivitiesMockup = [
   {
     id: '1',
-    user: 'Nguyễn Văn A',
-    text: 'đã tạo kỳ thi Học kỳ II năm 2024 - 2025',
-    time: '2 phút trước',
-    icon: CalendarPlus,
-    iconBg: 'bg-purple-100 text-purple-700',
+    actorName: 'Nguyễn Văn A',
+    actionText: 'đã tạo câu hỏi mới',
+    targetInfo: 'Câu hỏi: Mạng máy tính - Cấp độ: Dễ',
+    time: '10:15',
+    icon: FilePlus,
+    iconBg: 'bg-blue-100 text-blue-700',
   },
   {
     id: '2',
-    user: 'Trần Thị B',
-    text: 'đã thêm 20 câu hỏi mới Môn: Cấu trúc dữ liệu',
-    time: '15 phút trước',
-    icon: FileQuestion,
-    iconBg: 'bg-amber-100 text-amber-800',
+    actorName: 'Trần Thị B',
+    actionText: 'đã duyệt câu hỏi',
+    targetInfo: 'Câu hỏi: Cơ sở dữ liệu - Cấp độ: Trung bình',
+    time: '09:45',
+    icon: CheckCircle2,
+    iconBg: 'bg-emerald-100 text-emerald-700',
   },
   {
     id: '3',
-    user: 'Lê Văn C',
-    text: 'đã duyệt 15 câu hỏi Môn: Cơ sở dữ liệu',
-    time: '1 giờ trước',
-    icon: CheckCircle2,
+    actorName: 'Lê Văn C',
+    actionText: 'đã tạo kỳ thi mới',
+    targetInfo: 'Kỳ thi: Thi thử học kỳ I - 2024',
+    time: '09:30',
+    icon: CalendarPlus,
     iconBg: 'bg-blue-100 text-blue-700',
   },
   {
     id: '4',
-    user: 'Hệ thống',
-    text: 'đã xếp 120 sinh viên vào phòng thi A201',
-    time: '2 giờ trước',
-    icon: Layers,
-    iconBg: 'bg-emerald-100 text-emerald-700',
+    actorName: 'Phạm Thị D',
+    actionText: 'đã cập nhật lịch thi',
+    targetInfo: 'Kỳ thi: Kiểm tra học kỳ II',
+    time: '08:50',
+    icon: Clock,
+    iconBg: 'bg-blue-100 text-blue-700',
   },
   {
     id: '5',
-    user: 'Phạm Minh Đức',
-    text: 'đã tạo đề thi Đề thi giữa kỳ - CNTT K15A',
-    time: '3 giờ trước',
-    icon: FileText,
-    iconBg: 'bg-rose-100 text-rose-700',
+    actorName: 'Hệ thống',
+    actionText: 'đã gửi thông báo',
+    targetInfo: 'Thông báo: Lịch thi ngày mai',
+    time: '08:30',
+    icon: Bell,
+    iconBg: 'bg-purple-100 text-purple-700',
   },
 ];
 
@@ -60,19 +65,25 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
 
   const activityList = (activities && activities.length > 0)
     ? activities.slice(0, 5).map((act, idx) => {
-        const icons = [CalendarPlus, FileQuestion, CheckCircle2, Layers, FileText];
-        const bgs = ['bg-purple-100 text-purple-700', 'bg-amber-100 text-amber-800', 'bg-blue-100 text-blue-700', 'bg-emerald-100 text-emerald-700', 'bg-rose-100 text-rose-700'];
+        const icons = [FilePlus, CheckCircle2, CalendarPlus, Clock, Bell];
+        const bgs = ['bg-blue-100 text-blue-700', 'bg-emerald-100 text-emerald-700', 'bg-blue-100 text-blue-700', 'bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700'];
 
         return {
           id: act.id || String(idx),
-          user: act.actor?.username || 'Hệ thống',
-          text: act.description || 'thực hiện thao tác trên hệ thống',
-          time: act.createdAt ? '2 phút trước' : 'vừa xong',
+          actorName: act.actor?.username || 'Hệ thống',
+          actionText: 'thực hiện thao tác trên hệ thống',
+          targetInfo: act.description || 'Hoạt động khảo thí',
+          time: act.createdAt ? (() => {
+            const d = new Date(act.createdAt);
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            return `${hh}:${mm}`;
+          })() : '09:30',
           icon: icons[idx % icons.length],
           iconBg: bgs[idx % bgs.length],
         };
       })
-    : sampleActivities;
+    : sampleActivitiesMockup;
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
@@ -91,23 +102,29 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
       </div>
 
       {/* Timeline Items List */}
-      <div className="space-y-3.5">
+      <div className="space-y-3.5 my-auto">
         {activityList.map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.id} className="flex items-start gap-3 text-xs">
-              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold mt-0.5 ${item.iconBg}`}>
-                <Icon className="h-4 w-4" />
+            <div key={item.id} className="flex items-start justify-between gap-3 text-xs">
+              <div className="flex items-start gap-2.5 min-w-0">
+                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-bold mt-0.5 ${item.iconBg}`}>
+                  <Icon className="h-3.5 w-3.5" />
+                </div>
+                <div className="min-w-0 leading-tight">
+                  <p className="text-slate-800">
+                    <strong className="font-extrabold text-slate-900">{item.actorName}</strong>{' '}
+                    <span className="font-medium text-slate-700">{item.actionText}</span>
+                  </p>
+                  <p className="text-[10.5px] font-medium text-slate-500 truncate mt-0.5">
+                    {item.targetInfo}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0 leading-tight">
-                <p className="text-slate-800">
-                  <strong className="font-extrabold text-slate-900">{item.user}</strong>{' '}
-                  <span className="font-medium text-slate-700">{item.text}</span>
-                </p>
-                <span className="text-[10.5px] font-semibold text-slate-400 block mt-1">
-                  {item.time}
-                </span>
-              </div>
+
+              <span className="text-[10.5px] font-bold text-slate-400 shrink-0 mt-0.5">
+                {item.time}
+              </span>
             </div>
           );
         })}

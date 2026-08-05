@@ -17,7 +17,6 @@ import { QuestionStatusChart } from '../../components/dashboard/QuestionStatusCh
 import { UpcomingExamList } from '../../components/dashboard/UpcomingExamList';
 import { PendingQuestionList } from '../../components/dashboard/PendingQuestionList';
 import { RecentActivityList } from '../../components/dashboard/RecentActivityList';
-import { QuickActions } from '../../components/dashboard/QuickActions';
 import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton';
 import { DashboardErrorState } from '../../components/dashboard/DashboardErrorState';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -149,62 +148,55 @@ export default function DashboardPage() {
           />
         ) : (
           <div className="space-y-6 animate-fade-in">
-            {/* Row 1: Welcome Banner (7 cols) + Task Attention Alert Cards (5 cols) */}
+            {/* Section 2: Blue Welcome Banner */}
+            <DashboardWelcome
+              username={user?.username || 'Admin'}
+              examCount={overview.today?.examCount || 3}
+              pendingQuestionCount={overview.today?.pendingQuestionCount || 12}
+            />
+
+            {/* Section 3: 6 KPI Statistic Cards Grid */}
+            <DashboardStatistics summary={overview.summary} />
+
+            {/* Section 4: Middle Row (Lịch thi 7 ngày 5 cols + Donut Trạng thái câu hỏi 4 cols + Công việc cần xử lý 3 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              <div className="lg:col-span-7 flex flex-col">
-                <DashboardWelcome
-                  username={user?.username || 'Nguyễn Văn Admin'}
-                  examCount={overview.today?.examCount || 8}
-                  pendingQuestionCount={overview.today?.pendingQuestionCount || 23}
-                />
+              <div className="lg:col-span-5 flex flex-col min-w-0">
+                <ExamScheduleChart data={overview.examChart || []} />
               </div>
-              <div className="lg:col-span-5 flex flex-col">
+              <div className="lg:col-span-4 flex flex-col min-w-0">
+                <QuestionStatusChart data={overview.questionStatus || []} />
+              </div>
+              <div className="lg:col-span-3 flex flex-col min-w-0">
                 <TaskAttention attention={overview.attention} />
               </div>
             </div>
 
-            {/* Row 2: 6 KPI Statistic Cards Grid */}
-            <DashboardStatistics summary={overview.summary} />
-
-            {/* Row 3: 3 Column Layout (ExamProgress 6 cols + Bar Chart 3 cols + Donut Chart 3 cols) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              <div className="lg:col-span-6 flex flex-col">
-                <ExamProgressOverview periods={overview.examProgress || []} />
-              </div>
-              <div className="lg:col-span-3 flex flex-col min-w-0">
-                <ExamScheduleChart data={overview.examChart || []} />
-              </div>
-              <div className="lg:col-span-3 flex flex-col min-w-0">
-                <QuestionStatusChart data={overview.questionStatus || []} />
-              </div>
-            </div>
-
-            {/* Row 4: 3 Proportionate Columns (Lịch thi sắp tới 5 cols + Câu hỏi chờ duyệt 4 cols + Hoạt động vừa vặn 3 cols) */}
+            {/* Section 5: Row 4 (Kỳ thi sắp tới 5 cols + Tiến độ tổ chức kỳ thi 4 cols + Hoạt động gần đây 3 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
               <div className="lg:col-span-5 flex flex-col min-w-0">
                 <UpcomingExamList exams={overview.upcomingExams || []} />
               </div>
               <div className="lg:col-span-4 flex flex-col min-w-0">
-                <PendingQuestionList
-                  questions={overview.pendingQuestions || []}
-                  canReview={user?.role === 'ADMIN'}
-                  busyId={busyId}
-                  onApprove={approve}
-                  onReject={(id, code) => {
-                    setRejecting({ id, code });
-                    setReason('');
-                    setReasonError('');
-                  }}
-                  onView={(id) => router.push(`/question-bank?view=${id}`)}
-                />
+                <ExamProgressOverview periods={overview.examProgress || []} />
               </div>
               <div className="lg:col-span-3 flex flex-col min-w-0">
                 <RecentActivityList activities={overview.recentActivities || []} />
               </div>
             </div>
 
-            {/* Row 5: Sleek Horizontal Quick Actions Bar across the bottom */}
-            <QuickActions />
+            {/* Section 6: Row 5 (Câu hỏi chờ duyệt full width table - 12 cols) */}
+            <PendingQuestionList
+              questions={overview.pendingQuestions || []}
+              canReview={user?.role === 'ADMIN'}
+              busyId={busyId}
+              onApprove={approve}
+              onReject={(id, code) => {
+                setRejecting({ id, code });
+                setReason('');
+                setReasonError('');
+              }}
+              onView={(id) => router.push(`/question-bank?view=${id}`)}
+            />
           </div>
         )}
       </main>
