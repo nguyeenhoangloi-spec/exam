@@ -66,7 +66,7 @@ export class TeachersService {
     if (existingCode) throw new BadRequestException('Mã giảng viên đã tồn tại.');
 
     const username = data.username || data.teacherCode;
-    const rawPassword = data.password || '123456';
+    const rawPassword = data.password || data.teacherCode;
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
     return this.prisma.$transaction(async (tx) => {
       const [department, existingUser] = await Promise.all([

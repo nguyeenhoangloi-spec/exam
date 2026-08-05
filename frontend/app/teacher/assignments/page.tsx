@@ -414,6 +414,20 @@ export default function TeacherAssignmentsPage() {
           { label: 'Phòng thi phân công', value: drawerDuty?.roomName || drawerDuty?.roomCode, icon: DoorOpen },
           { label: 'Tòa nhà / Địa điểm', value: drawerDuty?.building || 'Nhà A1', icon: MapPin },
         ]}
+        extraSections={[
+          {
+            title: 'Xử lý vi phạm trực tuyến',
+            content: (
+              <button
+                onClick={() => drawerDuty?.examScheduleRoomId && router.push(`/teacher/proctor/${drawerDuty.examScheduleRoomId}`)}
+                disabled={!drawerDuty?.examScheduleRoomId}
+                className="w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Mở bảng giám thị và xem giải trình
+              </button>
+            ),
+          },
+        ]}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

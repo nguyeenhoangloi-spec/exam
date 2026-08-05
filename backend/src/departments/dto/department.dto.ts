@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MaxLength, MinLength, IsInt, Min } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength, IsInt, Min, IsNotEmpty, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateDepartmentDto {
@@ -18,13 +18,20 @@ export class UpdateDepartmentDto {
 }
 
 export class AddCurriculumSubjectDto {
-  subjectId: any;
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  subjectId: number;
 
-  @IsOptional() @IsString()
+  @IsOptional() @IsString() @IsIn(['MANDATORY', 'ELECTIVE'])
   type?: 'MANDATORY' | 'ELECTIVE';
 
   @IsOptional()
-  recommendedSemester?: any;
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  recommendedSemester?: number;
 
   @IsOptional() @IsString()
   note?: string;

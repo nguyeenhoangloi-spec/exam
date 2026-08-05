@@ -403,6 +403,11 @@ export default function TeachersPage() {
         title={editingTeacher ? 'Chỉnh sửa Giảng viên' : 'Thêm Giảng viên Mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {!editingTeacher && (
+            <div className="p-3 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700 font-medium">
+              💡 <strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định khởi tạo cho Giảng viên sẽ là <strong>Mã giảng viên</strong> (Ví dụ: GV001).
+            </div>
+          )}
           <div>
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Giảng viên</label>
             <input

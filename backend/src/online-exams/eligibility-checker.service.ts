@@ -27,6 +27,7 @@ export enum EligibilityErrorCode {
 
   // Lượt thi
   ALREADY_SUBMITTED = 'ALREADY_SUBMITTED', // Đã nộp bài rồi
+  ATTEMPT_UNDER_REVIEW = 'ATTEMPT_UNDER_REVIEW', // Bài thi đang bị xem xét do vi phạm
   ACTIVE_SESSION_EXISTS = 'ACTIVE_SESSION_EXISTS', // Có phiên khác đang hoạt động
   MAX_ATTEMPTS_EXCEEDED = 'MAX_ATTEMPTS_EXCEEDED', // Đã dùng hết số lần thi
 
@@ -268,6 +269,19 @@ export class EligibilityCheckerService {
         EligibilityErrorCode.ALREADY_SUBMITTED,
         'Sinh viên đã nộp bài thi. Không thể dự thi lại.',
         { student, schedule, config, existingAttempt: submittedAttempt },
+      );
+    }
+
+    // Phiên bị hệ thống đánh dấu vi phạm phải được hiển thị rõ ràng và
+    // không được tạo thêm lượt thi mới trong khi chờ cán bộ coi thi xử lý.
+    const underReviewAttempt = allAttempts.find((a) =>
+      a.status === 'UNDER_REVIEW' || a.isFlagged === true,
+    );
+    if (underReviewAttempt) {
+      return this.fail(
+        EligibilityErrorCode.ATTEMPT_UNDER_REVIEW,
+        'Bài thi của bạn đang bị tạm khóa để xem xét do vi phạm quy chế. Vui lòng liên hệ giám thị hoặc quản trị viên để được xử lý.',
+        { student, schedule, config, existingAttempt: underReviewAttempt },
       );
     }
 

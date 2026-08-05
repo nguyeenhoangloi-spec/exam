@@ -15,13 +15,28 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
+    let user = await this.prisma.user.findUnique({
       where: { username: loginDto.username },
       include: {
         student: true,
         teacher: true,
       },
     });
+
+    if (!user) {
+      user = await this.prisma.user.findFirst({
+        where: {
+          OR: [
+            { teacher: { teacherCode: loginDto.username } },
+            { student: { studentCode: loginDto.username } },
+          ],
+        },
+        include: {
+          student: true,
+          teacher: true,
+        },
+      });
+    }
 
     if (!user) {
       throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không chính xác.');

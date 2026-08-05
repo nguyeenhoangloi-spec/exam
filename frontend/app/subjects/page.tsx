@@ -490,10 +490,16 @@ export default function SubjectsPage() {
           <p className="rounded-xl bg-sky-50 p-3 text-sm text-sky-800">Các sinh viên đã được gán trong kỳ này sẽ được tích sẵn. Hiện có <strong>{selectedStudentIds.length}</strong> sinh viên được chọn.</p>
           <div className="grid grid-cols-2 gap-3">
             <label className="text-sm font-semibold text-slate-700">Học kỳ
-              <input value={enrollData.semester} onChange={(e) => setEnrollData({ ...enrollData, semester: e.target.value })} className="mt-1 w-full rounded-xl border p-2.5 font-normal" placeholder="HK1" />
+              <select value={enrollData.semester} onChange={(e) => setEnrollData({ ...enrollData, semester: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-2.5 font-normal text-slate-900">
+                <option value="HK1">Học kỳ 1 (HK1)</option>
+                <option value="HK2">Học kỳ 2 (HK2)</option>
+                <option value="HK3">Học kỳ hè (HK3)</option>
+              </select>
+              <span className="mt-1 block text-xs font-normal text-slate-500">Chọn học kỳ áp dụng cho việc gán sinh viên.</span>
             </label>
             <label className="text-sm font-semibold text-slate-700">Năm học
-              <input value={enrollData.schoolYear} onChange={(e) => setEnrollData({ ...enrollData, schoolYear: e.target.value })} className="mt-1 w-full rounded-xl border p-2.5 font-normal" placeholder="2025-2026" />
+              <input value={enrollData.schoolYear} onChange={(e) => setEnrollData({ ...enrollData, schoolYear: e.target.value })} pattern="\d{4}-\d{4}" className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 font-normal text-slate-900" placeholder="2025-2026" />
+              <span className="mt-1 block text-xs font-normal text-slate-500">Nhập theo dạng năm bắt đầu–năm kết thúc, ví dụ 2025-2026.</span>
             </label>
           </div>
           <div className="max-h-72 space-y-1 overflow-y-auto rounded-xl border border-slate-200 p-2">

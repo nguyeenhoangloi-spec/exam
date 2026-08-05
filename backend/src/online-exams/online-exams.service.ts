@@ -601,6 +601,8 @@ export class OnlineExamsService {
       }
     }
 
+    calculatedScore = Math.max(0, calculatedScore - (attempt.penaltyPoints || 0));
+
     const finalStatus = attempt.isFlagged
       ? AttemptStatus.UNDER_REVIEW
       : isAutoSubmit

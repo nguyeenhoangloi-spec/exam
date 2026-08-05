@@ -102,4 +102,9 @@ export const onlineExamService = {
     });
     return res.data;
   },
+
+  async resolveIncident(attemptId: string, decision: 'REOPEN' | 'PENALTY' | 'TERMINATE', penaltyPoints = 0, note = '') {
+    const res = await api.post(`/proctor/attempt/${attemptId}/resolve-incident`, { decision, penaltyPoints, note });
+    return res.data;
+  },
 };

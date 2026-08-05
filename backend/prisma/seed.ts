@@ -30,21 +30,22 @@ async function main() {
 
   const teacherUsers = [];
   const teacherList = [
-    { username: 'teacher1', name: 'Nguyễn Văn A', email: 'nguyenvana@school.edu.vn', degree: 'GS.TS', deptCode: 'CNTT' },
-    { username: 'teacher2', name: 'Trần Thị B', email: 'tranthib@school.edu.vn', degree: 'TS', deptCode: 'CNTT' },
-    { username: 'teacher3', name: 'Đỗ Minh C', email: 'dominhc@school.edu.vn', degree: 'PGS.TS', deptCode: 'DTVT' },
-    { username: 'teacher4', name: 'Lê Hoàng D', email: 'lehoangd@school.edu.vn', degree: 'TS', deptCode: 'AI-DS' },
-    { username: 'teacher5', name: 'Phạm Thu E', email: 'phamthue@school.edu.vn', degree: 'ThS', deptCode: 'ATTT' },
-    { username: 'teacher6', name: 'Bùi Anh F', email: 'buianhf@school.edu.vn', degree: 'TS', deptCode: 'KTS' },
+    { code: 'GV001', name: 'Nguyễn Văn A', email: 'nguyenvana@school.edu.vn', degree: 'GS.TS', deptCode: 'CNTT' },
+    { code: 'GV002', name: 'Trần Thị B', email: 'tranthib@school.edu.vn', degree: 'TS', deptCode: 'CNTT' },
+    { code: 'GV003', name: 'Đỗ Minh C', email: 'dominhc@school.edu.vn', degree: 'PGS.TS', deptCode: 'DTVT' },
+    { code: 'GV004', name: 'Lê Hoàng D', email: 'lehoangd@school.edu.vn', degree: 'TS', deptCode: 'AI-DS' },
+    { code: 'GV005', name: 'Phạm Thu E', email: 'phamthue@school.edu.vn', degree: 'ThS', deptCode: 'ATTT' },
+    { code: 'GV006', name: 'Bùi Anh F', email: 'buianhf@school.edu.vn', degree: 'TS', deptCode: 'KTS' },
   ];
 
   for (const t of teacherList) {
+    const teacherPass = await bcrypt.hash(t.code, 10);
     const u = await prisma.user.upsert({
-      where: { username: t.username },
-      update: {},
+      where: { username: t.code },
+      update: { password: teacherPass },
       create: {
-        username: t.username,
-        password: hashedPassword,
+        username: t.code,
+        password: teacherPass,
         email: t.email,
         role: 'TEACHER',
         status: 'ACTIVE',
@@ -98,7 +99,7 @@ async function main() {
   console.log(' └─ Creating Teacher Profiles...');
   for (let idx = 0; idx < teacherUsers.length; idx++) {
     const t = teacherUsers[idx];
-    const teacherCode = `GV00${idx + 1}`;
+    const teacherCode = t.code;
     const existing = await prisma.teacher.findFirst({ where: { userId: t.userId } });
     if (existing) {
       await prisma.teacher.update({

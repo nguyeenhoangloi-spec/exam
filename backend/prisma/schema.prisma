@@ -568,6 +568,7 @@ model ExamAttempt {
 
   totalScore Float?
   maxScore   Float?
+  penaltyPoints Float @default(0)
   riskScore  Int     @default(0)
   isFlagged  Boolean @default(false)
 
@@ -665,6 +666,7 @@ model ExamIncident {
   reason        String
   decision      String    @default("PENDING")
   studentAppeal String?
+  reviewerNote String?
   resolvedAt    DateTime?
   createdAt     DateTime  @default(now())
 

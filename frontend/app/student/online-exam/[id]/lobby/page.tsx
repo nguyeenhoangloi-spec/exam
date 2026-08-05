@@ -30,9 +30,11 @@ export default function StudentExamLobbyPage() {
           sessionStorage.setItem('attemptToken', attempt.attemptToken);
           router.push(`/student/online-exam/${attempt.attemptToken}/take`);
           return;
-        } else if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes(attempt.status)) {
+        } else if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(attempt.status)) {
           router.push(`/student/online-exam/${attempt.id}/result`);
           return;
+        } else if (attempt.status === 'UNDER_REVIEW' || attempt.isFlagged) {
+          setError(res.reason || 'Bài thi đang bị tạm khóa để xem xét do vi phạm quy chế. Vui lòng liên hệ giám thị hoặc quản trị viên.');
         }
       }
 
@@ -75,7 +77,7 @@ export default function StudentExamLobbyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
         <span className="ml-3 text-lg">Đang kiểm tra điều kiện dự thi...</span>
       </div>
@@ -93,18 +95,18 @@ export default function StudentExamLobbyPage() {
   const config = eligibilityData.config ?? schedule?.onlineExamConfig;
   const existingAttempt = eligibilityData.existingAttempt || eligibility?.existingAttempt;
 
-  const isCompleted = existingAttempt && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes(existingAttempt.status);
+  const isCompleted = existingAttempt && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(existingAttempt.status);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12">
-      <div className="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
-        <div className="border-b border-slate-800 pb-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="min-h-screen bg-slate-50 text-slate-900 p-6 md:p-12">
+      <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
+        <div className="border-b border-slate-200 pb-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold rounded-full uppercase tracking-wider">
               Thi Trắc Nghiệm Trực Tuyến
             </span>
-            <h1 className="text-2xl font-bold mt-2 text-white">{schedule?.subject?.subjectName}</h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <h1 className="text-2xl font-bold mt-2 text-slate-900">{schedule?.subject?.subjectName}</h1>
+            <p className="text-slate-500 text-sm mt-1">
               Mã môn: {schedule?.subject?.subjectCode} | Kỳ thi: {schedule?.examPeriod?.name}
             </p>
           </div>
@@ -118,8 +120,8 @@ export default function StudentExamLobbyPage() {
         {isCompleted ? (
           <div className="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-2xl mb-8 text-center space-y-4">
             <Trophy className="w-12 h-12 text-emerald-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Bạn Đã Hoàn Thành Bài Thi Này</h2>
-            <p className="text-sm text-slate-300">
+              <h2 className="text-xl font-bold text-slate-900">Bạn Đã Hoàn Thành Bài Thi Này</h2>
+            <p className="text-sm text-slate-600">
               Bài thi của bạn đã được gửi về hệ thống và ghi nhận kết quả.
             </p>
             <div className="pt-2">
@@ -141,14 +143,14 @@ export default function StudentExamLobbyPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-slate-950/60 border border-slate-800 p-5 rounded-xl">
+              <div className="bg-slate-50 border border-slate-200 p-5 rounded-xl">
                 <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Thông tin Thí sinh</h3>
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between border-b border-slate-800/80 pb-2">
+                  <div className="flex justify-between border-b border-slate-200 pb-2">
                     <span className="text-slate-400">Họ và tên:</span>
                     <span className="font-semibold text-slate-200">{student?.fullName}</span>
                   </div>
-                  <div className="flex justify-between border-b border-slate-800/80 pb-2">
+                  <div className="flex justify-between border-b border-slate-200 pb-2">
                     <span className="text-slate-400">Mã sinh viên:</span>
                     <span className="font-mono font-semibold text-indigo-400">{student?.studentCode}</span>
                   </div>
@@ -161,7 +163,7 @@ export default function StudentExamLobbyPage() {
                 </div>
               </div>
 
-              <div className="bg-slate-950/60 border border-slate-800 p-5 rounded-xl">
+              <div className="bg-slate-50 border border-slate-200 p-5 rounded-xl">
                 <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Kiểm tra Yêu cầu Bài thi</h3>
                 <ul className="space-y-2.5 text-sm">
                   <li className="flex items-center text-emerald-400">
@@ -216,7 +218,7 @@ export default function StudentExamLobbyPage() {
               <button
                 onClick={handleStartExam}
                 disabled={starting || !eligibility?.isEligible || (config?.requireRulesAcceptance !== false && !rulesAccepted)}
-                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-sm font-semibold flex items-center shadow-lg shadow-indigo-600/30 transition"
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-sm font-semibold flex items-center shadow-lg shadow-indigo-600/20 transition"
               >
                 {starting ? (
                   <span>Đang khởi tạo bài thi...</span>

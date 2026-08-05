@@ -270,6 +270,10 @@ export default function ExamPeriodsPage() {
             </div>
           </div>
 
+          <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-xs text-slate-700">
+            <span className="font-semibold text-sky-700">Giải thích trạng thái:</span> Sắp diễn ra = chưa đến ngày bắt đầu; Đang diễn ra = đang trong khoảng ngày thi; Đã kết thúc = đã qua ngày kết thúc; Đã khóa = kỳ thi đã khóa chỉnh sửa.
+          </div>
+
           {/* Table Content */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             {loading ? (
@@ -306,7 +310,7 @@ export default function ExamPeriodsPage() {
                         </td>
                         <td className="p-4">
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                            <CheckCircle2 className="h-3.5 w-3.5" /> {{ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' }[p.status] || 'Hoạt động'}
+                            <CheckCircle2 className="h-3.5 w-3.5" /> {{ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp', LOCKED: 'Đã khóa', ACTIVE: 'Đang hoạt động' }[p.status] || 'Chưa xác định'}
                           </span>
                         </td>
                         <td className="p-4 pr-6 text-right">

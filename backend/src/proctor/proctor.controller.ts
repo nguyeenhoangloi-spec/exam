@@ -67,4 +67,19 @@ export class ProctorController {
       body.decision,
     );
   }
+
+  @Post('attempt/:attemptId/resolve-incident')
+  resolveIncident(
+    @Request() req: any,
+    @Param('attemptId') attemptId: string,
+    @Body() body: { decision: 'REOPEN' | 'PENALTY' | 'TERMINATE'; penaltyPoints?: number; note: string },
+  ) {
+    return this.proctorService.resolveIncident(
+      req.user.id,
+      attemptId,
+      body.decision,
+      body.penaltyPoints || 0,
+      body.note || '',
+    );
+  }
 }

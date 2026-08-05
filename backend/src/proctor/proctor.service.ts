@@ -129,6 +129,12 @@ export class ProctorService {
     if (attempt.status !== 'IN_PROGRESS' && attempt.status !== 'DISCONNECTED') {
       throw new BadRequestException('Chỉ gia hạn thời gian cho bài thi đang làm');
     }
+    if (!reason?.trim()) {
+      throw new BadRequestException('Vui lòng nhập lý do gia hạn thời gian');
+    }
+    if (!Number.isInteger(extraMinutes) || extraMinutes < 1 || extraMinutes > 60) {
+      throw new BadRequestException('Số phút gia hạn phải là số nguyên từ 1 đến 60');
+    }
 
     const currentExpected = attempt.expectedEndTime || new Date();
     const newExpected = new Date(currentExpected.getTime() + extraMinutes * 60 * 1000);
@@ -169,6 +175,13 @@ export class ProctorService {
 
     if (!attempt) {
       throw new NotFoundException('Không tìm thấy phiên thi');
+    }
+
+    if (!['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'DISCONNECTED'].includes(attempt.status)) {
+      throw new BadRequestException('Chỉ có thể mở lại phiên đã nộp, tự động nộp hoặc bị gián đoạn');
+    }
+    if (!reason?.trim()) {
+      throw new BadRequestException('Vui lòng nhập lý do mở lại phiên thi');
     }
 
     const updated = await this.prisma.examAttempt.update({
@@ -228,5 +241,60 @@ export class ProctorService {
       message: 'Đã lập biên bản sự cố thành công',
       incident,
     };
+  }
+
+  async resolveIncident(
+    actorId: number,
+    attemptId: string,
+    decision: 'REOPEN' | 'PENALTY' | 'TERMINATE',
+    penaltyPoints: number,
+    note: string,
+  ) {
+    const attempt = await this.prisma.examAttempt.findUnique({
+      where: { id: attemptId },
+      include: { incidents: { orderBy: { createdAt: 'desc' }, take: 1 } },
+    });
+    if (!attempt) throw new NotFoundException('Không tìm thấy phiên thi');
+    const incident = attempt.incidents[0];
+    if (!incident) throw new BadRequestException('Phiên thi chưa có biên bản vi phạm để xử lý');
+
+    const penalty = Math.max(0, Math.min(Number(penaltyPoints) || 0, attempt.maxScore || 10));
+    const now = new Date();
+    const data: any = { isFlagged: false };
+    if (decision === 'REOPEN') {
+      data.status = 'IN_PROGRESS';
+      data.submittedAt = null;
+      data.endTime = null;
+      data.expectedEndTime = new Date(Math.max(now.getTime(), attempt.expectedEndTime?.getTime() || 0) + 60 * 60 * 1000);
+    } else if (decision === 'PENALTY') {
+      data.status = 'GRADED';
+      data.penaltyPoints = (attempt.penaltyPoints || 0) + penalty;
+      data.totalScore = Math.max(0, (attempt.totalScore || 0) - penalty);
+    } else {
+      data.status = 'TERMINATED';
+    }
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await tx.examAttempt.update({ where: { id: attemptId }, data });
+      await tx.examIncident.update({
+        where: { id: incident.id },
+        data: {
+          decision,
+          resolvedAt: now,
+          reviewerNote: note || null,
+        } as any,
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId,
+          action: 'RESOLVE_EXAM_INCIDENT',
+          entityType: 'ExamAttempt',
+          entityId: attemptId,
+          description: `Xử lý biên bản vi phạm: ${decision}${decision === 'PENALTY' ? `, trừ ${penalty} điểm` : ''}. ${note}`,
+        },
+      });
+      return next;
+    });
+    return { success: true, decision, penaltyPoints: penalty, status: updated.status, message: 'Đã xử lý giải trình và cập nhật phiên thi' };
   }
 }

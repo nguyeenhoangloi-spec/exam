@@ -1,0 +1,1 @@
+ALTER TABLE "exam_attempts" ADD COLUMN "penaltyPoints" DOUBLE PRECISION NOT NULL DEFAULT 0;
