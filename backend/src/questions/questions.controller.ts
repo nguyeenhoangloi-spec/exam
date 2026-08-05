@@ -15,8 +15,9 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { validateOrReject } from 'class-validator';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -59,6 +60,8 @@ const docUpload = FileInterceptor('file', {
   },
 });
 
+const mediaUpload = FilesInterceptor('files', 10, { limits: { fileSize: 5 * 1024 * 1024 } });
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'TEACHER')
 @Controller('questions')
@@ -88,6 +91,24 @@ export class QuestionsController {
   @Header('Content-Disposition', 'attachment; filename="mau-nhap-cau-hoi.csv"')
   template() {
     return this.questions.importTemplate();
+  }
+
+  @Post('media/preview')
+  @UseInterceptors(mediaUpload)
+  previewMedia(@Request() req: any, @UploadedFiles() files: Express.Multer.File[]) {
+    return this.questions.previewMedia(req.user, files);
+  }
+
+  @Post('media/upload')
+  @UseInterceptors(mediaUpload)
+  uploadMedia(@Request() req: any, @UploadedFiles() files: Express.Multer.File[], @Body('questionId') questionId: string, @Body('optionId') optionId?: string) {
+    if (!questionId) throw new BadRequestException('Thiếu questionId khi tải ảnh.');
+    return this.questions.uploadMedia(req.user, questionId, optionId, files);
+  }
+
+  @Delete('media/:id')
+  removeMedia(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.questions.removeMedia(req.user, id);
   }
 
   @Post('export')

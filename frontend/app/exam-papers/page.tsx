@@ -63,7 +63,7 @@ export default function ExamPapersPage() {
     title: '',
     message: '',
     type: 'warning',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -99,10 +99,10 @@ export default function ExamPapersPage() {
   const selectedSchedule = schedules.find((schedule) => String(schedule.id) === formData.examScheduleId);
   const scheduleDuration = selectedSchedule
     ? (() => {
-        const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
-        const [endHour, endMinute] = selectedSchedule.endTime.split(':').map(Number);
-        return endHour * 60 + endMinute - (startHour * 60 + startMinute);
-      })()
+      const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
+      const [endHour, endMinute] = selectedSchedule.endTime.split(':').map(Number);
+      return endHour * 60 + endMinute - (startHour * 60 + startMinute);
+    })()
     : 0;
 
   useEffect(() => {
@@ -415,11 +415,10 @@ export default function ExamPapersPage() {
                 <div className="mb-2 flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase text-slate-600">Ma trận độ khó</p>
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                      isValidTotal
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${isValidTotal
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         : 'bg-rose-50 text-rose-700 border border-rose-200'
-                    }`}
+                      }`}
                   >
                     Tổng: {currentTotal} / {requiredTotal} câu {isValidTotal ? '✓' : `(Cần ${requiredTotal} câu)`}
                   </span>
@@ -510,9 +509,8 @@ export default function ExamPapersPage() {
                         <td className="px-3 py-3 text-slate-600">{paper.createdBy?.username}</td>
                         <td className="px-3 py-3">
                           <span
-                            className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${
-                              statusStyle[paper.status].className
-                            }`}
+                            className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[paper.status].className
+                              }`}
                           >
                             {statusStyle[paper.status].label}
                           </span>
@@ -595,9 +593,8 @@ export default function ExamPapersPage() {
                   </p>
                 </div>
                 <span
-                  className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${
-                    statusStyle[selectedPaper.status].className
-                  }`}
+                  className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[selectedPaper.status].className
+                    }`}
                 >
                   {statusStyle[selectedPaper.status].label}
                 </span>
@@ -642,11 +639,10 @@ export default function ExamPapersPage() {
                     {item.question.options?.map((option) => (
                       <div
                         key={option.id}
-                        className={`rounded-lg border p-2 text-xs ${
-                          showAnswers && option.isCorrect
+                        className={`rounded-lg border p-2 text-xs ${showAnswers && option.isCorrect
                             ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800'
                             : 'border-slate-200 bg-slate-50 text-slate-700'
-                        }`}
+                          }`}
                       >
                         {option.label}. {option.content}
                         {showAnswers && option.isCorrect && ' ✓'}
@@ -679,6 +675,7 @@ export default function ExamPapersPage() {
         onClose={() => setCriticalModal({ isOpen: false, paper: null })}
         title={`Phát Hành Đề Thi Official (${criticalModal.paper?.paperCode || ''})`}
         warningMessage="Phát hành đề thi sẽ tự động khởi tạo cấu hình ca thi trực tuyến và KHÓA CHỈNH SỬA đề thi này. Đề thi sẽ sẵn sàng phát cho thí sinh khi ca thi bắt đầu."
+        examPasswordRequired={criticalModal.paper?.examSchedule?.mode !== 'MOCK'}
         confirmPhrase="PHAT HANH DE THI"
         reasons={[
           'Hoàn tất thẩm định và duyệt cấu trúc đề thi',

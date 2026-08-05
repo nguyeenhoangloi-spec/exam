@@ -406,6 +406,7 @@ export default function ExamSupervisorsPage() {
               >
                 {schedules.map((s) => (
                   <option key={s.id} value={s.id}>
+                    {s.mode === 'MOCK' ? '🟡 [THI THỬ] ' : '🔴 [CHÍNH THỨC] '}
                     {s.subject?.subjectName} ({s.startTime} - {s.endTime})
                   </option>
                 ))}
@@ -413,7 +414,12 @@ export default function ExamSupervisorsPage() {
             </div>
 
             {selectedSchedule && (
-              <div className="rounded-xl bg-sky-50/70 border border-sky-100 p-3 text-xs space-y-1 text-sky-900">
+              <div className={`rounded-xl border p-3 text-xs space-y-1 ${selectedSchedule.mode === 'MOCK' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-sky-50/70 border-sky-100 text-sky-900'}`}>
+                {selectedSchedule.mode === 'MOCK' && (
+                  <span className="inline-block mb-1 font-bold text-[11px] bg-amber-100 border border-amber-300 text-amber-900 px-2 py-0.5 rounded-full">
+                    🟡 Ca Thi Thử (Tự Do) - Không bắt buộc phân công Giám thị
+                  </span>
+                )}
                 <p className="font-bold">Môn: {selectedSchedule.subject?.subjectName}</p>
                 <p>Mã môn: {selectedSchedule.subject?.subjectCode}</p>
                 <p>

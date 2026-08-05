@@ -1,11 +1,12 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../lib/api';
 import { Question, Subject } from '../../types';
 import { Modal } from '../Modal';
+import { RichQuestionEditor } from './RichQuestionEditor';
 import {
   QUESTION_TYPE_LABELS,
   DIFFICULTY_LABELS,
@@ -22,6 +23,7 @@ const option = z.object({
 const schema = z.object({
   subjectId: z.number().min(1),
   content: z.string().min(5),
+  contentRich: z.object({ html: z.string() }).optional(),
   type: z.enum(['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY']),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
   bloomLevel: z.enum(['REMEMBER', 'UNDERSTAND', 'APPLY', 'ANALYZE']),
@@ -36,6 +38,7 @@ type Form = z.infer<typeof schema>;
 const defaults: Form = {
   subjectId: 0,
   content: '',
+  contentRich: { html: '' },
   type: 'SINGLE_CHOICE',
   difficulty: 'MEDIUM',
   bloomLevel: 'UNDERSTAND',
@@ -63,11 +66,13 @@ export function QuestionFormDialog({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const {
     register,
     control,
     watch,
     reset,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Form>({
@@ -85,11 +90,13 @@ export function QuestionFormDialog({
 
   useEffect(() => {
     if (!open) return;
+    setMediaFiles([]);
     reset(
       question
         ? {
             subjectId: question.subjectId,
             content: question.content,
+            contentRich: (question.contentRich as { html?: string } | null) || { html: '' },
             type: question.type,
             difficulty: question.difficulty,
             bloomLevel: question.bloomLevel,
@@ -106,7 +113,15 @@ export function QuestionFormDialog({
   }, [open, question, subjects, reset]);
 
   const submit = async (data: Form) => {
-    await (question ? api.patch(`/questions/${question.id}`, data) : api.post('/questions', data));
+    const html = data.contentRich?.html || '';
+    const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;
+    const payload = { ...data, content: plain, contentRich: html ? { html } : undefined };
+    const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
+    const savedId = question?.id || response.data?.id;
+    if (savedId && mediaFiles.length) {
+      const form = new FormData(); form.append('questionId', savedId); mediaFiles.forEach(file => form.append('files', file));
+      await api.post('/questions/media/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
     onSaved();
     onClose();
   };
@@ -161,12 +176,9 @@ export function QuestionFormDialog({
           />
         </div>
 
-        <textarea
-          {...register('content')}
-          rows={4}
-          placeholder="Nội dung câu hỏi..."
-          className="w-full rounded-xl border p-3 text-sm font-medium"
-        />
+        <input type="hidden" {...register('content')} />
+        <RichQuestionEditor value={watch('contentRich')} fallback={watch('content')} onFiles={(files) => setMediaFiles((current) => [...current, ...files])} onChange={(html) => { setValue('contentRich', { html }, { shouldDirty: true }); setValue('content', html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), { shouldValidate: true }); }} placeholder="Nội dung câu hỏi..." />
+        {mediaFiles.length > 0 && <p className="text-xs font-semibold text-sky-700">Đã chọn {mediaFiles.length} ảnh; ảnh sẽ được tải lên sau khi lưu bản nháp.</p>}
 
         {!['FILL_BLANK', 'ESSAY'].includes(type) && (
           <div className="space-y-2.5 border-t border-slate-100 pt-3">

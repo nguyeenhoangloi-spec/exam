@@ -1,11 +1,53 @@
+import React from 'react';
 import { Archive, CheckCircle2, Clock3, FileQuestion, XCircle } from 'lucide-react';
-export function QuestionStatistics({ counts }: { counts: Record<string, number> }) {
+
+export function QuestionStatistics({
+  counts,
+  activeStatus,
+  onSelectStatus,
+}: {
+  counts: Record<string, number>;
+  activeStatus?: string;
+  onSelectStatus?: (status: string) => void;
+}) {
   const items = [
-    ['Tổng câu hỏi', counts.total || 0, FileQuestion, 'text-sky-600 bg-sky-50'],
-    ['Chờ duyệt', counts.PENDING || 0, Clock3, 'text-amber-600 bg-amber-50'],
-    ['Đã duyệt', counts.APPROVED || 0, CheckCircle2, 'text-emerald-600 bg-emerald-50'],
-    ['Từ chối', counts.REJECTED || 0, XCircle, 'text-rose-600 bg-rose-50'],
-    ['Ngừng sử dụng', counts.ARCHIVED || 0, Archive, 'text-indigo-600 bg-indigo-50'],
-  ] as const;
-  return <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{items.map(([label, value, Icon, color]) => <div key={label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex items-center justify-between"><div><p className="text-xs text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold text-slate-800">{value}</p></div><div className={`rounded-xl p-2.5 ${color}`}><Icon className="h-5 w-5" /></div></div></div>)}</div>;
+    { key: '', label: 'Tổng câu hỏi', count: counts.total || 0, icon: FileQuestion, color: 'text-sky-600 bg-sky-50 border-sky-200' },
+    { key: 'PENDING', label: 'Chờ duyệt', count: counts.PENDING || 0, icon: Clock3, color: 'text-amber-600 bg-amber-50 border-amber-200' },
+    { key: 'APPROVED', label: 'Đã duyệt', count: counts.APPROVED || 0, icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+    { key: 'REJECTED', label: 'Từ chối', count: counts.REJECTED || 0, icon: XCircle, color: 'text-rose-600 bg-rose-50 border-rose-200' },
+    { key: 'ARCHIVED', label: 'Kho lưu trữ', count: counts.ARCHIVED || 0, icon: Archive, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+  ];
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = activeStatus === item.key;
+        return (
+          <div
+            key={item.key}
+            onClick={() => onSelectStatus && onSelectStatus(item.key)}
+            className={`rounded-2xl border p-4 shadow-2xs cursor-pointer transition duration-150 ${
+              isActive
+                ? 'border-[#1e66f5] bg-sky-50/80 ring-2 ring-[#1e66f5]/20 scale-[1.01]'
+                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-xs'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-slate-500">{item.label}</p>
+                <p className="mt-1 text-2xl font-black text-slate-900">{item.count}</p>
+              </div>
+              <div className={`rounded-xl p-2.5 border ${item.color}`}>
+                <Icon className="h-5 w-5" />
+              </div>
+            </div>
+            {item.key === 'ARCHIVED' && (
+              <p className="mt-2 text-[10px] text-slate-400 font-medium">Bấm vào để xem danh sách câu hỏi trong Kho lưu trữ</p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }

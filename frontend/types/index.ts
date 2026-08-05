@@ -102,6 +102,7 @@ export interface ExamSchedule {
   startTime: string;
   endTime: string;
   examType: string;
+  mode?: 'OFFICIAL' | 'MOCK';
   status: string;
   note?: string;
   examScheduleRooms?: any[];
@@ -128,6 +129,21 @@ export interface QuestionOption {
   order: number;
   optionLabel?: string;
   optionContent?: string;
+  contentRich?: { html?: string } | Record<string, unknown> | null;
+  media?: QuestionMedia[];
+}
+
+export interface QuestionMedia {
+  id?: string;
+  questionId?: string;
+  optionId?: string | null;
+  url: string;
+  mimeType: string;
+  fileName: string;
+  width?: number | null;
+  height?: number | null;
+  sortOrder?: number;
+  altText?: string | null;
 }
 
 export interface Question {
@@ -138,6 +154,7 @@ export interface Question {
   chapterId?: string | null;
   chapter?: Chapter;
   content: string;
+  contentRich?: { html?: string } | Record<string, unknown> | null;
   type: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'FILL_BLANK' | 'ESSAY';
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   bloomLevel: 'REMEMBER' | 'UNDERSTAND' | 'APPLY' | 'ANALYZE';
@@ -145,6 +162,7 @@ export interface Question {
   explanation?: string;
   status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
   options: QuestionOption[];
+  media?: QuestionMedia[];
   createdById: number;
   createdBy?: Pick<User, 'id' | 'username' | 'role'> & { fullName?: string };
   createdByName?: string;

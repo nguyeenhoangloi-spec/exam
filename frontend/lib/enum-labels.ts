@@ -27,7 +27,7 @@ export const QUESTION_STATUS_LABELS: Record<string, string> = {
   PENDING: 'Chờ duyệt',
   APPROVED: 'Đã duyệt',
   REJECTED: 'Từ chối',
-  ARCHIVED: 'Ngừng sử dụng',
+  ARCHIVED: 'Kho lưu trữ',
 };
 
 export const EXAM_STATUS_LABELS: Record<string, string> = {

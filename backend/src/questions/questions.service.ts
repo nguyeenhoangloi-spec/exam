@@ -1,6 +1,9 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { BloomLevel, Prisma, QuestionDifficulty, QuestionHistoryAction, QuestionStatus, QuestionType } from '@prisma/client';
 import { createHash } from 'node:crypto';
+import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { basename, extname, join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
@@ -9,7 +12,7 @@ import { normalizeQuestionContent, validateQuestionOptions } from './question-va
 
 type Actor = { id: number; role: string };
 const include = {
-  subject: true, chapter: true, options: { orderBy: { order: 'asc' as const } },
+  subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' as const } }, options: { orderBy: { order: 'asc' as const }, include: { media: { orderBy: { sortOrder: 'asc' as const } } } },
   createdBy: { select: { id: true, username: true } },
   approvedBy: { select: { id: true, username: true } }, statistic: true,
   histories: { orderBy: { createdAt: 'desc' as const }, include: { changedBy: { select: { id: true, username: true } } } },
@@ -23,6 +26,11 @@ export class QuestionsService {
   ) {}
   private access(a: Actor) { if (!['ADMIN', 'TEACHER'].includes(a.role)) throw new ForbiddenException('Không có quyền truy cập.'); }
   private json(v: unknown) { return JSON.parse(JSON.stringify(v)) as Prisma.InputJsonValue; }
+  private rich(v: unknown) {
+    if (!v || typeof v !== 'object') return undefined;
+    const html = typeof (v as any).html === 'string' ? (v as any).html : '';
+    return this.json({ html: html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '').replace(/javascript:/gi, '') });
+  }
   private async current(id: string) {
     const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include: { options: true, statistic: true } });
     if (!q) throw new NotFoundException('Không tìm thấy câu hỏi.');
@@ -35,6 +43,50 @@ export class QuestionsService {
   }
   private async chapter(subjectId: number, chapterId?: string | null) {
     if (chapterId && !await this.prisma.chapter.findFirst({ where: { id: chapterId, subjectId } })) throw new BadRequestException('Chương không thuộc môn học.');
+  }
+
+  private mediaRoot() { return join(process.cwd(), 'uploads', 'questions'); }
+  private sniffImage(file: Express.Multer.File) {
+    const b = file.buffer;
+    if (file.mimetype === 'image/png' && b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) return true;
+    if (file.mimetype === 'image/jpeg' && b.subarray(0, 3).equals(Buffer.from([255, 216, 255]))) return true;
+    if (file.mimetype === 'image/webp' && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP') return true;
+    if (file.mimetype === 'image/svg+xml') return /<svg[\s>]/i.test(file.buffer.toString('utf8', 0, 4096));
+    return false;
+  }
+  private validateMediaFile(file: Express.Multer.File) {
+    if (!file || file.size > Number(process.env.QUESTION_MEDIA_MAX_BYTES || 5 * 1024 * 1024)) throw new BadRequestException('Ảnh vượt quá dung lượng cho phép.');
+    if (!['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'].includes(file.mimetype) || !this.sniffImage(file)) throw new BadRequestException('File không phải ảnh PNG/JPG/WEBP/SVG hợp lệ.');
+  }
+  async previewMedia(a: Actor, files: Express.Multer.File[]) {
+    this.access(a); if (!files?.length) throw new BadRequestException('Vui lòng chọn ít nhất một ảnh.');
+    files.forEach(file => this.validateMediaFile(file));
+    return files.map(file => ({ fileName: basename(file.originalname), mimeType: file.mimetype, size: file.size, previewable: true }));
+  }
+  async uploadMedia(a: Actor, questionId: string, optionId: string | undefined, files: Express.Multer.File[]) {
+    this.access(a); const q = await this.current(questionId); this.edit(a, q); if (!files?.length) throw new BadRequestException('Vui lòng chọn ít nhất một ảnh.');
+    if (optionId && !q.options.some(o => o.id === optionId)) throw new BadRequestException('Đáp án không thuộc câu hỏi.');
+    files.forEach(file => this.validateMediaFile(file));
+    const root = this.mediaRoot(); await mkdir(root, { recursive: true });
+    const created: any[] = [];
+    for (const [i, file] of files.entries()) {
+      const id = randomUUID(); const extension = extname(file.originalname).toLowerCase() || (file.mimetype === 'image/svg+xml' ? '.svg' : '.bin');
+      const stored = `${id}${extension}`; const bytes = file.mimetype === 'image/svg+xml'
+        ? Buffer.from(file.buffer.toString('utf8').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '').replace(/javascript:/gi, ''))
+        : file.buffer;
+      await writeFile(join(root, stored), bytes);
+      const media = await this.prisma.questionMedia.create({ data: { id, questionId, optionId: optionId || null, url: `/uploads/questions/${stored}`, mimeType: file.mimetype, fileName: basename(file.originalname), sortOrder: i } });
+      created.push(media);
+    }
+    return created;
+  }
+  async removeMedia(a: Actor, id: string) {
+    this.access(a); const media = await this.prisma.questionMedia.findUnique({ where: { id }, include: { question: { select: { createdById: true, status: true } } } });
+    if (!media) throw new NotFoundException('Không tìm thấy ảnh.');
+    this.edit(a, media.question);
+    await this.prisma.questionMedia.delete({ where: { id } });
+    const fileName = basename(media.url); await unlink(join(this.mediaRoot(), fileName)).catch(() => undefined);
+    return { success: true };
   }
   private async code(tx: Prisma.TransactionClient) {
     const r = await tx.$queryRaw<Array<{ value: bigint }>>`SELECT nextval('question_code_seq') value`;
@@ -82,10 +134,15 @@ export class QuestionsService {
   private async createInTransaction(tx: Prisma.TransactionClient, a: Actor, d: CreateQuestionDto) {
     const q = await tx.question.create({ data: {
       code: await this.code(tx), subject: { connect: { id: d.subjectId } }, ...(d.chapterId ? { chapter: { connect: { id: d.chapterId } } } : {}), content: d.content.trim(),
-      normalizedContent: normalizeQuestionContent(d.content), type: d.type, difficulty: d.difficulty, bloomLevel: d.bloomLevel,
+      normalizedContent: normalizeQuestionContent(d.content), ...(d.contentRich ? { contentRich: this.rich(d.contentRich) } : {}), type: d.type, difficulty: d.difficulty, bloomLevel: d.bloomLevel,
       score: d.score, explanation: d.explanation || null, keywords: d.keywords || null, status: QuestionStatus.DRAFT, createdBy: { connect: { id: a.id } },
-      options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) }, statistic: { create: {} },
+      ...(d.media?.length ? { media: { create: d.media.map((m, i) => ({ url: m.url, mimeType: m.mimeType, fileName: m.fileName, width: m.width, height: m.height, sortOrder: m.sortOrder ?? i, altText: m.altText })) } } : {}),
+      options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, ...(o.contentRich ? { contentRich: this.json(o.contentRich) } : {}), isCorrect: o.isCorrect, order: o.order ?? i })) }, statistic: { create: {} },
     }, include });
+    for (const option of d.options) {
+      const createdOption = q.options.find((item) => item.order === (option.order ?? d.options.indexOf(option)));
+      if (createdOption && option.media?.length) await tx.questionMedia.createMany({ data: option.media.map((m, i) => ({ questionId: q.id, optionId: createdOption.id, url: m.url, mimeType: m.mimeType, fileName: m.fileName, width: m.width, height: m.height, sortOrder: m.sortOrder ?? i, altText: m.altText })) });
+    }
     await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.CREATE, newData: this.json(q), changedById: a.id } });
     await this.audit.write({ actorId: a.id, action: 'CREATE', entityType: 'QUESTION', entityId: q.id, description: `Đã tạo câu hỏi ${q.code}`, metadata: { questionCode: q.code } }, tx);
     return q;
@@ -101,7 +158,7 @@ export class QuestionsService {
       ...((q.fromDate || q.toDate) && { createdAt: { ...(q.fromDate && { gte: new Date(q.fromDate) }), ...(q.toDate && { lte: new Date(`${q.toDate}T23:59:59.999Z`) }) } }),
     };
     const [data, total] = await this.prisma.$transaction([
-      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, createdBy: { select: { id: true, username: true } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
+      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' } }, options: { orderBy: { order: 'asc' }, include: { media: { orderBy: { sortOrder: 'asc' } } } }, createdBy: { select: { id: true, username: true } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
       this.prisma.question.count({ where }),
     ]);
     return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
@@ -132,14 +189,22 @@ export class QuestionsService {
     validateQuestionOptions(d.type ?? old.type, d.options ?? old.options); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
     return this.prisma.$transaction(async tx => {
       if (d.options) await tx.questionOption.deleteMany({ where: { questionId: id } });
+      if (d.media) await tx.questionMedia.deleteMany({ where: { questionId: id, optionId: null } });
       const q = await tx.question.update({ where: { id }, data: {
-        ...(d.subjectId && { subjectId: d.subjectId }), ...(d.chapterId !== undefined && { chapterId: d.chapterId }),
-        ...(d.content && { content: d.content.trim(), normalizedContent: normalizeQuestionContent(d.content) }),
+        ...(d.subjectId && { subject: { connect: { id: d.subjectId } } }), ...(d.chapterId !== undefined && { chapter: d.chapterId ? { connect: { id: d.chapterId } } : { disconnect: true } }),
+        ...(d.content && { content: d.content.trim(), normalizedContent: normalizeQuestionContent(d.content) }), ...(d.contentRich !== undefined && { contentRich: d.contentRich ? this.rich(d.contentRich) : Prisma.JsonNull }),
         ...(d.type && { type: d.type }), ...(d.difficulty && { difficulty: d.difficulty }), ...(d.bloomLevel && { bloomLevel: d.bloomLevel }),
         ...(d.score !== undefined && { score: d.score }), ...(d.explanation !== undefined && { explanation: d.explanation || null }),
         ...(d.keywords !== undefined && { keywords: d.keywords || null }),
-        ...(d.options && { options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) } }),
+        ...(d.media?.length && { media: { create: d.media.map((m, i) => ({ url: m.url, mimeType: m.mimeType, fileName: m.fileName, width: m.width, height: m.height, sortOrder: m.sortOrder ?? i, altText: m.altText })) } }),
+        ...(d.options && { options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, ...(o.contentRich ? { contentRich: this.json(o.contentRich) } : {}), isCorrect: o.isCorrect, order: o.order ?? i })) } }),
       }, include });
+      if (d.options) {
+        for (const option of d.options) {
+          const createdOption = q.options.find((item) => item.order === (option.order ?? d.options!.indexOf(option)));
+          if (createdOption && option.media?.length) await tx.questionMedia.createMany({ data: option.media.map((m, i) => ({ questionId: id, optionId: createdOption.id, url: m.url, mimeType: m.mimeType, fileName: m.fileName, width: m.width, height: m.height, sortOrder: m.sortOrder ?? i, altText: m.altText })) });
+        }
+      }
       await tx.questionHistory.create({ data: { questionId: id, action: QuestionHistoryAction.UPDATE, oldData: this.json(old), newData: this.json(q), changedById: a.id } });
       await this.audit.write({ actorId: a.id, action: 'UPDATE', entityType: 'QUESTION', entityId: id, description: `Đã cập nhật câu hỏi ${q.code}`, metadata: { questionCode: q.code } }, tx);
       return q;

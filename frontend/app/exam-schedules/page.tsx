@@ -655,7 +655,6 @@ export default function ExamSchedulesPage() {
               >
                 <option value="OFFICIAL">🔴 Thi chính thức (OFFICIAL)</option>
                 <option value="MOCK">🟡 Thi thử (MOCK)</option>
-                <option value="PRACTICE">🟢 Luyện tập (PRACTICE)</option>
               </select>
             </div>
           </div>

@@ -48,6 +48,7 @@ export function QuestionImportWizard({
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [aiItems, setAiItems] = useState<any[]>([]);
+  const [documentIntent, setDocumentIntent] = useState<'preserve' | 'generate'>('preserve');
 
   const [meta, setMeta] = useState({
     subjectId: '',
@@ -131,6 +132,9 @@ export function QuestionImportWizard({
         });
 
         // Request AI Document Question Extraction using extracted text
+        const instruction = documentIntent === 'preserve'
+          ? 'Giữ nguyên các câu hỏi có sẵn trong tài liệu, không tự tạo thêm câu mới. Câu thiếu đáp án hoặc loại câu phải đánh dấu lỗi để người dùng sửa.'
+          : 'Đây là đề cương/tài liệu học tập. Hãy tạo các câu hỏi nháp bám sát nội dung tài liệu.';
         const r = await api.post('/questions/ai-generate', {
           subjectId: Number(meta.subjectId),
           ...(meta.chapterId ? { chapterId: meta.chapterId } : {}),
@@ -138,8 +142,10 @@ export function QuestionImportWizard({
           difficulty: meta.defaultDifficulty,
           bloomLevel: meta.defaultBloomLevel,
           count: 100,
-          prompt: extracted.data?.text || '',
+          prompt: `${instruction}\n\n${extracted.data?.text || ''}`,
           isExtractionOnly: true,
+          images: extracted.data?.images || [],
+          documentData: extracted.data?.documentData,
         });
 
         setAiItems(r.data);
@@ -368,6 +374,11 @@ export function QuestionImportWizard({
             </div>
           </div>
         )}
+
+        {mode === 'document' && <div className="grid gap-2 sm:grid-cols-2">
+          <button type="button" onClick={() => setDocumentIntent('preserve')} className={`rounded-xl border p-3 text-left text-xs ${documentIntent === 'preserve' ? 'border-sky-500 bg-sky-50 text-sky-800' : 'border-slate-200 bg-white text-slate-600'}`}><b>Giữ nguyên câu hỏi có sẵn</b><span className="mt-1 block text-[11px]">Không tự sinh thêm câu mới; câu thiếu dữ liệu sẽ báo lỗi.</span></button>
+          <button type="button" onClick={() => setDocumentIntent('generate')} className={`rounded-xl border p-3 text-left text-xs ${documentIntent === 'generate' ? 'border-violet-500 bg-violet-50 text-violet-800' : 'border-slate-200 bg-white text-slate-600'}`}><b>Tạo câu hỏi từ đề cương</b><span className="mt-1 block text-[11px]">AI tạo bản nháp bám sát nội dung tài liệu để sửa trước khi lưu.</span></button>
+        </div>}
 
         {/* File Picker & Action Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3.5">

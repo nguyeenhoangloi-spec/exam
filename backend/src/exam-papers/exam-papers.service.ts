@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ExamPaperStatus, Prisma } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRandomExamPaperDto } from './dto/exam-paper.dto';
@@ -45,7 +46,7 @@ export class ExamPapersService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly actionVerifier: ActionVerifierService,
-  ) {}
+  ) { }
 
   private assertOwner(actor: Actor, paper: { createdById: number }) {
     if (actor.role !== 'ADMIN' && paper.createdById !== actor.id) {
@@ -279,6 +280,21 @@ export class ExamPapersService {
     if (paper.status !== ExamPaperStatus.DRAFT) {
       throw new BadRequestException('Chỉ đề thi ở trạng thái bản nháp mới được phát hành.');
     }
+
+    // Mật khẩu thi: bắt buộc với kỳ thi chính thức (OFFICIAL), hash bcrypt trước khi lưu
+    const isOfficial = paper.examSchedule?.mode === 'OFFICIAL';
+    let examPasswordHash: string | null = null;
+    if (isOfficial) {
+      if (!dto?.examPassword || dto.examPassword.trim().length < 4) {
+        throw new BadRequestException(
+          'Kỳ thi chính thức bắt buộc phải thiết lập mật khẩu thi (tối thiểu 4 ký tự).',
+        );
+      }
+      examPasswordHash = await bcrypt.hash(dto.examPassword.trim(), 10);
+    } else if (dto?.examPassword) {
+      examPasswordHash = await bcrypt.hash(dto.examPassword.trim(), 10);
+    }
+
     return this.prisma.$transaction(async (tx) => {
       const updated = await tx.examPaper.update({
         where: { id },
@@ -288,7 +304,7 @@ export class ExamPapersService {
 
       await tx.onlineExamConfig.upsert({
         where: { examScheduleId: paper.examScheduleId },
-        update: { examPaperId: id },
+        update: { examPaperId: id, ...(examPasswordHash ? { examPasswordHash } : {}) },
         create: {
           examScheduleId: paper.examScheduleId,
           examPaperId: id,
@@ -297,6 +313,7 @@ export class ExamPapersService {
           preventCopyPaste: true,
           shuffleQuestions: true,
           shuffleOptions: true,
+          ...(examPasswordHash ? { examPasswordHash } : {}),
         },
       });
 
@@ -382,3 +399,4 @@ export class ExamPapersService {
     });
   }
 }
+

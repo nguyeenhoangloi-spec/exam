@@ -14,6 +14,8 @@ type MonthlyCount = { month: Date; count: bigint };
 
 @Injectable()
 export class DashboardService {
+  private overviewCache: { data: any; timestamp: number } | null = null;
+
   constructor(private readonly prisma: PrismaService) {}
 
   private vietnamParts(date = new Date()) {
@@ -46,6 +48,11 @@ export class DashboardService {
   }
 
   async overview() {
+    const nowTimestamp = Date.now();
+    if (this.overviewCache && nowTimestamp - this.overviewCache.timestamp < 3000) {
+      return this.overviewCache.data;
+    }
+
     const now = new Date();
     const current = this.vietnamParts(now);
     const todayStart = new Date(`${current.dateKey}T00:00:00.000Z`);
@@ -232,7 +239,7 @@ export class DashboardService {
       };
     });
 
-    return {
+    const result = {
       summary: {
         students: {
           total: totalStudents,
@@ -286,5 +293,8 @@ export class DashboardService {
       })),
       generatedAt: now,
     };
+
+    this.overviewCache = { data: result, timestamp: nowTimestamp };
+    return result;
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 
 // ===================================================================
@@ -36,6 +37,8 @@ export enum EligibilityErrorCode {
   DEVICE_NOT_REGISTERED = 'DEVICE_NOT_REGISTERED', // Thiết bị chưa đăng ký
   ACCESS_CODE_REQUIRED = 'ACCESS_CODE_REQUIRED', // Cần mã truy cập phòng thi
   ACCESS_CODE_INVALID = 'ACCESS_CODE_INVALID', // Mã truy cập sai
+  EXAM_PASSWORD_REQUIRED = 'EXAM_PASSWORD_REQUIRED', // Kỳ thi chính thức yêu cầu mật khẩu thi
+  EXAM_PASSWORD_INVALID = 'EXAM_PASSWORD_INVALID', // Mật khẩu thi không đúng
 
   // Quy định & thiết bị kiểm tra
   RULES_NOT_ACCEPTED = 'RULES_NOT_ACCEPTED', // Chưa đồng ý quy định thi
@@ -72,13 +75,15 @@ export interface EligibilityInput {
   clientIp?: string;
   deviceFingerprint?: string;
   providedAccessCode?: string;
+  /** Mật khẩu thi chính thức sinh viên nhập (dạng plaintext, sẽ so sánh bcrypt) */
+  providedExamPassword?: string;
   webcamAvailable?: boolean;
   deviceCheckPassed?: boolean;
 }
 
 @Injectable()
 export class EligibilityCheckerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   /**
    * Kiểm tra toàn bộ điều kiện dự thi theo chuẩn nghiệp vụ khảo thí
@@ -100,6 +105,7 @@ export class EligibilityCheckerService {
       clientIp,
       deviceFingerprint,
       providedAccessCode,
+      providedExamPassword,
       webcamAvailable,
       deviceCheckPassed,
     } = input;
@@ -397,6 +403,28 @@ export class EligibilityCheckerService {
       }
     }
 
+    // 7d. Kiểm tra mật khẩu thi chính thức (bắt buộc với kỳ thi OFFICIAL có thiết lập)
+    if (config.examPasswordHash) {
+      if (!providedExamPassword) {
+        return this.fail(
+          EligibilityErrorCode.EXAM_PASSWORD_REQUIRED,
+          'Kỳ thi chính thức yêu cầu nhập mật khẩu thi trước khi vào thi',
+          { student, schedule, config },
+        );
+      }
+      const isPasswordValid = await bcrypt.compare(
+        providedExamPassword,
+        config.examPasswordHash,
+      );
+      if (!isPasswordValid) {
+        return this.fail(
+          EligibilityErrorCode.EXAM_PASSWORD_INVALID,
+          'Mật khẩu thi không đúng. Vui lòng kiểm tra lại.',
+          { student, schedule, config },
+        );
+      }
+    }
+
     // ─────────────────────────────────────────
     // BƯỚC 8: Kiểm tra quy định & thiết bị (chỉ khi bắt đầu lần đầu)
     // ─────────────────────────────────────────
@@ -433,12 +461,12 @@ export class EligibilityCheckerService {
         roomStudentInfo,
         existingAttempt: activeAttempt
           ? {
-              id: activeAttempt.id,
-              status: activeAttempt.status,
-              attemptToken: activeAttempt.attemptToken,
-              startTime: activeAttempt.startTime,
-              expectedEndTime: activeAttempt.expectedEndTime,
-            }
+            id: activeAttempt.id,
+            status: activeAttempt.status,
+            attemptToken: activeAttempt.attemptToken,
+            startTime: activeAttempt.startTime,
+            expectedEndTime: activeAttempt.expectedEndTime,
+          }
           : null,
         serverTime,
         examStartTime,

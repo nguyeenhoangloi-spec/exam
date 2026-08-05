@@ -20,6 +20,43 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+export class QuestionMediaDto {
+  @IsString()
+  @MaxLength(1000)
+  url: string;
+
+  @IsString()
+  @MaxLength(100)
+  mimeType: string;
+
+  @IsString()
+  @MaxLength(255)
+  fileName: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10000)
+  width?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10000)
+  height?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(999)
+  sortOrder?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  altText?: string;
+}
+
 const TYPES = ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY'];
 const DIFFICULTIES = ['EASY', 'MEDIUM', 'HARD'];
 const BLOOMS = ['REMEMBER', 'UNDERSTAND', 'APPLY', 'ANALYZE'];
@@ -43,6 +80,15 @@ export class QuestionOptionDto {
   @Min(0)
   @Max(99)
   order: number;
+
+  @IsOptional()
+  contentRich?: Record<string, unknown>;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => QuestionMediaDto)
+  media?: QuestionMediaDto[];
 }
 
 export class CreateQuestionDto {
@@ -60,6 +106,9 @@ export class CreateQuestionDto {
   @MinLength(5)
   @MaxLength(10000)
   content: string;
+
+  @IsOptional()
+  contentRich?: Record<string, unknown>;
 
   @IsIn(TYPES)
   type: any;
@@ -95,6 +144,13 @@ export class CreateQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => QuestionOptionDto)
   options: QuestionOptionDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(50)
+  @ValidateNested({ each: true })
+  @Type(() => QuestionMediaDto)
+  media?: QuestionMediaDto[];
 }
 
 export class UpdateQuestionDto {
@@ -113,6 +169,9 @@ export class UpdateQuestionDto {
   @MinLength(5)
   @MaxLength(10000)
   content?: string;
+
+  @IsOptional()
+  contentRich?: Record<string, unknown>;
 
   @IsOptional()
   @IsIn(TYPES)
@@ -153,6 +212,13 @@ export class UpdateQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => QuestionOptionDto)
   options?: QuestionOptionDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(50)
+  @ValidateNested({ each: true })
+  @Type(() => QuestionMediaDto)
+  media?: QuestionMediaDto[];
 }
 
 export class QuestionQueryDto {
@@ -325,6 +391,14 @@ export class GenerateAiQuestionsDto {
   @IsOptional()
   @IsBoolean()
   isExtractionOnly?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(50)
+  images?: Array<{ mimeType: string; data: string; altText?: string }>;
+
+  @IsOptional()
+  documentData?: { mimeType: string; data: string };
 }
 
 export class SaveAiQuestionsDto {

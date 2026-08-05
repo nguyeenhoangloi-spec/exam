@@ -499,11 +499,28 @@ export default function ExamArrangementPage() {
                     ) : (
                       schedules.map((s) => (
                         <option key={s.id} value={s.id}>
-                          {s.subject?.subjectName} ({s.subject?.subjectCode}) · {new Date(s.examDate).toLocaleDateString('vi-VN')} ({s.startTime}-{s.endTime})
+                          {s.mode === 'MOCK' ? '🟡 [THI THỬ] ' : '🔴 [CHÍNH THỨC] '}
+                          {s.subject?.subjectName} ({s.subject?.subjectCode}) - {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '---'} ({s.startTime}-{s.endTime})
                         </option>
                       ))
                     )}
                   </select>
+                  {(() => {
+                    const current = schedules.find((s) => s.id.toString() === selectedScheduleId);
+                    if (current?.mode === 'MOCK') {
+                      return (
+                        <div className="mt-3 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium space-y-1 shadow-2xs">
+                          <p className="font-bold text-amber-950 flex items-center gap-1.5">
+                            <span>🟡 Ca Thi Thử (MOCK)</span>
+                          </p>
+                          <p className="leading-relaxed text-amber-800">
+                            Ca thi này áp dụng hình thức thi thử trực tuyến tự do. Sinh viên có thể tham gia thi trực tuyến mà không bắt buộc phải xếp phòng thi máy hay chia số báo danh.
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   {schedules.length === 0 && (
                     <div className="mt-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 shadow-2xs">
                       <p className="font-bold flex items-center gap-1.5 text-amber-800">

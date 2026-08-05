@@ -321,6 +321,7 @@ model Question {
   chapterId         String?
   chapter           Chapter?           @relation(fields: [chapterId], references: [id], onDelete: Restrict)
   content           String
+  contentRich       Json?
   normalizedContent String
   type              QuestionType
   difficulty        QuestionDifficulty @default(MEDIUM)
@@ -342,6 +343,7 @@ model Question {
   approvedBy        User?              @relation("ApprovedQuestions", fields: [approvedById], references: [id], onDelete: SetNull)
 
   options            QuestionOption[]
+  media             QuestionMedia[]
   examPaperQuestions ExamPaperQuestion[]
   histories          QuestionHistory[]
   statistic          QuestionStatistic?
@@ -371,13 +373,35 @@ model QuestionOption {
   id         String   @id @default(uuid())
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  media      QuestionMedia[]
   label      String
   content    String
+  contentRich Json?
   isCorrect  Boolean  @default(false)
   order      Int
 
   @@unique([questionId, order])
   @@map("question_options")
+}
+
+model QuestionMedia {
+  id         String          @id @default(uuid())
+  questionId String
+  question   Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionId   String?
+  option     QuestionOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  url        String
+  mimeType   String
+  fileName   String
+  width      Int?
+  height     Int?
+  sortOrder  Int             @default(0)
+  altText    String?
+  createdAt  DateTime        @default(now())
+
+  @@index([questionId, sortOrder])
+  @@index([optionId])
+  @@map("question_media")
 }
 
 model QuestionStatistic {
@@ -516,6 +540,9 @@ model OnlineExamConfig {
   requireDeviceBinding   Boolean @default(false)
   /// Mã truy cập phòng thi (access code), null = không yêu cầu
   accessCode             String?
+  /// Mật khẩu thi chính thức (bcrypt hash) do Giảng viên/Admin thiết lập khi phát hành đề,
+  /// bắt buộc với kỳ thi OFFICIAL. Sinh viên phải nhập đúng mật khẩu mới được vào thi.
+  examPasswordHash       String?
   /// Cho phép vào thi muộn tối đa bao nhiêu phút
   lateEntryWindowMinutes Int     @default(15)
   /// Yêu cầu sinh viên đọc và chấp nhận quy định trước khi thi

@@ -306,7 +306,14 @@ export default function QuestionBankPage() {
   return (
     <AppShell user={user} title="Ngân hàng câu hỏi">
       <main className="w-full px-6 py-6 space-y-6">
-        <QuestionStatistics counts={counts} />
+        <QuestionStatistics
+          counts={counts}
+          activeStatus={filters.status}
+          onSelectStatus={(st) => {
+            setFilters({ ...filters, status: st });
+            setPage(1);
+          }}
+        />
         <section className="my-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-3 xl:flex-row">
             <QuestionSearch value={search} onChange={setSearch} />

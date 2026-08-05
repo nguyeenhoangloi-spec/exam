@@ -14,6 +14,11 @@ export class StartExamDto {
   @IsOptional()
   accessCode?: string;
 
+  /** Mật khẩu thi chính thức (bắt buộc với kỳ thi OFFICIAL có thiết lập) */
+  @IsString()
+  @IsOptional()
+  examPassword?: string;
+
   /** Sinh viên đã chấp nhận quy định thi hay chưa */
   @IsBoolean()
   @IsOptional()

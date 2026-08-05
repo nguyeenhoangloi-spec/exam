@@ -38,6 +38,8 @@ node_modules
 
 # Generated backend artifacts
 /backend/dist/
+/backend/uploads/
+/backend-dev.*.log
 
 # Local environment and secrets
 /.env

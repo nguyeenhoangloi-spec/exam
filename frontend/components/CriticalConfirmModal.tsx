@@ -8,6 +8,8 @@ export interface CriticalConfirmPayload {
   note?: string;
   confirmPhrase: string;
   password: string;
+  /** Mật khẩu thi chính thức (chỉ dùng khi phát hành đề thi OFFICIAL) */
+  examPassword?: string;
 }
 
 interface CriticalConfirmModalProps {
@@ -18,6 +20,8 @@ interface CriticalConfirmModalProps {
   confirmPhrase: string; // E.g. "KHOA DIEM", "PHAT HANH DE THI", "KHOA KY THI"
   reasons?: string[];
   actionButtonText?: string;
+  /** Khi true, hiển thị thêm ô "Mật khẩu thi" bắt buộc (dùng cho phát hành đề thi chính thức) */
+  examPasswordRequired?: boolean;
   onConfirm: (payload: CriticalConfirmPayload) => Promise<void> | void;
 }
 
@@ -35,6 +39,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
     'Lý do khác',
   ],
   actionButtonText = 'Xác Nhận & Thực Hiện',
+  examPasswordRequired = false,
   onConfirm,
 }) => {
   const [selectedReason, setSelectedReason] = useState(reasons[0] || '');
@@ -42,6 +47,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   const [note, setNote] = useState('');
   const [inputPhrase, setInputPhrase] = useState('');
   const [password, setPassword] = useState('');
+  const [examPassword, setExamPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -54,6 +60,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       setNote('');
       setInputPhrase('');
       setPassword('');
+      setExamPassword('');
       setErrorMsg('');
       setLoading(false);
     }
@@ -65,7 +72,11 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   const isReasonValid = Boolean(
     selectedReason !== 'Lý do khác' ? selectedReason.trim() : customReason.trim(),
   );
-  const canSubmit = isPhraseMatched && isReasonValid && Boolean(password.trim()) && !loading;
+  const isExamPasswordValid = examPasswordRequired
+    ? examPassword.trim().length >= 4
+    : true;
+  const canSubmit =
+    isPhraseMatched && isReasonValid && Boolean(password.trim()) && isExamPasswordValid && !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +97,11 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       return;
     }
 
+    if (examPasswordRequired && examPassword.trim().length < 4) {
+      setErrorMsg('Vui lòng nhập mật khẩu thi (tối thiểu 4 ký tự) để phát hành đề thi chính thức.');
+      return;
+    }
+
     const finalReason = selectedReason === 'Lý do khác' ? customReason.trim() : selectedReason;
 
     try {
@@ -95,6 +111,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
         note: note.trim() || undefined,
         confirmPhrase: inputPhrase.trim().toUpperCase(),
         password,
+        examPassword: examPasswordRequired ? examPassword.trim() : undefined,
       });
       onClose();
     } catch (err: any) {
@@ -203,11 +220,10 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder={`Gõ đúng chữ: ${targetPhrase}`}
               value={inputPhrase}
               onChange={(e) => setInputPhrase(e.target.value)}
-              className={`w-full rounded-xl border px-3.5 py-2 text-xs font-bold focus:outline-none transition ${
-                isPhraseMatched
-                  ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900'
-                  : 'border-slate-200 focus:border-rose-500'
-              }`}
+              className={`w-full rounded-xl border px-3.5 py-2 text-xs font-bold focus:outline-none transition ${isPhraseMatched
+                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900'
+                : 'border-slate-200 focus:border-rose-500'
+                }`}
             />
             {isPhraseMatched && (
               <p className="mt-1 text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
@@ -232,6 +248,29 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             />
           </div>
 
+          {/* Step 5: Exam Password (only for publishing official exam paper) */}
+          {examPasswordRequired && (
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4">
+              <label className="block text-xs font-bold uppercase text-indigo-700 mb-1 flex items-center gap-1">
+                <Lock className="w-3.5 h-3.5 text-indigo-600" />
+                5. Mật khẩu thi chính thức <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="password"
+                autoComplete="off"
+                required
+                placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
+                value={examPassword}
+                onChange={(e) => setExamPassword(e.target.value)}
+                className="w-full rounded-xl border border-indigo-200 px-3.5 py-2 text-xs bg-white focus:border-indigo-500 focus:outline-none"
+              />
+              <p className="mt-1.5 text-[11px] font-medium text-indigo-700/80 leading-relaxed">
+                Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.
+                Hệ thống lưu dạng bảo mật (bcrypt) và không ai xem lại được sau khi lưu.
+              </p>
+            </div>
+          )}
+
           {/* Modal Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
@@ -244,11 +283,10 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <button
               type="submit"
               disabled={!canSubmit}
-              className={`px-5 py-2 rounded-xl text-white font-bold text-xs transition shadow-md flex items-center gap-2 ${
-                canSubmit
-                  ? 'bg-rose-600 hover:bg-rose-700 active:scale-95'
-                  : 'bg-slate-300 cursor-not-allowed'
-              }`}
+              className={`px-5 py-2 rounded-xl text-white font-bold text-xs transition shadow-md flex items-center gap-2 ${canSubmit
+                ? 'bg-rose-600 hover:bg-rose-700 active:scale-95'
+                : 'bg-slate-300 cursor-not-allowed'
+                }`}
             >
               {loading ? (
                 <>
@@ -268,3 +306,4 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
     </div>
   );
 };
+

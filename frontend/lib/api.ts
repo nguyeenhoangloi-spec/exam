@@ -8,8 +8,9 @@ const api = axios.create({
   },
 });
 
-// Fast in-memory cache for GET requests (5-second TTL)
+// Fast in-memory cache for GET requests (30-second TTL)
 const cache = new Map<string, { timestamp: number; data: any }>();
+let isWarmedUp = false;
 
 api.interceptors.request.use(
   (config) => {
@@ -22,11 +23,11 @@ api.interceptors.request.use(
       delete config.headers['Content-Type'];
     }
 
-    // Return cached response if fresh (less than 5 seconds old)
+    // Return cached response if fresh (less than 30 seconds old)
     if (config.method?.toLowerCase() === 'get' && config.url && !config.params?.noCache) {
       const cacheKey = `${config.url}?${new URLSearchParams(config.params || {}).toString()}`;
       const cached = cache.get(cacheKey);
-      if (cached && Date.now() - cached.timestamp < 5000) {
+      if (cached && Date.now() - cached.timestamp < 30000) {
         config.adapter = (async () => ({
           data: cached.data,
           status: 200,
@@ -38,6 +39,7 @@ api.interceptors.request.use(
     } else if (config.method && ['post', 'put', 'patch', 'delete'].includes(config.method.toLowerCase())) {
       // Invalidate cache on mutations
       cache.clear();
+      isWarmedUp = false;
     }
 
     return config;
@@ -65,5 +67,39 @@ api.interceptors.response.use(
     return Promise.reject(new Error(message));
   },
 );
+
+export const warmupGlobalCache = (role?: string) => {
+  if (isWarmedUp || typeof window === 'undefined') return;
+  const token = getAuthToken();
+  if (!token) return;
+  isWarmedUp = true;
+
+  const endpoints = role === 'ADMIN' ? [
+    '/dashboard/overview',
+    '/departments',
+    '/classes',
+    '/students?page=1&limit=20',
+    '/teachers',
+    '/subjects',
+    '/exam-rooms',
+    '/exam-periods',
+    '/exam-schedules',
+    '/questions?page=1&limit=20',
+  ] : role === 'TEACHER' ? [
+    '/teachers/my-assignments',
+    '/exam-schedules',
+    '/exam-papers',
+    '/questions?page=1&limit=20',
+    '/subjects',
+  ] : [
+    '/students/my-schedule',
+    '/students/my-curriculum',
+  ];
+
+  // Silently warm up cache in the background
+  setTimeout(() => {
+    void Promise.allSettled(endpoints.map((url) => api.get(url)));
+  }, 100);
+};
 
 export default api;

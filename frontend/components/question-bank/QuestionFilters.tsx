@@ -68,7 +68,7 @@ export function QuestionFilters({
         <option value="PENDING">Chờ duyệt</option>
         <option value="APPROVED">Đã duyệt</option>
         <option value="REJECTED">Từ chối</option>
-        <option value="ARCHIVED">Ngừng sử dụng</option>
+        <option value="ARCHIVED">Kho lưu trữ</option>
       </select>
     </div>
   );

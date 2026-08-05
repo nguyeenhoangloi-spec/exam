@@ -26,11 +26,20 @@ export const onlineExamService = {
     return res.data;
   },
 
-  async startAttempt(scheduleId: number, deviceInfo?: string, deviceFingerprint?: string, rulesAccepted = false) {
+  async startAttempt(
+    scheduleId: number,
+    deviceInfo?: string,
+    deviceFingerprint?: string,
+    rulesAccepted = false,
+    examPassword?: string,
+    accessCode?: string,
+  ) {
     const res = await api.post(`/online-exams/schedule/${scheduleId}/start`, {
       deviceInfo,
       deviceFingerprint,
       rulesAccepted,
+      examPassword,
+      accessCode,
     });
     return res.data;
   },

@@ -46,12 +46,20 @@ export class AiQuestionsService {
           'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
         ].filter(Boolean).join('\n');
     try {
+      const parts: Array<Record<string, unknown>> = [{ text: prompt }];
+      for (const image of input.images || []) {
+        if (!/^image\/(png|jpeg|jpg|webp|svg\+xml)$/.test(image.mimeType) || !image.data) continue;
+        parts.push({ inlineData: { mimeType: image.mimeType === 'image/jpg' ? 'image/jpeg' : image.mimeType, data: image.data } });
+      }
+      if (input.documentData?.mimeType === 'application/pdf' && input.documentData.data) {
+        parts.push({ inlineData: { mimeType: 'application/pdf', data: input.documentData.data } });
+      }
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ parts }],
           generationConfig: { responseMimeType: 'application/json', temperature: 0.4 },
         }),
       });
@@ -121,21 +129,31 @@ export class AiQuestionsService {
     }
   }
 
-  async extractDocumentText(file: Express.Multer.File): Promise<{ text: string }> {
+  async extractDocumentText(file: Express.Multer.File): Promise<{ text: string; images: Array<{ mimeType: string; data: string; altText?: string }>; documentData?: { mimeType: string; data: string } }> {
     if (!file) throw new BadRequestException('Vui lòng chọn tệp tài liệu.');
     const ext = file.originalname.toLowerCase();
     let text = '';
+    const images: Array<{ mimeType: string; data: string; altText?: string }> = [];
+    let documentData: { mimeType: string; data: string } | undefined;
     if (ext.endsWith('.txt') || ext.endsWith('.md')) {
       text = file.buffer.toString('utf-8');
     } else if (ext.endsWith('.docx')) {
-      const res = await mammoth.extractRawText({ buffer: file.buffer });
-      text = res.value || '';
+      const res = await (mammoth as any).convertToHtml({ buffer: file.buffer }, {
+        convertImage: (mammoth as any).images.imgElement((image: any) => image.read('base64').then((data: string) => {
+          const mimeType = image.contentType || 'image/png';
+          images.push({ mimeType, data });
+          return { src: `data:${mimeType};base64,${data}` };
+        })),
+      });
+      text = String(res.value || '').replace(/<img[^>]*>/gi, ' [HÌNH ẢNH] ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
     } else if (ext.endsWith('.pdf')) {
       const res = await pdfParse(file.buffer);
       text = res.text || '';
+      // Gemini nhận PDF gốc ở dạng inlineData để đọc cả ảnh, biểu đồ và PDF scan.
+      documentData = { mimeType: 'application/pdf', data: file.buffer.toString('base64') };
     } else {
       throw new BadRequestException('Chỉ hỗ trợ tệp .txt, .md, .docx, .pdf');
     }
-    return { text: text.trim().slice(0, 100000) };
+    return { text: text.trim().slice(0, 100000), images, ...(documentData ? { documentData } : {}) };
   }
 }

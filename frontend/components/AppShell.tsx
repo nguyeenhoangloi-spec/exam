@@ -6,6 +6,9 @@ import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { User } from '../types';
 import { canAccessPath, workspaceRoutes } from '../lib/access';
+import { warmupGlobalCache } from '../lib/api';
+
+import { NavigationProgress } from './NavigationProgress';
 
 interface AppShellProps {
   user: User | null;
@@ -31,7 +34,10 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
 
   useEffect(() => {
     setCollapsed(window.localStorage.getItem('sidebar-collapsed') === 'true');
-  }, []);
+    if (user?.role) {
+      warmupGlobalCache(user.role);
+    }
+  }, [user?.role]);
 
   useEffect(() => {
     window.localStorage.setItem('sidebar-collapsed', String(collapsed));
@@ -52,6 +58,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
+      <NavigationProgress />
       <Sidebar
         user={user}
         collapsed={collapsed}
@@ -76,7 +83,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, title, children }) => 
         } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
       >
         <Header user={user} title={title} collapsed={collapsed} onMenuClick={() => setMobileOpen(true)} />
-        {children}
+        <div className="animate-fade-in">{children}</div>
       </div>
     </div>
   );

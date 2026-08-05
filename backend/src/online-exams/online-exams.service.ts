@@ -76,6 +76,7 @@ export class OnlineExamsService {
         requireFullscreen: d.config?.requireFullscreen,
         requireRulesAcceptance: d.config?.requireRulesAcceptance,
         accessCodeRequired: !!d.config?.accessCode,
+        examPasswordRequired: !!d.config?.examPasswordHash,
         serverTime: d.serverTime,
         remainingEntrySeconds: d.remainingEntrySeconds,
       },
@@ -108,6 +109,7 @@ export class OnlineExamsService {
       clientIp,
       deviceFingerprint: dto.deviceFingerprint,
       providedAccessCode: dto.accessCode,
+      providedExamPassword: dto.examPassword,
       webcamAvailable: dto.webcamAvailable,
       deviceCheckPassed: dto.deviceCheckPassed,
     });

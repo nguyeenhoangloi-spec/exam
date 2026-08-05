@@ -170,10 +170,6 @@ export default function StudentExamSchedulePage() {
                       <span className="text-[11px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
                         🟡 THI THỬ
                       </span>
-                    ) : item.mode === 'PRACTICE' ? (
-                      <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-                        🟢 LUYỆN TẬP
-                      </span>
                     ) : (
                       <span className="text-[11px] font-extrabold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">
                         🔴 CHÍNH THỨC
