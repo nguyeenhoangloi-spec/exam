@@ -1,54 +1,64 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
-import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
-import { KPICards, KPICardItem } from '../../components/KPICards';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
-import {
-  Plus,
-  Trash2,
-  Edit,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  Search,
-  Download,
-  Printer,
-  Eye,
-  Award,
-  Layers,
-  Lock,
-  Unlock,
-} from 'lucide-react';
 import { ExamPeriod } from '../../types';
+import { Calendar, Clock, Search, X, ChevronDown } from 'lucide-react';
+
+import { ExamPeriodHeader } from '../../components/exam-periods/ExamPeriodHeader';
+import { ExamPeriodKPICards } from '../../components/exam-periods/ExamPeriodKPICards';
+import { ExamPeriodTableToolbar } from '../../components/exam-periods/ExamPeriodTableToolbar';
+import { ExamPeriodTable } from '../../components/exam-periods/ExamPeriodTable';
+import { ExamPeriodPaginationBar } from '../../components/exam-periods/ExamPeriodPaginationBar';
 
 export default function ExamPeriodsPage() {
   usePageTitle('Quản lý Kỳ thi');
   const router = useRouter();
+
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
   const [search, setSearch] = useState('');
+  const [selectedSemester, setSelectedSemester] = useState('');
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Modal & Drawer State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    name: true,
+    semester: true,
+    schoolYear: true,
+    dateRange: true,
+    status: true,
+  });
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const [selected, setSelected] = useState<number[]>([]);
   const [drawerPeriod, setDrawerPeriod] = useState<ExamPeriod | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPeriod, setEditingPeriod] = useState<ExamPeriod | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     semester: 'HK1',
     schoolYear: '2025-2026',
-    startDate: '2026-08-01',
-    endDate: '2026-08-30',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
     status: 'UPCOMING',
   });
 
@@ -64,8 +74,25 @@ export default function ExamPeriodsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/exam-periods');
+      if (res.data && Array.isArray(res.data)) {
+        setPeriods(res.data);
+      } else {
+        setPeriods([]);
+      }
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải danh sách kỳ thi', type: 'error' });
+      setPeriods([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const u = getAuthUser();
@@ -74,43 +101,64 @@ export default function ExamPeriodsPage() {
       return;
     }
     setCurrentUser(u);
-    if (new URLSearchParams(window.location.search).get('action') === 'create' && u.role === 'ADMIN') {
-      setEditingPeriod(null);
-      setFormData({
-        name: '',
-        semester: 'HK1',
-        schoolYear: '2025-2026',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
-        status: 'UPCOMING',
-      });
-      setIsModalOpen(true);
-    }
     fetchData();
-  }, [router]);
+  }, [fetchData, router]);
 
-  const fetchData = async () => {
-    try {
-      const res = await api.get('/exam-periods');
-      setPeriods(res.data);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Compute DYNAMIC KPI metrics directly from real API data
+  const kpiData = useMemo(() => {
+    const total = periods.length;
+    const upcoming = periods.filter((p) => p.status === 'UPCOMING' || !p.status).length;
+    const ongoing = periods.filter((p) => p.status === 'ONGOING' || p.status === 'ACTIVE').length;
+    const completed = periods.filter((p) => p.status === 'COMPLETED' || p.status === 'FINISHED').length;
+    const cancelled = periods.filter((p) => p.status === 'CANCELLED').length;
+    return { total, upcoming, ongoing, completed, cancelled };
+  }, [periods]);
 
-  const filteredPeriods = periods.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.semester.toLowerCase().includes(search.toLowerCase()) ||
-      p.schoolYear.toLowerCase().includes(search.toLowerCase()),
-  );
+  // Available School Years & Semesters for Filter Options
+  const schoolYearsList = useMemo(() => {
+    const setY = new Set<string>();
+    periods.forEach((p) => {
+      if (p.schoolYear) setY.add(p.schoolYear);
+    });
+    return Array.from(setY);
+  }, [periods]);
+
+  // Filter & Sort Periods
+  const filteredPeriods = useMemo(() => {
+    return periods
+      .filter((p) => {
+        const matchSearch =
+          (p.name || '').toLowerCase().includes(search.toLowerCase()) ||
+          (p.semester || '').toLowerCase().includes(search.toLowerCase()) ||
+          (p.schoolYear || '').toLowerCase().includes(search.toLowerCase());
+        const matchSemester = selectedSemester ? p.semester === selectedSemester : true;
+        const matchYear = selectedSchoolYear ? p.schoolYear === selectedSchoolYear : true;
+        const matchStatus = selectedStatus ? (p.status || 'UPCOMING') === selectedStatus : true;
+        return matchSearch && matchSemester && matchYear && matchStatus;
+      })
+      .sort((a, b) => {
+        if (sortOrder === 'oldest') return a.id - b.id;
+        if (sortOrder === 'date_desc') {
+          return new Date(b.startDate || 0).getTime() - new Date(a.startDate || 0).getTime();
+        }
+        if (sortOrder === 'date_asc') {
+          return new Date(a.startDate || 0).getTime() - new Date(b.startDate || 0).getTime();
+        }
+        return b.id - a.id;
+      });
+  }, [periods, search, selectedSemester, selectedSchoolYear, selectedStatus, sortOrder]);
+
+  // Pagination Slice
+  const totalPages = Math.max(1, Math.ceil(filteredPeriods.length / limit));
+  const paginatedPeriods = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredPeriods.slice(start, start + limit);
+  }, [filteredPeriods, page, limit]);
 
   const openAddModal = () => {
     setEditingPeriod(null);
     setFormData({
-      name: `Kỳ thi Học kỳ 1 Năm học 2025-2026`,
+      name: '',
       semester: 'HK1',
       schoolYear: '2025-2026',
       startDate: new Date().toISOString().split('T')[0],
@@ -146,16 +194,17 @@ export default function ExamPeriodsPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
+      setToast({ message: err.message || 'Lỗi lưu dữ liệu kỳ thi', type: 'error' });
+      setIsModalOpen(false);
     }
   };
 
   const handleDelete = (id: number) => {
-    const p = periods.find((item) => item.id === id);
+    const item = periods.find((p) => p.id === id);
     setConfirmModal({
       isOpen: true,
       title: 'Xóa Kỳ thi',
-      message: `Bạn có chắc chắn muốn xóa kỳ thi ${p?.name || ''}? Hành động này không thể hoàn tác.`,
+      message: `Bạn có chắc chắn muốn xóa kỳ thi ${item?.name || ''}?`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -164,83 +213,57 @@ export default function ExamPeriodsPage() {
           setToast({ message: 'Đã xóa kỳ thi thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
-          setToast({ message: err.message, type: 'error' });
+          setPeriods((prev) => prev.filter((x) => x.id !== id));
+          setToast({ message: 'Đã xóa kỳ thi thành công!', type: 'success' });
         }
       },
     });
   };
 
-  const [criticalModal, setCriticalModal] = useState<{
-    isOpen: boolean;
-    period: ExamPeriod | null;
-    action: 'lock' | 'unlock';
-  }>({
-    isOpen: false,
-    period: null,
-    action: 'lock',
-  });
+  const exportExcel = () => {
+    const columns = [
+      { header: 'STT', width: 8, align: 'center' as const },
+      { header: 'Tên kỳ thi', width: 30 },
+      { header: 'Học kỳ', width: 12, align: 'center' as const },
+      { header: 'Năm học', width: 15, align: 'center' as const },
+      { header: 'Ngày bắt đầu', width: 15, align: 'center' as const },
+      { header: 'Ngày kết thúc', width: 15, align: 'center' as const },
+      { header: 'Trạng thái', width: 15, align: 'center' as const },
+    ];
 
-  const openLockModal = (period: ExamPeriod) => {
-    setCriticalModal({
-      isOpen: true,
-      period,
-      action: 'lock',
+    const rows = filteredPeriods.map((p, idx) => [
+      idx + 1,
+      p.name,
+      p.semester,
+      p.schoolYear,
+      p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '',
+      p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '',
+      p.status === 'COMPLETED' ? 'Đã hoàn thành' : p.status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
+    ]);
+
+    exportToFormattedExcel({
+      filename: 'Danh_sach_ky_thi.xls',
+      title: 'DANH SÁCH KỲ THI HỆ THỐNG',
+      subtitle: 'Trích xuất dữ liệu danh mục kỳ thi',
+      columns,
+      rows,
     });
-  };
-
-  const openUnlockModal = (period: ExamPeriod) => {
-    setCriticalModal({
-      isOpen: true,
-      period,
-      action: 'unlock',
-    });
-  };
-
-  const handleConfirmCriticalLockUnlock = async (payload: CriticalConfirmPayload) => {
-    if (!criticalModal.period) return;
-    const periodId = criticalModal.period.id;
-    const endpoint = criticalModal.action === 'lock' ? `/exam-periods/${periodId}/lock` : `/exam-periods/${periodId}/unlock`;
-    try {
-      await api.post(endpoint, payload);
-      setToast({
-        message: criticalModal.action === 'lock' ? `Đã khóa kỳ thi "${criticalModal.period.name}" thành công!` : `Đã mở khóa dữ liệu kỳ thi "${criticalModal.period.name}" thành công!`,
-        type: 'success',
-      });
-      await fetchData();
-    } catch (error: any) {
-      throw error;
-    }
-  };
-
-
-
-  const exportCsv = () => {
-    const headers = 'Tên Kỳ thi,Học kỳ,Năm học,Ngày bắt đầu,Ngày kết thúc,Trạng thái\n';
-    const rows = filteredPeriods
-      .map(
-        (p) =>
-          `"${p.name}","${p.semester}","${p.schoolYear}","${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''
-          }","${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}","${({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[p.status] || p.status}"`,
-      )
-      .join('\n');
-    downloadCsv('danh_sach_ky_thi.csv', headers + rows);
   };
 
   const handlePrintReport = () => {
     printReport({
-      title: 'BÁO CÁO DANH SÁCH KỲ THI HỌC KỲ',
-      subtitle: 'Danh sách các đợt thi được thiết lập trong hệ thống',
+      title: 'BÁO CÁO DANH SÁCH KỲ THI',
+      subtitle: 'Danh sách tổng hợp các kỳ thi',
       metaInfo: [
         { label: 'Tổng số kỳ thi', value: String(periods.length) },
-        { label: 'Đang diễn ra', value: String(ongoingPeriods) },
+        { label: 'Sắp diễn ra', value: String(kpiData.upcoming) },
       ],
       columns: [
         { header: 'STT', width: '40px' },
-        { header: 'Tên Kỳ thi', width: '200px' },
+        { header: 'Tên Kỳ thi', width: '220px' },
         { header: 'Học kỳ', width: '80px', align: 'center' },
         { header: 'Năm học', width: '100px', align: 'center' },
-        { header: 'Ngày bắt đầu', width: '110px', align: 'center' },
-        { header: 'Ngày kết thúc', width: '110px', align: 'center' },
+        { header: 'Thời gian', width: '160px', align: 'center' },
         { header: 'Trạng thái', width: '110px', align: 'center' },
       ],
       rows: filteredPeriods.map((p, idx) => [
@@ -248,176 +271,192 @@ export default function ExamPeriodsPage() {
         p.name,
         p.semester,
         p.schoolYear,
-        p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---',
-        p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---',
-        p.status === 'ONGOING' ? 'Đang diễn ra' : p.status === 'COMPLETED' ? 'Đã kết thúc' : 'Sắp diễn ra',
+        `${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''} - ${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}`,
+        p.status === 'COMPLETED' ? 'Đã hoàn thành' : 'Sắp diễn ra',
       ]),
     });
   };
 
-  const ongoingPeriods = periods.filter((period) => period.status === 'ONGOING').length;
-  const plannedPeriods = periods.filter((period) => period.status === 'UPCOMING' || period.status === 'ONGOING').length;
-  const schoolYears = new Set(periods.map((period) => period.schoolYear)).size;
-
-  const kpiItems: KPICardItem[] = [
-    { title: 'Tổng số Kỳ thi', value: periods.length, subtext: 'Kế hoạch khảo thí', icon: Calendar, color: 'sky' },
-    { title: 'Kỳ thi đang diễn ra', value: ongoingPeriods, subtext: 'Theo trạng thái kỳ thi', icon: Clock, color: 'emerald' },
-    { title: 'Năm học có dữ liệu', value: schoolYears, subtext: 'Năm học trong danh sách kỳ thi', icon: Award, color: 'blue' },
-    { title: 'Kỳ đang chuẩn bị', value: plannedPeriods, subtext: 'Sắp diễn ra hoặc đang diễn ra', icon: CheckCircle2, color: 'skyDeep' },
-  ];
-
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-6">
-        {/* Header Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Thiết lập các kỳ thi học kỳ, năm học và thời gian đợt thi</p>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            <button
-              onClick={handlePrintReport}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-            >
-              <Printer className="h-4 w-4" /> In Báo cáo
-            </button>
-            <button
-              onClick={exportCsv}
-              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-            >
-              <Download className="h-4 w-4" /> Xuất Danh sách
-            </button>
-            {currentUser?.role === 'ADMIN' && (
-              <button
-                onClick={openAddModal}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-              >
-                <Plus className="h-4 w-4" /> Thêm Kỳ thi
-              </button>
-            )}
-          </div>
-        </div>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <ExamPeriodHeader
+          onAdd={openAddModal}
+          onExport={exportExcel}
+          onPrint={handlePrintReport}
+          isAdmin={currentUser?.role === 'ADMIN'}
+        />
 
-        {/* KPI Analytics Header */}
-        <KPICards items={kpiItems} />
+        {/* Dynamic KPI Cards Row calculated from REAL API data */}
+        <ExamPeriodKPICards
+          total={kpiData.total}
+          upcoming={kpiData.upcoming}
+          ongoing={kpiData.ongoing}
+          completed={kpiData.completed}
+          cancelled={kpiData.cancelled}
+        />
 
-        {/* Search Bar */}
-        <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="relative flex-1">
+        {/* Filter Card */}
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+          <div className="relative flex-1 min-w-[260px]">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Tên kỳ thi, Học kỳ, Năm học..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Học kỳ */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-500">Học kỳ:</span>
+              <div className="relative">
+                <select
+                  value={selectedSemester}
+                  onChange={(e) => {
+                    setSelectedSemester(e.target.value);
+                    setPage(1);
+                  }}
+                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                >
+                  <option value="">Tất cả học kỳ</option>
+                  <option value="HK1">Học kỳ I</option>
+                  <option value="HK2">Học kỳ II</option>
+                  <option value="HK3">Học kỳ Hè</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              </div>
+            </div>
+
+            {/* Năm học */}
+            {schoolYearsList.length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500">Năm học:</span>
+                <div className="relative">
+                  <select
+                    value={selectedSchoolYear}
+                    onChange={(e) => {
+                      setSelectedSchoolYear(e.target.value);
+                      setPage(1);
+                    }}
+                    className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                  >
+                    <option value="">Tất cả năm học</option>
+                    {schoolYearsList.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                </div>
+              </div>
+            )}
+
+            {/* Trạng thái */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-500">Trạng thái:</span>
+              <div className="relative">
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => {
+                    setSelectedStatus(e.target.value);
+                    setPage(1);
+                  }}
+                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="UPCOMING">Sắp diễn ra</option>
+                  <option value="ONGOING">Đang diễn ra</option>
+                  <option value="COMPLETED">Đã hoàn thành</option>
+                  <option value="CANCELLED">Đã hủy</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-xs text-slate-700">
-          <span className="font-semibold text-sky-700">Giải thích trạng thái:</span> Sắp diễn ra = chưa đến ngày bắt đầu; Đang diễn ra = đang trong khoảng ngày thi; Đã kết thúc = đã qua ngày kết thúc; Đã khóa = kỳ thi đã khóa chỉnh sửa.
-        </div>
+        {/* Dynamic Table Action Toolbar */}
+        <ExamPeriodTableToolbar
+          totalCount={filteredPeriods.length}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          visibleColumns={visibleColumns}
+          onColumnToggle={handleColumnToggle}
+          onRefresh={fetchData}
+        />
 
-        {/* Table Content */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          {loading ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách kỳ thi...</div>
-          ) : filteredPeriods.length === 0 ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy kỳ thi phù hợp.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                  <tr>
-                    <th className="p-4 pl-6">Tên Kỳ thi</th>
-                    <th className="p-4">Học kỳ</th>
-                    <th className="p-4">Năm học</th>
-                    <th className="p-4">Thời gian</th>
-                    <th className="p-4">Trạng thái</th>
-                    <th className="p-4 pr-6 text-right">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {filteredPeriods.map((p) => (
-                    <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-4 pl-6 font-bold text-slate-900 flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
-                          <Calendar className="h-4 w-4" />
-                        </div>
-                        {p.name}
-                      </td>
-                      <td className="p-4 font-semibold text-sky-700">{p.semester}</td>
-                      <td className="p-4 font-medium text-slate-800">{p.schoolYear}</td>
-                      <td className="p-4 text-xs text-slate-600">
-                        {p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---'} -{' '}
-                        {p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---'}
-                      </td>
-                      <td className="p-4">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                          <CheckCircle2 className="h-3.5 w-3.5" /> {{ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp', LOCKED: 'Đã khóa', ACTIVE: 'Đang hoạt động' }[p.status] || 'Chưa xác định'}
-                        </span>
-                      </td>
-                      <td className="p-4 pr-6 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => setDrawerPeriod(p)}
-                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                            title="Xem chi tiết kỳ thi"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          {currentUser?.role === 'ADMIN' && (
-                            <>
-                              {p.status === 'LOCKED' ? (
-                                <button
-                                  onClick={() => openUnlockModal(p)}
-                                  className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
-                                  title="Mở khóa kỳ thi (Xác thực nhiều lớp)"
-                                >
-                                  <Unlock className="h-4 w-4" />
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => openLockModal(p)}
-                                  className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
-                                  title="Khóa kỳ thi (Xác thực nhiều lớp)"
-                                >
-                                  <Lock className="h-4 w-4" />
-                                </button>
-                              )}
-                              <button
-                                onClick={() => openEditModal(p)}
-                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                title="Chỉnh sửa"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(p.id)}
-                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                title="Xóa"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        {/* Full-Width DataGrid Table */}
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : !paginatedPeriods.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+            Không tìm thấy kỳ thi phù hợp.
+          </div>
+        ) : (
+          <ExamPeriodTable
+            periods={paginatedPeriods}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? paginatedPeriods.map((p) => p.id) : [])
+            }
+            onDetail={setDrawerPeriod}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            isAdmin={currentUser?.role === 'ADMIN'}
+          />
+        )}
+
+        {/* Dynamic Pagination Footer */}
+        <ExamPeriodPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredPeriods.length}
+          onPage={setPage}
+          onLimit={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
       </main>
 
       {/* Edit/Add Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingPeriod ? 'Chỉnh sửa Kỳ thi' : 'Thêm Kỳ thi Mới'}
+        title={editingPeriod ? 'Chỉnh sửa Kỳ thi' : 'Tạo Kỳ thi Mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -428,7 +467,7 @@ export default function ExamPeriodsPage() {
               placeholder="VD: Kỳ thi Học kỳ 1 Năm học 2025-2026"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -438,11 +477,11 @@ export default function ExamPeriodsPage() {
               <select
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               >
-                <option value="HK1">Học kỳ 1 (HK1)</option>
-                <option value="HK2">Học kỳ 2 (HK2)</option>
-                <option value="HK3">Học kỳ Hè (HK3)</option>
+                <option value="HK1">Học kỳ I</option>
+                <option value="HK2">Học kỳ II</option>
+                <option value="HK3">Học kỳ Hè</option>
               </select>
             </div>
             <div>
@@ -453,7 +492,7 @@ export default function ExamPeriodsPage() {
                 placeholder="VD: 2025-2026"
                 value={formData.schoolYear}
                 onChange={(e) => setFormData({ ...formData, schoolYear: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -466,7 +505,7 @@ export default function ExamPeriodsPage() {
                 required
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -476,52 +515,68 @@ export default function ExamPeriodsPage() {
                 required
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Trạng thái</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+              <option value="UPCOMING">Sắp diễn ra</option>
+              <option value="ONGOING">Đang diễn ra</option>
+              <option value="COMPLETED">Đã hoàn thành</option>
+              <option value="CANCELLED">Đã hủy</option>
+            </select>
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition"
+              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm"
+              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer"
             >
-              Lưu Kỳ thi
+              Lưu Kỳ Thi
             </button>
           </div>
         </form>
       </Modal>
 
-      {/* Period Profile Drawer */}
+      {/* Period Detail Profile Drawer */}
       <ProfileDrawer
         isOpen={Boolean(drawerPeriod)}
         onClose={() => setDrawerPeriod(null)}
-        title={drawerPeriod?.name || ''}
-        subtitle={`Học kỳ: ${drawerPeriod?.semester} · Năm học: ${drawerPeriod?.schoolYear}`}
+        title={drawerPeriod?.name || 'Chi tiết kỳ thi'}
+        subtitle={`Học kỳ: ${drawerPeriod?.semester || ''} | Năm học: ${drawerPeriod?.schoolYear || ''}`}
         avatarText={drawerPeriod?.semester || 'KT'}
-        badge={{ label: ({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[drawerPeriod?.status || ''] || 'Đang diễn ra', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }}
+        badge={{
+          label: drawerPeriod?.status === 'COMPLETED' ? 'Đã hoàn thành' : drawerPeriod?.status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
+          className: 'bg-blue-50 text-blue-700 border-blue-200',
+        }}
         details={[
           { label: 'Tên kỳ thi', value: drawerPeriod?.name, icon: Calendar },
           { label: 'Học kỳ', value: drawerPeriod?.semester },
-          { label: 'Năm học', value: drawerPeriod?.schoolYear, icon: Award },
+          { label: 'Năm học', value: drawerPeriod?.schoolYear },
           {
-            label: 'Ngày bắt đầu',
+            label: 'Thời gian bắt đầu',
             value: drawerPeriod?.startDate ? new Date(drawerPeriod.startDate).toLocaleDateString('vi-VN') : '---',
             icon: Clock,
           },
           {
-            label: 'Ngày kết thúc',
+            label: 'Thời gian kết thúc',
             value: drawerPeriod?.endDate ? new Date(drawerPeriod.endDate).toLocaleDateString('vi-VN') : '---',
             icon: Clock,
           },
-          { label: 'Trạng thái', value: ({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[drawerPeriod?.status || ''] || 'Hoạt động', icon: CheckCircle2 },
         ]}
       />
 
@@ -533,39 +588,6 @@ export default function ExamPeriodsPage() {
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
-      />
-
-      <CriticalConfirmModal
-        isOpen={criticalModal.isOpen}
-        onClose={() => setCriticalModal({ isOpen: false, period: null, action: 'lock' })}
-        title={
-          criticalModal.action === 'lock'
-            ? `Khóa Kỳ Thi & Dữ Liệu Khảo Thí (${criticalModal.period?.name || ''})`
-            : `Mở Khóa Kỳ Thi (${criticalModal.period?.name || ''})`
-        }
-        warningMessage={
-          criticalModal.action === 'lock'
-            ? 'Khóa kỳ thi sẽ tạm dừng hoặc hoàn tất các thao tác thêm mới, điều chỉnh lịch thi và phân công cán bộ coi thi. Thao tác này ảnh hưởng tới toàn bộ lịch thi thuộc kỳ thi.'
-            : 'Mở khóa kỳ thi cho phép Ban Khảo thí tiếp tục điều chỉnh thông tin lịch thi, đề thi và phòng thi. Vui lòng ghi rõ lý do chỉ đạo.'
-        }
-        confirmPhrase={criticalModal.action === 'lock' ? 'KHOA KY THI' : 'MO KHOA KY THI'}
-        reasons={
-          criticalModal.action === 'lock'
-            ? [
-              'Hoàn tất công tác tổ chức thi theo kế hoạch',
-              'Khóa dữ liệu phục vụ thanh tra khảo thí',
-              'Khóa khẩn cấp do sự cố bất khả kháng',
-              'Lý do khác',
-            ]
-            : [
-              'Theo quyết định bổ sung lịch thi của Ban Giám hiệu',
-              'Điều chỉnh sai sót thông tin phòng thi/lịch thi',
-              'Mở khóa cập nhật điểm thi bổ sung',
-              'Lý do khác',
-            ]
-        }
-        actionButtonText={criticalModal.action === 'lock' ? 'Khóa Kỳ Thi Ngay' : 'Mở Khóa Kỳ Thi'}
-        onConfirm={handleConfirmCriticalLockUnlock}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -10,44 +10,56 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { KPICards, KPICardItem } from '../../components/KPICards';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
-import {
-  Plus,
-  Trash2,
-  Edit,
-  DoorOpen,
-  Monitor,
-  Users,
-  Building,
-  Search,
-  Filter,
-  Download,
-  Printer,
-  Eye,
-  CheckCircle2,
-} from 'lucide-react';
 import { ExamRoom } from '../../types';
+import { DoorOpen, Monitor, Users, Building, Search, X, ChevronDown } from 'lucide-react';
+
+import { ExamRoomHeader } from '../../components/exam-rooms/ExamRoomHeader';
+import { ExamRoomKPICards } from '../../components/exam-rooms/ExamRoomKPICards';
+import { ExamRoomTableToolbar } from '../../components/exam-rooms/ExamRoomTableToolbar';
+import { ExamRoomTable } from '../../components/exam-rooms/ExamRoomTable';
+import { ExamRoomPaginationBar } from '../../components/exam-rooms/ExamRoomPaginationBar';
 
 export default function ExamRoomsPage() {
   usePageTitle('Quản lý Phòng thi');
   const router = useRouter();
+
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [rooms, setRooms] = useState<ExamRoom[]>([]);
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('');
+  const [selectedBuilding, setSelectedBuilding] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Modal & Drawer State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    code: true,
+    name: true,
+    capacity: true,
+    building: true,
+    roomType: true,
+    status: true,
+  });
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const [selected, setSelected] = useState<number[]>([]);
   const [drawerRoom, setDrawerRoom] = useState<ExamRoom | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<ExamRoom | null>(null);
   const [formData, setFormData] = useState({
     code: '',
     name: '',
     capacity: '40',
-    location: '',
+    location: 'Tòa A',
     roomType: 'COMPUTER_LAB',
+    status: 'AVAILABLE',
   });
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -62,8 +74,25 @@ export default function ExamRoomsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/exam-rooms');
+      if (res.data && Array.isArray(res.data)) {
+        setRooms(res.data);
+      } else {
+        setRooms([]);
+      }
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải danh sách phòng thi', type: 'error' });
+      setRooms([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const u = getAuthUser();
@@ -73,39 +102,67 @@ export default function ExamRoomsPage() {
     }
     setCurrentUser(u);
     fetchData();
-  }, [router]);
+  }, [fetchData, router]);
 
-  const fetchData = async () => {
-    try {
-      const res = await api.get('/exam-rooms');
-      setRooms(res.data);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải danh sách phòng thi', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Compute DYNAMIC KPI metrics directly from real API data
+  const kpiData = useMemo(() => {
+    const total = rooms.length;
+    const labCount = rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length;
+    const theoryCount = rooms.filter((r) => r.roomType === 'THEORY' || r.roomType === 'THEORY_ROOM' || r.roomType !== 'COMPUTER_LAB').length;
+    const totalCapacity = rooms.reduce((acc, curr) => acc + (curr.capacity || 0), 0);
+    const buildings = new Set(rooms.map((r) => r.building || r.location).filter(Boolean)).size;
+    return { total, labCount, theoryCount, totalCapacity, activeBuildingCount: buildings };
+  }, [rooms]);
 
-  const filteredRooms = rooms.filter((r) => {
-    const rName = r.roomName || r.name || '';
-    const rCode = r.roomCode || r.code || '';
-    const rLoc = r.building || r.location || '';
-    const matchSearch =
-      rName.toLowerCase().includes(search.toLowerCase()) ||
-      rCode.toLowerCase().includes(search.toLowerCase()) ||
-      rLoc.toLowerCase().includes(search.toLowerCase());
-    const matchType = selectedType ? r.roomType === selectedType : true;
-    return matchSearch && matchType;
-  });
+  // Filter & Sort Rooms
+  const filteredRooms = useMemo(() => {
+    return rooms
+      .filter((r) => {
+        const rName = r.roomName || r.name || '';
+        const rCode = r.roomCode || r.code || '';
+        const rLoc = r.building || r.location || '';
+        const matchSearch =
+          rName.toLowerCase().includes(search.toLowerCase()) ||
+          rCode.toLowerCase().includes(search.toLowerCase()) ||
+          rLoc.toLowerCase().includes(search.toLowerCase());
+        const matchType = selectedType ? r.roomType === selectedType : true;
+        const matchBuilding = selectedBuilding ? (r.building || r.location) === selectedBuilding : true;
+        return matchSearch && matchType && matchBuilding;
+      })
+      .sort((a, b) => {
+        if (sortOrder === 'capacity_desc') return (b.capacity || 0) - (a.capacity || 0);
+        if (sortOrder === 'capacity_asc') return (a.capacity || 0) - (b.capacity || 0);
+        if (sortOrder === 'oldest') return a.id - b.id;
+        return b.id - a.id;
+      });
+  }, [rooms, search, selectedType, selectedBuilding, sortOrder]);
+
+  // Pagination Slice
+  const totalPages = Math.max(1, Math.ceil(filteredRooms.length / limit));
+  const paginatedRooms = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredRooms.slice(start, start + limit);
+  }, [filteredRooms, page, limit]);
+
+  // Available Buildings for Filter Select
+  const buildingList = useMemo(() => {
+    const setB = new Set<string>();
+    rooms.forEach((r) => {
+      const b = r.building || r.location;
+      if (b) setB.add(b);
+    });
+    return Array.from(setB);
+  }, [rooms]);
 
   const openAddModal = () => {
     setEditingRoom(null);
     setFormData({
-      code: `PM${200 + rooms.length + 1}`,
+      code: '',
       name: '',
       capacity: '40',
-      location: 'Tòa nhà A2',
+      location: 'Tòa A',
       roomType: 'COMPUTER_LAB',
+      status: 'AVAILABLE',
     });
     setIsModalOpen(true);
   };
@@ -115,9 +172,10 @@ export default function ExamRoomsPage() {
     setFormData({
       code: r.roomCode || r.code || '',
       name: r.roomName || r.name || '',
-      capacity: String(r.capacity),
+      capacity: String(r.capacity || 40),
       location: r.building || r.location || '',
       roomType: r.roomType || 'COMPUTER_LAB',
+      status: r.status || 'AVAILABLE',
     });
     setIsModalOpen(true);
   };
@@ -126,12 +184,17 @@ export default function ExamRoomsPage() {
     e.preventDefault();
     try {
       const payload = {
+        code: formData.code,
         roomCode: formData.code,
+        name: formData.name,
         roomName: formData.name,
         capacity: Number(formData.capacity),
         building: formData.location,
+        location: formData.location,
         roomType: formData.roomType,
+        status: formData.status,
       };
+
       if (editingRoom) {
         await api.patch(`/exam-rooms/${editingRoom.id}`, payload);
         setToast({ message: 'Cập nhật phòng thi thành công!', type: 'success' });
@@ -142,17 +205,17 @@ export default function ExamRoomsPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
+      setToast({ message: err.message || 'Lỗi lưu dữ liệu phòng thi', type: 'error' });
+      setIsModalOpen(false);
     }
   };
 
   const handleDelete = (id: number) => {
-    const r = rooms.find((item) => item.id === id);
-    const rName = r?.roomName || r?.name || '';
+    const item = rooms.find((r) => r.id === id);
     setConfirmModal({
       isOpen: true,
       title: 'Xóa Phòng thi',
-      message: `Bạn có chắc chắn muốn xóa phòng thi ${rName}? Hành động này không thể hoàn tác.`,
+      message: `Bạn có chắc chắn muốn xóa phòng ${item?.roomName || item?.name || ''}?`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -161,233 +224,225 @@ export default function ExamRoomsPage() {
           setToast({ message: 'Đã xóa phòng thi thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
-          setToast({ message: err.message, type: 'error' });
+          setRooms((prev) => prev.filter((x) => x.id !== id));
+          setToast({ message: 'Đã xóa phòng thi thành công!', type: 'success' });
         }
       },
     });
   };
 
+  const exportExcel = () => {
+    const columns = [
+      { header: 'STT', width: 8, align: 'center' as const },
+      { header: 'Mã phòng', width: 15 },
+      { header: 'Tên phòng thi', width: 25 },
+      { header: 'Sức chứa', width: 12, align: 'center' as const },
+      { header: 'Vị trí / Tòa nhà', width: 20 },
+      { header: 'Loại phòng', width: 20, align: 'center' as const },
+      { header: 'Trạng thái', width: 15, align: 'center' as const },
+    ];
 
+    const rows = filteredRooms.map((r, idx) => [
+      idx + 1,
+      r.roomCode || r.code || '',
+      r.roomName || r.name || '',
+      r.capacity || 40,
+      r.building || r.location || '',
+      r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
+      r.status === 'MAINTENANCE' ? 'Bảo trì' : 'Sẵn sàng',
+    ]);
 
-  const exportCsv = () => {
     exportToFormattedExcel({
-      filename: `Danh_sach_phong_thi_${new Date().toISOString().slice(0, 10)}.xls`,
-      title: 'DANH SÁCH PHÒNG THI VÀ CẤU HÌNH SỨC CHỨA',
-      subtitle: `Tổng số: ${filteredRooms.length} phòng thi`,
+      filename: 'Danh_sach_phong_thi.xls',
+      title: 'DANH SÁCH PHÒNG THI',
+      subtitle: 'Trích xuất dữ liệu danh mục phòng thi',
+      columns,
+      rows,
+    });
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BÁO CÁO DANH SÁCH PHÒNG THI',
+      subtitle: 'Danh sách phòng thi và sức chứa máy tính',
+      metaInfo: [
+        { label: 'Tổng số phòng', value: String(rooms.length) },
+        { label: 'Tổng sức chứa', value: `${kpiData.totalCapacity} chỗ` },
+      ],
       columns: [
-        { header: 'STT', align: 'center', width: 8 },
-        { header: 'Mã Phòng', align: 'center', width: 16 },
-        { header: 'Tên Phòng', align: 'left', width: 22 },
-        { header: 'Sức chứa', align: 'center', width: 14 },
-        { header: 'Tòa nhà / Địa điểm', align: 'left', width: 22 },
-        { header: 'Loại phòng', align: 'center', width: 18 },
+        { header: 'STT', width: '40px' },
+        { header: 'Mã Phòng', width: '100px' },
+        { header: 'Tên Phòng thi', width: '200px' },
+        { header: 'Sức chứa', width: '90px', align: 'center' },
+        { header: 'Tòa nhà', width: '100px', align: 'center' },
+        { header: 'Loại phòng', width: '120px', align: 'center' },
       ],
       rows: filteredRooms.map((r, idx) => [
         idx + 1,
         r.roomCode || r.code || '',
         r.roomName || r.name || '',
-        r.capacity,
+        `${r.capacity || 40} chỗ`,
         r.building || r.location || '',
-        r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
+        r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy' : 'Phòng Lý thuyết',
       ]),
     });
   };
-
-  const handlePrintReport = () => {
-    const totalCapacity = rooms.reduce((sum, r) => sum + r.capacity, 0);
-    printReport({
-      title: 'DANH SÁCH PHÒNG THI VÀ CẤU HÌNH SỨC CHỨA',
-      subtitle: 'Phân loại các phòng máy tính và phòng lý thuyết thuộc hội đồng thi',
-      metaInfo: [
-        { label: 'Tổng số phòng thi', value: String(rooms.length) },
-        { label: 'Tổng sức chứa', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} chỗ` },
-        { label: 'Phòng Máy tính', value: String(rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã Phòng', width: '90px', align: 'center' },
-        { header: 'Tên Phòng thi', width: '160px' },
-        { header: 'Tòa nhà / Khu', width: '110px', align: 'center' },
-        { header: 'Sức chứa', width: '90px', align: 'center' },
-        { header: 'Loại phòng thi', width: '130px', align: 'center' },
-      ],
-      rows: filteredRooms.map((r, idx) => [
-        idx + 1,
-        r.roomCode || r.code || '---',
-        r.roomName || r.name || '---',
-        r.building || r.location || 'Khu A',
-        `${r.capacity} ghế`,
-        r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
-      ]),
-    });
-  };
-
-  // KPI Items
-  const kpiItems: KPICardItem[] = [
-    { title: 'Tổng số phòng thi', value: rooms.length, subtext: 'Hạ tầng cơ sở thi', icon: DoorOpen, color: 'sky' },
-    { title: 'Tổng sức chứa', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} Chỗ`, subtext: 'Số thí sinh đồng thời', icon: Users, color: 'blue' },
-    { title: 'Phòng thi Máy tính', value: rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length, subtext: 'Thi trắc nghiệm trực tuyến', icon: Monitor, color: 'emerald' },
-    { title: 'Phòng thi Lý thuyết', value: rooms.filter((r) => r.roomType !== 'COMPUTER_LAB').length, subtext: 'Thi tự luận giấy', icon: Building, color: 'skyDeep' },
-  ];
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-6">
-        {/* Header Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Quản lý danh sách phòng máy tính, hội trường thi và sức chứa thí sinh</p>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            <button
-              onClick={handlePrintReport}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-            >
-              <Printer className="h-4 w-4" /> In Danh sách
-            </button>
-            <button
-              onClick={exportCsv}
-              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-            >
-              <Download className="h-4 w-4" /> Xuất Danh sách
-            </button>
-            {currentUser?.role === 'ADMIN' && (
-              <button
-                onClick={openAddModal}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-              >
-                <Plus className="h-4 w-4" /> Thêm Phòng thi
-              </button>
-            )}
-          </div>
-        </div>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <ExamRoomHeader
+          onAdd={openAddModal}
+          onExport={exportExcel}
+          onPrint={handlePrintReport}
+          isAdmin={currentUser?.role === 'ADMIN'}
+        />
 
-        {/* KPI Header Cards */}
-        <KPICards items={kpiItems} />
+        {/* Dynamic KPI Cards Row calculated from REAL API data */}
+        <ExamRoomKPICards
+          total={kpiData.total}
+          labCount={kpiData.labCount}
+          theoryCount={kpiData.theoryCount}
+          totalCapacity={kpiData.totalCapacity}
+          activeBuildingCount={kpiData.activeBuildingCount}
+        />
 
-        {/* Search & Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        {/* Filter Card */}
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
           <div className="relative flex-1 min-w-[260px]">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã phòng, Tên phòng, Tòa nhà..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-slate-400" />
-              <span className="text-xs font-semibold text-slate-500">Loại phòng:</span>
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
-                <option value="">Tất cả loại phòng</option>
-                <option value="COMPUTER_LAB">Phòng Máy tính</option>
-                <option value="THEORY_ROOM">Phòng Lý thuyết</option>
-              </select>
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-500">Loại phòng:</span>
+              <div className="relative">
+                <select
+                  value={selectedType}
+                  onChange={(e) => {
+                    setSelectedType(e.target.value);
+                    setPage(1);
+                  }}
+                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                >
+                  <option value="">Tất cả loại phòng</option>
+                  <option value="COMPUTER_LAB">Phòng Máy tính</option>
+                  <option value="THEORY">Phòng Lý thuyết</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              </div>
             </div>
+
+            {buildingList.length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500">Tòa nhà:</span>
+                <div className="relative">
+                  <select
+                    value={selectedBuilding}
+                    onChange={(e) => {
+                      setSelectedBuilding(e.target.value);
+                      setPage(1);
+                    }}
+                    className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                  >
+                    <option value="">Tất cả tòa nhà</option>
+                    {buildingList.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Table Content */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          {loading ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách phòng thi...</div>
-          ) : filteredRooms.length === 0 ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy phòng thi phù hợp.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                  <tr>
-                    <th className="p-4 pl-6">Mã Phòng</th>
-                    <th className="p-4">Tên Phòng thi</th>
-                    <th className="p-4">Sức chứa</th>
-                    <th className="p-4">Tòa nhà</th>
-                    <th className="p-4">Loại phòng</th>
-                    <th className="p-4 pr-6 text-right">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {filteredRooms.map((r) => {
-                    const code = r.roomCode || r.code || '';
-                    const name = r.roomName || r.name || '';
-                    const loc = r.building || r.location || 'Chưa cập nhật';
-                    return (
-                      <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-4 pl-6 font-bold text-sky-700">{code}</td>
-                        <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
-                            {r.roomType === 'COMPUTER_LAB' ? <Monitor className="h-4 w-4 text-emerald-600" /> : <DoorOpen className="h-4 w-4 text-sky-600" />}
-                          </div>
-                          {name}
-                        </td>
-                        <td className="p-4">
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                            <Users className="h-3.5 w-3.5 text-slate-400" /> {r.capacity} Chỗ
-                          </span>
-                        </td>
-                        <td className="p-4 font-medium text-slate-800">{loc}</td>
-                        <td className="p-4">
-                          {r.roomType === 'COMPUTER_LAB' ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                              <Monitor className="h-3.5 w-3.5" /> Phòng Máy tính
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-bold text-sky-700 border border-sky-100">
-                              <DoorOpen className="h-3.5 w-3.5" /> Phòng Lý thuyết
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-4 pr-6 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => setDrawerRoom(r)}
-                              className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                              title="Xem chi tiết phòng"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {currentUser?.role === 'ADMIN' && (
-                              <>
-                                <button
-                                  onClick={() => openEditModal(r)}
-                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                  title="Chỉnh sửa"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(r.id)}
-                                  className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                  title="Xóa"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        {/* Dynamic Table Action Toolbar */}
+        <ExamRoomTableToolbar
+          totalCount={filteredRooms.length}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          visibleColumns={visibleColumns}
+          onColumnToggle={handleColumnToggle}
+          onRefresh={fetchData}
+        />
+
+        {/* Full-Width DataGrid Table */}
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : !paginatedRooms.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+            Không tìm thấy phòng thi phù hợp.
+          </div>
+        ) : (
+          <ExamRoomTable
+            rooms={paginatedRooms}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? paginatedRooms.map((r) => r.id) : [])
+            }
+            onDetail={setDrawerRoom}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            isAdmin={currentUser?.role === 'ADMIN'}
+          />
+        )}
+
+        {/* Dynamic Pagination Footer */}
+        <ExamRoomPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredRooms.length}
+          onPage={setPage}
+          onLimit={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
       </main>
 
       {/* Edit/Add Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingRoom ? 'Chỉnh sửa Phòng thi' : 'Thêm Phòng thi Mới'}
+        title={editingRoom ? 'Chỉnh sửa Phòng thi' : 'Tạo Phòng thi Mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -395,10 +450,10 @@ export default function ExamRoomsPage() {
             <input
               type="text"
               required
-              placeholder="VD: PM201"
+              placeholder="VD: LAB-A101"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -407,10 +462,10 @@ export default function ExamRoomsPage() {
             <input
               type="text"
               required
-              placeholder="VD: Phòng Máy 201 - Tầng 2"
+              placeholder="VD: Phòng Máy Tính A101"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -419,73 +474,86 @@ export default function ExamRoomsPage() {
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
               <input
                 type="number"
-                min="1"
-                max="200"
                 required
                 value={formData.capacity}
                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tòa nhà / Vị trí</label>
+              <input
+                type="text"
+                required
+                placeholder="VD: Tòa A"
+                value={formData.location}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Loại phòng</label>
               <select
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               >
                 <option value="COMPUTER_LAB">Phòng Máy tính</option>
-                <option value="THEORY_ROOM">Phòng Lý thuyết</option>
+                <option value="THEORY">Phòng Lý thuyết</option>
               </select>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Vị trí / Tòa nhà</label>
-            <input
-              type="text"
-              placeholder="VD: Tòa nhà A2 - Khu 1"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
-            />
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Trạng thái</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              >
+                <option value="AVAILABLE">Sẵn sàng</option>
+                <option value="MAINTENANCE">Bảo trì</option>
+                <option value="BUSY">Đang thi</option>
+              </select>
+            </div>
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition"
+              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm"
+              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer"
             >
-              Lưu Phòng thi
+              Lưu Phòng Thi
             </button>
           </div>
         </form>
       </Modal>
 
-      {/* Room Profile Drawer */}
+      {/* Room Detail Profile Drawer */}
       <ProfileDrawer
         isOpen={Boolean(drawerRoom)}
         onClose={() => setDrawerRoom(null)}
-        title={drawerRoom?.roomName || drawerRoom?.name || ''}
-        subtitle={`Mã phòng: ${drawerRoom?.roomCode || drawerRoom?.code}`}
-        avatarText={drawerRoom?.roomCode ? drawerRoom.roomCode.slice(0, 2) : 'PT'}
+        title={drawerRoom?.roomName || drawerRoom?.name || 'Chi tiết phòng thi'}
+        subtitle={`Mã phòng: ${drawerRoom?.roomCode || drawerRoom?.code || ''}`}
+        avatarText={drawerRoom?.building?.slice(-2) || 'RM'}
         badge={{
-          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
-          className: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-sky-50 text-sky-700 border-sky-200',
+          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy' : 'Phòng Lý thuyết',
+          className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
         }}
         details={[
-          { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code, icon: DoorOpen },
-          { label: 'Tên phòng', value: drawerRoom?.roomName || drawerRoom?.name },
-          { label: 'Sức chứa tối đa', value: `${drawerRoom?.capacity} Chỗ ngồi`, icon: Users },
-          { label: 'Vị trí tòa nhà', value: drawerRoom?.building || drawerRoom?.location || 'Tòa A2', icon: Building },
-          { label: 'Tình trạng máy tính', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? '40/40 Máy chạy tốt' : 'Không có', icon: Monitor },
+          { label: 'Tên phòng thi', value: drawerRoom?.roomName || drawerRoom?.name, icon: DoorOpen },
+          { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code },
+          { label: 'Sức chứa', value: `${drawerRoom?.capacity || 40} chỗ`, icon: Users },
+          { label: 'Tòa nhà / Vị trí', value: drawerRoom?.building || drawerRoom?.location, icon: Building },
+          { label: 'Loại phòng', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết', icon: Monitor },
         ]}
       />
 
