@@ -101,9 +101,9 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
             accept=".pdf,.docx,.txt,.md"
             onChange={e => handleFileUpload(e.target.files?.[0] || null)}
             disabled={uploading}
-            className="w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-600 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-violet-700 cursor-pointer"
+            className="w-full text-xs text-slate-600 file:mr-3 file:rounded-xl file:border-0 file:bg-[#1e66f5] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-blue-700 cursor-pointer"
           />
-          {uploadStatus && <p className="mt-1 text-xs text-violet-700 font-medium">{uploadStatus}</p>}
+          {uploadStatus && <p className="mt-1 text-xs text-blue-700 font-medium">{uploadStatus}</p>}
         </div>
 
         <div>
@@ -120,7 +120,7 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
         <button
           disabled={busy || !form.subjectId || uploading}
           onClick={generate}
-          className="w-full rounded-xl bg-violet-600 px-4 py-2.5 font-semibold text-white transition hover:bg-violet-700 disabled:opacity-50"
+          className="w-full rounded-xl bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-4 py-2.5 font-bold text-white shadow-sm transition disabled:opacity-50"
         >
           {busy ? '⏳ AI đang sinh câu hỏi...' : '✨ Tạo câu hỏi tự động bằng Gemini'}
         </button>

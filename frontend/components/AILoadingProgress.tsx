@@ -28,7 +28,7 @@ export function AILoadingProgress({
       {/* Top Header info */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white shadow-md shadow-violet-200">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#1e66f5] text-white shadow-md shadow-blue-200">
             <Sparkles className="h-5 w-5 animate-pulse" />
             <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white" />
           </div>

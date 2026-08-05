@@ -32,109 +32,101 @@ export function QuestionBulkAction({
   onAction,
   onClear,
 }: QuestionBulkActionProps) {
-  if (totalCount === 0) return null;
+  // Only display the floating bottom bar when at least 1 item is checked
+  if (selectedCount === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sky-200 bg-sky-50/90 p-3.5 shadow-sm text-xs font-semibold animate-in fade-in duration-200">
-      {/* Selection Controls: Select All / Cancel All Buttons */}
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[92vw] bg-white/95 border border-slate-200/90 shadow-2xl rounded-2xl p-2.5 px-4 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 text-xs font-semibold animate-in slide-in-from-bottom-5 duration-300">
+      {/* Left side counter & clear buttons */}
+      <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3">
+        <span className="flex items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200 px-3 py-1.5 font-bold text-[#1e66f5]">
+          <CheckSquare className="h-4 w-4" />
+          <span>Đã chọn {selectedCount} / {totalCount}</span>
+        </span>
+
         <button
           type="button"
           onClick={onToggleAll}
-          className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 font-bold shadow-2xs transition ${
-            allSelected
-              ? 'bg-sky-600 border-sky-600 text-white hover:bg-sky-700'
-              : 'bg-white border-sky-300 text-sky-800 hover:bg-sky-100'
-          }`}
+          className="text-xs font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1 rounded-lg hover:bg-slate-100 transition"
         >
-          <CheckSquare className="h-4 w-4" />
-          {allSelected ? 'Đang chọn tất cả' : `Chọn tất cả (${totalCount} câu)`}
+          {allSelected ? 'Bỏ chọn' : 'Chọn tất cả'}
         </button>
 
-        {selectedCount > 0 && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-xs font-semibold text-rose-600 hover:text-rose-800 px-2.5 py-1 rounded-lg hover:bg-rose-50 transition flex items-center gap-1"
+        >
+          <X className="h-3.5 w-3.5" /> Hủy chọn
+        </button>
+      </div>
+
+      {/* Right side bulk action buttons */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider mr-1 hidden sm:inline">
+          Thao tác:
+        </span>
+
+        {canSubmit && (
           <button
             type="button"
-            onClick={onClear}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-2 font-bold text-slate-700 hover:bg-slate-100 shadow-2xs transition"
+            onClick={() => onAction('SUBMIT')}
+            className="flex items-center gap-1.5 rounded-xl bg-[#1e66f5] hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
           >
-            <X className="h-4 w-4 text-slate-500" />
-            Hủy chọn tất cả
+            <Send className="h-3.5 w-3.5" /> Gửi duyệt ({selectedCount})
           </button>
         )}
 
-        {selectedCount > 0 && (
-          <span className="text-sky-800 font-extrabold bg-sky-100 border border-sky-300 px-3 py-1.5 rounded-xl text-xs">
-            Đã chọn {selectedCount} / {totalCount}
-          </span>
+        {canApprove && (
+          <button
+            type="button"
+            onClick={() => onAction('APPROVE')}
+            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt ({selectedCount})
+          </button>
+        )}
+
+        {canRestore && (
+          <button
+            type="button"
+            onClick={() => onAction('RESTORE')}
+            className="flex items-center gap-1.5 rounded-xl bg-[#1e66f5] hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+          >
+            <RotateCcw className="h-3.5 w-3.5" /> Khôi phục ({selectedCount})
+          </button>
+        )}
+
+        {canReject && (
+          <button
+            type="button"
+            onClick={() => onAction('REJECT')}
+            className="flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+          >
+            <XCircle className="h-3.5 w-3.5" /> Từ chối ({selectedCount})
+          </button>
+        )}
+
+        {canArchive && (
+          <button
+            type="button"
+            onClick={() => onAction('ARCHIVE')}
+            className="flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 font-semibold transition"
+          >
+            <Archive className="h-3.5 w-3.5 text-indigo-600" /> Lưu trữ
+          </button>
+        )}
+
+        {canDelete && (
+          <button
+            type="button"
+            onClick={() => onAction('DELETE')}
+            className="flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Xóa ({selectedCount})
+          </button>
         )}
       </div>
-
-      {/* Action Buttons for Selected Items */}
-      {selectedCount > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-slate-500 text-[11px] font-bold">Thao tác hàng loạt:</span>
-
-          {canSubmit && (
-            <button
-              type="button"
-              onClick={() => onAction('SUBMIT')}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3.5 py-1.5 font-bold shadow-2xs transition"
-            >
-              <Send className="h-3.5 w-3.5" /> Gửi duyệt hàng loạt
-            </button>
-          )}
-
-          {canApprove && (
-            <button
-              type="button"
-              onClick={() => onAction('APPROVE')}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt hàng loạt
-            </button>
-          )}
-
-          {canRestore && (
-            <button
-              type="button"
-              onClick={() => onAction('RESTORE')}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-            >
-              <RotateCcw className="h-3.5 w-3.5" /> Khôi phục hàng loạt
-            </button>
-          )}
-
-          {canReject && (
-            <button
-              type="button"
-              onClick={() => onAction('REJECT')}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-            >
-              <XCircle className="h-3.5 w-3.5" /> Từ chối hàng loạt
-            </button>
-          )}
-
-          {canArchive && (
-            <button
-              type="button"
-              onClick={() => onAction('ARCHIVE')}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-            >
-              <Archive className="h-3.5 w-3.5" /> Lưu trữ
-            </button>
-          )}
-
-          {canDelete && (
-            <button
-              type="button"
-              onClick={() => onAction('DELETE')}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
-            >
-              <Trash2 className="h-3.5 w-3.5" /> Xóa đã chọn
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }
