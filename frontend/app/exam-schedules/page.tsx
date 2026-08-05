@@ -62,6 +62,7 @@ export default function ExamSchedulesPage() {
     startTime: '08:00',
     endTime: '09:30',
     examType: 'TRAC_NGHIEM',
+    mode: 'OFFICIAL',
     note: '',
   });
 
@@ -108,6 +109,7 @@ export default function ExamSchedulesPage() {
           startTime: '08:00',
           endTime: '09:30',
           examType: 'TRAC_NGHIEM',
+          mode: 'OFFICIAL',
           note: 'Thi trắc nghiệm máy tính',
         });
         setIsModalOpen(true);
@@ -156,6 +158,7 @@ export default function ExamSchedulesPage() {
       startTime: '08:00',
       endTime: '09:30',
       examType: 'TRAC_NGHIEM',
+      mode: 'OFFICIAL',
       note: 'Thi trắc nghiệm máy tính',
     });
     setIsModalOpen(true);
@@ -172,6 +175,7 @@ export default function ExamSchedulesPage() {
       startTime: sch.startTime || '08:00',
       endTime: sch.endTime || '09:30',
       examType: sch.examType || 'TRAC_NGHIEM',
+      mode: (sch as any).mode || 'OFFICIAL',
       note: sch.note || '',
     });
     setIsModalOpen(true);
@@ -628,6 +632,9 @@ export default function ExamSchedulesPage() {
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Hình thức thi</label>
               <select
@@ -637,6 +644,18 @@ export default function ExamSchedulesPage() {
               >
                 <option value="TRAC_NGHIEM">Trắc nghiệm trực tuyến</option>
                 <option value="TU_LUAN">Tự luận Giấy</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Chế độ thi</label>
+              <select
+                value={formData.mode}
+                onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none font-bold"
+              >
+                <option value="OFFICIAL">🔴 Thi chính thức (OFFICIAL)</option>
+                <option value="MOCK">🟡 Thi thử (MOCK)</option>
+                <option value="PRACTICE">🟢 Luyện tập (PRACTICE)</option>
               </select>
             </div>
           </div>

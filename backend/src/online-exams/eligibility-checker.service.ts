@@ -174,7 +174,10 @@ export class EligibilityCheckerService {
       }
     }
 
-    if (!isAssigned) {
+    // Nếu là chế độ Thi thử (MOCK), cho phép sinh viên dự thi mà không cần phân phòng thi cố định
+    const isMock = schedule.mode === 'MOCK';
+
+    if (!isAssigned && !isMock) {
       return this.fail(
         EligibilityErrorCode.STUDENT_NOT_ELIGIBLE,
         'Sinh viên không có tên trong danh sách dự thi ca thi này',

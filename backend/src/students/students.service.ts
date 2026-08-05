@@ -143,9 +143,11 @@ export class StudentsService {
   async getPersonalSchedule(userId: number) {
     const student = await this.prisma.student.findUnique({
       where: { userId },
+      include: { studentSubjects: true },
     });
     if (!student) throw new NotFoundException('Không tìm thấy thông tin sinh viên.');
 
+    // 1. Lấy lịch thi chính thức OFFICIAL (Bắt buộc đã xếp phòng thi & SBD)
     const roomStudents = await this.prisma.examRoomStudent.findMany({
       where: {
         studentId: student.id,
@@ -173,13 +175,14 @@ export class StudentsService {
       },
     });
 
-    return roomStudents.map((rs) => ({
+    const officialSchedules = roomStudents.map((rs) => ({
       id: rs.id,
       scheduleId: rs.examScheduleRoom.examSchedule.id,
       examScheduleId: rs.examScheduleRoom.examSchedule.id,
       examNumber: rs.examNumber,
       seatNumber: rs.seatNumber,
       status: rs.status,
+      mode: rs.examScheduleRoom.examSchedule.mode || 'OFFICIAL',
       subjectCode: rs.examScheduleRoom.examSchedule.subject.subjectCode,
       subjectName: rs.examScheduleRoom.examSchedule.subject.subjectName,
       credits: rs.examScheduleRoom.examSchedule.subject.credits,
@@ -192,6 +195,47 @@ export class StudentsService {
       building: rs.examScheduleRoom.room.building,
       periodName: rs.examScheduleRoom.examSchedule.examPeriod.name,
     }));
+
+    // 2. Lấy danh sách các đợt THI THỬ (MOCK) do Trường/Bộ môn mở tự do (Không bắt buộc xếp phòng/SBD)
+    const mockSchedules = await this.prisma.examSchedule.findMany({
+      where: {
+        mode: 'MOCK',
+        status: { not: 'CANCELLED' },
+        deletedAt: null,
+      },
+      include: {
+        subject: true,
+        examPeriod: true,
+      },
+      orderBy: { examDate: 'asc' },
+    });
+
+    // Gom các ca Thi thử / Luyện tập tự do (Tránh trùng với officialSchedules)
+    const existingScheduleIds = new Set(officialSchedules.map((s) => s.scheduleId));
+    const extraMockSchedules = mockSchedules
+      .filter((m) => !existingScheduleIds.has(m.id))
+      .map((m) => ({
+        id: `mock-${m.id}`,
+        scheduleId: m.id,
+        examScheduleId: m.id,
+        examNumber: 'Thi thử tự do',
+        seatNumber: 'Tự do',
+        status: 'OPEN',
+        mode: m.mode,
+        subjectCode: m.subject.subjectCode,
+        subjectName: m.subject.subjectName,
+        credits: m.subject.credits,
+        examDate: m.examDate,
+        startTime: m.startTime,
+        endTime: m.endTime,
+        examType: m.examType,
+        roomCode: 'ONLINE',
+        roomName: 'Thi thử trực tuyến tự do',
+        building: 'Online',
+        periodName: m.examPeriod.name,
+      }));
+
+    return [...officialSchedules, ...extraMockSchedules];
   }
 
   async getPersonalCurriculum(userId: number) {

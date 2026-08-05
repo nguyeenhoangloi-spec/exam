@@ -7,6 +7,7 @@ import {
   BarChart3,
   BookMarked,
   BookOpen,
+  Brain,
   Building2,
   Calendar,
   Clock,
@@ -65,6 +66,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
   const teacherNav = [
     { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
+    { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
+    { name: 'Tạo đề thi', href: '/exam-papers', icon: FileText },
     { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
   ];
   const studentNav = [

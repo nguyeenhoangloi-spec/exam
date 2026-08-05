@@ -5,6 +5,8 @@ const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
 const statuses = ['SCHEDULED', 'ONGOING', 'COMPLETED', 'CANCELLED', 'LOCKED'] as const;
 const examTypes = ['TRAC_NGHIEM', 'TU_LUAN'] as const;
 
+const modes = ['MOCK', 'OFFICIAL'] as const;
+
 export class CreateExamScheduleDto {
   @Type(() => Number)
   @IsInt()
@@ -28,6 +30,10 @@ export class CreateExamScheduleDto {
   @IsOptional()
   @IsIn(examTypes)
   examType?: (typeof examTypes)[number];
+
+  @IsOptional()
+  @IsIn(modes)
+  mode?: (typeof modes)[number];
 
   @IsOptional()
   @IsIn(statuses)
@@ -69,6 +75,10 @@ export class UpdateExamScheduleDto {
   examType?: (typeof examTypes)[number];
 
   @IsOptional()
+  @IsIn(modes)
+  mode?: (typeof modes)[number];
+
+  @IsOptional()
   @IsIn(statuses)
   status?: (typeof statuses)[number];
 
@@ -84,6 +94,10 @@ export class FindExamSchedulesDto {
   @IsInt()
   @Min(1)
   examPeriodId?: number;
+
+  @IsOptional()
+  @IsIn(modes)
+  mode?: (typeof modes)[number];
 }
 
 export class ReopenEntryDto {

@@ -377,6 +377,7 @@ export class ExamSchedulesService {
           startTime: data.startTime,
           endTime: data.endTime,
           examType: data.examType || 'TRAC_NGHIEM',
+          mode: (data.mode as any) || 'OFFICIAL',
           status: data.status || 'SCHEDULED',
           note: data.note,
         },
@@ -440,7 +441,7 @@ export class ExamSchedulesService {
       const schedule = await tx.examSchedule.update({
         where: { id },
         data: {
-          ...data,
+          ...(data as any),
           examDate: data.examDate ? this.dayRange(data.examDate).start : undefined,
         },
         include: { examPeriod: true, subject: true },

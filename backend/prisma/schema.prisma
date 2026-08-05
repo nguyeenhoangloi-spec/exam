@@ -58,6 +58,11 @@ enum ExamPaperStatus {
   ARCHIVED
 }
 
+enum ExamMode {
+  MOCK
+  OFFICIAL
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
@@ -156,11 +161,11 @@ model Subject {
   departmentId Int
   department   Department @relation(fields: [departmentId], references: [id])
 
-  studentSubjects StudentSubject[]
-  examSchedules   ExamSchedule[]
-  questions       Question[]
-  chapters        Chapter[]
-  majorSubjects   MajorSubject[]
+  studentSubjects  StudentSubject[]
+  examSchedules    ExamSchedule[]
+  questions        Question[]
+  chapters         Chapter[]
+  majorSubjects    MajorSubject[]
 
   @@map("subjects")
 }
@@ -235,6 +240,7 @@ model ExamSchedule {
   startTime    String
   endTime      String
   examType     String     @default("TRAC_NGHIEM")
+  mode         ExamMode   @default(OFFICIAL)
   status       String     @default("SCHEDULED")
   note         String?
   deletedAt    DateTime?
@@ -487,6 +493,7 @@ model OnlineExamConfig {
   examSchedule   ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
   examPaperId    Int
   examPaper      ExamPaper    @relation(fields: [examPaperId], references: [id])
+  mode           ExamMode     @default(OFFICIAL)
 
   // --- Cài đặt thiết bị & an ninh ---
   requireWebcam        Boolean @default(false)
@@ -549,6 +556,7 @@ model ExamAttempt {
   onlineExamConfig   OnlineExamConfig @relation(fields: [onlineExamConfigId], references: [id])
   studentId          Int
   student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  mode               ExamMode         @default(OFFICIAL)
 
   attemptNumber Int           @default(1)
   attemptToken  String        @unique

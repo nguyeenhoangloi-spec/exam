@@ -6,7 +6,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CreateSubjectDto, UpdateSubjectDto } from './dto/subject.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+@Roles('ADMIN', 'TEACHER', 'STUDENT')
 @Controller('subjects')
 export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService) {}

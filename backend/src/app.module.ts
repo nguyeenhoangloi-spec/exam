@@ -19,7 +19,6 @@ import { AuditModule } from './audit/audit.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { OnlineExamsModule } from './online-exams/online-exams.module';
 import { ProctorModule } from './proctor/proctor.module';
-
 import { SecurityModule } from './common/security/security.module';
 
 @Module({

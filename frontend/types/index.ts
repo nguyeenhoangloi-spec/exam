@@ -198,6 +198,7 @@ export interface PersonalScheduleItem {
   startTime: string;
   endTime: string;
   examType: string;
+  mode?: 'OFFICIAL' | 'MOCK' | 'PRACTICE' | string;
   roomCode: string;
   roomName: string;
   building: string;

@@ -165,7 +165,22 @@ export default function StudentExamSchedulePage() {
                   <span className="text-xs font-bold text-sky-700 bg-sky-50 border border-sky-100 px-3 py-1 rounded-full">
                     {item.subjectCode}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">{item.periodName}</span>
+                  <div className="flex items-center gap-1.5">
+                    {item.mode === 'MOCK' ? (
+                      <span className="text-[11px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                        🟡 THI THỬ
+                      </span>
+                    ) : item.mode === 'PRACTICE' ? (
+                      <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                        🟢 LUYỆN TẬP
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-extrabold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">
+                        🔴 CHÍNH THỨC
+                      </span>
+                    )}
+                    <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">{item.periodName}</span>
+                  </div>
                 </div>
 
                 <h3 className="text-base font-bold text-slate-900 line-clamp-1">{item.subjectName}</h3>
@@ -188,14 +203,14 @@ export default function StudentExamSchedulePage() {
                   <div className="flex items-center gap-2.5">
                     <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
                     <span>
-                      Phòng thi: <strong className="text-emerald-700 font-bold">{item.roomName || item.roomCode}</strong> {item.building && `(${item.building})`}
+                      Phòng thi: <strong className="text-emerald-700 font-bold">{item.roomName || item.roomCode || 'Tự do'}</strong> {item.building && `(${item.building})`}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2.5">
                     <Ticket className="w-4 h-4 text-slate-400 shrink-0" />
                     <span>
-                      SBD: <strong className="text-indigo-700 font-bold">{item.examNumber || item.registrationNumber || 'Chưa cấp'}</strong> · Ghế: <strong className="text-indigo-700 font-bold">{item.seatNumber || 'Chưa xếp'}</strong>
+                      SBD: <strong className="text-indigo-700 font-bold">{item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Thi thử tự do' : 'Chưa cấp')}</strong> · Ghế: <strong className="text-indigo-700 font-bold">{item.seatNumber || 'Chưa xếp'}</strong>
                     </span>
                   </div>
                 </div>
@@ -204,9 +219,11 @@ export default function StudentExamSchedulePage() {
                   {item.examType === 'TRAC_NGHIEM' && (
                     <button
                       onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                      className="flex items-center gap-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 px-3.5 py-1.5 rounded-xl shadow-xs transition"
+                      className={`flex items-center gap-1.5 text-xs font-bold text-white px-3.5 py-1.5 rounded-xl shadow-xs transition ${
+                        item.mode === 'MOCK' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-indigo-600 hover:bg-indigo-500'
+                      }`}
                     >
-                      <span>Thi Trực Tuyến</span>
+                      <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Thi Trực Tuyến'}</span>
                     </button>
                   )}
                   <button
