@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
-import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
@@ -169,16 +169,27 @@ export default function ExamRoomsPage() {
 
 
   const exportCsv = () => {
-    const headers = 'Mã Phòng,Tên Phòng,Sức chứa,Tòa nhà,Loại phòng\n';
-    const rows = filteredRooms
-      .map(
-        (r) =>
-          `"${r.roomCode || r.code || ''}","${r.roomName || r.name || ''}","${r.capacity}","${r.building || r.location || ''}","${
-            r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết'
-          }"`,
-      )
-      .join('\n');
-    downloadCsv('danh_sach_phong_thi.csv', headers + rows);
+    exportToFormattedExcel({
+      filename: `Danh_sach_phong_thi_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'DANH SÁCH PHÒNG THI VÀ CẤU HÌNH SỨC CHỨA',
+      subtitle: `Tổng số: ${filteredRooms.length} phòng thi`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Mã Phòng', align: 'center', width: 16 },
+        { header: 'Tên Phòng', align: 'left', width: 22 },
+        { header: 'Sức chứa', align: 'center', width: 14 },
+        { header: 'Tòa nhà / Địa điểm', align: 'left', width: 22 },
+        { header: 'Loại phòng', align: 'center', width: 18 },
+      ],
+      rows: filteredRooms.map((r, idx) => [
+        idx + 1,
+        r.roomCode || r.code || '',
+        r.roomName || r.name || '',
+        r.capacity,
+        r.building || r.location || '',
+        r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
+      ]),
+    });
   };
 
   const handlePrintReport = () => {

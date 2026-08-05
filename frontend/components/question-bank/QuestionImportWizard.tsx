@@ -133,7 +133,7 @@ export function QuestionImportWizard({
         // Request AI Document Question Extraction using extracted text
         const r = await api.post('/questions/ai-generate', {
           subjectId: Number(meta.subjectId),
-          chapterId: meta.chapterId,
+          ...(meta.chapterId ? { chapterId: meta.chapterId } : {}),
           type: meta.defaultType,
           difficulty: meta.defaultDifficulty,
           bloomLevel: meta.defaultBloomLevel,

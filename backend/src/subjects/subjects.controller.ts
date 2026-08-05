@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { SubjectsService } from './subjects.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -24,6 +24,16 @@ export class SubjectsController {
   @Get(':id/chapters')
   findChapters(@Param('id', ParseIntPipe) id: number) {
     return this.subjectsService.findChapters(id);
+  }
+
+  @Get(':id/enrollments')
+  getEnrollments(@Param('id', ParseIntPipe) id: number, @Query('semester') semester?: string, @Query('schoolYear') schoolYear?: string) {
+    return this.subjectsService.getEnrollments(id, semester, schoolYear);
+  }
+
+  @Post(':id/enroll-students')
+  enrollStudents(@Param('id', ParseIntPipe) id: number, @Body() body: { studentIds: number[]; semester: string; schoolYear: string }) {
+    return this.subjectsService.enrollStudents(id, body);
   }
 
   @Roles('ADMIN')

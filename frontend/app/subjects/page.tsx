@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
-import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
@@ -27,6 +27,7 @@ import {
   Eye,
   CheckCircle2,
   HelpCircle,
+  UserPlus,
 } from 'lucide-react';
 import { Subject, Department } from '../../types';
 
@@ -38,6 +39,11 @@ export default function SubjectsPage() {
   const [search, setSearch] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState('');
   const [loading, setLoading] = useState(true);
+  const [enrollSubject, setEnrollSubject] = useState<Subject | null>(null);
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedStudentIds, setSelectedStudentIds] = useState<number[]>([]);
+  const [enrollData, setEnrollData] = useState({ semester: 'HK1', schoolYear: '2025-2026' });
+  const [enrollLoading, setEnrollLoading] = useState(false);
 
   // Modal & Drawer State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -120,6 +126,36 @@ export default function SubjectsPage() {
     setIsModalOpen(true);
   };
 
+  const openEnrollModal = async (subject: Subject) => {
+    setEnrollSubject(subject);
+    setSelectedStudentIds([]);
+    try {
+      const [response, enrolled] = await Promise.all([
+        api.get('/students'),
+        api.get(`/subjects/${subject.id}/enrollments`, { params: enrollData }),
+      ]);
+      setStudents(response.data || []);
+      setSelectedStudentIds((enrolled.data || []).map((item: any) => item.studentId));
+    } catch (error: any) {
+      setToast({ message: error.message || 'Không thể tải danh sách sinh viên.', type: 'error' });
+    }
+  };
+
+  const submitEnrollment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!enrollSubject || !selectedStudentIds.length) return setToast({ message: 'Vui lòng chọn sinh viên.', type: 'error' });
+    setEnrollLoading(true);
+    try {
+      const response = await api.post(`/subjects/${enrollSubject.id}/enroll-students`, { ...enrollData, studentIds: selectedStudentIds });
+      setToast({ message: `Đã gán ${response.data.successCount} sinh viên vào môn ${enrollSubject.subjectName}.`, type: 'success' });
+      setEnrollSubject(null);
+    } catch (error: any) {
+      setToast({ message: error.message || 'Không thể gán sinh viên.', type: 'error' });
+    } finally {
+      setEnrollLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -165,14 +201,25 @@ export default function SubjectsPage() {
 
 
   const exportCsv = () => {
-    const headers = 'Mã Môn,Tên Môn học,Số tín chỉ,Khoa quản lý\n';
-    const rows = filteredSubjects
-      .map(
-        (s) =>
-          `"${s.subjectCode}","${s.subjectName}","${s.credits}","${s.department?.name || ''}"`,
-      )
-      .join('\n');
-    downloadCsv('danh_sach_mon_hoc.csv', headers + rows);
+    exportToFormattedExcel({
+      filename: `Danh_sach_mon_hoc_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'DANH MỤC MÔN HỌC GIẢNG DẠY',
+      subtitle: `Tổng số: ${filteredSubjects.length} môn học`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Mã Môn', align: 'center', width: 16 },
+        { header: 'Tên Môn học', align: 'left', width: 30 },
+        { header: 'Số tín chỉ', align: 'center', width: 12 },
+        { header: 'Khoa quản lý', align: 'left', width: 24 },
+      ],
+      rows: filteredSubjects.map((s, idx) => [
+        idx + 1,
+        s.subjectCode,
+        s.subjectName,
+        s.credits,
+        s.department?.name || '',
+      ]),
+    });
   };
 
   const handlePrintReport = () => {
@@ -321,6 +368,13 @@ export default function SubjectsPage() {
                             {currentUser?.role === 'ADMIN' && (
                               <>
                                 <button
+                                  onClick={() => openEnrollModal(s)}
+                                  className="rounded-lg p-1.5 text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-600"
+                                  title="Gán sinh viên vào môn học"
+                                >
+                                  <UserPlus className="h-4 w-4" />
+                                </button>
+                                <button
                                   onClick={() => openEditModal(s)}
                                   className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
                                   title="Chỉnh sửa"
@@ -423,6 +477,35 @@ export default function SubjectsPage() {
             >
               Lưu Môn học
             </button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal
+        isOpen={Boolean(enrollSubject)}
+        onClose={() => setEnrollSubject(null)}
+        title={enrollSubject ? `Gán sinh viên - ${enrollSubject.subjectName}` : 'Gán sinh viên'}
+      >
+        <form onSubmit={submitEnrollment} className="space-y-4">
+          <p className="rounded-xl bg-sky-50 p-3 text-sm text-sky-800">Các sinh viên đã được gán trong kỳ này sẽ được tích sẵn. Hiện có <strong>{selectedStudentIds.length}</strong> sinh viên được chọn.</p>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="text-sm font-semibold text-slate-700">Học kỳ
+              <input value={enrollData.semester} onChange={(e) => setEnrollData({ ...enrollData, semester: e.target.value })} className="mt-1 w-full rounded-xl border p-2.5 font-normal" placeholder="HK1" />
+            </label>
+            <label className="text-sm font-semibold text-slate-700">Năm học
+              <input value={enrollData.schoolYear} onChange={(e) => setEnrollData({ ...enrollData, schoolYear: e.target.value })} className="mt-1 w-full rounded-xl border p-2.5 font-normal" placeholder="2025-2026" />
+            </label>
+          </div>
+          <div className="max-h-72 space-y-1 overflow-y-auto rounded-xl border border-slate-200 p-2">
+            {students.map((student) => <label key={student.id} className="flex cursor-pointer items-center gap-2 rounded-lg p-2 text-sm hover:bg-slate-50">
+              <input type="checkbox" checked={selectedStudentIds.includes(student.id)} onChange={(e) => setSelectedStudentIds((ids) => e.target.checked ? [...ids, student.id] : ids.filter((id) => id !== student.id))} />
+              <span className="font-semibold">{student.studentCode}</span><span>{student.fullName}</span>
+            </label>)}
+            {!students.length && <p className="p-4 text-center text-sm text-slate-500">Chưa có sinh viên.</p>}
+          </div>
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={() => setEnrollSubject(null)} className="rounded-xl border px-4 py-2 text-sm">Hủy</button>
+            <button type="submit" disabled={enrollLoading} className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{enrollLoading ? 'Đang lưu...' : `Gán ${selectedStudentIds.length} sinh viên`}</button>
           </div>
         </form>
       </Modal>

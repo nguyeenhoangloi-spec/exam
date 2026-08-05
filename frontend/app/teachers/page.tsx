@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
-import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
@@ -185,16 +185,29 @@ export default function TeachersPage() {
 
 
   const exportCsv = () => {
-    const headers = 'Mã GV,Họ và tên,Học vị,Email,Số điện thoại,Khoa trực thuộc\n';
-    const rows = filteredTeachers
-      .map(
-        (t) =>
-          `"${t.teacherCode}","${t.fullName}","${t.degree || 'TS'}","${t.email}","${t.phone || ''}","${
-            t.department?.name || ''
-          }"`,
-      )
-      .join('\n');
-    downloadCsv('danh_sach_giang_vien.csv', headers + rows);
+    exportToFormattedExcel({
+      filename: `Danh_sach_giang_vien_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'DANH SÁCH GIẢNG VIÊN ĐÀO TẠO KHẢO THÍ',
+      subtitle: `Tổng số: ${filteredTeachers.length} giảng viên`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Mã GV', align: 'center', width: 16 },
+        { header: 'Họ và tên', align: 'left', width: 25 },
+        { header: 'Học vị', align: 'center', width: 14 },
+        { header: 'Email', align: 'left', width: 28 },
+        { header: 'Số điện thoại', align: 'center', width: 16 },
+        { header: 'Khoa trực thuộc', align: 'left', width: 24 },
+      ],
+      rows: filteredTeachers.map((t, idx) => [
+        idx + 1,
+        t.teacherCode,
+        t.fullName,
+        t.degree || 'Thạc sĩ',
+        t.email,
+        t.phone || '',
+        t.department?.name || '',
+      ]),
+    });
   };
 
   const handlePrintReport = () => {

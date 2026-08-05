@@ -52,6 +52,7 @@ export class CreateQuestionDto {
   subjectId: number;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsUUID()
   chapterId?: string;
 
@@ -297,6 +298,7 @@ export class GenerateAiQuestionsDto {
   subjectId: number;
 
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsUUID()
   chapterId?: string;
 

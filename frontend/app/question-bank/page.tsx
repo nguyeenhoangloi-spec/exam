@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Question, Subject } from '../../types';
@@ -239,21 +240,37 @@ export default function QuestionBankPage() {
 
   const exportCsv = async () => {
     try {
-      const payload: Record<string, any> = {};
-      Object.entries(filters).forEach(([k, v]) => {
-        if (v !== '' && v !== null && v !== undefined) payload[k] = v;
+      const selectedSubject = subjects.find(s => String(s.id) === String(filters.subjectId));
+      const rows = questions.map((q, idx) => [
+        idx + 1,
+        q.code || `CH${q.id}`,
+        q.subject?.subjectName || 'Chưa gán',
+        q.content,
+        q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'MEDIUM' ? 'Trung bình' : 'Khó',
+        q.status === 'APPROVED' ? 'Đã duyệt' : q.status === 'PENDING' ? 'Chờ duyệt' : q.status === 'DRAFT' ? 'Nháp' : q.status,
+        q.chapter ? `Chương ${q.chapter}` : 'Tự do',
+        q.createdByName || q.createdBy?.fullName || 'Hệ thống',
+      ]);
+
+      exportToFormattedExcel({
+        filename: `Danh_sach_cau_hoi_${new Date().toISOString().slice(0, 10)}.xls`,
+        title: 'BÁO CÁO DANH SÁCH CÂU HỎI NGÂN HÀNG',
+        subtitle: `Số lượng: ${questions.length} câu hỏi | Môn học: ${selectedSubject?.subjectName || 'Tất cả môn'}`,
+        columns: [
+          { header: 'STT', align: 'center', width: 8 },
+          { header: 'Mã câu hỏi', align: 'center', width: 16 },
+          { header: 'Môn học', align: 'left', width: 25 },
+          { header: 'Nội dung câu hỏi', align: 'left', width: 45 },
+          { header: 'Độ khó', align: 'center', width: 14 },
+          { header: 'Trạng thái', align: 'center', width: 14 },
+          { header: 'Chương', align: 'center', width: 12 },
+          { header: 'Người tạo', align: 'left', width: 20 },
+        ],
+        rows,
       });
-      const r = await api.post('/questions/export', payload, { responseType: 'blob' });
-      const url = URL.createObjectURL(r.data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'questions.csv';
-      a.click();
-      URL.revokeObjectURL(url);
-
-
+      setToast({ message: 'Đã xuất file Excel tự động định dạng thành công!', type: 'success' });
     } catch (e: any) {
-      setToast({ message: e.message || 'Không xuất được CSV.', type: 'error' });
+      setToast({ message: e.message || 'Không xuất được Excel.', type: 'error' });
     }
   };
 

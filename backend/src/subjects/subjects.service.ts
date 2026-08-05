@@ -30,6 +30,30 @@ export class SubjectsService {
     return this.prisma.chapter.findMany({ where: { subjectId }, orderBy: { order: 'asc' } });
   }
 
+  async enrollStudents(subjectId: number, data: { studentIds: number[]; semester: string; schoolYear: string }) {
+    await this.findOne(subjectId);
+    const ids = Array.from(new Set((data.studentIds || []).map(Number).filter((id) => Number.isInteger(id) && id > 0)));
+    if (!ids.length) throw new BadRequestException('Vui lòng chọn ít nhất một sinh viên.');
+    if (!data.semester?.trim() || !data.schoolYear?.trim()) throw new BadRequestException('Vui lòng nhập học kỳ và năm học.');
+    const students = await this.prisma.student.findMany({ where: { id: { in: ids } }, select: { id: true } });
+    if (students.length !== ids.length) throw new BadRequestException('Có sinh viên không tồn tại.');
+    await this.prisma.$transaction(ids.map((studentId) => this.prisma.studentSubject.upsert({
+      where: { studentId_subjectId_semester_schoolYear: { studentId, subjectId, semester: data.semester.trim(), schoolYear: data.schoolYear.trim() } },
+      create: { studentId, subjectId, semester: data.semester.trim(), schoolYear: data.schoolYear.trim(), status: 'ELIGIBLE' },
+      update: { status: 'ELIGIBLE' },
+    })));
+    return { successCount: ids.length, subjectId, semester: data.semester.trim(), schoolYear: data.schoolYear.trim() };
+  }
+
+  async getEnrollments(subjectId: number, semester?: string, schoolYear?: string) {
+    await this.findOne(subjectId);
+    return this.prisma.studentSubject.findMany({
+      where: { subjectId, ...(semester && { semester }), ...(schoolYear && { schoolYear }) },
+      include: { student: { select: { id: true, studentCode: true, fullName: true, email: true } } },
+      orderBy: { student: { studentCode: 'asc' } },
+    });
+  }
+
   async create(data: { subjectCode: string; subjectName: string; credits: number; departmentId: number }) {
     if (await this.prisma.subject.findUnique({ where: { subjectCode: data.subjectCode } })) {
       throw new BadRequestException('Mã môn học đã tồn tại.');

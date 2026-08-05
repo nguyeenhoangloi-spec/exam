@@ -41,14 +41,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.warn(logMessage);
     }
 
+    const debugMessage = exception instanceof Error ? exception.message : String(exception);
+
     response.status(status).json(
       typeof exceptionResponse === 'object'
-        ? exceptionResponse
+        ? { ...exceptionResponse as object, debug: status >= 500 ? debugMessage : undefined }
         : {
             statusCode: status,
             timestamp: new Date().toISOString(),
             path: request.url,
             message: exceptionResponse,
+            debug: status >= 500 ? debugMessage : undefined,
           },
     );
   }

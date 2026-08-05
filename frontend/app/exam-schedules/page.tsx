@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
-import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
@@ -333,18 +333,29 @@ export default function ExamSchedulesPage() {
 
 
   const exportCsv = () => {
-    const headers = 'Môn thi,Mã môn,Ngày thi,Giờ thi,Hình thức,Ghi chú\n';
-    const rows = filteredSchedules
-      .map(
-        (s) =>
-          `"${s.subject?.subjectName || ''}","${s.subject?.subjectCode || ''}","${
-            s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''
-          }","${s.startTime} - ${s.endTime}","${
-            s.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm trực tuyến' : 'Tự luận'
-          }","${s.note || ''}"`,
-      )
-      .join('\n');
-    downloadCsv('danh_sach_lich_thi.csv', headers + rows);
+    exportToFormattedExcel({
+      filename: `Danh_sach_lich_thi_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'KẾ HOẠCH LỊCH THI BẢO VỆ & THI KẾT THÚC HỌC PHẦN',
+      subtitle: `Tổng số: ${filteredSchedules.length} ca thi`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Mã Môn', align: 'center', width: 16 },
+        { header: 'Môn thi học phần', align: 'left', width: 30 },
+        { header: 'Ngày thi', align: 'center', width: 14 },
+        { header: 'Khung giờ thi', align: 'center', width: 18 },
+        { header: 'Hình thức thi', align: 'center', width: 22 },
+        { header: 'Ghi chú', align: 'left', width: 20 },
+      ],
+      rows: filteredSchedules.map((s, idx) => [
+        idx + 1,
+        s.subject?.subjectCode || '',
+        s.subject?.subjectName || '',
+        s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
+        `${s.startTime} - ${s.endTime}`,
+        s.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm trực tuyến' : 'Tự luận',
+        s.note || '',
+      ]),
+    });
   };
 
   const handlePrintReport = () => {

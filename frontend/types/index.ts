@@ -63,6 +63,7 @@ export interface Subject {
   id: number;
   subjectCode: string;
   subjectName: string;
+  name?: string;
   credits: number;
   departmentId: number;
   department?: Department;
@@ -134,7 +135,7 @@ export interface Question {
   code: string;
   subjectId: number;
   subject?: Subject;
-  chapterId: string;
+  chapterId?: string | null;
   chapter?: Chapter;
   content: string;
   type: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'FILL_BLANK' | 'ESSAY';
@@ -145,7 +146,8 @@ export interface Question {
   status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
   options: QuestionOption[];
   createdById: number;
-  createdBy?: Pick<User, 'id' | 'username' | 'role'>;
+  createdBy?: Pick<User, 'id' | 'username' | 'role'> & { fullName?: string };
+  createdByName?: string;
   keywords?: string;
   rejectionReason?: string;
   createdAt?: string;

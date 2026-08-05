@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
-import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
@@ -187,16 +187,31 @@ export default function StudentsPage() {
 
 
   const exportCsv = () => {
-    const headers = 'Mã SV,Họ và tên,Giới tính,Ngày sinh,Email,Số điện thoại,Lớp\n';
-    const rows = filteredStudents
-      .map(
-        (s) =>
-          `"${s.studentCode}","${s.fullName}","${s.gender || 'Nam'}","${
-            s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : ''
-          }","${s.email}","${s.phone || ''}","${s.class?.name || ''}"`,
-      )
-      .join('\n');
-    downloadCsv('danh_sach_sinh_vien.csv', headers + rows);
+    exportToFormattedExcel({
+      filename: `Danh_sach_sinh_vien_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'DANH SÁCH SINH VIÊN CHÍNH QUY',
+      subtitle: `Tổng số: ${filteredStudents.length} sinh viên`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Mã SV', align: 'center', width: 16 },
+        { header: 'Họ và tên', align: 'left', width: 25 },
+        { header: 'Giới tính', align: 'center', width: 12 },
+        { header: 'Ngày sinh', align: 'center', width: 14 },
+        { header: 'Email', align: 'left', width: 28 },
+        { header: 'Số điện thoại', align: 'center', width: 16 },
+        { header: 'Lớp sinh hoạt', align: 'left', width: 20 },
+      ],
+      rows: filteredStudents.map((s, idx) => [
+        idx + 1,
+        s.studentCode,
+        s.fullName,
+        s.gender || 'Nam',
+        s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : '',
+        s.email,
+        s.phone || '',
+        s.class?.name || '',
+      ]),
+    });
   };
 
   const handlePrintReport = () => {

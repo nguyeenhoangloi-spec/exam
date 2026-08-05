@@ -63,34 +63,37 @@ export class DepartmentsService {
 
   async addSubjectToCurriculum(
     departmentId: number,
-    data: { subjectId: number; type?: 'MANDATORY' | 'ELECTIVE'; recommendedSemester?: number; note?: string },
+    data: { subjectId: any; type?: 'MANDATORY' | 'ELECTIVE'; recommendedSemester?: any; note?: string },
   ) {
     await this.findOne(departmentId);
-    const subject = await this.prisma.subject.findUnique({ where: { id: Number(data.subjectId) } });
+
+    const subjectId = parseInt(String(data.subjectId), 10);
+    if (isNaN(subjectId) || subjectId <= 0) {
+      throw new BadRequestException('subjectId không hợp lệ.');
+    }
+
+    const recommendedSemester = parseInt(String(data.recommendedSemester), 10) || 1;
+
+    const subject = await this.prisma.subject.findUnique({ where: { id: subjectId } });
     if (!subject) throw new NotFoundException('Không tìm thấy môn học.');
 
     return this.prisma.majorSubject.upsert({
       where: {
-        departmentId_subjectId: {
-          departmentId,
-          subjectId: Number(data.subjectId),
-        },
+        departmentId_subjectId: { departmentId, subjectId },
       },
       create: {
         departmentId,
-        subjectId: Number(data.subjectId),
+        subjectId,
         type: data.type || 'MANDATORY',
-        recommendedSemester: Number(data.recommendedSemester) || 1,
+        recommendedSemester,
         note: data.note || null,
       },
       update: {
         type: data.type || 'MANDATORY',
-        recommendedSemester: Number(data.recommendedSemester) || 1,
+        recommendedSemester,
         note: data.note || null,
       },
-      include: {
-        subject: true,
-      },
+      include: { subject: true },
     });
   }
 
