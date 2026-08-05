@@ -593,7 +593,7 @@ export default function ExamPapersPage() {
         <Modal
           isOpen={Boolean(selectedPaper)}
           onClose={() => setSelectedPaper(null)}
-          title={`Đề Thi Mã Số: ${selectedPaper.paperCode} - ${(selectedPaper as any).subjectName || selectedPaper.examSchedule?.subjectName || 'Chi tiết Đề thi'}`}
+          title={`Đề Thi Mã Số: ${selectedPaper.paperCode} - ${(selectedPaper as any).subjectName || (selectedPaper.examSchedule as any)?.subjectName || (selectedPaper.examSchedule?.subject as any)?.subjectName || 'Chi tiết Đề thi'}`}
         >
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">

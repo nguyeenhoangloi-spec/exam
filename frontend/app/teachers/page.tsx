@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import api, { getCachedData } from '../../lib/api';
+import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -10,53 +10,52 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { KPICards, KPICardItem } from '../../components/KPICards';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
-import {
-  Plus,
-  Trash2,
-  Edit,
-  GraduationCap,
-  Search,
-  Upload,
-  Eye,
-  Lock,
-  Unlock,
-  Building2,
-  Mail,
-  Phone,
-  User,
-  CheckCircle2,
-  Award,
-  ShieldCheck,
-  HelpCircle,
-  Filter,
-  Download,
-  Printer,
-  FileSpreadsheet,
-} from 'lucide-react';
-import { Teacher, Department } from '../../types';
+import { Teacher, Department, User } from '../../types';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon } from 'lucide-react';
+
+import { TeacherHeader } from '../../components/teachers/TeacherHeader';
+import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
+import { TeacherTableToolbar } from '../../components/teachers/TeacherTableToolbar';
+import { TeacherTable } from '../../components/teachers/TeacherTable';
+import { TeacherPaginationBar } from '../../components/teachers/TeacherPaginationBar';
+
+const DEGREE_OPTIONS = ['GS.TS', 'PGS.TS', 'TS', 'ThS'];
 
 export default function TeachersPage() {
   usePageTitle('Quản lý Giảng viên');
   const router = useRouter();
-  const cachedTeachers = typeof window !== 'undefined' ? getCachedData<Teacher[]>('/teachers') : null;
-  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [teachers, setTeachers] = useState<Teacher[]>(cachedTeachers || []);
-  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
-  const [search, setSearch] = useState('');
-  const [selectedDeptId, setSelectedDeptId] = useState('');
-  const [loading, setLoading] = useState(!cachedTeachers);
 
-  // Modals & Drawers
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    teacherCode: true,
+    fullName: true,
+    degree: true,
+    department: true,
+    email: true,
+    phone: true,
+  });
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const [selected, setSelected] = useState<number[]>([]);
+  const [drawerTeacher, setDrawerTeacher] = useState<Teacher | null>(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [drawerTeacher, setDrawerTeacher] = useState<Teacher | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
-
-  // Form State
   const [formData, setFormData] = useState({
     teacherCode: '',
     fullName: '',
@@ -66,7 +65,6 @@ export default function TeachersPage() {
     departmentId: '',
   });
 
-  // Toast & Confirm
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -79,8 +77,24 @@ export default function TeachersPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [resTeachers, resDepts] = await Promise.all([
+        api.get('/teachers').catch(() => ({ data: [] })),
+        api.get('/departments').catch(() => ({ data: [] })),
+      ]);
+      setTeachers(resTeachers.data || []);
+      setDepartments(resDepts.data || []);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải dữ liệu giảng viên', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const u = getAuthUser();
@@ -90,36 +104,47 @@ export default function TeachersPage() {
     }
     setCurrentUser(u);
     fetchData();
-  }, [router]);
+  }, [fetchData, router]);
 
-  const fetchData = async () => {
-    try {
-      const [resTeachers, resDepts] = await Promise.all([
-        api.get('/teachers'),
-        api.get('/departments'),
-      ]);
-      setTeachers(resTeachers.data);
-      setDepartments(resDepts.data);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Compute DYNAMIC KPI Metrics from real API data
+  const kpiData = useMemo(() => {
+    return {
+      total: teachers.length,
+      withDegree: teachers.filter((t) => Boolean(t.degree?.trim())).length,
+      withDept: teachers.filter((t) => Boolean(t.departmentId)).length,
+    };
+  }, [teachers]);
 
-  const filteredTeachers = teachers.filter((t) => {
-    const matchSearch =
-      t.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      t.teacherCode.toLowerCase().includes(search.toLowerCase()) ||
-      t.email.toLowerCase().includes(search.toLowerCase());
-    const matchDept = selectedDeptId ? String(t.departmentId) === selectedDeptId : true;
-    return matchSearch && matchDept;
-  });
+  // Filter & Sort Teachers
+  const filteredTeachers = useMemo(() => {
+    return teachers
+      .filter((t) => {
+        const matchSearch =
+          t.fullName.toLowerCase().includes(search.toLowerCase()) ||
+          t.teacherCode.toLowerCase().includes(search.toLowerCase()) ||
+          t.email.toLowerCase().includes(search.toLowerCase());
+        return matchSearch;
+      })
+      .sort((a, b) => {
+        if (sortOrder === 'oldest') return a.id - b.id;
+        if (sortOrder === 'name_asc') return a.fullName.localeCompare(b.fullName, 'vi');
+        if (sortOrder === 'name_desc') return b.fullName.localeCompare(a.fullName, 'vi');
+        if (sortOrder === 'code_asc') return a.teacherCode.localeCompare(b.teacherCode);
+        return b.id - a.id;
+      });
+  }, [teachers, search, sortOrder]);
+
+  // Pagination Slice
+  const totalPages = Math.max(1, Math.ceil(filteredTeachers.length / limit));
+  const paginatedTeachers = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredTeachers.slice(start, start + limit);
+  }, [filteredTeachers, page, limit]);
 
   const openAddModal = () => {
     setEditingTeacher(null);
     setFormData({
-      teacherCode: `GV00${teachers.length + 1}`,
+      teacherCode: `GV${String(teachers.length + 1).padStart(3, '0')}`,
       fullName: '',
       degree: 'TS',
       email: '',
@@ -145,10 +170,7 @@ export default function TeachersPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
-        ...formData,
-        departmentId: Number(formData.departmentId),
-      };
+      const payload = { ...formData, departmentId: Number(formData.departmentId) };
       if (editingTeacher) {
         await api.patch(`/teachers/${editingTeacher.id}`, payload);
         setToast({ message: 'Cập nhật giảng viên thành công!', type: 'success' });
@@ -168,7 +190,7 @@ export default function TeachersPage() {
     setConfirmModal({
       isOpen: true,
       title: 'Xóa Giảng viên',
-      message: `Bạn có chắc chắn muốn xóa giảng viên ${t?.fullName || ''} (${t?.teacherCode || ''})? Hành động này không thể hoàn tác.`,
+      message: `Bạn có chắc muốn xóa giảng viên ${t?.fullName || ''} (${t?.teacherCode || ''})? Hành động này không thể hoàn tác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -183,14 +205,7 @@ export default function TeachersPage() {
     });
   };
 
-  const handleImportSuccess = (data: any[]) => {
-    setToast({ message: `Đã nhập thành công ${data.length} giảng viên từ file Excel!`, type: 'success' });
-    fetchData();
-  };
-
-
-
-  const exportCsv = () => {
+  const exportExcel = () => {
     exportToFormattedExcel({
       filename: `Danh_sach_giang_vien_${new Date().toISOString().slice(0, 10)}.xls`,
       title: 'DANH SÁCH GIẢNG VIÊN ĐÀO TẠO KHẢO THÍ',
@@ -208,7 +223,7 @@ export default function TeachersPage() {
         idx + 1,
         t.teacherCode,
         t.fullName,
-        t.degree || 'Thạc sĩ',
+        t.degree || 'TS',
         t.email,
         t.phone || '',
         t.department?.name || '',
@@ -245,164 +260,112 @@ export default function TeachersPage() {
     });
   };
 
-  // KPI Items
-  const kpiItems: KPICardItem[] = [
-    { title: 'Tổng giảng viên', value: teachers.length, subtext: 'Trực thuộc các Khoa', icon: GraduationCap, color: 'sky' },
-    { title: 'Có học vị khai báo', value: teachers.filter((teacher) => Boolean(teacher.degree?.trim())).length, subtext: 'Theo hồ sơ giảng viên', icon: Award, color: 'blue' },
-    { title: 'Đã thuộc khoa', value: teachers.filter((teacher) => Boolean(teacher.departmentId)).length, subtext: 'Có đơn vị quản lý', icon: ShieldCheck, color: 'emerald' },
-    { title: 'Giảng viên đang hiển thị', value: filteredTeachers.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: HelpCircle, color: 'skyDeep' },
-  ];
-
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-6">
-        {/* Header Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Quản lý danh mục cán bộ giảng dạy, học vị, khoa và lịch coi thi</p>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            <button
-              onClick={() => setIsImportModalOpen(true)}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-            >
-              <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
-            </button>
-            <button
-              onClick={handlePrintReport}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-            >
-              <Printer className="h-4 w-4" /> In Danh sách
-            </button>
-            <button
-              onClick={exportCsv}
-              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-            >
-              <Download className="h-4 w-4" /> Xuất Danh sách
-            </button>
-            {currentUser?.role === 'ADMIN' && (
-              <button
-                onClick={openAddModal}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-              >
-                <Plus className="h-4 w-4" /> Thêm Giảng viên
-              </button>
-            )}
-          </div>
-        </div>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <TeacherHeader
+          onAdd={openAddModal}
+          onExport={exportExcel}
+          onPrint={handlePrintReport}
+          onImport={() => setIsImportModalOpen(true)}
+          isAdmin={currentUser?.role === 'ADMIN'}
+        />
 
-        {/* KPI Header Cards */}
-        <KPICards items={kpiItems} />
+        {/* Dynamic KPI Cards Row calculated from REAL API data */}
+        <TeacherKPICards
+          total={kpiData.total}
+          withDegree={kpiData.withDegree}
+          withDept={kpiData.withDept}
+          filtered={filteredTeachers.length}
+        />
 
-        {/* Search & Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="relative flex-1 min-w-[260px]">
+        {/* Filter Card */}
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex items-center justify-between gap-4">
+          <div className="relative flex-1">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã GV, Họ tên, Email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-slate-400" />
-              <span className="text-xs font-semibold text-slate-500">Khoa:</span>
-              <select
-                value={selectedDeptId}
-                onChange={(e) => setSelectedDeptId(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
-                <option value="">Tất cả các Khoa</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name} ({d.code})
-                  </option>
-                ))}
-              </select>
-            </div>
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Table Content */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          {loading ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách giảng viên...</div>
-          ) : filteredTeachers.length === 0 ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy giảng viên phù hợp.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                  <tr>
-                    <th className="p-4 pl-6">Mã GV</th>
-                    <th className="p-4">Họ và tên</th>
-                    <th className="p-4">Học vị</th>
-                    <th className="p-4">Khoa trực thuộc</th>
-                    <th className="p-4">Email</th>
-                    <th className="p-4">Số điện thoại</th>
-                    <th className="p-4 pr-6 text-right">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {filteredTeachers.map((t) => (
-                    <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-4 pl-6 font-bold text-sky-700">{t.teacherCode}</td>
-                      <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
-                          {t.fullName.slice(-1)}
-                        </div>
-                        {t.fullName}
-                      </td>
-                      <td className="p-4">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-700 border border-blue-100">
-                          {t.degree || 'TS'}
-                        </span>
-                      </td>
-                      <td className="p-4 font-medium text-slate-800">{t.department?.name || '---'}</td>
-                      <td className="p-4 text-xs text-slate-500">{t.email}</td>
-                      <td className="p-4 text-xs text-slate-600">{t.phone || '---'}</td>
-                      <td className="p-4 pr-6 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => setDrawerTeacher(t)}
-                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                            title="Xem hồ sơ chi tiết"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          {currentUser?.role === 'ADMIN' && (
-                            <>
-                              <button
-                                onClick={() => openEditModal(t)}
-                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                title="Chỉnh sửa"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(t.id)}
-                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                title="Xóa"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        {/* Dynamic Table Action Toolbar */}
+        <TeacherTableToolbar
+          totalCount={filteredTeachers.length}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          visibleColumns={visibleColumns}
+          onColumnToggle={handleColumnToggle}
+          onRefresh={fetchData}
+        />
+
+        {/* Full-Width DataGrid Table */}
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : !paginatedTeachers.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+            Không tìm thấy Giảng viên phù hợp.
+          </div>
+        ) : (
+          <TeacherTable
+            teachers={paginatedTeachers}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? paginatedTeachers.map((t) => t.id) : [])
+            }
+            onDetail={setDrawerTeacher}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            isAdmin={currentUser?.role === 'ADMIN'}
+          />
+        )}
+
+        {/* Pagination */}
+        <TeacherPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredTeachers.length}
+          onPage={setPage}
+          onLimit={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
       </main>
 
-      {/* Edit/Add Modal */}
+      {/* Add / Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -411,18 +374,33 @@ export default function TeachersPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!editingTeacher && (
             <div className="p-3 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700 font-medium">
-              💡 <strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định khởi tạo cho Giảng viên sẽ là <strong>Mã giảng viên</strong> (Ví dụ: GV001).
+              💡 <strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định được khởi tạo là <strong>Mã giảng viên</strong> (Ví dụ: GV001).
             </div>
           )}
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Giảng viên</label>
-            <input
-              type="text"
-              required
-              value={formData.teacherCode}
-              onChange={(e) => setFormData({ ...formData, teacherCode: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
-            />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Giảng viên</label>
+              <input
+                type="text"
+                required
+                value={formData.teacherCode}
+                onChange={(e) => setFormData({ ...formData, teacherCode: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Học vị / Học hàm</label>
+              <select
+                value={formData.degree}
+                onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
+              >
+                {DEGREE_OPTIONS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div>
@@ -436,36 +414,19 @@ export default function TeachersPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Học vị / Học hàm</label>
-              <select
-                value={formData.degree}
-                onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
-              >
-                <option value="GS.TS">GS.TS</option>
-                <option value="PGS.TS">PGS.TS</option>
-                <option value="TS">TS (Tiến sĩ)</option>
-                <option value="ThS">ThS (Thạc sĩ)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Khoa trực thuộc</label>
-              <select
-                required
-                value={formData.departmentId}
-                onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
-              >
-                <option value="">-- Chọn Khoa --</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name} ({d.code})
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Khoa trực thuộc</label>
+            <select
+              required
+              value={formData.departmentId}
+              onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
+            >
+              <option value="">-- Chọn Khoa --</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+              ))}
+            </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -494,13 +455,13 @@ export default function TeachersPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition"
+              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm"
+              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm cursor-pointer"
             >
               Lưu Giảng viên
             </button>
@@ -508,13 +469,16 @@ export default function TeachersPage() {
         </form>
       </Modal>
 
-      {/* Bulk Excel Import Modal */}
+      {/* Excel Import Modal */}
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         title="Nhập Danh sách Giảng viên từ Excel"
         templateFileName="danh_sach_giang_vien_mau.csv"
-        onImportSuccess={handleImportSuccess}
+        onImportSuccess={(data: any[]) => {
+          setToast({ message: `Đã nhập thành công ${data.length} giảng viên từ file Excel!`, type: 'success' });
+          fetchData();
+        }}
       />
 
       {/* Teacher Profile Drawer */}
@@ -526,7 +490,7 @@ export default function TeachersPage() {
         avatarText={drawerTeacher?.fullName ? drawerTeacher.fullName.slice(-1) : 'GV'}
         badge={{ label: drawerTeacher?.degree || 'TS', className: 'bg-blue-50 text-blue-700 border-blue-200' }}
         details={[
-          { label: 'Mã giảng viên', value: drawerTeacher?.teacherCode, icon: User },
+          { label: 'Mã giảng viên', value: drawerTeacher?.teacherCode, icon: UserIcon },
           { label: 'Họ và tên', value: drawerTeacher?.fullName },
           { label: 'Học vị / Học hàm', value: drawerTeacher?.degree || 'TS', icon: GraduationCap },
           { label: 'Khoa trực thuộc', value: drawerTeacher?.department?.name, icon: Building2 },
@@ -535,7 +499,7 @@ export default function TeachersPage() {
         ]}
       />
 
-      {/* Confirm Popup */}
+      {/* Confirm Modal */}
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}

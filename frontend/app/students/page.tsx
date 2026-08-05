@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import api, { getCachedData } from '../../lib/api';
+import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -10,50 +10,51 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { KPICards, KPICardItem } from '../../components/KPICards';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
-import {
-  Plus,
-  Search,
-  Trash2,
-  Edit,
-  User,
-  Users,
-  CheckCircle2,
-  School,
-  Award,
-  Download,
-  Printer,
-  FileSpreadsheet,
-  Filter,
-  Eye,
-  Mail,
-  Phone,
-  Calendar,
-} from 'lucide-react';
-import { Student, ClassItem } from '../../types';
+import { Student, ClassItem, User } from '../../types';
+import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar } from 'lucide-react';
+
+import { StudentHeader } from '../../components/students/StudentHeader';
+import { StudentKPICards } from '../../components/students/StudentKPICards';
+import { StudentTableToolbar } from '../../components/students/StudentTableToolbar';
+import { StudentTable } from '../../components/students/StudentTable';
+import { StudentPaginationBar } from '../../components/students/StudentPaginationBar';
 
 export default function StudentsPage() {
   usePageTitle('Quản lý Sinh viên');
   const router = useRouter();
-  const cachedStudents = typeof window !== 'undefined' ? getCachedData<any>('/students?page=1&limit=20') : null;
-  const cachedClasses = typeof window !== 'undefined' ? getCachedData<ClassItem[]>('/classes') : null;
-  const initialStudentList = Array.isArray(cachedStudents) ? cachedStudents : (cachedStudents?.data || []);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [students, setStudents] = useState<Student[]>(initialStudentList);
-  const [classes, setClasses] = useState<ClassItem[]>(cachedClasses || []);
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
   const [search, setSearch] = useState('');
   const [selectedClassId, setSelectedClassId] = useState('');
-  const [loading, setLoading] = useState(!initialStudentList.length);
+  const [loading, setLoading] = useState(true);
 
-  // Modals & Drawers
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    studentCode: true,
+    fullName: true,
+    gender: true,
+    class: true,
+    email: true,
+    phone: true,
+  });
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const [selected, setSelected] = useState<number[]>([]);
+  const [drawerStudent, setDrawerStudent] = useState<Student | null>(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [drawerStudent, setDrawerStudent] = useState<Student | null>(null);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-
-  // Form State
   const [formData, setFormData] = useState({
     studentCode: '',
     fullName: '',
@@ -64,7 +65,6 @@ export default function StudentsPage() {
     classId: '',
   });
 
-  // Toast & Confirm State
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -77,8 +77,24 @@ export default function StudentsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [resStudents, resClasses] = await Promise.all([
+        api.get('/students').catch(() => ({ data: [] })),
+        api.get('/classes').catch(() => ({ data: [] })),
+      ]);
+      setStudents(resStudents.data || []);
+      setClasses(resClasses.data || []);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải dữ liệu sinh viên', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const u = getAuthUser();
@@ -87,37 +103,49 @@ export default function StudentsPage() {
       return;
     }
     setCurrentUser(u);
-    fetchInitialData();
-  }, [router]);
+    fetchData();
+  }, [fetchData, router]);
 
-  const fetchInitialData = async () => {
-    try {
-      const [resStudents, resClasses] = await Promise.all([
-        api.get('/students'),
-        api.get('/classes'),
-      ]);
-      setStudents(resStudents.data);
-      setClasses(resClasses.data);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải dữ liệu', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Compute DYNAMIC KPI Metrics from real API data
+  const kpiData = useMemo(() => {
+    return {
+      total: students.length,
+      withClass: students.filter((s) => Boolean(s.classId)).length,
+      totalClasses: classes.length,
+    };
+  }, [students, classes]);
 
-  const filteredStudents = students.filter((s) => {
-    const matchSearch =
-      s.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      s.studentCode.toLowerCase().includes(search.toLowerCase()) ||
-      s.email.toLowerCase().includes(search.toLowerCase());
-    const matchClass = selectedClassId ? String(s.classId) === selectedClassId : true;
-    return matchSearch && matchClass;
-  });
+  // Filter & Sort Students
+  const filteredStudents = useMemo(() => {
+    return students
+      .filter((s) => {
+        const matchSearch =
+          s.fullName.toLowerCase().includes(search.toLowerCase()) ||
+          s.studentCode.toLowerCase().includes(search.toLowerCase()) ||
+          s.email.toLowerCase().includes(search.toLowerCase());
+        const matchClass = selectedClassId ? String(s.classId) === selectedClassId : true;
+        return matchSearch && matchClass;
+      })
+      .sort((a, b) => {
+        if (sortOrder === 'oldest') return a.id - b.id;
+        if (sortOrder === 'name_asc') return a.fullName.localeCompare(b.fullName, 'vi');
+        if (sortOrder === 'name_desc') return b.fullName.localeCompare(a.fullName, 'vi');
+        if (sortOrder === 'code_asc') return a.studentCode.localeCompare(b.studentCode);
+        return b.id - a.id;
+      });
+  }, [students, search, selectedClassId, sortOrder]);
+
+  // Pagination Slice
+  const totalPages = Math.max(1, Math.ceil(filteredStudents.length / limit));
+  const paginatedStudents = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredStudents.slice(start, start + limit);
+  }, [filteredStudents, page, limit]);
 
   const openAddModal = () => {
     setEditingStudent(null);
     setFormData({
-      studentCode: `SV20260${Math.floor(10 + Math.random() * 90)}`,
+      studentCode: `SV${new Date().getFullYear()}${String(students.length + 1).padStart(3, '0')}`,
       fullName: '',
       gender: 'Nam',
       dateOfBirth: '2004-01-01',
@@ -128,16 +156,16 @@ export default function StudentsPage() {
     setIsModalOpen(true);
   };
 
-  const openEditModal = (student: Student) => {
-    setEditingStudent(student);
+  const openEditModal = (s: Student) => {
+    setEditingStudent(s);
     setFormData({
-      studentCode: student.studentCode,
-      fullName: student.fullName,
-      gender: student.gender || 'Nam',
-      dateOfBirth: student.dateOfBirth ? new Date(student.dateOfBirth).toISOString().split('T')[0] : '2004-01-01',
-      email: student.email || '',
-      phone: student.phone || '',
-      classId: student.classId ? String(student.classId) : '',
+      studentCode: s.studentCode,
+      fullName: s.fullName,
+      gender: s.gender || 'Nam',
+      dateOfBirth: s.dateOfBirth ? new Date(s.dateOfBirth).toISOString().split('T')[0] : '2004-01-01',
+      email: s.email || '',
+      phone: s.phone || '',
+      classId: s.classId ? String(s.classId) : '',
     });
     setIsModalOpen(true);
   };
@@ -145,10 +173,7 @@ export default function StudentsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
-        ...formData,
-        classId: Number(formData.classId),
-      };
+      const payload = { ...formData, classId: Number(formData.classId) };
       if (editingStudent) {
         await api.patch(`/students/${editingStudent.id}`, payload);
         setToast({ message: 'Cập nhật sinh viên thành công!', type: 'success' });
@@ -157,25 +182,25 @@ export default function StudentsPage() {
         setToast({ message: 'Thêm sinh viên mới thành công!', type: 'success' });
       }
       setIsModalOpen(false);
-      fetchInitialData();
+      fetchData();
     } catch (err: any) {
       setToast({ message: err.message, type: 'error' });
     }
   };
 
   const handleDelete = (id: number) => {
-    const st = students.find((s) => s.id === id);
+    const s = students.find((item) => item.id === id);
     setConfirmModal({
       isOpen: true,
       title: 'Xóa Sinh viên',
-      message: `Bạn có chắc chắn muốn xóa sinh viên ${st?.fullName || ''} (${st?.studentCode || ''})? Hành động này không thể hoàn tác.`,
+      message: `Bạn có chắc chắn muốn xóa sinh viên ${s?.fullName || ''} (${s?.studentCode || ''})? Hành động này không thể hoàn tác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/students/${id}`);
           setToast({ message: 'Đã xóa sinh viên thành công!', type: 'success' });
-          fetchInitialData();
+          fetchData();
         } catch (err: any) {
           setToast({ message: err.message, type: 'error' });
         }
@@ -183,14 +208,7 @@ export default function StudentsPage() {
     });
   };
 
-  const handleImportSuccess = (importedData: any[]) => {
-    setToast({ message: `Đã nhập thành công ${importedData.length} sinh viên từ file Excel!`, type: 'success' });
-    fetchInitialData();
-  };
-
-
-
-  const exportCsv = () => {
+  const exportExcel = () => {
     exportToFormattedExcel({
       filename: `Danh_sach_sinh_vien_${new Date().toISOString().slice(0, 10)}.xls`,
       title: 'DANH SÁCH SINH VIÊN CHÍNH QUY',
@@ -247,168 +265,123 @@ export default function StudentsPage() {
     });
   };
 
-  // KPI Items
-  const kpiItems: KPICardItem[] = [
-    { title: 'Tổng sinh viên', value: students.length, subtext: 'Chính quy K65 - K66', icon: Users, color: 'sky' },
-    { title: 'Có lớp học', value: students.filter((student) => Boolean(student.classId)).length, subtext: 'Sinh viên đã được phân lớp', icon: CheckCircle2, color: 'emerald' },
-    { title: 'Số lớp học', value: classes.length, subtext: 'Đào tạo chuyên ngành', icon: School, color: 'blue' },
-    { title: 'Sinh viên đang hiển thị', value: filteredStudents.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: Award, color: 'skyDeep' },
-  ];
-
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-6">
-        {/* Header Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Quản lý danh sách sinh viên chính quy, phân lớp và điều kiện dự thi</p>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            <button
-              onClick={() => setIsImportModalOpen(true)}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
-            >
-              <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
-            </button>
-            <button
-              onClick={handlePrintReport}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-            >
-              <Printer className="h-4 w-4" /> In Danh sách
-            </button>
-            <button
-              onClick={exportCsv}
-              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-            >
-              <Download className="h-4 w-4" /> Xuất Danh sách
-            </button>
-            {currentUser?.role === 'ADMIN' && (
-              <button
-                onClick={openAddModal}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-              >
-                <Plus className="h-4 w-4" /> Thêm Sinh viên
-              </button>
-            )}
-          </div>
-        </div>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <StudentHeader
+          onAdd={openAddModal}
+          onExport={exportExcel}
+          onPrint={handlePrintReport}
+          onImport={() => setIsImportModalOpen(true)}
+          isAdmin={currentUser?.role === 'ADMIN'}
+        />
 
-        {/* KPI Analytics Header */}
-        <KPICards items={kpiItems} />
+        {/* Dynamic KPI Cards Row calculated from REAL API data */}
+        <StudentKPICards
+          total={kpiData.total}
+          withClass={kpiData.withClass}
+          totalClasses={kpiData.totalClasses}
+          filtered={filteredStudents.length}
+        />
 
-        {/* Search & Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        {/* Filter Card */}
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center gap-4">
           <div className="relative flex-1 min-w-[260px]">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã SV, Họ tên, Email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => { setSearch(''); setPage(1); }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-slate-400" />
-              <span className="text-xs font-semibold text-slate-500">Lớp:</span>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-500">Lớp:</span>
+            <div className="relative">
               <select
                 value={selectedClassId}
-                onChange={(e) => setSelectedClassId(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
+                onChange={(e) => { setSelectedClassId(e.target.value); setPage(1); }}
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
               >
                 <option value="">Tất cả các lớp</option>
                 {classes.map((cls) => (
-                  <option key={cls.id} value={cls.id}>
-                    {cls.name} ({cls.code})
-                  </option>
+                  <option key={cls.id} value={cls.id}>{cls.name} ({cls.code})</option>
                 ))}
               </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             </div>
           </div>
         </div>
 
-        {/* Table Content */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          {loading ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách sinh viên...</div>
-          ) : filteredStudents.length === 0 ? (
-            <div className="p-12 text-center text-slate-500 text-sm">Khôn tìm thấy sinh viên phù hợp.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                  <tr>
-                    <th className="p-4 pl-6">Mã SV</th>
-                    <th className="p-4">Họ và tên</th>
-                    <th className="p-4">Giới tính</th>
-                    <th className="p-4">Lớp học</th>
-                    <th className="p-4">Email</th>
-                    <th className="p-4">Trạng thái</th>
-                    <th className="p-4 pr-6 text-right">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {filteredStudents.map((s) => (
-                    <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-4 pl-6 font-bold text-sky-700">{s.studentCode}</td>
-                      <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
-                          {s.fullName.slice(-1)}
-                        </div>
-                        {s.fullName}
-                      </td>
-                      <td className="p-4">{s.gender || 'Nam'}</td>
-                      <td className="p-4">
-                        <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                          {s.class?.name || 'Chưa xếp lớp'}
-                        </span>
-                      </td>
-                      <td className="p-4 text-xs text-slate-500">{s.email}</td>
-                      <td className="p-4">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
-                          <CheckCircle2 className="h-3.5 w-3.5" /> Đang học
-                        </span>
-                      </td>
-                      <td className="p-4 pr-6 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => setDrawerStudent(s)}
-                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                            title="Xem hồ sơ chi tiết"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          {currentUser?.role === 'ADMIN' && (
-                            <>
-                              <button
-                                onClick={() => openEditModal(s)}
-                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                title="Chỉnh sửa"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(s.id)}
-                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                title="Xóa"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        {/* Dynamic Table Action Toolbar */}
+        <StudentTableToolbar
+          totalCount={filteredStudents.length}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          visibleColumns={visibleColumns}
+          onColumnToggle={handleColumnToggle}
+          onRefresh={fetchData}
+        />
+
+        {/* Full-Width DataGrid Table */}
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : !paginatedStudents.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+            Không tìm thấy Sinh viên phù hợp.
+          </div>
+        ) : (
+          <StudentTable
+            students={paginatedStudents}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? paginatedStudents.map((s) => s.id) : [])
+            }
+            onDetail={setDrawerStudent}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            isAdmin={currentUser?.role === 'ADMIN'}
+          />
+        )}
+
+        {/* Pagination */}
+        <StudentPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredStudents.length}
+          onPage={setPage}
+          onLimit={(v) => { setLimit(v); setPage(1); }}
+        />
       </main>
 
-      {/* Edit/Add Modal */}
+      {/* Add / Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -443,7 +416,7 @@ export default function StudentsPage() {
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
               >
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
@@ -455,13 +428,11 @@ export default function StudentsPage() {
                 required
                 value={formData.classId}
                 onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
               >
                 <option value="">-- Chọn lớp học --</option>
                 {classes.map((cls) => (
-                  <option key={cls.id} value={cls.id}>
-                    {cls.name} ({cls.code})
-                  </option>
+                  <option key={cls.id} value={cls.id}>{cls.name} ({cls.code})</option>
                 ))}
               </select>
             </div>
@@ -493,13 +464,13 @@ export default function StudentsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition"
+              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm"
+              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm cursor-pointer"
             >
               Lưu Sinh viên
             </button>
@@ -507,13 +478,16 @@ export default function StudentsPage() {
         </form>
       </Modal>
 
-      {/* Bulk Excel Import Modal */}
+      {/* Excel Import Modal */}
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         title="Nhập Danh sách Sinh viên từ Excel"
         templateFileName="danh_sach_sinh_vien_mau.csv"
-        onImportSuccess={handleImportSuccess}
+        onImportSuccess={(data: any[]) => {
+          setToast({ message: `Đã nhập thành công ${data.length} sinh viên từ file Excel!`, type: 'success' });
+          fetchData();
+        }}
       />
 
       {/* Student Profile Drawer */}
@@ -525,7 +499,7 @@ export default function StudentsPage() {
         avatarText={drawerStudent?.fullName ? drawerStudent.fullName.slice(-1) : 'SV'}
         badge={{ label: 'Đang học', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }}
         details={[
-          { label: 'Mã sinh viên', value: drawerStudent?.studentCode, icon: User },
+          { label: 'Mã sinh viên', value: drawerStudent?.studentCode, icon: UserIcon },
           { label: 'Họ và tên', value: drawerStudent?.fullName },
           { label: 'Giới tính', value: drawerStudent?.gender || 'Nam' },
           {
@@ -539,7 +513,7 @@ export default function StudentsPage() {
         ]}
       />
 
-      {/* Confirm Popup */}
+      {/* Confirm Modal */}
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
