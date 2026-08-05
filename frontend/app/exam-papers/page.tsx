@@ -1,34 +1,59 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useState } from 'react';
-import {
-  Archive,
-  Download,
-  Eye,
-  FileText,
-  KeyRound,
-  Printer,
-  RotateCcw,
-  Send,
-  Sparkles,
-  Trash2,
-} from 'lucide-react';
+import React, { FormEvent, useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { usePageTitle } from '../../components/PageTitleContext';
-import { ConfirmModal } from '../../components/ConfirmModal';
-import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
-import { Modal } from '../../components/Modal';
-import { Toast } from '../../components/Toast';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
+import { usePageTitle } from '../../components/PageTitleContext';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { exportExamPaperToWord } from '../../lib/export-docx';
+import { printReport } from '../../lib/export-print';
+import { Modal } from '../../components/Modal';
+import { Toast } from '../../components/Toast';
+import { ConfirmModal } from '../../components/ConfirmModal';
+import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { ExamPaper, ExamSchedule, User } from '../../types';
+import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award } from 'lucide-react';
 
-const statusStyle = {
-  DRAFT: { label: 'Bản nháp', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  PUBLISHED: { label: 'Đã phát hành', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  ARCHIVED: { label: 'Đã lưu trữ', className: 'bg-slate-100 text-slate-600 border-slate-200' },
-};
+import { ExamPaperHeader } from '../../components/exam-papers/ExamPaperHeader';
+import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICards';
+import { ExamPaperMatrixForm } from '../../components/exam-papers/ExamPaperMatrixForm';
+import { ExamPaperTableToolbar } from '../../components/exam-papers/ExamPaperTableToolbar';
+import { ExamPaperTable } from '../../components/exam-papers/ExamPaperTable';
+import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
+
+function formatPaperForExport(paper: any) {
+  const details = paper.details || paper.questions || paper.paperDetails || [];
+  const subjectName = paper.subjectName || paper.examSchedule?.subjectName || paper.examSchedule?.subject?.subjectName || 'Môn thi';
+  const subjectCode = paper.subjectCode || paper.examSchedule?.subjectCode || paper.examSchedule?.subject?.subjectCode || 'MH';
+
+  return {
+    paperCode: paper.paperCode,
+    title: `ĐỀ THI MÔN ${subjectName.toUpperCase()}`,
+    subjectName,
+    subjectCode,
+    durationMinutes: paper.durationMinutes,
+    totalScore: paper.totalScore,
+    questions: details.map((d: any, idx: number) => {
+      const q = d.question || d;
+      const choices = [
+        { label: 'A', content: q.optionA, isCorrect: q.correctAnswer === 'A' },
+        { label: 'B', content: q.optionB, isCorrect: q.correctAnswer === 'B' },
+        { label: 'C', content: q.optionC, isCorrect: q.correctAnswer === 'C' },
+        { label: 'D', content: q.optionD, isCorrect: q.correctAnswer === 'D' },
+      ].filter((c) => c.content);
+
+      return {
+        order: idx + 1,
+        code: q.code || `Q${idx + 1}`,
+        content: q.content || '',
+        score: d.score || 0.25,
+        options: choices,
+        explanation: q.explanation || '',
+      };
+    }),
+  };
+}
 
 const initialForm = {
   examScheduleId: '',
@@ -43,6 +68,7 @@ const initialForm = {
 export default function ExamPapersPage() {
   usePageTitle('Quản lý đề thi');
   const router = useRouter();
+
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [papers, setPapers] = useState<ExamPaper[]>([]);
@@ -52,6 +78,28 @@ export default function ExamPapersPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [busyId, setBusyId] = useState<number | null>(null);
+
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    paperCode: true,
+    subjectName: true,
+    status: true,
+    questionCount: true,
+    durationMinutes: true,
+    totalScore: true,
+  });
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const [selected, setSelected] = useState<number[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -64,18 +112,26 @@ export default function ExamPapersPage() {
     title: '',
     message: '',
     type: 'warning',
-    onConfirm: () => { },
+    onConfirm: () => {},
+  });
+
+  const [criticalModal, setCriticalModal] = useState<{
+    isOpen: boolean;
+    paper: ExamPaper | null;
+  }>({
+    isOpen: false,
+    paper: null,
   });
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [scheduleResponse, paperResponse] = await Promise.all([
-        api.get<ExamSchedule[]>('/exam-schedules'),
-        api.get<ExamPaper[]>('/exam-papers'),
+        api.get<ExamSchedule[]>('/exam-schedules').catch(() => ({ data: [] })),
+        api.get<ExamPaper[]>('/exam-papers').catch(() => ({ data: [] })),
       ]);
-      setSchedules(scheduleResponse.data);
-      setPapers(paperResponse.data);
+      setSchedules(scheduleResponse.data || []);
+      setPapers(paperResponse.data || []);
       setFormData((previous) => ({
         ...previous,
         examScheduleId: previous.examScheduleId || String(scheduleResponse.data[0]?.id || ''),
@@ -97,13 +153,32 @@ export default function ExamPapersPage() {
     fetchData();
   }, [fetchData, router]);
 
+  const kpiData = useMemo(() => {
+    const total = papers.length;
+    const publishedCount = papers.filter((p) => p.status === 'PUBLISHED').length;
+    const draftCount = papers.filter((p) => p.status === 'DRAFT').length;
+    const archivedCount = papers.filter((p) => p.status === 'ARCHIVED').length;
+    const totalQuestionsInPapers = papers.reduce(
+      (acc, curr) => acc + ((curr as any).questionCount ?? (curr as any).questions?.length ?? (curr as any).details?.length ?? 0),
+      0,
+    );
+
+    return {
+      total,
+      publishedCount,
+      draftCount,
+      archivedCount,
+      totalQuestionsInPapers,
+    };
+  }, [papers]);
+
   const selectedSchedule = schedules.find((schedule) => String(schedule.id) === formData.examScheduleId);
   const scheduleDuration = selectedSchedule
     ? (() => {
-      const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
-      const [endHour, endMinute] = selectedSchedule.endTime.split(':').map(Number);
-      return endHour * 60 + endMinute - (startHour * 60 + startMinute);
-    })()
+        const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
+        const [endHour, endMinute] = selectedSchedule.endTime.split(':').map(Number);
+        return endHour * 60 + endMinute - (startHour * 60 + startMinute);
+      })()
     : 0;
 
   useEffect(() => {
@@ -181,7 +256,7 @@ export default function ExamPapersPage() {
       setConfirmModal({
         isOpen: true,
         title: variantCount > 1 ? `Tạo ${variantCount} Mã Đề Thi Đảo Câu` : 'Xác nhận tạo đề thi',
-        message: `Hệ thống sẽ sinh ${variantCount > 1 ? `${variantCount} mã đề thi khác nhau (tự động đảo câu hỏi & đáp án)` : `1 đề thi mã số ${paperCode}`} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
+        message: `Hệ thống sẽ sinh ${variantCount > 1 ? `${variantCount} mã đề thi khác nhau` : `1 đề thi mã số ${paperCode}`} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
         type: 'info',
         onConfirm: async () => {
           setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -232,14 +307,6 @@ export default function ExamPapersPage() {
     }
   };
 
-  const [criticalModal, setCriticalModal] = useState<{
-    isOpen: boolean;
-    paper: ExamPaper | null;
-  }>({
-    isOpen: false,
-    paper: null,
-  });
-
   const runAction = async (
     paper: ExamPaper,
     action: 'publish' | 'archive' | 'restore' | 'delete',
@@ -252,415 +319,378 @@ export default function ExamPapersPage() {
       return;
     }
 
-    const titles = {
-      publish: 'Phát hành đề thi',
-      archive: 'Lưu trữ đề thi',
-      restore: 'Khôi phục đề thi',
-      delete: 'Xóa bản nháp đề thi',
-    };
     const messages = {
-      publish: `Phát hành đề ${paper.paperCode}? Sau khi phát hành không thể xóa đề.`,
-      archive: `Lưu trữ đề ${paper.paperCode}?`,
-      restore: `Khôi phục đề ${paper.paperCode} về bản nháp?`,
-      delete: `Xóa bản nháp ${paper.paperCode}? Đề sẽ không còn xuất hiện trong danh sách.`,
-    };
-    const types: Record<string, 'danger' | 'warning' | 'info' | 'success'> = {
-      publish: 'success',
-      archive: 'warning',
-      restore: 'info',
-      delete: 'danger',
+      archive: `Bạn muốn lưu trữ đề thi ${paper.paperCode}?`,
+      restore: `Khôi phục đề thi ${paper.paperCode} về bản nháp?`,
+      delete: `Bạn có chắc muốn xóa đề thi ${paper.paperCode}?`,
     };
 
     setConfirmModal({
       isOpen: true,
-      title: titles[action],
-      message: messages[action],
-      type: types[action],
+      title: 'Xác nhận thao tác',
+      message: messages[action] || 'Xác nhận thực hiện thao tác?',
+      type: action === 'delete' ? 'danger' : 'warning',
       onConfirm: async () => {
-        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-        setBusyId(paper.id);
+        setConfirmModal((previous) => ({ ...previous, isOpen: false }));
         try {
-          if (action === 'delete') await api.delete(`/exam-papers/${paper.id}`);
-          else await api.post(`/exam-papers/${paper.id}/${action}`);
-          setSelectedPaper(null);
-          setToast({ message: 'Thao tác đề thi thành công.', type: 'success' });
+          if (action === 'delete') {
+            await api.delete(`/exam-papers/${paper.id}`);
+            setToast({ message: `Đã xóa đề thi ${paper.paperCode}.`, type: 'success' });
+          } else {
+            await api.patch(`/exam-papers/${paper.id}/${action}`);
+            setToast({ message: `Cập nhật trạng thái đề ${paper.paperCode} thành công.`, type: 'success' });
+          }
+          if (selectedPaper?.id === paper.id) setSelectedPaper(null);
           await fetchData();
         } catch (error: any) {
           setToast({ message: error.message, type: 'error' });
-        } finally {
-          setBusyId(null);
         }
       },
     });
   };
 
-  const handleConfirmCriticalPublish = async (payload: CriticalConfirmPayload) => {
+  const handleCriticalConfirm = async (payload: CriticalConfirmPayload) => {
     if (!criticalModal.paper) return;
-    const paperId = criticalModal.paper.id;
+    const paper = criticalModal.paper;
+    setCriticalModal((previous) => ({ ...previous, isOpen: false }));
+
     try {
-      await api.post(`/exam-papers/${paperId}/publish`, payload);
-      setSelectedPaper(null);
-      setToast({ message: `Đã phát hành thành công đề thi ${criticalModal.paper.paperCode}!`, type: 'success' });
+      await api.patch(`/exam-papers/${paper.id}/publish`, payload);
+      setToast({
+        message: `🚀 Đề thi ${paper.paperCode} đã phát hành chính thức! Lịch thi đã được KHÓA CHỈNH SỬA.`,
+        type: 'success',
+      });
+      if (selectedPaper?.id === paper.id) setSelectedPaper(null);
       await fetchData();
     } catch (error: any) {
-      throw error;
+      setToast({ message: error.message || 'Lỗi khi phát hành đề thi.', type: 'error' });
     }
   };
 
-  const handleExportWord = (includeAnswerKey: boolean) => {
-    if (!selectedPaper) return;
-    const exportData = {
-      paperCode: selectedPaper.paperCode,
-      title: selectedPaper.title,
-      subjectName: selectedPaper.examSchedule?.subject?.subjectName || 'Môn học',
-      subjectCode: selectedPaper.examSchedule?.subject?.subjectCode || 'MH001',
-      durationMinutes: selectedPaper.durationMinutes,
-      totalScore: selectedPaper.totalScore,
-      questions: (selectedPaper.questions || []).map((qItem) => ({
-        order: qItem.questionOrder,
-        code: qItem.question.code,
-        content: qItem.question.content,
-        score: qItem.score,
-        explanation: qItem.question.explanation || undefined,
-        options: (qItem.question.options || []).map((opt) => ({
-          label: opt.label,
-          content: opt.content,
-          isCorrect: opt.isCorrect,
-        })),
-      })),
-    };
+  const filteredPapers = useMemo(() => {
+    return papers
+      .filter((p) => {
+        const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '';
+        const matchesSearch =
+          p.paperCode.toLowerCase().includes(search.toLowerCase()) ||
+          subjectName.toLowerCase().includes(search.toLowerCase());
+        const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a: any, b: any) => {
+        if (sortOrder === 'oldest') return a.id - b.id;
+        if (sortOrder === 'code_asc') return a.paperCode.localeCompare(b.paperCode);
+        if (sortOrder === 'questions_desc') {
+          const qA = (a as any).questionCount ?? a.questions?.length ?? 0;
+          const qB = (b as any).questionCount ?? b.questions?.length ?? 0;
+          return qB - qA;
+        }
+        return b.id - a.id;
+      });
+  }, [papers, search, statusFilter, sortOrder]);
 
-    exportExamPaperToWord(exportData, includeAnswerKey);
-    setToast({
-      message: `Đã xuất File Word Đề thi ${selectedPaper.paperCode} ${includeAnswerKey ? 'kèm Bảng đáp án' : ''} thành công!`,
-      type: 'success',
+  const totalPages = Math.max(1, Math.ceil(filteredPapers.length / limit));
+  const paginatedPapers = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredPapers.slice(start, start + limit);
+  }, [filteredPapers, page, limit]);
+
+  const exportExcel = () => {
+    const columns = [
+      { header: 'STT', width: 8, align: 'center' as const },
+      { header: 'Mã Đề', width: 15 },
+      { header: 'Môn học', width: 35 },
+      { header: 'Trạng thái', width: 18 },
+      { header: 'Số câu', width: 12, align: 'center' as const },
+      { header: 'Thời gian', width: 15, align: 'center' as const },
+      { header: 'Tổng điểm', width: 12, align: 'center' as const },
+    ];
+
+    const rows = filteredPapers.map((p: any, idx) => [
+      idx + 1,
+      p.paperCode,
+      p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '',
+      p.status,
+      p.questionCount ?? p.questions?.length ?? 0,
+      `${p.durationMinutes} phút`,
+      `${p.totalScore} đ`,
+    ]);
+
+    exportToFormattedExcel({
+      filename: 'Danh_sach_de_thi.xls',
+      title: 'DANH SÁCH ĐỀ THI HỆ THỐNG',
+      subtitle: 'Trích xuất dữ liệu danh mục đề thi ngẫu nhiên',
+      columns,
+      rows,
     });
   };
 
-  const isAdmin = currentUser?.role === 'ADMIN';
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BÁO CÁO DANH SÁCH ĐỀ THI',
+      subtitle: 'Danh sách đề thi và phân bổ ma trận câu hỏi',
+      metaInfo: [
+        { label: 'Tổng số đề thi', value: String(papers.length) },
+        { label: 'Đã phát hành', value: String(kpiData.publishedCount) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã Đề', width: '80px' },
+        { header: 'Tên Môn học', width: '220px' },
+        { header: 'Trạng thái', width: '110px' },
+        { header: 'Số câu', width: '70px', align: 'center' },
+        { header: 'Thời gian', width: '90px', align: 'center' },
+        { header: 'Điểm', width: '70px', align: 'center' },
+      ],
+      rows: filteredPapers.map((p: any, idx) => [
+        idx + 1,
+        p.paperCode,
+        p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '',
+        p.status,
+        `${p.questionCount ?? p.questions?.length ?? 0} câu`,
+        `${p.durationMinutes} ph`,
+        `${p.totalScore} đ`,
+      ]),
+    });
+  };
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-6">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        <ExamPaperHeader
+          onExportAll={exportExcel}
+          onPrintAll={handlePrintReport}
+          isAdmin={currentUser?.role === 'ADMIN'}
+        />
 
-        <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
-          {/* Creation Form Panel */}
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
-            <h2 className="mb-4 flex items-center gap-2 font-bold text-slate-900">
-              <Sparkles className="h-5 w-5 text-sky-600" /> Rút đề thi ngẫu nhiên
-            </h2>
+        <ExamPaperKPICards
+          total={kpiData.total}
+          publishedCount={kpiData.publishedCount}
+          draftCount={kpiData.draftCount}
+          archivedCount={kpiData.archivedCount}
+          totalQuestionsInPapers={kpiData.totalQuestionsInPapers}
+        />
 
-            <form onSubmit={createPaper} className="space-y-4">
-              <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">
-                  Lịch thi tập trung
-                </span>
-                <select
-                  required
-                  value={formData.examScheduleId}
-                  onChange={(event) => setFormData({ ...formData, examScheduleId: event.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-sky-500 font-semibold"
-                >
-                  {!schedules.length && <option value="">Chưa có lịch thi</option>}
-                  {schedules.map((schedule) => (
-                    <option key={schedule.id} value={schedule.id}>
-                      {schedule.subject?.subjectName} ({schedule.subject?.subjectCode}) - Kíp {schedule.startTime}
-                    </option>
-                  ))}
-                </select>
-              </label>
+        {currentUser?.role === 'ADMIN' && (
+          <ExamPaperMatrixForm
+            schedules={schedules}
+            formData={formData}
+            setFormData={setFormData}
+            handleDurationChange={handleDurationChange}
+            onSubmit={createPaper}
+            creating={creating}
+            selectedSchedule={selectedSchedule}
+            scheduleDuration={scheduleDuration}
+            currentTotal={currentTotal}
+            requiredTotal={requiredTotal}
+            isValidTotal={isValidTotal}
+          />
+        )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <label>
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Mã đề gốc</span>
-                  <input
-                    required
-                    maxLength={30}
-                    value={formData.paperCode}
-                    onChange={(event) => setFormData({ ...formData, paperCode: event.target.value })}
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold outline-none focus:border-sky-500"
-                  />
-                </label>
-                <label>
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Sinh số lượng mã đề</span>
-                  <select
-                    value={formData.variantCount}
-                    onChange={(e) => setFormData({ ...formData, variantCount: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-sky-700 outline-none focus:border-sky-500"
-                  >
-                    <option value="1">1 mã đề độc lập</option>
-                    <option value="2">2 mã đề (101, 102)</option>
-                    <option value="4">4 mã đề (101, 102, 103, 104)</option>
-                    <option value="6">6 mã đề (101-106)</option>
-                  </select>
-                </label>
-              </div>
-
-              <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase text-slate-600">Thời gian làm bài</span>
-                <select
-                  required
-                  value={formData.durationMinutes}
-                  onChange={(event) => handleDurationChange(event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-sky-500"
-                >
-                  <option value="60">60 phút (40 câu)</option>
-                  <option value="90">90 phút (60 câu)</option>
-                  {scheduleDuration > 0 && scheduleDuration !== 60 && scheduleDuration !== 90 && (
-                    <option value={scheduleDuration}>{scheduleDuration} phút (theo lịch thi)</option>
-                  )}
-                </select>
-              </label>
-
-              <div className="border-t border-slate-100 pt-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase text-slate-600">Ma trận độ khó</p>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${isValidTotal
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-rose-50 text-rose-700 border border-rose-200'
-                      }`}
-                  >
-                    Tổng: {currentTotal} / {requiredTotal} câu {isValidTotal ? '✓' : `(Cần ${requiredTotal} câu)`}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    ['easyCount', 'Câu dễ', 'text-emerald-700'],
-                    ['mediumCount', 'Trung bình', 'text-amber-700'],
-                    ['hardCount', 'Câu khó', 'text-rose-700'],
-                  ].map(([key, label, color]) => (
-                    <label key={key}>
-                      <span className={`mb-1 block text-[11px] font-medium ${color}`}>{label}</span>
-                      <input
-                        type="number"
-                        min={0}
-                        max={200}
-                        required
-                        value={formData[key as keyof typeof formData]}
-                        onChange={(event) => setFormData({ ...formData, [key]: event.target.value })}
-                        className="w-full rounded-xl border border-slate-200 px-2 py-2 text-center text-sm font-bold outline-none focus:border-sky-500"
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Mã đề, Tên môn học..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+            />
+            {search && (
               <button
-                disabled={creating || !schedules.length || !isValidTotal}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 py-3 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
-                <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : `Tạo ${Number(formData.variantCount) > 1 ? `${formData.variantCount} Mã Đề Đảo Câu` : 'Đề Thi'}`}
+                <X className="h-3.5 w-3.5" />
               </button>
-            </form>
-          </section>
+            )}
+          </div>
 
-          {/* Paper List Panel */}
-          <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-8">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h2 className="flex items-center gap-2 font-bold text-slate-900">
-                  <FileText className="h-5 w-5 text-sky-600" /> Danh sách đề thi
-                </h2>
-                <p className="mt-1 text-xs text-slate-500">
-                  {isAdmin ? 'Tất cả đề thi trong hệ thống' : 'Đề thi do bạn tạo và Đề thi đã phát hành'}
-                </p>
-              </div>
-              <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                {papers.length} đề
-              </span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left text-sm">
-                <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-600">
-                  <tr>
-                    <th className="px-3 py-3">Mã đề</th>
-                    <th className="px-3 py-3">Tên đề</th>
-                    <th className="px-3 py-3">Người tạo</th>
-                    <th className="px-3 py-3">Trạng thái</th>
-                    <th className="px-3 py-3">Cấu trúc</th>
-                    <th className="px-3 py-3 text-right">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={6} className="px-3 py-10 text-center text-slate-400">
-                        Đang tải danh sách đề thi...
-                      </td>
-                    </tr>
-                  ) : !papers.length ? (
-                    <tr>
-                      <td colSpan={6} className="px-3 py-10 text-center text-slate-400">
-                        Chưa có đề thi phù hợp.
-                      </td>
-                    </tr>
-                  ) : (
-                    papers.map((paper) => (
-                      <tr key={paper.id} className="hover:bg-slate-50/70">
-                        <td className="px-3 py-3 font-bold text-sky-700">{paper.paperCode}</td>
-                        <td className="max-w-64 px-3 py-3">
-                          <p className="truncate font-semibold text-slate-800" title={paper.title}>
-                            {paper.title}
-                          </p>
-                          <p className="text-xs text-slate-500">{paper.examSchedule?.subject?.subjectCode}</p>
-                        </td>
-                        <td className="px-3 py-3 text-slate-600">{paper.createdBy?.username}</td>
-                        <td className="px-3 py-3">
-                          <span
-                            className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[paper.status].className
-                              }`}
-                          >
-                            {statusStyle[paper.status].label}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3 text-xs text-slate-600">
-                          {paper._count?.questions || 0} câu · {paper.totalScore} điểm · {paper.durationMinutes} phút
-                        </td>
-                        <td className="px-3 py-3">
-                          <div className="flex justify-end gap-1">
-                            <button
-                              disabled={busyId === paper.id}
-                              onClick={() => openDetail(paper.id)}
-                              title="Xem chi tiết & Xuất Word"
-                              className="rounded-lg p-2 text-sky-600 hover:bg-sky-50"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {isAdmin && paper.status === 'DRAFT' && (
-                              <button
-                                onClick={() => runAction(paper, 'publish')}
-                                title="Phát hành đề thi"
-                                className="rounded-lg p-2 text-emerald-600 hover:bg-emerald-50"
-                              >
-                                <Send className="h-4 w-4" />
-                              </button>
-                            )}
-                            {isAdmin && paper.status !== 'ARCHIVED' && (
-                              <button
-                                onClick={() => runAction(paper, 'archive')}
-                                title="Lưu trữ"
-                                className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
-                              >
-                                <Archive className="h-4 w-4" />
-                              </button>
-                            )}
-                            {isAdmin && paper.status === 'ARCHIVED' && (
-                              <button
-                                onClick={() => runAction(paper, 'restore')}
-                                title="Khôi phục"
-                                className="rounded-lg p-2 text-sky-600 hover:bg-sky-50"
-                              >
-                                <RotateCcw className="h-4 w-4" />
-                              </button>
-                            )}
-                            {paper.status === 'DRAFT' && (
-                              <button
-                                onClick={() => runAction(paper, 'delete')}
-                                title="Xóa bản nháp"
-                                className="rounded-lg p-2 text-rose-600 hover:bg-rose-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-      </main>
-
-      {/* Detail Modal with Word Export & Answers */}
-      <Modal
-        isOpen={Boolean(selectedPaper)}
-        onClose={() => setSelectedPaper(null)}
-        title={selectedPaper ? `Chi tiết đề thi ${selectedPaper.paperCode}` : 'Chi tiết đề thi'}
-      >
-        {selectedPaper && (
-          <div className="space-y-5">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-bold text-slate-900">{selectedPaper.title}</h3>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {selectedPaper.examSchedule?.examPeriod?.name} · {selectedPaper.examSchedule?.subject?.subjectName}
-                  </p>
-                </div>
-                <span
-                  className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${statusStyle[selectedPaper.status].className
-                    }`}
-                >
-                  {statusStyle[selectedPaper.status].label}
-                </span>
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-3 text-xs font-medium text-slate-600">
-                <span>{selectedPaper.durationMinutes} phút</span>
-                <span>{selectedPaper.totalScore} điểm</span>
-                <span>{selectedPaper.questions?.length || 0} câu</span>
-                <span>Người tạo: {selectedPaper.createdBy?.username}</span>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  onClick={() => handleExportWord(false)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition shadow-2xs"
-                >
-                  <Download className="h-3.5 w-3.5" /> Xuất Word Đề Thi (.doc)
-                </button>
-                <button
-                  onClick={() => handleExportWord(true)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition shadow-2xs"
-                >
-                  <KeyRound className="h-3.5 w-3.5" /> Xuất Word + Bảng Đáp Án
-                </button>
-                <button
-                  onClick={() => setShowAnswers((value) => !value)}
-                  className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700"
-                >
-                  {showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án màn hình'}
-                </button>
-              </div>
-            </div>
-
-            <div className="max-h-[55vh] space-y-3 overflow-y-auto pr-1">
-              {selectedPaper.questions?.map((item) => (
-                <article key={item.id} className="rounded-xl border border-slate-200 p-4">
-                  <p className="text-sm font-semibold text-slate-900">
-                    Câu {item.questionOrder}. ({item.score} điểm) {item.question.content}
-                  </p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {item.question.options?.map((option) => (
-                      <div
-                        key={option.id}
-                        className={`rounded-lg border p-2 text-xs ${showAnswers && option.isCorrect
-                          ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800'
-                          : 'border-slate-200 bg-slate-50 text-slate-700'
-                          }`}
-                      >
-                        {option.label}. {option.content}
-                        {showAnswers && option.isCorrect && ' ✓'}
-                      </div>
-                    ))}
-                  </div>
-                  {showAnswers && item.question.explanation && (
-                    <p className="mt-3 rounded-lg bg-sky-50 p-2 text-xs text-sky-800">
-                      <strong>Giải thích:</strong> {item.question.explanation}
-                    </p>
-                  )}
-                </article>
-              ))}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-500">Trạng thái đề:</span>
+            <div className="relative">
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+              >
+                <option value="ALL">Tất cả Trạng thái</option>
+                <option value="DRAFT">Bản nháp (Draft)</option>
+                <option value="PUBLISHED">Đã phát hành (Published)</option>
+                <option value="ARCHIVED">Đã lưu trữ (Archived)</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             </div>
           </div>
+        </div>
+
+        <ExamPaperTableToolbar
+          totalCount={filteredPapers.length}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          visibleColumns={visibleColumns}
+          onColumnToggle={handleColumnToggle}
+          onRefresh={fetchData}
+        />
+
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : !paginatedPapers.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+            Không tìm thấy Đề thi phù hợp.
+          </div>
+        ) : (
+          <ExamPaperTable
+            papers={paginatedPapers}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? paginatedPapers.map((p) => p.id) : [])
+            }
+            onDetail={openDetail}
+            onExportWord={(p) => exportExamPaperToWord(formatPaperForExport(p))}
+            onAction={runAction}
+            busyId={busyId}
+            isAdmin={currentUser?.role === 'ADMIN'}
+          />
         )}
-      </Modal>
+
+        <ExamPaperPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredPapers.length}
+          onPage={setPage}
+          onLimit={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
+      </main>
+
+      {selectedPaper && (
+        <Modal
+          isOpen={Boolean(selectedPaper)}
+          onClose={() => setSelectedPaper(null)}
+          title={`Đề Thi Mã Số: ${selectedPaper.paperCode} - ${(selectedPaper as any).subjectName || selectedPaper.examSchedule?.subjectName || 'Chi tiết Đề thi'}`}
+        >
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700 border border-blue-200">
+                  {(selectedPaper as any).questionCount ?? selectedPaper.questions?.length ?? (selectedPaper as any).details?.length ?? 0} câu hỏi
+                </span>
+                <span className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700 border border-emerald-200">
+                  {selectedPaper.totalScore} điểm
+                </span>
+                <span className="rounded-lg bg-purple-50 px-2.5 py-1 text-xs font-black text-purple-700 border border-purple-200">
+                  {selectedPaper.durationMinutes} phút
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAnswers(!showAnswers)}
+                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition cursor-pointer border ${
+                    showAnswers
+                      ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                  }`}
+                >
+                  <KeyRound className="h-3.5 w-3.5" />
+                  <span>{showAnswers ? 'Ẩn Đáp án' : 'Hiện Đáp án'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => exportExamPaperToWord(formatPaperForExport(selectedPaper))}
+                  className="flex items-center gap-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 text-xs font-extrabold border border-blue-200 transition cursor-pointer"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Tải Word (.docx)</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[60vh] overflow-y-auto space-y-4 pr-1">
+              {((selectedPaper as any).details || selectedPaper.questions || []).map((detail: any, index: number) => {
+                const q = detail.question || detail;
+                const choices = [
+                  { label: 'A', text: q.optionA },
+                  { label: 'B', text: q.optionB },
+                  { label: 'C', text: q.optionC },
+                  { label: 'D', text: q.optionD },
+                ].filter((c) => c.text);
+
+                return (
+                  <div key={detail.id || index} className="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-2 shadow-2xs">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-xs font-black text-slate-900 leading-snug">
+                        Câu {index + 1}: {q.content}
+                      </span>
+                      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                        {q.difficulty || 'DỄ'} · {detail.score || 0.25}đ
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                      {choices.map((c) => {
+                        const isCorrect = q.correctAnswer === c.label;
+                        return (
+                          <div
+                            key={c.label}
+                            className={`rounded-xl border p-2 font-medium transition ${
+                              showAnswers && isCorrect
+                                ? 'border-emerald-500 bg-emerald-50 text-emerald-900 font-bold'
+                                : 'border-slate-200 bg-slate-50/70 text-slate-700'
+                            }`}
+                          >
+                            <span className="font-black text-slate-900 mr-1.5">{c.label}.</span>
+                            <span>{c.text}</span>
+                            {showAnswers && isCorrect && <span className="ml-2 text-emerald-600 font-black">✓ Đáp án đúng</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      <CriticalConfirmModal
+        isOpen={criticalModal.isOpen}
+        title={`Phát hành Đề thi Mã số: ${criticalModal.paper?.paperCode || ''}`}
+        warningMessage={`Khi phát hành đề thi ${criticalModal.paper?.paperCode || ''}, lịch thi sẽ bị KHOÁ CHỈNH SỬA và thí sinh có thể bắt đầu làm bài.`}
+        confirmPhrase="PHAT HANH DE THI"
+        examPasswordRequired={true}
+        onClose={() => setCriticalModal({ isOpen: false, paper: null })}
+        onConfirm={handleCriticalConfirm}
+      />
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}
@@ -671,23 +701,6 @@ export default function ExamPapersPage() {
         type={confirmModal.type}
       />
 
-      <CriticalConfirmModal
-        isOpen={criticalModal.isOpen}
-        onClose={() => setCriticalModal({ isOpen: false, paper: null })}
-        title={`Phát Hành Đề Thi Official (${criticalModal.paper?.paperCode || ''})`}
-        warningMessage="Phát hành đề thi sẽ tự động khởi tạo cấu hình ca thi trực tuyến và KHÓA CHỈNH SỬA đề thi này. Đề thi sẽ sẵn sàng phát cho thí sinh khi ca thi bắt đầu."
-        examPasswordRequired={criticalModal.paper?.examSchedule?.mode !== 'MOCK'}
-        confirmPhrase="PHAT HANH DE THI"
-        reasons={[
-          'Hoàn tất thẩm định và duyệt cấu trúc đề thi',
-          'Đến thời điểm phát hành theo kế hoạch thi',
-          'Phát hành bổ sung mã đề dự phòng',
-          'Yêu cầu chỉ đạo phát hành khẩn cấp',
-          'Lý do khác',
-        ]}
-        actionButtonText="Phát Hành & Kích Hoạt Ca Thi"
-        onConfirm={handleConfirmCriticalPublish}
-      />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
