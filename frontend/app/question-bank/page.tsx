@@ -18,6 +18,7 @@ import { QuestionPagination } from '../../components/question-bank/QuestionPagin
 import { QuestionSearch } from '../../components/question-bank/QuestionSearch';
 import { QuestionStatistics } from '../../components/question-bank/QuestionStatistics';
 import { QuestionToolbar } from '../../components/question-bank/QuestionToolbar';
+import { printReport } from '../../lib/export-print';
 
 const emptyFilters: Filters = { subjectId: '', chapterId: '', type: '', difficulty: '', bloomLevel: '', status: '' };
 
@@ -249,9 +250,40 @@ export default function QuestionBankPage() {
       a.download = 'questions.csv';
       a.click();
       URL.revokeObjectURL(url);
+
+
     } catch (e: any) {
       setToast({ message: e.message || 'Không xuất được CSV.', type: 'error' });
     }
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BÁO CÁO THỐNG KÊ NGÂN HÀNG CÂU HỎI',
+      subtitle: 'Danh sách các câu hỏi trong ngân hàng câu hỏi khảo thí',
+      metaInfo: [
+        { label: 'Tổng số câu hỏi', value: String(counts.total || questions.length) },
+        { label: 'Số câu hiển thị', value: String(questions.length) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã CH', width: '90px', align: 'center' },
+        { header: 'Môn thi', width: '130px' },
+        { header: 'Dạng câu hỏi', width: '110px', align: 'center' },
+        { header: 'Độ khó', width: '90px', align: 'center' },
+        { header: 'Nội dung câu hỏi', width: '250px' },
+        { header: 'Trạng thái', width: '100px', align: 'center' },
+      ],
+      rows: questions.map((q, idx) => [
+        idx + 1,
+        q.code || `CH-${q.id}`,
+        q.subject?.subjectName || '---',
+        q.type === 'SINGLE_CHOICE' ? 'Trắc nghiệm (1 đáp án)' : q.type === 'MULTIPLE_CHOICE' ? 'Nhiều đáp án' : 'Đúng/Sai',
+        q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình',
+        q.content,
+        q.status === 'APPROVED' ? 'Đã duyệt' : q.status === 'REJECTED' ? 'Từ chối' : 'Chờ duyệt',
+      ]),
+    });
   };
 
   return (
@@ -266,6 +298,7 @@ export default function QuestionBankPage() {
               onImport={() => setImportOpen(true)}
               onAi={() => setAiOpen(true)}
               onExport={exportCsv}
+              onPrint={handlePrintReport}
             />
           </div>
           <QuestionFilters value={filters} subjects={subjects} onChange={next => { setFilters(next); setPage(1); }} />
@@ -333,7 +366,7 @@ export default function QuestionBankPage() {
 
       <QuestionFormDialog open={formOpen} subjects={subjects} question={editing} onClose={() => { setFormOpen(false); setEditing(null); }} onSaved={load} />
       <QuestionDetailDialog question={detail} onClose={() => setDetail(null)} />
-      <QuestionImportWizard open={importOpen} onClose={() => setImportOpen(false)} onDone={load} />
+      <QuestionImportWizard open={importOpen} subjects={subjects} onClose={() => setImportOpen(false)} onDone={load} />
       <QuestionAIWizard open={aiOpen} subjects={subjects} onClose={() => setAiOpen(false)} onDone={load} />
 
       <ConfirmModal

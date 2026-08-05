@@ -1,9 +1,10 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { BloomLevel, Prisma, QuestionDifficulty, QuestionHistoryAction, QuestionStatus, QuestionType } from '@prisma/client';
 import { createHash } from 'node:crypto';
+import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
+import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, ImportPreviewDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
 import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
 
 type Actor = { id: number; role: string };
@@ -32,8 +33,8 @@ export class QuestionsService {
     if (q.createdById !== a.id) throw new ForbiddenException('Chỉ được sửa câu hỏi của mình.');
     if (q.status !== QuestionStatus.DRAFT && q.status !== QuestionStatus.REJECTED) throw new BadRequestException('Chỉ sửa được câu nháp hoặc bị từ chối.');
   }
-  private async chapter(subjectId: number, chapterId: string) {
-    if (!await this.prisma.chapter.findFirst({ where: { id: chapterId, subjectId } })) throw new BadRequestException('Chương không thuộc môn học.');
+  private async chapter(subjectId: number, chapterId?: string | null) {
+    if (chapterId && !await this.prisma.chapter.findFirst({ where: { id: chapterId, subjectId } })) throw new BadRequestException('Chương không thuộc môn học.');
   }
   private async code(tx: Prisma.TransactionClient) {
     const r = await tx.$queryRaw<Array<{ value: bigint }>>`SELECT nextval('question_code_seq') value`;
@@ -80,9 +81,9 @@ export class QuestionsService {
   }
   private async createInTransaction(tx: Prisma.TransactionClient, a: Actor, d: CreateQuestionDto) {
     const q = await tx.question.create({ data: {
-      code: await this.code(tx), subjectId: d.subjectId, chapterId: d.chapterId, content: d.content.trim(),
+      code: await this.code(tx), subject: { connect: { id: d.subjectId } }, ...(d.chapterId ? { chapter: { connect: { id: d.chapterId } } } : {}), content: d.content.trim(),
       normalizedContent: normalizeQuestionContent(d.content), type: d.type, difficulty: d.difficulty, bloomLevel: d.bloomLevel,
-      score: d.score, explanation: d.explanation || null, keywords: d.keywords || null, status: QuestionStatus.DRAFT, createdById: a.id,
+      score: d.score, explanation: d.explanation || null, keywords: d.keywords || null, status: QuestionStatus.DRAFT, createdBy: { connect: { id: a.id } },
       options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order ?? i })) }, statistic: { create: {} },
     }, include });
     await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.CREATE, newData: this.json(q), changedById: a.id } });
@@ -127,12 +128,12 @@ export class QuestionsService {
     if (await this.prisma.examPaperQuestion.count({ where: { questionId: id } })) {
       throw new BadRequestException('Không thể sửa câu hỏi đã được đưa vào đề thi. Hãy nhân bản câu hỏi để chỉnh sửa.');
     }
-    const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId ?? old.chapterId; await this.chapter(subjectId, chapterId);
+    const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId === null ? null : (d.chapterId ?? old.chapterId); await this.chapter(subjectId, chapterId);
     validateQuestionOptions(d.type ?? old.type, d.options ?? old.options); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
     return this.prisma.$transaction(async tx => {
       if (d.options) await tx.questionOption.deleteMany({ where: { questionId: id } });
       const q = await tx.question.update({ where: { id }, data: {
-        ...(d.subjectId && { subjectId: d.subjectId }), ...(d.chapterId && { chapterId: d.chapterId }),
+        ...(d.subjectId && { subjectId: d.subjectId }), ...(d.chapterId !== undefined && { chapterId: d.chapterId }),
         ...(d.content && { content: d.content.trim(), normalizedContent: normalizeQuestionContent(d.content) }),
         ...(d.type && { type: d.type }), ...(d.difficulty && { difficulty: d.difficulty }), ...(d.bloomLevel && { bloomLevel: d.bloomLevel }),
         ...(d.score !== undefined && { score: d.score }), ...(d.explanation !== undefined && { explanation: d.explanation || null }),
@@ -146,7 +147,7 @@ export class QuestionsService {
   }
   async duplicate(a: Actor, id: string) {
     const old = await this.current(id); return this.prisma.$transaction(async tx => {
-      const q = await tx.question.create({ data: { code: await this.code(tx), subjectId: old.subjectId, chapterId: old.chapterId, content: `${old.content} (Bản sao)`, normalizedContent: `${old.normalizedContent} ban sao ${Date.now()}`, type: old.type, difficulty: old.difficulty, bloomLevel: old.bloomLevel, score: old.score, explanation: old.explanation, keywords: old.keywords, createdById: a.id, options: { create: old.options.map(o => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order })) }, statistic: { create: {} } }, include });
+      const q = await tx.question.create({ data: { code: await this.code(tx), subject: { connect: { id: old.subjectId } }, ...(old.chapterId ? { chapter: { connect: { id: old.chapterId } } } : {}), content: `${old.content} (Bản sao)`, normalizedContent: `${old.normalizedContent} ban sao ${Date.now()}`, type: old.type, difficulty: old.difficulty, bloomLevel: old.bloomLevel, score: old.score, explanation: old.explanation, keywords: old.keywords, createdBy: { connect: { id: a.id } }, options: { create: old.options.map(o => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order })) }, statistic: { create: {} } }, include });
       await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.DUPLICATE, note: `Từ ${old.code}`, changedById: a.id } });
       await this.audit.write({ actorId: a.id, action: 'DUPLICATE', entityType: 'QUESTION', entityId: q.id, description: `Đã nhân bản câu hỏi ${old.code} thành ${q.code}`, metadata: { sourceQuestionCode: old.code, questionCode: q.code } }, tx);
       return q;
@@ -154,12 +155,15 @@ export class QuestionsService {
   }
   private async transition(a: Actor, id: string, action: QuestionHistoryAction, from: QuestionStatus[], to: QuestionStatus, note?: string) {
     const old = await this.current(id);
-    if (!from.includes(old.status)) throw new BadRequestException(`Không thể chuyển ${old.status} sang ${to}.`);
+    if (!from.includes(old.status)) {
+      const labels: Record<string, string> = { DRAFT: 'bản nháp', PENDING: 'chờ duyệt', APPROVED: 'đã duyệt', REJECTED: 'bị từ chối', ARCHIVED: 'lưu trữ' };
+      throw new BadRequestException(`Không thể chuyển từ ${labels[old.status] || old.status} sang ${labels[to] || to}.`);
+    }
     if (action === QuestionHistoryAction.SUBMIT) {
       if (old.status !== QuestionStatus.DRAFT && old.status !== QuestionStatus.REJECTED) throw new BadRequestException('Chỉ gửi duyệt được câu nháp hoặc bị từ chối.');
     }
     if ((action === QuestionHistoryAction.APPROVE || action === QuestionHistoryAction.REJECT) && a.role === 'TEACHER' && old.createdById === a.id) throw new ForbiddenException('Không được tự duyệt câu hỏi.');
-    if ((action === QuestionHistoryAction.ARCHIVE || action === QuestionHistoryAction.RESTORE) && a.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được thực hiện.');
+    if ((action === QuestionHistoryAction.ARCHIVE || action === QuestionHistoryAction.RESTORE) && a.role !== 'ADMIN') throw new ForbiddenException('Chỉ quản trị viên được thực hiện.');
     return this.prisma.$transaction(async tx => {
       const q = await tx.question.update({ where: { id }, data: { status: to, rejectionReason: action === QuestionHistoryAction.REJECT ? note : null, approvedById: action === QuestionHistoryAction.APPROVE ? a.id : old.approvedById, approvedAt: action === QuestionHistoryAction.APPROVE ? new Date() : old.approvedAt, archivedAt: action === QuestionHistoryAction.ARCHIVE ? new Date() : action === QuestionHistoryAction.RESTORE ? null : old.archivedAt, isActive: to !== QuestionStatus.ARCHIVED }, include });
       await tx.questionHistory.create({ data: { questionId: id, action, oldData: this.json(old), newData: this.json(q), note, changedById: a.id } });
@@ -187,7 +191,7 @@ export class QuestionsService {
   archive(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.ARCHIVE, [QuestionStatus.DRAFT, QuestionStatus.PENDING, QuestionStatus.APPROVED, QuestionStatus.REJECTED], QuestionStatus.ARCHIVED); }
   restore(a: Actor, id: string) { return this.transition(a, id, QuestionHistoryAction.RESTORE, [QuestionStatus.ARCHIVED], QuestionStatus.DRAFT); }
   async remove(a: Actor, id: string) {
-    if (a.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được xóa.'); const old = await this.current(id);
+    if (a.role !== 'ADMIN') throw new ForbiddenException('Chỉ quản trị viên được xóa.'); const old = await this.current(id);
     if (old.statistic?.usedCount || await this.prisma.examPaperQuestion.count({ where: { questionId: id } })) throw new BadRequestException('Câu đã dùng; hãy lưu trữ.');
     return this.prisma.$transaction(async tx => {
       await tx.questionHistory.create({ data: { questionId: id, action: QuestionHistoryAction.DELETE, oldData: this.json(old), changedById: a.id } });
@@ -217,25 +221,47 @@ export class QuestionsService {
   }
   async exportCsv(a: Actor, q: QuestionQueryDto) {
     const r = await this.findAll(a, { ...q, page: 1, limit: 100 }); const esc = (v: any) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    return '\uFEFFcode,subject,chapter,type,difficulty,bloomLevel,content,score,status\r\n' + r.data.map(x => [x.code, x.subject.subjectCode, x.chapter.code, x.type, x.difficulty, x.bloomLevel, x.content, x.score, x.status].map(esc).join(',')).join('\r\n');
+    const typeLabels: Record<string, string> = { SINGLE_CHOICE: 'Trắc nghiệm một đáp án', MULTIPLE_CHOICE: 'Trắc nghiệm nhiều đáp án', TRUE_FALSE: 'Đúng hoặc Sai', FILL_BLANK: 'Điền vào chỗ trống', ESSAY: 'Tự luận' };
+    const difficultyLabels: Record<string, string> = { EASY: 'Dễ', MEDIUM: 'Trung bình', HARD: 'Khó' };
+    const bloomLabels: Record<string, string> = { REMEMBER: 'Nhận biết', UNDERSTAND: 'Thông hiểu', APPLY: 'Vận dụng', ANALYZE: 'Phân tích' };
+    const statusLabels: Record<string, string> = { DRAFT: 'Bản nháp', PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Từ chối', ARCHIVED: 'Lưu trữ' };
+    return '\uFEFFMã câu hỏi,Mã môn,Mã chương,Loại câu hỏi,Độ khó,Mức độ Bloom,Nội dung câu hỏi,Điểm,Trạng thái\r\n' + r.data.map(x => [x.code, x.subject.subjectCode, x.chapter.code, typeLabels[x.type] || x.type, difficultyLabels[x.difficulty] || x.difficulty, bloomLabels[x.bloomLevel] || x.bloomLevel, x.content, x.score, statusLabels[x.status] || x.status].map(esc).join(',')).join('\r\n');
   }
-  importTemplate() { return '\uFEFFsubjectCode,chapterCode,type,difficulty,bloomLevel,content,score,optionA,correctA,optionB,correctB,optionC,correctC,optionD,correctD,explanation\r\nCNTT01,CH1,SINGLE_CHOICE,EASY,REMEMBER,"Câu hỏi mẫu hợp lệ?",0.25,"Đáp án A",true,"Đáp án B",false,"Đáp án C",false,"Đáp án D",false,"Giải thích mẫu"\r\nCNTT01,CH1,TRUE_FALSE,EASY,UNDERSTAND,"Mệnh đề mẫu là đúng.",0.25,"Đúng",true,"Sai",false,,,,,"Giải thích"'; }
-  private csv(file: Express.Multer.File) {
+  importTemplate() { return '\uFEFFMã môn,Mã chương,Loại câu hỏi,Độ khó,Mức độ Bloom,Nội dung câu hỏi,Điểm,Đáp án A,Đúng A,Đáp án B,Đúng B,Đáp án C,Đúng C,Đáp án D,Đúng D,Giải thích\r\nCNTT01,CH1,SINGLE_CHOICE,EASY,REMEMBER,"Câu hỏi mẫu hợp lệ?",0.25,"Đáp án A",true,"Đáp án B",false,"Đáp án C",false,"Đáp án D",false,"Giải thích mẫu"\r\nCNTT01,CH1,TRUE_FALSE,EASY,UNDERSTAND,"Mệnh đề mẫu là đúng.",0.25,"Đúng",true,"Sai",false,,,,,"Giải thích"'; }
+  private csvLegacy(file: Express.Multer.File) {
     const lines = file.buffer.toString('utf8').replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean); const headers = lines.shift()!.split(',');
     return lines.map((line, i) => ({ row: i + 2, data: Object.fromEntries(headers.map((h, x) => [h.trim(), line.match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]*))(?:,|$)/g)?.[x]?.replace(/^\"|\",?$|,$/g, '').replace(/\"\"/g, '"') || ''])) }));
   }
-  async importPreview(a: Actor, file: Express.Multer.File) {
-    this.access(a); const rows = this.csv(file); if (!rows.length || rows.length > 1000) throw new BadRequestException('CSV phải có 1-1000 dòng.');
-    const out = []; for (const row of rows) { const v: any = row.data; const subject = await this.prisma.subject.findUnique({ where: { subjectCode: v.subjectCode } }); const chapter = subject ? await this.prisma.chapter.findFirst({ where: { subjectId: subject.id, code: v.chapterCode } }) : null; const errors = []; if (!subject) errors.push('Môn không tồn tại'); if (!chapter) errors.push('Chương không hợp lệ'); if (!v.content) errors.push('Thiếu nội dung'); out.push({ ...row, subjectId: subject?.id, chapterId: chapter?.id, errors, duplicates: v.content ? await this.duplicates(v.content) : [] }); }
+  private rowsFromFile(file: Express.Multer.File) {
+    const workbook = XLSX.read(file.buffer, { type: 'buffer', raw: false });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const matrix = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1, defval: '' });
+    const aliases: Record<string, string> = { 'Mã môn': 'subjectCode', 'Mã chương': 'chapterCode', 'Loại câu hỏi': 'type', 'Độ khó': 'difficulty', 'Mức độ Bloom': 'bloomLevel', 'Nội dung câu hỏi': 'content', 'Điểm': 'score', 'Đáp án A': 'optionA', 'Đúng A': 'correctA', 'Đáp án B': 'optionB', 'Đúng B': 'correctB', 'Đáp án C': 'optionC', 'Đúng C': 'correctC', 'Đáp án D': 'optionD', 'Đúng D': 'correctD', 'Giải thích': 'explanation' };
+    const headers = (matrix.shift() || []).map((h: any) => aliases[String(h).trim()] || String(h).trim());
+    return matrix.filter(row => row.some((v: any) => String(v ?? '').trim() !== '')).map((row, i) => ({ row: i + 2, data: Object.fromEntries(headers.map((h, x) => [h, String(row[x] ?? '').trim()])) }));
+  }
+  private resolveImport(data: any, meta: ImportPreviewDto) {
+    const use = (key: string, fallback: any) => meta.applyDefaultsToMissingOnly !== false && (!data[key] || String(data[key]).trim() === '') ? fallback : data[key];
+    return { ...data, subjectId: data.subjectId || meta.subjectId, chapterId: data.chapterId || meta.chapterId, type: use('type', meta.defaultType), difficulty: use('difficulty', meta.defaultDifficulty), bloomLevel: use('bloomLevel', meta.defaultBloomLevel), score: use('score', meta.defaultScore) };
+  }
+  async importPreview(a: Actor, file: Express.Multer.File, meta: ImportPreviewDto = new ImportPreviewDto()) {
+    this.access(a); let rows = this.rowsFromFile(file); if (!rows.length || rows.length > 1000) throw new BadRequestException('File phải có 1-1000 dòng.');
+    rows = rows.map(row => ({ ...row, data: this.resolveImport(row.data, meta) }));
+    const out = []; for (const row of rows) { const v: any = row.data; const subject = await this.prisma.subject.findUnique({ where: { subjectCode: v.subjectCode } }); const chapter = subject && v.chapterCode ? await this.prisma.chapter.findFirst({ where: { subjectId: subject.id, code: v.chapterCode } }) : null; const errors = []; if (!subject) errors.push('Môn không tồn tại'); if (v.chapterCode && !chapter) errors.push('Chương không hợp lệ'); if (!v.content) errors.push('Thiếu nội dung'); out.push({ ...row, subjectId: subject?.id, chapterId: chapter?.id || null, errors, duplicates: v.content ? await this.duplicates(v.content) : [] }); }
     return { hash: createHash('sha256').update(file.buffer).digest('hex'), rows: out };
   }
   async importConfirm(a: Actor, file: Express.Multer.File, d: ImportConfirmDto) {
-    if (createHash('sha256').update(file.buffer).digest('hex') !== d.hash) throw new BadRequestException('File đã thay đổi.'); const p = await this.importPreview(a, file); const selected = p.rows.filter(x => d.rows.includes(x.row));
+    if (createHash('sha256').update(file.buffer).digest('hex') !== d.hash) throw new BadRequestException('File đã thay đổi.'); const p = await this.importPreview(a, file, d);
+    if (d.overrides) { try { const overrides = JSON.parse(d.overrides); p.rows.forEach((row: any) => { if (overrides[row.row]) row.data = { ...row.data, ...overrides[row.row] }; }); } catch { throw new BadRequestException('Dữ liệu chỉnh sửa import không hợp lệ.'); } }
+    const selected = p.rows.filter(x => d.rows.includes(x.row));
     if (!selected.length || selected.some(x => x.errors.length)) throw new BadRequestException('Dòng chọn có lỗi.'); if (selected.some(x => x.duplicates.length) && !(d.overrideDuplicate && a.role === 'ADMIN')) throw new ConflictException('Có câu trùng.');
     const payloads: CreateQuestionDto[] = selected.map((x) => {
       const v: any = x.data;
       const options = ['A', 'B', 'C', 'D'].filter((key) => v[`option${key}`]).map((key, index) => ({ label: key, content: v[`option${key}`], isCorrect: v[`correct${key}`] === 'true', order: index }));
-      const payload: CreateQuestionDto = { subjectId: x.subjectId!, chapterId: x.chapterId!, content: v.content, type: v.type, difficulty: v.difficulty || 'MEDIUM', bloomLevel: v.bloomLevel || 'UNDERSTAND', score: Number(v.score || .25), explanation: v.explanation, options, overrideDuplicate: d.overrideDuplicate };
+      const payload: CreateQuestionDto = { subjectId: x.subjectId!, chapterId: x.chapterId || undefined, content: v.content, type: v.type, difficulty: v.difficulty || 'MEDIUM', bloomLevel: v.bloomLevel || 'UNDERSTAND', score: Number(v.score || .25), explanation: v.explanation, options, overrideDuplicate: d.overrideDuplicate };
+      if (!['SINGLE_CHOICE','MULTIPLE_CHOICE','TRUE_FALSE','FILL_BLANK','ESSAY'].includes(payload.type)) throw new BadRequestException(`Loại câu ở dòng ${x.row} không hợp lệ.`);
+      if (!['EASY','MEDIUM','HARD'].includes(payload.difficulty)) throw new BadRequestException(`Độ khó ở dòng ${x.row} không hợp lệ.`);
+      if (!['REMEMBER','UNDERSTAND','APPLY','ANALYZE'].includes(payload.bloomLevel)) throw new BadRequestException(`Bloom ở dòng ${x.row} không hợp lệ.`);
       validateQuestionOptions(payload.type, payload.options);
       if (!Number.isFinite(payload.score) || payload.score < 0.01 || payload.score > 100) throw new BadRequestException(`Điểm ở dòng ${x.row} không hợp lệ.`);
       return payload;
@@ -243,8 +269,10 @@ export class QuestionsService {
     const created = await this.prisma.$transaction(async (tx) => {
       const rows: any[] = [];
       for (const payload of payloads) {
-        const chapter = await tx.chapter.findFirst({ where: { id: payload.chapterId, subjectId: payload.subjectId } });
-        if (!chapter) throw new BadRequestException('Chương không còn thuộc môn học đã chọn.');
+        if (payload.chapterId) {
+          const chapter = await tx.chapter.findFirst({ where: { id: payload.chapterId, subjectId: payload.subjectId } });
+          if (!chapter) throw new BadRequestException('Chương không còn thuộc môn học đã chọn.');
+        }
         const normalizedContent = normalizeQuestionContent(payload.content);
         const duplicates = await tx.$queryRaw<Array<{ id: string }>>`
           SELECT id FROM questions WHERE "deletedAt" IS NULL

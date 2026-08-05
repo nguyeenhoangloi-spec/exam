@@ -183,19 +183,19 @@ export default function ExamArrangementPage() {
   }, [schedules]);
 
   const fetchSchedules = useCallback(async (periodId: string) => {
-    if (!periodId) {
-      setSchedules([]);
-      setSelectedScheduleId('');
-      return;
-    }
     try {
-      const res = await api.get(`/exam-schedules?examPeriodId=${periodId}`);
+      const url = periodId ? `/exam-schedules?examPeriodId=${periodId}` : '/exam-schedules';
+      const res = await api.get(url);
       setSchedules(res.data);
       if (res.data.length > 0) {
         const firstSchedId = res.data[0].id.toString();
         setSelectedScheduleId(firstSchedId);
         await fetchRoomAvailability(firstSchedId);
         await fetchExistingResults(firstSchedId);
+      } else {
+        setSelectedScheduleId('');
+        setRooms([]);
+        setResult(null);
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải danh sách ca thi', type: 'error' });
@@ -215,12 +215,8 @@ export default function ExamArrangementPage() {
     try {
       const resPeriods = await api.get('/exam-periods');
       setPeriods(resPeriods.data);
-
-      if (resPeriods.data.length > 0) {
-        const periodId = resPeriods.data[0].id.toString();
-        setSelectedPeriodId(periodId);
-        await fetchSchedules(periodId);
-      }
+      // Default to empty periodId to fetch all schedules across periods initially
+      await fetchSchedules('');
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu ban đầu', type: 'error' });
     }
@@ -481,6 +477,7 @@ export default function ExamArrangementPage() {
                     }}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
                   >
+                    <option value="">Tất cả Kỳ thi ({periods.length} kỳ)</option>
                     {periods.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name} ({p.semester} - {p.schoolYear})
@@ -494,14 +491,37 @@ export default function ExamArrangementPage() {
                   <select
                     value={selectedScheduleId}
                     onChange={(e) => void handleScheduleChange(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
+                    disabled={schedules.length === 0}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none disabled:opacity-60"
                   >
-                    {schedules.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.subject?.subjectName} ({s.subject?.subjectCode}) · {new Date(s.examDate).toLocaleDateString('vi-VN')} ({s.startTime}-{s.endTime})
-                      </option>
-                    ))}
+                    {schedules.length === 0 ? (
+                      <option value="">(Chưa có ca thi nào)</option>
+                    ) : (
+                      schedules.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.subject?.subjectName} ({s.subject?.subjectCode}) · {new Date(s.examDate).toLocaleDateString('vi-VN')} ({s.startTime}-{s.endTime})
+                        </option>
+                      ))
+                    )}
                   </select>
+                  {schedules.length === 0 && (
+                    <div className="mt-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 shadow-2xs">
+                      <p className="font-bold flex items-center gap-1.5 text-amber-800">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
+                        Kỳ thi này hiện chưa có ca thi nào
+                      </p>
+                      <p className="mt-1 text-[11px] text-amber-700 leading-relaxed">
+                        Vui lòng chọn <strong>&quot;Tất cả Kỳ thi&quot;</strong> từ menu thả xuống hoặc sang trang Quản lý Lịch thi để lập ca thi mới.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => router.push('/exam-schedules?action=create')}
+                        className="mt-2 text-[11px] font-bold text-sky-700 hover:text-sky-900 underline"
+                      >
+                        + Chuyển đến Quản lý Lịch thi để tạo ca thi
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -556,10 +576,10 @@ export default function ExamArrangementPage() {
                 <div className="pt-2 space-y-2">
                   <button
                     type="submit"
-                    disabled={arranging}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98"
+                    disabled={arranging || selectedRoomIds.length === 0}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98"
                   >
-                    <Sparkles className="h-4 w-4" /> {arranging ? 'Đang chạy thuật toán...' : 'Xem trước phương án'}
+                    <Sparkles className="h-4 w-4" /> {arranging ? 'Đang chạy thuật toán AI...' : 'Xem trước phương án xếp phòng'}
                   </button>
 
                   {result && (
@@ -834,7 +854,7 @@ export default function ExamArrangementPage() {
                           {new Date(log.createdAt).toLocaleString('vi-VN')}
                         </td>
                         <td className="p-3 font-bold text-slate-800 whitespace-nowrap">
-                          {log.actor?.username || 'Admin'} ({log.actor?.role || 'SYSTEM'})
+                          {log.actor?.username || 'Quản trị viên'} ({log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role || 'Hệ thống'})
                         </td>
                         <td className="p-3 whitespace-nowrap">
                           <span

@@ -76,7 +76,7 @@ export default function ProctorDashboardPage() {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
-        <span className="ml-3 text-slate-300">Đang kết nối Dashboard Giám Thị trực tuyến...</span>
+        <span className="ml-3 text-slate-300">Đang kết nối bảng điều khiển giám thị trực tuyến...</span>
       </div>
     );
   }
@@ -86,7 +86,7 @@ export default function ProctorDashboardPage() {
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
         <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md text-center">
           <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Lỗi Tải Dashboard</h2>
+          <h2 className="text-xl font-bold mb-2">Lỗi tải bảng điều khiển</h2>
           <p className="text-slate-400 text-sm mb-6">{error}</p>
           <button
             onClick={() => router.back()}
@@ -222,7 +222,7 @@ export default function ProctorDashboardPage() {
                                 : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30'
                             }`}
                           >
-                            {att.status} {att.extraMinutes > 0 && `(+${att.extraMinutes}m)`}
+                            {(att.status === 'IN_PROGRESS' ? 'Đang làm bài' : att.status === 'DISCONNECTED' ? 'Mất kết nối' : att.status === 'SUBMITTED' ? 'Đã nộp bài' : att.status === 'ABSENT' ? 'Vắng mặt' : att.status)} {att.extraMinutes > 0 && `(+${att.extraMinutes} phút)`}
                           </span>
                         )}
                       </td>

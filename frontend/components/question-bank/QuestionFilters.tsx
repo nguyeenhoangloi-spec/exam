@@ -18,13 +18,7 @@ export function QuestionFilters({
   subjects: Subject[];
   onChange: (next: Filters) => void;
 }) {
-  const subject = subjects.find((s) => String(s.id) === value.subjectId);
-  const set = (key: keyof Filters, next: string) =>
-    onChange({
-      ...value,
-      [key]: next,
-      ...(key === 'subjectId' ? { chapterId: '' } : {}),
-    });
+  const set = (key: keyof Filters, next: string) => onChange({ ...value, [key]: next });
 
   const select = 'rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium outline-none transition focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-100 cursor-pointer';
 
@@ -36,21 +30,6 @@ export function QuestionFilters({
         {subjects.map((s) => (
           <option key={s.id} value={s.id}>
             {s.subjectName}
-          </option>
-        ))}
-      </select>
-
-      {/* Chọn Chương */}
-      <select
-        className={select}
-        value={value.chapterId}
-        onChange={(e) => set('chapterId', e.target.value)}
-        disabled={!value.subjectId}
-      >
-        <option value="">Tất cả chương</option>
-        {subject?.chapters?.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
           </option>
         ))}
       </select>
@@ -76,10 +55,10 @@ export function QuestionFilters({
       {/* Chọn Mức độ Bloom */}
       <select className={select} value={value.bloomLevel} onChange={(e) => set('bloomLevel', e.target.value)}>
         <option value="">Tất cả mức độ Bloom</option>
-        <option value="REMEMBER">Nhận biết (Remember)</option>
-        <option value="UNDERSTAND">Thông hiểu (Understand)</option>
-        <option value="APPLY">Vận dụng (Apply)</option>
-        <option value="ANALYZE">Phân tích (Analyze)</option>
+        <option value="REMEMBER">Nhận biết</option>
+        <option value="UNDERSTAND">Thông hiểu</option>
+        <option value="APPLY">Vận dụng</option>
+        <option value="ANALYZE">Phân tích</option>
       </select>
 
       {/* Chọn Trạng thái */}

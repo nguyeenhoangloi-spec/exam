@@ -41,7 +41,7 @@ export function DashboardWelcome({
     <section className="flex flex-col justify-between gap-6 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs lg:flex-row lg:items-center">
       <div className="min-w-0">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-          Chào buổi sáng, {username || 'Admin'} <span className="animate-bounce inline-block">👋</span>
+          Chào buổi sáng, {username || 'Quản trị viên'} <span className="animate-bounce inline-block">👋</span>
         </h1>
         <p className="mt-1.5 text-sm font-medium text-slate-500">
           Theo dõi tình hình tổ chức thi và các công việc cần xử lý hôm nay.

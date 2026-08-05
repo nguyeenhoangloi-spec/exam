@@ -118,7 +118,7 @@ export default function LoginPage() {
               onClick={() => quickLogin('admin', 'admin123')}
               className="px-2 py-2 bg-slate-800 hover:bg-slate-700 text-sky-400 rounded-lg font-medium transition text-center"
             >
-              Admin
+              Quản trị viên
             </button>
             <button
               onClick={() => quickLogin('teacher1', '123456')}

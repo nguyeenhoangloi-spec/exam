@@ -153,7 +153,7 @@ export class OnlineExamsService {
         where: { examScheduleId: scheduleId, status: 'PUBLISHED' },
       });
       if (!publishedPaper) {
-        throw new BadRequestException('Kỳ thi chưa có đề thi chính thức được phát hành (PUBLISHED)');
+      throw new BadRequestException('Kỳ thi chưa có đề thi chính thức được phát hành.');
       }
       config = await this.prisma.onlineExamConfig.create({
         data: {

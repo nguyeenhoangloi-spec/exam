@@ -12,6 +12,7 @@ import {
   ClipboardList,
   FilePlus2,
   GraduationCap,
+  KeyRound,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -26,6 +27,7 @@ import {
 import { removeAuth } from '../lib/auth';
 import { Role, User } from '../types';
 import { canAccessPath, workspaceRoutes } from '../lib/access';
+import { ChangePasswordModal } from './ChangePasswordModal';
 
 interface HeaderProps {
   user: User | null;
@@ -45,7 +47,7 @@ interface NavigationCommand {
 type OpenPanel = 'quick-actions' | 'notifications' | 'account' | null;
 
 const navigationCommands: NavigationCommand[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN'], keywords: 'tổng quan thống kê' },
+  { label: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN'], keywords: 'tổng quan thống kê' },
   { label: 'Quản lý Khoa', href: '/departments', icon: Building2, roles: ['ADMIN'], keywords: 'khoa phòng ban' },
   { label: 'Quản lý Lớp học', href: '/classes', icon: GraduationCap, roles: ['ADMIN'], keywords: 'lớp sinh viên' },
   { label: 'Quản lý Sinh viên', href: '/students', icon: UsersRound, roles: ['ADMIN'], keywords: 'học viên' },
@@ -82,6 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   const role = user?.role;
   const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Tài khoản';
@@ -379,7 +382,7 @@ export const Header: React.FC<HeaderProps> = ({
                   )}
                 </div>
                 {role && (
-                  <div className="p-1.5">
+                  <div className="p-1.5 space-y-0.5">
                     <button
                       type="button"
                       onClick={() => navigateTo(workspaceRoutes[role])}
@@ -387,6 +390,17 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <LayoutDashboard className="h-4 w-4 text-slate-500" />
                       Trang làm việc
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenPanel(null);
+                        setIsChangePasswordOpen(true);
+                      }}
+                      className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                    >
+                      <KeyRound className="h-4 w-4 text-[#1e66f5]" />
+                      Đổi mật khẩu
                     </button>
                   </div>
                 )}
@@ -405,6 +419,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </div>
+      <ChangePasswordModal isOpen={isChangePasswordOpen} onClose={() => setIsChangePasswordOpen(false)} />
     </header>
   );
 };

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { downloadCsv } from '../../lib/export-csv';
+import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -21,6 +23,7 @@ import {
   Search,
   Filter,
   Download,
+  Printer,
   Eye,
   CheckCircle2,
 } from 'lucide-react';
@@ -163,6 +166,8 @@ export default function ExamRoomsPage() {
     });
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Mã Phòng,Tên Phòng,Sức chứa,Tòa nhà,Loại phòng\n';
     const rows = filteredRooms
@@ -173,20 +178,43 @@ export default function ExamRoomsPage() {
           }"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'danh_sach_phong_thi.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('danh_sach_phong_thi.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    const totalCapacity = rooms.reduce((sum, r) => sum + r.capacity, 0);
+    printReport({
+      title: 'DANH SÁCH PHÒNG THI VÀ CẤU HÌNH SỨC CHỨA',
+      subtitle: 'Phân loại các phòng máy tính và phòng lý thuyết thuộc hội đồng thi',
+      metaInfo: [
+        { label: 'Tổng số phòng thi', value: String(rooms.length) },
+        { label: 'Tổng sức chứa', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} chỗ` },
+        { label: 'Phòng Máy tính', value: String(rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã Phòng', width: '90px', align: 'center' },
+        { header: 'Tên Phòng thi', width: '160px' },
+        { header: 'Tòa nhà / Khu', width: '110px', align: 'center' },
+        { header: 'Sức chứa', width: '90px', align: 'center' },
+        { header: 'Loại phòng thi', width: '130px', align: 'center' },
+      ],
+      rows: filteredRooms.map((r, idx) => [
+        idx + 1,
+        r.roomCode || r.code || '---',
+        r.roomName || r.name || '---',
+        r.building || r.location || 'Khu A',
+        `${r.capacity} ghế`,
+        r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
+      ]),
+    });
   };
 
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số phòng thi', value: rooms.length, subtext: 'Hạ tầng cơ sở thi', icon: DoorOpen, color: 'sky' },
     { title: 'Tổng sức chứa', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} Chỗ`, subtext: 'Số thí sinh đồng thời', icon: Users, color: 'indigo' },
-    { title: 'Phòng thi Máy tính', value: rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length, subtext: 'Thi trắc nghiệm Online', icon: Monitor, color: 'emerald' },
+    { title: 'Phòng thi Máy tính', value: rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length, subtext: 'Thi trắc nghiệm trực tuyến', icon: Monitor, color: 'emerald' },
     { title: 'Phòng thi Lý thuyết', value: rooms.filter((r) => r.roomType !== 'COMPUTER_LAB').length, subtext: 'Thi tự luận giấy', icon: Building, color: 'purple' },
   ];
 
@@ -200,6 +228,12 @@ export default function ExamRoomsPage() {
           </div>
             <div className="flex flex-wrap gap-2.5">
               <button
+                onClick={handlePrintReport}
+                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+              >
+                <Printer className="h-4 w-4" /> In Danh sách
+              </button>
+              <button
                 onClick={exportCsv}
                 className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
               >
@@ -208,7 +242,7 @@ export default function ExamRoomsPage() {
               {currentUser?.role === 'ADMIN' && (
                 <button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
                 >
                   <Plus className="h-4 w-4" /> Thêm Phòng thi
                 </button>

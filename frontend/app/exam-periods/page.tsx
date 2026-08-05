@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { downloadCsv } from '../../lib/export-csv';
+import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -19,6 +21,7 @@ import {
   CheckCircle2,
   Search,
   Download,
+  Printer,
   Eye,
   Award,
   Layers,
@@ -163,6 +166,8 @@ export default function ExamPeriodsPage() {
     });
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Tên Kỳ thi,Học kỳ,Năm học,Ngày bắt đầu,Ngày kết thúc,Trạng thái\n';
     const rows = filteredPeriods
@@ -170,16 +175,39 @@ export default function ExamPeriodsPage() {
         (p) =>
           `"${p.name}","${p.semester}","${p.schoolYear}","${
             p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''
-          }","${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}","${p.status}"`,
+          }","${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}","${({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[p.status] || p.status}"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'danh_sach_ky_thi.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('danh_sach_ky_thi.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BÁO CÁO DANH SÁCH KỲ THI HỌC KỲ',
+      subtitle: 'Danh sách các đợt thi được thiết lập trong hệ thống',
+      metaInfo: [
+        { label: 'Tổng số kỳ thi', value: String(periods.length) },
+        { label: 'Đang diễn ra', value: String(ongoingPeriods) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Tên Kỳ thi', width: '200px' },
+        { header: 'Học kỳ', width: '80px', align: 'center' },
+        { header: 'Năm học', width: '100px', align: 'center' },
+        { header: 'Ngày bắt đầu', width: '110px', align: 'center' },
+        { header: 'Ngày kết thúc', width: '110px', align: 'center' },
+        { header: 'Trạng thái', width: '110px', align: 'center' },
+      ],
+      rows: filteredPeriods.map((p, idx) => [
+        idx + 1,
+        p.name,
+        p.semester,
+        p.schoolYear,
+        p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---',
+        p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---',
+        p.status === 'ONGOING' ? 'Đang diễn ra' : p.status === 'COMPLETED' ? 'Đã kết thúc' : 'Sắp diễn ra',
+      ]),
+    });
   };
 
   const ongoingPeriods = periods.filter((period) => period.status === 'ONGOING').length;
@@ -203,6 +231,12 @@ export default function ExamPeriodsPage() {
           </div>
             <div className="flex flex-wrap gap-2.5">
               <button
+                onClick={handlePrintReport}
+                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+              >
+                <Printer className="h-4 w-4" /> In Báo cáo
+              </button>
+              <button
                 onClick={exportCsv}
                 className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
               >
@@ -211,7 +245,7 @@ export default function ExamPeriodsPage() {
               {currentUser?.role === 'ADMIN' && (
                 <button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
                 >
                   <Plus className="h-4 w-4" /> Thêm Kỳ thi
                 </button>
@@ -272,7 +306,7 @@ export default function ExamPeriodsPage() {
                         </td>
                         <td className="p-4">
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                            <CheckCircle2 className="h-3.5 w-3.5" /> {p.status || 'Hoạt động'}
+                            <CheckCircle2 className="h-3.5 w-3.5" /> {{ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' }[p.status] || 'Hoạt động'}
                           </span>
                         </td>
                         <td className="p-4 pr-6 text-right">
@@ -406,7 +440,7 @@ export default function ExamPeriodsPage() {
         title={drawerPeriod?.name || ''}
         subtitle={`Học kỳ: ${drawerPeriod?.semester} · Năm học: ${drawerPeriod?.schoolYear}`}
         avatarText={drawerPeriod?.semester || 'KT'}
-        badge={{ label: drawerPeriod?.status || 'Đang diễn ra', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }}
+        badge={{ label: ({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[drawerPeriod?.status || ''] || 'Đang diễn ra', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }}
         details={[
           { label: 'Tên kỳ thi', value: drawerPeriod?.name, icon: Calendar },
           { label: 'Học kỳ', value: drawerPeriod?.semester },
@@ -421,7 +455,7 @@ export default function ExamPeriodsPage() {
             value: drawerPeriod?.endDate ? new Date(drawerPeriod.endDate).toLocaleDateString('vi-VN') : '---',
             icon: Clock,
           },
-          { label: 'Trạng thái', value: drawerPeriod?.status || 'Hoạt động', icon: CheckCircle2 },
+          { label: 'Trạng thái', value: ({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[drawerPeriod?.status || ''] || 'Hoạt động', icon: CheckCircle2 },
         ]}
       />
 

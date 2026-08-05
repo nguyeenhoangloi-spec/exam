@@ -233,7 +233,7 @@ export default function DepartmentsPage() {
           {currentUser?.role === 'ADMIN' && (
             <button
               onClick={openAddModal}
-              className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+              className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
             >
               <Plus className="h-4 w-4" /> Thêm Khoa mới
             </button>

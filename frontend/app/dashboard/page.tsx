@@ -120,12 +120,12 @@ export default function DashboardPage() {
         {loading ? (
           <DashboardSkeleton />
         ) : error || !overview ? (
-          <DashboardErrorState message={error || 'Dữ liệu Dashboard không khả dụng.'} onRetry={loadOverview} />
+          <DashboardErrorState message={error || 'Dữ liệu trang tổng quan không khả dụng.'} onRetry={loadOverview} />
         ) : (
           <div className="space-y-6">
             {/* Top Welcome Banner Card */}
             <DashboardWelcome
-              username={user?.username || 'Admin'}
+              username={user?.username || 'Quản trị viên'}
               examCount={overview.today.examCount}
               pendingQuestionCount={overview.today.pendingQuestionCount}
             />

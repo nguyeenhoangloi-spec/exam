@@ -27,7 +27,7 @@ const actions: QuickActionItem[] = [
   { title: 'Phân công GV', icon: UserCheck, route: '/exam-supervisors', tone: 'bg-amber-50 text-amber-600 hover:bg-amber-100' },
   { title: 'Tạo câu hỏi', icon: FilePlus, route: '/question-bank?action=create', tone: 'bg-rose-50 text-rose-600 hover:bg-rose-100' },
   { title: 'Tạo đề thi', icon: FileText, route: '/exam-papers', tone: 'bg-teal-50 text-teal-600 hover:bg-teal-100' },
-  { title: 'Import dữ liệu', icon: Upload, route: '/question-bank?action=import', tone: 'bg-sky-50 text-sky-600 hover:bg-sky-100' },
+  { title: 'Nhập dữ liệu', icon: Upload, route: '/question-bank?action=import', tone: 'bg-sky-50 text-sky-600 hover:bg-sky-100' },
   { title: 'Xem báo cáo', icon: BarChart3, route: '/reports', tone: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100' },
 ];
 

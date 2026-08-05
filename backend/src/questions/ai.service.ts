@@ -12,24 +12,39 @@ export class AiQuestionsService {
   async generate(input: GenerateAiQuestionsDto) {
     const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) throw new ServiceUnavailableException('Chưa cấu hình GEMINI_API_KEY. AI không thể tạo câu hỏi.');
-    const chapter = await this.prisma.chapter.findFirst({
-      where: { id: input.chapterId, subjectId: input.subjectId },
-      include: { subject: true },
-    });
-    if (!chapter) throw new BadRequestException('Chương không thuộc môn học đã chọn.');
+    const subject = await this.prisma.subject.findUnique({ where: { id: input.subjectId } });
+    if (!subject) throw new BadRequestException('Môn học không tồn tại.');
+    const chapter = input.chapterId
+      ? await this.prisma.chapter.findFirst({ where: { id: input.chapterId, subjectId: input.subjectId } })
+      : null;
+    if (input.chapterId && !chapter) throw new BadRequestException('Chương không thuộc môn học đã chọn.');
 
     const model = process.env.GEMINI_MODEL?.trim() || 'gemini-2.0-flash';
-    const timeout = Number(process.env.GEMINI_TIMEOUT_MS || 45000);
+    const configuredTimeout = Number(process.env.GEMINI_TIMEOUT_MS || 180000);
+    const timeout = Number.isFinite(configuredTimeout) && configuredTimeout >= 30000 ? Math.min(configuredTimeout, 300000) : 180000;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
-    const prompt = [
-      `Tạo đúng ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
-      `Môn: ${chapter.subject.subjectName}; chương: ${chapter.name}.`,
-      `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
-      input.prompt ? `Ngữ cảnh tài liệu: ${input.prompt}` : '',
-      'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.',
-      'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
-    ].filter(Boolean).join('\n');
+    const isExtraction = Boolean(input.isExtractionOnly || (input.prompt && input.prompt.length > 20));
+    const prompt = isExtraction
+      ? [
+          `Nhiệm vụ: Trích xuất TOÀN BỘ tất cả các câu hỏi và các lựa chọn đáp án từ tài liệu văn bản dưới đây.`,
+          `Môn học: ${subject.subjectName}; ${chapter ? `Chương: ${chapter.name}.` : 'Không phân chương.'}`,
+          `Loại mặc định: ${input.type}; Độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
+          `YÊU CẦU BẮT BUỘC:`,
+          `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (trích xuất tối đa lên tới ${input.count || 100} câu hỏi, tuyệt đối không tự ý bỏ bớt câu nào).`,
+          `2. Trích xuất đúng nội dung từng câu hỏi và danh sách các lựa chọn A, B, C, D...`,
+          `3. Xác định hoặc suy luận đáp án đúng cho từng câu hỏi và đánh dấu isCorrect: true cho lựa chọn đó.`,
+          `4. Không tự tạo thêm câu hỏi mới ngoài nội dung tài liệu.`,
+          `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.`,
+          `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
+        ].join('\n')
+      : [
+          `Tạo đúng ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
+          `Môn: ${subject.subjectName}; ${chapter ? `chương: ${chapter.name}.` : 'không phân chương.'}`,
+          `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
+          'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.',
+          'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
+        ].filter(Boolean).join('\n');
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
         method: 'POST',
@@ -121,6 +136,6 @@ export class AiQuestionsService {
     } else {
       throw new BadRequestException('Chỉ hỗ trợ tệp .txt, .md, .docx, .pdf');
     }
-    return { text: text.trim().slice(0, 8000) };
+    return { text: text.trim().slice(0, 100000) };
   }
 }

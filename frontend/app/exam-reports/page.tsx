@@ -1,5 +1,6 @@
 'use client';
 
+import { downloadCsv } from '../../lib/export-csv';
 import { useCallback, useEffect, useState } from 'react';
 import {
   AlertTriangle,
@@ -141,6 +142,8 @@ export default function ExamReportsPage() {
     return matchesSearch && matchesStatus;
   });
 
+
+
   // Xuất file CSV / Excel Bảng điểm thi
   const exportCsv = () => {
     if (!report || !filteredCandidates.length) {
@@ -160,17 +163,8 @@ export default function ExamReportsPage() {
       c.violationCount,
     ]);
 
-    const csvContent = '\ufeff' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `Bao_Cao_Diem_${report.schedule.subjectCode}_Ca_${report.schedule.id}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
+    const csvContent = [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    downloadCsv(`Bao_Cao_Diem_${report.schedule.subjectCode}_Ca_${report.schedule.id}.csv`, csvContent);
     setToast({ message: 'Đã xuất file Bảng điểm CSV thành công!', type: 'success' });
   };
 

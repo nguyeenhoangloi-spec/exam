@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Upload, FileSpreadsheet, Download, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { Modal } from './Modal';
+import { downloadCsv } from '../lib/export-csv';
 
 interface ExcelImportModalProps {
   isOpen: boolean;
@@ -60,15 +61,11 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
     reader.readAsText(selectedFile);
   };
 
+
+
   const downloadTemplate = () => {
-    const csvContent = 'data:text/csv;charset=utf-8,Ma,HoTen,Email,MaLop\nSV2026099,Nguyen Van Sample,sample@student.edu.vn,CNTT-K65';
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', templateFileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const csvContent = 'Mã SV,Họ và Tên,Email,Mã Lớp\nSV2026099,Nguyễn Văn Mẫu,sample@student.edu.vn,CNTT-K65';
+    downloadCsv(templateFileName, csvContent);
   };
 
   const handleConfirmImport = () => {
@@ -157,7 +154,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
                       <td className="p-2.5">{row.email || row.class}</td>
                       <td className="p-2.5">
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                          <CheckCircle2 className="h-3 w-3" /> {row.status}
+                          <CheckCircle2 className="h-3 w-3" /> {row.status === 'success' ? 'Hợp lệ' : row.status === 'error' ? 'Lỗi' : row.status}
                         </span>
                       </td>
                     </tr>

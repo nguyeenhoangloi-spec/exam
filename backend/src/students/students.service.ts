@@ -55,7 +55,7 @@ export class StudentsService {
     if (existingCode) throw new BadRequestException('Mã sinh viên đã tồn tại.');
 
     const username = data.username || data.studentCode;
-    const rawPassword = data.password || '123456';
+    const rawPassword = data.password || data.studentCode;
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
     if (Number.isNaN(new Date(data.dateOfBirth).getTime())) throw new BadRequestException('Ngày sinh không hợp lệ.');
 

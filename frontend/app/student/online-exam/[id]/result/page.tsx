@@ -108,7 +108,7 @@ export default function StudentExamResultPage() {
           <div className="bg-slate-950 border border-slate-800 p-6 rounded-xl space-y-3">
             <div className="flex justify-between border-b border-slate-800/80 pb-3 text-sm">
               <span className="text-slate-400">Trạng thái bài thi:</span>
-              <span className="font-semibold text-indigo-400">{result.status}</span>
+              <span className="font-semibold text-indigo-400">{result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}</span>
             </div>
             <div className="flex justify-between border-b border-slate-800/80 pb-3 text-sm">
               <span className="text-slate-400">Thời điểm nộp bài:</span>
@@ -126,7 +126,7 @@ export default function StudentExamResultPage() {
               </div>
             ) : (
               <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-xs">
-                🔒 <strong>Quy chế công bố điểm thi:</strong> Điểm số chính thức sẽ được công bố sau khi ca thi kết thúc{result.examEndTime ? ` (Dự kiến lúc ${result.examEndTime})` : ''}.
+                <strong>Quy chế công bố điểm thi:</strong> Điểm số chính thức sẽ được công bố sau khi ca thi kết thúc{result.examEndTime ? ` (Dự kiến lúc ${result.examEndTime})` : ''}.
               </div>
             )}
           </div>

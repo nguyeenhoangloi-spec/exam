@@ -48,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const role = user?.role || 'STUDENT';
 
   const adminNav = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Quản lý Khoa', href: '/departments', icon: Building2 },
     { name: 'Quản lý Lớp học', href: '/classes', icon: School },
     { name: 'Quản lý Sinh viên', href: '/students', icon: Users },
@@ -180,7 +180,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             <p className="truncate text-sm font-medium text-white">{user?.username}</p>
             <span className="mt-0.5 inline-block rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-400">
-              {role}
+              {{ ADMIN: 'Quản trị viên', TEACHER: 'Giảng viên', STUDENT: 'Sinh viên', PROCTOR: 'Cán bộ coi thi' }[role] || role}
             </span>
           </div>
         </div>

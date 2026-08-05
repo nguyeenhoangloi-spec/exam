@@ -21,7 +21,6 @@ const option = z.object({
 
 const schema = z.object({
   subjectId: z.number().min(1),
-  chapterId: z.string().uuid(),
   content: z.string().min(5),
   type: z.enum(['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY']),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
@@ -36,7 +35,6 @@ type Form = z.infer<typeof schema>;
 
 const defaults: Form = {
   subjectId: 0,
-  chapterId: '',
   content: '',
   type: 'SINGLE_CHOICE',
   difficulty: 'MEDIUM',
@@ -84,7 +82,6 @@ export function QuestionFormDialog({
 
   const subjectId = watch('subjectId');
   const type = watch('type');
-  const subject = subjects.find((s) => s.id === Number(subjectId));
 
   useEffect(() => {
     if (!open) return;
@@ -92,7 +89,6 @@ export function QuestionFormDialog({
       question
         ? {
             subjectId: question.subjectId,
-            chapterId: question.chapterId,
             content: question.content,
             type: question.type,
             difficulty: question.difficulty,
@@ -105,7 +101,6 @@ export function QuestionFormDialog({
         : {
             ...defaults,
             subjectId: subjects[0]?.id || 0,
-            chapterId: subjects[0]?.chapters?.[0]?.id || '',
           }
     );
   }, [open, question, subjects, reset]);
@@ -125,16 +120,6 @@ export function QuestionFormDialog({
             {subjects.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.subjectName}
-              </option>
-            ))}
-          </select>
-
-          {/* Chương */}
-          <select {...register('chapterId')} className="rounded-xl border p-2.5 text-sm font-medium">
-            <option value="">Chọn chương</option>
-            {subject?.chapters?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
               </option>
             ))}
           </select>

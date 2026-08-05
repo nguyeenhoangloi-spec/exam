@@ -39,4 +39,24 @@
 - **Prevention**: Always generate and apply a Prisma migration immediately after modifying `schema.prisma`.
 - **Status**: Fixed
 
+
+---
+
+## [2026-08-05 07:55] - Garbled Vietnamese Font Characters in Exported CSV Files (MS Excel)
+
+- **Type**: Integration / Encoding Error
+- **Severity**: Medium
+- **File**: `frontend/lib/export-csv.ts`, `frontend/app/*`, `frontend/components/ExcelImportModal.tsx`
+- **Agent**: @frontend-specialist & @exam
+- **Root Cause**: Downloaded `.csv` files were generated without a UTF-8 Byte Order Mark (`\uFEFF` BOM) prefix. When Microsoft Excel opens CSV files without a BOM, it defaults to opening them in ANSI/CP1252 character encoding, corrupting Vietnamese UTF-8 text (e.g. `Tên Kỳ thi` rendered as `TĂªn Ká»³ thi`).
+- **Error Message**:
+  ```txt
+  Corrupted font rendering in Excel: TĂªn Ká»³ thi, Há»c ká»³, NÄƒm há»c, NgÃ y báº¯t đầu, TrÃ¡ºng thÃ¡i
+  ```
+- **Fix Applied**:
+  1. Created centralized utility `frontend/lib/export-csv.ts` that prepends `\uFEFF` (UTF-8 BOM) to CSV string streams before Blob creation.
+  2. Refactored all 13 export pages and CSV sample template downloads to use `downloadCsv`.
+- **Prevention**: Always prepend `\uFEFF` UTF-8 BOM when generating CSV or HTML file downloads targeting Microsoft Office applications.
+- **Status**: Fixed
+
 ---

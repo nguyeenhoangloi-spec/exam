@@ -419,7 +419,7 @@ export default function ExamPapersPage() {
 
               <button
                 disabled={creating || !schedules.length || !isValidTotal}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 py-3 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : `Tạo ${Number(formData.variantCount) > 1 ? `${formData.variantCount} Mã Đề Đảo Câu` : 'Đề Thi'}`}
               </button>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { downloadCsv } from '../../lib/export-csv';
+import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -23,6 +25,7 @@ import {
   Filter,
   FileSpreadsheet,
   Download,
+  Printer,
   Eye,
   Building2,
   Mail,
@@ -179,6 +182,8 @@ export default function TeachersPage() {
     fetchData();
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Mã GV,Họ và tên,Học vị,Email,Số điện thoại,Khoa trực thuộc\n';
     const rows = filteredTeachers
@@ -189,13 +194,36 @@ export default function TeachersPage() {
           }"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'danh_sach_giang_vien.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('danh_sach_giang_vien.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'DANH SÁCH GIẢNG VIÊN ĐÀO TẠO KHẢO THÍ',
+      subtitle: 'Hồ sơ đội ngũ giảng viên và phân khoa trực thuộc',
+      metaInfo: [
+        { label: 'Tổng số giảng viên', value: String(teachers.length) },
+        { label: 'Giảng viên đang lọc', value: String(filteredTeachers.length) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã GV', width: '90px', align: 'center' },
+        { header: 'Họ và Tên', width: '180px' },
+        { header: 'Học vị', width: '80px', align: 'center' },
+        { header: 'Khoa trực thuộc', width: '150px' },
+        { header: 'Email công vụ', width: '180px' },
+        { header: 'Số điện thoại', width: '100px', align: 'center' },
+      ],
+      rows: filteredTeachers.map((t, idx) => [
+        idx + 1,
+        t.teacherCode,
+        t.fullName,
+        t.degree || 'TS',
+        t.department?.name || '---',
+        t.email,
+        t.phone || '---',
+      ]),
+    });
   };
 
   // KPI Items
@@ -217,9 +245,15 @@ export default function TeachersPage() {
             <div className="flex flex-wrap gap-2.5">
               <button
                 onClick={() => setIsImportModalOpen(true)}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
               >
                 <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
+              </button>
+              <button
+                onClick={handlePrintReport}
+                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+              >
+                <Printer className="h-4 w-4" /> In Danh sách
               </button>
               <button
                 onClick={exportCsv}
@@ -230,7 +264,7 @@ export default function TeachersPage() {
               {currentUser?.role === 'ADMIN' && (
                 <button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
                 >
                   <Plus className="h-4 w-4" /> Thêm Giảng viên
                 </button>

@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { downloadCsv } from '../../lib/export-csv';
+import { printReport } from '../../lib/export-print';
+import { Printer } from 'lucide-react';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { KPICards, KPICardItem } from '../../components/KPICards';
@@ -212,6 +215,8 @@ export default function ExamSupervisorsPage() {
     });
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Môn thi,Phòng thi,Giám thị,Học vị,Vai trò,Trạng thái,Ghi chú\n';
     const rows = (statusFilter === 'ALL' ? assignedSupervisors : displayedSupervisors)
@@ -221,17 +226,48 @@ export default function ExamSupervisorsPage() {
           const rName = roomObj?.roomName || roomObj?.roomCode || '';
           return `"${selectedSchedule?.subject?.subjectName || ''}","${rName}","${s.teacher?.fullName || ''}","${s.teacher?.degree || 'TS'}","${
             s.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'
-          }","${s.status || 'PENDING'}","${s.note || ''}"`;
+          }","${({ CONFIRMED: 'Đã xác nhận', CHANGE_REQUESTED: 'Xin đổi ca', COMPLETED: 'Hoàn thành', ABSENT: 'Vắng mặt', PENDING: 'Chờ phản hồi', REJECTED: 'Đã từ chối' } as Record<string, string>)[s.status || 'PENDING'] || s.status || 'Chờ phản hồi'}","${s.note || ''}"`;
         },
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'danh_sach_giam_thi_phan_cong.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('danh_sach_giam_thi_phan_cong.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    const list = statusFilter === 'ALL' ? assignedSupervisors : displayedSupervisors;
+    printReport({
+      title: 'BÁO CÁO PHÂN CÔNG GIÁM THỊ VÀ TRẠNG THÁI GÁC THI',
+      subtitle: selectedSchedule
+        ? `Môn thi: ${selectedSchedule.subject?.subjectName} (${selectedSchedule.subject?.subjectCode}) - Ngày thi: ${new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}`
+        : 'Tổng hợp tất cả các ca coi thi',
+      metaInfo: [
+        { label: 'Tổng số lượt phân công', value: String(list.length) },
+        { label: 'Đã xác nhận', value: String(confirmedCount) },
+        { label: 'Yêu cầu đổi ca', value: String(changeRequestedCount) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Môn thi', width: '160px' },
+        { header: 'Phòng thi', width: '90px', align: 'center' },
+        { header: 'Giám thị', width: '150px' },
+        { header: 'Học vị', width: '70px', align: 'center' },
+        { header: 'Vai trò', width: '90px', align: 'center' },
+        { header: 'Trạng thái', width: '110px', align: 'center' },
+      ],
+      rows: list.map((s, idx) => {
+        const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
+        const rName = roomObj?.roomName || roomObj?.roomCode || '---';
+        return [
+          idx + 1,
+          selectedSchedule?.subject?.subjectName || '---',
+          rName,
+          s.teacher?.fullName || '---',
+          s.teacher?.degree || 'TS',
+          s.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+          s.status === 'CONFIRMED' ? 'Đã xác nhận' : s.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận',
+        ];
+      }),
+    });
   };
 
   const selectedRooms = selectedSchedule?.examScheduleRooms || [];
@@ -250,7 +286,7 @@ export default function ExamSupervisorsPage() {
     {
       title: 'Yêu cầu đổi ca thi',
       value: changeRequestedCount,
-      subtext: changeRequestedCount > 0 ? '⚠️ Cần Admin phê duyệt ngay' : 'Không có yêu cầu mới',
+      subtext: changeRequestedCount > 0 ? 'Cần quản trị viên phê duyệt ngay' : 'Không có yêu cầu mới',
       icon: RefreshCw,
       color: changeRequestedCount > 0 ? 'amber' : 'emerald',
       trend: changeRequestedCount > 0 ? 'Cần duyệt' : 'Bình thường',
@@ -300,15 +336,22 @@ export default function ExamSupervisorsPage() {
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Dashboard Giám thị & Phê duyệt Ca coi thi 🛡️</h1>
             <p className="text-xs text-slate-500 font-medium">Theo dõi trạng thái xác nhận, phê duyệt yêu cầu đổi ca và đánh dấu điểm danh gác thi</p>
           </div>
-          <button
-            onClick={exportCsv}
-            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-          >
-            <Download className="h-4 w-4 text-sky-600" /> Xuất Báo cáo (.csv)
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <Printer className="h-4 w-4" /> In Báo Cáo Ca Thi
+            </button>
+            <button
+              onClick={exportCsv}
+              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
+            >
+              <Download className="h-4 w-4 text-sky-600" /> Xuất Báo cáo (.csv)
+            </button>
+          </div>
         </div>
 
         {/* KPI Analytics Header */}
@@ -318,11 +361,11 @@ export default function ExamSupervisorsPage() {
         <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-xs">
           {[
             { key: 'ALL', label: 'Tất cả theo phòng', icon: ShieldCheck, count: assignedSupervisors.length },
-            { key: 'CHANGE_REQUESTED', label: '🔄 Xin đổi ca (Cần xử lý)', icon: RefreshCw, count: changeRequestedCount, badgeClass: 'bg-amber-500 text-white font-bold' },
-            { key: 'CONFIRMED', label: '🔒 Đã xác nhận', icon: CheckCircle2, count: confirmedCount },
-            { key: 'PENDING', label: '⏳ Chờ phản hồi', icon: Clock, count: allScheduleSupervisors.filter((s) => s.status === 'PENDING').length },
-            { key: 'COMPLETED', label: '✅ Hoàn thành', icon: UserCheck, count: completedCount },
-            { key: 'ABSENT', label: '❌ Vắng mặt', icon: XCircle, count: allScheduleSupervisors.filter((s) => s.status === 'ABSENT').length },
+            { key: 'CHANGE_REQUESTED', label: 'Xin đổi ca (Cần xử lý)', icon: RefreshCw, count: changeRequestedCount, badgeClass: 'bg-amber-500 text-white font-bold' },
+            { key: 'CONFIRMED', label: 'Đã xác nhận', icon: CheckCircle2, count: confirmedCount },
+            { key: 'PENDING', label: 'Chờ phản hồi', icon: Clock, count: allScheduleSupervisors.filter((s) => s.status === 'PENDING').length },
+            { key: 'COMPLETED', label: 'Hoàn thành', icon: UserCheck, count: completedCount },
+            { key: 'ABSENT', label: 'Vắng mặt', icon: XCircle, count: allScheduleSupervisors.filter((s) => s.status === 'ABSENT').length },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = statusFilter === tab.key;
@@ -426,7 +469,7 @@ export default function ExamSupervisorsPage() {
                     <div className="mt-2 space-y-1">
                       {autoProposal.proposals.map((proposal: any) => {
                         const key = `${proposal.examScheduleRoomId}-${proposal.role}`;
-                        return <label key={key} className="flex items-center gap-2"><input type="checkbox" checked={selectedAutoProposalKeys.includes(key)} onChange={(event) => setSelectedAutoProposalKeys((current) => event.target.checked ? [...current, key] : current.filter((item) => item !== key))} />{proposal.roomCode} · {proposal.teacherName} · {proposal.role}</label>;
+                        return <label key={key} className="flex items-center gap-2"><input type="checkbox" checked={selectedAutoProposalKeys.includes(key)} onChange={(event) => setSelectedAutoProposalKeys((current) => event.target.checked ? [...current, key] : current.filter((item) => item !== key))} />{proposal.roomCode} · {proposal.teacherName} · {proposal.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}</label>;
                       })}
                     </div>
                     {autoProposal.unassigned?.length > 0 && <p className="mt-2 text-rose-700">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>}
@@ -464,9 +507,9 @@ export default function ExamSupervisorsPage() {
                   <div className="flex items-end">
                     <button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-xl text-sm shadow-sm transition"
+                      className="w-full flex items-center justify-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl text-sm shadow-sm transition"
                     >
-                      <UserPlus className="h-4 w-4" /> Gán Giám thị
+                      <UserPlus className="h-4 w-4" /> Phân công Giám thị
                     </button>
                   </div>
                 </form>
@@ -479,7 +522,7 @@ export default function ExamSupervisorsPage() {
                 <span>
                   {statusFilter === 'ALL'
                     ? 'Danh sách Giám thị đã phân công cho phòng thi này'
-                    : `Danh sách Cán bộ coi thi: ${statusFilter}`}
+                    : `Danh sách cán bộ coi thi: ${{ CHANGE_REQUESTED: 'Xin đổi ca', CONFIRMED: 'Đã xác nhận', PENDING: 'Chờ phản hồi', COMPLETED: 'Hoàn thành', ABSENT: 'Vắng mặt', REJECTED: 'Đã từ chối' }[statusFilter] || statusFilter}`}
                 </span>
                 <span className="text-[11px] text-slate-500 font-normal">
                   Hiển thị {displayedSupervisors.length} bản ghi
@@ -529,7 +572,7 @@ export default function ExamSupervisorsPage() {
                                 {renderStatusBadge(sup.status)}
                                 {sup.note && (
                                   <div className="text-[11px] text-amber-700 bg-amber-50 p-1.5 rounded-lg border border-amber-200 max-w-xs">
-                                    💬 <strong>Lý do/Ghi chú:</strong> {sup.note}
+                                    <strong>Lý do/Ghi chú:</strong> {sup.note}
                                   </div>
                                 )}
                               </div>
@@ -542,7 +585,7 @@ export default function ExamSupervisorsPage() {
                                     <button
                                       onClick={() => void handleUpdateStatus(sup.id, 'CHANGE_APPROVED', 'chấp nhận cho đổi ca (gỡ gán cũ)')}
                                       className="px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-xs transition whitespace-nowrap"
-                                      title="Đồng ý cho đổi ca (Hệ thống sẽ gỡ gán cũ để Admin chọn GV mới)"
+                                      title="Đồng ý cho đổi ca (Hệ thống sẽ gỡ gán cũ để quản trị viên chọn giảng viên mới)"
                                     >
                                       Duyệt đổi ca
                                     </button>
@@ -620,7 +663,7 @@ export default function ExamSupervisorsPage() {
           { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode },
           { label: 'Học vị / Học hàm', value: drawerSupervisor?.teacher?.degree || 'TS', icon: GraduationCap },
           { label: 'Nhiệm vụ phân công', value: drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Cán bộ coi thi chính (Giám thị 1)' : 'Cán bộ coi thi phụ (Giám thị 2)', icon: ShieldCheck },
-          { label: 'Trạng thái ca thi', value: drawerSupervisor?.status || 'PENDING' },
+          { label: 'Trạng thái ca thi', value: ({ CONFIRMED: 'Đã xác nhận', CHANGE_REQUESTED: 'Xin đổi ca', COMPLETED: 'Hoàn thành', ABSENT: 'Vắng mặt', PENDING: 'Chờ phản hồi', REJECTED: 'Đã từ chối' } as Record<string, string>)[drawerSupervisor?.status || ''] || 'Chờ phản hồi' },
           { label: 'Ghi chú / Lý do', value: drawerSupervisor?.note || 'Không có ghi chú' },
           {
             label: 'Phòng coi thi',

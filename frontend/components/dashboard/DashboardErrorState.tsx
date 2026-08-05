@@ -4,7 +4,7 @@ export function DashboardErrorState({ message, onRetry }: { message: string; onR
   return (
     <div className="rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-sm">
       <AlertCircle className="mx-auto mb-3 h-10 w-10 text-rose-500" />
-      <h2 className="font-semibold text-slate-800">Không thể tải Dashboard</h2>
+      <h2 className="font-semibold text-slate-800">Không thể tải trang tổng quan</h2>
       <p className="mx-auto mt-1 max-w-lg text-sm text-slate-500">{message}</p>
       <button
         type="button"

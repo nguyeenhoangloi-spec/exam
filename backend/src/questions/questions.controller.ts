@@ -28,6 +28,7 @@ import {
   CreateQuestionDto,
   GenerateAiQuestionsDto,
   ImportConfirmDto,
+  ImportPreviewDto,
   QuestionQueryDto,
   RejectQuestionDto,
   SaveAiQuestionsDto,
@@ -39,6 +40,14 @@ const csvUpload = FileInterceptor('file', {
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, callback) =>
     callback(file.originalname.toLowerCase().endsWith('.csv') ? null : new BadRequestException('Chỉ chấp nhận file CSV.'), file.originalname.toLowerCase().endsWith('.csv')),
+});
+
+const spreadsheetUpload = FileInterceptor('file', {
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => {
+    const ok = /\.(csv|xlsx)$/i.test(file.originalname);
+    callback(ok ? null : new BadRequestException('Chỉ chấp nhận file CSV hoặc XLSX.'), ok);
+  },
 });
 
 const docUpload = FileInterceptor('file', {
@@ -76,7 +85,7 @@ export class QuestionsController {
 
   @Get('import/template')
   @Header('Content-Type', 'text/csv; charset=utf-8')
-  @Header('Content-Disposition', 'attachment; filename="question-import-template.csv"')
+  @Header('Content-Disposition', 'attachment; filename="mau-nhap-cau-hoi.csv"')
   template() {
     return this.questions.importTemplate();
   }
@@ -85,7 +94,7 @@ export class QuestionsController {
   async export(@Request() req: any, @Body() query: QuestionQueryDto, @Res() res: Response) {
     const csv = await this.questions.exportCsv(req.user, query);
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', 'attachment; filename="questions.csv"');
+    res.setHeader('Content-Disposition', 'attachment; filename="danh-sach-cau-hoi.csv"');
     res.send(csv);
   }
 
@@ -95,28 +104,49 @@ export class QuestionsController {
   }
 
   @Post('import/preview')
-  @UseInterceptors(csvUpload)
-  preview(@Request() req: any, @UploadedFile() file: Express.Multer.File) {
-    if (!file) throw new BadRequestException('Vui lòng chọn file CSV.');
-    return this.questions.importPreview(req.user, file);
+  @UseInterceptors(spreadsheetUpload)
+  preview(@Request() req: any, @UploadedFile() file: Express.Multer.File, @Body() raw: any) {
+    if (!file) throw new BadRequestException('Vui lòng chọn file CSV hoặc XLSX.');
+    return this.questions.importPreview(req.user, file, this.parseImportMeta(raw));
   }
 
   @Post('import/confirm')
-  @UseInterceptors(csvUpload)
+  @UseInterceptors(spreadsheetUpload)
   async confirm(@Request() req: any, @UploadedFile() file: Express.Multer.File, @Body() raw: any) {
-    if (!file) throw new BadRequestException('Vui lòng gửi lại file CSV.');
+    if (!file) throw new BadRequestException('Vui lòng gửi lại file CSV hoặc XLSX.');
     let body: ImportConfirmDto;
     try {
       body = Object.assign(new ImportConfirmDto(), {
         hash: raw.hash,
         rows: Array.isArray(raw.rows) ? raw.rows.map(Number) : JSON.parse(raw.rows || '[]').map(Number),
         overrideDuplicate: raw.overrideDuplicate === true || raw.overrideDuplicate === 'true',
+        subjectId: raw.subjectId ? Number(raw.subjectId) : undefined,
+        chapterId: raw.chapterId || undefined,
+        defaultType: raw.defaultType || undefined,
+        defaultDifficulty: raw.defaultDifficulty || undefined,
+        defaultBloomLevel: raw.defaultBloomLevel || undefined,
+        defaultScore: raw.defaultScore ? Number(raw.defaultScore) : undefined,
+        applyDefaultsToMissingOnly: raw.applyDefaultsToMissingOnly === undefined ? true : raw.applyDefaultsToMissingOnly === true || raw.applyDefaultsToMissingOnly === 'true',
+        overrides: raw.overrides || undefined,
       });
       await validateOrReject(body);
     } catch {
       throw new BadRequestException('Dữ liệu xác nhận import không hợp lệ.');
     }
     return this.questions.importConfirm(req.user, file, body);
+  }
+
+  private parseImportMeta(raw: any): ImportPreviewDto {
+    const body = Object.assign(new ImportPreviewDto(), {
+      subjectId: raw?.subjectId ? Number(raw.subjectId) : undefined,
+      chapterId: raw?.chapterId || undefined,
+      defaultType: raw?.defaultType || undefined,
+      defaultDifficulty: raw?.defaultDifficulty || undefined,
+      defaultBloomLevel: raw?.defaultBloomLevel || undefined,
+      defaultScore: raw?.defaultScore ? Number(raw.defaultScore) : undefined,
+      applyDefaultsToMissingOnly: raw?.applyDefaultsToMissingOnly === undefined ? true : raw.applyDefaultsToMissingOnly === true || raw.applyDefaultsToMissingOnly === 'true',
+    });
+    return body;
   }
 
   @Post('ai-generate')

@@ -121,7 +121,7 @@ export class ExamSupervisorsService {
     if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(scheduleRoom.examSchedule.status)) {
       throw new BadRequestException('Không thể phân công giám thị cho lịch thi đã hủy hoặc hoàn thành.');
     }
-    if (scheduleRoom.examSchedule.deletedAt) throw new NotFoundException('Lich thi da nam trong thung rac.');
+    if (scheduleRoom.examSchedule.deletedAt) throw new NotFoundException('Lịch thi đã nằm trong thùng rác.');
     if (scheduleRoom.examSchedule.examPapers.some((paper) => paper.status === 'PUBLISHED')) {
       throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi phân công.');
     }

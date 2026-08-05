@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { AppShell } from '../../../components/AppShell';
+import { downloadCsv } from '../../../lib/export-csv';
+import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
 import { KPICards, KPICardItem } from '../../../components/KPICards';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
@@ -14,12 +16,12 @@ import {
   Clock,
   MapPin,
   Download,
+  Printer,
   Award,
   BookOpen,
   DoorOpen,
   UserCheck,
   Eye,
-  Printer,
   CheckCircle2,
   RefreshCw,
 } from 'lucide-react';
@@ -172,6 +174,8 @@ export default function TeacherAssignmentsPage() {
     }
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Mã môn,Tên môn thi,Vai trò,Trạng thái,Ngày thi,Thời gian,Phòng thi,Địa điểm\n';
     const rows = assignments
@@ -184,13 +188,39 @@ export default function TeacherAssignmentsPage() {
           }","${a.building || ''}"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lich_coi_thi_giang_vien.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('lich_coi_thi_giang_vien.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'LỊCH PHÂN CÔNG COI THI CÁ NHÂN GIẢNG VIÊN',
+      subtitle: `Giảng viên: ${currentUser?.username || ''} - Tổng hợp các ca thi được phân công gác thi`,
+      metaInfo: [
+        { label: 'Tổng ca coi thi', value: String(assignments.length) },
+        { label: 'Giám thị 1', value: String(sup1Count) },
+        { label: 'Giám thị 2', value: String(assignments.length - sup1Count) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Tên môn thi', width: '180px' },
+        { header: 'Mã môn', width: '90px', align: 'center' },
+        { header: 'Ngày thi', width: '100px', align: 'center' },
+        { header: 'Khung giờ', width: '110px', align: 'center' },
+        { header: 'Phòng thi', width: '90px', align: 'center' },
+        { header: 'Vai trò phân công', width: '110px', align: 'center' },
+        { header: 'Trạng thái', width: '110px', align: 'center' },
+      ],
+      rows: assignments.map((a, idx) => [
+        idx + 1,
+        a.subjectName,
+        a.subjectCode,
+        new Date(a.examDate).toLocaleDateString('vi-VN'),
+        `${a.startTime} - ${a.endTime}`,
+        a.roomName || a.roomCode,
+        a.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+        a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận',
+      ]),
+    });
   };
 
   const sup1Count = assignments.filter((a) => a.role === 'SUPERVISOR_1').length;
@@ -209,13 +239,20 @@ export default function TeacherAssignmentsPage() {
         {/* Banner Welcome */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg">
           <div>
-            <h1 className="text-xl font-bold mb-1">Chào Thầy/Cô {currentUser?.username} 👨‍🏫</h1>
+            <h1 className="text-xl font-bold mb-1">Chào Thầy/Cô {currentUser?.username}</h1>
             <p className="text-emerald-100 text-xs font-medium">
               Danh sách các ca coi thi được phân công. Vui lòng có mặt tại phòng thi trước 15 phút.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-white text-emerald-900 hover:bg-emerald-50 px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition whitespace-nowrap"
+            >
+              <Printer className="w-4 h-4" />
+              <span>In Lịch coi thi</span>
+            </button>
             <button
               onClick={exportCsv}
               className="flex items-center gap-2 bg-emerald-800/40 hover:bg-emerald-800/60 text-white border border-emerald-400/30 px-4 py-2.5 rounded-xl font-semibold text-xs transition whitespace-nowrap"
@@ -267,12 +304,12 @@ export default function TeacherAssignmentsPage() {
                         }`}
                       >
                         {isExpired
-                          ? '🔒 Quá hạn ca thi'
+                          ? 'Quá hạn ca thi'
                           : item.status === 'CONFIRMED'
-                          ? '🔒 Đã xác nhận (Đã khóa)'
+                          ? 'Đã xác nhận (Đã khóa)'
                           : item.status === 'CHANGE_REQUESTED'
-                          ? '🔒 Xin đổi ca (Đã khóa)'
-                          : '⏳ Chờ xác nhận'}
+                          ? 'Xin đổi ca (Đã khóa)'
+                          : 'Chờ xác nhận'}
                       </span>
                       <span
                         className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${

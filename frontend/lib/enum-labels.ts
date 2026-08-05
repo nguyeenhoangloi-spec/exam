@@ -13,12 +13,12 @@ export const DIFFICULTY_LABELS: Record<string, string> = {
 };
 
 export const BLOOM_LABELS: Record<string, string> = {
-  REMEMBER: 'Nhận biết (Remember)',
-  UNDERSTAND: 'Thông hiểu (Understand)',
-  APPLY: 'Vận dụng (Apply)',
-  ANALYZE: 'Phân tích (Analyze)',
-  EVALUATE: 'Đánh giá (Evaluate)',
-  CREATE: 'Sáng tạo (Create)',
+  REMEMBER: 'Nhận biết',
+  UNDERSTAND: 'Thông hiểu',
+  APPLY: 'Vận dụng',
+  ANALYZE: 'Phân tích',
+  EVALUATE: 'Đánh giá',
+  CREATE: 'Sáng tạo',
 };
 
 export const QUESTION_STATUS_LABELS: Record<string, string> = {

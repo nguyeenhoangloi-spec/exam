@@ -5,14 +5,13 @@ import { Subject } from '../../types';
 import { Modal } from '../Modal';
 
 export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: boolean; subjects: Subject[]; onClose: () => void; onDone: () => void }) {
-  const [form, setForm] = useState({ subjectId: '', chapterId: '', type: 'SINGLE_CHOICE', difficulty: 'MEDIUM', bloomLevel: 'UNDERSTAND', count: 5, prompt: '' });
+  const [form, setForm] = useState({ subjectId: '', type: 'SINGLE_CHOICE', difficulty: 'MEDIUM', bloomLevel: 'UNDERSTAND', count: 5, prompt: '' });
   const [items, setItems] = useState<any[]>([]);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
 
-  const subject = subjects.find(s => String(s.id) === form.subjectId);
-  const set = (k: string, v: any) => setForm(p => ({ ...p, [k]: v, ...(k === 'subjectId' ? { chapterId: '' } : {}) }));
+  const set = (k: string, v: any) => setForm(p => ({ ...p, [k]: v }));
 
   const handleFileUpload = async (file: File | null) => {
     if (!file) return;
@@ -26,10 +25,10 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
       });
       if (res.data?.text) {
         set('prompt', res.data.text);
-        setUploadStatus(`✅ Đã đọc xong tệp "${file.name}" (${res.data.text.length} ký tự).`);
+        setUploadStatus(`Đã đọc xong tệp "${file.name}" (${res.data.text.length} ký tự).`);
       }
     } catch (e: any) {
-      setUploadStatus(`❌ Lỗi đọc tệp: ${e.response?.data?.message || e.message}`);
+      setUploadStatus(`Lỗi đọc tệp: ${e.response?.data?.message || e.message}`);
     } finally {
       setUploading(false);
     }
@@ -54,23 +53,19 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
     } catch (e: any) {
       const msg = e.response?.data?.message;
       const text = Array.isArray(msg) ? msg.join(', ') : (typeof msg === 'string' ? msg : e.message || 'Không thể lưu câu hỏi AI.');
-      setUploadStatus(`❌ Lỗi lưu câu hỏi: ${text}`);
+      setUploadStatus(`Lỗi lưu câu hỏi: ${text}`);
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title="AI Wizard - Tạo câu hỏi bằng Gemini">
+    <Modal isOpen={open} onClose={onClose} title="Trình tạo câu hỏi bằng AI Gemini">
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           <select value={form.subjectId} onChange={e => set('subjectId', e.target.value)} className="rounded-lg border p-2 text-sm">
             <option value="">Chọn môn</option>
             {subjects.map(s => <option key={s.id} value={s.id}>{s.subjectName}</option>)}
-          </select>
-          <select value={form.chapterId} onChange={e => set('chapterId', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="">Chọn chương</option>
-            {subject?.chapters?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <select value={form.type} onChange={e => set('type', e.target.value)} className="rounded-lg border p-2 text-sm">
             <option value="SINGLE_CHOICE">Trắc nghiệm (1 đáp án)</option>
@@ -85,10 +80,10 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
             <option value="HARD">Khó</option>
           </select>
           <select value={form.bloomLevel} onChange={e => set('bloomLevel', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="REMEMBER">Nhận biết (Remember)</option>
-            <option value="UNDERSTAND">Thông hiểu (Understand)</option>
-            <option value="APPLY">Vận dụng (Apply)</option>
-            <option value="ANALYZE">Phân tích (Analyze)</option>
+            <option value="REMEMBER">Nhận biết</option>
+            <option value="UNDERSTAND">Thông hiểu</option>
+            <option value="APPLY">Vận dụng</option>
+            <option value="ANALYZE">Phân tích</option>
           </select>
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500 font-medium">Số câu:</span>
@@ -123,7 +118,7 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
         </div>
 
         <button
-          disabled={busy || !form.chapterId || uploading}
+          disabled={busy || !form.subjectId || uploading}
           onClick={generate}
           className="w-full rounded-xl bg-violet-600 px-4 py-2.5 font-semibold text-white transition hover:bg-violet-700 disabled:opacity-50"
         >
@@ -182,4 +177,3 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
     </Modal>
   );
 }
-

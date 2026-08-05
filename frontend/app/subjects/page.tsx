@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { downloadCsv } from '../../lib/export-csv';
+import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -21,6 +23,7 @@ import {
   Search,
   Filter,
   Download,
+  Printer,
   Eye,
   CheckCircle2,
   HelpCircle,
@@ -159,6 +162,8 @@ export default function SubjectsPage() {
     });
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Mã Môn,Tên Môn học,Số tín chỉ,Khoa quản lý\n';
     const rows = filteredSubjects
@@ -167,13 +172,32 @@ export default function SubjectsPage() {
           `"${s.subjectCode}","${s.subjectName}","${s.credits}","${s.department?.name || ''}"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'danh_sach_mon_hoc.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('danh_sach_mon_hoc.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'DANH MỤC MÔN HỌC GIẢNG DẠY',
+      subtitle: 'Danh sách môn học thuộc chương trình đào tạo nhà trường',
+      metaInfo: [
+        { label: 'Tổng số môn học', value: String(subjects.length) },
+        { label: 'Môn học đang lọc', value: String(filteredSubjects.length) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã Môn', width: '100px', align: 'center' },
+        { header: 'Tên Môn học', width: '220px' },
+        { header: 'Số Tín chỉ', width: '90px', align: 'center' },
+        { header: 'Khoa quản lý chuyên môn', width: '180px' },
+      ],
+      rows: filteredSubjects.map((s, idx) => [
+        idx + 1,
+        s.subjectCode,
+        s.subjectName,
+        `${s.credits} tín chỉ`,
+        s.department?.name || '---',
+      ]),
+    });
   };
 
   // KPI Items
@@ -194,6 +218,12 @@ export default function SubjectsPage() {
           </div>
             <div className="flex flex-wrap gap-2.5">
               <button
+                onClick={handlePrintReport}
+                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+              >
+                <Printer className="h-4 w-4" /> In Danh sách
+              </button>
+              <button
                 onClick={exportCsv}
                 className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
               >
@@ -202,7 +232,7 @@ export default function SubjectsPage() {
               {currentUser?.role === 'ADMIN' && (
                 <button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
                 >
                   <Plus className="h-4 w-4" /> Thêm Môn học
                 </button>

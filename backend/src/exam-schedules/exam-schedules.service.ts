@@ -475,7 +475,7 @@ export class ExamSchedulesService {
   }
 
   async reopenEntry(actor: Actor, id: number, minutes: number) {
-    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được mở lại thời gian vào thi.');
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ quản trị viên được mở lại thời gian vào thi.');
     if (!Number.isInteger(minutes) || minutes < 1 || minutes > 24 * 60) {
       throw new BadRequestException('Thời gian mở lại phải từ 1 đến 1440 phút.');
     }
@@ -506,7 +506,7 @@ export class ExamSchedulesService {
   }
 
   async findTrash(actor: Actor, examPeriodId?: number) {
-    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được xem thùng rác lịch thi.');
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ quản trị viên được xem thùng rác lịch thi.');
     return this.prisma.examSchedule.findMany({
       where: { deletedAt: { not: null }, ...(examPeriodId ? { examPeriodId } : {}) },
       include: {
@@ -521,7 +521,7 @@ export class ExamSchedulesService {
   }
 
   async restore(actor: Actor, id: number) {
-    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ ADMIN được khôi phục lịch thi.');
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ quản trị viên được khôi phục lịch thi.');
     const existing = await this.prisma.examSchedule.findFirst({
       where: { id, deletedAt: { not: null } },
       include: { subject: true, examScheduleRooms: { select: { roomId: true } } },

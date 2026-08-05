@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { AppShell } from '../../../components/AppShell';
+import { downloadCsv } from '../../../lib/export-csv';
+import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
 import { KPICards, KPICardItem } from '../../../components/KPICards';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
@@ -15,6 +17,7 @@ import {
   MapPin,
   Ticket,
   Download,
+  Printer,
   Award,
   BookOpen,
   DoorOpen,
@@ -52,6 +55,8 @@ export default function StudentExamSchedulePage() {
     }
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Kỳ thi,Mã môn,Tên môn thi,Ngày thi,Thời gian,Phòng thi,SBD,Số ghế\n';
     const rows = schedules
@@ -64,13 +69,41 @@ export default function StudentExamSchedulePage() {
           }"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lich_thi_ca_nhan_sinh_vien.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('lich_thi_ca_nhan_sinh_vien.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'LỊCH THI CÁ NHÂN SINH VIÊN',
+      subtitle: `Thí sinh: ${currentUser?.username || ''} - Thông tin ca thi và số báo danh`,
+      metaInfo: [
+        { label: 'Tổng số môn đăng ký thi', value: String(schedules.length) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Kỳ thi', width: '130px' },
+        { header: 'Mã môn', width: '80px', align: 'center' },
+        { header: 'Tên môn thi', width: '180px' },
+        { header: 'Ngày thi', width: '100px', align: 'center' },
+        { header: 'Khung giờ', width: '110px', align: 'center' },
+        { header: 'Phòng thi', width: '80px', align: 'center' },
+        { header: 'SBD / Ghế', width: '90px', align: 'center' },
+      ],
+      rows: schedules.map((s, idx) => [
+        idx + 1,
+        s.periodName,
+        s.subjectCode,
+        s.subjectName,
+        new Date(s.examDate).toLocaleDateString('vi-VN'),
+        `${s.startTime} - ${s.endTime}`,
+        s.roomName || s.roomCode,
+        `SBN-${s.seatNumber || idx + 1} (Ghế #${s.seatNumber || idx + 1})`,
+      ]),
+      signers: [
+        { title: 'SINH VIÊN KÝ TÊN', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'XÁC NHẬN CỦA HỘI ĐỒNG KHẢO THÍ', subtitle: '(Ký, đóng dấu)' }
+      ]
+    });
   };
 
   const kpiItems: KPICardItem[] = [
@@ -86,19 +119,28 @@ export default function StudentExamSchedulePage() {
         {/* Banner Welcome */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-sky-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
           <div>
-            <h1 className="text-xl font-bold mb-1">Lịch thi cá nhân của bạn 🎓</h1>
+            <h1 className="text-xl font-bold mb-1">Lịch thi cá nhân của bạn</h1>
             <p className="text-sky-100 text-xs font-medium">
               Vui lòng kiểm tra chính xác Mã môn thi, Ngày giờ thi, Phòng thi, Số Báo Danh và Số ghế trước khi đến phòng thi.
             </p>
           </div>
 
-          <button
-            onClick={exportCsv}
-            className="flex items-center gap-2 bg-white text-sky-800 hover:bg-sky-50 px-4 py-2.5 rounded-xl font-semibold text-xs shadow-md transition whitespace-nowrap"
-          >
-            <Download className="w-4 h-4 text-sky-600" />
-            <span>Tải lịch thi (.CSV)</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-white text-sky-900 hover:bg-sky-50 px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition whitespace-nowrap"
+            >
+              <Printer className="w-4 h-4 text-sky-600" />
+              <span>In Lịch thi A4</span>
+            </button>
+            <button
+              onClick={exportCsv}
+              className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white border border-white/30 px-4 py-2.5 rounded-xl font-semibold text-xs shadow-md transition whitespace-nowrap"
+            >
+              <Download className="w-4 h-4 text-white" />
+              <span>Tải lịch thi (.CSV)</span>
+            </button>
+          </div>
         </div>
 
         {/* KPI Analytics Header */}

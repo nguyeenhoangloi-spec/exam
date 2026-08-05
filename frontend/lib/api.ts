@@ -18,6 +18,10 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    if (typeof window !== 'undefined' && config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     // Return cached response if fresh (less than 5 seconds old)
     if (config.method?.toLowerCase() === 'get' && config.url && !config.params?.noCache) {
       const cacheKey = `${config.url}?${new URLSearchParams(config.params || {}).toString()}`;

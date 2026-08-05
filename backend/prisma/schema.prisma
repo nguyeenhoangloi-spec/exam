@@ -17,17 +17,20 @@ enum QuestionType {
   FILL_BLANK
   ESSAY
 }
+
 enum QuestionDifficulty {
   EASY
   MEDIUM
   HARD
 }
+
 enum BloomLevel {
   REMEMBER
   UNDERSTAND
   APPLY
   ANALYZE
 }
+
 enum QuestionStatus {
   DRAFT
   PENDING
@@ -35,6 +38,7 @@ enum QuestionStatus {
   REJECTED
   ARCHIVED
 }
+
 enum QuestionHistoryAction {
   CREATE
   UPDATE
@@ -67,12 +71,12 @@ model User {
   student Student?
   teacher Teacher?
 
-  createdQuestions  Question[]        @relation("UserQuestions")
-  approvedQuestions Question[]        @relation("ApprovedQuestions")
-  createdExamPapers ExamPaper[]       @relation("UserExamPapers")
-  deletedExamSchedules ExamSchedule[] @relation("ExamScheduleDeletedBy")
-  questionHistories QuestionHistory[] @relation("QuestionHistoryActor")
-  auditLogs         AuditLog[]         @relation("AuditLogActor")
+  createdQuestions     Question[]        @relation("UserQuestions")
+  approvedQuestions    Question[]        @relation("ApprovedQuestions")
+  createdExamPapers    ExamPaper[]       @relation("UserExamPapers")
+  deletedExamSchedules ExamSchedule[]    @relation("ExamScheduleDeletedBy")
+  questionHistories    QuestionHistory[] @relation("QuestionHistoryActor")
+  auditLogs            AuditLog[]        @relation("AuditLogActor")
 
   @@map("users")
 }
@@ -178,14 +182,14 @@ model MajorSubject {
 }
 
 model Chapter {
-  id String @id @default(uuid())
+  id        String     @id @default(uuid())
   subjectId Int
-  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  code String
-  name String
-  order Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  code      String
+  name      String
+  order     Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   questions Question[]
 
   @@unique([subjectId, code])
@@ -203,8 +207,8 @@ model StudentSubject {
   schoolYear String
   status     String  @default("ELIGIBLE")
 
-  @@map("student_subjects")
   @@unique([studentId, subjectId, semester, schoolYear])
+  @@map("student_subjects")
 }
 
 model ExamPeriod {
@@ -241,8 +245,8 @@ model ExamSchedule {
   examPapers        ExamPaper[]
   onlineExamConfig  OnlineExamConfig?
 
-  @@map("exam_schedules")
   @@index([deletedAt])
+  @@map("exam_schedules")
 }
 
 model ExamRoom {
@@ -269,8 +273,8 @@ model ExamScheduleRoom {
   examRoomStudents ExamRoomStudent[]
   supervisors      ExamSupervisor[]
 
-  @@map("exam_schedule_rooms")
   @@unique([examScheduleId, roomId])
+  @@map("exam_schedule_rooms")
 }
 
 model ExamRoomStudent {
@@ -283,9 +287,9 @@ model ExamRoomStudent {
   seatNumber         Int
   status             String           @default("ASSIGNED")
 
-  @@map("exam_room_students")
   @@unique([examScheduleRoomId, studentId])
   @@unique([examScheduleRoomId, seatNumber])
+  @@map("exam_room_students")
 }
 
 model ExamSupervisor {
@@ -298,38 +302,38 @@ model ExamSupervisor {
   status             String           @default("PENDING")
   note               String?
 
-  @@map("exam_supervisors")
   @@unique([examScheduleRoomId, teacherId])
   @@unique([examScheduleRoomId, role])
+  @@map("exam_supervisors")
 }
 
 model Question {
-  id                String @id @default(uuid())
-  code              String @unique
+  id                String             @id @default(uuid())
+  code              String             @unique
   subjectId         Int
-  subject           Subject @relation(fields: [subjectId], references: [id], onDelete: Restrict)
-  chapterId         String
-  chapter           Chapter @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  subject           Subject            @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  chapterId         String?
+  chapter           Chapter?           @relation(fields: [chapterId], references: [id], onDelete: Restrict)
   content           String
   normalizedContent String
   type              QuestionType
   difficulty        QuestionDifficulty @default(MEDIUM)
-  bloomLevel        BloomLevel @default(UNDERSTAND)
-  score             Float    @default(0.25)
+  bloomLevel        BloomLevel         @default(UNDERSTAND)
+  score             Float              @default(0.25)
   explanation       String?
   keywords          String?
-  status            QuestionStatus @default(DRAFT)
+  status            QuestionStatus     @default(DRAFT)
   rejectionReason   String?
-  isActive          Boolean @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   deletedAt         DateTime?
   approvedAt        DateTime?
   archivedAt        DateTime?
   createdById       Int
-  createdBy         User     @relation("UserQuestions", fields: [createdById], references: [id], onDelete: Restrict)
+  createdBy         User               @relation("UserQuestions", fields: [createdById], references: [id], onDelete: Restrict)
   approvedById      Int?
-  approvedBy        User?    @relation("ApprovedQuestions", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedBy        User?              @relation("ApprovedQuestions", fields: [approvedById], references: [id], onDelete: SetNull)
 
   options            QuestionOption[]
   examPaperQuestions ExamPaperQuestion[]
@@ -342,50 +346,51 @@ model Question {
 }
 
 model QuestionHistory {
-  id          String @id @default(uuid())
+  id          String                @id @default(uuid())
   questionId  String
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question    Question              @relation(fields: [questionId], references: [id], onDelete: Cascade)
   action      QuestionHistoryAction
   oldData     Json?
   newData     Json?
   note        String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime              @default(now())
   changedById Int
-  changedBy   User     @relation("QuestionHistoryActor", fields: [changedById], references: [id], onDelete: Restrict)
+  changedBy   User                  @relation("QuestionHistoryActor", fields: [changedById], references: [id], onDelete: Restrict)
 
   @@index([questionId, createdAt])
   @@map("question_histories")
 }
 
 model QuestionOption {
-  id String @id @default(uuid())
+  id         String   @id @default(uuid())
   questionId String
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  label String
-  content String
-  isCorrect Boolean @default(false)
-  order Int
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label      String
+  content    String
+  isCorrect  Boolean  @default(false)
+  order      Int
 
   @@unique([questionId, order])
   @@map("question_options")
 }
 
 model QuestionStatistic {
-  id String @id @default(uuid())
-  questionId String @unique
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  usedCount Int @default(0)
-  totalAnswers Int @default(0)
-  correctAnswers Int @default(0)
-  lastUsedAt DateTime?
-  updatedAt DateTime @updatedAt
+  id             String    @id @default(uuid())
+  questionId     String    @unique
+  question       Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  usedCount      Int       @default(0)
+  totalAnswers   Int       @default(0)
+  correctAnswers Int       @default(0)
+  lastUsedAt     DateTime?
+  updatedAt      DateTime  @updatedAt
+
   @@map("question_statistics")
 }
 
 model ExamPaper {
-  id              Int          @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   examScheduleId  Int
-  examSchedule    ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  examSchedule    ExamSchedule    @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
   paperCode       String
   title           String
   durationMinutes Int
@@ -397,9 +402,9 @@ model ExamPaper {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   createdById     Int
-  createdBy       User         @relation("UserExamPapers", fields: [createdById], references: [id], onDelete: Cascade)
+  createdBy       User            @relation("UserExamPapers", fields: [createdById], references: [id], onDelete: Cascade)
 
-  questions ExamPaperQuestion[]
+  questions         ExamPaperQuestion[]
   onlineExamConfigs OnlineExamConfig[]
 
   @@unique([examScheduleId, paperCode])
@@ -477,45 +482,45 @@ enum ProctoringEventType {
 }
 
 model OnlineExamConfig {
-  id                    Int          @id @default(autoincrement())
-  examScheduleId        Int          @unique
-  examSchedule          ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
-  examPaperId           Int
-  examPaper             ExamPaper    @relation(fields: [examPaperId], references: [id])
-  
+  id             Int          @id @default(autoincrement())
+  examScheduleId Int          @unique
+  examSchedule   ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  examPaperId    Int
+  examPaper      ExamPaper    @relation(fields: [examPaperId], references: [id])
+
   // --- Cài đặt thiết bị & an ninh ---
-  requireWebcam         Boolean      @default(false)
-  requireMic            Boolean      @default(false)
-  requireFullscreen     Boolean      @default(true)
-  preventTabSwitch      Boolean      @default(true)
-  preventCopyPaste      Boolean      @default(true)
-  shuffleQuestions      Boolean      @default(true)
-  shuffleOptions        Boolean      @default(true)
-  maxAllowedViolations  Int          @default(5)
+  requireWebcam        Boolean @default(false)
+  requireMic           Boolean @default(false)
+  requireFullscreen    Boolean @default(true)
+  preventTabSwitch     Boolean @default(true)
+  preventCopyPaste     Boolean @default(true)
+  shuffleQuestions     Boolean @default(true)
+  shuffleOptions       Boolean @default(true)
+  maxAllowedViolations Int     @default(5)
 
   // --- Kết quả & đánh giá ---
-  showResultImmediately Boolean      @default(false)
-  allowReview           Boolean      @default(true)
+  showResultImmediately Boolean @default(false)
+  allowReview           Boolean @default(true)
 
   // --- Kiểm soát truy cập ---
   /// Danh sách IP/subnet được phép (JSON array of strings), null = không giới hạn
-  ipWhitelist           Json?        @default("[]")
+  ipWhitelist            Json?   @default("[]")
   /// Yêu cầu thiết bị đã đăng ký trước
-  requireDeviceBinding  Boolean      @default(false)
+  requireDeviceBinding   Boolean @default(false)
   /// Mã truy cập phòng thi (access code), null = không yêu cầu
-  accessCode            String?
+  accessCode             String?
   /// Cho phép vào thi muộn tối đa bao nhiêu phút
-  lateEntryWindowMinutes Int         @default(15)
+  lateEntryWindowMinutes Int     @default(15)
   /// Yêu cầu sinh viên đọc và chấp nhận quy định trước khi thi
-  requireRulesAcceptance Boolean     @default(true)
+  requireRulesAcceptance Boolean @default(true)
   /// Số lần thi được phép tối đa
-  maxAttempts           Int          @default(1)
+  maxAttempts            Int     @default(1)
 
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  attempts              ExamAttempt[]
-  securityPolicy        ExamSecurityPolicy?
+  attempts       ExamAttempt[]
+  securityPolicy ExamSecurityPolicy?
 
   @@map("online_exam_configs")
 }
@@ -524,59 +529,59 @@ model ExamSecurityPolicy {
   id                 Int              @id @default(autoincrement())
   onlineExamConfigId Int              @unique
   onlineExamConfig   OnlineExamConfig @relation(fields: [onlineExamConfigId], references: [id], onDelete: Cascade)
-  
-  weightTabHidden    Int              @default(10)
-  weightWindowBlur   Int              @default(5)
-  weightExitFull     Int              @default(15)
-  weightCopyPaste    Int              @default(20)
-  weightMultiSession Int              @default(50)
-  weightFaceMissing  Int              @default(15)
-  weightMultiFace    Int              @default(30)
-  
-  reviewThreshold    Int              @default(40)
-  
+
+  weightTabHidden    Int @default(10)
+  weightWindowBlur   Int @default(5)
+  weightExitFull     Int @default(15)
+  weightCopyPaste    Int @default(20)
+  weightMultiSession Int @default(50)
+  weightFaceMissing  Int @default(15)
+  weightMultiFace    Int @default(30)
+
+  reviewThreshold Int @default(40)
+
   @@map("exam_security_policies")
 }
 
 model ExamAttempt {
-  id                   String        @id @default(uuid())
-  onlineExamConfigId   Int
-  onlineExamConfig     OnlineExamConfig @relation(fields: [onlineExamConfigId], references: [id])
-  studentId            Int
-  student              Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
-  attemptNumber        Int           @default(1)
-  attemptToken         String        @unique
-  status               AttemptStatus @default(NOT_STARTED)
-  
-  startTime            DateTime?
-  endTime              DateTime?
-  expectedEndTime      DateTime?
-  submittedAt          DateTime?
-  
-  extraMinutes         Int           @default(0)
-  extraTimeReason      String?
-  
-  clientIp             String?
-  userAgent            String?
-  deviceFingerprint    String?
-  
-  totalScore           Float?
-  maxScore             Float?
-  riskScore            Int           @default(0)
-  isFlagged            Boolean       @default(false)
+  id                 String           @id @default(uuid())
+  onlineExamConfigId Int
+  onlineExamConfig   OnlineExamConfig @relation(fields: [onlineExamConfigId], references: [id])
+  studentId          Int
+  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  attemptNumber Int           @default(1)
+  attemptToken  String        @unique
+  status        AttemptStatus @default(NOT_STARTED)
+
+  startTime       DateTime?
+  endTime         DateTime?
+  expectedEndTime DateTime?
+  submittedAt     DateTime?
+
+  extraMinutes    Int     @default(0)
+  extraTimeReason String?
+
+  clientIp          String?
+  userAgent         String?
+  deviceFingerprint String?
+
+  totalScore Float?
+  maxScore   Float?
+  riskScore  Int     @default(0)
+  isFlagged  Boolean @default(false)
 
   /// Sinh viên đã chấp nhận quy định thi hay chưa
-  rulesAcceptedAt      DateTime?
-  
-  snapshot             ExamSnapshot?
-  attemptAnswers       AttemptAnswer[]
-  proctoringEvents     ProctoringEvent[]
-  incidents            ExamIncident[]
-  deviceSessions       DeviceSession[]
+  rulesAcceptedAt DateTime?
 
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
+  snapshot         ExamSnapshot?
+  attemptAnswers   AttemptAnswer[]
+  proctoringEvents ProctoringEvent[]
+  incidents        ExamIncident[]
+  deviceSessions   DeviceSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([onlineExamConfigId, studentId, attemptNumber])
   @@index([studentId, status])
@@ -584,33 +589,33 @@ model ExamAttempt {
 }
 
 model ExamSnapshot {
-  id            String      @id @default(uuid())
-  attemptId     String      @unique
-  attempt       ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  
+  id        String      @id @default(uuid())
+  attemptId String      @unique
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
   paperTitle    String
   duration      Int
   questionCount Int
   snapshotData  Json
-  
-  createdAt     DateTime    @default(now())
+
+  createdAt DateTime @default(now())
 
   @@map("exam_snapshots")
 }
 
 model AttemptAnswer {
-  id                 String      @id @default(uuid())
-  attemptId          String
-  attempt            ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  questionId         String
-  
+  id         String      @id @default(uuid())
+  attemptId  String
+  attempt    ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+
   selectedOptionIds  Json?
   textAnswer         String?
-  isFlaggedForReview Boolean     @default(false)
-  
-  version            Int         @default(1)
-  clientTimestamp    DateTime
-  serverTimestamp    DateTime    @default(now())
+  isFlaggedForReview Boolean @default(false)
+
+  version         Int      @default(1)
+  clientTimestamp DateTime
+  serverTimestamp DateTime @default(now())
 
   @@unique([attemptId, questionId])
   @@index([attemptId])
@@ -618,50 +623,50 @@ model AttemptAnswer {
 }
 
 model ProctoringEvent {
-  id          String              @id @default(uuid())
-  attemptId   String
-  attempt     ExamAttempt         @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  
-  eventType   ProctoringEventType
-  severity    EventSeverity       @default(LOW)
-  occurredAt  DateTime            @default(now())
-  duration    Int?
-  
+  id        String      @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  eventType  ProctoringEventType
+  severity   EventSeverity       @default(LOW)
+  occurredAt DateTime            @default(now())
+  duration   Int?
+
   metadata    Json?
   evidenceUrl String?
-  
-  reviewStatus String             @default("PENDING")
+
+  reviewStatus String  @default("PENDING")
   reviewerNote String?
-  
+
   @@index([attemptId, occurredAt])
   @@map("proctoring_events")
 }
 
 model DeviceSession {
-  id           String      @id @default(uuid())
-  attemptId    String
-  attempt      ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  
-  sessionToken String      @unique
+  id        String      @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  sessionToken String   @unique
   deviceInfo   String
   ipAddress    String
-  isActive     Boolean     @default(true)
-  lastSeenAt   DateTime    @default(now())
+  isActive     Boolean  @default(true)
+  lastSeenAt   DateTime @default(now())
 
   @@map("device_sessions")
 }
 
 model ExamIncident {
-  id            String      @id @default(uuid())
-  attemptId     String
-  attempt       ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  
+  id        String      @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
   reportedById  Int
   reason        String
-  decision      String      @default("PENDING")
+  decision      String    @default("PENDING")
   studentAppeal String?
   resolvedAt    DateTime?
-  createdAt     DateTime    @default(now())
+  createdAt     DateTime  @default(now())
 
   @@map("exam_incidents")
 }

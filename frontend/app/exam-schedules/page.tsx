@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { AppShell } from '../../components/AppShell';
+import { downloadCsv } from '../../lib/export-csv';
+import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -21,6 +23,7 @@ import {
   Search,
   Filter,
   Download,
+  Printer,
   Eye,
   CheckCircle2,
   Users,
@@ -90,9 +93,8 @@ export default function ExamSchedulesPage() {
       setSubjects(resSubjects.data);
       setSchedules(resSchedules.data);
       setTrashSchedules(resTrash.data);
-      if (resPeriods.data.length > 0) {
-        setSelectedPeriodId(resPeriods.data[0].id.toString());
-      }
+      // Keep selectedPeriodId empty by default so all active schedules display without hiding data
+      setSelectedPeriodId((prev) => (prev ? prev : ''));
       const params = new URLSearchParams(window.location.search);
       const authUser = getAuthUser();
       if (params.get('action') === 'create' && authUser?.role === 'ADMIN') {
@@ -328,6 +330,8 @@ export default function ExamSchedulesPage() {
     });
   };
 
+
+
   const exportCsv = () => {
     const headers = 'Môn thi,Mã môn,Ngày thi,Giờ thi,Hình thức,Ghi chú\n';
     const rows = filteredSchedules
@@ -336,17 +340,40 @@ export default function ExamSchedulesPage() {
           `"${s.subject?.subjectName || ''}","${s.subject?.subjectCode || ''}","${
             s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''
           }","${s.startTime} - ${s.endTime}","${
-            s.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm Online' : 'Tự luận'
+            s.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm trực tuyến' : 'Tự luận'
           }","${s.note || ''}"`,
       )
       .join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'danh_sach_lich_thi.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv('danh_sach_lich_thi.csv', headers + rows);
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BẢNG TỔNG HỢP LỊCH THI HỌC KỲ',
+      subtitle: 'Thông tin các ca thi và lịch tổ chức thi tại các phòng',
+      metaInfo: [
+        { label: 'Tổng số ca thi', value: String(schedules.length) },
+        { label: 'Tổng phòng thi xếp', value: String(totalAssignedRooms) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Môn thi', width: '180px' },
+        { header: 'Mã môn', width: '90px', align: 'center' },
+        { header: 'Ngày thi', width: '100px', align: 'center' },
+        { header: 'Khung giờ', width: '110px', align: 'center' },
+        { header: 'Hình thức', width: '130px', align: 'center' },
+        { header: 'Số phòng', width: '80px', align: 'center' },
+      ],
+      rows: filteredSchedules.map((s, idx) => [
+        idx + 1,
+        s.subject?.subjectName || '---',
+        s.subject?.subjectCode || '---',
+        s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '---',
+        `${s.startTime} - ${s.endTime}`,
+        s.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm trực tuyến' : 'Tự luận',
+        s.examScheduleRooms?.length || 0,
+      ]),
+    });
   };
 
   const totalAssignedRooms = schedules.reduce((total, schedule) => total + (schedule.examScheduleRooms?.length || 0), 0);
@@ -377,6 +404,12 @@ export default function ExamSchedulesPage() {
           </div>
             <div className="flex flex-wrap gap-2.5">
               <button
+                onClick={handlePrintReport}
+                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+              >
+                <Printer className="h-4 w-4" /> In Lịch thi
+              </button>
+              <button
                 onClick={exportCsv}
                 className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
               >
@@ -384,12 +417,12 @@ export default function ExamSchedulesPage() {
               </button>
               {currentUser?.role === 'ADMIN' && (
                 <>
-                <button type="button" onClick={() => void previewAutoSchedule()} disabled={autoLoading} className="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-medium text-violet-700 hover:bg-violet-100 disabled:opacity-50">
+                <button type="button" onClick={() => void previewAutoSchedule()} disabled={autoLoading} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 text-sm font-bold shadow-sm transition disabled:opacity-50">
                   <Sparkles className="h-4 w-4" /> {autoLoading ? 'Đang đề xuất...' : 'Xếp lịch tự động'}
                 </button>
                 <button
                   onClick={openAddModal}
-                  className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
                 >
                   <Plus className="h-4 w-4" /> Thêm Ca thi Mới
                 </button>
@@ -490,7 +523,7 @@ export default function ExamSchedulesPage() {
                         </td>
                         <td className="p-4">
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                            <Monitor className="h-3.5 w-3.5" /> {sch.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm Online' : 'Tự luận'}
+                            <Monitor className="h-3.5 w-3.5" /> {sch.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm trực tuyến' : 'Tự luận'}
                           </span>
                         </td>
                         <td className="p-4 text-xs text-slate-500">{activeTab === 'trash' ? <>{(sch as any).deletedBy?.username || 'ADMIN'} · {(sch as any).deletedAt ? new Date((sch as any).deletedAt).toLocaleString('vi-VN') : '---'}<br />Phòng: {sch.examScheduleRooms?.length || 0} · Đề: {(sch as any).examPapers?.length || 0}</> : (sch.note || '---')}</td>
@@ -591,7 +624,7 @@ export default function ExamSchedulesPage() {
                 onChange={(e) => setFormData({ ...formData, examType: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
               >
-                <option value="TRAC_NGHIEM">Trắc nghiệm Online</option>
+                <option value="TRAC_NGHIEM">Trắc nghiệm trực tuyến</option>
                 <option value="TU_LUAN">Tự luận Giấy</option>
               </select>
             </div>
@@ -675,7 +708,7 @@ export default function ExamSchedulesPage() {
             icon: Calendar,
           },
           { label: 'Khung giờ', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}`, icon: Clock },
-          { label: 'Hình thức thi', value: drawerSchedule?.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm Online' : 'Tự luận' },
+          { label: 'Hình thức thi', value: drawerSchedule?.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm trực tuyến' : 'Tự luận' },
           { label: 'Ghi chú', value: drawerSchedule?.note || 'Không có' },
         ]}
       />

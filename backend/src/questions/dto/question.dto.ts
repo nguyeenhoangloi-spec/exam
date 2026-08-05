@@ -51,8 +51,9 @@ export class CreateQuestionDto {
   @Min(1)
   subjectId: number;
 
+  @IsOptional()
   @IsUUID()
-  chapterId: string;
+  chapterId?: string;
 
   @IsString()
   @MinLength(5)
@@ -268,6 +269,25 @@ export class ImportConfirmDto {
   @IsOptional()
   @IsBoolean()
   overrideDuplicate?: boolean;
+
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) subjectId?: number;
+  @IsOptional() @IsUUID() chapterId?: string;
+  @IsOptional() @IsIn(TYPES) defaultType?: any;
+  @IsOptional() @IsIn(DIFFICULTIES) defaultDifficulty?: any;
+  @IsOptional() @IsIn(BLOOMS) defaultBloomLevel?: any;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(0.01) @Max(100) defaultScore?: number;
+  @IsOptional() @IsBoolean() applyDefaultsToMissingOnly?: boolean;
+  @IsOptional() @IsString() @MaxLength(500000) overrides?: string;
+}
+
+export class ImportPreviewDto {
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) subjectId?: number;
+  @IsOptional() @IsUUID() chapterId?: string;
+  @IsOptional() @IsIn(TYPES) defaultType?: any;
+  @IsOptional() @IsIn(DIFFICULTIES) defaultDifficulty?: any;
+  @IsOptional() @IsIn(BLOOMS) defaultBloomLevel?: any;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(0.01) @Max(100) defaultScore?: number;
+  @IsOptional() @IsBoolean() applyDefaultsToMissingOnly?: boolean;
 }
 
 export class GenerateAiQuestionsDto {
@@ -276,8 +296,9 @@ export class GenerateAiQuestionsDto {
   @Min(1)
   subjectId: number;
 
+  @IsOptional()
   @IsUUID()
-  chapterId: string;
+  chapterId?: string;
 
   @IsIn(TYPES)
   type: any;
@@ -291,19 +312,23 @@ export class GenerateAiQuestionsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(20)
+  @Max(100)
   count: number;
 
   @IsOptional()
   @IsString()
-  @MaxLength(30000)
+  @MaxLength(100000)
   prompt?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isExtractionOnly?: boolean;
 }
 
 export class SaveAiQuestionsDto {
   @IsArray()
   @ArrayMinSize(1)
-  @ArrayMaxSize(20)
+  @ArrayMaxSize(200)
   @ValidateNested({ each: true })
   @Type(() => CreateQuestionDto)
   questions: CreateQuestionDto[];
