@@ -21,9 +21,9 @@ export function DashboardWelcome({
   const displayPendingCount = pendingQuestionCount > 0 ? pendingQuestionCount : 12;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 p-6 text-white shadow-md min-h-[140px] flex flex-col justify-between">
-      {/* 3D Isometric Vector Illustration Overlay matching Mockup Image */}
-      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-90">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md min-h-[140px] flex flex-col justify-between">
+      {/* 3D Isometric Vector Illustration Overlay matching User Screenshot */}
+      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-85">
         <svg viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           {/* Isometric Grid Floor */}
           <path d="M160 20L300 80L160 140L20 80L160 20Z" fill="url(#grid-grad)" fillOpacity="0.15" />
@@ -66,29 +66,29 @@ export function DashboardWelcome({
             <span>Xin chào, {username}</span>
             <span className="animate-bounce inline-block">👋</span>
           </h2>
-          <div className="space-y-0.5 text-xs sm:text-sm font-medium text-blue-50">
+          <div className="space-y-0.5 text-xs sm:text-sm font-medium text-blue-100">
             <p>Hôm nay có <strong className="font-black text-white">{displayExamCount}</strong> kỳ thi diễn ra</p>
             <p><strong className="font-black text-white">{displayPendingCount}</strong> câu hỏi đang chờ duyệt</p>
           </div>
         </div>
 
-        {/* Right Action Buttons */}
+        {/* Right Action Buttons matching User Screenshot */}
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={() => router.push('/exam-schedules')}
-            className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-900 px-4 py-2.5 text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-[#003896] px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
           >
-            <Calendar className="h-4 w-4 text-blue-600" />
+            <Calendar className="h-4 w-4 text-[#003896]" />
             <span>Xem lịch thi</span>
           </button>
 
           <button
             type="button"
             onClick={() => router.push('/question-bank?status=PENDING')}
-            className="flex items-center gap-2 rounded-xl bg-blue-900/40 hover:bg-blue-900/60 border border-white/20 text-white px-4 py-2.5 text-xs font-bold backdrop-blur-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-[#001E5C] hover:bg-[#001748] text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer shadow-xs border border-blue-400/20"
           >
-            <CheckCircle className="h-4 w-4 text-emerald-300" />
+            <CheckCircle className="h-4 w-4 text-white" />
             <span>Duyệt câu hỏi</span>
           </button>
         </div>

@@ -50,37 +50,37 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
   });
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3 h-full flex flex-col justify-between overflow-hidden">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
       {/* Header & Dropdown */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-sm sm:text-base font-black text-slate-900">Thống kê trạng thái câu hỏi</h3>
+        <h3 className="text-base sm:text-lg font-black text-slate-900">Thống kê trạng thái câu hỏi</h3>
 
         <div className="relative">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="Tất cả">Tất cả</option>
             <option value="Tháng này">Tháng này</option>
             <option value="Học kỳ này">Học kỳ này</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
         </div>
       </div>
 
-      {/* Donut & Legend side by side */}
-      <div className="flex flex-row items-center justify-between gap-3 py-2 min-w-0">
-        {/* Donut Canvas */}
-        <div className="relative h-36 w-36 shrink-0">
+      {/* Donut & Legend side by side - BIG & SPACIOUS */}
+      <div className="flex-1 flex flex-row items-center justify-between gap-6 py-4 min-w-0 my-auto">
+        {/* Large Donut Canvas */}
+        <div className="relative h-52 w-52 shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 dataKey="count"
                 nameKey="label"
-                innerRadius={42}
-                outerRadius={66}
+                innerRadius={58}
+                outerRadius={92}
                 paddingAngle={3}
                 stroke="none"
               >
@@ -93,7 +93,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                   borderRadius: '12px',
                   border: '1px solid #e2e8f0',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontWeight: 700,
                 }}
                 formatter={(value, name) => [`${Number(value).toLocaleString('vi-VN')} câu`, name]}
@@ -101,27 +101,27 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
             </PieChart>
           </ResponsiveContainer>
 
-          {/* Center Text */}
+          {/* Large Center Text */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[10px] font-bold text-slate-400">Tổng</span>
-            <span className="text-base font-black text-slate-900 leading-none my-0.5">
+            <span className="text-xs font-extrabold text-slate-400">Tổng</span>
+            <span className="text-2xl font-black text-slate-900 leading-none my-1">
               {totalCount.toLocaleString('vi-VN')}
             </span>
-            <span className="text-[10px] font-bold text-slate-400">câu hỏi</span>
+            <span className="text-xs font-extrabold text-slate-400">câu hỏi</span>
           </div>
         </div>
 
-        {/* Legend List on Right */}
-        <div className="flex-1 min-w-0 space-y-3 text-xs font-semibold">
+        {/* Large Legend List on Right */}
+        <div className="flex-1 min-w-0 space-y-4">
           {chartData.map((item) => (
-            <div key={item.status} className="flex items-center justify-between gap-1.5 text-xs">
-              <span className="flex items-center gap-1.5 min-w-0">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
-                <span className="text-slate-700 font-bold truncate">{item.label}</span>
+            <div key={item.status} className="flex items-center justify-between gap-2">
+              <span className="flex items-center gap-2 min-w-0">
+                <span className="h-3.5 w-3.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
+                <span className="text-sm font-extrabold text-slate-800 truncate">{item.label}</span>
               </span>
-              <div className="text-right shrink-0 font-extrabold text-slate-900 whitespace-nowrap">
-                {item.count.toLocaleString('vi-VN')}{' '}
-                <span className="text-[10.5px] text-slate-400 font-semibold ml-0.5">({item.percent})</span>
+              <div className="text-right shrink-0 whitespace-nowrap">
+                <span className="text-base font-black text-slate-900">{item.count.toLocaleString('vi-VN')}</span>{' '}
+                <span className="text-xs text-slate-400 font-bold ml-1">({item.percent})</span>
               </div>
             </div>
           ))}

@@ -4,36 +4,33 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  GraduationCap,
   LayoutDashboard,
-  Calendar,
-  DoorOpen,
-  Clock,
-  UserCheck,
+  CalendarDays,
+  CalendarCheck,
+  Building2,
+  Users,
+  ShieldCheck,
   HelpCircle,
   FileText,
-  Layers,
   BarChart3,
-  Users,
   School,
-  Building2,
   BookOpen,
+  GraduationCap,
   ChevronLeft,
   User as UserIcon,
-  ShieldCheck,
   BookMarked,
   LucideIcon,
 } from 'lucide-react';
-import { User } from '../types';
+import { Role, User } from '../types';
 import { canAccessPath } from '../lib/access';
 
 interface SidebarProps {
   user: User | null;
   collapsed: boolean;
   onToggle: () => void;
-  isToggling: boolean;
-  mobileOpen: boolean;
-  onMobileClose: () => void;
+  isToggling?: boolean;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
 interface NavItem {
@@ -43,7 +40,7 @@ interface NavItem {
 }
 
 interface NavGroup {
-  group: string;
+  group?: string;
   items: NavItem[];
 }
 
@@ -51,30 +48,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
   user,
   collapsed,
   onToggle,
-  isToggling,
   mobileOpen,
   onMobileClose,
 }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const role = user?.role || 'ADMIN';
+  const role: Role = user?.role || 'ADMIN';
 
-  // Define All Valid Route Groups based strictly on access.ts
+  // Master Navigation Items
   const adminGroups: NavGroup[] = [
     {
-      group: '',
-      items: [
-        { name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard },
-      ],
+      items: [{ name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard }],
     },
     {
       group: 'QUẢN LÝ KHẢO THÍ',
       items: [
-        { name: 'Quản lý Kỳ thi', href: '/exam-periods', icon: Calendar },
-        { name: 'Quản lý Lịch thi', href: '/exam-schedules', icon: Clock },
-        { name: 'Quản lý Phòng thi', href: '/exam-rooms', icon: DoorOpen },
-        { name: 'Xếp phòng thi', href: '/exam-arrangement', icon: Layers },
-        { name: 'Phân công Giám thị', href: '/exam-supervisors', icon: UserCheck },
+        { name: 'Quản lý Kỳ thi', href: '/exam-periods', icon: CalendarDays },
+        { name: 'Quản lý Lịch thi', href: '/exam-schedules', icon: CalendarCheck },
+        { name: 'Quản lý Phòng thi', href: '/exam-rooms', icon: Building2 },
+        { name: 'Xếp phòng thi', href: '/exam-arrangement', icon: Users },
+        { name: 'Phân công Giám thị', href: '/exam-supervisors', icon: ShieldCheck },
       ],
     },
     {
@@ -133,13 +126,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-hidden border-r border-slate-800 bg-[#0B1426] text-slate-300 shadow-2xl transition-all duration-300 ${
+      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-hidden border-r border-[#1E293B]/70 bg-[#0B1739] text-slate-300 shadow-2xl transition-all duration-300 ${
         collapsed ? 'w-[260px] md:w-[76px]' : 'w-[260px]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
     >
-      {/* Header Section */}
-      <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-800/80 px-4 bg-[#080E1C]">
-        <div className="flex items-center gap-3">
+      {/* Header Section with Toggle Button ALWAYS at top */}
+      <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#1E293B]/70 px-3.5 bg-[#0B1739]">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 font-black text-white shadow-md">
             <GraduationCap className="h-5 w-5" />
           </div>
@@ -156,17 +149,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {/* Toggle Button */}
-        {!collapsed && (
-          <button
-            type="button"
-            onClick={onToggle}
-            className="hidden md:flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
-            title="Thu gọn thanh bên"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        )}
+        {/* Toggle Button ALWAYS AT THE TOP HEADER */}
+        <button
+          type="button"
+          onClick={onToggle}
+          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-[#1E293B] transition cursor-pointer"
+          title={collapsed ? 'Mở rộng thanh bên' : 'Thu gọn thanh bên'}
+        >
+          <ChevronLeft className={`h-4 w-4 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} />
+        </button>
       </div>
 
       {/* Navigation Groups List */}
@@ -174,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {filteredGroups.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-1">
             {group.group && !collapsed && (
-              <h3 className="px-3 text-[10px] font-black tracking-wider text-slate-500 uppercase">
+              <h3 className="px-3 text-[10px] font-black tracking-wider text-slate-400 uppercase">
                 {group.group}
               </h3>
             )}
@@ -194,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   className={`group relative flex h-10 items-center rounded-xl px-3 text-xs font-bold transition-all duration-200 ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                      : 'text-slate-400 hover:bg-slate-800/80 hover:text-white'
+                      : 'text-slate-300 hover:bg-[#1E293B] hover:text-white'
                   }`}
                 >
                   <Icon className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-110 ${collapsed ? 'mx-auto' : 'mr-3'} ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-400'}`} />
@@ -209,34 +200,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ))}
       </nav>
 
-      {/* Footer User Profile Section */}
-      <div className="shrink-0 border-t border-slate-800/80 p-3 bg-[#080E1C]">
-        <div className="flex items-center justify-between gap-2">
+      {/* Footer User Profile Section matching User Screenshot */}
+      <div className="shrink-0 border-t border-[#1E293B]/70 p-3 bg-[#0B1739]">
+        <div className={`flex items-center justify-between gap-2.5 rounded-2xl bg-[#081845] p-2.5 border border-blue-900/40 shadow-2xs ${collapsed ? 'justify-center p-2' : ''}`}>
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-800 text-white font-bold border border-slate-700">
-              <UserIcon className="h-4 w-4 text-blue-400" />
+            {/* White Circle Avatar with Blue Letter 'A' */}
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-blue-600 font-black text-sm shadow-sm">
+              {(user?.username || 'Admin').charAt(0).toUpperCase()}
             </div>
+
             {!collapsed && (
               <div className="min-w-0">
-                <span className="block truncate text-xs font-black text-white">
+                <span className="block truncate text-xs font-black text-white leading-tight">
                   {user?.username || 'Admin'}
                 </span>
-                <span className="block truncate text-[10px] font-medium text-slate-400">
+                <span className="block truncate text-[11px] font-semibold text-slate-300 leading-tight mt-0.5">
                   {role === 'ADMIN' ? 'Quản trị hệ thống' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                 </span>
               </div>
             )}
           </div>
 
-          {collapsed && (
-            <button
-              type="button"
-              onClick={onToggle}
-              className="flex h-7 w-7 mx-auto items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
-              title="Mở rộng thanh bên"
-            >
-              <ChevronLeft className="h-4 w-4 rotate-180" />
-            </button>
+          {!collapsed && (
+            <ChevronLeft className="h-3.5 w-3.5 -rotate-90 shrink-0 text-slate-300" />
           )}
         </div>
       </div>
