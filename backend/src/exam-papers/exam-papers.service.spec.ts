@@ -9,7 +9,8 @@ describe('ExamPapersService permissions', () => {
     },
   };
   const audit = { write: jest.fn() };
-  const service = new ExamPapersService(prisma as any, audit as any);
+  const actionVerifier = { verify: jest.fn().mockResolvedValue(true) };
+  const service = new ExamPapersService(prisma as any, audit as any, actionVerifier as any);
 
   beforeEach(() => jest.clearAllMocks());
 
@@ -64,6 +65,7 @@ describe('ExamPapersService permissions', () => {
     const timedService = new ExamPapersService(
       { $transaction: jest.fn((callback) => callback(tx)) } as any,
       audit as any,
+      actionVerifier as any,
     );
 
     await expect(timedService.createRandom({ id: 1, role: 'ADMIN' }, {

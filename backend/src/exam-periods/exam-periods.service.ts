@@ -1,10 +1,16 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { ActionVerifierService } from '../common/security/action-verifier.service';
+import { ConfirmCriticalActionDto } from '../common/dto/critical-action.dto';
 
 @Injectable()
 export class ExamPeriodsService {
-  constructor(private prisma: PrismaService, private audit: AuditService) {}
+  constructor(
+    private prisma: PrismaService,
+    private audit: AuditService,
+    private actionVerifier: ActionVerifierService,
+  ) {}
 
   async findAll() {
     const periods = await this.prisma.examPeriod.findMany({
@@ -91,6 +97,46 @@ export class ExamPeriodsService {
       const removed = await tx.examPeriod.delete({ where: { id } });
       await this.audit.write({ actorId: actor.id, action: 'DELETE', entityType: 'EXAM_PERIOD', entityId: id, description: `Đã xóa kỳ thi ${existing.name}` }, tx);
       return removed;
+    });
+  }
+
+  async lock(actor: { id: number }, id: number, dto: ConfirmCriticalActionDto) {
+    await this.actionVerifier.verify(actor.id, dto, 'KHOA KY THI');
+    const existing = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.examPeriod.update({
+        where: { id },
+        data: { status: 'LOCKED' },
+      });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'LOCK',
+        entityType: 'EXAM_PERIOD',
+        entityId: id,
+        description: `Đã khóa kỳ thi "${existing.name}". Lý do: ${dto.reason}${dto.note ? ` (${dto.note})` : ''}`,
+        metadata: { reason: dto.reason, note: dto.note },
+      }, tx);
+      return updated;
+    });
+  }
+
+  async unlock(actor: { id: number }, id: number, dto: ConfirmCriticalActionDto) {
+    await this.actionVerifier.verify(actor.id, dto, 'MO KHOA KY THI');
+    const existing = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.examPeriod.update({
+        where: { id },
+        data: { status: 'UPCOMING' },
+      });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'UNLOCK',
+        entityType: 'EXAM_PERIOD',
+        entityId: id,
+        description: `Đã mở khóa dữ liệu kỳ thi "${existing.name}". Lý do: ${dto.reason}${dto.note ? ` (${dto.note})` : ''}`,
+        metadata: { reason: dto.reason, note: dto.note },
+      }, tx);
+      return updated;
     });
   }
 }

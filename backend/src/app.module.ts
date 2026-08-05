@@ -20,10 +20,13 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { OnlineExamsModule } from './online-exams/online-exams.module';
 import { ProctorModule } from './proctor/proctor.module';
 
+import { SecurityModule } from './common/security/security.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+    SecurityModule,
     AuditModule,
     AuthModule,
     UsersModule,

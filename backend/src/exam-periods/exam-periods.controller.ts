@@ -38,4 +38,16 @@ export class ExamPeriodsController {
   remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
     return this.examPeriodsService.remove(req.user, id);
   }
+
+  @Roles('ADMIN')
+  @Post(':id/lock')
+  lock(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return this.examPeriodsService.lock(req.user, id, body);
+  }
+
+  @Roles('ADMIN')
+  @Post(':id/unlock')
+  unlock(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return this.examPeriodsService.unlock(req.user, id, body);
+  }
 }

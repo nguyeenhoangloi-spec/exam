@@ -46,8 +46,8 @@ export class ExamPapersController {
 
   @Roles('ADMIN')
   @Post(':id/publish')
-  publish(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
-    return this.examPapersService.publish(req.user, id);
+  publish(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return this.examPapersService.publish(req.user, id, body);
   }
 
   @Roles('ADMIN')

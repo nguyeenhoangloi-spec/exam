@@ -10,6 +10,7 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { KPICards, KPICardItem } from '../../components/KPICards';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import {
@@ -25,6 +26,8 @@ import {
   Eye,
   Award,
   Layers,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import { ExamPeriod } from '../../types';
 
@@ -164,6 +167,48 @@ export default function ExamPeriodsPage() {
         }
       },
     });
+  };
+
+  const [criticalModal, setCriticalModal] = useState<{
+    isOpen: boolean;
+    period: ExamPeriod | null;
+    action: 'lock' | 'unlock';
+  }>({
+    isOpen: false,
+    period: null,
+    action: 'lock',
+  });
+
+  const openLockModal = (period: ExamPeriod) => {
+    setCriticalModal({
+      isOpen: true,
+      period,
+      action: 'lock',
+    });
+  };
+
+  const openUnlockModal = (period: ExamPeriod) => {
+    setCriticalModal({
+      isOpen: true,
+      period,
+      action: 'unlock',
+    });
+  };
+
+  const handleConfirmCriticalLockUnlock = async (payload: CriticalConfirmPayload) => {
+    if (!criticalModal.period) return;
+    const periodId = criticalModal.period.id;
+    const endpoint = criticalModal.action === 'lock' ? `/exam-periods/${periodId}/lock` : `/exam-periods/${periodId}/unlock`;
+    try {
+      await api.post(endpoint, payload);
+      setToast({
+        message: criticalModal.action === 'lock' ? `Đã khóa kỳ thi "${criticalModal.period.name}" thành công!` : `Đã mở khóa dữ liệu kỳ thi "${criticalModal.period.name}" thành công!`,
+        type: 'success',
+      });
+      await fetchData();
+    } catch (error: any) {
+      throw error;
+    }
   };
 
 
@@ -324,6 +369,23 @@ export default function ExamPeriodsPage() {
                             </button>
                             {currentUser?.role === 'ADMIN' && (
                               <>
+                                {p.status === 'LOCKED' ? (
+                                  <button
+                                    onClick={() => openUnlockModal(p)}
+                                    className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                                    title="Mở khóa kỳ thi (Xác thực nhiều lớp)"
+                                  >
+                                    <Unlock className="h-4 w-4" />
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => openLockModal(p)}
+                                    className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                                    title="Khóa kỳ thi (Xác thực nhiều lớp)"
+                                  >
+                                    <Lock className="h-4 w-4" />
+                                  </button>
+                                )}
                                 <button
                                   onClick={() => openEditModal(p)}
                                   className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
@@ -471,6 +533,39 @@ export default function ExamPeriodsPage() {
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
+      />
+
+      <CriticalConfirmModal
+        isOpen={criticalModal.isOpen}
+        onClose={() => setCriticalModal({ isOpen: false, period: null, action: 'lock' })}
+        title={
+          criticalModal.action === 'lock'
+            ? `Khóa Kỳ Thi & Dữ Liệu Khảo Thí (${criticalModal.period?.name || ''})`
+            : `Mở Khóa Kỳ Thi (${criticalModal.period?.name || ''})`
+        }
+        warningMessage={
+          criticalModal.action === 'lock'
+            ? 'Khóa kỳ thi sẽ tạm dừng hoặc hoàn tất các thao tác thêm mới, điều chỉnh lịch thi và phân công cán bộ coi thi. Thao tác này ảnh hưởng tới toàn bộ lịch thi thuộc kỳ thi.'
+            : 'Mở khóa kỳ thi cho phép Ban Khảo thí tiếp tục điều chỉnh thông tin lịch thi, đề thi và phòng thi. Vui lòng ghi rõ lý do chỉ đạo.'
+        }
+        confirmPhrase={criticalModal.action === 'lock' ? 'KHOA KY THI' : 'MO KHOA KY THI'}
+        reasons={
+          criticalModal.action === 'lock'
+            ? [
+                'Hoàn tất công tác tổ chức thi theo kế hoạch',
+                'Khóa dữ liệu phục vụ thanh tra khảo thí',
+                'Khóa khẩn cấp do sự cố bất khả kháng',
+                'Lý do khác',
+              ]
+            : [
+                'Theo quyết định bổ sung lịch thi của Ban Giám hiệu',
+                'Điều chỉnh sai sót thông tin phòng thi/lịch thi',
+                'Mở khóa cập nhật điểm thi bổ sung',
+                'Lý do khác',
+              ]
+        }
+        actionButtonText={criticalModal.action === 'lock' ? 'Khóa Kỳ Thi Ngay' : 'Mở Khóa Kỳ Thi'}
+        onConfirm={handleConfirmCriticalLockUnlock}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { AppShell } from '../../components/AppShell';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import api from '../../lib/api';
@@ -230,10 +231,26 @@ export default function ExamPapersPage() {
     }
   };
 
+  const [criticalModal, setCriticalModal] = useState<{
+    isOpen: boolean;
+    paper: ExamPaper | null;
+  }>({
+    isOpen: false,
+    paper: null,
+  });
+
   const runAction = async (
     paper: ExamPaper,
     action: 'publish' | 'archive' | 'restore' | 'delete',
   ) => {
+    if (action === 'publish') {
+      setCriticalModal({
+        isOpen: true,
+        paper,
+      });
+      return;
+    }
+
     const titles = {
       publish: 'Phát hành đề thi',
       archive: 'Lưu trữ đề thi',
@@ -274,6 +291,19 @@ export default function ExamPapersPage() {
         }
       },
     });
+  };
+
+  const handleConfirmCriticalPublish = async (payload: CriticalConfirmPayload) => {
+    if (!criticalModal.paper) return;
+    const paperId = criticalModal.paper.id;
+    try {
+      await api.post(`/exam-papers/${paperId}/publish`, payload);
+      setSelectedPaper(null);
+      setToast({ message: `Đã phát hành thành công đề thi ${criticalModal.paper.paperCode}!`, type: 'success' });
+      await fetchData();
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const handleExportWord = (includeAnswerKey: boolean) => {
@@ -642,6 +672,23 @@ export default function ExamPapersPage() {
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
+      />
+
+      <CriticalConfirmModal
+        isOpen={criticalModal.isOpen}
+        onClose={() => setCriticalModal({ isOpen: false, paper: null })}
+        title={`Phát Hành Đề Thi Official (${criticalModal.paper?.paperCode || ''})`}
+        warningMessage="Phát hành đề thi sẽ tự động khởi tạo cấu hình ca thi trực tuyến và KHÓA CHỈNH SỬA đề thi này. Đề thi sẽ sẵn sàng phát cho thí sinh khi ca thi bắt đầu."
+        confirmPhrase="PHAT HANH DE THI"
+        reasons={[
+          'Hoàn tất thẩm định và duyệt cấu trúc đề thi',
+          'Đến thời điểm phát hành theo kế hoạch thi',
+          'Phát hành bổ sung mã đề dự phòng',
+          'Yêu cầu chỉ đạo phát hành khẩn cấp',
+          'Lý do khác',
+        ]}
+        actionButtonText="Phát Hành & Kích Hoạt Ca Thi"
+        onConfirm={handleConfirmCriticalPublish}
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </AppShell>

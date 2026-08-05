@@ -36,11 +36,15 @@ const paperDetailInclude = {
   },
 };
 
+import { ActionVerifierService } from '../common/security/action-verifier.service';
+import { ConfirmCriticalActionDto } from '../common/dto/critical-action.dto';
+
 @Injectable()
 export class ExamPapersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly actionVerifier: ActionVerifierService,
   ) {}
 
   private assertOwner(actor: Actor, paper: { createdById: number }) {
@@ -267,7 +271,10 @@ export class ExamPapersService {
     return paper;
   }
 
-  async publish(actor: Actor, id: number) {
+  async publish(actor: Actor, id: number, dto?: ConfirmCriticalActionDto) {
+    if (dto) {
+      await this.actionVerifier.verify(actor.id, dto, 'PHAT HANH DE THI');
+    }
     const paper = await this.current(id);
     if (paper.status !== ExamPaperStatus.DRAFT) {
       throw new BadRequestException('Chỉ đề thi ở trạng thái bản nháp mới được phát hành.');
@@ -298,8 +305,8 @@ export class ExamPapersService {
         action: 'PUBLISH',
         entityType: 'EXAM_PAPER',
         entityId: id,
-        description: `Đã phát hành đề thi ${paper.paperCode} và kích hoạt ca thi trực tuyến`,
-        metadata: { paperCode: paper.paperCode, examScheduleId: paper.examScheduleId },
+        description: `Đã phát hành đề thi ${paper.paperCode} và kích hoạt ca thi trực tuyến. Lý do: ${dto?.reason || 'Phát hành chính thức'}${dto?.note ? ` (${dto.note})` : ''}`,
+        metadata: { paperCode: paper.paperCode, examScheduleId: paper.examScheduleId, reason: dto?.reason, note: dto?.note },
       }, tx);
 
       return updated;
