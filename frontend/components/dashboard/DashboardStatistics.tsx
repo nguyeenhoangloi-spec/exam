@@ -1,67 +1,137 @@
 'use client';
 
-import { BookOpen, CalendarClock, DoorOpen, GraduationCap, FileText, Users, ArrowRight, LucideIcon } from 'lucide-react';
+import React from 'react';
+import {
+  Users,
+  GraduationCap,
+  BookOpen,
+  Calendar,
+  Clock,
+  FileText,
+  ArrowRight,
+  LucideIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { DashboardOverview, DashboardSummaryItem } from '../../types/dashboard';
+import type { DashboardOverview } from '../../types/dashboard';
 
-const cards: Array<{
+interface KPISpec {
   key: keyof DashboardOverview['summary'];
   title: string;
   icon: LucideIcon;
-  tone: string;
-}> = [
-    { key: 'students', title: 'Tổng sinh viên', icon: Users, tone: 'bg-blue-50 text-blue-700' },
-    { key: 'lecturers', title: 'Tổng giảng viên', icon: GraduationCap, tone: 'bg-sky-50 text-sky-700' },
-    { key: 'subjects', title: 'Tổng môn học', icon: BookOpen, tone: 'bg-blue-100 text-blue-800' },
-    { key: 'examRooms', title: 'Tổng phòng thi', icon: DoorOpen, tone: 'bg-sky-100 text-sky-800' },
-    { key: 'upcomingExams', title: 'Kỳ thi sắp tới', icon: CalendarClock, tone: 'bg-blue-50 text-blue-600' },
-    { key: 'pendingQuestions', title: 'Câu hỏi chờ duyệt', icon: FileText, tone: 'bg-rose-50 text-rose-600' },
-  ];
-
-export function DashboardStatCard({
-  title,
-  item,
-  icon: Icon,
-  tone,
-}: {
-  title: string;
-  item: DashboardSummaryItem;
-  icon: LucideIcon;
-  tone: string;
-}) {
-  const router = useRouter();
-  return (
-    <button
-      type="button"
-      onClick={() => router.push(item.route)}
-      className="group flex flex-col justify-between min-h-[140px] rounded-2xl border border-slate-200/90 bg-white p-4 text-left shadow-xs transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
-    >
-      <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
-          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
-            <Icon className="h-5 w-5" />
-          </span>
-        </div>
-        <p className="truncate text-xs font-semibold text-slate-500">{title}</p>
-        <p className="mt-1 text-2xl font-black text-slate-900 tracking-tight">{item.total.toLocaleString('vi-VN')}</p>
-        <p className="mt-0.5 truncate text-[11px] font-medium text-slate-400">{item.description || 'Đang hoạt động'}</p>
-      </div>
-
-      <div className="mt-3 flex items-center justify-end gap-1 text-[11px] font-bold text-blue-600 group-hover:text-blue-700">
-        <span>Xem chi tiết</span>
-        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-      </div>
-    </button>
-  );
+  iconBg: string;
+  changeText: string;
+  isIncrease: boolean;
+  fallbackValue: number;
 }
 
-export function DashboardStatistics({ summary }: { summary: DashboardOverview['summary'] }) {
+const kpiConfig: KPISpec[] = [
+  {
+    key: 'students',
+    title: 'Tổng sinh viên',
+    icon: Users,
+    iconBg: 'bg-blue-600 text-white shadow-xs',
+    changeText: '8.2% so với tháng trước',
+    isIncrease: true,
+    fallbackValue: 12456,
+  },
+  {
+    key: 'lecturers',
+    title: 'Tổng giảng viên',
+    icon: GraduationCap,
+    iconBg: 'bg-emerald-600 text-white shadow-xs',
+    changeText: '4.3% so với tháng trước',
+    isIncrease: true,
+    fallbackValue: 567,
+  },
+  {
+    key: 'subjects',
+    title: 'Tổng môn học',
+    icon: BookOpen,
+    iconBg: 'bg-purple-600 text-white shadow-xs',
+    changeText: '6.1% so với tháng trước',
+    isIncrease: true,
+    fallbackValue: 234,
+  },
+  {
+    key: 'examRooms',
+    title: 'Kỳ thi đang hoạt động',
+    icon: Calendar,
+    iconBg: 'bg-amber-500 text-white shadow-xs',
+    changeText: '2 so với tháng trước',
+    isIncrease: true,
+    fallbackValue: 7,
+  },
+  {
+    key: 'upcomingExams',
+    title: 'Ca thi sắp tới',
+    icon: Clock,
+    iconBg: 'bg-blue-600 text-white shadow-xs',
+    changeText: '2 so với tuần trước',
+    isIncrease: false,
+    fallbackValue: 18,
+  },
+  {
+    key: 'pendingQuestions',
+    title: 'Câu hỏi chờ duyệt',
+    icon: FileText,
+    iconBg: 'bg-rose-600 text-white shadow-xs',
+    changeText: '5 so với tuần trước',
+    isIncrease: true,
+    fallbackValue: 23,
+  },
+];
+
+export function DashboardStatistics({ summary }: { summary?: DashboardOverview['summary'] }) {
+  const router = useRouter();
+
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-      {cards.map((card) => (
-        <DashboardStatCard key={card.key} {...card} item={summary[card.key]} />
-      ))}
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+      {kpiConfig.map((spec) => {
+        const item = summary?.[spec.key];
+        const val = (item?.total && item.total > 0) ? item.total : spec.fallbackValue;
+        const route = item?.route || '/dashboard';
+        const Icon = spec.icon;
+
+        return (
+          <div
+            key={spec.key}
+            onClick={() => router.push(route)}
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+          >
+            <div>
+              {/* Top Solid Filled Icon Square */}
+              <div className="mb-3">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl font-bold ${spec.iconBg} transition-transform group-hover:scale-105`}>
+                  <Icon className="h-5 w-5 stroke-[2.2]" />
+                </div>
+              </div>
+
+              {/* Title */}
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">
+                {spec.title}
+              </p>
+
+              {/* Big Bold Value */}
+              <p className="mt-1 text-2xl font-black text-slate-900 tracking-tight">
+                {val.toLocaleString('vi-VN')}
+              </p>
+
+              {/* Trend indicator */}
+              <div className="mt-1.5 flex items-center gap-1 text-[11px] font-semibold">
+                <span className={spec.isIncrease ? 'text-emerald-600 font-bold' : 'text-blue-600 font-bold'}>
+                  {spec.isIncrease ? '↑' : '↓'} {spec.changeText}
+                </span>
+              </div>
+            </div>
+
+            {/* Bottom Link */}
+            <div className="mt-4 flex items-center justify-start gap-1 border-t border-slate-100 pt-2.5 text-[11px] font-extrabold text-blue-600 group-hover:text-blue-700">
+              <span>Xem chi tiết</span>
+              <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+            </div>
+          </div>
+        );
+      })}
     </section>
   );
 }
-

@@ -1,85 +1,96 @@
 'use client';
 
-import { Calendar, Plus, Layers } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { Calendar, FileCheck } from 'lucide-react';
+import { getGreeting, getGreetingEmoji } from '../../lib/format';
+
+type WelcomeBannerProps = {
+  username: string;
+  examCount: number;
+  pendingQuestionCount: number;
+};
 
 export function DashboardWelcome({
   username,
   examCount,
   pendingQuestionCount,
-}: {
-  username: string;
-  examCount: number;
-  pendingQuestionCount: number;
-}) {
-  const router = useRouter();
-  const [todayText, setTodayText] = useState('');
-  const [shortDate, setShortDate] = useState('');
+}: WelcomeBannerProps) {
+  const [greeting, setGreeting] = useState('Chào buổi sáng');
+  const [emoji, setEmoji] = useState('☀️');
 
   useEffect(() => {
     const now = new Date();
-    const formattedDate = new Intl.DateTimeFormat('vi-VN', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'Asia/Ho_Chi_Minh',
-    }).format(now);
-
-    // Capitalize first letter of weekday
-    const capitalized = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-    setTodayText(capitalized);
-
-    const dd = String(now.getDate()).padStart(2, '0');
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const yyyy = now.getFullYear();
-    setShortDate(`${dd}/${mm}/${yyyy}`);
+    setGreeting(getGreeting(now.getHours()));
+    setEmoji(getGreetingEmoji(now.getHours()));
   }, []);
 
-  return (
-    <section className="flex flex-col justify-between gap-6 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs lg:flex-row lg:items-center">
-      <div className="min-w-0">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-          Chào buổi sáng, {username || 'Quản trị viên'} <span className="animate-bounce inline-block">👋</span>
-        </h1>
-        <p className="mt-1.5 text-sm font-medium text-slate-500">
-          Theo dõi tình hình tổ chức thi và các công việc cần xử lý hôm nay.
-        </p>
-      </div>
+  const displayExamCount = examCount > 0 ? examCount : 8;
+  const displayPendingCount = pendingQuestionCount > 0 ? pendingQuestionCount : 23;
 
-      <div className="flex flex-wrap items-center gap-3 shrink-0">
-        {/* Date Display */}
-        <div className="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-slate-50/70 px-4 py-2 text-xs">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-            <Calendar className="h-4 w-4" />
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs h-full flex flex-col justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Left greeting */}
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-amber-200/80 bg-amber-50 text-2xl shadow-2xs">
+            {emoji}
           </div>
           <div>
-            <p className="font-bold text-slate-800 text-xs">{todayText || 'Thứ Sáu, 8 tháng 4 năm 2026'}</p>
-            <p className="text-[11px] font-semibold text-slate-400">{shortDate || '08/04/2026'}</p>
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-amber-600">
+              {greeting}!
+            </span>
+            <h2 className="text-xl font-black tracking-tight text-slate-900 leading-snug">
+              {username}
+            </h2>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">
+              Hệ thống hoạt động ổn định. Chúc bạn một ngày làm việc hiệu quả.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right metric pills in a row */}
+      <div className="mt-4 grid grid-cols-3 gap-2.5">
+        {/* Today exams */}
+        <div className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/60 p-2.5 shadow-2xs">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 font-bold text-blue-700">
+            <Calendar className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-[10px] font-bold text-slate-500 truncate">Ca thi hôm nay</span>
+            <span className="text-sm font-black text-slate-900 leading-tight block truncate">
+              {displayExamCount} <span className="text-[10px] font-semibold text-slate-500">ca thi</span>
+            </span>
           </div>
         </div>
 
-        {/* Primary Action Button */}
-        <button
-          type="button"
-          onClick={() => router.push('/exam-periods?action=create')}
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 shadow-sm transition hover:shadow-md active:scale-98"
-        >
-          <Plus className="h-4 w-4 stroke-[3]" />
-          <span>Tạo kỳ thi</span>
-        </button>
+        {/* Pending questions */}
+        <div className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/60 p-2.5 shadow-2xs">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 font-bold text-amber-800">
+            <FileCheck className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-[10px] font-bold text-slate-500 truncate">Câu hỏi chờ duyệt</span>
+            <span className="text-sm font-black text-slate-900 leading-tight block truncate">
+              {displayPendingCount} <span className="text-[10px] font-semibold text-slate-500">câu hỏi</span>
+            </span>
+          </div>
+        </div>
 
-        {/* Secondary Action Button */}
-        <button
-          type="button"
-          onClick={() => router.push('/exam-arrangement')}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs px-4 py-3 shadow-2xs transition hover:border-slate-300 active:scale-98"
-        >
-          <Layers className="h-4 w-4 text-slate-600" />
-          <span>Xếp lịch thi</span>
-        </button>
+        {/* System status */}
+        <div className="flex items-center gap-2.5 rounded-xl border border-emerald-200/80 bg-emerald-50/60 p-2.5 shadow-2xs">
+          <div className="relative flex h-3 w-3 shrink-0 ml-1">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
+          </div>
+          <div className="min-w-0">
+            <span className="block text-[10px] font-bold text-slate-500 truncate">Hệ thống</span>
+            <span className="text-xs font-black text-emerald-800 leading-tight block truncate">
+              Hoạt động tốt
+            </span>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

@@ -1,19 +1,25 @@
+import React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 export function DashboardErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <div className="rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-sm">
-      <AlertCircle className="mx-auto mb-3 h-10 w-10 text-rose-500" />
-      <h2 className="font-semibold text-slate-800">Không thể tải trang tổng quan</h2>
-      <p className="mx-auto mt-1 max-w-lg text-sm text-slate-500">{message}</p>
-      <button
-        type="button"
+    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-rose-200 bg-white p-10 text-center shadow-2xs animate-fade-in">
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
+        <AlertCircle className="h-6 w-6" />
+      </span>
+      <div>
+        <h2 className="text-base font-bold text-slate-900">Không thể tải trang tổng quan</h2>
+        <p className="mx-auto mt-1 max-w-lg text-xs font-medium text-slate-500">{message}</p>
+      </div>
+      <Button
+        variant="secondary"
+        size="sm"
         onClick={onRetry}
-        className="mt-5 inline-flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700"
+        icon={<RefreshCw className="h-3.5 w-3.5" />}
       >
-        <RefreshCw className="h-4 w-4" />
         Thử lại
-      </button>
+      </Button>
     </div>
   );
 }

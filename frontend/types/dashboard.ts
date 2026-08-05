@@ -4,7 +4,15 @@ export type DashboardSummaryItem = {
   route: string;
 };
 
+export type DashboardAttention = {
+  unassignedRooms: number;
+  missingSupervisors: number;
+  pendingQuestions: number;
+  upcomingExams: number;
+};
+
 export type DashboardOverview = {
+  attention: DashboardAttention;
   summary: {
     students: DashboardSummaryItem;
     lecturers: DashboardSummaryItem;
@@ -46,7 +54,12 @@ export type DashboardOverview = {
     id: number;
     name: string;
     status: string;
+    startDate: string;
+    endDate: string;
     totalSchedules: number;
+    arrangedSchedules: number;
+    supervisedSchedules: number;
+    completedSchedules: number;
     roomProgress: number;
     supervisorProgress: number;
     paperProgress: number;

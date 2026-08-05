@@ -83,6 +83,8 @@ export class DashboardService {
       pendingRows,
       progressPeriods,
       recentRows,
+      unassignedSchedules,
+      missingSupervisorRooms,
     ] = await Promise.all([
       this.prisma.student.count(),
       this.prisma.teacher.count({ where: { user: { status: 'ACTIVE' } } }),
@@ -175,6 +177,22 @@ export class DashboardService {
         orderBy: { createdAt: 'desc' },
         include: { actor: { select: { id: true, username: true } } },
       }),
+      this.prisma.examSchedule.count({
+        where: {
+          deletedAt: null,
+          status: { notIn: ['CANCELLED', 'COMPLETED'] },
+          examScheduleRooms: { none: {} },
+        },
+      }),
+      this.prisma.examScheduleRoom.count({
+        where: {
+          examSchedule: {
+            deletedAt: null,
+            status: { notIn: ['CANCELLED', 'COMPLETED'] },
+          },
+          supervisors: { none: {} },
+        },
+      }),
     ]);
 
     const countByMonth = new Map(
@@ -219,7 +237,11 @@ export class DashboardService {
       const totalSchedules = schedules.length;
       const arrangedSchedules = schedules.filter((schedule) => schedule.examScheduleRooms.length > 0).length;
       const rooms = schedules.flatMap((schedule) => schedule.examScheduleRooms);
-      const supervisedRooms = rooms.filter((room) => room._count.supervisors > 0).length;
+      const supervisedSchedules = schedules.filter(
+        (schedule) =>
+          schedule.examScheduleRooms.length > 0 &&
+          schedule.examScheduleRooms.every((room) => room._count.supervisors > 0),
+      ).length;
       const paperSchedules = schedules.filter((schedule) => schedule._count.examPapers > 0).length;
       const incompleteSchedules = schedules.filter(
         (schedule) =>
@@ -231,15 +253,26 @@ export class DashboardService {
         id: period.id,
         name: period.name,
         status: period.status,
+        startDate: period.startDate,
+        endDate: period.endDate,
         totalSchedules,
+        arrangedSchedules,
+        supervisedSchedules,
+        completedSchedules: totalSchedules - incompleteSchedules,
         roomProgress: this.percent(arrangedSchedules, totalSchedules),
-        supervisorProgress: this.percent(supervisedRooms, rooms.length),
+        supervisorProgress: this.percent(supervisedSchedules, totalSchedules),
         paperProgress: this.percent(paperSchedules, totalSchedules),
         incompleteSchedules,
       };
     });
 
     const result = {
+      attention: {
+        unassignedRooms: unassignedSchedules,
+        missingSupervisors: missingSupervisorRooms,
+        pendingQuestions: pendingCount,
+        upcomingExams: upcomingCount,
+      },
       summary: {
         students: {
           total: totalStudents,

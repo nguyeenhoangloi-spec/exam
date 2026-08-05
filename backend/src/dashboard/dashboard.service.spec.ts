@@ -8,6 +8,7 @@ describe('DashboardService', () => {
     examRoom: { count: jest.fn() },
     class: { count: jest.fn() },
     examSchedule: { count: jest.fn(), findMany: jest.fn() },
+    examScheduleRoom: { count: jest.fn() },
     question: { count: jest.fn(), groupBy: jest.fn(), findMany: jest.fn() },
     examPeriod: { findMany: jest.fn() },
     auditLog: { findMany: jest.fn() },
@@ -24,8 +25,10 @@ describe('DashboardService', () => {
       .mockResolvedValueOnce(2);
     prisma.class.count.mockResolvedValue(2);
     prisma.examSchedule.count
-      .mockResolvedValueOnce(1)
-      .mockResolvedValueOnce(1);
+      .mockResolvedValueOnce(1) // upcomingCount
+      .mockResolvedValueOnce(1) // todayExamCount
+      .mockResolvedValueOnce(2); // unassignedSchedules
+    prisma.examScheduleRoom.count.mockResolvedValue(3); // missingSupervisorRooms
     prisma.question.count.mockResolvedValue(1);
     prisma.$queryRaw.mockResolvedValue([]);
     prisma.question.groupBy.mockResolvedValue([
@@ -93,5 +96,20 @@ describe('DashboardService', () => {
       paperProgress: 0,
       incompleteSchedules: 1,
     });
+  });
+
+  it('trả về dữ liệu công việc cần chú ý (attention)', async () => {
+    const service = new DashboardService(prisma as any);
+    const result = await service.overview();
+
+    expect(result.attention).toMatchObject({
+      unassignedRooms: 2,
+      missingSupervisors: 3,
+      pendingQuestions: 1,
+      upcomingExams: 1,
+    });
+    expect(result.examProgress[0]).toHaveProperty('arrangedSchedules');
+    expect(result.examProgress[0]).toHaveProperty('supervisedSchedules');
+    expect(result.examProgress[0]).toHaveProperty('completedSchedules');
   });
 });
