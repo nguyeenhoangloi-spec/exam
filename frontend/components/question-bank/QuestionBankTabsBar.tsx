@@ -1,0 +1,61 @@
+'use client';
+
+import React from 'react';
+
+interface QuestionBankTabsBarProps {
+  activeStatus: string;
+  counts?: Record<string, number>;
+  onSelectStatus: (status: string) => void;
+}
+
+export function QuestionBankTabsBar({
+  activeStatus,
+  counts = {},
+  onSelectStatus,
+}: QuestionBankTabsBarProps) {
+  const totalCount = counts.total ?? counts.all ?? 0;
+  const pendingCount = counts.PENDING ?? counts.pending ?? 0;
+  const approvedCount = counts.APPROVED ?? counts.approved ?? 0;
+  const rejectedCount = counts.REJECTED ?? counts.rejected ?? 0;
+
+  const tabs = [
+    { key: '', label: 'Tất cả câu hỏi', count: totalCount },
+    { key: 'PENDING', label: 'Chờ duyệt', count: pendingCount },
+    { key: 'APPROVED', label: 'Đã duyệt', count: approvedCount },
+    { key: 'REJECTED', label: 'Bị từ chối', count: rejectedCount },
+  ];
+
+  return (
+    <div className="flex items-center gap-2 border-b border-slate-200/80 overflow-x-auto no-scrollbar pt-2">
+      {tabs.map((tab) => {
+        const isActive = activeStatus === tab.key;
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onSelectStatus(tab.key)}
+            className={`group relative flex items-center gap-2 px-4 py-3 text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+              isActive ? 'text-blue-600 font-black' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <span>{tab.label}</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[11px] font-bold transition ${
+                isActive
+                  ? 'bg-blue-50 text-blue-600'
+                  : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+              }`}
+            >
+              ({tab.count.toLocaleString('vi-VN')})
+            </span>
+
+            {/* Active Blue Bottom Bar */}
+            {isActive && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-blue-600" />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
