@@ -17,6 +17,12 @@ export class StudentsController {
     return this.studentsService.getPersonalSchedule(req.user.id);
   }
 
+  @Roles('STUDENT')
+  @Get('my-curriculum')
+  getMyCurriculum(@Request() req: any) {
+    return this.studentsService.getPersonalCurriculum(req.user.id);
+  }
+
   @Get()
   findAll(@Query('search') search?: string) {
     return this.studentsService.findAll(search);

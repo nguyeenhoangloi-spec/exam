@@ -193,4 +193,87 @@ export class StudentsService {
       periodName: rs.examScheduleRoom.examSchedule.examPeriod.name,
     }));
   }
+
+  async getPersonalCurriculum(userId: number) {
+    const student = await this.prisma.student.findUnique({
+      where: { userId },
+      include: {
+        class: {
+          include: {
+            department: true,
+          },
+        },
+        studentSubjects: true,
+      },
+    });
+
+    if (!student) throw new NotFoundException('Không tìm thấy thông tin sinh viên.');
+    if (!student.class?.departmentId) {
+      throw new BadRequestException('Sinh viên chưa được xếp vào Lớp/Khoa hợp lệ.');
+    }
+
+    const departmentId = student.class.departmentId;
+    const curriculum = await this.prisma.majorSubject.findMany({
+      where: { departmentId },
+      include: {
+        subject: {
+          select: {
+            id: true,
+            subjectCode: true,
+            subjectName: true,
+            credits: true,
+            department: { select: { id: true, name: true, code: true } },
+          },
+        },
+      },
+      orderBy: [{ recommendedSemester: 'asc' }, { type: 'asc' }],
+    });
+
+    const enrolledSubjectIds = new Set((student.studentSubjects || []).map((ss) => ss.subjectId));
+
+    const totalMandatoryCredits = curriculum
+      .filter((c) => c.type === 'MANDATORY')
+      .reduce((sum, c) => sum + (c.subject?.credits || 0), 0);
+
+    const totalElectiveCredits = curriculum
+      .filter((c) => c.type === 'ELECTIVE')
+      .reduce((sum, c) => sum + (c.subject?.credits || 0), 0);
+
+    const totalCredits = totalMandatoryCredits + totalElectiveCredits;
+
+    const completedCredits = curriculum
+      .filter((c) => enrolledSubjectIds.has(c.subjectId))
+      .reduce((sum, c) => sum + (c.subject?.credits || 0), 0);
+
+    return {
+      student: {
+        id: student.id,
+        studentCode: student.studentCode,
+        fullName: student.fullName,
+        className: student.class.name,
+        classCode: student.class.code,
+        departmentName: student.class.department.name,
+        departmentCode: student.class.department.code,
+      },
+      stats: {
+        totalSubjects: curriculum.length,
+        totalCredits,
+        totalMandatoryCredits,
+        totalElectiveCredits,
+        completedCredits,
+        completedSubjects: enrolledSubjectIds.size,
+      },
+      curriculum: curriculum.map((item) => ({
+        id: item.id,
+        subjectId: item.subjectId,
+        subjectCode: item.subject.subjectCode,
+        subjectName: item.subject.subjectName,
+        credits: item.subject.credits,
+        type: item.type,
+        recommendedSemester: item.recommendedSemester,
+        note: item.note,
+        isCompleted: enrolledSubjectIds.has(item.subjectId),
+      })),
+    };
+  }
 }

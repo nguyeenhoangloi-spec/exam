@@ -67,7 +67,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
     { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
   ];
-  const studentNav = [{ name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: BookMarked }];
+  const studentNav = [
+    { name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: BookMarked },
+    { name: 'Khung đào tạo ngành', href: '/student/curriculum', icon: BookOpen },
+  ];
   const navItems = (role === 'ADMIN' ? adminNav : role === 'TEACHER' ? teacherNav : studentNav).filter((item) =>
     canAccessPath(role, item.href),
   );

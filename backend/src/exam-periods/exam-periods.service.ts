@@ -7,12 +7,21 @@ export class ExamPeriodsService {
   constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   async findAll() {
-    return this.prisma.examPeriod.findMany({
+    const periods = await this.prisma.examPeriod.findMany({
       include: {
         _count: { select: { examSchedules: true } },
       },
       orderBy: { startDate: 'desc' },
     });
+    const now = new Date();
+    return periods.map((period) => ({ ...period, status: this.getDisplayStatus(period, now) }));
+  }
+
+  private getDisplayStatus(period: { status: string; startDate: Date; endDate: Date }, now: Date) {
+    if (['CANCELLED', 'DRAFT', 'LOCKED'].includes(period.status)) return period.status;
+    if (now < period.startDate) return 'UPCOMING';
+    if (now > period.endDate) return 'COMPLETED';
+    return 'ONGOING';
   }
 
   async findOne(id: number) {
@@ -21,7 +30,7 @@ export class ExamPeriodsService {
       include: { examSchedules: { include: { subject: true } } },
     });
     if (!period) throw new NotFoundException('Không tìm thấy kỳ thi.');
-    return period;
+    return { ...period, status: this.getDisplayStatus(period, new Date()) };
   }
 
   async create(actor: { id: number }, data: {

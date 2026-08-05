@@ -24,6 +24,7 @@ const routeAccess: Array<{ prefix: string; roles: Role[] }> = [
   { prefix: '/exam-reports', roles: ['ADMIN', 'TEACHER'] },
   { prefix: '/teacher/assignments', roles: ['TEACHER'] },
   { prefix: '/student/exam-schedule', roles: ['STUDENT'] },
+  { prefix: '/student/curriculum', roles: ['STUDENT'] },
 ];
 
 export const canAccessPath = (role: Role | undefined, pathname: string) => {
