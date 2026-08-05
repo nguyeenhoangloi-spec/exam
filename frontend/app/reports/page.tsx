@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { DashboardErrorState } from '../../components/dashboard/DashboardErrorState';
 import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton';
 import { DashboardStatistics } from '../../components/dashboard/DashboardStatistics';
@@ -15,6 +15,7 @@ import { User } from '../../types';
 import { DashboardOverview } from '../../types/dashboard';
 
 export default function ReportsPage() {
+  usePageTitle('Báo cáo tổng quan');
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [data, setData] = useState<DashboardOverview | null>(null);
@@ -43,7 +44,7 @@ export default function ReportsPage() {
   }, [load, router]);
 
   return (
-    <AppShell user={user} title="Báo cáo tổng quan">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         <div>
           <p className="text-xs text-slate-500 font-medium">Số liệu được tổng hợp trực tiếp từ PostgreSQL tại thời điểm hiện tại</p>
@@ -61,6 +62,6 @@ export default function ReportsPage() {
           </div>
         )}
       </main>
-    </AppShell>
+    </>
   );
 }

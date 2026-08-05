@@ -1,0 +1,17 @@
+const fs = require('fs');
+const path = require('path');
+
+const csvContent = `\uFEFFNội dung câu hỏi,Đáp án A,Đáp án B,Đáp án C,Đáp án D,Đáp án đúng,Giải thích
+"ISO/IEC 27001 là tiêu chuẩn quản lý quốc tế về lĩnh vực nào?","Hệ thống Quản lý An toàn Thông tin (ISMS)","Hệ thống Quản lý Chất lượng (QMS)","Hệ thống Quản lý Môi trường (EMS)","Hệ thống Quản lý Dịch vụ IT (ITSM)","A","ISO/IEC 27001 là tiêu chuẩn quốc tế cho hệ thống quản lý an toàn thông tin ISMS."
+"Trong hệ điều hành, tiến trình (Process) được định nghĩa là gì?","Một tệp tin thực thi (.exe) lưu trên đĩa cứng","Một chương trình đang trong quá trình thực thi trong bộ nhớ","Một đoạn mã nguồn chưa qua biên dịch","Một thiết bị ngoại vi kết nối với máy tính","B","Tiến trình là một chương trình nạp vào RAM và đang được CPU xử lý."
+"Giao thức nào sau đây sử dụng cổng mặc định là 443?","HTTP","FTP","HTTPS","SSH","C","HTTPS bảo mật bằng SSL/TLS chạy trên cổng mặc định 443."
+"Cấu trúc dữ liệu nào hoạt động theo nguyên tắc LIFO (Last In First Out)?","Hàng đợi (Queue)","Ngăn xếp (Stack)","Danh sách liên kết (LinkedList)","Cây nhị phân (Binary Tree)","B","Ngăn xếp (Stack) lưu và lấy dữ liệu theo cơ chế Vào sau Ra trước (LIFO)."
+"Thuật toán mã hóa RSA thuộc loại mật mã nào?","Mật mã đối xứng (Symmetric Encryption)","Mật mã bất đối xứng (Asymmetric Encryption)","Mã hóa một chiều không thể giải mã","Mã hóa luồng dữ liệu (Stream Cipher)","B","RSA dùng cặp khóa Public Key và Private Key nên là mật mã bất đối xứng."`;
+
+const publicPath = path.join(__dirname, 'frontend', 'public', 'mau-cau-hoi-7-cot-test.csv');
+const rootPath = path.join(__dirname, 'mau-cau-hoi-7-cot-test.csv');
+
+fs.writeFileSync(publicPath, csvContent, 'utf8');
+fs.writeFileSync(rootPath, csvContent, 'utf8');
+
+console.log('Successfully created test CSV files!');

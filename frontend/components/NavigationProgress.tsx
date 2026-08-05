@@ -48,7 +48,7 @@ export const NavigationProgress: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none h-1 bg-transparent">
       <div
-        className="h-full bg-gradient-to-r from-sky-400 via-[#1e66f5] to-indigo-600 shadow-[0_0_10px_#1e66f5] transition-all duration-200 ease-out"
+        className="h-full bg-gradient-to-r from-sky-400 via-blue-600 to-blue-800 shadow-[0_0_10px_rgba(37,99,235,0.5)] transition-all duration-200 ease-out"
         style={{
           width: `${progress}%`,
           opacity: progress === 100 ? 0 : 1,

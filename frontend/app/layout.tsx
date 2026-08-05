@@ -1,5 +1,7 @@
 import './globals.css';
 import React from 'react';
+import { PageTitleProvider } from '../components/PageTitleContext';
+import { RouteShell } from '../components/RouteShell';
 
 export const metadata = {
   title: 'Hệ thống Quản lý Khảo thí Sinh viên',
@@ -26,7 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className="bg-slate-50 min-h-screen">{children}</body>
+      <body className="bg-slate-50 min-h-screen">
+        <PageTitleProvider>
+          <RouteShell>{children}</RouteShell>
+        </PageTitleProvider>
+      </body>
     </html>
   );
 }

@@ -5,7 +5,7 @@ import { DashboardOverview } from '../../types/dashboard';
 import { DashboardEmptyState } from './DashboardEmptyState';
 
 const settings = {
-  DRAFT: { label: 'Bản nháp / Đã xếp lịch', color: '#1e66f5' },
+  DRAFT: { label: 'Bản nháp / Đã xếp lịch', color: '#2563eb' },
   PENDING: { label: 'Đang diễn ra', color: '#10b981' },
   APPROVED: { label: 'Đã hoàn thành', color: '#f59e0b' },
   REJECTED: { label: 'Đã hủy', color: '#ef4444' },

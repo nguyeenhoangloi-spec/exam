@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
-import { AppShell } from '../../../components/AppShell';
+import { usePageTitle } from '../../../components/PageTitleContext';
 import { downloadCsv } from '../../../lib/export-csv';
 import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
@@ -27,6 +27,7 @@ import {
 import { PersonalScheduleItem } from '../../../types';
 
 export default function StudentExamSchedulePage() {
+  usePageTitle('Lịch thi Cá nhân Sinh viên');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [schedules, setSchedules] = useState<PersonalScheduleItem[]>([]);
@@ -64,8 +65,7 @@ export default function StudentExamSchedulePage() {
         (s) =>
           `"${s.periodName}","${s.subjectCode}","${s.subjectName}","${new Date(s.examDate).toLocaleDateString(
             'vi-VN',
-          )}","${s.startTime} - ${s.endTime}","${s.roomName || s.roomCode}","${s.examNumber || s.registrationNumber || ''}","${
-            s.seatNumber || ''
+          )}","${s.startTime} - ${s.endTime}","${s.roomName || s.roomCode}","${s.examNumber || s.registrationNumber || ''}","${s.seatNumber || ''
           }"`,
       )
       .join('\n');
@@ -109,15 +109,15 @@ export default function StudentExamSchedulePage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số môn thi', value: schedules.length, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'sky' },
     { title: 'Đã xếp phòng thi', value: schedules.filter((schedule) => Boolean(schedule.roomCode || schedule.roomName)).length, subtext: 'Theo lịch thi đã được xếp', icon: CheckCircle2, color: 'emerald' },
-    { title: 'Môn thi trắc nghiệm', value: schedules.filter((schedule) => schedule.examType === 'TRAC_NGHIEM').length, subtext: 'Theo lịch thi cá nhân', icon: BookOpen, color: 'indigo' },
-    { title: 'Đã cấp số báo danh', value: schedules.filter((schedule) => Boolean(schedule.examNumber || schedule.registrationNumber)).length, subtext: 'Theo lịch thi hiện có', icon: Award, color: 'purple' },
+    { title: 'Môn thi trắc nghiệm', value: schedules.filter((schedule) => schedule.examType === 'TRAC_NGHIEM').length, subtext: 'Theo lịch thi cá nhân', icon: BookOpen, color: 'blue' },
+    { title: 'Đã cấp số báo danh', value: schedules.filter((schedule) => Boolean(schedule.examNumber || schedule.registrationNumber)).length, subtext: 'Theo lịch thi hiện có', icon: Award, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Lịch thi Cá nhân Sinh viên">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Banner Welcome */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-sky-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-blue-600 to-sky-600 rounded-2xl p-6 text-white shadow-lg">
           <div>
             <h1 className="text-xl font-bold mb-1">Lịch thi cá nhân của bạn</h1>
             <p className="text-sky-100 text-xs font-medium">
@@ -206,7 +206,7 @@ export default function StudentExamSchedulePage() {
                   <div className="flex items-center gap-2.5">
                     <Ticket className="w-4 h-4 text-slate-400 shrink-0" />
                     <span>
-                      SBD: <strong className="text-indigo-700 font-bold">{item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Thi thử tự do' : 'Chưa cấp')}</strong> · Ghế: <strong className="text-indigo-700 font-bold">{item.seatNumber || 'Chưa xếp'}</strong>
+                      SBD: <strong className="text-blue-700 font-bold">{item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Thi thử tự do' : 'Chưa cấp')}</strong> · Ghế: <strong className="text-blue-700 font-bold">{item.seatNumber || 'Chưa xếp'}</strong>
                     </span>
                   </div>
                 </div>
@@ -215,9 +215,8 @@ export default function StudentExamSchedulePage() {
                   {item.examType === 'TRAC_NGHIEM' && (
                     <button
                       onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                      className={`flex items-center gap-1.5 text-xs font-bold text-white px-3.5 py-1.5 rounded-xl shadow-xs transition ${
-                        item.mode === 'MOCK' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-indigo-600 hover:bg-indigo-500'
-                      }`}
+                      className={`flex items-center gap-1.5 text-xs font-bold text-white px-3.5 py-1.5 rounded-xl shadow-xs transition ${item.mode === 'MOCK' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-blue-600 hover:bg-blue-500'
+                        }`}
                     >
                       <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Thi Trực Tuyến'}</span>
                     </button>
@@ -260,6 +259,6 @@ export default function StudentExamSchedulePage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

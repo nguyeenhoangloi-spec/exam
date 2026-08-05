@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -45,12 +45,15 @@ interface CurriculumItem {
 }
 
 export default function DepartmentsPage() {
+  usePageTitle('Quản lý Khoa & Khung chương trình');
   const router = useRouter();
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
+  const cachedSubs = typeof window !== 'undefined' ? getCachedData<Subject[]>('/subjects') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
+  const [allSubjects, setAllSubjects] = useState<Subject[]>(cachedSubs || []);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedDepts);
 
   // Modal & Drawer State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,7 +87,7 @@ export default function DepartmentsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -217,13 +220,13 @@ export default function DepartmentsPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số Khoa/Viện', value: departments.length, subtext: 'Trực thuộc Trường', icon: Building2, color: 'sky' },
-    { title: 'Khoa đang hiển thị', value: filteredDepartments.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: GraduationCap, color: 'indigo' },
+    { title: 'Khoa đang hiển thị', value: filteredDepartments.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: GraduationCap, color: 'blue' },
     { title: 'Mã khoa hợp lệ', value: departments.filter((department) => Boolean(department.code?.trim())).length, subtext: 'Có mã định danh', icon: Users, color: 'emerald' },
-    { title: 'Đơn vị có tên', value: departments.filter((department) => Boolean(department.name?.trim())).length, subtext: 'Dữ liệu đã khai báo tên', icon: CheckCircle2, color: 'purple' },
+    { title: 'Đơn vị có tên', value: departments.filter((department) => Boolean(department.name?.trim())).length, subtext: 'Dữ liệu đã khai báo tên', icon: CheckCircle2, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Quản lý Khoa & Khung chương trình">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -233,7 +236,7 @@ export default function DepartmentsPage() {
           {currentUser?.role === 'ADMIN' && (
             <button
               onClick={openAddModal}
-              className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
             >
               <Plus className="h-4 w-4" /> Thêm Khoa mới
             </button>
@@ -287,7 +290,7 @@ export default function DepartmentsPage() {
                       <td className="p-4">
                         <button
                           onClick={() => openCurriculumModal(d)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition border border-indigo-200/80"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition border border-blue-200/80"
                         >
                           <BookOpen className="h-3.5 w-3.5" /> Khung Đào tạo Ngành
                         </button>
@@ -481,7 +484,7 @@ export default function DepartmentsPage() {
                               Bắt buộc
                             </span>
                           ) : (
-                            <span className="inline-block px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-bold text-[10px]">
+                            <span className="inline-block px-2 py-0.5 rounded-md bg-sky-100 text-sky-800 font-bold text-[10px]">
                               Tự chọn
                             </span>
                           )}
@@ -515,7 +518,7 @@ export default function DepartmentsPage() {
         title={drawerDepartment?.name || ''}
         subtitle={`Mã đơn vị: ${drawerDepartment?.code}`}
         avatarText={drawerDepartment?.code ? drawerDepartment.code.slice(0, 2) : 'KH'}
-        badge={{ label: 'Khoa Chuyên Môn', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' }}
+        badge={{ label: 'Khoa Chuyên Môn', className: 'bg-blue-50 text-blue-700 border-blue-200' }}
         details={[
           { label: 'Mã khoa', value: drawerDepartment?.code, icon: Building2 },
           { label: 'Tên khoa / viện', value: drawerDepartment?.name },
@@ -535,6 +538,6 @@ export default function DepartmentsPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

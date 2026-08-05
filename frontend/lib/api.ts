@@ -12,6 +12,16 @@ const api = axios.create({
 const cache = new Map<string, { timestamp: number; data: any }>();
 let isWarmedUp = false;
 
+export function getCachedData<T = any>(url: string, params?: any): T | null {
+  if (typeof window === 'undefined') return null;
+  const cacheKey = `${url}?${new URLSearchParams(params || {}).toString()}`;
+  const cached = cache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < 30000) {
+    return cached.data as T;
+  }
+  return null;
+}
+
 api.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
@@ -84,12 +94,19 @@ export const warmupGlobalCache = (role?: string) => {
     '/exam-rooms',
     '/exam-periods',
     '/exam-schedules',
+    '/exam-schedules/trash',
+    '/exam-papers',
     '/questions?page=1&limit=20',
+    '/questions/filter-options',
+    '/questions/statistics',
+    '/exam-arrangement/history',
   ] : role === 'TEACHER' ? [
     '/teachers/my-assignments',
     '/exam-schedules',
     '/exam-papers',
     '/questions?page=1&limit=20',
+    '/questions/filter-options',
+    '/questions/statistics',
     '/subjects',
   ] : [
     '/students/my-schedule',

@@ -51,7 +51,7 @@ export function DashboardWelcome({
       <div className="flex flex-wrap items-center gap-3 shrink-0">
         {/* Date Display */}
         <div className="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-slate-50/70 px-4 py-2 text-xs">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-[#1e66f5]">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
             <Calendar className="h-4 w-4" />
           </div>
           <div>
@@ -64,7 +64,7 @@ export function DashboardWelcome({
         <button
           type="button"
           onClick={() => router.push('/exam-periods?action=create')}
-          className="inline-flex items-center gap-2 rounded-xl bg-[#1e66f5] hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 shadow-sm transition hover:shadow-md active:scale-98"
+          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-3 shadow-sm transition hover:shadow-md active:scale-98"
         >
           <Plus className="h-4 w-4 stroke-[3]" />
           <span>Tạo kỳ thi</span>

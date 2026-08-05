@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -14,13 +14,16 @@ import { Plus, Trash2, Edit, School, Building2, Users, Search, Filter, Eye, Grad
 import { ClassItem, Department } from '../../types';
 
 export default function ClassesPage() {
+  usePageTitle('Quản lý Lớp học');
   const router = useRouter();
+  const cachedClasses = typeof window !== 'undefined' ? getCachedData<ClassItem[]>('/classes') : null;
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [classes, setClasses] = useState<ClassItem[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>(cachedClasses || []);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
   const [search, setSearch] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedClasses);
 
   // Modal & Drawer State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,7 +47,7 @@ export default function ClassesPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -144,130 +147,130 @@ export default function ClassesPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số lớp học', value: classes.length, subtext: 'Chính quy K65 - K66', icon: School, color: 'sky' },
-    { title: 'Khoa đào tạo', value: departments.length, subtext: 'Các khoa chuyên ngành', icon: Building2, color: 'indigo' },
+    { title: 'Khoa đào tạo', value: departments.length, subtext: 'Các khoa chuyên ngành', icon: Building2, color: 'blue' },
     { title: 'Tổng sinh viên', value: classes.reduce((total, item: any) => total + (item._count?.students || 0), 0), subtext: 'Theo danh sách lớp hiện có', icon: Users, color: 'emerald' },
-    { title: 'Lớp có sinh viên', value: classes.filter((item: any) => (item._count?.students || 0) > 0).length, subtext: 'Lớp đang có dữ liệu sinh viên', icon: GraduationCap, color: 'purple' },
+    { title: 'Lớp có sinh viên', value: classes.filter((item: any) => (item._count?.students || 0) > 0).length, subtext: 'Lớp đang có dữ liệu sinh viên', icon: GraduationCap, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Quản lý Lớp học">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs text-slate-500 font-medium">Quản lý danh sách lớp học, khoa trực thuộc và phân công cố vấn học tập</p>
           </div>
-            {currentUser?.role === 'ADMIN' && (
-              <button
-                onClick={openAddModal}
-                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+          {currentUser?.role === 'ADMIN' && (
+            <button
+              onClick={openAddModal}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <Plus className="h-4 w-4" /> Thêm Lớp mới
+            </button>
+          )}
+        </div>
+
+        {/* KPI Analytics Header */}
+        <KPICards items={kpiItems} />
+
+        {/* Search & Filter Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Mã lớp, Tên lớp học..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-slate-400" />
+              <span className="text-xs font-semibold text-slate-500">Khoa:</span>
+              <select
+                value={selectedDeptId}
+                onChange={(e) => setSelectedDeptId(e.target.value)}
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
               >
-                <Plus className="h-4 w-4" /> Thêm Lớp mới
-              </button>
-            )}
-          </div>
-
-          {/* KPI Analytics Header */}
-          <KPICards items={kpiItems} />
-
-          {/* Search & Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="relative flex-1 min-w-[260px]">
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Tìm theo Mã lớp, Tên lớp học..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-slate-400" />
-                <span className="text-xs font-semibold text-slate-500">Khoa:</span>
-                <select
-                  value={selectedDeptId}
-                  onChange={(e) => setSelectedDeptId(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
-                >
-                  <option value="">Tất cả các Khoa</option>
-                  {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} ({d.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <option value="">Tất cả các Khoa</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} ({d.code})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
+        </div>
 
-          {/* Table Content */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách lớp học...</div>
-            ) : filteredClasses.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy lớp học phù hợp.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                    <tr>
-                      <th className="p-4 pl-6">Mã Lớp</th>
-                      <th className="p-4">Tên Lớp học</th>
-                      <th className="p-4">Khoa trực thuộc</th>
-                      <th className="p-4">Sĩ số ước tính</th>
-                      <th className="p-4 pr-6 text-right">Thao tác</th>
+        {/* Table Content */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {loading ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách lớp học...</div>
+          ) : filteredClasses.length === 0 ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy lớp học phù hợp.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 pl-6">Mã Lớp</th>
+                    <th className="p-4">Tên Lớp học</th>
+                    <th className="p-4">Khoa trực thuộc</th>
+                    <th className="p-4">Sĩ số ước tính</th>
+                    <th className="p-4 pr-6 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {filteredClasses.map((c) => (
+                    <tr key={c.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 pl-6 font-bold text-sky-700">{c.code}</td>
+                      <td className="p-4 font-semibold text-slate-900">{c.name}</td>
+                      <td className="p-4 font-medium text-slate-800">{c.department?.name || '---'}</td>
+                      <td className="p-4">
+                        <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                          <Users className="h-3.5 w-3.5 text-slate-400" /> 40 Sinh viên
+                        </span>
+                      </td>
+                      <td className="p-4 pr-6 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setDrawerClass(c)}
+                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
+                            title="Xem chi tiết lớp"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          {currentUser?.role === 'ADMIN' && (
+                            <>
+                              <button
+                                onClick={() => openEditModal(c)}
+                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                                title="Chỉnh sửa"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(c.id)}
+                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                title="Xóa"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
-                    {filteredClasses.map((c) => (
-                      <tr key={c.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-4 pl-6 font-bold text-sky-700">{c.code}</td>
-                        <td className="p-4 font-semibold text-slate-900">{c.name}</td>
-                        <td className="p-4 font-medium text-slate-800">{c.department?.name || '---'}</td>
-                        <td className="p-4">
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                            <Users className="h-3.5 w-3.5 text-slate-400" /> 40 Sinh viên
-                          </span>
-                        </td>
-                        <td className="p-4 pr-6 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => setDrawerClass(c)}
-                              className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                              title="Xem chi tiết lớp"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {currentUser?.role === 'ADMIN' && (
-                              <>
-                                <button
-                                  onClick={() => openEditModal(c)}
-                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                  title="Chỉnh sửa"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(c.id)}
-                                  className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                  title="Xóa"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </main>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Edit/Add Modal */}
       <Modal
@@ -363,6 +366,6 @@ export default function ClassesPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

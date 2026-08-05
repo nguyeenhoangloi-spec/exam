@@ -250,9 +250,9 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 5: Exam Password (only for publishing official exam paper) */}
           {examPasswordRequired && (
-            <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4">
-              <label className="block text-xs font-bold uppercase text-indigo-700 mb-1 flex items-center gap-1">
-                <Lock className="w-3.5 h-3.5 text-indigo-600" />
+            <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-4">
+              <label className="block text-xs font-bold uppercase text-blue-700 mb-1 flex items-center gap-1">
+                <Lock className="w-3.5 h-3.5 text-blue-600" />
                 5. Mật khẩu thi chính thức <span className="text-rose-500">*</span>
               </label>
               <input
@@ -262,9 +262,9 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
                 value={examPassword}
                 onChange={(e) => setExamPassword(e.target.value)}
-                className="w-full rounded-xl border border-indigo-200 px-3.5 py-2 text-xs bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-xl border border-blue-200 px-3.5 py-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
               />
-              <p className="mt-1.5 text-[11px] font-medium text-indigo-700/80 leading-relaxed">
+              <p className="mt-1.5 text-[11px] font-medium text-blue-700/80 leading-relaxed">
                 Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.
                 Hệ thống lưu dạng bảo mật (bcrypt) và không ai xem lại được sau khi lưu.
               </p>

@@ -75,7 +75,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
 
         <div className="flex justify-end gap-2 pt-2">
           <button type="button" onClick={close} disabled={loading} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">Hủy bỏ</button>
-          <button type="submit" disabled={loading} className="flex items-center gap-2 rounded-xl bg-[#1e66f5] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"><KeyRound className="h-4 w-4" />{loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}</button>
+          <button type="submit" disabled={loading} className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"><KeyRound className="h-4 w-4" />{loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}</button>
         </div>
       </form>
     </Modal>

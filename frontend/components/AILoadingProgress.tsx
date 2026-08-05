@@ -24,11 +24,11 @@ export function AILoadingProgress({
   ];
 
   return (
-    <div className="rounded-2xl border border-violet-200 bg-gradient-to-b from-violet-50/80 via-indigo-50/30 to-white p-5 shadow-sm space-y-4 animate-in fade-in duration-300">
+    <div className="rounded-2xl border border-sky-200 bg-gradient-to-b from-sky-50/80 via-blue-50/30 to-white p-5 shadow-sm space-y-4 animate-in fade-in duration-300">
       {/* Top Header info */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#1e66f5] text-white shadow-md shadow-blue-200">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">
             <Sparkles className="h-5 w-5 animate-pulse" />
             <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white" />
           </div>
@@ -40,7 +40,7 @@ export function AILoadingProgress({
           </div>
         </div>
         <div className="text-right">
-          <span className="text-2xl font-black tracking-tight text-violet-700 font-mono">
+          <span className="text-2xl font-black tracking-tight text-sky-700 font-mono">
             {Math.min(100, Math.max(0, Math.round(percent)))}%
           </span>
         </div>
@@ -50,7 +50,7 @@ export function AILoadingProgress({
       <div className="space-y-1.5">
         <div className="relative h-3 w-full overflow-hidden rounded-full bg-slate-200/80 p-0.5">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-600 via-indigo-600 to-sky-500 shadow-sm transition-all duration-300 ease-out"
+            className="h-full rounded-full bg-gradient-to-r from-sky-500 via-blue-600 to-blue-800 shadow-sm transition-all duration-300 ease-out"
             style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
           />
         </div>
@@ -69,14 +69,14 @@ export function AILoadingProgress({
                 isDone
                   ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
                   : isCurrent
-                  ? 'bg-white text-violet-800 border-violet-300 shadow-xs ring-2 ring-violet-100'
+                  ? 'bg-white text-sky-800 border-sky-300 shadow-xs ring-2 ring-sky-100'
                   : 'bg-slate-50 text-slate-400 border-slate-200/70'
               }`}
             >
               {isDone ? (
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
               ) : isCurrent ? (
-                <Loader2 className="h-4 w-4 shrink-0 animate-spin text-violet-600" />
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin text-sky-600" />
               ) : (
                 <Icon className="h-4 w-4 shrink-0 text-slate-400" />
               )}

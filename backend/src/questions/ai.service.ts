@@ -35,7 +35,8 @@ export class AiQuestionsService {
           `2. Trích xuất đúng nội dung từng câu hỏi và danh sách các lựa chọn A, B, C, D...`,
           `3. Xác định hoặc suy luận đáp án đúng cho từng câu hỏi và đánh dấu isCorrect: true cho lựa chọn đó.`,
           `4. Không tự tạo thêm câu hỏi mới ngoài nội dung tài liệu.`,
-          `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.`,
+          `5. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
+          `6. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.`,
           `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
         ].join('\n')
       : [
@@ -97,6 +98,7 @@ export class AiQuestionsService {
             }))
           : [];
         validateQuestionOptions(input.type, options);
+        const imageIndexes = Array.isArray(item.imageIndexes) ? item.imageIndexes.filter((index: any) => Number.isInteger(index) && index >= 0 && index < (input.images || []).length) : [];
         return {
           subjectId: input.subjectId,
           chapterId: input.chapterId,
@@ -108,6 +110,7 @@ export class AiQuestionsService {
           explanation: String(item.explanation || ''),
           keywords: String(item.keywords || ''),
           options,
+          sourceImages: imageIndexes.map((index: number) => ({ ...(input.images || [])[index], index })),
         };
       });
       const normalized = questions.map((q) => normalizeQuestionContent(q.content));
@@ -141,14 +144,28 @@ export class AiQuestionsService {
       const res = await (mammoth as any).convertToHtml({ buffer: file.buffer }, {
         convertImage: (mammoth as any).images.imgElement((image: any) => image.read('base64').then((data: string) => {
           const mimeType = image.contentType || 'image/png';
-          images.push({ mimeType, data });
+          if (images.length < 50 && Buffer.byteLength(data, 'base64') <= 8 * 1024 * 1024) images.push({ mimeType, data });
           return { src: `data:${mimeType};base64,${data}` };
         })),
       });
       text = String(res.value || '').replace(/<img[^>]*>/gi, ' [HÌNH ẢNH] ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
     } else if (ext.endsWith('.pdf')) {
-      const res = await pdfParse(file.buffer);
-      text = res.text || '';
+      const parser = new pdfParse.PDFParse({ data: file.buffer });
+      try {
+        const res = await parser.getText();
+        text = res.text || '';
+        try {
+          const extracted = await parser.getImage({ imageBuffer: true, imageDataUrl: true, imageThreshold: 1 });
+          let imageBytes = 0;
+          for (const page of extracted.pages || []) for (const image of page.images || []) {
+            const match = String(image.dataUrl || '').match(/^data:([^;]+);base64,(.+)$/);
+            if (match && images.length < 50 && imageBytes + Buffer.byteLength(match[2], 'base64') <= 8 * 1024 * 1024) {
+              images.push({ mimeType: match[1], data: match[2], altText: `Ảnh trang ${page.pageNumber}` });
+              imageBytes += Buffer.byteLength(match[2], 'base64');
+            }
+          }
+        } catch { /* PDF gốc vẫn được gửi cho Gemini nếu thư viện không giải mã được ảnh */ }
+      } finally { await parser.destroy(); }
       // Gemini nhận PDF gốc ở dạng inlineData để đọc cả ảnh, biểu đồ và PDF scan.
       documentData = { mimeType: 'application/pdf', data: file.buffer.toString('base64') };
     } else {

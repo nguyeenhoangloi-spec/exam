@@ -45,7 +45,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               <X className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-3.5 pr-8">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-lg font-bold text-white shadow-lg">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-700 text-lg font-bold text-white shadow-lg">
                 {avatarText}
               </div>
               <div className="min-w-0 flex-1 space-y-0.5">

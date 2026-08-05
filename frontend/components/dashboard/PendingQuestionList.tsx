@@ -35,7 +35,7 @@ export function PendingQuestionList({
         </div>
         <button
           onClick={() => router.push('/question-bank?status=PENDING')}
-          className="inline-flex items-center gap-1 text-xs font-bold text-[#1e66f5] hover:text-blue-700 transition"
+          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition"
         >
           <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -61,7 +61,7 @@ export function PendingQuestionList({
             <tbody className="divide-y divide-slate-100 bg-white">
               {questions.map((q) => (
                 <tr key={q.id} className="hover:bg-slate-50/80 transition">
-                  <td className="p-3 font-bold text-[#1e66f5] whitespace-nowrap">{q.code}</td>
+                  <td className="p-3 font-bold text-blue-600 whitespace-nowrap">{q.code}</td>
                   <td className="p-3 max-w-[220px]">
                     <p className="truncate font-medium text-slate-800" title={q.content}>
                       {q.content}

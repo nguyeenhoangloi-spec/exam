@@ -54,7 +54,7 @@ export default function StudentExamResultPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
         <span className="ml-3 text-slate-600">Đang tải thông tin kết quả...</span>
       </div>
     );
@@ -69,7 +69,7 @@ export default function StudentExamResultPage() {
           <p className="text-slate-600 text-sm mb-6">{error}</p>
           <button
             onClick={() => router.push('/student/exam-schedule')}
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl"
+            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl"
           >
             Về Lịch Thi
           </button>
@@ -108,7 +108,7 @@ export default function StudentExamResultPage() {
           <div className="bg-slate-50 border border-slate-200 p-6 rounded-xl space-y-3">
             <div className="flex justify-between border-b border-slate-200 pb-3 text-sm">
               <span className="text-slate-600">Trạng thái bài thi:</span>
-              <span className="font-semibold text-indigo-700">{result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}</span>
+              <span className="font-semibold text-blue-700">{result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}</span>
             </div>
             <div className="flex justify-between border-b border-slate-200 pb-3 text-sm">
               <span className="text-slate-600">Thời điểm nộp bài:</span>
@@ -152,7 +152,7 @@ export default function StudentExamResultPage() {
                   value={appealReason}
                   onChange={(e) => setAppealReason(e.target.value)}
                   placeholder="Nhập chi tiết lý do sự cố xảy ra..."
-                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500"
                   required
                 />
                 <button

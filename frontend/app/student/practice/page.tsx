@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppShell } from '../../../components/AppShell';
+import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -14,6 +14,7 @@ type PracticeQuestion = { id: string; content: string; type?: string; options?: 
 type Session = { sessionId: string; title?: string; questions: PracticeQuestion[] };
 
 export default function PracticePage() {
+  usePageTitle('Luyện tập tự do');
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -84,7 +85,7 @@ export default function PracticePage() {
   };
 
   return (
-    <AppShell user={user} title="Luyện tập tự do">
+    <>
       <div className="mx-auto max-w-5xl space-y-6 p-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900"><BookOpen className="text-sky-600" /> Luyện tập tự do</h1>
@@ -129,6 +130,6 @@ export default function PracticePage() {
         {result && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" /><h2 className="mt-3 text-2xl font-bold text-slate-900">Hoàn thành bài luyện tập</h2><p className="mt-2 text-slate-700">Điểm: <strong>{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}</p><button onClick={() => setResult(null)} className="mt-5 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white">Tạo bài mới</button></div>}
       </div>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

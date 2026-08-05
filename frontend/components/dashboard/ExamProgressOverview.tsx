@@ -34,7 +34,7 @@ export function ExamProgressOverview({ periods }: { periods: DashboardOverview['
         </div>
         <button
           onClick={() => router.push('/exam-periods')}
-          className="inline-flex items-center gap-1 text-xs font-bold text-[#1e66f5] hover:text-blue-700 transition"
+          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition"
         >
           <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -59,7 +59,7 @@ export function ExamProgressOverview({ periods }: { periods: DashboardOverview['
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
                 <div
-                  className="h-full rounded-full bg-[#1e66f5] transition-all duration-500"
+                  className="h-full rounded-full bg-blue-600 transition-all duration-500"
                   style={{ width: `${currentPeriod.paperProgress || 75}%` }}
                 />
               </div>
@@ -75,9 +75,8 @@ export function ExamProgressOverview({ periods }: { periods: DashboardOverview['
               {steps.map((step, idx) => (
                 <div key={idx} className="relative z-10 flex flex-col items-center text-center max-w-[64px]">
                   <div
-                    className={`flex h-5 w-5 items-center justify-center rounded-full text-white ${
-                      step.done ? 'bg-emerald-500' : 'bg-slate-300'
-                    }`}
+                    className={`flex h-5 w-5 items-center justify-center rounded-full text-white ${step.done ? 'bg-emerald-500' : 'bg-slate-300'
+                      }`}
                   >
                     <CheckCircle2 className="h-3.5 w-3.5" />
                   </div>
@@ -93,3 +92,4 @@ export function ExamProgressOverview({ periods }: { periods: DashboardOverview['
     </section>
   );
 }
+

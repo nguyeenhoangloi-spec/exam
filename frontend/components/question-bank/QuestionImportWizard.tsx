@@ -48,6 +48,8 @@ export function QuestionImportWizard({
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [aiItems, setAiItems] = useState<any[]>([]);
+  const [documentImageCount, setDocumentImageCount] = useState(0);
+  const [documentImages, setDocumentImages] = useState<Array<{ mimeType: string; data: string }>>([]);
   const [documentIntent, setDocumentIntent] = useState<'preserve' | 'generate'>('preserve');
 
   const [meta, setMeta] = useState({
@@ -70,6 +72,7 @@ export function QuestionImportWizard({
         chapterId: '',
       }));
     }
+    if (!open) { setDocumentImages([]); setDocumentImageCount(0); }
   }, [open, subjects, meta.subjectId]);
 
   const subject = useMemo(
@@ -96,7 +99,7 @@ export function QuestionImportWizard({
       const url = URL.createObjectURL(r.data);
       const a = document.createElement('a');
       a.href = url;
-        a.download = 'mau-nhap-cau-hoi.csv';
+      a.download = 'mau-nhap-cau-hoi.csv';
       a.click();
       URL.revokeObjectURL(url);
     } catch (e: any) {
@@ -130,6 +133,8 @@ export function QuestionImportWizard({
         const extracted = await api.post('/questions/ai-extract-text', f, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
+        setDocumentImages(extracted.data?.images || []);
+        setDocumentImageCount((extracted.data?.images?.length || 0) + (extracted.data?.documentData ? 1 : 0));
 
         // Request AI Document Question Extraction using extracted text
         const instruction = documentIntent === 'preserve'
@@ -190,14 +195,25 @@ export function QuestionImportWizard({
 
     try {
       if (mode === 'document') {
-        await api.post('/questions/ai-save', {
-          questions: aiItems
-            .filter((_, i) => selected.includes(i + 1))
-            .map(({ duplicate, ...q }) => ({
-              ...q,
-              score: Number(q.score || meta.defaultScore),
-            })),
+        const selectedAi = aiItems.filter((_, i) => selected.includes(i + 1));
+        const saved = await api.post('/questions/ai-save', {
+          questions: selectedAi.map(({ duplicate, sourceImages, ...q }) => ({
+            ...q,
+            score: Number(q.score || meta.defaultScore),
+          })),
         });
+        const savedQuestions = Array.isArray(saved.data) ? saved.data : [];
+        for (let i = 0; i < savedQuestions.length; i++) {
+          const images = selectedAi[i]?.sourceImages || [];
+          if (!images.length || !savedQuestions[i]?.id) continue;
+          const form = new FormData(); form.append('questionId', savedQuestions[i].id);
+          images.forEach((image: any, index: number) => {
+            const binary = atob(image.data); const bytes = new Uint8Array(binary.length);
+            for (let j = 0; j < binary.length; j++) bytes[j] = binary.charCodeAt(j);
+            form.append('files', new File([bytes], `ai-image-${i + 1}-${index + 1}`, { type: image.mimeType }));
+          });
+          await api.post('/questions/media/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+        }
       } else {
         const f = new FormData();
         f.append('file', file);
@@ -248,9 +264,8 @@ export function QuestionImportWizard({
         <div className="flex gap-2 border-b border-slate-200 pb-3">
           <button
             type="button"
-            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
-              mode === 'table' ? 'bg-[#1e66f5] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${mode === 'table' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
             onClick={() => {
               setMode('table');
               setPreview(null);
@@ -262,9 +277,8 @@ export function QuestionImportWizard({
           </button>
           <button
             type="button"
-            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
-              mode === 'document' ? 'bg-gradient-to-r from-[#1e66f5] to-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${mode === 'document' ? 'bg-gradient-to-r from-blue-600 to-sky-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
             onClick={() => {
               setMode('document');
               setPreview(null);
@@ -358,27 +372,24 @@ export function QuestionImportWizard({
             type="checkbox"
             checked={meta.applyDefaultsToMissingOnly}
             onChange={(e) => updateMeta('applyDefaultsToMissingOnly', e.target.checked)}
-            className="rounded border-slate-300 text-[#1e66f5]"
+            className="rounded border-slate-300 text-blue-600"
           />
           Chỉ sử dụng các giá trị thiết lập trên cho ô dữ liệu còn thiếu trong tệp
         </label>
 
         {mode === 'document' && (
-          <div className="rounded-xl border border-violet-200 bg-violet-50/70 p-3.5 text-xs text-violet-900 shadow-2xs flex items-start gap-2.5">
-            <Sparkles className="h-4 w-4 text-violet-600 shrink-0 mt-0.5" />
+          <div className="rounded-xl border border-sky-200 bg-sky-50/70 p-3.5 text-xs text-sky-900 shadow-2xs flex items-start gap-2.5">
+            <Sparkles className="h-4 w-4 text-sky-600 shrink-0 mt-0.5" />
             <div>
               <p className="font-bold">Trích xuất thông minh bằng Gemini AI</p>
-              <p className="text-[11px] text-violet-700 mt-0.5">
+              <p className="text-[11px] text-sky-700 mt-0.5">
                 AI sẽ quét nội dung từ file Word/PDF (`.docx`, `.pdf`, `.txt`, `.md`), bóc tách câu hỏi & đáp án rồi hiển thị bản nháp để bạn kiểm tra trước khi lưu.
               </p>
+              {documentImageCount > 0 && <p className="mt-1 text-[11px] font-semibold text-sky-800">Đã nhận diện {documentImageCount} thành phần hình ảnh/tài liệu và sẽ gửi kèm cho AI phân tích.</p>}
+              {documentImages.length > 0 && <div className="mt-2 flex flex-wrap gap-2">{documentImages.slice(0, 8).map((image, index) => <img key={index} src={`data:${image.mimeType};base64,${image.data}`} alt={`Hình ${index + 1}`} className="h-12 w-16 rounded border border-sky-200 object-cover" />)}</div>}
             </div>
           </div>
         )}
-
-        {mode === 'document' && <div className="grid gap-2 sm:grid-cols-2">
-          <button type="button" onClick={() => setDocumentIntent('preserve')} className={`rounded-xl border p-3 text-left text-xs ${documentIntent === 'preserve' ? 'border-sky-500 bg-sky-50 text-sky-800' : 'border-slate-200 bg-white text-slate-600'}`}><b>Giữ nguyên câu hỏi có sẵn</b><span className="mt-1 block text-[11px]">Không tự sinh thêm câu mới; câu thiếu dữ liệu sẽ báo lỗi.</span></button>
-          <button type="button" onClick={() => setDocumentIntent('generate')} className={`rounded-xl border p-3 text-left text-xs ${documentIntent === 'generate' ? 'border-violet-500 bg-violet-50 text-violet-800' : 'border-slate-200 bg-white text-slate-600'}`}><b>Tạo câu hỏi từ đề cương</b><span className="mt-1 block text-[11px]">AI tạo bản nháp bám sát nội dung tài liệu để sửa trước khi lưu.</span></button>
-        </div>}
 
         {/* File Picker & Action Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
@@ -390,9 +401,11 @@ export function QuestionImportWizard({
                 setFile(e.target.files?.[0] || null);
                 setPreview(null);
                 setAiItems([]);
+                setDocumentImageCount(0);
+                setDocumentImages([]);
                 setError('');
               }}
-              className="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1e66f5] file:text-white hover:file:bg-blue-700 cursor-pointer"
+              className="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
             />
           </div>
 
@@ -410,9 +423,8 @@ export function QuestionImportWizard({
               type="button"
               disabled={!file || busy}
               onClick={load}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition disabled:opacity-50 ${
-                mode === 'document' ? 'bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700' : 'bg-[#1e66f5] hover:bg-blue-700'
-              }`}
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition disabled:opacity-50 ${mode === 'document' ? 'bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
             >
               {busy ? (
                 <span>Đang xử lý {progress}%...</span>
@@ -430,18 +442,18 @@ export function QuestionImportWizard({
         </div>
 
         {busy && (
-          <div className="rounded-xl border border-violet-200 bg-violet-50 p-3">
-            <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-violet-700">
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-3">
+            <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-sky-700">
               <span>{mode === 'document' ? 'Gemini đang đọc và phân tích tài liệu…' : 'Đang kiểm tra dữ liệu…'}</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-violet-100">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-sky-100">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-[width] duration-700"
+                className="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-600 transition-[width] duration-700"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="mt-1.5 text-[11px] text-violet-600">Không đóng cửa sổ trong khi hệ thống đang xử lý.</p>
+            <p className="mt-1.5 text-[11px] text-sky-600">Không đóng cửa sổ trong khi hệ thống đang xử lý.</p>
           </div>
         )}
 
@@ -458,7 +470,7 @@ export function QuestionImportWizard({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                <FileText className="h-4 w-4 text-[#1e66f5]" /> Bản nháp câu hỏi trích xuất ({preview.rows.length} câu)
+                <FileText className="h-4 w-4 text-blue-600" /> Bản nháp câu hỏi trích xuất ({preview.rows.length} câu)
               </h4>
               <span className="text-xs font-bold text-slate-500">
                 Đã chọn {selected.length} / {preview.rows.length} câu
@@ -472,9 +484,8 @@ export function QuestionImportWizard({
                 return (
                   <div
                     key={r.row}
-                    className={`rounded-2xl border p-4 text-xs space-y-3 transition ${
-                      isChecked ? 'border-sky-300 bg-sky-50/40 shadow-2xs' : 'border-slate-200 bg-white opacity-70'
-                    }`}
+                    className={`rounded-2xl border p-4 text-xs space-y-3 transition ${isChecked ? 'border-sky-300 bg-sky-50/40 shadow-2xs' : 'border-slate-200 bg-white opacity-70'
+                      }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <label className="flex items-center gap-2 font-bold text-slate-800 cursor-pointer">
@@ -489,7 +500,7 @@ export function QuestionImportWizard({
                                 : selected.filter((x) => x !== r.row),
                             )
                           }
-                          className="rounded border-slate-300 text-[#1e66f5]"
+                          className="rounded border-slate-300 text-blue-600"
                         />
                         <span>Câu #{r.row}</span>
                       </label>
@@ -501,7 +512,7 @@ export function QuestionImportWizard({
                         <span className="rounded-full bg-blue-100 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-800">
                           {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
                         </span>
-                        <span className="rounded-full bg-purple-100 border border-purple-200 px-2 py-0.5 text-[10px] font-bold text-purple-800">
+                        <span className="rounded-full bg-sky-100 border border-sky-200 px-2 py-0.5 text-[10px] font-bold text-sky-800">
                           {q.score || meta.defaultScore} điểm
                         </span>
                       </div>
@@ -515,31 +526,57 @@ export function QuestionImportWizard({
                       placeholder="Nội dung câu hỏi..."
                     />
 
-                    {/* Render Options Preview for Choice Questions */}
-                    {Array.isArray(q.options) && q.options.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
-                        {q.options.map((opt: any, optIdx: number) => (
-                          <div
-                            key={optIdx}
-                            className={`flex items-center gap-2 p-2 rounded-lg border text-xs font-medium ${
-                              opt.isCorrect
-                                ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold'
-                                : 'bg-white border-slate-200 text-slate-700'
-                            }`}
-                          >
-                            <span
-                              className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                                opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
-                              }`}
+                    {Array.isArray(q.sourceImages) && q.sourceImages.length > 0 && <div className="flex flex-wrap gap-2 rounded-xl border border-sky-200 bg-sky-50 p-2">{q.sourceImages.map((image: any, index: number) => <img key={index} src={`data:${image.mimeType};base64,${image.data}`} alt={`Hình minh họa ${index + 1}`} className="h-20 w-28 rounded-lg border border-sky-200 object-contain bg-white" />)}</div>}
+
+                    {/* Render Options Preview for Choice Questions (both Excel & AI) */}
+                    {(() => {
+                      const optionsList =
+                        Array.isArray(q.options) && q.options.length > 0
+                          ? q.options
+                          : ['A', 'B', 'C', 'D']
+                            .filter((key) => q[`option${key}`])
+                            .map((key) => {
+                              const correctAnsStr = String(q.correctAnswer || '').trim().toUpperCase();
+                              const isCorrect =
+                                q[`correct${key}`] === 'true' ||
+                                q[`correct${key}`] === true ||
+                                correctAnsStr.includes(key) ||
+                                (key === 'A' && (correctAnsStr === '1' || correctAnsStr.startsWith('A'))) ||
+                                (key === 'B' && (correctAnsStr === '2' || correctAnsStr.startsWith('B'))) ||
+                                (key === 'C' && (correctAnsStr === '3' || correctAnsStr.startsWith('C'))) ||
+                                (key === 'D' && (correctAnsStr === '4' || correctAnsStr.startsWith('D')));
+                              return {
+                                label: key,
+                                content: q[`option${key}`],
+                                isCorrect,
+                              };
+                            });
+
+                      if (!optionsList.length) return null;
+
+                      return (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
+                          {optionsList.map((opt: any, optIdx: number) => (
+                            <div
+                              key={optIdx}
+                              className={`flex items-center gap-2 p-2 rounded-lg border text-xs font-medium transition ${opt.isCorrect
+                                  ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold shadow-2xs'
+                                  : 'bg-white border-slate-200 text-slate-700'
+                                }`}
                             >
-                              {opt.label || String.fromCharCode(65 + optIdx)}
-                            </span>
-                            <span className="truncate flex-1">{opt.content}</span>
-                            {opt.isCorrect && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                              <span
+                                className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${opt.isCorrect ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-200 text-slate-700'
+                                  }`}
+                              >
+                                {opt.label || String.fromCharCode(65 + optIdx)}
+                              </span>
+                              <span className="truncate flex-1">{opt.content}</span>
+                              {opt.isCorrect && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
 
                     {(r.errors.length > 0 || r.duplicates.length > 0) && (
                       <div className="text-[11px] font-bold text-rose-600 flex items-center gap-1">

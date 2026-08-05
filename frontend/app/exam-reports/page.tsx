@@ -17,7 +17,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -68,6 +68,7 @@ const statusBadgeMap: Record<string, { label: string; className: string }> = {
 };
 
 export default function ExamReportsPage() {
+  usePageTitle('Báo cáo Điểm thi');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
@@ -230,7 +231,7 @@ export default function ExamReportsPage() {
         <div class="meta">
           <p style="margin:2px 0;"><strong>Môn học:</strong> ${escapeHtml(report.schedule.subjectName)} (${escapeHtml(report.schedule.subjectCode)})</p>
           <p style="margin:2px 0;"><strong>Kỳ thi:</strong> ${escapeHtml(report.schedule.periodName)} · <strong>Ngày thi:</strong> ${report.schedule.examDate} (${report.schedule.startTime} - ${report.schedule.endTime})</p>
-          <p style="margin:2px 0;"><strong>Thống kê:</strong> Tổng ${report.stats.totalAssigned} thí sinh · Dự thi: ${report.stats.totalSubmitted} (${((report.stats.totalSubmitted/report.stats.totalAssigned)*100||0).toFixed(1)}%) · Vắng: ${report.stats.totalAbsent} · Điểm TB: ${report.stats.avgScore} · Tỷ lệ Đạt: ${report.stats.passRate}%</p>
+          <p style="margin:2px 0;"><strong>Thống kê:</strong> Tổng ${report.stats.totalAssigned} thí sinh · Dự thi: ${report.stats.totalSubmitted} (${((report.stats.totalSubmitted / report.stats.totalAssigned) * 100 || 0).toFixed(1)}%) · Vắng: ${report.stats.totalAbsent} · Điểm TB: ${report.stats.avgScore} · Tỷ lệ Đạt: ${report.stats.passRate}%</p>
         </div>
 
         <table class="data-table">
@@ -271,7 +272,7 @@ export default function ExamReportsPage() {
   };
 
   return (
-    <AppShell user={currentUser} title="Báo cáo Điểm thi">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Schedule Filter Section */}
         <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -353,13 +354,13 @@ export default function ExamReportsPage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-purple-200 bg-purple-50/60 p-4 shadow-sm">
+              <div className="rounded-2xl border border-sky-200 bg-sky-50/60 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-purple-800">Tỷ Lệ Đạt (≥ 5.0)</span>
-                  <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                  <span className="text-xs font-semibold text-sky-800">Tỷ Lệ Đạt (≥ 5.0)</span>
+                  <CheckCircle2 className="h-4 w-4 text-sky-600" />
                 </div>
-                <p className="mt-2 text-2xl font-black text-purple-900">{report.stats.passRate}%</p>
-                <p className="mt-1 text-[11px] font-medium text-purple-700">
+                <p className="mt-2 text-2xl font-black text-sky-900">{report.stats.passRate}%</p>
+                <p className="mt-1 text-[11px] font-medium text-sky-700">
                   Đạt: {report.stats.passCount} / {report.stats.totalSubmitted} bài
                 </p>
               </div>
@@ -441,9 +442,8 @@ export default function ExamReportsPage() {
                           <td className="px-3 py-3 text-slate-600">{c.className}</td>
                           <td className="px-3 py-3 text-center">
                             <span
-                              className={`inline-block rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
-                                statusBadgeMap[c.status]?.className || 'bg-slate-100 text-slate-600'
-                              }`}
+                              className={`inline-block rounded-full border px-2.5 py-1 text-[11px] font-semibold ${statusBadgeMap[c.status]?.className || 'bg-slate-100 text-slate-600'
+                                }`}
                             >
                               {statusBadgeMap[c.status]?.label || c.status}
                             </span>
@@ -453,13 +453,12 @@ export default function ExamReportsPage() {
                               <span className="font-bold text-rose-600">Vắng thi</span>
                             ) : (
                               <span
-                                className={`text-sm font-black ${
-                                  c.totalScore >= 8.0
-                                    ? 'text-emerald-700'
-                                    : c.totalScore >= 5.0
+                                className={`text-sm font-black ${c.totalScore >= 8.0
+                                  ? 'text-emerald-700'
+                                  : c.totalScore >= 5.0
                                     ? 'text-sky-700'
                                     : 'text-rose-600'
-                                }`}
+                                  }`}
                               >
                                 {c.totalScore} <span className="text-[10px] font-normal text-slate-400">/ 10</span>
                               </span>
@@ -488,7 +487,7 @@ export default function ExamReportsPage() {
         )}
       </main>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }
 

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Archive, Check, CheckCircle2, ChevronDown, ChevronUp, Copy, Eye, HelpCircle, Pencil, RotateCcw, Send, Trash2, X } from 'lucide-react';
+import { Archive, Check, CheckCircle2, ChevronDown, ChevronUp, Copy, Eye, HelpCircle, ImageIcon, Maximize2, Pencil, RotateCcw, Send, Trash2, X } from 'lucide-react';
 import { Question } from '../../types';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
+import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
+import { ImageLightboxModal } from '../ImageLightboxModal';
 
 export function QuestionCard({
   question: q,
@@ -19,10 +21,20 @@ export function QuestionCard({
   isAdmin: boolean;
 }) {
   const [showOptions, setShowOptions] = useState(true);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const options = q.options || [];
 
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs hover:shadow-md transition space-y-3.5">
+      {/* Lightbox Popup Modal for HD Image Viewing */}
+      {lightboxUrl && (
+        <ImageLightboxModal
+          imageUrl={lightboxUrl}
+          altText={`Hình minh họa câu hỏi mã ${q.code}`}
+          onClose={() => setLightboxUrl(null)}
+        />
+      )}
+
       {/* Header Badges & Actions */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -32,7 +44,7 @@ export function QuestionCard({
             onChange={(e) => onSelect(e.target.checked)}
             className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
           />
-          <b className="text-[#1e66f5] font-mono text-sm">{q.code}</b>
+          <b className="text-blue-600 font-mono text-sm">{q.code}</b>
           {q.subject?.subjectName && (
             <span className="rounded-full bg-sky-50 border border-sky-200 px-2.5 py-0.5 text-xs font-extrabold text-sky-800">
               {q.subject.subjectName}
@@ -117,9 +129,9 @@ export function QuestionCard({
                 </button>
               ) : (
                 <button
-                  title="Lưu trữ câu hỏi"
+                  title="Kho lưu trữ"
                   onClick={() => onAction('archive')}
-                  className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
                 >
                   <Archive className="h-4 w-4" />
                 </button>
@@ -137,9 +149,58 @@ export function QuestionCard({
       </div>
 
       {/* Question Content */}
-      <div className="text-sm font-bold text-slate-900 leading-relaxed cursor-pointer hover:text-[#1e66f5] transition" onClick={onDetail}>
-        {q.contentRich && typeof q.contentRich === 'object' && 'html' in q.contentRich ? <div dangerouslySetInnerHTML={{ __html: String((q.contentRich as { html?: string }).html || '') }} /> : q.content}
-        {q.media?.length ? <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-sky-700"><img src={q.media[0].url} alt={q.media[0].altText || ''} className="h-12 w-16 rounded-lg border object-cover" /> Có hình ảnh</div> : null}
+      <div className="space-y-3">
+        <div
+          className="text-sm font-bold text-slate-900 leading-relaxed cursor-pointer hover:text-blue-600 transition"
+          onClick={onDetail}
+        >
+          {q.contentRich && typeof q.contentRich === 'object' && 'html' in q.contentRich ? (
+            <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(String((q.contentRich as { html?: string }).html || '')) }} />
+          ) : (
+            q.content
+          )}
+        </div>
+
+        {/* Media / Image Attachments */}
+        {q.media && q.media.length > 0 && (
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            {q.media.map((mediaItem, idx) => {
+              const fullUrl = getImageUrl(mediaItem.url);
+              return (
+                <div
+                  key={mediaItem.id || idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxUrl(mediaItem.url);
+                  }}
+                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-sky-400 hover:shadow-md"
+                  title="Bấm vào để xem ảnh phóng to"
+                >
+                  <div className="relative flex items-center justify-center">
+                    <img
+                      src={fullUrl}
+                      alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
+                      className="h-20 w-32 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
+                      onError={(e) => {
+                        // Fallback if image load fails
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-xs">
+                        <Maximize2 className="h-3.5 w-3.5 text-sky-400" /> Xem rõ ảnh
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-600">
+                    <ImageIcon className="h-3 w-3 text-sky-600" />
+                    <span className="truncate max-w-[110px]">{mediaItem.fileName || `Hình ${idx + 1}`}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Options List directly in Card */}
@@ -169,17 +230,15 @@ export function QuestionCard({
                 return (
                   <div
                     key={opt.id || idx}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition ${
-                      isCorrect
+                    className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition ${isCorrect
                         ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950 font-bold shadow-2xs'
                         : 'bg-slate-50/80 border-slate-200 text-slate-700 font-medium'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <span
-                        className={`h-6 min-w-6 px-1.5 rounded-lg flex items-center justify-center text-[11px] font-black shrink-0 ${
-                          isCorrect ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-200 text-slate-700'
-                        }`}
+                        className={`h-6 min-w-6 px-1.5 rounded-lg flex items-center justify-center text-[11px] font-black shrink-0 ${isCorrect ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-200 text-slate-700'
+                          }`}
                       >
                         {label}
                       </span>

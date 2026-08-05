@@ -24,7 +24,7 @@ export function UpcomingExamList({ exams }: { exams: DashboardOverview['upcoming
         </div>
         <button
           onClick={() => router.push('/exam-schedules')}
-          className="inline-flex items-center gap-1 text-xs font-bold text-[#1e66f5] hover:text-blue-700 transition"
+          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition"
         >
           <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />

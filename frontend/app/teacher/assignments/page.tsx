@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
-import { AppShell } from '../../../components/AppShell';
+import { usePageTitle } from '../../../components/PageTitleContext';
 import { downloadCsv } from '../../../lib/export-csv';
 import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function TeacherAssignmentsPage() {
+  usePageTitle('Lịch coi thi Giảng viên');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -129,8 +130,8 @@ export default function TeacherAssignmentsPage() {
             </thead>
             <tbody>
               ${(data.students || [])
-                .map(
-                  (st: any, idx: number) => `
+          .map(
+            (st: any, idx: number) => `
                 <tr>
                   <td class="center">${idx + 1}</td>
                   <td class="center"><strong>${st.examNumber || idx + 1}</strong></td>
@@ -142,8 +143,8 @@ export default function TeacherAssignmentsPage() {
                   <td></td>
                 </tr>
               `,
-                )
-                .join('')}
+          )
+          .join('')}
             </tbody>
           </table>
 
@@ -181,10 +182,8 @@ export default function TeacherAssignmentsPage() {
     const rows = assignments
       .map(
         (a) =>
-          `"${a.subjectCode}","${a.subjectName}","${a.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}","${
-            a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận'
-          }","${new Date(a.examDate).toLocaleDateString('vi-VN')}","${a.startTime} - ${a.endTime}","${
-            a.roomName || a.roomCode
+          `"${a.subjectCode}","${a.subjectName}","${a.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}","${a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận'
+          }","${new Date(a.examDate).toLocaleDateString('vi-VN')}","${a.startTime} - ${a.endTime}","${a.roomName || a.roomCode
           }","${a.building || ''}"`,
       )
       .join('\n');
@@ -229,18 +228,18 @@ export default function TeacherAssignmentsPage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng ca coi thi', value: assignments.length, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'sky' },
     { title: 'Giám thị 1 (Chính)', value: sup1Count, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, color: 'emerald', trend: 'Đạt chuẩn' },
-    { title: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length}`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, color: 'indigo' },
-    { title: 'Thời gian tập trung', value: 'Trước 15 phút', subtext: 'Chuẩn bị & điểm danh', icon: Clock, color: 'purple' },
+    { title: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length}`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, color: 'blue' },
+    { title: 'Thời gian tập trung', value: 'Trước 15 phút', subtext: 'Chuẩn bị & điểm danh', icon: Clock, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Lịch coi thi Giảng viên">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Banner Welcome */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-blue-700 via-blue-800 to-sky-800 rounded-2xl p-6 text-white shadow-lg">
           <div>
             <h1 className="text-xl font-bold mb-1">Chào Thầy/Cô {currentUser?.username}</h1>
-            <p className="text-emerald-100 text-xs font-medium">
+            <p className="text-sky-100 text-xs font-medium">
               Danh sách các ca coi thi được phân công. Vui lòng có mặt tại phòng thi trước 15 phút.
             </p>
           </div>
@@ -248,14 +247,14 @@ export default function TeacherAssignmentsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrintReport}
-              className="flex items-center gap-2 bg-white text-emerald-900 hover:bg-emerald-50 px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition whitespace-nowrap"
+              className="flex items-center gap-2 bg-white text-blue-900 hover:bg-sky-50 px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition whitespace-nowrap"
             >
               <Printer className="w-4 h-4" />
               <span>In Lịch coi thi</span>
             </button>
             <button
               onClick={exportCsv}
-              className="flex items-center gap-2 bg-emerald-800/40 hover:bg-emerald-800/60 text-white border border-emerald-400/30 px-4 py-2.5 rounded-xl font-semibold text-xs transition whitespace-nowrap"
+              className="flex items-center gap-2 bg-blue-800/40 hover:bg-blue-800/60 text-white border border-sky-400/30 px-4 py-2.5 rounded-xl font-semibold text-xs transition whitespace-nowrap"
             >
               <Download className="w-4 h-4" />
               <span>Xuất CSV Lịch Coi Thi</span>
@@ -293,30 +292,28 @@ export default function TeacherAssignmentsPage() {
                     </span>
                     <div className="flex items-center gap-1.5">
                       <span
-                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                          isExpired
-                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : item.status === 'CONFIRMED'
+                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${isExpired
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                          : item.status === 'CONFIRMED'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : item.status === 'CHANGE_REQUESTED'
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-slate-100 text-slate-600 border border-slate-200'
-                        }`}
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          }`}
                       >
                         {isExpired
                           ? 'Quá hạn ca thi'
                           : item.status === 'CONFIRMED'
-                          ? 'Đã xác nhận (Đã khóa)'
-                          : item.status === 'CHANGE_REQUESTED'
-                          ? 'Xin đổi ca (Đã khóa)'
-                          : 'Chờ xác nhận'}
+                            ? 'Đã xác nhận (Đã khóa)'
+                            : item.status === 'CHANGE_REQUESTED'
+                              ? 'Xin đổi ca (Đã khóa)'
+                              : 'Chờ xác nhận'}
                       </span>
                       <span
-                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                          item.role === 'SUPERVISOR_1'
-                            ? 'bg-sky-50 text-sky-800 border border-sky-200'
-                            : 'bg-indigo-50 text-indigo-800 border border-indigo-200'
-                        }`}
+                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${item.role === 'SUPERVISOR_1'
+                          ? 'bg-sky-50 text-sky-800 border border-sky-200'
+                          : 'bg-blue-50 text-blue-800 border border-blue-200'
+                          }`}
                       >
                         {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                       </span>
@@ -370,25 +367,25 @@ export default function TeacherAssignmentsPage() {
                       </button>
                     </div>
 
-                  <div className="flex items-center justify-between pt-1">
-                    <button
-                      onClick={() => handlePrintAttendance(item)}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-sky-700 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg transition"
-                    >
-                      <Printer className="w-3.5 h-3.5 text-sky-600" /> In Danh sách điểm danh
-                    </button>
+                    <div className="flex items-center justify-between pt-1">
+                      <button
+                        onClick={() => handlePrintAttendance(item)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-sky-700 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg transition"
+                      >
+                        <Printer className="w-3.5 h-3.5 text-sky-600" /> In Danh sách điểm danh
+                      </button>
 
-                    <button
-                      onClick={() => setDrawerDuty(item)}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 hover:text-sky-800 hover:bg-sky-50 px-2.5 py-1.5 rounded-lg transition"
-                    >
-                      <Eye className="w-3.5 h-3.5" /> Chi tiết
-                    </button>
+                      <button
+                        onClick={() => setDrawerDuty(item)}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 hover:text-sky-800 hover:bg-sky-50 px-2.5 py-1.5 rounded-lg transition"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> Chi tiết
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
           </div>
         )}
       </main>
@@ -402,7 +399,7 @@ export default function TeacherAssignmentsPage() {
         avatarText="GT"
         badge={{
           label: drawerDuty?.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
-          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-indigo-50 text-indigo-700 border-indigo-200',
+          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
           { label: 'Môn thi', value: drawerDuty?.subjectName, icon: BookOpen },
@@ -421,7 +418,7 @@ export default function TeacherAssignmentsPage() {
               <button
                 onClick={() => drawerDuty?.examScheduleRoomId && router.push(`/teacher/proctor/${drawerDuty.examScheduleRoomId}`)}
                 disabled={!drawerDuty?.examScheduleRoomId}
-                className="w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Mở bảng giám thị và xem giải trình
               </button>
@@ -431,6 +428,6 @@ export default function TeacherAssignmentsPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

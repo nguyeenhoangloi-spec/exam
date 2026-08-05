@@ -21,14 +21,14 @@ interface QuickActionItem {
 }
 
 const actions: QuickActionItem[] = [
-  { title: 'Tạo kỳ thi', icon: CalendarPlus, route: '/exam-periods?action=create', tone: 'bg-blue-50 text-blue-600 hover:bg-blue-100' },
-  { title: 'Tạo ca thi', icon: Clock, route: '/exam-schedules?action=create', tone: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' },
-  { title: 'Xếp phòng thi', icon: Layers, route: '/exam-arrangement', tone: 'bg-purple-50 text-purple-600 hover:bg-purple-100' },
-  { title: 'Phân công GV', icon: UserCheck, route: '/exam-supervisors', tone: 'bg-amber-50 text-amber-600 hover:bg-amber-100' },
+  { title: 'Tạo kỳ thi', icon: CalendarPlus, route: '/exam-periods?action=create', tone: 'bg-blue-50 text-blue-700 hover:bg-blue-100' },
+  { title: 'Tạo ca thi', icon: Clock, route: '/exam-schedules?action=create', tone: 'bg-sky-50 text-sky-700 hover:bg-sky-100' },
+  { title: 'Xếp phòng thi', icon: Layers, route: '/exam-arrangement', tone: 'bg-blue-100 text-blue-800 hover:bg-blue-200' },
+  { title: 'Phân công GV', icon: UserCheck, route: '/exam-supervisors', tone: 'bg-sky-100 text-sky-800 hover:bg-sky-200' },
   { title: 'Tạo câu hỏi', icon: FilePlus, route: '/question-bank?action=create', tone: 'bg-rose-50 text-rose-600 hover:bg-rose-100' },
-  { title: 'Tạo đề thi', icon: FileText, route: '/exam-papers', tone: 'bg-teal-50 text-teal-600 hover:bg-teal-100' },
+  { title: 'Tạo đề thi', icon: FileText, route: '/exam-papers', tone: 'bg-blue-50 text-blue-600 hover:bg-blue-100' },
   { title: 'Nhập dữ liệu', icon: Upload, route: '/question-bank?action=import', tone: 'bg-sky-50 text-sky-600 hover:bg-sky-100' },
-  { title: 'Xem báo cáo', icon: BarChart3, route: '/reports', tone: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100' },
+  { title: 'Xem báo cáo', icon: BarChart3, route: '/reports', tone: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
 ];
 
 export function QuickActions() {

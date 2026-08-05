@@ -87,7 +87,7 @@ export default function StudentExamLobbyPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         <span className="ml-3 text-lg">Đang kiểm tra điều kiện dự thi...</span>
       </div>
     );
@@ -126,7 +126,7 @@ export default function StudentExamLobbyPage() {
             </p>
           </div>
           <div className="flex items-center space-x-2 bg-slate-100/80 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 shrink-0">
-            <Clock className="w-4 h-4 text-[#1e66f5]" />
+            <Clock className="w-4 h-4 text-blue-600" />
             <span className="text-xs font-bold">Thời gian: {durationMinutes} phút</span>
           </div>
         </div>
@@ -167,11 +167,11 @@ export default function StudentExamLobbyPage() {
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 pb-2">
                     <span className="text-slate-500 font-medium">Mã sinh viên:</span>
-                    <span className="font-mono font-bold text-[#1e66f5]">{studentCode}</span>
+                    <span className="font-mono font-bold text-blue-600">{studentCode}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500 font-medium">SBD / Số ghế:</span>
-                    <span className="font-bold text-indigo-700">
+                    <span className="font-bold text-blue-700">
                       {examNumber} (Ghế: {seatNumber})
                     </span>
                   </div>
@@ -194,7 +194,7 @@ export default function StudentExamLobbyPage() {
                     Giám sát chuyển tab & toàn màn hình
                   </li>
                   <li className="flex items-center text-slate-700">
-                    <Monitor className="w-4 h-4 mr-2 shrink-0 text-[#1e66f5]" />
+                    <Monitor className="w-4 h-4 mr-2 shrink-0 text-blue-600" />
                     Trình duyệt đã sẵn sàng
                   </li>
                 </ul>
@@ -210,9 +210,9 @@ export default function StudentExamLobbyPage() {
             </div>
 
             {(examInfo?.examPasswordRequired || examInfo?.accessCodeRequired) && (
-              <div className="mb-6 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-5 shadow-xs">
+              <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50/60 p-5 shadow-xs">
                 <h3 className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-[#1e66f5]" />
+                  <KeyRound className="w-4 h-4 text-blue-600" />
                   {examInfo?.examPasswordRequired
                     ? 'Nhập mật khẩu thi'
                     : 'Nhập mã truy cập phòng thi'}
@@ -228,7 +228,7 @@ export default function StudentExamLobbyPage() {
                       placeholder="Nhập mật khẩu thi chính thức"
                       value={examPassword}
                       onChange={(e) => setExamPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-[#1e66f5] focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                     />
                     <p className="mt-1 text-[11px] text-slate-500 font-medium">
                       Mật khẩu thi được cán bộ coi thi hoặc giảng viên phổ biến trước giờ thi.
@@ -246,7 +246,7 @@ export default function StudentExamLobbyPage() {
                       placeholder="Nhập mã truy cập phòng thi"
                       value={accessCode}
                       onChange={(e) => setAccessCode(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-[#1e66f5] focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                 )}
@@ -254,12 +254,12 @@ export default function StudentExamLobbyPage() {
             )}
 
             {config?.requireRulesAcceptance !== false && (
-              <label className="mb-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-4 text-xs font-semibold text-slate-800 shadow-xs hover:bg-indigo-50 transition">
+              <label className="mb-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 text-xs font-semibold text-slate-800 shadow-xs hover:bg-blue-50 transition">
                 <input
                   type="checkbox"
                   checked={rulesAccepted}
                   onChange={(event) => setRulesAccepted(event.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-[#1e66f5] rounded"
+                  className="mt-0.5 h-4 w-4 accent-blue-600 rounded"
                 />
                 <span>
                   Tôi đã đọc, hiểu và đồng ý chấp hành toàn bộ quy định thi. Tôi hiểu hệ thống có thể ghi nhận vi phạm và tự động khóa hoặc nộp bài theo quy chế.
@@ -283,7 +283,7 @@ export default function StudentExamLobbyPage() {
                   (examInfo?.examPasswordRequired && !examPassword.trim()) ||
                   (examInfo?.accessCodeRequired && !accessCode.trim())
                 }
-                className="px-6 py-2.5 bg-[#1e66f5] hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center shadow-md shadow-blue-600/20 transition"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center shadow-md shadow-blue-600/20 transition"
               >
                 {starting ? (
                   <span>Đang khởi tạo bài thi...</span>

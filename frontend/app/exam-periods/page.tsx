@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { downloadCsv } from '../../lib/export-csv';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
@@ -32,6 +32,7 @@ import {
 import { ExamPeriod } from '../../types';
 
 export default function ExamPeriodsPage() {
+  usePageTitle('Quản lý Kỳ thi');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
@@ -63,7 +64,7 @@ export default function ExamPeriodsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -218,8 +219,7 @@ export default function ExamPeriodsPage() {
     const rows = filteredPeriods
       .map(
         (p) =>
-          `"${p.name}","${p.semester}","${p.schoolYear}","${
-            p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''
+          `"${p.name}","${p.semester}","${p.schoolYear}","${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''
           }","${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}","${({ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp' } as Record<string, string>)[p.status] || p.status}"`,
       )
       .join('\n');
@@ -262,156 +262,156 @@ export default function ExamPeriodsPage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số Kỳ thi', value: periods.length, subtext: 'Kế hoạch khảo thí', icon: Calendar, color: 'sky' },
     { title: 'Kỳ thi đang diễn ra', value: ongoingPeriods, subtext: 'Theo trạng thái kỳ thi', icon: Clock, color: 'emerald' },
-    { title: 'Năm học có dữ liệu', value: schoolYears, subtext: 'Năm học trong danh sách kỳ thi', icon: Award, color: 'indigo' },
-    { title: 'Kỳ đang chuẩn bị', value: plannedPeriods, subtext: 'Sắp diễn ra hoặc đang diễn ra', icon: CheckCircle2, color: 'purple' },
+    { title: 'Năm học có dữ liệu', value: schoolYears, subtext: 'Năm học trong danh sách kỳ thi', icon: Award, color: 'blue' },
+    { title: 'Kỳ đang chuẩn bị', value: plannedPeriods, subtext: 'Sắp diễn ra hoặc đang diễn ra', icon: CheckCircle2, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Quản lý Kỳ thi">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs text-slate-500 font-medium">Thiết lập các kỳ thi học kỳ, năm học và thời gian đợt thi</p>
           </div>
-            <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <Printer className="h-4 w-4" /> In Báo cáo
+            </button>
+            <button
+              onClick={exportCsv}
+              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
+            >
+              <Download className="h-4 w-4" /> Xuất Danh sách
+            </button>
+            {currentUser?.role === 'ADMIN' && (
               <button
-                onClick={handlePrintReport}
-                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+                onClick={openAddModal}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
               >
-                <Printer className="h-4 w-4" /> In Báo cáo
+                <Plus className="h-4 w-4" /> Thêm Kỳ thi
               </button>
-              <button
-                onClick={exportCsv}
-                className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-              >
-                <Download className="h-4 w-4" /> Xuất Danh sách
-              </button>
-              {currentUser?.role === 'ADMIN' && (
-                <button
-                  onClick={openAddModal}
-                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-                >
-                  <Plus className="h-4 w-4" /> Thêm Kỳ thi
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* KPI Analytics Header */}
-          <KPICards items={kpiItems} />
-
-          {/* Search Bar */}
-          <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Tìm theo Tên kỳ thi, Học kỳ, Năm học..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
-              />
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-xs text-slate-700">
-            <span className="font-semibold text-sky-700">Giải thích trạng thái:</span> Sắp diễn ra = chưa đến ngày bắt đầu; Đang diễn ra = đang trong khoảng ngày thi; Đã kết thúc = đã qua ngày kết thúc; Đã khóa = kỳ thi đã khóa chỉnh sửa.
-          </div>
-
-          {/* Table Content */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách kỳ thi...</div>
-            ) : filteredPeriods.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy kỳ thi phù hợp.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                    <tr>
-                      <th className="p-4 pl-6">Tên Kỳ thi</th>
-                      <th className="p-4">Học kỳ</th>
-                      <th className="p-4">Năm học</th>
-                      <th className="p-4">Thời gian</th>
-                      <th className="p-4">Trạng thái</th>
-                      <th className="p-4 pr-6 text-right">Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
-                    {filteredPeriods.map((p) => (
-                      <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-4 pl-6 font-bold text-slate-900 flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
-                            <Calendar className="h-4 w-4" />
-                          </div>
-                          {p.name}
-                        </td>
-                        <td className="p-4 font-semibold text-sky-700">{p.semester}</td>
-                        <td className="p-4 font-medium text-slate-800">{p.schoolYear}</td>
-                        <td className="p-4 text-xs text-slate-600">
-                          {p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---'} -{' '}
-                          {p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---'}
-                        </td>
-                        <td className="p-4">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                            <CheckCircle2 className="h-3.5 w-3.5" /> {{ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp', LOCKED: 'Đã khóa', ACTIVE: 'Đang hoạt động' }[p.status] || 'Chưa xác định'}
-                          </span>
-                        </td>
-                        <td className="p-4 pr-6 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => setDrawerPeriod(p)}
-                              className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                              title="Xem chi tiết kỳ thi"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {currentUser?.role === 'ADMIN' && (
-                              <>
-                                {p.status === 'LOCKED' ? (
-                                  <button
-                                    onClick={() => openUnlockModal(p)}
-                                    className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
-                                    title="Mở khóa kỳ thi (Xác thực nhiều lớp)"
-                                  >
-                                    <Unlock className="h-4 w-4" />
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => openLockModal(p)}
-                                    className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
-                                    title="Khóa kỳ thi (Xác thực nhiều lớp)"
-                                  >
-                                    <Lock className="h-4 w-4" />
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => openEditModal(p)}
-                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                  title="Chỉnh sửa"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(p.id)}
-                                  className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                  title="Xóa"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             )}
           </div>
-        </main>
+        </div>
+
+        {/* KPI Analytics Header */}
+        <KPICards items={kpiItems} />
+
+        {/* Search Bar */}
+        <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Tên kỳ thi, Học kỳ, Năm học..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+            />
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-xs text-slate-700">
+          <span className="font-semibold text-sky-700">Giải thích trạng thái:</span> Sắp diễn ra = chưa đến ngày bắt đầu; Đang diễn ra = đang trong khoảng ngày thi; Đã kết thúc = đã qua ngày kết thúc; Đã khóa = kỳ thi đã khóa chỉnh sửa.
+        </div>
+
+        {/* Table Content */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {loading ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách kỳ thi...</div>
+          ) : filteredPeriods.length === 0 ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy kỳ thi phù hợp.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 pl-6">Tên Kỳ thi</th>
+                    <th className="p-4">Học kỳ</th>
+                    <th className="p-4">Năm học</th>
+                    <th className="p-4">Thời gian</th>
+                    <th className="p-4">Trạng thái</th>
+                    <th className="p-4 pr-6 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {filteredPeriods.map((p) => (
+                    <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 pl-6 font-bold text-slate-900 flex items-center gap-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
+                          <Calendar className="h-4 w-4" />
+                        </div>
+                        {p.name}
+                      </td>
+                      <td className="p-4 font-semibold text-sky-700">{p.semester}</td>
+                      <td className="p-4 font-medium text-slate-800">{p.schoolYear}</td>
+                      <td className="p-4 text-xs text-slate-600">
+                        {p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---'} -{' '}
+                        {p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---'}
+                      </td>
+                      <td className="p-4">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> {{ UPCOMING: 'Sắp diễn ra', ONGOING: 'Đang diễn ra', COMPLETED: 'Đã kết thúc', CANCELLED: 'Đã hủy', DRAFT: 'Bản nháp', LOCKED: 'Đã khóa', ACTIVE: 'Đang hoạt động' }[p.status] || 'Chưa xác định'}
+                        </span>
+                      </td>
+                      <td className="p-4 pr-6 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setDrawerPeriod(p)}
+                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
+                            title="Xem chi tiết kỳ thi"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          {currentUser?.role === 'ADMIN' && (
+                            <>
+                              {p.status === 'LOCKED' ? (
+                                <button
+                                  onClick={() => openUnlockModal(p)}
+                                  className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                                  title="Mở khóa kỳ thi (Xác thực nhiều lớp)"
+                                >
+                                  <Unlock className="h-4 w-4" />
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => openLockModal(p)}
+                                  className="p-1.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                                  title="Khóa kỳ thi (Xác thực nhiều lớp)"
+                                >
+                                  <Lock className="h-4 w-4" />
+                                </button>
+                              )}
+                              <button
+                                onClick={() => openEditModal(p)}
+                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                                title="Chỉnh sửa"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(p.id)}
+                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                title="Xóa"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Edit/Add Modal */}
       <Modal
@@ -552,23 +552,23 @@ export default function ExamPeriodsPage() {
         reasons={
           criticalModal.action === 'lock'
             ? [
-                'Hoàn tất công tác tổ chức thi theo kế hoạch',
-                'Khóa dữ liệu phục vụ thanh tra khảo thí',
-                'Khóa khẩn cấp do sự cố bất khả kháng',
-                'Lý do khác',
-              ]
+              'Hoàn tất công tác tổ chức thi theo kế hoạch',
+              'Khóa dữ liệu phục vụ thanh tra khảo thí',
+              'Khóa khẩn cấp do sự cố bất khả kháng',
+              'Lý do khác',
+            ]
             : [
-                'Theo quyết định bổ sung lịch thi của Ban Giám hiệu',
-                'Điều chỉnh sai sót thông tin phòng thi/lịch thi',
-                'Mở khóa cập nhật điểm thi bổ sung',
-                'Lý do khác',
-              ]
+              'Theo quyết định bổ sung lịch thi của Ban Giám hiệu',
+              'Điều chỉnh sai sót thông tin phòng thi/lịch thi',
+              'Mở khóa cập nhật điểm thi bổ sung',
+              'Lý do khác',
+            ]
         }
         actionButtonText={criticalModal.action === 'lock' ? 'Khóa Kỳ Thi Ngay' : 'Mở Khóa Kỳ Thi'}
         onConfirm={handleConfirmCriticalLockUnlock}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

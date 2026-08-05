@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
@@ -35,13 +35,17 @@ import {
 import { Student, ClassItem } from '../../types';
 
 export default function StudentsPage() {
+  usePageTitle('Quản lý Sinh viên');
   const router = useRouter();
+  const cachedStudents = typeof window !== 'undefined' ? getCachedData<any>('/students?page=1&limit=20') : null;
+  const cachedClasses = typeof window !== 'undefined' ? getCachedData<ClassItem[]>('/classes') : null;
+  const initialStudentList = Array.isArray(cachedStudents) ? cachedStudents : (cachedStudents?.data || []);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [students, setStudents] = useState<Student[]>(initialStudentList);
+  const [classes, setClasses] = useState<ClassItem[]>(cachedClasses || []);
   const [search, setSearch] = useState('');
   const [selectedClassId, setSelectedClassId] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialStudentList.length);
 
   // Modals & Drawers
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,7 +77,7 @@ export default function StudentsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -247,162 +251,162 @@ export default function StudentsPage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng sinh viên', value: students.length, subtext: 'Chính quy K65 - K66', icon: Users, color: 'sky' },
     { title: 'Có lớp học', value: students.filter((student) => Boolean(student.classId)).length, subtext: 'Sinh viên đã được phân lớp', icon: CheckCircle2, color: 'emerald' },
-    { title: 'Số lớp học', value: classes.length, subtext: 'Đào tạo chuyên ngành', icon: School, color: 'indigo' },
-    { title: 'Sinh viên đang hiển thị', value: filteredStudents.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: Award, color: 'purple' },
+    { title: 'Số lớp học', value: classes.length, subtext: 'Đào tạo chuyên ngành', icon: School, color: 'blue' },
+    { title: 'Sinh viên đang hiển thị', value: filteredStudents.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: Award, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Quản lý Sinh viên">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs text-slate-500 font-medium">Quản lý danh sách sinh viên chính quy, phân lớp và điều kiện dự thi</p>
           </div>
-            <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+            >
+              <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
+            </button>
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <Printer className="h-4 w-4" /> In Danh sách
+            </button>
+            <button
+              onClick={exportCsv}
+              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
+            >
+              <Download className="h-4 w-4" /> Xuất Danh sách
+            </button>
+            {currentUser?.role === 'ADMIN' && (
               <button
-                onClick={() => setIsImportModalOpen(true)}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm shadow-sm transition"
+                onClick={openAddModal}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
               >
-                <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
+                <Plus className="h-4 w-4" /> Thêm Sinh viên
               </button>
-              <button
-                onClick={handlePrintReport}
-                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-              >
-                <Printer className="h-4 w-4" /> In Danh sách
-              </button>
-              <button
-                onClick={exportCsv}
-                className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-              >
-                <Download className="h-4 w-4" /> Xuất Danh sách
-              </button>
-              {currentUser?.role === 'ADMIN' && (
-                <button
-                  onClick={openAddModal}
-                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-                >
-                  <Plus className="h-4 w-4" /> Thêm Sinh viên
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* KPI Analytics Header */}
-          <KPICards items={kpiItems} />
-
-          {/* Search & Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="relative flex-1 min-w-[260px]">
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Tìm theo Mã SV, Họ tên, Email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-slate-400" />
-                <span className="text-xs font-semibold text-slate-500">Lớp:</span>
-                <select
-                  value={selectedClassId}
-                  onChange={(e) => setSelectedClassId(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
-                >
-                  <option value="">Tất cả các lớp</option>
-                  {classes.map((cls) => (
-                    <option key={cls.id} value={cls.id}>
-                      {cls.name} ({cls.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Table Content */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách sinh viên...</div>
-            ) : filteredStudents.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Khôn tìm thấy sinh viên phù hợp.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                    <tr>
-                      <th className="p-4 pl-6">Mã SV</th>
-                      <th className="p-4">Họ và tên</th>
-                      <th className="p-4">Giới tính</th>
-                      <th className="p-4">Lớp học</th>
-                      <th className="p-4">Email</th>
-                      <th className="p-4">Trạng thái</th>
-                      <th className="p-4 pr-6 text-right">Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
-                    {filteredStudents.map((s) => (
-                      <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-4 pl-6 font-bold text-sky-700">{s.studentCode}</td>
-                        <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
-                            {s.fullName.slice(-1)}
-                          </div>
-                          {s.fullName}
-                        </td>
-                        <td className="p-4">{s.gender || 'Nam'}</td>
-                        <td className="p-4">
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                            {s.class?.name || 'Chưa xếp lớp'}
-                          </span>
-                        </td>
-                        <td className="p-4 text-xs text-slate-500">{s.email}</td>
-                        <td className="p-4">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
-                            <CheckCircle2 className="h-3.5 w-3.5" /> Đang học
-                          </span>
-                        </td>
-                        <td className="p-4 pr-6 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => setDrawerStudent(s)}
-                              className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                              title="Xem hồ sơ chi tiết"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {currentUser?.role === 'ADMIN' && (
-                              <>
-                                <button
-                                  onClick={() => openEditModal(s)}
-                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                  title="Chỉnh sửa"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(s.id)}
-                                  className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                  title="Xóa"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             )}
           </div>
-        </main>
+        </div>
+
+        {/* KPI Analytics Header */}
+        <KPICards items={kpiItems} />
+
+        {/* Search & Filter Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Mã SV, Họ tên, Email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-slate-400" />
+              <span className="text-xs font-semibold text-slate-500">Lớp:</span>
+              <select
+                value={selectedClassId}
+                onChange={(e) => setSelectedClassId(e.target.value)}
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
+              >
+                <option value="">Tất cả các lớp</option>
+                {classes.map((cls) => (
+                  <option key={cls.id} value={cls.id}>
+                    {cls.name} ({cls.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Table Content */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {loading ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách sinh viên...</div>
+          ) : filteredStudents.length === 0 ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Khôn tìm thấy sinh viên phù hợp.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 pl-6">Mã SV</th>
+                    <th className="p-4">Họ và tên</th>
+                    <th className="p-4">Giới tính</th>
+                    <th className="p-4">Lớp học</th>
+                    <th className="p-4">Email</th>
+                    <th className="p-4">Trạng thái</th>
+                    <th className="p-4 pr-6 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {filteredStudents.map((s) => (
+                    <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 pl-6 font-bold text-sky-700">{s.studentCode}</td>
+                      <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
+                          {s.fullName.slice(-1)}
+                        </div>
+                        {s.fullName}
+                      </td>
+                      <td className="p-4">{s.gender || 'Nam'}</td>
+                      <td className="p-4">
+                        <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                          {s.class?.name || 'Chưa xếp lớp'}
+                        </span>
+                      </td>
+                      <td className="p-4 text-xs text-slate-500">{s.email}</td>
+                      <td className="p-4">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Đang học
+                        </span>
+                      </td>
+                      <td className="p-4 pr-6 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setDrawerStudent(s)}
+                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
+                            title="Xem hồ sơ chi tiết"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          {currentUser?.role === 'ADMIN' && (
+                            <>
+                              <button
+                                onClick={() => openEditModal(s)}
+                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                                title="Chỉnh sửa"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(s.id)}
+                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                title="Xóa"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Edit/Add Modal */}
       <Modal
@@ -546,6 +550,6 @@ export default function StudentsPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

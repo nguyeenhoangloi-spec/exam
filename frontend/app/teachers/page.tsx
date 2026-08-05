@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
@@ -18,31 +18,37 @@ import {
   Trash2,
   Edit,
   GraduationCap,
-  Award,
-  ShieldCheck,
-  HelpCircle,
   Search,
-  Filter,
-  FileSpreadsheet,
-  Download,
-  Printer,
+  Upload,
   Eye,
+  Lock,
+  Unlock,
   Building2,
   Mail,
   Phone,
   User,
   CheckCircle2,
+  Award,
+  ShieldCheck,
+  HelpCircle,
+  Filter,
+  Download,
+  Printer,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { Teacher, Department } from '../../types';
 
 export default function TeachersPage() {
+  usePageTitle('Quản lý Giảng viên');
   const router = useRouter();
+  const cachedTeachers = typeof window !== 'undefined' ? getCachedData<Teacher[]>('/teachers') : null;
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>(cachedTeachers || []);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
   const [search, setSearch] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedTeachers);
 
   // Modals & Drawers
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,7 +79,7 @@ export default function TeachersPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -242,159 +248,159 @@ export default function TeachersPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng giảng viên', value: teachers.length, subtext: 'Trực thuộc các Khoa', icon: GraduationCap, color: 'sky' },
-    { title: 'Có học vị khai báo', value: teachers.filter((teacher) => Boolean(teacher.degree?.trim())).length, subtext: 'Theo hồ sơ giảng viên', icon: Award, color: 'indigo' },
+    { title: 'Có học vị khai báo', value: teachers.filter((teacher) => Boolean(teacher.degree?.trim())).length, subtext: 'Theo hồ sơ giảng viên', icon: Award, color: 'blue' },
     { title: 'Đã thuộc khoa', value: teachers.filter((teacher) => Boolean(teacher.departmentId)).length, subtext: 'Có đơn vị quản lý', icon: ShieldCheck, color: 'emerald' },
-    { title: 'Giảng viên đang hiển thị', value: filteredTeachers.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: HelpCircle, color: 'purple' },
+    { title: 'Giảng viên đang hiển thị', value: filteredTeachers.length, subtext: search ? 'Theo điều kiện tìm kiếm' : 'Toàn bộ danh sách', icon: HelpCircle, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Quản lý Giảng viên">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs text-slate-500 font-medium">Quản lý danh mục cán bộ giảng dạy, học vị, khoa và lịch coi thi</p>
           </div>
-            <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
+            </button>
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <Printer className="h-4 w-4" /> In Danh sách
+            </button>
+            <button
+              onClick={exportCsv}
+              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
+            >
+              <Download className="h-4 w-4" /> Xuất Danh sách
+            </button>
+            {currentUser?.role === 'ADMIN' && (
               <button
-                onClick={() => setIsImportModalOpen(true)}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+                onClick={openAddModal}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
               >
-                <FileSpreadsheet className="h-4 w-4" /> Nhập Excel
+                <Plus className="h-4 w-4" /> Thêm Giảng viên
               </button>
-              <button
-                onClick={handlePrintReport}
-                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-              >
-                <Printer className="h-4 w-4" /> In Danh sách
-              </button>
-              <button
-                onClick={exportCsv}
-                className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-              >
-                <Download className="h-4 w-4" /> Xuất Danh sách
-              </button>
-              {currentUser?.role === 'ADMIN' && (
-                <button
-                  onClick={openAddModal}
-                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-                >
-                  <Plus className="h-4 w-4" /> Thêm Giảng viên
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* KPI Header Cards */}
-          <KPICards items={kpiItems} />
-
-          {/* Search & Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="relative flex-1 min-w-[260px]">
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Tìm theo Mã GV, Họ tên, Email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-slate-400" />
-                <span className="text-xs font-semibold text-slate-500">Khoa:</span>
-                <select
-                  value={selectedDeptId}
-                  onChange={(e) => setSelectedDeptId(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
-                >
-                  <option value="">Tất cả các Khoa</option>
-                  {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} ({d.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Table Content */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách giảng viên...</div>
-            ) : filteredTeachers.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy giảng viên phù hợp.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                    <tr>
-                      <th className="p-4 pl-6">Mã GV</th>
-                      <th className="p-4">Họ và tên</th>
-                      <th className="p-4">Học vị</th>
-                      <th className="p-4">Khoa trực thuộc</th>
-                      <th className="p-4">Email</th>
-                      <th className="p-4">Số điện thoại</th>
-                      <th className="p-4 pr-6 text-right">Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
-                    {filteredTeachers.map((t) => (
-                      <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-4 pl-6 font-bold text-sky-700">{t.teacherCode}</td>
-                        <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
-                            {t.fullName.slice(-1)}
-                          </div>
-                          {t.fullName}
-                        </td>
-                        <td className="p-4">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-bold text-indigo-700 border border-indigo-100">
-                            {t.degree || 'TS'}
-                          </span>
-                        </td>
-                        <td className="p-4 font-medium text-slate-800">{t.department?.name || '---'}</td>
-                        <td className="p-4 text-xs text-slate-500">{t.email}</td>
-                        <td className="p-4 text-xs text-slate-600">{t.phone || '---'}</td>
-                        <td className="p-4 pr-6 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => setDrawerTeacher(t)}
-                              className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                              title="Xem hồ sơ chi tiết"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {currentUser?.role === 'ADMIN' && (
-                              <>
-                                <button
-                                  onClick={() => openEditModal(t)}
-                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                  title="Chỉnh sửa"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(t.id)}
-                                  className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                  title="Xóa"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             )}
           </div>
-        </main>
+        </div>
+
+        {/* KPI Header Cards */}
+        <KPICards items={kpiItems} />
+
+        {/* Search & Filter Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Mã GV, Họ tên, Email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-slate-400" />
+              <span className="text-xs font-semibold text-slate-500">Khoa:</span>
+              <select
+                value={selectedDeptId}
+                onChange={(e) => setSelectedDeptId(e.target.value)}
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
+              >
+                <option value="">Tất cả các Khoa</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} ({d.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Table Content */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {loading ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách giảng viên...</div>
+          ) : filteredTeachers.length === 0 ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy giảng viên phù hợp.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 pl-6">Mã GV</th>
+                    <th className="p-4">Họ và tên</th>
+                    <th className="p-4">Học vị</th>
+                    <th className="p-4">Khoa trực thuộc</th>
+                    <th className="p-4">Email</th>
+                    <th className="p-4">Số điện thoại</th>
+                    <th className="p-4 pr-6 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {filteredTeachers.map((t) => (
+                    <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 pl-6 font-bold text-sky-700">{t.teacherCode}</td>
+                      <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 font-bold text-xs">
+                          {t.fullName.slice(-1)}
+                        </div>
+                        {t.fullName}
+                      </td>
+                      <td className="p-4">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-700 border border-blue-100">
+                          {t.degree || 'TS'}
+                        </span>
+                      </td>
+                      <td className="p-4 font-medium text-slate-800">{t.department?.name || '---'}</td>
+                      <td className="p-4 text-xs text-slate-500">{t.email}</td>
+                      <td className="p-4 text-xs text-slate-600">{t.phone || '---'}</td>
+                      <td className="p-4 pr-6 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setDrawerTeacher(t)}
+                            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
+                            title="Xem hồ sơ chi tiết"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          {currentUser?.role === 'ADMIN' && (
+                            <>
+                              <button
+                                onClick={() => openEditModal(t)}
+                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                                title="Chỉnh sửa"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(t.id)}
+                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                title="Xóa"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Edit/Add Modal */}
       <Modal
@@ -518,7 +524,7 @@ export default function TeachersPage() {
         title={drawerTeacher?.fullName || ''}
         subtitle={`Mã cán bộ: ${drawerTeacher?.teacherCode}`}
         avatarText={drawerTeacher?.fullName ? drawerTeacher.fullName.slice(-1) : 'GV'}
-        badge={{ label: drawerTeacher?.degree || 'TS', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' }}
+        badge={{ label: drawerTeacher?.degree || 'TS', className: 'bg-blue-50 text-blue-700 border-blue-200' }}
         details={[
           { label: 'Mã giảng viên', value: drawerTeacher?.teacherCode, icon: User },
           { label: 'Họ và tên', value: drawerTeacher?.fullName },
@@ -540,6 +546,6 @@ export default function TeachersPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

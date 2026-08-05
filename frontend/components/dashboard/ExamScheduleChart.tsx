@@ -65,7 +65,7 @@ export function ExamScheduleChart({ data }: { data: DashboardOverview['examChart
                 contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', fontSize: '12px', fontWeight: 600 }}
                 formatter={(value) => [`${value} kỳ thi`, 'Số lượng']}
               />
-              <Bar dataKey="count" fill="#1e66f5" radius={[6, 6, 0, 0]} maxBarSize={38} />
+              <Bar dataKey="count" fill="#2563eb" radius={[6, 6, 0, 0]} maxBarSize={38} />
             </BarChart>
           </ResponsiveContainer>
         </div>

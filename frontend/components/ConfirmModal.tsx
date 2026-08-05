@@ -102,7 +102,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   if (reasonError) setReasonError('');
                 }}
                 placeholder={reasonPlaceholder}
-                className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
               {reasonError && <p className="text-xs font-medium text-rose-600">{reasonError}</p>}
             </div>

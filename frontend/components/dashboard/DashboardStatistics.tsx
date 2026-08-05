@@ -10,13 +10,13 @@ const cards: Array<{
   icon: LucideIcon;
   tone: string;
 }> = [
-  { key: 'students', title: 'Tổng sinh viên', icon: Users, tone: 'bg-blue-50 text-blue-600' },
-  { key: 'lecturers', title: 'Tổng giảng viên', icon: GraduationCap, tone: 'bg-emerald-50 text-emerald-600' },
-  { key: 'subjects', title: 'Tổng môn học', icon: BookOpen, tone: 'bg-purple-50 text-purple-600' },
-  { key: 'examRooms', title: 'Tổng phòng thi', icon: DoorOpen, tone: 'bg-amber-50 text-amber-600' },
-  { key: 'upcomingExams', title: 'Kỳ thi sắp tới', icon: CalendarClock, tone: 'bg-sky-50 text-sky-600' },
-  { key: 'pendingQuestions', title: 'Câu hỏi chờ duyệt', icon: FileText, tone: 'bg-rose-50 text-rose-600' },
-];
+    { key: 'students', title: 'Tổng sinh viên', icon: Users, tone: 'bg-blue-50 text-blue-700' },
+    { key: 'lecturers', title: 'Tổng giảng viên', icon: GraduationCap, tone: 'bg-sky-50 text-sky-700' },
+    { key: 'subjects', title: 'Tổng môn học', icon: BookOpen, tone: 'bg-blue-100 text-blue-800' },
+    { key: 'examRooms', title: 'Tổng phòng thi', icon: DoorOpen, tone: 'bg-sky-100 text-sky-800' },
+    { key: 'upcomingExams', title: 'Kỳ thi sắp tới', icon: CalendarClock, tone: 'bg-blue-50 text-blue-600' },
+    { key: 'pendingQuestions', title: 'Câu hỏi chờ duyệt', icon: FileText, tone: 'bg-rose-50 text-rose-600' },
+  ];
 
 export function DashboardStatCard({
   title,
@@ -47,7 +47,7 @@ export function DashboardStatCard({
         <p className="mt-0.5 truncate text-[11px] font-medium text-slate-400">{item.description || 'Đang hoạt động'}</p>
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-1 text-[11px] font-bold text-[#1e66f5] group-hover:text-blue-700">
+      <div className="mt-3 flex items-center justify-end gap-1 text-[11px] font-bold text-blue-600 group-hover:text-blue-700">
         <span>Xem chi tiết</span>
         <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
       </div>
@@ -64,3 +64,4 @@ export function DashboardStatistics({ summary }: { summary: DashboardOverview['s
     </section>
   );
 }
+

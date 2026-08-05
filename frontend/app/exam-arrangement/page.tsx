@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { KPICards, KPICardItem } from '../../components/KPICards';
@@ -81,6 +81,7 @@ function escapeHtml(val: unknown) {
 }
 
 export default function ExamArrangementPage() {
+  usePageTitle('Xếp Lịch Thi Tự Động');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
@@ -112,7 +113,7 @@ export default function ExamArrangementPage() {
     title: '',
     message: '',
     type: 'warning',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchRoomAvailability = useCallback(async (scheduleId: string) => {
@@ -382,7 +383,7 @@ export default function ExamArrangementPage() {
         <div className="page" style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;">
           <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;">
             <h2 style="margin:0;font-size:18px;text-transform:uppercase;color:#0f172a;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2>
-            <h1 style="margin:4px 0 0;font-size:24px;color:#1e66f5;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1>
+            <h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1>
             <p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(currentSched?.subject?.subjectName)}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(currentSched?.examDate || Date.now()).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p>
           </div>
           <table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6">
@@ -416,8 +417,8 @@ export default function ExamArrangementPage() {
   const kpiItems: KPICardItem[] = [
     { title: 'Ca thi đang chọn', value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn', subtext: `${schedules.length} ca thi trong kỳ`, icon: Zap, color: 'sky' },
     { title: 'Phòng thi khả dụng', value: `${availableCount}/${rooms.length}`, subtext: 'Trạng thái rảnh trong khung giờ', icon: DoorOpen, color: 'emerald' },
-    { title: 'Sức chứa đã chọn', value: `${selectedCapacity} chỗ`, subtext: `${selectedRoomIds.length} phòng đang được chọn`, icon: Users, color: 'indigo' },
-    { title: 'Kết quả phân bổ', value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp', subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu', icon: CheckCircle2, color: 'purple' },
+    { title: 'Sức chứa đã chọn', value: `${selectedCapacity} chỗ`, subtext: `${selectedRoomIds.length} phòng đang được chọn`, icon: Users, color: 'blue' },
+    { title: 'Kết quả phân bổ', value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp', subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu', icon: CheckCircle2, color: 'skyDeep' },
   ];
 
   const filteredDetails = useMemo(() => {
@@ -427,7 +428,7 @@ export default function ExamArrangementPage() {
   }, [filterRoomCode, result]);
 
   return (
-    <AppShell user={currentUser} title="Xếp Lịch Thi Tự Động">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header & Tab Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -437,17 +438,15 @@ export default function ExamArrangementPage() {
           <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs font-bold shadow-2xs">
             <button
               onClick={() => setActiveTab('arrange')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
-                activeTab === 'arrange' ? 'bg-[#1e66f5] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${activeTab === 'arrange' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               <Sparkles className="h-3.5 w-3.5" /> Thực hiện Xếp phòng
             </button>
             <button
               onClick={() => setActiveTab('history')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${
-                activeTab === 'history' ? 'bg-[#1e66f5] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${activeTab === 'history' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               <History className="h-3.5 w-3.5" /> Lịch sử & Nhật ký ({historyLogs.length})
             </button>
@@ -547,7 +546,7 @@ export default function ExamArrangementPage() {
                     <button
                       type="button"
                       onClick={selectAvailableOnly}
-                      className="text-[11px] font-bold text-[#1e66f5] hover:underline"
+                      className="text-[11px] font-bold text-blue-600 hover:underline"
                     >
                       Chọn phòng trống ({availableCount})
                     </button>
@@ -560,26 +559,24 @@ export default function ExamArrangementPage() {
                         <div
                           key={r.id}
                           onClick={() => handleToggleRoom(r)}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${
-                            !r.isAvailable
-                              ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
-                              : isSelected
+                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${!r.isAvailable
+                            ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
+                            : isSelected
                               ? 'border-sky-500 bg-sky-50 text-sky-900 font-bold shadow-2xs cursor-pointer'
                               : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 cursor-pointer'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-rose-500' : isSelected ? 'text-[#1e66f5]' : 'text-slate-400'}`} />
+                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-rose-500' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
                             <span className="truncate">{r.roomName || r.roomCode}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span className="text-[11px] font-semibold text-slate-500">{r.capacity} chỗ</span>
                             <span
-                              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
-                                r.isAvailable
-                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                  : 'bg-rose-100 text-rose-800 border border-rose-300'
-                              }`}
+                              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${r.isAvailable
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                : 'bg-rose-100 text-rose-800 border border-rose-300'
+                                }`}
                             >
                               {r.isAvailable ? 'TRỐNG' : r.busyReason || 'BẬN'}
                             </span>
@@ -594,7 +591,7 @@ export default function ExamArrangementPage() {
                   <button
                     type="submit"
                     disabled={arranging || selectedRoomIds.length === 0}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98"
                   >
                     <Sparkles className="h-4 w-4" /> {arranging ? 'Đang chạy thuật toán AI...' : 'Xem trước phương án xếp phòng'}
                   </button>
@@ -628,18 +625,16 @@ export default function ExamArrangementPage() {
                           <button
                             type="button"
                             onClick={() => setViewMode('matrix')}
-                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${
-                              viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
-                            }`}
+                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
+                              }`}
                           >
                             <Grid className="h-3.5 w-3.5" /> Sơ đồ chỗ ngồi
                           </button>
                           <button
                             type="button"
                             onClick={() => setViewMode('table')}
-                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${
-                              viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
-                            }`}
+                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
+                              }`}
                           >
                             <List className="h-3.5 w-3.5" /> Danh sách bảng
                           </button>
@@ -729,7 +724,7 @@ export default function ExamArrangementPage() {
                                 <div key={room.roomCode} className="rounded-2xl border border-slate-200/90 bg-slate-50/50 p-4 space-y-3">
                                   <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
                                     <div className="flex items-center gap-2">
-                                      <DoorOpen className="h-4 w-4 text-[#1e66f5]" />
+                                      <DoorOpen className="h-4 w-4 text-blue-600" />
                                       <h4 className="font-extrabold text-slate-900 text-sm">
                                         PHÒNG {room.roomName || room.roomCode} ({room.building})
                                       </h4>
@@ -761,11 +756,10 @@ export default function ExamArrangementPage() {
                                         {st.requirementLabel && (
                                           <div className="pt-0.5">
                                             <span
-                                              className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border ${
-                                                st.requirementType === 'MANDATORY'
-                                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                                  : 'bg-purple-50 text-purple-700 border-purple-200'
-                                              }`}
+                                              className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY'
+                                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                : 'bg-sky-50 text-sky-700 border-sky-200'
+                                                }`}
                                             >
                                               {st.requirementLabel}
                                             </span>
@@ -805,11 +799,10 @@ export default function ExamArrangementPage() {
                                   <td className="p-3">
                                     {st.requirementLabel ? (
                                       <span
-                                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${
-                                          st.requirementType === 'MANDATORY'
-                                            ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                            : 'bg-purple-50 text-purple-700 border-purple-200'
-                                        }`}
+                                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY'
+                                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                          : 'bg-sky-50 text-sky-700 border-sky-200'
+                                          }`}
                                       >
                                         {st.requirementLabel}
                                       </span>
@@ -841,7 +834,7 @@ export default function ExamArrangementPage() {
               </div>
               <button
                 onClick={fetchHistory}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#1e66f5] hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline"
               >
                 <RotateCcw className="h-3.5 w-3.5" /> Tải lại Nhật ký
               </button>
@@ -875,13 +868,12 @@ export default function ExamArrangementPage() {
                         </td>
                         <td className="p-3 whitespace-nowrap">
                           <span
-                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                              log.action === 'ARRANGE'
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : log.action === 'RESET_ARRANGEMENT'
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${log.action === 'ARRANGE'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : log.action === 'RESET_ARRANGEMENT'
                                 ? 'bg-rose-50 text-rose-700 border border-rose-200'
                                 : 'bg-sky-50 text-sky-700 border border-sky-200'
-                            }`}
+                              }`}
                           >
                             {log.action}
                           </span>
@@ -908,6 +900,7 @@ export default function ExamArrangementPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }
+

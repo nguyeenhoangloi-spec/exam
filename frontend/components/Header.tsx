@@ -189,9 +189,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className={`fixed right-0 top-0 z-40 h-[72px] border-b border-slate-200/90 bg-white/95 shadow-[0_1px_3px_rgba(15,23,42,0.05)] backdrop-blur transition-all duration-300 ${
-        collapsed ? 'left-0 md:left-[76px]' : 'left-0 md:left-[260px]'
-      }`}
+      className={`fixed right-0 top-0 z-40 h-[72px] border-b border-slate-200/90 bg-white/95 shadow-[0_1px_3px_rgba(15,23,42,0.05)] backdrop-blur transition-all duration-300 ${collapsed ? 'left-0 md:left-[76px]' : 'left-0 md:left-[260px]'
+        }`}
     >
       <div ref={containerRef} className="mx-auto flex h-full w-full items-center gap-3 px-4 md:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-3 lg:max-w-[360px]">
@@ -214,9 +213,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="relative hidden min-w-0 flex-1 justify-center lg:flex">
           <div
-            className={`relative w-full max-w-[480px] rounded-xl border bg-slate-50/80 transition ${
-              searchOpen ? 'border-sky-500 bg-white ring-4 ring-sky-100/60' : 'border-slate-200 hover:border-slate-300'
-            }`}
+            className={`relative w-full max-w-[480px] rounded-xl border bg-slate-50/80 transition ${searchOpen ? 'border-sky-500 bg-white ring-4 ring-sky-100/60' : 'border-slate-200 hover:border-slate-300'
+              }`}
           >
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -399,7 +397,7 @@ export const Header: React.FC<HeaderProps> = ({
                       }}
                       className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                     >
-                      <KeyRound className="h-4 w-4 text-[#1e66f5]" />
+                      <KeyRound className="h-4 w-4 text-sky-600" />
                       Đổi mật khẩu
                     </button>
                   </div>

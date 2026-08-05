@@ -292,7 +292,9 @@ export class QuestionsService {
     const statusLabels: Record<string, string> = { DRAFT: 'Bản nháp', PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Từ chối', ARCHIVED: 'Lưu trữ' };
     return '\uFEFFMã câu hỏi,Mã môn,Mã chương,Loại câu hỏi,Độ khó,Mức độ Bloom,Nội dung câu hỏi,Điểm,Trạng thái\r\n' + r.data.map(x => [x.code, x.subject.subjectCode, x.chapter.code, typeLabels[x.type] || x.type, difficultyLabels[x.difficulty] || x.difficulty, bloomLabels[x.bloomLevel] || x.bloomLevel, x.content, x.score, statusLabels[x.status] || x.status].map(esc).join(',')).join('\r\n');
   }
-  importTemplate() { return '\uFEFFMã môn,Mã chương,Loại câu hỏi,Độ khó,Mức độ Bloom,Nội dung câu hỏi,Điểm,Đáp án A,Đúng A,Đáp án B,Đúng B,Đáp án C,Đúng C,Đáp án D,Đúng D,Giải thích\r\nCNTT01,CH1,SINGLE_CHOICE,EASY,REMEMBER,"Câu hỏi mẫu hợp lệ?",0.25,"Đáp án A",true,"Đáp án B",false,"Đáp án C",false,"Đáp án D",false,"Giải thích mẫu"\r\nCNTT01,CH1,TRUE_FALSE,EASY,UNDERSTAND,"Mệnh đề mẫu là đúng.",0.25,"Đúng",true,"Sai",false,,,,,"Giải thích"'; }
+  importTemplate() {
+    return '\uFEFFNội dung câu hỏi,Đáp án A,Đáp án B,Đáp án C,Đáp án D,Đáp án đúng,Giải thích\r\n"ISO/IEC 27001 là tiêu chuẩn gì?","Tiêu chuẩn quản lý an toàn thông tin ISMS","Chuẩn cáp mạng USB","Chuẩn lập trình web HTML","Chuẩn kết nối không dây Wi-Fi","A","ISO/IEC 27001 là tiêu chuẩn quản lý ATTT quốc tế."\r\n"Thuật toán RSA thuộc loại mã hóa nào?","Mã hóa bất đối xứng (Dùng cặp khóa Public/Private)","Mã hóa đối xứng","Hàm băm một chiều","Không mã hóa","A","RSA là thuật toán mã hóa bất đối xứng phổ biến."\r\n';
+  }
   private csvLegacy(file: Express.Multer.File) {
     const lines = file.buffer.toString('utf8').replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean); const headers = lines.shift()!.split(',');
     return lines.map((line, i) => ({ row: i + 2, data: Object.fromEntries(headers.map((h, x) => [h.trim(), line.match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]*))(?:,|$)/g)?.[x]?.replace(/^\"|\",?$|,$/g, '').replace(/\"\"/g, '"') || ''])) }));
@@ -301,18 +303,64 @@ export class QuestionsService {
     const workbook = XLSX.read(file.buffer, { type: 'buffer', raw: false });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const matrix = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1, defval: '' });
-    const aliases: Record<string, string> = { 'Mã môn': 'subjectCode', 'Mã chương': 'chapterCode', 'Loại câu hỏi': 'type', 'Độ khó': 'difficulty', 'Mức độ Bloom': 'bloomLevel', 'Nội dung câu hỏi': 'content', 'Điểm': 'score', 'Đáp án A': 'optionA', 'Đúng A': 'correctA', 'Đáp án B': 'optionB', 'Đúng B': 'correctB', 'Đáp án C': 'optionC', 'Đúng C': 'correctC', 'Đáp án D': 'optionD', 'Đúng D': 'correctD', 'Giải thích': 'explanation' };
+    const aliases: Record<string, string> = {
+      'Mã môn': 'subjectCode',
+      'Mã chương': 'chapterCode',
+      'Loại câu hỏi': 'type',
+      'Độ khó': 'difficulty',
+      'Mức độ Bloom': 'bloomLevel',
+      'Nội dung câu hỏi': 'content',
+      'Nội dung': 'content',
+      'Câu hỏi': 'content',
+      'Điểm': 'score',
+      'Đáp án A': 'optionA',
+      'Đúng A': 'correctA',
+      'Đáp án B': 'optionB',
+      'Đúng B': 'correctB',
+      'Đáp án C': 'optionC',
+      'Đúng C': 'correctC',
+      'Đáp án D': 'optionD',
+      'Đúng D': 'correctD',
+      'Đáp án đúng': 'correctAnswer',
+      'Đáp án': 'correctAnswer',
+      'Giải thích': 'explanation',
+    };
     const headers = (matrix.shift() || []).map((h: any) => aliases[String(h).trim()] || String(h).trim());
     return matrix.filter(row => row.some((v: any) => String(v ?? '').trim() !== '')).map((row, i) => ({ row: i + 2, data: Object.fromEntries(headers.map((h, x) => [h, String(row[x] ?? '').trim()])) }));
   }
   private resolveImport(data: any, meta: ImportPreviewDto) {
     const use = (key: string, fallback: any) => meta.applyDefaultsToMissingOnly !== false && (!data[key] || String(data[key]).trim() === '') ? fallback : data[key];
-    return { ...data, subjectId: data.subjectId || meta.subjectId, chapterId: data.chapterId || meta.chapterId, type: use('type', meta.defaultType), difficulty: use('difficulty', meta.defaultDifficulty), bloomLevel: use('bloomLevel', meta.defaultBloomLevel), score: use('score', meta.defaultScore) };
+    const resolvedSubjectId = data.subjectId || (data.subjectCode ? null : meta.subjectId);
+    const resolvedChapterId = data.chapterId || (data.chapterCode ? null : meta.chapterId);
+    return {
+      ...data,
+      ...(resolvedSubjectId && { subjectId: resolvedSubjectId }),
+      ...(resolvedChapterId && { chapterId: resolvedChapterId }),
+      type: use('type', meta.defaultType || 'SINGLE_CHOICE'),
+      difficulty: use('difficulty', meta.defaultDifficulty || 'MEDIUM'),
+      bloomLevel: use('bloomLevel', meta.defaultBloomLevel || 'UNDERSTAND'),
+      score: use('score', meta.defaultScore || '0.25'),
+    };
   }
   async importPreview(a: Actor, file: Express.Multer.File, meta: ImportPreviewDto = new ImportPreviewDto()) {
     this.access(a); let rows = this.rowsFromFile(file); if (!rows.length || rows.length > 1000) throw new BadRequestException('File phải có 1-1000 dòng.');
     rows = rows.map(row => ({ ...row, data: this.resolveImport(row.data, meta) }));
-    const out = []; for (const row of rows) { const v: any = row.data; const subject = await this.prisma.subject.findUnique({ where: { subjectCode: v.subjectCode } }); const chapter = subject && v.chapterCode ? await this.prisma.chapter.findFirst({ where: { subjectId: subject.id, code: v.chapterCode } }) : null; const errors = []; if (!subject) errors.push('Môn không tồn tại'); if (v.chapterCode && !chapter) errors.push('Chương không hợp lệ'); if (!v.content) errors.push('Thiếu nội dung'); out.push({ ...row, subjectId: subject?.id, chapterId: chapter?.id || null, errors, duplicates: v.content ? await this.duplicates(v.content) : [] }); }
+    const out = [];
+    for (const row of rows) {
+      const v: any = row.data;
+      let subject = v.subjectId ? await this.prisma.subject.findUnique({ where: { id: Number(v.subjectId) } }) : (v.subjectCode ? await this.prisma.subject.findUnique({ where: { subjectCode: v.subjectCode } }) : null);
+      if (!subject && meta.subjectId) {
+        subject = await this.prisma.subject.findUnique({ where: { id: Number(meta.subjectId) } });
+      }
+      let chapter = v.chapterId ? await this.prisma.chapter.findUnique({ where: { id: String(v.chapterId) } }) : (subject && v.chapterCode ? await this.prisma.chapter.findFirst({ where: { subjectId: subject.id, code: v.chapterCode } }) : null);
+      if (!chapter && meta.chapterId && subject && String(subject.id) === String(meta.subjectId)) {
+        chapter = await this.prisma.chapter.findUnique({ where: { id: String(meta.chapterId) } });
+      }
+      const errors = [];
+      if (!subject) errors.push('Môn học không tồn tại. Vui lòng chọn môn học ở ô cấu hình.');
+      if (!v.content) errors.push('Thiếu nội dung câu hỏi.');
+      out.push({ ...row, subjectId: subject?.id, chapterId: chapter?.id || null, errors, duplicates: v.content ? await this.duplicates(v.content) : [] });
+    }
     return { hash: createHash('sha256').update(file.buffer).digest('hex'), rows: out };
   }
   async importConfirm(a: Actor, file: Express.Multer.File, d: ImportConfirmDto) {
@@ -322,8 +370,25 @@ export class QuestionsService {
     if (!selected.length || selected.some(x => x.errors.length)) throw new BadRequestException('Dòng chọn có lỗi.'); if (selected.some(x => x.duplicates.length) && !(d.overrideDuplicate && a.role === 'ADMIN')) throw new ConflictException('Có câu trùng.');
     const payloads: CreateQuestionDto[] = selected.map((x) => {
       const v: any = x.data;
-      const options = ['A', 'B', 'C', 'D'].filter((key) => v[`option${key}`]).map((key, index) => ({ label: key, content: v[`option${key}`], isCorrect: v[`correct${key}`] === 'true', order: index }));
-      const payload: CreateQuestionDto = { subjectId: x.subjectId!, chapterId: x.chapterId || undefined, content: v.content, type: v.type, difficulty: v.difficulty || 'MEDIUM', bloomLevel: v.bloomLevel || 'UNDERSTAND', score: Number(v.score || .25), explanation: v.explanation, options, overrideDuplicate: d.overrideDuplicate };
+      const correctAnsStr = String(v.correctAnswer || '').trim().toUpperCase();
+      const checkCorrect = (label: string) => {
+        if (v[`correct${label}`] === 'true' || v[`correct${label}`] === true) return true;
+        if (!correctAnsStr) return false;
+        if (correctAnsStr.includes(label)) return true;
+        if (label === 'A' && (correctAnsStr === '1' || correctAnsStr.startsWith('A'))) return true;
+        if (label === 'B' && (correctAnsStr === '2' || correctAnsStr.startsWith('B'))) return true;
+        if (label === 'C' && (correctAnsStr === '3' || correctAnsStr.startsWith('C'))) return true;
+        if (label === 'D' && (correctAnsStr === '4' || correctAnsStr.startsWith('D'))) return true;
+        if (v[`option${label}`] && String(v[`option${label}`]).trim().toUpperCase() === correctAnsStr) return true;
+        return false;
+      };
+      const options = ['A', 'B', 'C', 'D'].filter((key) => v[`option${key}`]).map((key, index) => ({
+        label: key,
+        content: v[`option${key}`],
+        isCorrect: checkCorrect(key),
+        order: index,
+      }));
+      const payload: CreateQuestionDto = { subjectId: x.subjectId!, chapterId: x.chapterId || undefined, content: v.content, type: v.type || 'SINGLE_CHOICE', difficulty: v.difficulty || 'MEDIUM', bloomLevel: v.bloomLevel || 'UNDERSTAND', score: Number(v.score || .25), explanation: v.explanation, options, overrideDuplicate: d.overrideDuplicate };
       if (!['SINGLE_CHOICE','MULTIPLE_CHOICE','TRUE_FALSE','FILL_BLANK','ESSAY'].includes(payload.type)) throw new BadRequestException(`Loại câu ở dòng ${x.row} không hợp lệ.`);
       if (!['EASY','MEDIUM','HARD'].includes(payload.difficulty)) throw new BadRequestException(`Độ khó ở dòng ${x.row} không hợp lệ.`);
       if (!['REMEMBER','UNDERSTAND','APPLY','ANALYZE'].includes(payload.bloomLevel)) throw new BadRequestException(`Bloom ở dòng ${x.row} không hợp lệ.`);

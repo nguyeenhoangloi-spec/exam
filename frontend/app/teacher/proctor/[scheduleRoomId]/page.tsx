@@ -79,7 +79,7 @@ export default function ProctorDashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
         <span className="ml-3 text-slate-600">Đang kết nối bảng điều khiển giám thị trực tuyến...</span>
       </div>
     );
@@ -94,7 +94,7 @@ export default function ProctorDashboardPage() {
           <p className="text-slate-600 text-sm mb-6">{error}</p>
           <button
             onClick={() => router.back()}
-            className="px-6 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl"
+            className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl"
           >
             Quay lại
           </button>
@@ -118,7 +118,7 @@ export default function ProctorDashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
           <div>
             <div className="flex items-center space-x-3">
-              <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold rounded-full uppercase tracking-wider">
+              <span className="px-3 py-1 bg-blue-500/10 text-blue-500 border border-blue-500/20 text-xs font-semibold rounded-full uppercase tracking-wider">
                 Giám Thí Trực Tiếp (Realtime)
               </span>
               <span className="flex items-center text-xs text-emerald-400 font-semibold" title="Dữ liệu tự động cập nhật mỗi 3 giây">
@@ -154,8 +154,8 @@ export default function ProctorDashboardPage() {
             <div className="text-2xl font-bold text-amber-400">{data.stats?.disconnected || 0}</div>
           </div>
           <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-            <div className="text-xs text-indigo-400 font-semibold mb-1">Đã Nộp Bài</div>
-            <div className="text-2xl font-bold text-indigo-400">{data.stats?.submitted || 0}</div>
+            <div className="text-xs text-blue-500 font-semibold mb-1">Đã Nộp Bài</div>
+            <div className="text-2xl font-bold text-blue-500">{data.stats?.submitted || 0}</div>
           </div>
           <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
             <div className="text-xs text-rose-400 font-semibold mb-1">Có Cảnh Báo Vi Phạm</div>
@@ -169,11 +169,10 @@ export default function ProctorDashboardPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
-                filter === f
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${filter === f
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                   : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
-              }`}
+                }`}
             >
               {f === 'ALL' && 'Tất Cả'}
               {f === 'IN_PROGRESS' && 'Đang Làm Bài'}
@@ -183,8 +182,8 @@ export default function ProctorDashboardPage() {
           ))}
         </div>
 
-        <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-xs text-slate-700">
-          <strong className="text-indigo-300">Hướng dẫn:</strong> “Gia hạn thời gian” cộng phút cho phiên đang thi; “Mở lại phiên thi” cho phép tiếp tục phiên đã kết thúc hoặc gián đoạn; “Mức cảnh báo” là điểm rủi ro từ các sự kiện giám sát, không phải điểm bài thi.
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-slate-700">
+          <strong className="text-blue-600">Hướng dẫn:</strong> “Gia hạn thời gian” cộng phút cho phiên đang thi; “Mở lại phiên thi” cho phép tiếp tục phiên đã kết thúc hoặc gián đoạn; “Mức cảnh báo” là điểm rủi ro từ các sự kiện giám sát, không phải điểm bài thi.
         </div>
 
         {/* STUDENT MONITORING TABLE */}
@@ -212,23 +211,22 @@ export default function ProctorDashboardPage() {
                         {s.examNumber} <span className="text-xs text-slate-500">(G:{s.seatNumber})</span>
                       </td>
                       <td className="px-6 py-4 font-semibold text-slate-900">{s.student.fullName}</td>
-                      <td className="px-6 py-4 font-mono text-indigo-400">{s.student.studentCode}</td>
+                      <td className="px-6 py-4 font-mono text-blue-500">{s.student.studentCode}</td>
                       <td className="px-6 py-4">
                         {!att ? (
-                            <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs rounded-full border border-slate-200">
+                          <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs rounded-full border border-slate-200">
                             Chưa bắt đầu
                           </span>
                         ) : (
                           <span
-                            className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
-                              att.status === 'IN_PROGRESS'
+                            className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${att.status === 'IN_PROGRESS'
                                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                                 : att.status === 'DISCONNECTED'
-                                ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                                : att.isFlagged
-                                ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                                : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30'
-                            }`}
+                                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                                  : att.isFlagged
+                                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                                    : 'bg-blue-500/10 text-blue-500 border-blue-500/30'
+                              }`}
                           >
                             {(att.status === 'IN_PROGRESS' ? 'Đang làm bài' : att.status === 'DISCONNECTED' ? 'Mất kết nối' : att.status === 'SUBMITTED' ? 'Đã nộp bài' : att.status === 'ABSENT' ? 'Vắng mặt' : att.status)} {att.extraMinutes > 0 && `(+${att.extraMinutes} phút)`}
                           </span>
@@ -236,13 +234,12 @@ export default function ProctorDashboardPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg border ${
-                            riskScore >= 40
+                          className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg border ${riskScore >= 40
                               ? 'bg-rose-500/20 text-rose-400 border-rose-500/50 animate-pulse'
                               : riskScore >= 15
-                              ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                              : 'bg-slate-100 text-slate-600 border-slate-200'
-                          }`}
+                                ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
                         >
                           {riskScore} điểm
                         </span>
@@ -256,7 +253,7 @@ export default function ProctorDashboardPage() {
                                 setActionType('EXTEND');
                               }}
                               title="Cộng thêm thời gian làm bài khi sinh viên đang thi hoặc bị mất kết nối"
-                              className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-medium rounded-lg border border-indigo-200 transition"
+                              className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium rounded-lg border border-blue-200 transition"
                             >
                               Gia hạn thời gian
                             </button>}
@@ -323,7 +320,7 @@ export default function ProctorDashboardPage() {
                     type="number"
                     value={extraMinutes}
                     onChange={(e) => setExtraMinutes(Number(e.target.value))}
-                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                     min={1}
                     max={60}
                   />
@@ -336,7 +333,7 @@ export default function ProctorDashboardPage() {
                   <select
                     value={incidentDecision}
                     onChange={(e) => setIncidentDecision(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                   >
                     <option value="UNDER_REVIEW">Yêu cầu xem xét (UNDER_REVIEW)</option>
                     <option value="TERMINATED">Đình chỉ thi ngay lập tức (TERMINATED)</option>
@@ -352,7 +349,7 @@ export default function ProctorDashboardPage() {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="Nhập nguyên nhân..."
-                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -378,7 +375,7 @@ export default function ProctorDashboardPage() {
                 <button
                   disabled={processing}
                   onClick={handleAction}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl"
                 >
                   {processing ? 'Đang xử lý...' : 'Xác Nhận'}
                 </button>

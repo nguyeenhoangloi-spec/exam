@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
-import { AppShell } from '../../../components/AppShell';
+import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import {
   BookOpen,
@@ -53,6 +53,7 @@ interface StatsInfo {
 }
 
 export default function StudentCurriculumPage() {
+  usePageTitle('Khung Chương Trình Đào Tạo Cá Nhân');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
@@ -109,14 +110,14 @@ export default function StudentCurriculumPage() {
     : 0;
 
   return (
-    <AppShell user={currentUser} title="Khung Chương Trình Đào Tạo Cá Nhân">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Banner Student & Major Info */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white shadow-xl">
-          <div className="absolute -right-10 -bottom-10 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-900 to-sky-900 p-6 text-white shadow-xl">
+          <div className="absolute -right-10 -bottom-10 h-48 w-48 rounded-full bg-sky-400/20 blur-3xl pointer-events-none" />
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-400/20 border border-sky-300/30 text-sky-200 text-xs font-semibold backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Chương Trình Đào Tạo Chuẩn</span>
               </div>
@@ -125,15 +126,15 @@ export default function StudentCurriculumPage() {
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">
                 <span className="flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-indigo-400" />
+                  <User className="w-3.5 h-3.5 text-sky-300" />
                   {studentInfo?.fullName} ({studentInfo?.studentCode})
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <School className="w-3.5 h-3.5 text-indigo-400" />
+                  <School className="w-3.5 h-3.5 text-sky-300" />
                   Lớp: {studentInfo?.className || studentInfo?.classCode || '---'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                  <Building2 className="w-3.5 h-3.5 text-sky-300" />
                   Mã Khoa: {studentInfo?.departmentCode || '---'}
                 </span>
               </div>
@@ -147,7 +148,7 @@ export default function StudentCurriculumPage() {
               </div>
               <div className="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-500 rounded-full"
+                  className="bg-gradient-to-r from-blue-500 to-sky-400 h-full transition-all duration-500 rounded-full"
                   style={{ width: `${completionPercentage}%` }}
                 />
               </div>
@@ -172,7 +173,7 @@ export default function StudentCurriculumPage() {
           </div>
 
           <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
               <Layers className="w-5 h-5" />
             </div>
             <div>
@@ -192,7 +193,7 @@ export default function StudentCurriculumPage() {
           </div>
 
           <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
@@ -324,7 +325,7 @@ export default function StudentCurriculumPage() {
                                     Bắt buộc
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200/60">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200/60">
                                     Tự chọn
                                   </span>
                                 )}
@@ -355,6 +356,6 @@ export default function StudentCurriculumPage() {
 
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </main>
-    </AppShell>
+    </>
   );
 }

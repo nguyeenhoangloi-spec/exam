@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { DashboardWelcome } from '../../components/dashboard/DashboardWelcome';
@@ -23,10 +23,12 @@ import { DashboardOverview } from '../../types/dashboard';
 import { User } from '../../types';
 
 export default function DashboardPage() {
+  usePageTitle('Tổng quan');
   const router = useRouter();
+  const cachedOverview = typeof window !== 'undefined' ? getCachedData<DashboardOverview>('/dashboard/overview') : null;
   const [user, setUser] = useState<User | null>(null);
-  const [overview, setOverview] = useState<DashboardOverview | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [overview, setOverview] = useState<DashboardOverview | null>(cachedOverview);
+  const [loading, setLoading] = useState(!cachedOverview);
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState('');
   const [confirmModal, setConfirmModal] = useState<{
@@ -40,14 +42,14 @@ export default function DashboardPage() {
     title: '',
     message: '',
     type: 'success',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
   const [rejecting, setRejecting] = useState<{ id: string; code: string } | null>(null);
   const [reason, setReason] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const loadOverview = useCallback(async () => {
-    setLoading(true);
+  const loadOverview = useCallback(async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     setError('');
     try {
       const response = await api.get<DashboardOverview>('/dashboard/overview');
@@ -115,7 +117,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <AppShell user={user} title="Tổng quan">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {loading ? (
           <DashboardSkeleton />
@@ -230,6 +232,6 @@ export default function DashboardPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

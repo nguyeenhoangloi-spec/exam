@@ -14,7 +14,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { Modal } from '../../components/Modal';
@@ -41,6 +41,7 @@ const initialForm = {
 };
 
 export default function ExamPapersPage() {
+  usePageTitle('Quản lý đề thi');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
@@ -339,14 +340,14 @@ export default function ExamPapersPage() {
   const isAdmin = currentUser?.role === 'ADMIN';
 
   return (
-    <AppShell user={currentUser} title="Quản lý đề thi">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
 
         <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-12">
           {/* Creation Form Panel */}
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
             <h2 className="mb-4 flex items-center gap-2 font-bold text-slate-900">
-              <Sparkles className="h-5 w-5 text-violet-600" /> Rút đề thi ngẫu nhiên
+              <Sparkles className="h-5 w-5 text-sky-600" /> Rút đề thi ngẫu nhiên
             </h2>
 
             <form onSubmit={createPaper} className="space-y-4">
@@ -416,8 +417,8 @@ export default function ExamPapersPage() {
                   <p className="text-xs font-semibold uppercase text-slate-600">Ma trận độ khó</p>
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${isValidTotal
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-rose-50 text-rose-700 border border-rose-200'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'bg-rose-50 text-rose-700 border border-rose-200'
                       }`}
                   >
                     Tổng: {currentTotal} / {requiredTotal} câu {isValidTotal ? '✓' : `(Cần ${requiredTotal} câu)`}
@@ -448,7 +449,7 @@ export default function ExamPapersPage() {
 
               <button
                 disabled={creating || !schedules.length || !isValidTotal}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1e66f5] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 py-3 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 py-3 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Sparkles className="h-4 w-4" /> {creating ? 'Đang tạo đề...' : `Tạo ${Number(formData.variantCount) > 1 ? `${formData.variantCount} Mã Đề Đảo Câu` : 'Đề Thi'}`}
               </button>
@@ -499,7 +500,7 @@ export default function ExamPapersPage() {
                   ) : (
                     papers.map((paper) => (
                       <tr key={paper.id} className="hover:bg-slate-50/70">
-                        <td className="px-3 py-3 font-bold text-violet-700">{paper.paperCode}</td>
+                        <td className="px-3 py-3 font-bold text-sky-700">{paper.paperCode}</td>
                         <td className="max-w-64 px-3 py-3">
                           <p className="truncate font-semibold text-slate-800" title={paper.title}>
                             {paper.title}
@@ -550,7 +551,7 @@ export default function ExamPapersPage() {
                               <button
                                 onClick={() => runAction(paper, 'restore')}
                                 title="Khôi phục"
-                                className="rounded-lg p-2 text-violet-600 hover:bg-violet-50"
+                                className="rounded-lg p-2 text-sky-600 hover:bg-sky-50"
                               >
                                 <RotateCcw className="h-4 w-4" />
                               </button>
@@ -640,8 +641,8 @@ export default function ExamPapersPage() {
                       <div
                         key={option.id}
                         className={`rounded-lg border p-2 text-xs ${showAnswers && option.isCorrect
-                            ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800'
-                            : 'border-slate-200 bg-slate-50 text-slate-700'
+                          ? 'border-emerald-300 bg-emerald-50 font-semibold text-emerald-800'
+                          : 'border-slate-200 bg-slate-50 text-slate-700'
                           }`}
                       >
                         {option.label}. {option.content}
@@ -688,6 +689,6 @@ export default function ExamPapersPage() {
         onConfirm={handleConfirmCriticalPublish}
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

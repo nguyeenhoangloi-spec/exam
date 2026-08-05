@@ -8,7 +8,7 @@ export interface KPICardItem {
   value: string | number;
   subtext?: string;
   icon: LucideIcon;
-  color: 'sky' | 'indigo' | 'emerald' | 'amber' | 'purple' | 'rose';
+  color: 'sky' | 'blue' | 'emerald' | 'amber' | 'skyDeep' | 'rose';
   trend?: string;
 }
 
@@ -23,11 +23,11 @@ const colorMap = {
     border: 'border-sky-100',
     iconBg: 'bg-sky-500',
   },
-  indigo: {
-    bg: 'bg-indigo-50',
-    text: 'text-indigo-600',
-    border: 'border-indigo-100',
-    iconBg: 'bg-indigo-500',
+  blue: {
+    bg: 'bg-blue-50',
+    text: 'text-blue-700',
+    border: 'border-blue-100',
+    iconBg: 'bg-blue-600',
   },
   emerald: {
     bg: 'bg-emerald-50',
@@ -41,11 +41,11 @@ const colorMap = {
     border: 'border-amber-100',
     iconBg: 'bg-amber-500',
   },
-  purple: {
-    bg: 'bg-purple-50',
-    text: 'text-purple-600',
-    border: 'border-purple-100',
-    iconBg: 'bg-purple-500',
+  skyDeep: {
+    bg: 'bg-sky-50',
+    text: 'text-sky-700',
+    border: 'border-sky-200',
+    iconBg: 'bg-sky-600',
   },
   rose: {
     bg: 'bg-rose-50',

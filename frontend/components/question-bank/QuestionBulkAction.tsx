@@ -39,7 +39,7 @@ export function QuestionBulkAction({
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[92vw] bg-white/95 border border-slate-200/90 shadow-2xl rounded-2xl p-2.5 px-4 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 text-xs font-semibold animate-in slide-in-from-bottom-5 duration-300">
       {/* Left side counter & clear buttons */}
       <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3">
-        <span className="flex items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200 px-3 py-1.5 font-bold text-[#1e66f5]">
+        <span className="flex items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200 px-3 py-1.5 font-bold text-blue-600">
           <CheckSquare className="h-4 w-4" />
           <span>Đã chọn {selectedCount} / {totalCount}</span>
         </span>
@@ -71,7 +71,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('SUBMIT')}
-            className="flex items-center gap-1.5 rounded-xl bg-[#1e66f5] hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
           >
             <Send className="h-3.5 w-3.5" /> Gửi duyệt ({selectedCount})
           </button>
@@ -91,7 +91,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('RESTORE')}
-            className="flex items-center gap-1.5 rounded-xl bg-[#1e66f5] hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
           >
             <RotateCcw className="h-3.5 w-3.5" /> Khôi phục ({selectedCount})
           </button>
@@ -113,7 +113,7 @@ export function QuestionBulkAction({
             onClick={() => onAction('ARCHIVE')}
             className="flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 font-semibold transition"
           >
-            <Archive className="h-3.5 w-3.5 text-indigo-600" /> Lưu trữ
+            <Archive className="h-3.5 w-3.5 text-blue-600" /> Lưu trữ
           </button>
         )}
 

@@ -11,7 +11,7 @@ const statusStyles: Record<string, string> = {
   PENDING_APPROVAL: 'bg-amber-100 text-amber-800 border border-amber-300',
   APPROVED: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
   REJECTED: 'bg-rose-100 text-rose-800 border border-rose-300',
-  ARCHIVED: 'bg-indigo-100 text-indigo-800 border border-indigo-300',
+  ARCHIVED: 'bg-blue-100 text-blue-800 border border-blue-300',
 };
 
 const difficultyStyles: Record<string, string> = {

@@ -1,9 +1,9 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -21,15 +21,24 @@ import { QuestionStatistics } from '../../components/question-bank/QuestionStati
 import { QuestionToolbar } from '../../components/question-bank/QuestionToolbar';
 import { printReport } from '../../lib/export-print';
 
-const emptyFilters: Filters = { subjectId: '', chapterId: '', type: '', difficulty: '', bloomLevel: '', status: '' };
-
 export default function QuestionBankPage() {
+  usePageTitle('Ngân hàng câu hỏi');
   const router = useRouter();
+  const cachedQRes = typeof window !== 'undefined' ? getCachedData<any>('/questions?page=1&limit=20') : null;
+  const cachedSubs = typeof window !== 'undefined' ? getCachedData<Subject[]>('/subjects') : null;
+  const initialQList = cachedQRes?.data || [];
   const [user, setUser] = useState<any>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [questions, setQuestions] = useState<Question[]>(initialQList);
+  const [subjects, setSubjects] = useState<Subject[]>(cachedSubs || []);
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const [filters, setFilters] = useState(emptyFilters);
+  const [filters, setFilters] = useState<Filters>({
+    subjectId: '',
+    chapterId: '',
+    type: '',
+    difficulty: '',
+    bloomLevel: '',
+    status: '',
+  });
   const [search, setSearch] = useState('');
   const [debounced, setDebounced] = useState('');
   const [page, setPage] = useState(1);
@@ -41,7 +50,7 @@ export default function QuestionBankPage() {
   const [editing, setEditing] = useState<Question | null>(null);
   const [importOpen, setImportOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialQList.length);
   const [error, setError] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -304,7 +313,7 @@ export default function QuestionBankPage() {
   };
 
   return (
-    <AppShell user={user} title="Ngân hàng câu hỏi">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         <QuestionStatistics
           counts={counts}
@@ -407,6 +416,6 @@ export default function QuestionBankPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }

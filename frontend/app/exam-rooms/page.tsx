@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
-import { AppShell } from '../../components/AppShell';
+import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
@@ -30,6 +30,7 @@ import {
 import { ExamRoom } from '../../types';
 
 export default function ExamRoomsPage() {
+  usePageTitle('Quản lý Phòng thi');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [rooms, setRooms] = useState<ExamRoom[]>([]);
@@ -61,7 +62,7 @@ export default function ExamRoomsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -224,163 +225,163 @@ export default function ExamRoomsPage() {
   // KPI Items
   const kpiItems: KPICardItem[] = [
     { title: 'Tổng số phòng thi', value: rooms.length, subtext: 'Hạ tầng cơ sở thi', icon: DoorOpen, color: 'sky' },
-    { title: 'Tổng sức chứa', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} Chỗ`, subtext: 'Số thí sinh đồng thời', icon: Users, color: 'indigo' },
+    { title: 'Tổng sức chứa', value: `${rooms.reduce((sum, r) => sum + r.capacity, 0)} Chỗ`, subtext: 'Số thí sinh đồng thời', icon: Users, color: 'blue' },
     { title: 'Phòng thi Máy tính', value: rooms.filter((r) => r.roomType === 'COMPUTER_LAB').length, subtext: 'Thi trắc nghiệm trực tuyến', icon: Monitor, color: 'emerald' },
-    { title: 'Phòng thi Lý thuyết', value: rooms.filter((r) => r.roomType !== 'COMPUTER_LAB').length, subtext: 'Thi tự luận giấy', icon: Building, color: 'purple' },
+    { title: 'Phòng thi Lý thuyết', value: rooms.filter((r) => r.roomType !== 'COMPUTER_LAB').length, subtext: 'Thi tự luận giấy', icon: Building, color: 'skyDeep' },
   ];
 
   return (
-    <AppShell user={currentUser} title="Quản lý Phòng thi">
+    <>
       <main className="w-full px-6 py-6 space-y-6">
         {/* Header Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs text-slate-500 font-medium">Quản lý danh sách phòng máy tính, hội trường thi và sức chứa thí sinh</p>
           </div>
-            <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+            >
+              <Printer className="h-4 w-4" /> In Danh sách
+            </button>
+            <button
+              onClick={exportCsv}
+              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
+            >
+              <Download className="h-4 w-4" /> Xuất Danh sách
+            </button>
+            {currentUser?.role === 'ADMIN' && (
               <button
-                onClick={handlePrintReport}
-                className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
+                onClick={openAddModal}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
               >
-                <Printer className="h-4 w-4" /> In Danh sách
+                <Plus className="h-4 w-4" /> Thêm Phòng thi
               </button>
-              <button
-                onClick={exportCsv}
-                className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-xl font-medium text-sm shadow-xs transition"
-              >
-                <Download className="h-4 w-4" /> Xuất Danh sách
-              </button>
-              {currentUser?.role === 'ADMIN' && (
-                <button
-                  onClick={openAddModal}
-                  className="flex items-center gap-2 bg-[#1e66f5] hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition"
-                >
-                  <Plus className="h-4 w-4" /> Thêm Phòng thi
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* KPI Header Cards */}
-          <KPICards items={kpiItems} />
-
-          {/* Search & Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="relative flex-1 min-w-[260px]">
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Tìm theo Mã phòng, Tên phòng, Tòa nhà..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-slate-400" />
-                <span className="text-xs font-semibold text-slate-500">Loại phòng:</span>
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
-                >
-                  <option value="">Tất cả loại phòng</option>
-                  <option value="COMPUTER_LAB">Phòng Máy tính</option>
-                  <option value="THEORY_ROOM">Phòng Lý thuyết</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Table Content */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách phòng thi...</div>
-            ) : filteredRooms.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy phòng thi phù hợp.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
-                    <tr>
-                      <th className="p-4 pl-6">Mã Phòng</th>
-                      <th className="p-4">Tên Phòng thi</th>
-                      <th className="p-4">Sức chứa</th>
-                      <th className="p-4">Tòa nhà</th>
-                      <th className="p-4">Loại phòng</th>
-                      <th className="p-4 pr-6 text-right">Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
-                    {filteredRooms.map((r) => {
-                      const code = r.roomCode || r.code || '';
-                      const name = r.roomName || r.name || '';
-                      const loc = r.building || r.location || 'Chưa cập nhật';
-                      return (
-                        <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="p-4 pl-6 font-bold text-sky-700">{code}</td>
-                          <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
-                              {r.roomType === 'COMPUTER_LAB' ? <Monitor className="h-4 w-4 text-emerald-600" /> : <DoorOpen className="h-4 w-4 text-sky-600" />}
-                            </div>
-                            {name}
-                          </td>
-                          <td className="p-4">
-                            <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                              <Users className="h-3.5 w-3.5 text-slate-400" /> {r.capacity} Chỗ
-                            </span>
-                          </td>
-                          <td className="p-4 font-medium text-slate-800">{loc}</td>
-                          <td className="p-4">
-                            {r.roomType === 'COMPUTER_LAB' ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
-                                <Monitor className="h-3.5 w-3.5" /> Phòng Máy tính
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-bold text-sky-700 border border-sky-100">
-                                <DoorOpen className="h-3.5 w-3.5" /> Phòng Lý thuyết
-                              </span>
-                            )}
-                          </td>
-                          <td className="p-4 pr-6 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button
-                                onClick={() => setDrawerRoom(r)}
-                                className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
-                                title="Xem chi tiết phòng"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </button>
-                              {currentUser?.role === 'ADMIN' && (
-                                <>
-                                  <button
-                                    onClick={() => openEditModal(r)}
-                                    className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                                    title="Chỉnh sửa"
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDelete(r.id)}
-                                    className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                    title="Xóa"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
             )}
           </div>
-        </main>
+        </div>
+
+        {/* KPI Header Cards */}
+        <KPICards items={kpiItems} />
+
+        {/* Search & Filter Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Mã phòng, Tên phòng, Tòa nhà..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none transition"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-slate-400" />
+              <span className="text-xs font-semibold text-slate-500">Loại phòng:</span>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:bg-white focus:outline-none"
+              >
+                <option value="">Tất cả loại phòng</option>
+                <option value="COMPUTER_LAB">Phòng Máy tính</option>
+                <option value="THEORY_ROOM">Phòng Lý thuyết</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Table Content */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {loading ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Đang tải danh sách phòng thi...</div>
+          ) : filteredRooms.length === 0 ? (
+            <div className="p-12 text-center text-slate-500 text-sm">Không tìm thấy phòng thi phù hợp.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 pl-6">Mã Phòng</th>
+                    <th className="p-4">Tên Phòng thi</th>
+                    <th className="p-4">Sức chứa</th>
+                    <th className="p-4">Tòa nhà</th>
+                    <th className="p-4">Loại phòng</th>
+                    <th className="p-4 pr-6 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {filteredRooms.map((r) => {
+                    const code = r.roomCode || r.code || '';
+                    const name = r.roomName || r.name || '';
+                    const loc = r.building || r.location || 'Chưa cập nhật';
+                    return (
+                      <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-4 pl-6 font-bold text-sky-700">{code}</td>
+                        <td className="p-4 font-semibold text-slate-900 flex items-center gap-2">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 font-bold text-xs">
+                            {r.roomType === 'COMPUTER_LAB' ? <Monitor className="h-4 w-4 text-emerald-600" /> : <DoorOpen className="h-4 w-4 text-sky-600" />}
+                          </div>
+                          {name}
+                        </td>
+                        <td className="p-4">
+                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                            <Users className="h-3.5 w-3.5 text-slate-400" /> {r.capacity} Chỗ
+                          </span>
+                        </td>
+                        <td className="p-4 font-medium text-slate-800">{loc}</td>
+                        <td className="p-4">
+                          {r.roomType === 'COMPUTER_LAB' ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-100">
+                              <Monitor className="h-3.5 w-3.5" /> Phòng Máy tính
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-bold text-sky-700 border border-sky-100">
+                              <DoorOpen className="h-3.5 w-3.5" /> Phòng Lý thuyết
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4 pr-6 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => setDrawerRoom(r)}
+                              className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition"
+                              title="Xem chi tiết phòng"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                            {currentUser?.role === 'ADMIN' && (
+                              <>
+                                <button
+                                  onClick={() => openEditModal(r)}
+                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                                  title="Chỉnh sửa"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(r.id)}
+                                  className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                  title="Xóa"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Edit/Add Modal */}
       <Modal
@@ -499,6 +500,6 @@ export default function ExamRoomsPage() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </AppShell>
+    </>
   );
 }
