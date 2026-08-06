@@ -163,9 +163,21 @@ export class QuestionsService {
     ]);
     return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
   }
-  async statistics(a: Actor) {
+  async statistics(a: Actor, q?: QuestionQueryDto) {
     this.access(a);
-    const where = { deletedAt: null };
+    const where: Prisma.QuestionWhereInput = {
+      deletedAt: null,
+      ...(q?.subjectId ? { subjectId: Number(q.subjectId) } : {}),
+      ...(q?.chapterId ? { chapterId: String(q.chapterId) } : {}),
+      ...(q?.type ? { type: q.type } : {}),
+      ...(q?.difficulty ? { difficulty: q.difficulty } : {}),
+      ...(q?.search ? {
+        OR: [
+          { content: { contains: q.search, mode: 'insensitive' } },
+          { code: { contains: q.search, mode: 'insensitive' } },
+        ],
+      } : {}),
+    };
     const [statusRows, difficultyRows, typeRows] = await Promise.all([
       this.prisma.question.groupBy({ by: ['status'], where, _count: { _all: true } }),
       this.prisma.question.groupBy({ by: ['difficulty'], where, _count: { _all: true } }),

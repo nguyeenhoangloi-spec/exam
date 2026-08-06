@@ -77,8 +77,8 @@ export class QuestionsController {
   }
 
   @Get('statistics')
-  statistics(@Request() req: any) {
-    return this.questions.statistics(req.user);
+  statistics(@Request() req: any, @Query() query: QuestionQueryDto) {
+    return this.questions.statistics(req.user, query);
   }
 
   @Get('filter-options')

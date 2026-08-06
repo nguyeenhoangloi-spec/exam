@@ -176,16 +176,49 @@ export class ExamPapersService {
         );
       }
 
-      const selectedQuestions = this.shuffle([
+      const rawSelected = this.shuffle([
         ...this.shuffle(byDifficulty.EASY).slice(0, data.easyCount),
         ...this.shuffle(byDifficulty.MEDIUM).slice(0, data.mediumCount),
         ...this.shuffle(byDifficulty.HARD).slice(0, data.hardCount),
       ]);
       if (schedule.examType === 'TU_LUAN') {
-        const missingRubric = selectedQuestions.find((question: any) => question.type === 'ESSAY' && (!question.essayRubrics || question.essayRubrics.length === 0));
+        const missingRubric = rawSelected.find((question: any) => question.type === 'ESSAY' && (!question.essayRubrics || question.essayRubrics.length === 0));
         if (missingRubric) throw new BadRequestException(`Câu ${missingRubric.code} chưa có rubric chấm điểm, không thể tạo đề tự luận.`);
       }
-      const totalScore = selectedQuestions.reduce((sum, question) => sum + question.score, 0);
+
+      // Thuật toán chuẩn hóa phân bổ điểm sao cho tổng bộ đề luôn luôn bằng đúng 10.0 điểm
+      const targetTotalScore = 10.0;
+      const numQuestions = rawSelected.length;
+      let currentSum = 0;
+      const selectedQuestions = rawSelected.map((q, idx) => {
+        let assignedScore = 0.25;
+        if (schedule.examType === 'TU_LUAN') {
+          // Tính điểm dựa trên độ khó / điểm gốc sao cho tổng = 10.0
+          const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
+          const qWeight = q.score && q.score > 0 ? q.score : (weightMap[q.difficulty] || 1.5);
+          const totalWeight = rawSelected.reduce((sum, item) => sum + (item.score && item.score > 0 ? item.score : (weightMap[item.difficulty] || 1.5)), 0);
+
+          if (idx === numQuestions - 1) {
+            assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
+          } else {
+            const calculated = Math.round(((qWeight / totalWeight) * targetTotalScore) * 4) / 4;
+            assignedScore = Math.max(0.25, calculated);
+            currentSum += assignedScore;
+          }
+        } else {
+          // Trắc nghiệm: Chia đều 10.0 cho tổng số câu
+          if (idx === numQuestions - 1) {
+            assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
+          } else {
+            const calculated = Math.round((targetTotalScore / numQuestions) * 100) / 100;
+            assignedScore = Math.max(0.05, calculated);
+            currentSum += assignedScore;
+          }
+        }
+        return { ...q, assignedScore };
+      });
+
+      const totalScore = targetTotalScore;
       const paperCode = data.paperCode.trim();
       const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;
 
@@ -195,7 +228,7 @@ export class ExamPapersService {
           message: 'Đã tạo phương án đề thi. Chưa ghi dữ liệu.',
           schedule: { id: schedule.id, subjectName: schedule.subject.subjectName, examDate: schedule.examDate, startTime: schedule.startTime, endTime: schedule.endTime },
           paper: { paperCode, title, durationMinutes: data.durationMinutes, totalScore, questionCount: selectedQuestions.length },
-          questions: selectedQuestions.map((question, index) => ({ id: question.id, code: question.code, content: question.content, difficulty: question.difficulty, score: question.score, order: index + 1 })),
+          questions: selectedQuestions.map((question, index) => ({ id: question.id, code: question.code, content: question.content, difficulty: question.difficulty, score: question.assignedScore, order: index + 1 })),
           rationale: 'Chọn ngẫu nhiên câu đã duyệt theo đúng ma trận độ khó đã nhập.',
           warnings: [],
           alternatives: [{ rationale: 'Có thể chạy lại xem trước để tạo một bộ câu ngẫu nhiên khác cùng ma trận.' }],
@@ -223,7 +256,7 @@ export class ExamPapersService {
               create: shuffledQuestions.map((question, index) => ({
                 questionId: question.id,
                 questionOrder: index + 1,
-                score: question.score,
+                score: question.assignedScore,
               })),
             },
           },

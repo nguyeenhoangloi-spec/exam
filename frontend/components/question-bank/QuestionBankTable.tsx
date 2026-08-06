@@ -312,6 +312,7 @@ export function QuestionBankTable({
             {visibleColumns.subject !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Môn học</th>}
             {visibleColumns.difficulty !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Độ khó</th>}
             {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại</th>}
+            <th scope="col" className="p-3.5 whitespace-nowrap">Điểm</th>
             {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
             {visibleColumns.creator !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Người tạo</th>}
             {visibleColumns.createdAt !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày tạo</th>}
@@ -424,6 +425,13 @@ export function QuestionBankTable({
                     <QuestionTypeBadge type={q.type || 'SINGLE_CHOICE'} />
                   </td>
                 )}
+
+                {/* Điểm số */}
+                <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200/90 text-[11px] font-extrabold shadow-2xs">
+                    {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)} đ
+                  </span>
+                </td>
 
                 {/* Trạng thái */}
                 {visibleColumns.status !== false && (

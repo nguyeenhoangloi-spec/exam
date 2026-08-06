@@ -155,12 +155,17 @@ export default function QuestionBankPage() {
     if (filterValues.status) params.set('status', filterValues.status);
     if (filterValues.type) params.set('type', filterValues.type);
 
+    const statsParams = new URLSearchParams(params);
+    statsParams.delete('status');
+    statsParams.delete('page');
+    statsParams.delete('limit');
+
     router.replace(`/question-bank?${params}`, { scroll: false });
 
     try {
       const [list, stats] = await Promise.all([
         api.get(`/questions?${params}`),
-        api.get('/questions/statistics'),
+        api.get(`/questions/statistics?${statsParams}`),
       ]);
       setQuestions(list.data.data);
       setTotalPages(list.data.totalPages);
