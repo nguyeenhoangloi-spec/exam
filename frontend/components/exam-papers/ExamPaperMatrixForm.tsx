@@ -18,12 +18,16 @@ interface ExamPaperMatrixFormProps {
     hardCount: string;
     variantCount: string;
     examType?: string;
+    selectionMode?: string;
+    easyScore?: string;
+    mediumScore?: string;
+    hardScore?: string;
   };
   setFormData: React.Dispatch<React.SetStateAction<any>>;
   handleDurationChange: (duration: string) => void;
   onSubmit: (e: FormEvent) => void;
   creating: boolean;
-  selectedSchedule?: ExamSchedule;
+  selectedSchedule?: any;
   scheduleDuration: number;
   currentTotal: number;
   requiredTotal: number;
@@ -56,6 +60,28 @@ export function ExamPaperMatrixForm({
   const isEssay  = examType === 'TU_LUAN';
   const scheduleType = selectedSchedule?.examType === 'TU_LUAN' ? 'TU_LUAN' : selectedSchedule?.examType === 'TRAC_NGHIEM' ? 'TRAC_NGHIEM' : undefined;
 
+  const isPublished = Boolean(
+    selectedSchedule?.hasPublishedPaper ||
+    selectedSchedule?.examPapers?.some((p: any) => p.status === 'PUBLISHED')
+  );
+
+  const isScheduleExpired = (s: any) => {
+    if (['COMPLETED', 'CANCELLED', 'LOCKED'].includes(s?.status)) return true;
+    if (!s?.examDate) return false;
+    try {
+      const scheduleEnd = new Date(s.examDate);
+      if (s.endTime) {
+        const [h, m] = s.endTime.split(':').map(Number);
+        scheduleEnd.setHours(h || 23, m || 59, 0, 0);
+      } else {
+        scheduleEnd.setHours(23, 59, 59, 999);
+      }
+      return scheduleEnd.getTime() < Date.now();
+    } catch {
+      return false;
+    }
+  };
+
   const hasPaper = (s: any) => {
     if (s?.hasPublishedPaper) return true;
     if (typeof s?.paperCount === 'number' && s.paperCount > 0) return true;
@@ -63,8 +89,9 @@ export function ExamPaperMatrixForm({
     return false;
   };
 
-  const pending = schedules.filter((s: any) => !hasPaper(s));
+  const pending = schedules.filter((s: any) => !hasPaper(s) && !isScheduleExpired(s));
   const created = schedules.filter((s: any) => hasPaper(s));
+  const expired = schedules.filter((s: any) => !hasPaper(s) && isScheduleExpired(s));
 
   const label = (s: any) => ({
     subCode:    s.subjectCode    || s.subject?.subjectCode    || 'MH',
@@ -288,7 +315,7 @@ export function ExamPaperMatrixForm({
                         </span>
                       </div>
                       {pending.length === 0 ? (
-                        <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Tất cả đã có đề</p>
+                        <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Không có ca thi cần tạo đề</p>
                       ) : (
                         pending.map((s: any) => {
                           const { subCode, subName, periodName } = label(s);
@@ -312,6 +339,38 @@ export function ExamPaperMatrixForm({
                             </button>
                           );
                         })
+                      )}
+
+                      {/* Phân đoạn ca thi Đã quá hạn / Đã kết thúc */}
+                      {expired.length > 0 && (
+                        <div className="border-t border-slate-200 bg-slate-100/50 pt-2">
+                          <div className="px-4 py-1.5 bg-slate-200/60">
+                            <span className="text-[9.5px] font-black text-slate-500 uppercase tracking-wider">
+                              📁 Đã quá hạn / Đã kết thúc ({expired.length})
+                            </span>
+                          </div>
+                          {expired.map((s: any) => {
+                            const { subCode, subName, periodName } = label(s);
+                            return (
+                              <div
+                                key={s.id}
+                                className="w-full text-left px-4 py-2.5 border-b border-slate-100 bg-slate-50/80 opacity-60 cursor-not-allowed select-none"
+                              >
+                                <div className="flex items-center justify-between gap-1">
+                                  <p className="text-xs font-extrabold text-slate-600 truncate">
+                                    [{subCode}] {subName}
+                                  </p>
+                                  <span className="shrink-0 rounded-md bg-rose-100 text-rose-700 text-[9px] font-black px-1.5 py-0.5">
+                                    Đã quá hạn
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-slate-400 font-semibold mt-0.5 truncate">
+                                  {periodName} · {fmt(s.examDate)} ({s.startTime} – {s.endTime})
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
                       )}
                     </div>
 
@@ -380,61 +439,112 @@ export function ExamPaperMatrixForm({
         {/* ── ROW 3: Difficulty Matrix ── */}
         <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 space-y-3">
           <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5 text-blue-500" />
               <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-600">
-                {isEssay ? 'Số câu Tự luận' : 'Ma trận độ khó'}
+                {isEssay ? 'Phân bổ Tự luận' : 'Ma trận phân bổ đề thi'}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              {requiredTotal > 0 && (
-                <span className="text-[10px] text-slate-400 font-semibold hidden sm:block">
-                  Gợi ý: {requiredTotal} câu / {formData.durationMinutes} phút
-                </span>
-              )}
-              <span className={`text-xs font-black px-2.5 py-0.5 rounded-full border ${
-                currentTotal >= 1
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-red-50 text-red-600 border-red-200'
-              }`}>
-                {currentTotal} câu
-              </span>
+
+            {/* Switch Mode */}
+            <div className="flex items-center rounded-lg bg-slate-200/70 p-0.5 text-[10px] font-extrabold">
+              <button
+                type="button"
+                onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
+                className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
+                  (formData.selectionMode || 'BY_COUNT') === 'BY_COUNT'
+                    ? 'bg-white text-slate-900 shadow-2xs'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                Theo Số câu
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
+                className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
+                  formData.selectionMode === 'BY_SCORE'
+                    ? 'bg-purple-600 text-white shadow-2xs'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                Theo Thang điểm (Ngân hàng)
+              </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { label: 'Dễ',        key: 'easyCount',   accent: 'emerald' },
-              { label: 'Trung bình', key: 'mediumCount', accent: 'amber'   },
-              { label: 'Khó',        key: 'hardCount',   accent: 'red'     },
-            ].map(({ label: lb, key, accent }) => (
-              <div key={key} className="rounded-xl bg-white border border-slate-200 p-2.5 space-y-1.5">
-                <span className={`text-[10px] font-bold uppercase tracking-wide block ${
-                  accent === 'emerald' ? 'text-emerald-700' :
-                  accent === 'amber'   ? 'text-amber-700'   :
-                  'text-red-700'
-                }`}>
-                  {lb}
-                </span>
-                <input
-                  type="number"
-                  min={0}
-                  value={(formData as any)[key]}
-                  onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                  className={`w-full rounded-lg border bg-slate-50 px-2.5 py-1.5 text-sm font-black text-slate-900 outline-none focus:bg-white transition ${
-                    accent === 'emerald' ? 'border-emerald-200 focus:border-emerald-400' :
-                    accent === 'amber'   ? 'border-amber-200   focus:border-amber-400'   :
-                    'border-red-200      focus:border-red-400'
-                  }`}
-                />
+          {formData.selectionMode === 'BY_SCORE' ? (
+            <div className="space-y-2">
+              <p className="text-[11px] text-purple-700 font-semibold bg-purple-50 p-2 rounded-lg border border-purple-200">
+                💡 Hệ thống sẽ tự động quét Ngân hàng câu hỏi & lấy điểm gốc từng câu để tìm tập hợp phù hợp với tổng điểm độ khó bên dưới.
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: 'Dễ (Điểm mục tiêu)', key: 'easyScore', accent: 'emerald' },
+                  { label: 'TB (Điểm mục tiêu)', key: 'mediumScore', accent: 'amber'   },
+                  { label: 'Khó (Điểm mục tiêu)', key: 'hardScore', accent: 'red'     },
+                ].map(({ label: lb, key, accent }) => (
+                  <div key={key} className="rounded-xl bg-white border border-slate-200 p-2.5 space-y-1.5">
+                    <span className={`text-[10px] font-bold uppercase tracking-wide block ${
+                      accent === 'emerald' ? 'text-emerald-700' :
+                      accent === 'amber'   ? 'text-amber-700'   :
+                      'text-red-700'
+                    }`}>
+                      {lb}
+                    </span>
+                    <input
+                      type="number"
+                      step="0.25"
+                      min={0}
+                      max={10}
+                      value={(formData as any)[key] || ''}
+                      onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
+                      className="w-full rounded-lg border border-purple-200 bg-purple-50/30 px-2.5 py-1.5 text-sm font-black text-purple-900 outline-none focus:bg-white transition"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: 'Dễ (Số câu)',        key: 'easyCount',   accent: 'emerald' },
+                { label: 'Trung bình (Số câu)', key: 'mediumCount', accent: 'amber'   },
+                { label: 'Khó (Số câu)',        key: 'hardCount',   accent: 'red'     },
+              ].map(({ label: lb, key, accent }) => (
+                <div key={key} className="rounded-xl bg-white border border-slate-200 p-2.5 space-y-1.5">
+                  <span className={`text-[10px] font-bold uppercase tracking-wide block ${
+                    accent === 'emerald' ? 'text-emerald-700' :
+                    accent === 'amber'   ? 'text-amber-700'   :
+                    'text-red-700'
+                  }`}>
+                    {lb}
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={(formData as any)[key]}
+                    onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
+                    className={`w-full rounded-lg border bg-slate-50 px-2.5 py-1.5 text-sm font-black text-slate-900 outline-none focus:bg-white transition ${
+                      accent === 'emerald' ? 'border-emerald-200 focus:border-emerald-400' :
+                      accent === 'amber'   ? 'border-amber-200   focus:border-amber-400'   :
+                      'border-red-200      focus:border-red-400'
+                    }`}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── FOOTER ── */}
         <div className="flex items-center justify-between gap-3 pt-1">
-          {currentTotal < 1 ? (
+          {isPublished ? (
+            <p className="text-xs font-bold text-red-600 flex items-center gap-1.5 bg-red-50 px-3 py-1.5 rounded-lg border border-red-200">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+              Lịch thi này đã có đề công bố. Không thể sinh thêm đề tự động.
+            </p>
+          ) : currentTotal < 1 ? (
             <p className="text-xs font-bold text-red-600 flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
               Cần ít nhất 1 câu hỏi
@@ -448,13 +558,23 @@ export function ExamPaperMatrixForm({
 
           <button
             type="submit"
-            disabled={creating || currentTotal < 1}
-            className={`flex items-center gap-2 rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-sm cursor-pointer active:scale-95 disabled:opacity-50 ${
-              isEssay ? 'bg-slate-900 hover:bg-slate-800' : 'bg-blue-600 hover:bg-blue-700'
+            disabled={creating || currentTotal < 1 || isPublished}
+            className={`flex items-center gap-2 rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-sm active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed ${
+              isPublished
+                ? 'bg-slate-400 opacity-60'
+                : isEssay
+                ? 'bg-slate-900 hover:bg-slate-800'
+                : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
             <Sparkles className="h-4 w-4" />
-            {creating ? 'Đang sinh đề...' : isEssay ? 'Tạo Đề Tự luận' : 'Tạo Đề Trắc nghiệm'}
+            {creating
+              ? 'Đang sinh đề...'
+              : isPublished
+              ? 'Đã Có Đề Công Bố'
+              : isEssay
+              ? 'Tạo Đề Tự luận'
+              : 'Tạo Đề Trắc nghiệm'}
           </button>
         </div>
       </div>

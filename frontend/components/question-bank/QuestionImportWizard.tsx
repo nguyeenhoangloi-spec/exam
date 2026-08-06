@@ -582,6 +582,21 @@ export function QuestionImportWizard({
                       );
                     })()}
 
+                    {/* Explanation / Model Answer preview & edit */}
+                    <div className="space-y-1 bg-amber-50/70 border border-amber-200 p-2.5 rounded-xl">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-900">
+                        <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                        <span>Hướng dẫn đáp án / Gợi ý chấm:</span>
+                      </div>
+                      <textarea
+                        value={q.explanation || ''}
+                        onChange={(e) => editRow(r, 'explanation', e.target.value)}
+                        rows={2}
+                        className="w-full rounded-lg border border-amber-200 bg-white p-2 text-xs font-medium text-slate-800 focus:border-amber-500 focus:outline-none"
+                        placeholder={q.type === 'ESSAY' ? 'Đáp án mẫu hoặc hướng dẫn chấm tự luận...' : 'Giải thích đáp án...'}
+                      />
+                    </div>
+
                     {(r.errors.length > 0 || r.duplicates.length > 0) && (
                       <div className="text-[11px] font-bold text-rose-600 flex items-center gap-1">
                         <AlertCircle className="h-3.5 w-3.5 shrink-0" />

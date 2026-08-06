@@ -259,8 +259,8 @@ export class AiQuestionsService {
           `YÊU CẦU BẮT BUỘC:`,
           `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (tối đa ${input.count || 100} câu hỏi, không tự ý bỏ bớt).`,
           input.type === 'ESSAY'
-            ? `2. Đây là dạng TỰ LUẬN. Đặt options: [] (không tạo lựa chọn A, B, C, D). Đưa gợi ý chấm/Rubric vào phần explanation.`
-            : `2. Trích xuất nội dung từng câu hỏi và danh sách đáp án A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng.`,
+            ? `2. Đây là dạng TỰ LUẬN. Đặt options: [] (không tạo lựa chọn A, B, C, D). Nếu trong tài liệu có sẵn Đáp án/Hướng dẫn trả lời thì trích xuất đầy đủ vào "explanation". NẾU TRONG TÀI LIỆU KHÔNG CÓ SẴN ĐÁP ÁN, BẠN PHẢI TỰ ĐỘNG BIÊN SOẠN HƯỚNG DẪN ĐÁP ÁN / GỢI Ý CHẤM MẪU CHUẨN XÁC VÀ ĐƯA VÀO "explanation" (Tuyệt đối không được để explanation bị rỗng).`
+            : `2. Trích xuất nội dung từng câu hỏi và danh sách đáp án A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng. Trích xuất lời giải (nếu có) hoặc tự tạo giải thích vào "explanation".`,
           `3. Không tự tạo thêm câu hỏi ngoài tài liệu.`,
           `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
           `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[]}]}.`,

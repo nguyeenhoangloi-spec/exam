@@ -112,8 +112,19 @@ export class EssayService {
     await this.getAttempt(actor, answer.attemptId);
     const snapshot = ((answer.attempt.snapshot?.snapshotData as any[]) || []).find((q) => q.questionId === answer.questionId);
     if (!snapshot || snapshot.type !== 'ESSAY') throw new BadRequestException('Chỉ hỗ trợ chấm AI cho câu tự luận.');
-    const rubric = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: answer.questionId }, orderBy: { sortOrder: 'asc' } });
-    if (!rubric.length) throw new BadRequestException('Câu hỏi chưa có rubric.');
+    let rubric = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: answer.questionId }, orderBy: { sortOrder: 'asc' } });
+    if (!rubric.length) {
+      rubric = [{
+        id: 'default_rubric',
+        questionId: answer.questionId,
+        label: 'Hướng dẫn đáp án & Thang điểm',
+        description: snapshot.explanation || 'Đánh giá câu trả lời tự luận của sinh viên',
+        maxScore: snapshot.score || 10.0,
+        sortOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }] as any[];
+    }
     const prompt = `Bạn là trợ lý chấm thi. Chỉ đề xuất, không quyết định điểm.\nCÂU HỎI:\n${snapshot.content}\nBÀI LÀM:\n${answer.textAnswer || ''}\nRUBRIC:\n${rubric.map((r) => `${r.id}|${r.label}|${r.description || ''}|tối đa ${r.maxScore}`).join('\n')}\nTrả JSON duy nhất dạng {"criteria":[{"criterionId":"...","score":0,"comment":"..."}],"overallComment":"...","confidence":0}. Điểm không vượt maxScore.`;
     const controller = new AbortController();
     const timeoutMs = Math.min(Math.max(Number(process.env.GEMINI_TIMEOUT_MS || 120000), 30000), 180000);

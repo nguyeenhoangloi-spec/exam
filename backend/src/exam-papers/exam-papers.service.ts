@@ -72,6 +72,20 @@ export class ExamPapersService {
     return result;
   }
 
+  private selectQuestionsByScore(pool: any[], targetScore: number, defaultScore: number) {
+    if (targetScore <= 0 || pool.length === 0) return [];
+    const shuffled = this.shuffle([...pool]);
+    const selected: any[] = [];
+    let currentScore = 0;
+    for (const q of shuffled) {
+      if (currentScore >= targetScore) break;
+      const score = q.score && q.score > 0 ? q.score : defaultScore;
+      selected.push(q);
+      currentScore += score;
+    }
+    return selected;
+  }
+
   async createRandom(actor: Actor, data: CreateRandomExamPaperDto, persist = true) {
     const requestedCount = data.easyCount + data.mediumCount + data.hardCount;
     if (requestedCount < 1) {
@@ -158,33 +172,59 @@ export class ExamPapersService {
         { label: 'trung bình', requested: data.mediumCount, available: byDifficulty.MEDIUM.length },
         { label: 'khó', requested: data.hardCount, available: byDifficulty.HARD.length },
       ];
-      const shortage = requirements.find((item) => item.available < item.requested);
-      if (shortage) {
-        if (!persist) {
-          return {
-            preview: true,
-            isValid: false,
-            message: `Không đủ câu ${shortage.label} theo ma trận.`,
-            errors: [`Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`],
-            warnings: [],
-            alternatives: [{ rationale: `Giảm số câu ${shortage.label} xuống ${shortage.available} hoặc bổ sung câu đã duyệt.` }],
-            paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount, totalScore: requestedCount * 0.25 },
-          };
+
+      let rawSelected: any[] = [];
+      const isByScore = data.selectionMode === 'BY_SCORE';
+
+      if (isByScore) {
+        const easyTarget = Number(data.easyScore) || 0;
+        const medTarget = Number(data.mediumScore) || 0;
+        const hardTarget = Number(data.hardScore) || 0;
+
+        const easySel = this.selectQuestionsByScore(byDifficulty.EASY, easyTarget, 1.0);
+        const medSel = this.selectQuestionsByScore(byDifficulty.MEDIUM, medTarget, 1.5);
+        const hardSel = this.selectQuestionsByScore(byDifficulty.HARD, hardTarget, 2.0);
+
+        if (easyTarget > 0 && easySel.length === 0 && byDifficulty.EASY.length === 0) {
+          throw new BadRequestException('Ngân hàng chưa có câu hỏi Dễ đã duyệt.');
         }
-        throw new BadRequestException(
-          `Không đủ câu ${shortage.label} đã duyệt. Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`,
-        );
+        if (medTarget > 0 && medSel.length === 0 && byDifficulty.MEDIUM.length === 0) {
+          throw new BadRequestException('Ngân hàng chưa có câu hỏi Trung bình đã duyệt.');
+        }
+        if (hardTarget > 0 && hardSel.length === 0 && byDifficulty.HARD.length === 0) {
+          throw new BadRequestException('Ngân hàng chưa có câu hỏi Khó đã duyệt.');
+        }
+
+        rawSelected = [...easySel, ...medSel, ...hardSel];
+        if (rawSelected.length === 0) {
+          throw new BadRequestException('Chưa chọn được câu hỏi nào phù hợp với mục tiêu điểm.');
+        }
+      } else {
+        const shortage = requirements.find((item) => item.available < item.requested);
+        if (shortage) {
+          if (!persist) {
+            return {
+              preview: true,
+              isValid: false,
+              message: `Không đủ câu ${shortage.label} theo ma trận.`,
+              errors: [`Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`],
+              warnings: [],
+              alternatives: [{ rationale: `Giảm số câu ${shortage.label} xuống ${shortage.available} hoặc bổ sung câu đã duyệt.` }],
+              paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount, totalScore: requestedCount * 0.25 },
+            };
+          }
+          throw new BadRequestException(
+            `Không đủ câu ${shortage.label} đã duyệt. Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`,
+          );
+        }
+
+        rawSelected = this.shuffle([
+          ...this.shuffle(byDifficulty.EASY).slice(0, data.easyCount),
+          ...this.shuffle(byDifficulty.MEDIUM).slice(0, data.mediumCount),
+          ...this.shuffle(byDifficulty.HARD).slice(0, data.hardCount),
+        ]);
       }
 
-      const rawSelected = this.shuffle([
-        ...this.shuffle(byDifficulty.EASY).slice(0, data.easyCount),
-        ...this.shuffle(byDifficulty.MEDIUM).slice(0, data.mediumCount),
-        ...this.shuffle(byDifficulty.HARD).slice(0, data.hardCount),
-      ]);
-      if (schedule.examType === 'TU_LUAN') {
-        const missingRubric = rawSelected.find((question: any) => question.type === 'ESSAY' && (!question.essayRubrics || question.essayRubrics.length === 0));
-        if (missingRubric) throw new BadRequestException(`Câu ${missingRubric.code} chưa có rubric chấm điểm, không thể tạo đề tự luận.`);
-      }
 
       // Thuật toán chuẩn hóa phân bổ điểm sao cho tổng bộ đề luôn luôn bằng đúng 10.0 điểm
       const targetTotalScore = 10.0;

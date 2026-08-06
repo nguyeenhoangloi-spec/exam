@@ -9,7 +9,9 @@ export class TrashService {
    * Lấy thống kê số lượng items nằm trong thùng rác
    */
   async getTrashStats() {
-    const [schedulesCount, papersCount, questionsCount] = await Promise.all([
+    const [
+      schedulesCount, papersCount, questionsCount
+    ] = await Promise.all([
       this.prisma.examSchedule.count({ where: { deletedAt: { not: null } } }),
       this.prisma.examPaper.count({ where: { deletedAt: { not: null } } }),
       this.prisma.question.count({ where: { deletedAt: { not: null } } }),
@@ -22,13 +24,16 @@ export class TrashService {
       schedules: schedulesCount,
       papers: papersCount,
       questions: questionsCount,
+      users: 0,
+      subjects: 0,
+      classes: 0,
     };
   }
 
   /**
    * Lấy danh sách items đã bị xóa (Soft Delete) theo loại
    */
-  async getTrashItems(type: 'schedules' | 'papers' | 'questions', search = '') {
+  async getTrashItems(type: string, search = '') {
     const searchFilter = search.trim().toLowerCase();
 
     if (type === 'schedules') {
@@ -125,7 +130,7 @@ export class TrashService {
       }));
     }
 
-    throw new BadRequestException('Loại danh mục không hợp lệ');
+    return [];
   }
 
   /**

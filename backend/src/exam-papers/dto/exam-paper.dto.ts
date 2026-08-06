@@ -46,6 +46,22 @@ export class CreateRandomExamPaperDto {
   hardCount: number;
 
   @IsOptional()
+  @IsIn(['BY_COUNT', 'BY_SCORE'])
+  selectionMode?: 'BY_COUNT' | 'BY_SCORE';
+
+  @IsOptional()
+  @Type(() => Number)
+  easyScore?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  mediumScore?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  hardScore?: number;
+
+  @IsOptional()
   @IsBoolean()
   confirm?: boolean;
 

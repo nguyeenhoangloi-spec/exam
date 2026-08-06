@@ -297,9 +297,9 @@ export function ExamScheduleTable({
   // 2. Dạng Thu Gọn (Compact View Mode)
   if (viewMode === 'compact') {
     return (
-      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
+        <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
+          <thead className="bg-slate-50/90 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-300 border-b border-slate-200/80 dark:border-slate-700">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -318,7 +318,7 @@ export function ExamScheduleTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-medium">
             {schedules.map((s) => {
               const isChecked = selected.includes(s.id);
               const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
@@ -327,7 +327,7 @@ export function ExamScheduleTable({
               const roomName = s.roomName || 'P.101';
 
               return (
-                <tr key={s.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                <tr key={s.id} className={`transition hover:bg-blue-50/40 dark:hover:bg-slate-800/90 ${isChecked ? 'bg-blue-50/60 dark:bg-blue-950/60' : ''}`}>
                   <td className="p-2 pl-3 text-center">
                     <input
                       type="checkbox"
@@ -366,9 +366,9 @@ export function ExamScheduleTable({
 
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default matching Mockup Image 100%)
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
+      <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
+        <thead className="bg-slate-50/90 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-300 border-b border-slate-200/80 dark:border-slate-700">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -391,7 +391,7 @@ export function ExamScheduleTable({
             <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 font-medium">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-medium">
           {schedules.map((s, index) => {
             const isChecked = selected.includes(s.id);
             const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
@@ -405,8 +405,8 @@ export function ExamScheduleTable({
             return (
               <tr
                 key={s.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
+                className={`transition hover:bg-blue-50/40 dark:hover:bg-slate-800/90 ${
+                  isChecked ? 'bg-blue-50/60 dark:bg-blue-950/60' : ''
                 }`}
               >
                 {/* Checkbox */}

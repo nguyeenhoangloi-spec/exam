@@ -43,10 +43,16 @@ interface SidebarProps {
   onMobileClose?: () => void;
 }
 
+interface NavSubItem {
+  name: string;
+  href: string;
+}
+
 interface NavItem {
   name: string;
   href: string;
   icon: LucideIcon;
+  children?: NavSubItem[];
 }
 
 interface NavGroup {
@@ -67,10 +73,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
+  const [openSubMenus, setOpenSubMenus] = React.useState<Record<string, boolean>>({
+    '/trash': true, // Mặc định cho phép mục thùng rác mở ra khi truy cập
+  });
   const footerRef = React.useRef<HTMLDivElement>(null);
 
   const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Admin';
   const avatarUrl = user?.avatarUrl || user?.teacher?.avatarUrl || user?.student?.avatarUrl;
+
+  const toggleSubMenu = (parentHref: string) => {
+    setOpenSubMenus((prev) => ({ ...prev, [parentHref]: !prev[parentHref] }));
+  };
 
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -118,7 +131,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Quản lý Môn học', href: '/subjects', icon: BookOpen },
         { name: 'Quản lý Giảng viên', href: '/teachers', icon: GraduationCap },
         { name: 'Quản lý Sinh viên', href: '/students', icon: Users },
-        { name: 'Thùng rác', href: '/trash', icon: Trash2 },
+        {
+          name: 'Thùng rác hệ thống',
+          href: '/trash',
+          icon: Trash2,
+          children: [
+            { name: 'Lịch thi đã xóa', href: '/trash?type=schedules' },
+            { name: 'Đề thi đã xóa', href: '/trash?type=papers' },
+            { name: 'Ngân hàng câu hỏi', href: '/trash?type=questions' },
+            { name: 'Người dùng & Sinh viên', href: '/trash?type=users' },
+            { name: 'Môn học & Lớp học', href: '/trash?type=subjects' },
+          ],
+        },
       ],
     },
   ];
@@ -131,7 +155,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
-        { name: 'Thùng rác', href: '/trash', icon: Trash2 },
+        {
+          name: 'Thùng rác hệ thống',
+          href: '/trash',
+          icon: Trash2,
+          children: [
+            { name: 'Lịch thi đã xóa', href: '/trash?type=schedules' },
+            { name: 'Đề thi đã xóa', href: '/trash?type=papers' },
+            { name: 'Ngân hàng câu hỏi', href: '/trash?type=questions' },
+          ],
+        },
       ],
     },
   ];
@@ -147,6 +180,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const rawGroups = role === 'ADMIN' ? adminGroups : role === 'TEACHER' ? teacherGroups : studentGroups;
+
+  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
+    'QUẢN LÝ KHẢO THÍ': true,
+    'NGÂN HÀNG & ĐỀ THI': true,
+    'DANH MỤC HỆ THỐNG': true,
+    'NGHIỆP VỤ GIẢNG VIÊN': true,
+    'DÀNH CHO SINH VIÊN': true,
+  });
+
+  const toggleAccordionGroup = (groupName: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [groupName]: !prev[groupName] }));
+  };
 
   // Filter items strictly by canAccessPath
   const filteredGroups = rawGroups
@@ -209,55 +254,123 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       {/* Navigation Groups List */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 no-scrollbar" aria-label="Điều hướng chính">
-        {filteredGroups.map((group, groupIdx) => (
-          <div key={groupIdx} className="space-y-1">
-            {group.group && (
-              <h3
-                className={`px-3 text-[10px] font-black tracking-wider text-blue-200/80 uppercase transition-all duration-300 overflow-hidden whitespace-nowrap ${
-                  collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100 mb-1.5'
-                }`}
-              >
-                {group.group}
-              </h3>
-            )}
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-3 no-scrollbar" aria-label="Điều hướng chính">
+        {filteredGroups.map((group, groupIdx) => {
+          const groupName = group.group || `group_${groupIdx}`;
+          const isExpanded = expandedGroups[groupName] ?? true;
 
-            {group.items.map((item) => {
-              const Icon = item.icon;
-              const isActive = isItemActive(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  prefetch={true}
-                  onMouseEnter={() => router.prefetch(item.href)}
-                  onClick={onMobileClose}
-                  title={collapsed ? item.name : undefined}
-                  className={`group relative flex h-10 items-center justify-start rounded-xl px-3.5 text-xs font-bold transition-all duration-200 overflow-hidden ${
-                    isActive
-                      ? 'bg-[#1c3673] text-white border border-blue-500/40 shadow-xs font-black'
-                      : 'text-slate-200/90 hover:bg-white/[0.08] hover:text-white'
+          return (
+            <div key={groupIdx} className="space-y-1">
+              {group.group && (
+                <button
+                  type="button"
+                  onClick={() => toggleAccordionGroup(groupName)}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-black tracking-wider text-blue-200/80 uppercase hover:text-white transition cursor-pointer select-none ${
+                    collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                   }`}
                 >
-                  {isActive && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-sky-300 rounded-r-full shadow-xs" />
+                  <span className="truncate">{group.group}</span>
+                  {isExpanded ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-blue-300/80 shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 text-blue-300/80 shrink-0" />
                   )}
+                </button>
+              )}
 
-                  <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-200/70 group-hover:text-blue-300'}`} />
+              {/* Group Items */}
+              {(isExpanded || collapsed || !group.group) && (
+                <div className={`space-y-1 ${group.group && !collapsed ? 'pl-1.5' : ''}`}>
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = isItemActive(item.href);
+                    const hasChildren = item.children && item.children.length > 0;
+                    const isSubOpen = openSubMenus[item.href] ?? true;
 
-                  <span
-                    className={`whitespace-nowrap transition-all duration-200 overflow-hidden ${
-                      collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
-                    }`}
-                  >
-                    {item.name}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        ))}
+                    if (hasChildren) {
+                      return (
+                        <div key={item.href} className="space-y-1">
+                          <button
+                            type="button"
+                            onClick={() => toggleSubMenu(item.href)}
+                            className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-xs font-bold transition-all duration-200 overflow-hidden cursor-pointer ${
+                              isActive
+                                ? 'bg-[#1c3673] text-white border border-blue-500/40 shadow-xs font-black'
+                                : 'text-slate-200/90 hover:bg-white/[0.08] hover:text-white'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-200/70 group-hover:text-blue-300'}`} />
+                              <span className={`whitespace-nowrap transition-all duration-200 truncate ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100'}`}>
+                                {item.name}
+                              </span>
+                            </div>
+
+                            {!collapsed && (
+                              isSubOpen ? (
+                                <ChevronDown className="h-3.5 w-3.5 text-blue-300/80 shrink-0" />
+                              ) : (
+                                <ChevronRight className="h-3.5 w-3.5 text-blue-300/80 shrink-0" />
+                              )
+                            )}
+                          </button>
+
+                          {/* Sub Items (xổ ra thụt lề như ảnh mẫu người dùng gửi) */}
+                          {isSubOpen && !collapsed && (
+                            <div className="pl-7 space-y-1 border-l border-blue-400/20 ml-4 py-1">
+                              {item.children?.map((sub) => {
+                                return (
+                                  <Link
+                                    key={sub.href}
+                                    href={sub.href}
+                                    onClick={onMobileClose}
+                                    className="block py-1.5 px-3 rounded-lg text-[11.5px] font-semibold text-slate-300/90 hover:text-white hover:bg-white/10 transition-all"
+                                  >
+                                    {sub.name}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        prefetch={true}
+                        onMouseEnter={() => router.prefetch(item.href)}
+                        onClick={onMobileClose}
+                        title={collapsed ? item.name : undefined}
+                        className={`group relative flex h-10 items-center justify-start rounded-xl px-3 text-xs font-bold transition-all duration-200 overflow-hidden ${
+                          isActive
+                            ? 'bg-[#1c3673] text-white border border-blue-500/40 shadow-xs font-black'
+                            : 'text-slate-200/90 hover:bg-white/[0.08] hover:text-white'
+                        }`}
+                      >
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-sky-300 rounded-r-full shadow-xs" />
+                        )}
+
+                        <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-200/70 group-hover:text-blue-300'}`} />
+
+                        <span
+                          className={`whitespace-nowrap transition-all duration-200 overflow-hidden ${
+                            collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
+                          }`}
+                        >
+                          {item.name}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </nav>
 
       {/* Confirmation Modal for Logout */}
