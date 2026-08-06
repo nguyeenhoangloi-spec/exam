@@ -73,6 +73,7 @@ const initialForm = {
   mediumCount: '16',
   hardCount: '8',
   variantCount: '1',
+  examType: 'TRAC_NGHIEM',
 };
 
 export default function ExamPapersPage() {
@@ -169,7 +170,7 @@ export default function ExamPapersPage() {
     const draftCount = papers.filter((p) => p.status === 'DRAFT').length;
     const archivedCount = papers.filter((p) => p.status === 'ARCHIVED').length;
     const totalQuestionsInPapers = papers.reduce(
-      (acc, curr) => acc + ((curr as any).questionCount ?? (curr as any).questions?.length ?? (curr as any).details?.length ?? 0),
+      (acc, curr) => acc + ((curr as any)._count?.questions ?? (curr as any).questionCount ?? (curr as any).questions?.length ?? (curr as any).details?.length ?? 0),
       0,
     );
 
@@ -183,6 +184,8 @@ export default function ExamPapersPage() {
   }, [papers]);
 
   const selectedSchedule = schedules.find((schedule) => String(schedule.id) === formData.examScheduleId);
+  // isEssay is now driven by formData.examType (user-selected toggle)
+  const isEssay = formData.examType === 'TU_LUAN';
   const scheduleDuration = selectedSchedule
     ? (() => {
         const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
@@ -193,7 +196,7 @@ export default function ExamPapersPage() {
 
   useEffect(() => {
     if (scheduleDuration > 0 && Number(formData.durationMinutes) > scheduleDuration) {
-      setFormData((previous) => ({ ...previous, durationMinutes: String(scheduleDuration) }));
+      setFormData((previous: any) => ({ ...previous, durationMinutes: String(scheduleDuration) }));
     }
   }, [scheduleDuration, formData.durationMinutes]);
 
@@ -221,21 +224,14 @@ export default function ExamPapersPage() {
 
   const currentTotal =
     Number(formData.easyCount) + Number(formData.mediumCount) + Number(formData.hardCount);
-  const requiredTotal =
-    Number(formData.durationMinutes) === 60 ? 40 : Number(formData.durationMinutes) === 90 ? 60 : 0;
-  const isValidTotal = requiredTotal === 0 || currentTotal === requiredTotal;
+  // requiredTotal is now a HINT only — not enforced
+  const requiredTotal = isEssay ? 0 : Number(formData.durationMinutes) === 60 ? 40 : Number(formData.durationMinutes) === 90 ? 60 : 0;
+  const isValidTotal = currentTotal >= 1;
 
   const createPaper = async (event: FormEvent) => {
     event.preventDefault();
     if (!formData.examScheduleId || currentTotal < 1) {
       setToast({ message: 'Hãy chọn lịch thi và ít nhất một câu hỏi.', type: 'error' });
-      return;
-    }
-    if (requiredTotal > 0 && currentTotal !== requiredTotal) {
-      setToast({
-        message: `Đề thi ${formData.durationMinutes} phút phải có đúng ${requiredTotal} câu hỏi (hiện tại: ${currentTotal} câu).`,
-        type: 'error',
-      });
       return;
     }
 
@@ -251,6 +247,7 @@ export default function ExamPapersPage() {
         mediumCount: Number(formData.mediumCount),
         hardCount: Number(formData.hardCount),
         variantCount,
+        examType: formData.examType || 'TRAC_NGHIEM',
       };
 
       const preview = await api.post<any>('/exam-papers/preview-random', payload);
@@ -356,7 +353,7 @@ export default function ExamPapersPage() {
             await api.delete(`/exam-papers/${paper.id}`);
             setToast({ message: `Đã xóa đề thi ${paper.paperCode}.`, type: 'success' });
           } else {
-            await api.patch(`/exam-papers/${paper.id}/${action}`);
+            await api.post(`/exam-papers/${paper.id}/${action}`);
             setToast({ message: `Cập nhật trạng thái đề ${paper.paperCode} thành công.`, type: 'success' });
           }
           if (selectedPaper?.id === paper.id) setSelectedPaper(null);
@@ -374,7 +371,7 @@ export default function ExamPapersPage() {
     setCriticalModal((previous) => ({ ...previous, isOpen: false }));
 
     try {
-      await api.patch(`/exam-papers/${paper.id}/publish`, payload);
+      await api.post(`/exam-papers/${paper.id}/publish`, payload);
       setToast({
         message: `🚀 Đề thi ${paper.paperCode} đã phát hành chính thức! Lịch thi đã được KHÓA CHỈNH SỬA.`,
         type: 'success',
@@ -503,10 +500,48 @@ export default function ExamPapersPage() {
             currentTotal={currentTotal}
             requiredTotal={requiredTotal}
             isValidTotal={isValidTotal}
+            isEssay={isEssay}
           />
         )}
 
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+              {[
+                { id: 'ALL', label: 'Tất cả đề thi', count: kpiData.total, badgeClass: 'bg-blue-100 text-blue-700' },
+                { id: 'PUBLISHED', label: 'Đã phát hành', count: kpiData.publishedCount, badgeClass: 'bg-emerald-100 text-emerald-700' },
+                { id: 'DRAFT', label: 'Bản nháp', count: kpiData.draftCount, badgeClass: 'bg-amber-100 text-amber-700' },
+                { id: 'ARCHIVED', label: 'Lưu trữ', count: kpiData.archivedCount, badgeClass: 'bg-slate-100 text-slate-700' },
+              ].map((tab) => {
+                const isActive = statusFilter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter(tab.id);
+                      setPage(1);
+                    }}
+                    className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition cursor-pointer shrink-0 ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                        isActive ? 'bg-white/20 text-white' : tab.badgeClass
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="relative flex-1 min-w-[260px]">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
@@ -531,26 +566,6 @@ export default function ExamPapersPage() {
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500">Trạng thái đề:</span>
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
-                  setPage(1);
-                }}
-                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
-              >
-                <option value="ALL">Tất cả Trạng thái</option>
-                <option value="DRAFT">Bản nháp (Draft)</option>
-                <option value="PUBLISHED">Đã phát hành (Published)</option>
-                <option value="ARCHIVED">Đã lưu trữ (Archived)</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            </div>
           </div>
         </div>
 

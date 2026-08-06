@@ -55,7 +55,7 @@ export function ExamPaperTable({
           const isChecked = selected.includes(p.id);
           const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
           const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || 'Môn học';
-          const qCount = (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
+          const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
 
           return (
             <div
@@ -180,7 +180,7 @@ export function ExamPaperTable({
               const isChecked = selected.includes(p.id);
               const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
               const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---';
-              const qCount = (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
+              const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
 
               return (
                 <tr key={p.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
@@ -248,7 +248,7 @@ export function ExamPaperTable({
             const isChecked = selected.includes(p.id);
             const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
             const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---';
-            const qCount = (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
+            const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
 
             return (
               <tr

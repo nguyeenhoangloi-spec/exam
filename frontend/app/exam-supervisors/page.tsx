@@ -44,6 +44,7 @@ export default function ExamSupervisorsPage() {
   const [assignedSupervisors, setAssignedSupervisors] = useState<any[]>([]);
   const [allScheduleSupervisors, setAllScheduleSupervisors] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
   const [autoProposal, setAutoProposal] = useState<any | null>(null);
   const [selectedAutoProposalKeys, setSelectedAutoProposalKeys] = useState<string[]>([]);
@@ -433,19 +434,122 @@ export default function ExamSupervisorsPage() {
             </h3>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1">Ca thi Môn học</label>
-              <select
-                value={selectedSchedule?.id || ''}
-                onChange={(e) => void selectSchedule(Number(e.target.value))}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
+              <label className="block text-xs font-bold text-slate-500 mb-1.5">Ca thi Môn học</label>
+
+              {/* Custom grouped picker trigger */}
+              <button
+                type="button"
+                onClick={() => setShowSchedulePicker(true)}
+                className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-left hover:bg-white hover:border-blue-300 transition cursor-pointer"
               >
-                {schedules.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {(s as any).mode === 'MOCK' ? '🟡 [THI THỬ] ' : '🔴 [CHÍNH THỨC] '}
-                    {(s as any).subject?.subjectName} ({(s as any).startTime} - {(s as any).endTime})
-                  </option>
-                ))}
-              </select>
+                <span className={selectedSchedule ? 'text-slate-800' : 'text-slate-400'}>
+                  {selectedSchedule
+                    ? `[${(selectedSchedule as any).subject?.subjectCode || 'MH'}] ${(selectedSchedule as any).subject?.subjectName} (· ${(selectedSchedule as any).startTime} – ${(selectedSchedule as any).endTime})`
+                    : '-- Chọn ca thi --'}
+                </span>
+                <svg className="h-4 w-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+
+              {/* Modal popup */}
+              {showSchedulePicker && (
+                <>
+                  <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+                    <div className="pointer-events-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+
+                      {/* Header */}
+                      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
+                        <div>
+                          <p className="text-sm font-black text-slate-900">Chọn Ca thi</p>
+                          <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                            {schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).length} ca chưa phân công
+                            · {schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).length} ca đã có giám thị
+                          </p>
+                        </div>
+                        <button type="button" onClick={() => setShowSchedulePicker(false)}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+
+                      {/* Body: 2 columns */}
+                      <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+
+                        {/* LEFT: Chưa phân công */}
+                        <div>
+                          <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                              Chưa phân công ({schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).length})
+                            </span>
+                          </div>
+                          {schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).length === 0 ? (
+                            <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Tất cả đã phân công</p>
+                          ) : schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).map((s: any) => {
+                            const isActive = selectedSchedule?.id === s.id;
+                            return (
+                              <button key={s.id} type="button"
+                                onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
+                                className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+                              >
+                                <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
+                                  {s.mode === 'MOCK' ? '[THI THỪ] ' : '[CHÍNH THỨC] '}
+                                  {s.subject?.subjectName || s.subjectName}
+                                </p>
+                                <p className="text-[10.5px] text-slate-500 font-semibold mt-0.5">
+                                  {s.startTime} – {s.endTime}
+                                  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* RIGHT: Đã có giám thị */}
+                        <div>
+                          <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                              Đã phân công ({schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).length})
+                            </span>
+                          </div>
+                          {schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).length === 0 ? (
+                            <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
+                          ) : schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).map((s: any) => {
+                            const isActive = selectedSchedule?.id === s.id;
+                            const count = s.examSupervisors?.length || s.supervisorCount || 0;
+                            return (
+                              <button key={s.id} type="button"
+                                onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
+                                className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <p className={`text-xs font-black truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
+                                    {s.subject?.subjectName || s.subjectName}
+                                  </p>
+                                  <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
+                                    {count} GT
+                                  </span>
+                                </div>
+                                <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                                  {s.startTime} – {s.endTime}
+                                  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+                        <button type="button" onClick={() => setShowSchedulePicker(false)}
+                          className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                          Đóng
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {selectedSchedule && (

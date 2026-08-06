@@ -205,6 +205,7 @@ export class ExamSchedulesService {
       include: {
         examPeriod: true,
         subject: true,
+        examPapers: { select: { id: true, paperCode: true, status: true } },
         examScheduleRooms: { include: { room: true, _count: { select: { examRoomStudents: true, supervisors: true } } } },
       },
       orderBy: { examDate: 'asc' },

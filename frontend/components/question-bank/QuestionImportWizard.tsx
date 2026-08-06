@@ -9,10 +9,7 @@ import { CheckCircle2, FileSpreadsheet, Sparkles, Upload, AlertCircle, FileText,
 type Mode = 'table' | 'document';
 
 const types = [
-  ['SINGLE_CHOICE', 'Trắc nghiệm (1 đáp án)'],
-  ['MULTIPLE_CHOICE', 'Trắc nghiệm (nhiều đáp án)'],
-  ['TRUE_FALSE', 'Đúng / Sai'],
-  ['FILL_BLANK', 'Điền từ'],
+  ['SINGLE_CHOICE', 'Trắc nghiệm'],
   ['ESSAY', 'Tự luận'],
 ];
 
@@ -507,7 +504,7 @@ export function QuestionImportWizard({
 
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-600">
-                          {q.type === 'SINGLE_CHOICE' ? 'Trắc nghiệm 1 đáp án' : q.type === 'MULTIPLE_CHOICE' ? 'Nhiều đáp án' : 'Đúng/Sai'}
+                          {q.type === 'ESSAY' ? 'Tự luận' : q.type === 'TRUE_FALSE' ? 'Đúng / Sai' : 'Trắc nghiệm'}
                         </span>
                         <span className="rounded-full bg-blue-100 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-800">
                           {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
@@ -552,7 +549,7 @@ export function QuestionImportWizard({
                               };
                             });
 
-                      if (!optionsList.length) return null;
+                      if (q.type === 'ESSAY' || !optionsList.length) return null;
 
                       return (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50 border border-slate-200 p-2.5 rounded-xl">

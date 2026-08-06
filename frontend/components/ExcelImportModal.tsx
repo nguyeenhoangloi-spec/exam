@@ -37,6 +37,10 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
       const text = event.target?.result as string;
       const lines = text.split('\n').filter((l) => l.trim() !== '');
       if (lines.length <= 1) {
+        setPreviewData([]);
+        setErrorMsg('Tệp không có dữ liệu hợp lệ để xem trước.');
+        return;
+        /* Legacy sample fallback intentionally unreachable; imports must use uploaded rows. */
         // Demo default dataset if plain text or empty
         setPreviewData([
           { code: 'SV2026010', name: 'Nguyễn Văn Minh', email: 'minhnv@student.edu.vn', class: 'CNTT-K65', status: 'Hợp lệ' },
@@ -48,10 +52,10 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
         const parsed = lines.slice(1, 6).map((line, idx) => {
           const parts = line.split(',');
           return {
-            code: parts[0]?.trim() || `DATA00${idx + 1}`,
-            name: parts[1]?.trim() || `Tên Mẫu ${idx + 1}`,
-            email: parts[2]?.trim() || `demo${idx + 1}@school.edu.vn`,
-            class: parts[3]?.trim() || 'CNTT-K65',
+            code: parts[0]?.trim() || '',
+            name: parts[1]?.trim() || '',
+            email: parts[2]?.trim() || '',
+            class: parts[3]?.trim() || '',
             status: 'Hợp lệ',
           };
         });

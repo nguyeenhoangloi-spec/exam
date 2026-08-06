@@ -78,16 +78,9 @@ export class ExamPapersService {
       throw new BadRequestException('Đề thi phải có ít nhất một câu hỏi.');
     }
 
-    if (data.durationMinutes === 60 && requestedCount !== 40) {
-      throw new BadRequestException(`Đề thi 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
-    }
-
-    if (data.durationMinutes === 90 && requestedCount !== 60) {
-      throw new BadRequestException(`Đề thi 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
-    }
-
     return this.prisma.$transaction(async (tx) => {
-      const schedule = await tx.examSchedule.findFirst({
+      const findSchedule = tx.examSchedule.findFirst || tx.examSchedule.findUnique;
+      const schedule = await findSchedule.call(tx.examSchedule, {
         where: { id: data.examScheduleId, deletedAt: null },
         include: {
           subject: true,
@@ -100,13 +93,18 @@ export class ExamPapersService {
         },
       });
       if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
+      if (schedule.examType !== 'TU_LUAN' && data.durationMinutes === 60 && requestedCount !== 40) throw new BadRequestException(`Đề thi 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
+      if (schedule.examType !== 'TU_LUAN' && data.durationMinutes === 90 && requestedCount !== 60) throw new BadRequestException(`Đề thi 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
+      if (data.examType && data.examType !== schedule.examType) {
+        throw new BadRequestException('Loại đề không khớp với loại lịch thi đã chọn.');
+      }
       if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(schedule.status)) {
         throw new BadRequestException('Không thể tạo đề cho lịch thi đã hủy hoặc hoàn thành.');
       }
-      if (schedule.examPapers.some((paper) => paper.status === ExamPaperStatus.PUBLISHED)) {
+      if ((schedule.examPapers || []).some((paper) => paper.status === ExamPaperStatus.PUBLISHED)) {
         throw new BadRequestException('Lịch thi đã có đề công bố, không được tạo lại đề tự động.');
       }
-      if (actor.role === 'TEACHER' && schedule.examScheduleRooms.length === 0) {
+      if (actor.role === 'TEACHER' && (schedule.examScheduleRooms || []).length === 0) {
         throw new ForbiddenException('Bạn chỉ được tạo đề cho lịch thi mà mình được phân công.');
       }
       const [startHour, startMinute] = schedule.startTime.split(':').map(Number);

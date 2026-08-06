@@ -1,8 +1,8 @@
 export const QUESTION_TYPE_LABELS: Record<string, string> = {
-  SINGLE_CHOICE: 'Trắc nghiệm (1 đáp án)',
-  MULTIPLE_CHOICE: 'Trắc nghiệm (Nhiều đáp án)',
-  TRUE_FALSE: 'Đúng / Sai',
-  FILL_BLANK: 'Điền từ vào chỗ trống',
+  SINGLE_CHOICE: 'Trắc nghiệm',
+  MULTIPLE_CHOICE: 'Trắc nghiệm',
+  TRUE_FALSE: 'Trắc nghiệm',
+  FILL_BLANK: 'Tự luận',
   ESSAY: 'Tự luận',
 };
 

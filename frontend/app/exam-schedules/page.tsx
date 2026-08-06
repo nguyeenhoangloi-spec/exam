@@ -19,7 +19,7 @@ import { ExamScheduleFiltersCard, ExamScheduleFilterValues } from '../../compone
 import { ExamScheduleTabsBar } from '../../components/exam-schedules/ExamScheduleTabsBar';
 import { ExamScheduleTableToolbar } from '../../components/exam-schedules/ExamScheduleTableToolbar';
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
-import { ExamScheduleTable, ExamScheduleItemExtended } from '../../components/exam-schedules/ExamScheduleTable';
+import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
 import { Calendar, Clock, Building, Users } from 'lucide-react';
 
@@ -119,7 +119,7 @@ export default function ExamSchedulesPage() {
           ...s,
           code: s.code || `LCT${String(s.id).padStart(6, '0')}`,
           periodName: s.examPeriod?.name || s.periodName || (realPeriods.find((p: any) => p.id === s.examPeriodId)?.name) || 'Kỳ thi học kỳ',
-          shiftName: s.shiftName || (s.startTime?.startsWith('07') || s.startTime?.startsWith('08') ? 'Ca 1 - Sáng' : 'Ca 2 - Sáng'),
+          shiftName: computeShiftName(s.startTime, s.shiftName),
           roomName: s.roomName || (s.examScheduleRooms?.[0]?.examRoom?.roomCode || s.examScheduleRooms?.[0]?.examRoom?.name) || 'P.101',
           studentCount: s.studentCount ?? 0,
           supervisorCount: s.supervisorCount ?? '0/0',
@@ -191,14 +191,15 @@ export default function ExamSchedulesPage() {
   // Action Handlers
   const openAddModal = () => {
     setEditingSchedule(null);
+    const defaultStartTime = '07:00';
     setFormData({
-      periodName: periods[0]?.name || 'Thi học kỳ I',
-      shiftName: 'Ca 1 - Sáng',
+      periodName: periods[0]?.name || 'Thi học kỳ II 2025-2026',
+      shiftName: computeShiftName(defaultStartTime),
       roomName: rooms[0]?.roomCode || rooms[0]?.name || 'P.101',
       examDate: new Date().toISOString().split('T')[0],
-      startTime: '07:00',
+      startTime: defaultStartTime,
       endTime: '09:00',
-      studentCount: '40',
+      studentCount: '45',
       statusBadge: 'UPCOMING',
     });
     setIsModalOpen(true);
@@ -206,12 +207,13 @@ export default function ExamSchedulesPage() {
 
   const openEditModal = (s: ExamScheduleItemExtended) => {
     setEditingSchedule(s);
+    const startT = s.startTime || '07:00';
     setFormData({
       periodName: s.periodName || s.examPeriod?.name || '',
-      shiftName: s.shiftName || 'Ca 1 - Sáng',
+      shiftName: computeShiftName(startT, s.shiftName),
       roomName: s.roomName || 'P.101',
       examDate: s.examDate ? new Date(s.examDate).toISOString().split('T')[0] : '',
-      startTime: s.startTime || '07:00',
+      startTime: startT,
       endTime: s.endTime || '09:00',
       studentCount: String(s.studentCount ?? (s as any)._count?.examRoomStudents ?? 0),
       statusBadge: (s.statusBadge || 'UPCOMING') as any,
@@ -516,17 +518,11 @@ export default function ExamSchedulesPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi</label>
-              <select
-                value={formData.shiftName}
-                onChange={(e) => setFormData({ ...formData, shiftName: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              >
-                <option value="Ca 1 - Sáng">Ca 1 - Sáng (07:00 - 09:00)</option>
-                <option value="Ca 2 - Sáng">Ca 2 - Sáng (09:30 - 11:30)</option>
-                <option value="Ca 1 - Chiều">Ca 1 - Chiều (13:00 - 15:00)</option>
-                <option value="Ca 2 - Chiều">Ca 2 - Chiều (15:30 - 17:30)</option>
-              </select>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi (Tự động xác định)</label>
+              <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-extrabold text-blue-700 flex items-center justify-between">
+                <span>{formData.shiftName || computeShiftName(formData.startTime)}</span>
+                <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md uppercase">Tự động</span>
+              </div>
             </div>
 
             <div>
@@ -559,8 +555,12 @@ export default function ExamSchedulesPage() {
                 type="time"
                 required
                 value={formData.startTime}
-                onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                onChange={(e) => {
+                  const newStart = e.target.value;
+                  const newShift = computeShiftName(newStart);
+                  setFormData({ ...formData, startTime: newStart, shiftName: newShift });
+                }}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none font-bold"
               />
             </div>
             <div>

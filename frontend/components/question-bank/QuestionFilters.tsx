@@ -37,10 +37,7 @@ export function QuestionFilters({
       {/* Chọn Loại câu hỏi */}
       <select className={select} value={value.type} onChange={(e) => set('type', e.target.value)}>
         <option value="">Tất cả loại câu hỏi</option>
-        <option value="SINGLE_CHOICE">Trắc nghiệm (1 đáp án)</option>
-        <option value="MULTIPLE_CHOICE">Trắc nghiệm (Nhiều đáp án)</option>
-        <option value="TRUE_FALSE">Đúng / Sai</option>
-        <option value="FILL_BLANK">Điền từ vào chỗ trống</option>
+        <option value="SINGLE_CHOICE">Trắc nghiệm</option>
         <option value="ESSAY">Tự luận</option>
       </select>
 

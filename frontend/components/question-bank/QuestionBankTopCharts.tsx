@@ -37,24 +37,10 @@ export function QuestionBankTopCharts({
   ];
 
   // Difficulty data from real questions
-  const easyRaw = questions.filter((q) => q.difficulty === 'EASY').length;
-  const mediumRaw = questions.filter((q) => q.difficulty === 'MEDIUM').length;
-  const hardRaw = questions.filter((q) => q.difficulty === 'HARD').length;
-  const sampleCount = easyRaw + mediumRaw + hardRaw;
-
-  let easy = easyRaw;
-  let medium = mediumRaw;
-  let hard = hardRaw;
-
-  if (sampleCount > 0 && total > 0) {
-    easy = Math.round((easyRaw / sampleCount) * total);
-    medium = Math.round((mediumRaw / sampleCount) * total);
-    hard = Math.max(0, total - easy - medium);
-  } else {
-    easy = easyRaw;
-    medium = mediumRaw;
-    hard = hardRaw;
-  }
+  const difficultyCounts = (counts.difficulty || {}) as Record<string, number>;
+  const easy = difficultyCounts.EASY ?? questions.filter((q) => q.difficulty === 'EASY').length;
+  const medium = difficultyCounts.MEDIUM ?? questions.filter((q) => q.difficulty === 'MEDIUM').length;
+  const hard = difficultyCounts.HARD ?? questions.filter((q) => q.difficulty === 'HARD').length;
 
   const difficultyData = [
     { label: 'Dễ', value: easy, percent: calcPct(easy), color: '#16a34a', pctNum: total > 0 ? (easy / total) * 100 : 0 },
@@ -63,20 +49,9 @@ export function QuestionBankTopCharts({
   ];
 
   // Question Type distribution
-  const mcRaw = questions.filter((q) => !q.type || ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(q.type)).length;
-  const essayRaw = questions.filter((q) => ['ESSAY', 'FILL_BLANK'].includes(q.type)).length;
-  const typeSample = mcRaw + essayRaw;
-
-  let multipleChoice = mcRaw;
-  let essay = essayRaw;
-
-  if (typeSample > 0 && total > 0) {
-    multipleChoice = Math.round((mcRaw / typeSample) * total);
-    essay = Math.max(0, total - multipleChoice);
-  } else {
-    multipleChoice = mcRaw;
-    essay = essayRaw;
-  }
+  const typeCounts = (counts.types || {}) as Record<string, number>;
+  const multipleChoice = (typeCounts.SINGLE_CHOICE ?? 0) + (typeCounts.MULTIPLE_CHOICE ?? 0) + (typeCounts.TRUE_FALSE ?? 0) || questions.filter((q) => !q.type || ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(q.type)).length;
+  const essay = (typeCounts.ESSAY ?? 0) + (typeCounts.FILL_BLANK ?? 0) || questions.filter((q) => ['ESSAY', 'FILL_BLANK'].includes(q.type)).length;
 
   const typeData = [
     { name: 'Trắc nghiệm', value: multipleChoice, color: '#2563eb', percent: calcPct(multipleChoice) },

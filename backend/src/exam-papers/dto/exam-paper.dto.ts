@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
+import { IsBoolean, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
 
 export class CreateRandomExamPaperDto {
   @Type(() => Number)
@@ -16,6 +16,10 @@ export class CreateRandomExamPaperDto {
   @IsString()
   @MaxLength(255)
   title?: string;
+
+  @IsOptional()
+  @IsIn(['TRAC_NGHIEM', 'TU_LUAN'])
+  examType?: 'TRAC_NGHIEM' | 'TU_LUAN';
 
   @Type(() => Number)
   @IsInt()

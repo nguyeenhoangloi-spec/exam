@@ -164,9 +164,18 @@ export class QuestionsService {
     return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
   }
   async statistics(a: Actor) {
-    this.access(a); const rows = await this.prisma.question.groupBy({ by: ['status'], where: { deletedAt: null }, _count: { _all: true } });
-    const out: any = { total: 0, DRAFT: 0, PENDING: 0, APPROVED: 0, REJECTED: 0, ARCHIVED: 0 };
-    rows.forEach(r => { out[r.status] = r._count._all; out.total += r._count._all; }); return out;
+    this.access(a);
+    const where = { deletedAt: null };
+    const [statusRows, difficultyRows, typeRows] = await Promise.all([
+      this.prisma.question.groupBy({ by: ['status'], where, _count: { _all: true } }),
+      this.prisma.question.groupBy({ by: ['difficulty'], where, _count: { _all: true } }),
+      this.prisma.question.groupBy({ by: ['type'], where, _count: { _all: true } }),
+    ]);
+    const out: any = { total: 0, DRAFT: 0, PENDING: 0, APPROVED: 0, REJECTED: 0, ARCHIVED: 0, difficulty: {}, types: {} };
+    statusRows.forEach(r => { out[r.status] = r._count._all; out.total += r._count._all; });
+    difficultyRows.forEach(r => { out.difficulty[r.difficulty] = r._count._all; });
+    typeRows.forEach(r => { out.types[r.type] = r._count._all; });
+    return out;
   }
   async filterOptions(a: Actor) {
     this.access(a); return { subjects: await this.prisma.subject.findMany({ include: { chapters: { orderBy: { order: 'asc' } } }, orderBy: { subjectName: 'asc' } }), types: Object.values(QuestionType), difficulties: Object.values(QuestionDifficulty), bloomLevels: Object.values(BloomLevel), statuses: Object.values(QuestionStatus) };

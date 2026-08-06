@@ -43,6 +43,28 @@ interface ExamScheduleTableProps {
   isAdmin: boolean;
 }
 
+export function computeShiftName(startTime?: string, fallbackShiftName?: string): string {
+  if (!startTime) return fallbackShiftName || 'Ca 1 - Sáng';
+  const parts = startTime.split(':');
+  if (parts.length < 2) return fallbackShiftName || 'Ca 1 - Sáng';
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  if (isNaN(h)) return fallbackShiftName || 'Ca 1 - Sáng';
+  const totalMins = h * 60 + (isNaN(m) ? 0 : m);
+
+  if (totalMins < 555) {
+    return 'Ca 1 - Sáng';
+  } else if (totalMins < 720) {
+    return 'Ca 2 - Sáng';
+  } else if (totalMins < 900) {
+    return 'Ca 1 - Chiều';
+  } else if (totalMins < 1080) {
+    return 'Ca 2 - Chiều';
+  } else {
+    return 'Ca Tối';
+  }
+}
+
 export function ExamScheduleTable({
   schedules,
   selected,
@@ -124,7 +146,7 @@ export function ExamScheduleTable({
           const isChecked = selected.includes(s.id);
           const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
           const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ II 2023-2024';
-          const shiftName = s.shiftName || 'Ca 1 - Sáng';
+          const shiftName = computeShiftName(s.startTime, s.shiftName);
           const roomName = s.roomName || 'P.101';
           const studentCount = s.studentCount || 45;
           const supervisorCount = s.supervisorCount || '2/2';
@@ -255,7 +277,7 @@ export function ExamScheduleTable({
               const isChecked = selected.includes(s.id);
               const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
               const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ II 2023-2024';
-              const shiftName = s.shiftName || 'Ca 1 - Sáng';
+              const shiftName = computeShiftName(s.startTime, s.shiftName);
               const roomName = s.roomName || 'P.101';
 
               return (
@@ -328,7 +350,7 @@ export function ExamScheduleTable({
             const isChecked = selected.includes(s.id);
             const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
             const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ II 2023-2024';
-            const shiftName = s.shiftName || 'Ca 1 - Sáng';
+            const shiftName = computeShiftName(s.startTime, s.shiftName);
             const roomName = s.roomName || 'P.101';
             const studentCount = s.studentCount || 45;
             const supervisorCount = s.supervisorCount || '2/2';

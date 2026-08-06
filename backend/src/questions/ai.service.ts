@@ -27,16 +27,17 @@ export class AiQuestionsService {
     const isExtraction = Boolean(input.isExtractionOnly || (input.prompt && input.prompt.length > 20));
     const prompt = isExtraction
       ? [
-          `Nhiệm vụ: Trích xuất TOÀN BỘ tất cả các câu hỏi và các lựa chọn đáp án từ tài liệu văn bản dưới đây.`,
+          `Nhiệm vụ: Trích xuất TOÀN BỘ các câu hỏi từ tài liệu văn bản dưới đây.`,
           `Môn học: ${subject.subjectName}; ${chapter ? `Chương: ${chapter.name}.` : 'Không phân chương.'}`,
           `Loại mặc định: ${input.type}; Độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
           `YÊU CẦU BẮT BUỘC:`,
-          `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (trích xuất tối đa lên tới ${input.count || 100} câu hỏi, tuyệt đối không tự ý bỏ bớt câu nào).`,
-          `2. Trích xuất đúng nội dung từng câu hỏi và danh sách các lựa chọn A, B, C, D...`,
-          `3. Xác định hoặc suy luận đáp án đúng cho từng câu hỏi và đánh dấu isCorrect: true cho lựa chọn đó.`,
-          `4. Không tự tạo thêm câu hỏi mới ngoài nội dung tài liệu.`,
-          `5. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
-          `6. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.`,
+          `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (tối đa ${input.count || 100} câu hỏi, không tự ý bỏ bớt).`,
+          input.type === 'ESSAY'
+            ? `2. Đây là dạng TỰ LUẬN. Đặt options: [] (không tạo lựa chọn A, B, C, D). Đưa gợi ý chấm/Rubric vào phần explanation.`
+            : `2. Trích xuất nội dung từng câu hỏi và danh sách đáp án A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng.`,
+          `3. Không tự tạo thêm câu hỏi ngoài tài liệu.`,
+          `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
+          `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[]}]}.`,
           `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
         ].join('\n')
       : [
@@ -89,7 +90,8 @@ export class AiQuestionsService {
         if (typeof item.content !== 'string' || item.content.trim().length < 5) {
           throw new BadGatewayException(`Câu AI thứ ${index + 1} không hợp lệ.`);
         }
-        const options: QuestionOptionDto[] = Array.isArray(item.options)
+        const isEssay = input.type === 'ESSAY';
+        const options: QuestionOptionDto[] = (Array.isArray(item.options) && !isEssay)
           ? item.options.map((option: any, order: number) => ({
               label: String(option.label || String.fromCharCode(65 + order)),
               content: String(option.content || ''),

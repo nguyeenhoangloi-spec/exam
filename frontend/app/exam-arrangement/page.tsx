@@ -23,7 +23,7 @@ import {
   List,
   RotateCcw,
 } from 'lucide-react';
-import { ExamPeriod, ExamSchedule } from '../../types';
+import { ExamSchedule } from '../../types';
 
 type RoomAvailability = {
   id: number;
@@ -81,11 +81,9 @@ export default function ExamArrangementPage() {
   usePageTitle('Xếp Phòng Thi Tự Động');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [periods, setPeriods] = useState<ExamPeriod[]>([]);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [rooms, setRooms] = useState<RoomAvailability[]>([]);
 
-  const [selectedPeriodId, setSelectedPeriodId] = useState<string>('');
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
   const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
 
@@ -96,6 +94,7 @@ export default function ExamArrangementPage() {
   const [historyLogs, setHistoryLogs] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
   const [filterRoomCode, setFilterRoomCode] = useState<string>('ALL');
+  const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
@@ -204,8 +203,6 @@ export default function ExamArrangementPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const resPeriods = await api.get('/exam-periods');
-      setPeriods(resPeriods.data);
       await fetchSchedules('');
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu ban đầu', type: 'error' });
@@ -452,39 +449,126 @@ export default function ExamArrangementPage() {
               </h3>
 
               <form onSubmit={runPreview} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1">Kỳ thi Trường</label>
-                  <select
-                    value={selectedPeriodId}
-                    onChange={(e) => { setSelectedPeriodId(e.target.value); void fetchSchedules(e.target.value); }}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
-                  >
-                    <option value="">Tất cả Kỳ thi ({periods.length} kỳ)</option>
-                    {periods.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name} ({p.semester} - {p.schoolYear})</option>
-                    ))}
-                  </select>
-                </div>
+
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1">Ca thi Cần Xếp phòng</label>
-                  <select
-                    value={selectedScheduleId}
-                    onChange={(e) => void handleScheduleChange(e.target.value)}
+                  <label className="block text-xs font-bold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
+
+                  {/* Custom popup trigger */}
+                  <button
+                    type="button"
+                    onClick={() => setShowSchedulePicker(true)}
                     disabled={schedules.length === 0}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none disabled:opacity-60 cursor-pointer"
+                    className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-left hover:bg-white hover:border-blue-300 transition cursor-pointer disabled:opacity-60"
                   >
-                    {schedules.length === 0 ? (
-                      <option value="">(Chưa có ca thi nào)</option>
-                    ) : (
-                      schedules.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {(s as any).mode === 'MOCK' ? '🟡 [THI THỬ] ' : '🔴 [CHÍNH THỨC] '}
-                          {s.subject?.subjectName} ({s.subject?.subjectCode}) - {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '---'} ({s.startTime}-{s.endTime})
-                        </option>
-                      ))
-                    )}
-                  </select>
+                    <span className={selectedScheduleId ? 'text-slate-800 truncate' : 'text-slate-400'}>
+                      {selectedScheduleId
+                        ? (() => { const s = schedules.find((x) => x.id.toString() === selectedScheduleId); return s ? `[${s.subject?.subjectCode}] ${s.subject?.subjectName} \u00b7 ${s.startTime}\u2013${s.endTime}` : '-- Chọn ca thi --'; })()
+                        : schedules.length === 0 ? '(Chưa có ca thi nào)' : '-- Chọn ca thi --'}
+                    </span>
+                    <svg className="h-4 w-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </button>
+
+                  {/* Modal popup */}
+                  {showSchedulePicker && (
+                    <>
+                      <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
+                      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+                        <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+
+                          {/* Header */}
+                          <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
+                            <div>
+                              <p className="text-sm font-black text-slate-900">Chọn Ca thi</p>
+                              <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                                {schedules.filter((s: any) => !s.examScheduleRooms?.length).length} ca chưa xếp
+                                · {schedules.filter((s: any) => s.examScheduleRooms?.length).length} ca đã xếp phòng
+                              </p>
+                            </div>
+                            <button type="button" onClick={() => setShowSchedulePicker(false)}
+                              className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                          </div>
+
+                          {/* Body: 2 columns */}
+                          <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+
+                            {/* LEFT: Chưa xếp phòng */}
+                            <div>
+                              <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                                  Chưa xếp phòng ({schedules.filter((s: any) => !s.examScheduleRooms?.length).length})
+                                </span>
+                              </div>
+                              {schedules.filter((s: any) => !s.examScheduleRooms?.length).length === 0 ? (
+                                <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Tất cả đã xếp phòng</p>
+                              ) : schedules.filter((s: any) => !s.examScheduleRooms?.length).map((s: any) => {
+                                const isActive = selectedScheduleId === s.id.toString();
+                                return (
+                                  <button key={s.id} type="button"
+                                    onClick={() => { void handleScheduleChange(s.id.toString()); setShowSchedulePicker(false); }}
+                                    className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+                                  >
+                                    <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
+                                      {s.mode === 'MOCK' ? '[THI THỪ] ' : '[CHÍNH THỨC] '}
+                                      {s.subject?.subjectName}
+                                    </p>
+                                    <p className="text-[10.5px] text-slate-500 font-semibold mt-0.5">
+                                      {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
+                                      {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                    </p>
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {/* RIGHT: Đã xếp phòng */}
+                            <div>
+                              <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                                  Đã xếp phòng ({schedules.filter((s: any) => s.examScheduleRooms?.length).length})
+                                </span>
+                              </div>
+                              {schedules.filter((s: any) => s.examScheduleRooms?.length).length === 0 ? (
+                                <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
+                              ) : schedules.filter((s: any) => s.examScheduleRooms?.length).map((s: any) => {
+                                const isActive = selectedScheduleId === s.id.toString();
+                                const roomCount = s.examScheduleRooms?.length || 0;
+                                return (
+                                  <button key={s.id} type="button"
+                                    onClick={() => { void handleScheduleChange(s.id.toString()); setShowSchedulePicker(false); }}
+                                    className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <p className={`text-xs font-black truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
+                                        {s.subject?.subjectName}
+                                      </p>
+                                      <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
+                                        {roomCount} phòng
+                                      </span>
+                                    </div>
+                                    <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                                      {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
+                                      {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                    </p>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+                            <button type="button" onClick={() => setShowSchedulePicker(false)}
+                              className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                              Đóng
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   {(() => {
                     const current = schedules.find((s) => s.id.toString() === selectedScheduleId);

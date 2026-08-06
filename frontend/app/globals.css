@@ -68,3 +68,86 @@
     display: none !important;
   }
 }
+
+/* Legacy shell screens also use light-only utilities. Keep them readable in
+   the persisted dark theme while leaving full-screen exam/login views alone. */
+html.dark .app-shell-main {
+  color: rgb(226 232 240);
+}
+
+html.dark .app-shell-main .bg-white,
+html.dark .app-shell-main .bg-white\/95,
+html.dark .app-shell-main .bg-white\/90 {
+  background-color: rgb(15 23 42) !important;
+}
+
+html.dark .app-shell-main .bg-slate-50,
+html.dark .app-shell-main .bg-slate-50\/50,
+html.dark .app-shell-main .bg-slate-50\/70,
+html.dark .app-shell-main .bg-slate-50\/80 {
+  background-color: rgb(15 23 42 / 0.72) !important;
+}
+
+html.dark .app-shell-main .bg-slate-100,
+html.dark .app-shell-main .bg-slate-100\/70,
+html.dark .app-shell-main .bg-slate-100\/80 {
+  background-color: rgb(30 41 59 / 0.9) !important;
+}
+
+html.dark .app-shell-main .bg-gray-50,
+html.dark .app-shell-main .bg-gray-100 {
+  background-color: rgb(15 23 42 / 0.72) !important;
+}
+
+html.dark .app-shell-main .text-slate-900,
+html.dark .app-shell-main .text-slate-800,
+html.dark .app-shell-main .text-slate-700 {
+  color: rgb(226 232 240) !important;
+}
+
+html.dark .app-shell-main .text-slate-600 {
+  color: rgb(203 213 225) !important;
+}
+
+html.dark .app-shell-main .text-slate-500 {
+  color: rgb(148 163 184) !important;
+}
+
+html.dark .app-shell-main .text-gray-900,
+html.dark .app-shell-main .text-gray-800,
+html.dark .app-shell-main .text-gray-700,
+html.dark .app-shell-main .text-gray-600 {
+  color: rgb(203 213 225) !important;
+}
+
+html.dark .app-shell-main .border-slate-100,
+html.dark .app-shell-main .border-slate-200,
+html.dark .app-shell-main .border-slate-200\/70,
+html.dark .app-shell-main .border-slate-200\/80,
+html.dark .app-shell-main .border-slate-200\/90,
+html.dark .app-shell-main .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+html.dark .app-shell-main .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgb(51 65 85) !important;
+}
+
+html.dark .app-shell-main input:not([type='checkbox']):not([type='radio']),
+html.dark .app-shell-main select,
+html.dark .app-shell-main textarea {
+  background-color: rgb(15 23 42) !important;
+  color: rgb(226 232 240) !important;
+  border-color: rgb(71 85 105) !important;
+  color-scheme: dark;
+}
+
+html.dark .app-shell-main input::placeholder,
+html.dark .app-shell-main textarea::placeholder {
+  color: rgb(148 163 184) !important;
+}
+
+html.dark .app-shell-main .shadow-sm,
+html.dark .app-shell-main .shadow-md,
+html.dark .app-shell-main .shadow-lg,
+html.dark .app-shell-main .shadow-xl,
+html.dark .app-shell-main .shadow-2xl {
+  --tw-shadow-color: rgb(2 6 23 / 0.55);
+}

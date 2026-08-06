@@ -80,10 +80,7 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
             {subjects.map(s => <option key={s.id} value={s.id}>{s.subjectName}</option>)}
           </select>
           <select value={form.type} onChange={e => set('type', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="SINGLE_CHOICE">Trắc nghiệm (1 đáp án)</option>
-            <option value="MULTIPLE_CHOICE">Trắc nghiệm (Nhiều đáp án)</option>
-            <option value="TRUE_FALSE">Đúng / Sai</option>
-            <option value="FILL_BLANK">Điền từ</option>
+            <option value="SINGLE_CHOICE">Trắc nghiệm</option>
             <option value="ESSAY">Tự luận</option>
           </select>
           <select value={form.difficulty} onChange={e => set('difficulty', e.target.value)} className="rounded-lg border p-2 text-sm">

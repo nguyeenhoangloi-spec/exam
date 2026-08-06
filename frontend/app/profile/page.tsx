@@ -225,6 +225,10 @@ export default function ProfilePage() {
     profile?.student?.class?.name ||
     'Ban Quản trị Khảo thí Trung tâm';
 
+  const actualDepartment = profile?.teacher?.department?.departmentName || profile?.teacher?.department?.name || profile?.student?.class?.className || profile?.student?.class?.name;
+  const profileFields = [profile?.username, displayName, (profile as any)?.email, userCode, actualDepartment];
+  const profileCompletion = Math.round((profileFields.filter(Boolean).length / profileFields.length) * 100);
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto p-4 sm:p-6 pb-12 animate-fade-in">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
@@ -324,9 +328,9 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hồ sơ cá nhân</span>
-          <div className="text-xl font-black text-slate-900">100% Hoàn tất</div>
+          <div className="text-xl font-black text-slate-900">{profileCompletion}% Hoàn tất</div>
           <span className="text-[10.5px] font-bold text-emerald-600 flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" /> Tất cả thông tin đã xác thực
+            <CheckCircle2 className="h-3 w-3" /> {profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm thông tin để hoàn tất hồ sơ'}
           </span>
         </div>
 
