@@ -17,28 +17,28 @@ export function TeacherKPICards({ total, withDegree, withDept, filtered }: Teach
       value: total,
       subtext: 'Cán bộ giảng dạy',
       icon: GraduationCap,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Có Học vị khai báo',
       value: withDegree,
       subtext: 'TS / ThS / GS',
       icon: Award,
-      iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Đã phân Khoa',
       value: withDept,
       subtext: 'Có đơn vị quản lý',
       icon: Building2,
-      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Đang Hiển thị',
       value: filtered,
       subtext: 'Theo bộ lọc hiện tại',
       icon: Users,
-      iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
   ];
 

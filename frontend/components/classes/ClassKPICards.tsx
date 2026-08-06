@@ -24,14 +24,14 @@ export function ClassKPICards({
       value: total,
       subtext: 'Lớp sinh viên',
       icon: GraduationCap,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Khoa đào tạo',
       value: totalDepartments,
       subtext: 'Khoa quản lý lớp',
       icon: Building2,
-      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' khoa',
     },
     {
@@ -39,7 +39,7 @@ export function ClassKPICards({
       value: totalStudents,
       subtext: 'Sinh viên đã vào lớp',
       icon: Users,
-      iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' SV',
     },
     {
@@ -47,7 +47,7 @@ export function ClassKPICards({
       value: avgStudents,
       subtext: 'Sinh viên / lớp',
       icon: BarChart3,
-      iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' SV/lớp',
     },
     {
@@ -55,7 +55,7 @@ export function ClassKPICards({
       value: maxClassStudents,
       subtext: 'Lớp đông sinh viên nhất',
       icon: Flame,
-      iconBg: 'bg-sky-50 text-sky-600 border-sky-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' SV',
     },
   ];

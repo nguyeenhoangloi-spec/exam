@@ -24,14 +24,14 @@ export function ExamPaperKPICards({
       value: total,
       subtext: 'Danh mục đề thi',
       icon: FileText,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Đã phát hành',
       value: publishedCount,
       subtext: 'Sẵn sàng tổ chức thi',
       icon: Send,
-      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' đề',
     },
     {
@@ -39,7 +39,7 @@ export function ExamPaperKPICards({
       value: draftCount,
       subtext: 'Đang xem xét / kiểm tra',
       icon: Clock,
-      iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' đề',
     },
     {
@@ -47,7 +47,7 @@ export function ExamPaperKPICards({
       value: archivedCount,
       subtext: 'Kho lưu trữ kho đề',
       icon: Archive,
-      iconBg: 'bg-slate-100 text-slate-600 border-slate-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' đề',
     },
     {
@@ -55,7 +55,7 @@ export function ExamPaperKPICards({
       value: totalQuestionsInPapers,
       subtext: 'Đã phân bổ vào ma trận',
       icon: HelpCircle,
-      iconBg: 'bg-sky-50 text-sky-600 border-sky-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' câu',
     },
   ];

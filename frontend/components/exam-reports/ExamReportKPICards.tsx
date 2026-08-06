@@ -26,7 +26,7 @@ export function ExamReportKPICards({
       value: totalAssigned,
       subtext: 'Tổng danh sách ca thi',
       icon: Users,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' thí sinh',
     },
     {
@@ -34,7 +34,7 @@ export function ExamReportKPICards({
       value: totalSubmitted,
       subtext: `${totalAssigned > 0 ? ((totalSubmitted / totalAssigned) * 100).toFixed(1) : 0}% tỷ lệ tham gia`,
       icon: UserCheck,
-      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' TS',
     },
     {
@@ -42,7 +42,7 @@ export function ExamReportKPICards({
       value: totalAbsent,
       subtext: 'Không nộp bài thi',
       icon: UserX,
-      iconBg: 'bg-rose-50 text-rose-600 border-rose-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' TS',
     },
     {
@@ -50,7 +50,7 @@ export function ExamReportKPICards({
       value: avgScore,
       subtext: 'Thang điểm 10.0',
       icon: BarChart3,
-      iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' /10',
     },
     {
@@ -58,7 +58,7 @@ export function ExamReportKPICards({
       value: passRate,
       subtext: `${passCount} bài thi đạt yêu cầu`,
       icon: CheckCircle2,
-      iconBg: 'bg-sky-50 text-sky-600 border-sky-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: '%',
     },
   ];

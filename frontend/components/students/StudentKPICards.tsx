@@ -17,28 +17,28 @@ export function StudentKPICards({ total, withClass, totalClasses, filtered }: St
       value: total,
       subtext: 'Chính quy trong hệ thống',
       icon: Users,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Đã phân Lớp',
       value: withClass,
       subtext: 'Sinh viên đã được xếp lớp',
       icon: CheckCircle2,
-      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Số Lớp học',
       value: totalClasses,
       subtext: 'Lớp đào tạo chuyên ngành',
       icon: School,
-      iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
       title: 'Đang Hiển thị',
       value: filtered,
       subtext: 'Theo bộ lọc hiện tại',
       icon: Award,
-      iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
   ];
 

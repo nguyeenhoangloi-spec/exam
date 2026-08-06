@@ -350,28 +350,28 @@ export default function ExamSupervisorsPage() {
               value: totalAssignments,
               subtext: `Lịch thi: ${(selectedSchedule?.examScheduleRooms || []).length} phòng`,
               icon: ShieldCheck,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
             },
             {
               title: 'Yêu cầu đổi ca',
               value: changeRequestedCount,
               subtext: changeRequestedCount > 0 ? 'Cần quản trị viên phê duyệt' : 'Không có yêu cầu mới',
               icon: RefreshCw,
-              iconBg: changeRequestedCount > 0 ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200',
+              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
             },
             {
               title: 'Đã xác nhận ca',
               value: `${confirmedCount}/${totalAssignments}`,
               subtext: 'Sẵn sàng gác thi',
               icon: CheckCircle2,
-              iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
             },
             {
               title: 'Hoàn thành gác thi',
               value: `${completedCount}/${totalAssignments}`,
               subtext: 'Theo báo cáo phòng thi',
               icon: UserCheck,
-              iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
             },
           ].map((item) => {
             const IconComponent = item.icon;
