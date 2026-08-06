@@ -180,8 +180,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ) : (
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#254294]/40 px-4 bg-transparent">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-400 to-blue-600 font-black text-white shadow-md">
-              <GraduationCap className="h-5 w-5" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15 border border-white/20 font-black text-white shadow-md">
+              <GraduationCap className="h-5 w-5 text-sky-200" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
               <h1 className="truncate text-xs font-black tracking-wider text-white uppercase leading-tight">

@@ -216,7 +216,7 @@ export default function LoginPage() {
     <div
       className={[
         'h-screen w-screen overflow-hidden flex font-sans antialiased',
-        isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-900',
+        isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#d6dfef] text-slate-900',
       ].join(' ')}
     >
       {/* ══════════ LEFT 40% ══════════ */}
@@ -230,8 +230,8 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col h-full p-8 xl:p-10">
           {/* Logo */}
           <div className="flex items-center gap-3.5 shrink-0">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 shadow-lg shadow-blue-900/50 flex items-center justify-center shrink-0">
-              <GraduationCap className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-white/15 border border-white/20 shadow-md flex items-center justify-center shrink-0">
+              <GraduationCap className="w-7 h-7 text-sky-200" />
             </div>
             <div>
               <p className="text-[9.5px] font-bold tracking-[0.25em] text-sky-300 uppercase">Exam System</p>
@@ -313,7 +313,7 @@ export default function LoginPage() {
       <main
         className={[
           'flex-1 h-full flex flex-col overflow-hidden relative',
-          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-slate-50 via-sky-50/30 to-blue-50/30',
+          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-[#d6dfef] via-[#cdd8ec] to-[#c4d0e8]',
         ].join(' ')}
       >
         {/* Dot pattern */}
