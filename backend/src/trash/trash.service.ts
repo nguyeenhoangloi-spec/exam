@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TrashService {
+  // Keep this service as a normal class so TypeScript Server can refresh the file cleanly.
   constructor(private readonly prisma: PrismaService) {}
 
   /**

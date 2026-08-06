@@ -24,21 +24,21 @@ import {
 
 /* ─── helpers ─── */
 function statusMeta(att: any) {
-  if (!att) return { label: 'Chưa bắt đầu', cls: 'bg-slate-100 text-slate-500 border-slate-200' };
+  if (!att) return { label: 'Chưa bắt đầu', cls: 'bg-slate-100 text-slate-600' };
   if (att.status === 'IN_PROGRESS')
-    return { label: 'Đang làm bài', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+    return { label: 'Đang làm bài', cls: 'bg-blue-50 text-blue-700' };
   if (att.status === 'DISCONNECTED')
-    return { label: 'Mất kết nối', cls: 'bg-amber-50 text-amber-700 border-amber-200' };
+    return { label: 'Mất kết nối', cls: 'bg-amber-50 text-amber-800' };
   if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(att.status))
-    return { label: att.status === 'AUTO_SUBMITTED' ? 'Nộp tự động' : 'Đã nộp bài', cls: 'bg-blue-50 text-blue-700 border-blue-200' };
-  if (att.status === 'ABSENT') return { label: 'Vắng mặt', cls: 'bg-rose-50 text-rose-600 border-rose-200' };
-  return { label: att.status, cls: 'bg-slate-100 text-slate-500 border-slate-200' };
+    return { label: att.status === 'AUTO_SUBMITTED' ? 'Nộp tự động' : 'Đã nộp bài', cls: 'bg-emerald-50 text-emerald-700' };
+  if (att.status === 'ABSENT') return { label: 'Vắng mặt', cls: 'bg-rose-50 text-rose-700' };
+  return { label: att.status, cls: 'bg-slate-100 text-slate-600' };
 }
 
 function riskMeta(score: number) {
-  if (score >= 40) return { cls: 'bg-rose-50 text-rose-700 border-rose-300 animate-pulse', level: 'Cao' };
-  if (score >= 15) return { cls: 'bg-amber-50 text-amber-700 border-amber-200', level: 'Trung bình' };
-  return { cls: 'bg-slate-50 text-slate-500 border-slate-200', level: 'Thấp' };
+  if (score >= 40) return { cls: 'bg-rose-50 text-rose-700 animate-pulse', level: 'Cao' };
+  if (score >= 15) return { cls: 'bg-amber-50 text-amber-800', level: 'Trung bình' };
+  return { cls: 'bg-slate-100 text-slate-600', level: 'Thấp' };
 }
 
 const FILTER_LABELS: Record<string, string> = {
@@ -337,13 +337,13 @@ export default function ProctorDashboardPage() {
 
                         {/* Status */}
                         <td className="px-5 py-3.5">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10.5px] font-bold ${statusCls}`}>
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10.5px] font-bold ${statusCls}`}>
                             {att?.status === 'IN_PROGRESS' && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                             )}
                             {statusLabel}
                             {att?.extraMinutes > 0 && (
-                              <span className="ml-1 text-[9.5px] font-black text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded-full">+{att.extraMinutes}p</span>
+                              <span className="ml-1 text-[9.5px] font-black text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded-md">+{att.extraMinutes}p</span>
                             )}
                           </span>
                         </td>

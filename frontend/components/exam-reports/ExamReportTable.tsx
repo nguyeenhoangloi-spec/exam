@@ -16,12 +16,12 @@ export interface CandidateReport {
 }
 
 const statusBadgeMap: Record<string, { label: string; className: string }> = {
-  GRADED: { label: 'Đã chấm điểm', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  SUBMITTED: { label: 'Đã nộp bài', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  AUTO_SUBMITTED: { label: 'Tự động nộp (Hết giờ)', className: 'bg-sky-50 text-sky-700 border-sky-200' },
-  UNDER_REVIEW: { label: 'Tạm khóa (Vi phạm)', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  IN_PROGRESS: { label: 'Đang làm bài', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  ABSENT: { label: 'Chưa thi / Vắng thi', className: 'bg-rose-50 text-rose-700 border-rose-200' },
+  GRADED: { label: 'Đã chấm điểm', className: 'bg-emerald-50 text-emerald-700' },
+  SUBMITTED: { label: 'Đã nộp bài', className: 'bg-emerald-50 text-emerald-700' },
+  AUTO_SUBMITTED: { label: 'Tự động nộp (Hết giờ)', className: 'bg-sky-50 text-sky-700' },
+  UNDER_REVIEW: { label: 'Tạm khóa (Vi phạm)', className: 'bg-amber-50 text-amber-700' },
+  IN_PROGRESS: { label: 'Đang làm bài', className: 'bg-blue-50 text-blue-700' },
+  ABSENT: { label: 'Chưa thi / Vắng thi', className: 'bg-rose-50 text-rose-700' },
 };
 
 interface ExamReportTableProps {
@@ -84,7 +84,7 @@ export function ExamReportTable({
                     </span>
                   </div>
 
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border ${badge.className}`}>
+                  <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold ${badge.className}`}>
                     {badge.label}
                   </span>
                 </div>
@@ -110,7 +110,7 @@ export function ExamReportTable({
                   </div>
 
                   {c.violationCount > 0 && (
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700 border border-rose-200">
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
                       <AlertTriangle className="h-3.5 w-3.5 text-rose-600" /> {c.violationCount} vi phạm
                     </span>
                   )}
@@ -180,7 +180,7 @@ export function ExamReportTable({
                   </td>
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{c.className}</td>
                   <td className="p-2 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10.5px] font-bold border ${badge.className}`}>
+                    <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[10.5px] font-bold ${badge.className}`}>
                       {badge.label}
                     </span>
                   </td>
@@ -273,7 +273,7 @@ export function ExamReportTable({
 
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border ${badge.className}`}>
+                    <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold ${badge.className}`}>
                       {badge.label}
                     </span>
                   </td>
@@ -282,7 +282,7 @@ export function ExamReportTable({
                 {visibleColumns.totalScore !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center font-black">
                     {c.status === 'ABSENT' ? (
-                      <span className="rounded-md bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600 border border-rose-200">
+                      <span className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
                         Vắng thi
                       </span>
                     ) : (
