@@ -157,7 +157,7 @@ export default function StudentExamResultPage() {
 
             {appealSuccess ? (
               <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-700 text-xs font-semibold">
-                ✓ Đã gửi giải trình thành công. Giám thị sẽ tiến hành xem xét biên bản.
+                Đã gửi giải trình thành công. Giám thị sẽ tiến hành xem xét biên bản.
               </div>
             ) : (
               <form onSubmit={handleSendAppeal} className="space-y-4">

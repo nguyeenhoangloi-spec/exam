@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, Check } from 'lucide-react';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { Question } from '../../types';
 import {
   QuestionDifficultyBadge,
@@ -311,11 +312,12 @@ export function QuestionBankTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {questions.map((q) => {
+          {questions.map((q, index) => {
             const isChecked = selected.includes(q.id);
             const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
             const subjectName = q.subject?.subjectName || 'An toàn thông tin';
             const creatorName = q.createdByName || q.createdBy?.fullName || 'Nguyễn Văn A';
+            const isLastRow = index >= Math.floor(questions.length / 2);
 
             // Options list (A, B, C, D)
             const optionsList = q.options && q.options.length > 0 ? q.options : [
@@ -442,30 +444,16 @@ export function QuestionBankTable({
                       <Eye className="h-4 w-4" />
                     </button>
 
-                    {/* 3 Dots Menu button */}
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === q.id ? null : q.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        title="Thao tác khác"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-
-                      {/* Dropdown Menu */}
-                      {activeMenuId === q.id && (
-                        <div
-                          className="absolute right-0 top-full z-20 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
-                          onMouseLeave={() => setActiveMenuId(null)}
-                        >
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onDetail(q);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                           >
                             <Eye className="h-3.5 w-3.5 text-slate-500" />
                             <span>Xem chi tiết</span>
@@ -474,10 +462,10 @@ export function QuestionBankTable({
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onAction(q, 'edit');
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                           >
                             <Edit className="h-3.5 w-3.5 text-blue-600" />
                             <span>Chỉnh sửa</span>
@@ -487,10 +475,10 @@ export function QuestionBankTable({
                             <button
                               type="button"
                               onClick={() => {
-                                setActiveMenuId(null);
+                                closeMenu();
                                 onAction(q, 'approve');
                               }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700"
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700 cursor-pointer"
                             >
                               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                               <span>Phê duyệt</span>
@@ -501,30 +489,32 @@ export function QuestionBankTable({
                             <button
                               type="button"
                               onClick={() => {
-                                setActiveMenuId(null);
+                                closeMenu();
                                 onAction(q, 'reject');
                               }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-700"
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-700 cursor-pointer"
                             >
                               <XCircle className="h-3.5 w-3.5 text-rose-600" />
                               <span>Từ chối</span>
                             </button>
                           )}
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              onAction(q, 'delete');
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            <span>Xóa câu hỏi</span>
-                          </button>
-                        </div>
+                          {isAdmin && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                onAction(q, 'delete');
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              <span>Xóa câu hỏi</span>
+                            </button>
+                          )}
+                        </>
                       )}
-                    </div>
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

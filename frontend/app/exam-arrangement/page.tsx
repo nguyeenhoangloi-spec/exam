@@ -575,7 +575,7 @@ export default function ExamArrangementPage() {
                     if ((current as any)?.mode === 'MOCK') {
                       return (
                         <div className="mt-3 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium space-y-1 shadow-2xs">
-                          <p className="font-bold text-amber-950">🟡 Ca Thi Thử (MOCK)</p>
+                          <p className="font-bold text-amber-950">Ca Thi Thử (MOCK)</p>
                           <p className="leading-relaxed text-amber-800">
                             Ca thi này áp dụng hình thức thi thử trực tuyến tự do. Sinh viên có thể tham gia thi trực tuyến mà không bắt buộc phải xếp phòng thi máy hay chia số báo danh.
                           </p>

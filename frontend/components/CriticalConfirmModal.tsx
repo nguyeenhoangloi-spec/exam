@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AlertTriangle, Lock, ShieldAlert, KeyRound, X } from 'lucide-react';
 
 export interface CriticalConfirmPayload {
@@ -25,24 +26,26 @@ interface CriticalConfirmModalProps {
   onConfirm: (payload: CriticalConfirmPayload) => Promise<void> | void;
 }
 
+const DEFAULT_REASONS = [
+  'Tuân thủ quy định quản lý khảo thí',
+  'Hoàn tất công tác chấm thi và tổng hợp',
+  'Phát hiện sai sót dữ liệu cần xử lý',
+  'Yêu cầu theo chỉ đạo của Ban Giám hiệu',
+  'Lý do khác',
+];
+
 export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   isOpen,
   onClose,
   title,
   warningMessage,
   confirmPhrase,
-  reasons = [
-    'Tuân thủ quy định quản lý khảo thí',
-    'Hoàn tất công tác chấm thi và tổng hợp',
-    'Phát hiện sai sót dữ liệu cần xử lý',
-    'Yêu cầu theo chỉ đạo của Ban Giám hiệu',
-    'Lý do khác',
-  ],
+  reasons = DEFAULT_REASONS,
   actionButtonText = 'Xác Nhận & Thực Hiện',
   examPasswordRequired = false,
   onConfirm,
 }) => {
-  const [selectedReason, setSelectedReason] = useState(reasons[0] || '');
+  const [selectedReason, setSelectedReason] = useState(reasons[0] || DEFAULT_REASONS[0]);
   const [customReason, setCustomReason] = useState('');
   const [note, setNote] = useState('');
   const [inputPhrase, setInputPhrase] = useState('');
@@ -50,12 +53,27 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   const [examPassword, setExamPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const targetPhrase = confirmPhrase.trim().toUpperCase();
 
+  // Helper strip vietnamese diacritics for flexible matching
+  const normalizeStr = (str: string) =>
+    (str || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .trim()
+      .toUpperCase();
+
   useEffect(() => {
     if (isOpen) {
-      setSelectedReason(reasons[0] || '');
+      setSelectedReason(reasons[0] || DEFAULT_REASONS[0]);
       setCustomReason('');
       setNote('');
       setInputPhrase('');
@@ -64,19 +82,22 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       setErrorMsg('');
       setLoading(false);
     }
-  }, [isOpen, reasons]);
+  }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  const isPhraseMatched = inputPhrase.trim().toUpperCase() === targetPhrase;
+  const isPhraseMatched = normalizeStr(inputPhrase) === normalizeStr(targetPhrase);
   const isReasonValid = Boolean(
     selectedReason !== 'Lý do khác' ? selectedReason.trim() : customReason.trim(),
   );
   const isExamPasswordValid = examPasswordRequired
     ? examPassword.trim().length >= 4
     : true;
-  const canSubmit =
-    isPhraseMatched && isReasonValid && Boolean(password.trim()) && isExamPasswordValid && !loading;
+
+  const handleQuickFillPhrase = () => {
+    setInputPhrase(confirmPhrase);
+    setErrorMsg('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,17 +109,12 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
     }
 
     if (!isPhraseMatched) {
-      setErrorMsg(`Cụm từ xác nhận chưa chính xác. Vui lòng gõ đúng "${targetPhrase}".`);
-      return;
-    }
-
-    if (!password.trim()) {
-      setErrorMsg('Vui lòng nhập mật khẩu tài khoản của bạn để xác thực.');
+      setErrorMsg(`Cụm từ xác nhận chưa chính xác. Vui lòng gõ "${targetPhrase}" (hoặc bấm nút Điền nhanh).`);
       return;
     }
 
     if (examPasswordRequired && examPassword.trim().length < 4) {
-      setErrorMsg('Vui lòng nhập mật khẩu thi (tối thiểu 4 ký tự) để phát hành đề thi chính thức.');
+      setErrorMsg('Vui lòng nhập mật khẩu thi chính thức (tối thiểu 4 ký tự) ở mục 5.');
       return;
     }
 
@@ -123,8 +139,8 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-rose-100 flex flex-col max-h-[90vh]">
         {/* Header Alert Banner */}
         <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-amber-600 px-6 py-4 text-white flex items-center justify-between shrink-0">
@@ -158,7 +174,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {errorMsg && (
             <div className="rounded-xl bg-red-100 border border-red-200 p-3 text-xs font-semibold text-red-700 animate-shake">
-              ⚠️ {errorMsg}
+              {errorMsg}
             </div>
           )}
 
@@ -210,14 +226,25 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               <label className="block text-xs font-bold uppercase text-slate-600">
                 3. Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
               </label>
-              <span className="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
-                {targetPhrase}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                  {targetPhrase}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleQuickFillPhrase}
+                  className="text-[10px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-md border border-blue-200 transition cursor-pointer"
+                  title="Tự động điền cụm từ xác nhận"
+                >
+                  Điền nhanh
+                </button>
+              </div>
             </div>
             <input
               type="text"
               required
-              placeholder={`Gõ đúng chữ: ${targetPhrase}`}
+              autoFocus
+              placeholder={`Gõ: ${targetPhrase} (hoặc bấm Điền nhanh)`}
               value={inputPhrase}
               onChange={(e) => setInputPhrase(e.target.value)}
               className={`w-full rounded-xl border px-3.5 py-2 text-xs font-bold focus:outline-none transition ${isPhraseMatched
@@ -227,21 +254,23 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             />
             {isPhraseMatched && (
               <p className="mt-1 text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                ✓ Cụm từ xác nhận khớp đúng
+                Cụm từ xác nhận hợp lệ
               </p>
             )}
           </div>
 
-          {/* Step 4: Account Password Verification */}
+          {/* Step 4: Account Password Verification (Optional if logged in) */}
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1 flex items-center gap-1">
-              <KeyRound className="w-3.5 h-3.5 text-slate-500" />
-              4. Mật khẩu tài khoản của bạn <span className="text-rose-500">*</span>
+            <label className="block text-xs font-bold uppercase text-slate-600 mb-1 flex items-center justify-between">
+              <span className="flex items-center gap-1">
+                <KeyRound className="w-3.5 h-3.5 text-slate-500" />
+                4. Mật khẩu tài khoản của bạn
+              </span>
+              <span className="text-[10px] text-slate-400 font-normal">(Tùy chọn nếu đã đăng nhập)</span>
             </label>
             <input
               type="password"
-              required
-              placeholder="Nhập mật khẩu hiện tại để xác nhận quyền hạn"
+              placeholder="Mật khẩu tài khoản (tùy chọn)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs focus:border-rose-500 focus:outline-none"
@@ -282,11 +311,10 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={!canSubmit}
-              className={`px-5 py-2 rounded-xl text-white font-bold text-xs transition shadow-md flex items-center gap-2 ${canSubmit
-                ? 'bg-rose-600 hover:bg-rose-700 active:scale-95'
-                : 'bg-slate-300 cursor-not-allowed'
-                }`}
+              disabled={loading}
+              className={`px-5 py-2 rounded-xl text-white font-bold text-xs transition shadow-md flex items-center gap-2 cursor-pointer ${
+                loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700 active:scale-95'
+              }`}
             >
               {loading ? (
                 <>
@@ -303,7 +331,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
-

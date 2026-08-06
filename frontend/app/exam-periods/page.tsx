@@ -17,7 +17,7 @@ import { Calendar, Clock, Search, X, ChevronDown } from 'lucide-react';
 import { ExamPeriodHeader } from '../../components/exam-periods/ExamPeriodHeader';
 import { ExamPeriodKPICards } from '../../components/exam-periods/ExamPeriodKPICards';
 import { ExamPeriodTableToolbar } from '../../components/exam-periods/ExamPeriodTableToolbar';
-import { ExamPeriodTable } from '../../components/exam-periods/ExamPeriodTable';
+import { ExamPeriodTable, computePeriodStatus } from '../../components/exam-periods/ExamPeriodTable';
 import { ExamPeriodPaginationBar } from '../../components/exam-periods/ExamPeriodPaginationBar';
 
 export default function ExamPeriodsPage() {
@@ -104,13 +104,13 @@ export default function ExamPeriodsPage() {
     fetchData();
   }, [fetchData, router]);
 
-  // Compute DYNAMIC KPI metrics directly from real API data
+  // Compute DYNAMIC KPI metrics directly from real API data using real-time status
   const kpiData = useMemo(() => {
     const total = periods.length;
-    const upcoming = periods.filter((p) => p.status === 'UPCOMING' || !p.status).length;
-    const ongoing = periods.filter((p) => p.status === 'ONGOING' || p.status === 'ACTIVE').length;
-    const completed = periods.filter((p) => p.status === 'COMPLETED' || p.status === 'FINISHED').length;
-    const cancelled = periods.filter((p) => p.status === 'CANCELLED').length;
+    const upcoming = periods.filter((p) => computePeriodStatus(p) === 'UPCOMING').length;
+    const ongoing = periods.filter((p) => computePeriodStatus(p) === 'ONGOING').length;
+    const completed = periods.filter((p) => computePeriodStatus(p) === 'COMPLETED').length;
+    const cancelled = periods.filter((p) => computePeriodStatus(p) === 'CANCELLED').length;
     return { total, upcoming, ongoing, completed, cancelled };
   }, [periods]);
 
@@ -133,7 +133,7 @@ export default function ExamPeriodsPage() {
           (p.schoolYear || '').toLowerCase().includes(search.toLowerCase());
         const matchSemester = selectedSemester ? p.semester === selectedSemester : true;
         const matchYear = selectedSchoolYear ? p.schoolYear === selectedSchoolYear : true;
-        const matchStatus = selectedStatus ? (p.status || 'UPCOMING') === selectedStatus : true;
+        const matchStatus = selectedStatus ? computePeriodStatus(p) === selectedStatus : true;
         return matchSearch && matchSemester && matchYear && matchStatus;
       })
       .sort((a, b) => {
@@ -518,20 +518,6 @@ export default function ExamPeriodsPage() {
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Trạng thái</label>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-            >
-              <option value="UPCOMING">Sắp diễn ra</option>
-              <option value="ONGOING">Đang diễn ra</option>
-              <option value="COMPLETED">Đã hoàn thành</option>
-              <option value="CANCELLED">Đã hủy</option>
-            </select>
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">

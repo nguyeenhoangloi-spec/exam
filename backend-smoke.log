@@ -2096,3 +2096,909 @@ Require stack:
 }
 
 Node.js v24.18.1
+[2J[3J[H[[90m1:23:12 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:23:22 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +118ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +14ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSecurityModule dependencies initialized[39m[38;5;3m +32ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +19ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDepartmentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClassesModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStudentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubjectsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContactModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProctorModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeachersModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamRoomsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPeriodsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSchedulesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamArrangementModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSupervisorsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mQuestionsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPapersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEssayModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOnlineExamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +27ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +32ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, GET} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/change-password, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/dashboard-stats, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +18ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDepartmentsController {/departments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum/:subjectId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, DELETE} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClassesController {/classes}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStudentsController {/students}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-schedule, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-curriculum, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeachersController {/teachers}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments, GET} route[39m[38;5;3m +18ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/status, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/attendance-sheet, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, GET} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/lock, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, PATCH} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubjectsController {/subjects}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/chapters, GET} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enrollments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enroll-students, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamRoomsController {/exam-rooms}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/lock, POST} route[39m[38;5;3m +10ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPeriodsController {/exam-periods}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSchedulesController {/exam-schedules}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/conflicts, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/trash, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-apply, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/reopen-entry, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/restore, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamArrangementController {/exam-arrangement}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/auto-arrange, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/result, GET} route[39m[38;5;3m +17ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/room-availability, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/reset/:examScheduleId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/history, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSupervisorsController {/exam-supervisors}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/assign, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-preview, POST} route[39m[38;5;3m +9ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-assign, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mQuestionsController {/questions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/statistics, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/filter-options, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/template, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/preview, POST} route[39m[38;5;3m +10ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/upload, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/export, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/bulk-action, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-generate, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-save, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-extract-text, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/duplicate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/reject, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/archive, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/restore, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPapersController {/exam-papers}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/create-random, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/preview-random, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/publish, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/archive, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/restore, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard/overview, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOnlineExamsController {/online-exams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/check-eligibility, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/start, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/questions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/answers/save, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/heartbeat, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/events, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/submit, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/result, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/appeal, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/grade-report, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProctorController {/proctor}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/live-dashboard/:scheduleRoomId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/extend-time, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/flag-incident, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/resolve-incident, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayController {/essay}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/assignments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/answers/:answerId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/attempt/:token/answers/:questionId/files, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayGradingController {/essay-grading}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/assignments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId/ai-suggest, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayConfigController {/online-exam-config}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exam-config/:scheduleId/essay, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContactController {/contact}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/contact/send, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +160ms[39m
+[31m[Nest] 19108  - [39m08/06/2026, 1:23:33 PM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +6ms[39m
+node:net:2009
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:2009:16)
+    at listenInCluster (node:net:2066:12)
+    at Server.listen (node:net:2171:7)
+    at ExpressAdapter.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v24.18.1
+[2J[3J[H[[90m1:51:57 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:00 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:52:01 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:02 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:52:06 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:07 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:52:14 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:14 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:52:16 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:17 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +112ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSecurityModule dependencies initialized[39m[38;5;3m +20ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +9ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +31ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDepartmentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClassesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStudentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubjectsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContactModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProctorModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeachersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamRoomsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPeriodsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSchedulesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamArrangementModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSupervisorsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mQuestionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPapersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEssayModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOnlineExamsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +23ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +9ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/change-password, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/dashboard-stats, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDepartmentsController {/departments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, GET} route[39m[38;5;3m +10ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, PATCH} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum/:subjectId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClassesController {/classes}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStudentsController {/students}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-schedule, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-curriculum, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, DELETE} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeachersController {/teachers}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/status, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/attendance-sheet, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubjectsController {/subjects}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/chapters, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enrollments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enroll-students, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamRoomsController {/exam-rooms}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/lock, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPeriodsController {/exam-periods}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSchedulesController {/exam-schedules}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/conflicts, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/trash, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-apply, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, DELETE} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/reopen-entry, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/restore, POST} route[39m[38;5;3m +16ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamArrangementController {/exam-arrangement}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/auto-arrange, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/result, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/room-availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/reset/:examScheduleId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/history, GET} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSupervisorsController {/exam-supervisors}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/assign, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-preview, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id/status, PATCH} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id, DELETE} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mQuestionsController {/questions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/statistics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/filter-options, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/template, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/preview, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/upload, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/export, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/bulk-action, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/preview, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-generate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-save, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-extract-text, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/duplicate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/submit, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/reject, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/archive, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/restore, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPapersController {/exam-papers}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/create-random, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/preview-random, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/archive, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/restore, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard/overview, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOnlineExamsController {/online-exams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/check-eligibility, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/start, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/questions, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/answers/save, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/heartbeat, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/events, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/submit, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/result, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/appeal, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/grade-report, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProctorController {/proctor}:[39m[38;5;3m +3ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/live-dashboard/:scheduleRoomId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/extend-time, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/reopen, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/flag-incident, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/resolve-incident, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayController {/essay}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/answers/:answerId, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/attempt/:token/answers/:questionId/files, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayGradingController {/essay-grading}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId/ai-suggest, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayConfigController {/online-exam-config}:[39m[38;5;3m +2ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exam-config/:scheduleId/essay, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContactController {/contact}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/contact/send, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +125ms[39m
+[31m[Nest] 18304  - [39m08/06/2026, 1:52:27 PM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +5ms[39m
+node:net:2009
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:2009:16)
+    at listenInCluster (node:net:2066:12)
+    at Server.listen (node:net:2171:7)
+    at ExpressAdapter.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v24.18.1
+[2J[3J[H[[90m1:52:30 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/app.module.ts[0m:[93m1[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'Module'.
+
+[7m1[0m import { Module } from '@nestjs/common';
+[7m [0m [91m         ~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m2[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ConfigModule'.
+
+[7m2[0m import { ConfigModule } from '@nestjs/config';
+[7m [0m [91m         ~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m3[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'PrismaModule'.
+
+[7m3[0m import { PrismaModule } from './prisma/prisma.module';
+[7m [0m [91m         ~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m4[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'AuthModule'.
+
+[7m4[0m import { AuthModule } from './auth/auth.module';
+[7m [0m [91m         ~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m5[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'UsersModule'.
+
+[7m5[0m import { UsersModule } from './users/users.module';
+[7m [0m [91m         ~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m6[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'DepartmentsModule'.
+
+[7m6[0m import { DepartmentsModule } from './departments/departments.module';
+[7m [0m [91m         ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m7[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ClassesModule'.
+
+[7m7[0m import { ClassesModule } from './classes/classes.module';
+[7m [0m [91m         ~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m8[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'StudentsModule'.
+
+[7m8[0m import { StudentsModule } from './students/students.module';
+[7m [0m [91m         ~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m9[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'TeachersModule'.
+
+[7m9[0m import { TeachersModule } from './teachers/teachers.module';
+[7m [0m [91m         ~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m10[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'SubjectsModule'.
+
+[7m10[0m import { SubjectsModule } from './subjects/subjects.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m11[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamRoomsModule'.
+
+[7m11[0m import { ExamRoomsModule } from './exam-rooms/exam-rooms.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m12[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamPeriodsModule'.
+
+[7m12[0m import { ExamPeriodsModule } from './exam-periods/exam-periods.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m13[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamSchedulesModule'.
+
+[7m13[0m import { ExamSchedulesModule } from './exam-schedules/exam-schedules.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m14[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamArrangementModule'.
+
+[7m14[0m import { ExamArrangementModule } from './exam-arrangement/exam-arrangement.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m15[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamSupervisorsModule'.
+
+[7m15[0m import { ExamSupervisorsModule } from './exam-supervisors/exam-supervisors.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m16[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'QuestionsModule'.
+
+[7m16[0m import { QuestionsModule } from './questions/questions.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m17[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamPapersModule'.
+
+[7m17[0m import { ExamPapersModule } from './exam-papers/exam-papers.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m18[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'AuditModule'.
+
+[7m18[0m import { AuditModule } from './audit/audit.module';
+[7m  [0m [91m         ~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m19[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'Module'.
+
+[7m19[0m import { Module } from '@nestjs/common';
+[7m  [0m [91m         ~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m20[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ConfigModule'.
+
+[7m20[0m import { ConfigModule } from '@nestjs/config';
+[7m  [0m [91m         ~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m21[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'PrismaModule'.
+
+[7m21[0m import { PrismaModule } from './prisma/prisma.module';
+[7m  [0m [91m         ~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m22[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'AuthModule'.
+
+[7m22[0m import { AuthModule } from './auth/auth.module';
+[7m  [0m [91m         ~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m23[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'UsersModule'.
+
+[7m23[0m import { UsersModule } from './users/users.module';
+[7m  [0m [91m         ~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m24[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'DepartmentsModule'.
+
+[7m24[0m import { DepartmentsModule } from './departments/departments.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m25[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ClassesModule'.
+
+[7m25[0m import { ClassesModule } from './classes/classes.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m26[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'StudentsModule'.
+
+[7m26[0m import { StudentsModule } from './students/students.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m27[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'TeachersModule'.
+
+[7m27[0m import { TeachersModule } from './teachers/teachers.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m28[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'SubjectsModule'.
+
+[7m28[0m import { SubjectsModule } from './subjects/subjects.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m29[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamRoomsModule'.
+
+[7m29[0m import { ExamRoomsModule } from './exam-rooms/exam-rooms.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m30[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamPeriodsModule'.
+
+[7m30[0m import { ExamPeriodsModule } from './exam-periods/exam-periods.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m31[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamSchedulesModule'.
+
+[7m31[0m import { ExamSchedulesModule } from './exam-schedules/exam-schedules.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m32[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamArrangementModule'.
+
+[7m32[0m import { ExamArrangementModule } from './exam-arrangement/exam-arrangement.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m33[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamSupervisorsModule'.
+
+[7m33[0m import { ExamSupervisorsModule } from './exam-supervisors/exam-supervisors.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m34[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'QuestionsModule'.
+
+[7m34[0m import { QuestionsModule } from './questions/questions.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m35[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'ExamPapersModule'.
+
+[7m35[0m import { ExamPapersModule } from './exam-papers/exam-papers.module';
+[7m  [0m [91m         ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app.module.ts[0m:[93m36[0m:[93m10[0m - [91merror[0m[90m TS2300: [0mDuplicate identifier 'AuditModule'.
+
+[7m36[0m import { AuditModule } from './audit/audit.module';
+[7m  [0m [91m         ~~~~~~~~~~~[0m
+
+[[90m1:52:31 PM[0m] Found 36 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:52:35 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:37 PM[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:52:41 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:52:43 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:55 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +58ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +12ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSecurityModule dependencies initialized[39m[38;5;3m +13ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +7ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +11ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDepartmentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClassesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStudentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubjectsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContactModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProctorModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeachersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamRoomsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPeriodsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSchedulesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamArrangementModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSupervisorsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mQuestionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPapersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEssayModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOnlineExamsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +13ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/change-password, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/dashboard-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDepartmentsController {/departments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum/:subjectId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClassesController {/classes}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, GET} route[39m[38;5;3m +15ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, POST} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStudentsController {/students}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-schedule, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-curriculum, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, PATCH} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, DELETE} route[39m[38;5;3m +13ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeachersController {/teachers}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/attendance-sheet, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubjectsController {/subjects}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/chapters, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enrollments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enroll-students, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamRoomsController {/exam-rooms}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPeriodsController {/exam-periods}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSchedulesController {/exam-schedules}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/conflicts, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/trash, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-apply, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/reopen-entry, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/restore, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamArrangementController {/exam-arrangement}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/auto-arrange, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/result, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/room-availability, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/reset/:examScheduleId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/history, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSupervisorsController {/exam-supervisors}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-preview, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-assign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mQuestionsController {/questions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/statistics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/filter-options, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/template, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/upload, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/export, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/bulk-action, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/confirm, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-generate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-save, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-extract-text, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/duplicate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/approve, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/reject, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/archive, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/restore, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPapersController {/exam-papers}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/create-random, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/preview-random, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/publish, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/archive, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/restore, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard/overview, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOnlineExamsController {/online-exams}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/check-eligibility, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/start, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/questions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/answers/save, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/heartbeat, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/events, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/result, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/appeal, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/grade-report, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProctorController {/proctor}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/live-dashboard/:scheduleRoomId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/extend-time, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/flag-incident, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/resolve-incident, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayController {/essay}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/answers/:answerId, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/attempt/:token/answers/:questionId/files, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayGradingController {/essay-grading}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId/ai-suggest, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayConfigController {/online-exam-config}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exam-config/:scheduleId/essay, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContactController {/contact}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/contact/send, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/grade-essay, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/generate-questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +124ms[39m
+[31m[Nest] 17960  - [39m08/06/2026, 1:52:56 PM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +6ms[39m
+node:net:2009
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:2009:16)
+    at listenInCluster (node:net:2066:12)
+    at Server.listen (node:net:2171:7)
+    at ExpressAdapter.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\src\main.ts:32:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v24.18.1

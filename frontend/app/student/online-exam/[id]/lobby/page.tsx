@@ -202,7 +202,7 @@ export default function StudentExamLobbyPage() {
             </div>
 
             <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl mb-6 text-amber-900 text-xs shadow-xs">
-              <p className="font-bold mb-1 text-amber-950">⚠️ Nội quy thi nghiêm ngặt:</p>
+              <p className="font-bold mb-1 text-amber-950">Nội quy thi nghiêm ngặt:</p>
               <p className="text-amber-800 leading-relaxed font-medium">
                 Hệ thống tự động ghi nhận mọi hành vi chuyển tab, thoát toàn màn hình, mở công cụ lập trình hoặc mất kết nối.
                 Bài thi sẽ bị tự động khóa và nộp nếu vi phạm quá số lần quy định.

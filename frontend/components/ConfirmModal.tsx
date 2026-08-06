@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle, CheckCircle, LogOut, Info } from 'lucide-react';
 
 interface ConfirmModalProps {
@@ -28,6 +29,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 }) => {
   const [reason, setReason] = useState('');
   const [reasonError, setReasonError] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -36,7 +42,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const handleConfirm = () => {
     if (requireReason) {
@@ -88,7 +94,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   const iconConfig = getIconConfig();
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
       <div className="relative w-full max-w-sm my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-950/15 transition-all border border-slate-200/90 dark:border-slate-700">
         {/* Header Bar - Compact & Sleek */}
@@ -148,6 +154,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

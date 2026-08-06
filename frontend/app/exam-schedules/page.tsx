@@ -19,9 +19,22 @@ import { ExamScheduleFiltersCard, ExamScheduleFilterValues } from '../../compone
 import { ExamScheduleTabsBar } from '../../components/exam-schedules/ExamScheduleTabsBar';
 import { ExamScheduleTableToolbar } from '../../components/exam-schedules/ExamScheduleTableToolbar';
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
-import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName } from '../../components/exam-schedules/ExamScheduleTable';
+import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeScheduleStatus } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
 import { Calendar, Clock, Building, Users } from 'lucide-react';
+
+function calculateEndTime(startTime: string, durationMinutes: number): string {
+  if (!startTime) return '08:30';
+  const parts = startTime.split(':').map(Number);
+  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return '08:30';
+
+  const [h, m] = parts;
+  const totalM = h * 60 + m + durationMinutes;
+  const endH = Math.floor(totalM / 60) % 24;
+  const endM = totalM % 60;
+
+  return `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
+}
 
 export default function ExamSchedulesPage() {
   usePageTitle('Xếp lịch thi');
@@ -77,11 +90,12 @@ export default function ExamSchedulesPage() {
     shiftName: 'Ca 1 - Sáng',
     roomName: '',
     examDate: new Date().toISOString().split('T')[0],
-    startTime: '07:00',
-    endTime: '09:00',
+    startTime: '07:30',
+    endTime: '08:30',
     studentCount: '40',
     statusBadge: 'UPCOMING',
   });
+  const [selectedDuration, setSelectedDuration] = useState<number>(60);
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
@@ -123,7 +137,7 @@ export default function ExamSchedulesPage() {
           roomName: s.roomName || (s.examScheduleRooms?.[0]?.examRoom?.roomCode || s.examScheduleRooms?.[0]?.examRoom?.name) || 'P.101',
           studentCount: s.studentCount ?? 0,
           supervisorCount: s.supervisorCount ?? '0/0',
-          statusBadge: s.status === 'COMPLETED' ? 'COMPLETED' : s.status === 'ONGOING' ? 'ONGOING' : s.status === 'CANCELLED' ? 'CANCELLED' : 'UPCOMING',
+          statusBadge: computeScheduleStatus(s),
         }));
         setSchedules(mappedRealSchedules);
       }
@@ -144,13 +158,13 @@ export default function ExamSchedulesPage() {
     void fetchInitialData();
   }, [fetchInitialData, router]);
 
-  // Compute DYNAMIC KPI Counts from REAL API DATA
+  // Compute DYNAMIC KPI Counts from REAL API DATA using Real-time status
   const counts = useMemo(() => {
     const total = schedules.length;
-    const upcoming = schedules.filter((s) => s.statusBadge === 'UPCOMING' || s.status === 'SCHEDULED' || s.status === 'UPCOMING').length;
-    const ongoing = schedules.filter((s) => s.statusBadge === 'ONGOING' || s.status === 'ONGOING' || s.status === 'ACTIVE').length;
-    const completed = schedules.filter((s) => s.statusBadge === 'COMPLETED' || s.status === 'COMPLETED' || s.status === 'FINISHED').length;
-    const cancelled = schedules.filter((s) => s.statusBadge === 'CANCELLED' || s.status === 'CANCELLED' || s.status === 'REJECTED').length;
+    const upcoming = schedules.filter((s) => computeScheduleStatus(s) === 'UPCOMING').length;
+    const ongoing = schedules.filter((s) => computeScheduleStatus(s) === 'ONGOING').length;
+    const completed = schedules.filter((s) => computeScheduleStatus(s) === 'COMPLETED').length;
+    const cancelled = schedules.filter((s) => computeScheduleStatus(s) === 'CANCELLED').length;
     return { total, upcoming, ongoing, completed, cancelled };
   }, [schedules]);
 
@@ -166,7 +180,8 @@ export default function ExamSchedulesPage() {
       }
 
       if (filterValues.status) {
-        if (s.statusBadge !== filterValues.status && s.status !== filterValues.status) return false;
+        const currentStatus = computeScheduleStatus(s);
+        if (currentStatus !== filterValues.status) return false;
       }
 
       if (filterValues.examPeriodId) {
@@ -191,14 +206,16 @@ export default function ExamSchedulesPage() {
   // Action Handlers
   const openAddModal = () => {
     setEditingSchedule(null);
-    const defaultStartTime = '07:00';
+    const defaultStart = '07:30';
+    const duration = 60;
+    setSelectedDuration(duration);
     setFormData({
-      periodName: periods[0]?.name || 'Thi học kỳ II 2025-2026',
-      shiftName: computeShiftName(defaultStartTime),
+      periodName: periods[0]?.name || 'Kỳ thi Học kỳ 2 Năm học 2025-2026',
+      shiftName: computeShiftName(defaultStart),
       roomName: rooms[0]?.roomCode || rooms[0]?.name || 'P.101',
       examDate: new Date().toISOString().split('T')[0],
-      startTime: defaultStartTime,
-      endTime: '09:00',
+      startTime: defaultStart,
+      endTime: calculateEndTime(defaultStart, duration),
       studentCount: '45',
       statusBadge: 'UPCOMING',
     });
@@ -207,14 +224,26 @@ export default function ExamSchedulesPage() {
 
   const openEditModal = (s: ExamScheduleItemExtended) => {
     setEditingSchedule(s);
-    const startT = s.startTime || '07:00';
+    const startT = s.startTime || '07:30';
+    let duration = 60;
+
+    if (s.startTime && s.endTime) {
+      const [sh, sm] = s.startTime.split(':').map(Number);
+      const [eh, em] = s.endTime.split(':').map(Number);
+      if (!isNaN(sh) && !isNaN(sm) && !isNaN(eh) && !isNaN(em)) {
+        const diff = (eh * 60 + em) - (sh * 60 + sm);
+        if (diff > 0) duration = diff;
+      }
+    }
+    setSelectedDuration(duration);
+
     setFormData({
       periodName: s.periodName || s.examPeriod?.name || '',
       shiftName: computeShiftName(startT, s.shiftName),
       roomName: s.roomName || 'P.101',
       examDate: s.examDate ? new Date(s.examDate).toISOString().split('T')[0] : '',
       startTime: startT,
-      endTime: s.endTime || '09:00',
+      endTime: s.endTime || calculateEndTime(startT, duration),
       studentCount: String(s.studentCount ?? (s as any)._count?.examRoomStudents ?? 0),
       statusBadge: (s.statusBadge || 'UPCOMING') as any,
     });
@@ -516,25 +545,43 @@ export default function ExamSchedulesPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi (Tự động xác định)</label>
-              <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-extrabold text-blue-700 flex items-center justify-between">
-                <span>{formData.shiftName || computeShiftName(formData.startTime)}</span>
-                <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md uppercase">Tự động</span>
-              </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi (Tự động xác định)</label>
+            <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-extrabold text-blue-700 flex items-center justify-between">
+              <span>{formData.shiftName || computeShiftName(formData.startTime)}</span>
+              <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md uppercase">Hệ thống tự động nhận diện</span>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Phòng thi</label>
-              <input
-                type="text"
-                required
-                placeholder="VD: P.101"
-                value={formData.roomName}
-                onChange={(e) => setFormData({ ...formData, roomName: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              />
+          {/* Quick Duration Selection */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-bold uppercase text-slate-500">Thời lượng thi (Tự động tính Giờ kết thúc)</label>
+              <span className="text-[11px] font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                Đang chọn: {selectedDuration} phút
+              </span>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[45, 60, 90, 120].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => {
+                    setSelectedDuration(d);
+                    setFormData((prev) => ({
+                      ...prev,
+                      endTime: calculateEndTime(prev.startTime, d),
+                    }));
+                  }}
+                  className={`py-2 rounded-xl text-xs font-black transition cursor-pointer border ${
+                    selectedDuration === d
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
+                >
+                  {d} phút
+                </button>
+              ))}
             </div>
           </div>
 
@@ -558,48 +605,30 @@ export default function ExamSchedulesPage() {
                 onChange={(e) => {
                   const newStart = e.target.value;
                   const newShift = computeShiftName(newStart);
-                  setFormData({ ...formData, startTime: newStart, shiftName: newShift });
+                  const newEnd = calculateEndTime(newStart, selectedDuration);
+                  setFormData({
+                    ...formData,
+                    startTime: newStart,
+                    shiftName: newShift,
+                    endTime: newEnd,
+                  });
                 }}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none font-bold"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none font-bold text-blue-700"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Giờ kết thúc</label>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Giờ kết thúc (Tự động)</label>
               <input
                 type="time"
                 required
                 value={formData.endTime}
                 onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-blue-200 bg-blue-50/40 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none font-bold text-blue-900"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Số thí sinh</label>
-              <input
-                type="number"
-                required
-                value={formData.studentCount}
-                onChange={(e) => setFormData({ ...formData, studentCount: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Trạng thái</label>
-              <select
-                value={formData.statusBadge}
-                onChange={(e) => setFormData({ ...formData, statusBadge: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              >
-                <option value="UPCOMING">Sắp diễn ra</option>
-                <option value="ONGOING">Đang diễn ra</option>
-                <option value="COMPLETED">Đã diễn ra</option>
-                <option value="CANCELLED">Đã hủy</option>
-              </select>
-            </div>
-          </div>
+
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button

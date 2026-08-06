@@ -238,11 +238,12 @@ export function DepartmentTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {departments.map((d) => {
+          {departments.map((d, index) => {
             const isChecked = selected.includes(d.id);
           const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
           const classesCount = (d as any).classesCount ?? (d as any)._count?.classes ?? ((d as any).classes?.length || 0);
           const teachersCount = (d as any).teachersCount ?? (d as any)._count?.teachers ?? ((d as any).teachers?.length || 0);
+          const isLastRow = index >= Math.floor(departments.length / 2);
 
             return (
               <tr
@@ -346,7 +347,9 @@ export function DepartmentTable({
 
                       {activeMenuId === d.id && (
                         <div
-                          className="absolute right-0 top-full z-20 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
+                          className={`absolute right-2 ${
+                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
+                          } z-30 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
                           onMouseLeave={() => setActiveMenuId(null)}
                         >
                           <button

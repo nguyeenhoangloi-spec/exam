@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical } from 'lucide-react';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { ExamPaper } from '../../types';
 
 const statusStyle: Record<string, { label: string; className: string }> = {
@@ -244,11 +245,12 @@ export function ExamPaperTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {papers.map((p) => {
+          {papers.map((p, index) => {
             const isChecked = selected.includes(p.id);
             const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
             const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---';
             const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
+            const isLastRow = index >= Math.floor(papers.length / 2);
 
             return (
               <tr
@@ -286,7 +288,7 @@ export function ExamPaperTable({
                       </div>
                       <span
                         onClick={() => onDetail(p.id)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate"
                       >
                         {subjectName}
                       </span>
@@ -345,28 +347,16 @@ export function ExamPaperTable({
                       <Download className="h-4 w-4" />
                     </button>
 
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === p.id ? null : p.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        title="Thao tác khác"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-
-                      {activeMenuId === p.id && (
-                        <div
-                          className="absolute right-0 top-full z-20 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
-                          onMouseLeave={() => setActiveMenuId(null)}
-                        >
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onDetail(p.id);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                           >
                             <Eye className="h-3.5 w-3.5 text-slate-500" />
                             <span>Xem chi tiết</span>
@@ -375,10 +365,10 @@ export function ExamPaperTable({
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onExportWord(p);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                           >
                             <Download className="h-3.5 w-3.5 text-slate-500" />
                             <span>Xuất Word (.doc)</span>
@@ -390,10 +380,10 @@ export function ExamPaperTable({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setActiveMenuId(null);
+                                    closeMenu();
                                     onAction(p, 'publish');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700"
+                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700 cursor-pointer"
                                 >
                                   <Send className="h-3.5 w-3.5 text-emerald-600" />
                                   <span>Phát hành Đề thi</span>
@@ -404,10 +394,10 @@ export function ExamPaperTable({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setActiveMenuId(null);
+                                    closeMenu();
                                     onAction(p, 'archive');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                                 >
                                   <Archive className="h-3.5 w-3.5 text-slate-500" />
                                   <span>Lưu trữ Đề thi</span>
@@ -418,32 +408,32 @@ export function ExamPaperTable({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setActiveMenuId(null);
+                                    closeMenu();
                                     onAction(p, 'restore');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-sky-50 text-sky-700"
+                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                                 >
-                                  <RotateCcw className="h-3.5 w-3.5 text-sky-600" />
-                                  <span>Khôi phục Đề nháp</span>
+                                  <RotateCcw className="h-3.5 w-3.5 text-slate-500" />
+                                  <span>Khôi phục Đề thi</span>
                                 </button>
                               )}
 
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onAction(p, 'delete');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
+                                <Trash2 className="h-3.5 w-3.5 text-rose-500" />
                                 <span>Xóa Đề thi</span>
                               </button>
                             </>
                           )}
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

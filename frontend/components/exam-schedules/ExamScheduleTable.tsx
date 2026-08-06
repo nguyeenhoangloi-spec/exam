@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, MoreVertical, Edit, Trash2, RotateCcw, Clock, Calendar, Users, Building } from 'lucide-react';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { ExamSchedule } from '../../types';
 
 export interface ExamScheduleItemExtended {
@@ -41,6 +42,51 @@ interface ExamScheduleTableProps {
   onRestore?: (id: number) => void;
   onHardDelete?: (id: number) => void;
   isAdmin: boolean;
+}
+
+export function computeScheduleStatus(s: {
+  status?: string;
+  statusBadge?: string;
+  examDate?: string;
+  startTime?: string;
+  endTime?: string;
+}): 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED' {
+  const rawStatus = (s.statusBadge || s.status || '').toUpperCase();
+  if (rawStatus === 'CANCELLED' || rawStatus === 'REJECTED') {
+    return 'CANCELLED';
+  }
+
+  if (!s.examDate) {
+    return (rawStatus as any) || 'UPCOMING';
+  }
+
+  try {
+    const now = new Date();
+
+    let dateStr = s.examDate;
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+    const parts = dateStr.split('-').map(Number);
+    if (parts.length < 3) return (rawStatus as any) || 'UPCOMING';
+    const [y, m, d] = parts;
+
+    const [startH, startM] = (s.startTime || '00:00').split(':').map(Number);
+    const [endH, endM] = (s.endTime || '23:59').split(':').map(Number);
+
+    const startDateTime = new Date(y, m - 1, d, startH || 0, startM || 0);
+    const endDateTime = new Date(y, m - 1, d, endH || 23, endM || 59);
+
+    if (now < startDateTime) {
+      return 'UPCOMING';
+    } else if (now >= startDateTime && now <= endDateTime) {
+      return 'ONGOING';
+    } else {
+      return 'COMPLETED';
+    }
+  } catch {
+    return (rawStatus as any) || 'UPCOMING';
+  }
 }
 
 export function computeShiftName(startTime?: string, fallbackShiftName?: string): string {
@@ -107,8 +153,8 @@ export function ExamScheduleTable({
     }
   };
 
-  const getStatusBadge = (st?: string) => {
-    const s = st?.toUpperCase() || 'UPCOMING';
+  const getStatusBadge = (st?: string, sched?: ExamScheduleItemExtended) => {
+    const s = (sched ? computeScheduleStatus(sched) : st?.toUpperCase()) || 'UPCOMING';
     if (s === 'ONGOING' || s === 'ACTIVE') {
       return (
         <span className="inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
@@ -176,7 +222,7 @@ export function ExamScheduleTable({
                       {codeText}
                     </button>
                   </div>
-                  {getStatusBadge(s.statusBadge || s.status)}
+                  {getStatusBadge(s.statusBadge || s.status, s)}
                 </div>
 
                 {/* Period & Shift Info */}
@@ -303,7 +349,7 @@ export function ExamScheduleTable({
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{shiftName}</td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{roomName}</td>
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{formatDate(s.examDate)}</td>
-                  <td className="p-2 whitespace-nowrap">{getStatusBadge(s.statusBadge || s.status)}</td>
+                  <td className="p-2 whitespace-nowrap">{getStatusBadge(s.statusBadge || s.status, s)}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
                       <Eye className="h-3.5 w-3.5" />
@@ -346,7 +392,7 @@ export function ExamScheduleTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {schedules.map((s) => {
+          {schedules.map((s, index) => {
             const isChecked = selected.includes(s.id);
             const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
             const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ II 2023-2024';
@@ -354,6 +400,7 @@ export function ExamScheduleTable({
             const roomName = s.roomName || 'P.101';
             const studentCount = s.studentCount || 45;
             const supervisorCount = s.supervisorCount || '2/2';
+            const isLastRow = index >= Math.floor(schedules.length / 2);
 
             return (
               <tr
@@ -449,7 +496,7 @@ export function ExamScheduleTable({
                 {/* Trạng thái */}
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    {getStatusBadge(s.statusBadge || s.status)}
+                    {getStatusBadge(s.statusBadge || s.status, s)}
                   </td>
                 )}
 
@@ -457,39 +504,16 @@ export function ExamScheduleTable({
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
                     {/* Detail Eye button */}
-                    <button
-                      type="button"
-                      onClick={() => onDetail(s)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                      title="Xem chi tiết"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-
-                    {/* 3 Dots Menu button */}
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === s.id ? null : s.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        title="Thao tác khác"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-
-                      {/* Dropdown Menu */}
-                      {activeMenuId === s.id && (
-                        <div
-                          className="absolute right-0 top-full z-20 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
-                          onMouseLeave={() => setActiveMenuId(null)}
-                        >
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onDetail(s);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                           >
                             <Eye className="h-3.5 w-3.5 text-slate-500" />
                             <span>Xem chi tiết</span>
@@ -502,10 +526,10 @@ export function ExamScheduleTable({
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      setActiveMenuId(null);
+                                      closeMenu();
                                       onRestore?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-600"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-600 cursor-pointer"
                                   >
                                     <RotateCcw className="h-3.5 w-3.5" />
                                     <span>Khôi phục lịch thi</span>
@@ -513,10 +537,10 @@ export function ExamScheduleTable({
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      setActiveMenuId(null);
+                                      closeMenu();
                                       onHardDelete?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                     <span>Xóa vĩnh viễn</span>
@@ -527,33 +551,32 @@ export function ExamScheduleTable({
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      setActiveMenuId(null);
+                                      closeMenu();
                                       onEdit(s);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-blue-600"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
                                   >
-                                    <Edit className="h-3.5 w-3.5" />
-                                    <span>Chỉnh sửa lịch thi</span>
+                                    <Edit className="h-3.5 w-3.5 text-slate-500" />
+                                    <span>Chỉnh sửa ca thi</span>
                                   </button>
-
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      setActiveMenuId(null);
+                                      closeMenu();
                                       onDelete(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
                                   >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                    <span>Xóa lịch thi</span>
+                                    <Trash2 className="h-3.5 w-3.5 text-rose-500" />
+                                    <span>Xóa ca thi</span>
                                   </button>
                                 </>
                               )}
                             </>
                           )}
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

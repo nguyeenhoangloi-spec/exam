@@ -17,6 +17,33 @@ interface ExamPeriodTableProps {
   isAdmin: boolean;
 }
 
+export function computePeriodStatus(p: { status?: string; startDate?: string; endDate?: string }): 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED' {
+  if (p.status === 'CANCELLED') return 'CANCELLED';
+  if (!p.startDate || !p.endDate) return (p.status as any) || 'UPCOMING';
+
+  try {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    let startStr = p.startDate;
+    if (startStr.includes('T')) startStr = startStr.split('T')[0];
+    const [sy, sm, sd] = startStr.split('-').map(Number);
+
+    let endStr = p.endDate;
+    if (endStr.includes('T')) endStr = endStr.split('T')[0];
+    const [ey, em, ed] = endStr.split('-').map(Number);
+
+    const start = new Date(sy, sm - 1, sd, 0, 0, 0);
+    const end = new Date(ey, em - 1, ed, 23, 59, 59);
+
+    if (now < start) return 'UPCOMING';
+    if (now >= start && now <= end) return 'ONGOING';
+    return 'COMPLETED';
+  } catch {
+    return (p.status as any) || 'UPCOMING';
+  }
+}
+
 export function ExamPeriodTable({
   periods,
   selected,
@@ -51,8 +78,8 @@ export function ExamPeriodTable({
     }
   };
 
-  const getStatusBadge = (status?: string) => {
-    const s = status?.toUpperCase() || 'UPCOMING';
+  const getStatusBadge = (status?: string, period?: ExamPeriod) => {
+    const s = (period ? computePeriodStatus(period) : status?.toUpperCase()) || 'UPCOMING';
     if (s === 'ONGOING' || s === 'ACTIVE') {
       return (
         <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">
@@ -224,7 +251,7 @@ export function ExamPeriodTable({
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{p.semester}</td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{p.schoolYear}</td>
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
-                  <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status)}</td>
+                  <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status, p)}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(p)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
                       <Eye className="h-3.5 w-3.5" />
@@ -262,8 +289,9 @@ export function ExamPeriodTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {periods.map((p) => {
+          {periods.map((p, index) => {
             const isChecked = selected.includes(p.id);
+            const isLastRow = index >= Math.floor(periods.length / 2);
 
             return (
               <tr
@@ -314,7 +342,7 @@ export function ExamPeriodTable({
 
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    {getStatusBadge(p.status)}
+                    {getStatusBadge(p.status, p)}
                   </td>
                 )}
 
@@ -341,7 +369,9 @@ export function ExamPeriodTable({
 
                       {activeMenuId === p.id && (
                         <div
-                          className="absolute right-0 top-full z-20 mt-1 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
+                          className={`absolute right-2 ${
+                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
+                          } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
                           onMouseLeave={() => setActiveMenuId(null)}
                         >
                           <button

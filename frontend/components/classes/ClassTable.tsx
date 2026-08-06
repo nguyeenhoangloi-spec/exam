@@ -215,10 +215,11 @@ export function ClassTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {classes.map((c) => {
+          {classes.map((c, index) => {
             const isChecked = selected.includes(c.id);
             const deptName = c.department?.name || (c as any).departmentName || 'Chưa gán Khoa';
             const studentCount = (c as any)._count?.students ?? (c as any).studentsCount ?? ((c as any).students?.length || 0);
+            const isLastRow = index >= Math.floor(classes.length / 2);
 
             return (
               <tr
@@ -303,7 +304,9 @@ export function ClassTable({
 
                       {activeMenuId === c.id && (
                         <div
-                          className="absolute right-0 top-full z-20 mt-1 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
+                          className={`absolute right-2 ${
+                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
+                          } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
                           onMouseLeave={() => setActiveMenuId(null)}
                         >
                           <button

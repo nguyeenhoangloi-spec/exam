@@ -22,6 +22,7 @@ import { ProctorModule } from './proctor/proctor.module';
 import { ContactModule } from './contact/contact.module';
 import { SecurityModule } from './common/security/security.module';
 import { EssayModule } from './essay/essay.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { EssayModule } from './essay/essay.module';
     ProctorModule,
     EssayModule,
     ContactModule,
+    AiModule,
   ],
 })
 export class AppModule {}

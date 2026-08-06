@@ -384,7 +384,7 @@ export default function ExamPapersPage() {
     try {
       await api.post(`/exam-papers/${paper.id}/publish`, payload);
       setToast({
-        message: `🚀 Đề thi ${paper.paperCode} đã phát hành chính thức! Lịch thi đã được KHÓA CHỈNH SỬA.`,
+        message: `Đề thi ${paper.paperCode} đã phát hành chính thức! Lịch thi đã được KHÓA CHỈNH SỬA.`,
         type: 'success',
       });
       if (selectedPaper?.id === paper.id) setSelectedPaper(null);

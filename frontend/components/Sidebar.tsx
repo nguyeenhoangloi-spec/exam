@@ -157,7 +157,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-[#1a2e63]/60 bg-gradient-to-b from-[#070d24] via-[#0b1638] to-[#0e1d4a] text-slate-100 shadow-2xl transition-all duration-300 overflow-hidden ${
+      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-[#1a2e63]/60 bg-gradient-to-b from-[#070d24] via-[#0b1638] to-[#0e1d4a] text-slate-100 shadow-2xl transition-all duration-300 ${
         collapsed ? 'w-[260px] md:w-[76px]' : 'w-[260px]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
     >
@@ -315,18 +315,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </button>
 
-        {/* Popover User Menu Card (Positioned ABOVE trigger matching Screenshot 3) */}
+        {/* Popover User Menu Card (Positioned ABOVE trigger matching Screenshot 3 or SIDEWAYS when collapsed) */}
         {showUserMenu && (
           <div
-            className={`absolute bottom-[calc(100%+10px)] ${
-              collapsed ? 'left-2 w-64' : 'left-3 right-3 w-auto'
+            className={`absolute ${
+              collapsed
+                ? 'left-[calc(100%+12px)] bottom-1 w-64'
+                : 'bottom-[calc(100%+10px)] left-3 right-3 w-auto'
             } rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-2xl z-[9999] text-xs animate-in fade-in zoom-in-95 duration-150`}
           >
-            {/* Little pointer triangle arrow pointing down to trigger card */}
+            {/* Little pointer triangle arrow pointing to trigger card */}
             <div
-              className={`absolute -bottom-1.5 ${
-                collapsed ? 'left-6' : 'left-8'
-              } h-3 w-3 rotate-45 border-r border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900`}
+              className={`absolute ${
+                collapsed
+                  ? '-left-1.5 bottom-4 h-3 w-3 rotate-45 border-l border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
+                  : '-bottom-1.5 left-8 h-3 w-3 rotate-45 border-r border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
+              }`}
             />
 
             {/* Top User Info Header Item */}

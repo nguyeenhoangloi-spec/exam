@@ -263,11 +263,12 @@ export function ExamRoomTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
-          {rooms.map((r) => {
+          {rooms.map((r, index) => {
             const isChecked = selected.includes(r.id);
             const codeText = r.roomCode || r.code || '';
             const nameText = r.roomName || r.name || '';
             const locText = r.building || r.location || 'Tòa nhà A';
+            const isLastRow = index >= Math.floor(rooms.length / 2);
 
             return (
               <tr
@@ -366,7 +367,9 @@ export function ExamRoomTable({
 
                       {activeMenuId === r.id && (
                         <div
-                          className="absolute right-0 top-full z-20 mt-1 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
+                          className={`absolute right-2 ${
+                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
+                          } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
                           onMouseLeave={() => setActiveMenuId(null)}
                         >
                           <button
