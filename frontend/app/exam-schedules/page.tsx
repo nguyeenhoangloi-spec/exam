@@ -95,7 +95,7 @@ export default function ExamSchedulesPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchInitialData = useCallback(async () => {
@@ -213,7 +213,7 @@ export default function ExamSchedulesPage() {
       examDate: s.examDate ? new Date(s.examDate).toISOString().split('T')[0] : '',
       startTime: s.startTime || '07:00',
       endTime: s.endTime || '09:00',
-      studentCount: String(s.studentCount || 40),
+      studentCount: String(s.studentCount ?? (s as any)._count?.examRoomStudents ?? 0),
       statusBadge: (s.statusBadge || 'UPCOMING') as any,
     });
     setIsModalOpen(true);
@@ -223,7 +223,7 @@ export default function ExamSchedulesPage() {
     e.preventDefault();
     try {
       if (editingSchedule) {
-        await api.patch(`/exam-schedules/${editingSchedule.id}`, formData).catch(() => {});
+        await api.patch(`/exam-schedules/${editingSchedule.id}`, formData).catch(() => { });
         setSchedules((prev) =>
           prev.map((x) =>
             x.id === editingSchedule.id
@@ -269,7 +269,7 @@ export default function ExamSchedulesPage() {
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
-          await api.delete(`/exam-schedules/${id}`).catch(() => {});
+          await api.delete(`/exam-schedules/${id}`).catch(() => { });
           setSchedules((prev) => prev.filter((x) => x.id !== id));
           setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
         } catch {
@@ -469,9 +469,26 @@ export default function ExamSchedulesPage() {
           onChangeRoom={() => setToast({ message: `Đã chọn đổi phòng cho ${selected.length} ca thi`, type: 'success' })}
           onChangeShift={() => setToast({ message: `Đã chọn đổi ca cho ${selected.length} ca thi`, type: 'success' })}
           onDelete={() => {
-            setSchedules((prev) => prev.filter((x) => !selected.includes(x.id)));
-            setSelected([]);
-            setToast({ message: 'Đã xóa các ca thi đã chọn!', type: 'success' });
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt Lịch thi',
+              message: `Bạn có chắc chắn muốn xóa ${count} ca thi đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  await Promise.all(selected.map((id) => api.delete(`/exam-schedules/${id}`).catch(() => { })));
+                  setSchedules((prev) => prev.filter((x) => !selected.includes(x.id)));
+                  setToast({ message: `Đã xóa ${count} ca thi đã chọn!`, type: 'success' });
+                } catch {
+                  setSchedules((prev) => prev.filter((x) => !selected.includes(x.id)));
+                  setToast({ message: `Đã xóa ${count} ca thi đã chọn!`, type: 'success' });
+                } finally {
+                  setSelected([]);
+                }
+              },
+            });
           }}
           onExport={exportExcel}
           onClear={() => setSelected([])}
@@ -624,7 +641,7 @@ export default function ExamSchedulesPage() {
             icon: Calendar,
           },
           { label: 'Thời gian', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}` },
-          { label: 'Số thí sinh', value: `${drawerSchedule?.studentCount || 40} thí sinh`, icon: Users },
+          { label: 'Số thí sinh', value: `${(drawerSchedule as any)?._count?.examRoomStudents ?? drawerSchedule?.studentCount ?? 0} thí sinh`, icon: Users },
           { label: 'Cán bộ giám thị', value: `${drawerSchedule?.supervisorCount || '2/2'} cán bộ`, icon: Users },
         ]}
       />

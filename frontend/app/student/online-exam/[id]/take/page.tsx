@@ -17,7 +17,7 @@ export default function StudentExamTakePage() {
   const [error, setError] = useState<string | null>(null);
 
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, { selectedOptionIds: string[]; textAnswer: string; isFlagged: boolean; version: number }>>({});
+  const [answers, setAnswers] = useState<Record<string, { selectedOptionIds: string[]; textAnswer: string; textAnswerRich?: Record<string, unknown>; isFlagged: boolean; version: number; files?: any[] }>>({});
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
 
   const [syncState, setSyncState] = useState<'SAVED' | 'SAVING' | 'OFFLINE'>('SAVED');
@@ -65,8 +65,10 @@ export default function StudentExamTakePage() {
           initialAnswers[ans.questionId] = {
             selectedOptionIds: ans.selectedOptionIds || [],
             textAnswer: ans.textAnswer || '',
+            textAnswerRich: ans.textAnswerRich || undefined,
             isFlagged: ans.isFlaggedForReview || false,
             version: ans.version || 1,
+            files: ans.files || [],
           };
         });
       }
@@ -114,7 +116,7 @@ export default function StudentExamTakePage() {
   }, [handleAutoSubmit, tokenFromUrl]);
 
   const triggerAutoSave = useCallback(
-    (questionId: string, selectedOptionIds: string[], textAnswer: string, isFlagged: boolean, currentVersion: number) => {
+    (questionId: string, selectedOptionIds: string[], textAnswer: string, isFlagged: boolean, currentVersion: number, textAnswerRich?: Record<string, unknown>) => {
       const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
       if (!token) return;
 
@@ -123,6 +125,7 @@ export default function StudentExamTakePage() {
         questionId,
         selectedOptionIds,
         textAnswer,
+        textAnswerRich,
         isFlaggedForReview: isFlagged,
         version: newVersion,
         clientTimestamp: new Date().toISOString(),
@@ -149,6 +152,31 @@ export default function StudentExamTakePage() {
     },
     [tokenFromUrl],
   );
+
+  const handleEssayChange = (questionId: string, textAnswer: string) => {
+    const current = answers[questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false, version: 0 };
+    const version = (current.version || 0) + 1;
+    setAnswers((prev) => ({ ...prev, [questionId]: { ...current, textAnswer, version } }));
+    triggerAutoSave(questionId, current.selectedOptionIds || [], textAnswer, current.isFlagged, current.version || 0);
+  };
+
+  const handleEssayFile = async (questionId: string, file?: File) => {
+    if (!file) return;
+    const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
+    if (!token) return;
+    try {
+      setSyncState('SAVING');
+      const uploaded = await onlineExamService.uploadEssayFile(token, questionId, file);
+      setAnswers((prev) => ({
+        ...prev,
+        [questionId]: { ...(prev[questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false, version: 0 }), files: [...(prev[questionId]?.files || []), uploaded] },
+      }));
+      setSyncState('SAVED');
+    } catch (e: any) {
+      setSyncState('OFFLINE');
+      alert(e?.response?.data?.message || e?.message || 'Không thể tải tệp bài làm');
+    }
+  };
 
   useEffect(() => {
     const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
@@ -327,7 +355,7 @@ export default function StudentExamTakePage() {
   const currentAns = answers[currentQ?.questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false };
 
   const totalCount = questions.length;
-  const answeredCount = Object.values(answers).filter((a) => a.selectedOptionIds && a.selectedOptionIds.length > 0).length;
+  const answeredCount = Object.values(answers).filter((a) => (a.selectedOptionIds && a.selectedOptionIds.length > 0) || Boolean(a.textAnswer?.trim())).length;
   const flaggedCount = Object.values(answers).filter((a) => a.isFlagged).length;
 
   return (
@@ -474,7 +502,30 @@ export default function StudentExamTakePage() {
                 )}
               </div>
 
-              {/* Options Choice List */}
+              {/* Answer area */}
+              {currentQ.type === 'ESSAY' ? (
+                <div className="space-y-3 pt-2">
+                  <label className="block text-sm font-bold text-slate-700">Bài làm tự luận</label>
+                  <textarea
+                    value={currentAns.textAnswer || ''}
+                    onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
+                    className="min-h-[260px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    placeholder="Nhập bài làm của bạn..."
+                  />
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+                    <span>{(currentAns.textAnswer || '').length} ký tự · Tự động lưu khi nhập</span>
+                    <label className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 font-bold text-slate-700 hover:bg-slate-50">
+                      Đính kèm PDF/DOCX/JPG/PNG
+                      <input type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" className="hidden" onChange={(e) => handleEssayFile(currentQ.questionId, e.target.files?.[0])} />
+                    </label>
+                  </div>
+                  {(currentAns as any).files && (currentAns as any).files.length > 0 && (
+                    <div className="space-y-1 rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
+                      {(currentAns as any).files.map((file: any) => <div key={file.id || file.url}>📎 {file.fileName || 'Tệp bài làm'}</div>)}
+                    </div>
+                  )}
+                </div>
+              ) : (
               <div className="space-y-3 pt-2">
                 {currentQ.options?.map((opt: any) => {
                   const isSelected = currentAns.selectedOptionIds?.includes(opt.id);
@@ -504,6 +555,7 @@ export default function StudentExamTakePage() {
                   );
                 })}
               </div>
+              )}
 
               {/* Pagination Controls */}
               <div className="flex items-center justify-between border-t border-slate-100 pt-6">

@@ -135,13 +135,13 @@ export class ExamPapersService {
           isActive: true,
           deletedAt: null,
         },
-        include: { options: { orderBy: { order: 'asc' } } },
+        include: { options: { orderBy: { order: 'asc' } }, essayRubrics: { orderBy: { sortOrder: 'asc' } } },
       });
 
       const byDifficulty = {
-        EASY: approvedQuestions.filter((question) => question.difficulty === 'EASY'),
-        MEDIUM: approvedQuestions.filter((question) => question.difficulty === 'MEDIUM'),
-        HARD: approvedQuestions.filter((question) => question.difficulty === 'HARD'),
+        EASY: approvedQuestions.filter((question) => question.difficulty === 'EASY' && (schedule.examType !== 'TU_LUAN' || question.type === 'ESSAY')),
+        MEDIUM: approvedQuestions.filter((question) => question.difficulty === 'MEDIUM' && (schedule.examType !== 'TU_LUAN' || question.type === 'ESSAY')),
+        HARD: approvedQuestions.filter((question) => question.difficulty === 'HARD' && (schedule.examType !== 'TU_LUAN' || question.type === 'ESSAY')),
       };
       const requirements = [
         { label: 'dễ', requested: data.easyCount, available: byDifficulty.EASY.length },
@@ -171,6 +171,10 @@ export class ExamPapersService {
         ...this.shuffle(byDifficulty.MEDIUM).slice(0, data.mediumCount),
         ...this.shuffle(byDifficulty.HARD).slice(0, data.hardCount),
       ]);
+      if (schedule.examType === 'TU_LUAN') {
+        const missingRubric = selectedQuestions.find((question: any) => question.type === 'ESSAY' && (!question.essayRubrics || question.essayRubrics.length === 0));
+        if (missingRubric) throw new BadRequestException(`Câu ${missingRubric.code} chưa có rubric chấm điểm, không thể tạo đề tự luận.`);
+      }
       const totalScore = selectedQuestions.reduce((sum, question) => sum + question.score, 0);
       const paperCode = data.paperCode.trim();
       const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;
@@ -399,4 +403,3 @@ export class ExamPapersService {
     });
   }
 }
-

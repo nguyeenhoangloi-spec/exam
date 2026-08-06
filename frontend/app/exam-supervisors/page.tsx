@@ -60,7 +60,7 @@ export default function ExamSupervisorsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchSupervisors = useCallback(async (scheduleRoomId: string, scheduleId?: number) => {
@@ -144,16 +144,27 @@ export default function ExamSupervisorsPage() {
     }
   };
 
-  const handleUpdateStatus = async (id: number, status: string, actionName: string) => {
-    try {
-      await api.patch(`/exam-supervisors/${id}/status`, { status });
-      setToast({ message: `Đã ${actionName} thành công!`, type: 'success' });
-      if (selectedSchedule?.id) {
-        await selectSchedule(selectedSchedule.id);
-      }
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi cập nhật trạng thái ca thi', type: 'error' });
-    }
+  const handleUpdateStatus = (id: number, status: string, actionName: string) => {
+    const sup = [...assignedSupervisors, ...allScheduleSupervisors].find((s) => s.id === id);
+    const type = status === 'REJECTED' || status === 'ABSENT' ? 'danger' : status === 'COMPLETED' ? 'warning' : 'success';
+    setConfirmModal({
+      isOpen: true,
+      title: `Xác nhận ${actionName}`,
+      message: `Bạn có chắc chắn muốn ${actionName} giám thị ${sup?.teacher?.fullName || ''}?`,
+      type,
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.patch(`/exam-supervisors/${id}/status`, { status });
+          setToast({ message: `Đã ${actionName} thành công!`, type: 'success' });
+          if (selectedSchedule?.id) {
+            await selectSchedule(selectedSchedule.id);
+          }
+        } catch (err: any) {
+          setToast({ message: err.message || 'Lỗi cập nhật trạng thái ca thi', type: 'error' });
+        }
+      },
+    });
   };
 
   const previewAutoAssign = async () => {
@@ -171,24 +182,34 @@ export default function ExamSupervisorsPage() {
     }
   };
 
-  const acceptAutoAssign = async () => {
+  const acceptAutoAssign = () => {
     if (!autoProposal?.proposals?.length) return;
-    setAutoLoading(true);
-    try {
-      const proposals = autoProposal.proposals
-        .filter((p: any) => selectedAutoProposalKeys.includes(`${p.examScheduleRoomId}-${p.role}`))
-        .map((p: any) => ({ examScheduleRoomId: p.examScheduleRoomId, teacherId: p.teacherId, role: p.role }));
-      if (!proposals.length) return;
-      await api.post('/exam-supervisors/auto-assign', { proposals });
-      setAutoProposal(null);
-      setSelectedAutoProposalKeys([]);
-      setToast({ message: 'Đã lưu phương án phân công tự động.', type: 'success' });
-      await selectSchedule(selectedSchedule.id);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Phương án đã thay đổi, vui lòng xem lại', type: 'error' });
-    } finally {
-      setAutoLoading(false);
-    }
+    const count = selectedAutoProposalKeys.length;
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xác nhận lưu phương án tự động',
+      message: `Bạn có chắc chắn muốn lưu ${count} lượt phân công giám thị từ phương án tự động? Hành động này sẽ ghi dữ liệu vào hệ thống.`,
+      type: 'info',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        setAutoLoading(true);
+        try {
+          const proposals = autoProposal.proposals
+            .filter((p: any) => selectedAutoProposalKeys.includes(`${p.examScheduleRoomId}-${p.role}`))
+            .map((p: any) => ({ examScheduleRoomId: p.examScheduleRoomId, teacherId: p.teacherId, role: p.role }));
+          if (!proposals.length) return;
+          await api.post('/exam-supervisors/auto-assign', { proposals });
+          setAutoProposal(null);
+          setSelectedAutoProposalKeys([]);
+          setToast({ message: 'Đã lưu phương án phân công tự động.', type: 'success' });
+          await selectSchedule(selectedSchedule.id);
+        } catch (err: any) {
+          setToast({ message: err.message || 'Phương án đã thay đổi, vui lòng xem lại', type: 'error' });
+        } finally {
+          setAutoLoading(false);
+        }
+      },
+    });
   };
 
   const handleDelete = (id: number) => {
@@ -390,9 +411,8 @@ export default function ExamSupervisorsPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setStatusFilter(tab.key)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                  isActive ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                }`}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${isActive ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
+                  }`}
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>

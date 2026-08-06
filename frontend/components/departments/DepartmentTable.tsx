@@ -46,9 +46,9 @@ export function DepartmentTable({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {departments.map((d) => {
           const isChecked = selected.includes(d.id);
-          const subjectsCount = (d as any).subjectsCount ?? ((d as any).subjects?.length || 0);
-          const classesCount = (d as any).classesCount ?? ((d as any).classes?.length || 0);
-          const teachersCount = (d as any).teachersCount ?? ((d as any).teachers?.length || 0);
+          const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
+          const classesCount = (d as any).classesCount ?? (d as any)._count?.classes ?? ((d as any).classes?.length || 0);
+          const teachersCount = (d as any).teachersCount ?? (d as any)._count?.teachers ?? ((d as any).teachers?.length || 0);
 
           return (
             <div
@@ -174,9 +174,9 @@ export function DepartmentTable({
           <tbody className="divide-y divide-slate-100 font-medium">
             {departments.map((d) => {
               const isChecked = selected.includes(d.id);
-              const subjectsCount = (d as any).subjectsCount ?? ((d as any).subjects?.length || 0);
-              const classesCount = (d as any).classesCount ?? ((d as any).classes?.length || 0);
-              const teachersCount = (d as any).teachersCount ?? ((d as any).teachers?.length || 0);
+              const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
+              const classesCount = (d as any).classesCount ?? (d as any)._count?.classes ?? ((d as any).classes?.length || 0);
+              const teachersCount = (d as any).teachersCount ?? (d as any)._count?.teachers ?? ((d as any).teachers?.length || 0);
 
               return (
                 <tr key={d.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
@@ -240,9 +240,9 @@ export function DepartmentTable({
         <tbody className="divide-y divide-slate-100 font-medium">
           {departments.map((d) => {
             const isChecked = selected.includes(d.id);
-            const subjectsCount = (d as any).subjectsCount ?? ((d as any).subjects?.length || 0);
-            const classesCount = (d as any).classesCount ?? ((d as any).classes?.length || 0);
-            const teachersCount = (d as any).teachersCount ?? ((d as any).teachers?.length || 0);
+          const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
+          const classesCount = (d as any).classesCount ?? (d as any)._count?.classes ?? ((d as any).classes?.length || 0);
+          const teachersCount = (d as any).teachersCount ?? (d as any)._count?.teachers ?? ((d as any).teachers?.length || 0);
 
             return (
               <tr

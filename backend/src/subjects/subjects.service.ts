@@ -61,7 +61,15 @@ export class SubjectsService {
     if (!await this.prisma.department.findUnique({ where: { id: data.departmentId } })) {
       throw new BadRequestException('Khoa được chọn không tồn tại.');
     }
-    return this.prisma.subject.create({ data, include: { department: true } });
+    const subject = await this.prisma.subject.create({ data, include: { department: true } });
+    if (data.departmentId) {
+      await this.prisma.majorSubject.upsert({
+        where: { departmentId_subjectId: { departmentId: data.departmentId, subjectId: subject.id } },
+        create: { departmentId: data.departmentId, subjectId: subject.id, type: 'MANDATORY', recommendedSemester: 1, note: 'Môn học thuộc Khoa' },
+        update: {},
+      });
+    }
+    return subject;
   }
 
   async update(id: number, data: { subjectCode?: string; subjectName?: string; credits?: number; departmentId?: number }) {
@@ -69,7 +77,15 @@ export class SubjectsService {
     if (data.departmentId !== undefined && !await this.prisma.department.findUnique({ where: { id: data.departmentId } })) {
       throw new BadRequestException('Khoa được chọn không tồn tại.');
     }
-    return this.prisma.subject.update({ where: { id }, data, include: { department: true } });
+    const subject = await this.prisma.subject.update({ where: { id }, data, include: { department: true } });
+    if (subject.departmentId) {
+      await this.prisma.majorSubject.upsert({
+        where: { departmentId_subjectId: { departmentId: subject.departmentId, subjectId: subject.id } },
+        create: { departmentId: subject.departmentId, subjectId: subject.id, type: 'MANDATORY', recommendedSemester: 1, note: 'Môn học thuộc Khoa' },
+        update: {},
+      });
+    }
+    return subject;
   }
 
   async remove(id: number) {

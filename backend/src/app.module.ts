@@ -21,6 +21,7 @@ import { OnlineExamsModule } from './online-exams/online-exams.module';
 import { ProctorModule } from './proctor/proctor.module';
 import { ContactModule } from './contact/contact.module';
 import { SecurityModule } from './common/security/security.module';
+import { EssayModule } from './essay/essay.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SecurityModule } from './common/security/security.module';
     DashboardModule,
     OnlineExamsModule,
     ProctorModule,
+    EssayModule,
     ContactModule,
   ],
 })

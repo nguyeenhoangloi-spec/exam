@@ -79,6 +79,20 @@ export default function StudentExamResultPage() {
   }
 
   const isUnderReview = result.status === 'UNDER_REVIEW' || result.isFlagged;
+  const isEssayWaiting = Boolean(result.gradingStatus && result.gradingStatus !== 'PUBLISHED');
+
+  if (isEssayWaiting) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-6 md:p-12 text-slate-900">
+        <div className="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-xl">
+          <CheckCircle2 className="mx-auto mb-4 h-14 w-14 text-blue-600" />
+          <h1 className="mb-3 text-2xl font-black">Bài đã nộp, đang chờ chấm</h1>
+          <p className="mb-8 text-sm text-slate-600">Điểm tự luận sẽ hiển thị sau khi giảng viên chấm và ADMIN duyệt, công bố.</p>
+          <button onClick={() => router.push('/student/exam-schedule')} className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white">Quay về lịch thi</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-6 md:p-12">

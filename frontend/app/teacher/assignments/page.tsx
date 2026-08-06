@@ -8,6 +8,7 @@ import { usePageTitle } from '../../../components/PageTitleContext';
 import { downloadCsv } from '../../../lib/export-csv';
 import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import {
   ShieldCheck,
@@ -37,6 +38,19 @@ export default function TeacherAssignmentsPage() {
   const [busyId, setBusyId] = useState<number | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [drawerDuty, setDrawerDuty] = useState<any | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info' | 'success';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'warning',
+    onConfirm: () => { },
+  });
 
   useEffect(() => {
     const u = getAuthUser();
@@ -60,20 +74,33 @@ export default function TeacherAssignmentsPage() {
     }
   };
 
-  const handleUpdateStatus = async (id: number, status: string) => {
-    setBusyId(id);
-    try {
-      await api.patch(`/teachers/my-assignments/${id}/status`, { status });
-      setToast({
-        message: status === 'CONFIRMED' ? 'Đã xác nhận tham gia ca coi thi!' : 'Đã gửi yêu cầu xin đổi ca coi thi.',
-        type: 'success',
-      });
-      await fetchMyAssignments();
-    } catch (err: any) {
-      setToast({ message: err.message || 'Cập nhật trạng thái thất bại.', type: 'error' });
-    } finally {
-      setBusyId(null);
-    }
+  const handleUpdateStatus = (id: number, status: string) => {
+    const item = assignments.find((a) => a.id === id);
+    const isConfirm = status === 'CONFIRMED';
+    setConfirmModal({
+      isOpen: true,
+      title: isConfirm ? 'Xác nhận tham gia ca coi thi' : 'Xin đổi ca coi thi',
+      message: isConfirm
+        ? `Bạn có chắc chắn xác nhận tham gia ca coi thi ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`
+        : `Bạn có chắc chắn gửi yêu cầu xin đổi ca coi thi ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`,
+      type: isConfirm ? 'success' : 'warning',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        setBusyId(id);
+        try {
+          await api.patch(`/teachers/my-assignments/${id}/status`, { status });
+          setToast({
+            message: status === 'CONFIRMED' ? 'Đã xác nhận tham gia ca coi thi!' : 'Đã gửi yêu cầu xin đổi ca coi thi.',
+            type: 'success',
+          });
+          await fetchMyAssignments();
+        } catch (err: any) {
+          setToast({ message: err.message || 'Cập nhật trạng thái thất bại.', type: 'error' });
+        } finally {
+          setBusyId(null);
+        }
+      },
+    });
   };
 
   const handlePrintAttendance = async (item: any) => {
@@ -352,30 +379,28 @@ export default function TeacherAssignmentsPage() {
                       </span>
                       <div className="flex items-center gap-1.5">
                         <span
-                          className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${
-                            isExpired
-                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                              : item.status === 'CONFIRMED'
+                          className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${isExpired
+                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                            : item.status === 'CONFIRMED'
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : item.status === 'CHANGE_REQUESTED'
-                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                              : 'bg-slate-100 text-slate-600 border border-slate-200'
-                          }`}
+                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                                : 'bg-slate-100 text-slate-600 border border-slate-200'
+                            }`}
                         >
                           {isExpired
                             ? 'Quá hạn ca thi'
                             : item.status === 'CONFIRMED'
-                            ? 'Đã xác nhận'
-                            : item.status === 'CHANGE_REQUESTED'
-                            ? 'Xin đổi ca'
-                            : 'Chờ xác nhận'}
+                              ? 'Đã xác nhận'
+                              : item.status === 'CHANGE_REQUESTED'
+                                ? 'Xin đổi ca'
+                                : 'Chờ xác nhận'}
                         </span>
                         <span
-                          className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${
-                            item.role === 'SUPERVISOR_1'
-                              ? 'bg-sky-50 text-sky-800 border border-sky-200'
-                              : 'bg-violet-50 text-violet-800 border border-violet-200'
-                          }`}
+                          className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${item.role === 'SUPERVISOR_1'
+                            ? 'bg-sky-50 text-sky-800 border border-sky-200'
+                            : 'bg-violet-50 text-violet-800 border border-violet-200'
+                            }`}
                         >
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                         </span>
@@ -511,6 +536,16 @@ export default function TeacherAssignmentsPage() {
             ),
           },
         ]}
+      />
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

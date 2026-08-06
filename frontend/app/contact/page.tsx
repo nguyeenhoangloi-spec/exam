@@ -1,6 +1,7 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -14,32 +15,41 @@ import {
   Building2,
   HelpCircle,
   BookOpen,
-  ShieldAlert,
   Send,
-  CheckCircle2,
   MessageSquare,
   X,
   FileText,
-  UserCheck,
   GraduationCap,
   Sparkles,
-  ArrowLeft,
+  Clock,
+  ExternalLink,
 } from 'lucide-react';
 import { Toast } from '../../components/Toast';
+import { Modal } from '../../components/Modal';
 import api from '../../lib/api';
 
-interface FAQItem {
+interface ArticleItem {
   id: string;
-  category: string;
-  question: string;
-  answer: string;
+  category: 'STUDENT' | 'TEACHER' | 'ADMIN' | 'RULES';
+  categoryLabel: string;
+  title: string;
+  summary: string;
+  content: string[];
+  readTime: string;
+  tags: string[];
+  updatedAt: string;
 }
 
 export default function ContactSupportPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>('faq-1');
+
+  // Modals
+  const [isAllArticlesModalOpen, setIsAllArticlesModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
 
   // Contact Form State
   const [fullName, setFullName] = useState('');
@@ -59,51 +69,136 @@ export default function ContactSupportPage() {
   ]);
   const [chatInput, setChatInput] = useState('');
 
-  const faqs: FAQItem[] = [
+  // Knowledge Base Articles
+  const articles: ArticleItem[] = [
     {
-      id: 'faq-1',
+      id: 'art-1',
       category: 'STUDENT',
-      question: 'Tôi phải làm gì nếu bị mất kết nối internet khi đang làm bài thi online?',
-      answer:
-        'Hệ thống tự động lưu trạng thái làm bài (Auto-save) sau mỗi 5 giây. Nếu gián đoạn mạng, bạn không bị mất dữ liệu. Hãy nhanh chóng kết nối lại internet hoặc liên hệ Cán bộ coi thi / Hotline 1800-EXAM-HELP để được cấp lại thời gian làm bài bù.',
+      categoryLabel: 'Sinh viên',
+      title: 'Xử lý sự cố mất kết nối internet khi đang làm bài thi trực tuyến',
+      summary: 'Hệ thống hỗ trợ cơ chế lưu tự động (Auto-save) sau mỗi 5 giây. Hướng dẫn các bước xử lý khi mạng bị rớt.',
+      readTime: '3 phút đọc',
+      tags: ['Rớt mạng', 'Lưu bài thi', 'Sự cố trực tuyến'],
+      updatedAt: '06/08/2026',
+      content: [
+        '1. Đừng quá lo lắng: Hệ thống tích hợp tính năng Auto-save lưu câu trả lời của bạn lên máy chủ liên tục sau mỗi 5 giây.',
+        '2. Không tắt trình duyệt: Giữ nguyên tab làm bài thi và kiểm tra lại dây mạng hoặc kết nối Wi-Fi.',
+        '3. Tự động kết nối lại: Khi internet có hiệu lực trở lại, hệ thống sẽ tự động đồng bộ câu trả lời mà bạn vừa chọn.',
+        '4. Trường hợp gián đoạn quá 5 phút: Hãy giơ tay báo cho Cán bộ coi thi tại phòng hoặc gọi ngay Hotline khẩn cấp 1800-EXAM-HELP để được kỹ thuật viên lập biên bản và cấp bổ sung thời gian thi.',
+      ],
     },
     {
-      id: 'faq-2',
+      id: 'art-2',
       category: 'STUDENT',
-      question: 'Xem lịch thi cá nhân và số báo danh ở đâu trên hệ thống?',
-      answer:
-        'Bạn đăng nhập tài khoản Sinh viên và truy cập mục "Lịch thi cá nhân". Tại đây hiển thị đầy đủ ca thi, môn thi, số báo danh, phòng thi và thời gian thi chi tiết.',
+      categoryLabel: 'Sinh viên',
+      title: 'Hướng dẫn tra cứu Lịch thi cá nhân, Số báo danh và Phòng thi',
+      summary: 'Cách xem lịch thi chính thức, ca thi, sơ đồ phòng thi và mã tra cứu kết quả dành cho Sinh viên.',
+      readTime: '2 phút đọc',
+      tags: ['Lịch thi', 'Số báo danh', 'Phòng thi'],
+      updatedAt: '05/08/2026',
+      content: [
+        '1. Đăng nhập vào Hệ thống Quản lý Khảo thí bằng tài khoản sinh viên do nhà trường cấp.',
+        '2. Trên menu bên trái, chọn mục "Quản lý Lịch thi" ➔ "Lịch thi cá nhân".',
+        '3. Tại đây hiển thị đầy đủ danh sách các môn thi trong kỳ, Ca thi, Giờ bắt đầu, Số báo danh và Phòng thi chi tiết.',
+        '4. Bạn có thể bấm nút "Xuất file lịch thi" hoặc "In báo cáo" để lưu lịch thi về điện thoại/máy tính.',
+      ],
     },
     {
-      id: 'faq-3',
+      id: 'art-3',
+      category: 'STUDENT',
+      categoryLabel: 'Sinh viên',
+      title: 'Quy trình gửi đơn Phúc khảo bài thi & Xem lịch sử cập nhật điểm',
+      summary: 'Thời hạn đăng ký phúc khảo, mức phí và các bước theo dõi tiến độ xử lý đơn phúc khảo trực tuyến.',
+      readTime: '4 phút đọc',
+      tags: ['Phúc khảo', 'Điểm thi', 'Khiếu nại'],
+      updatedAt: '04/08/2026',
+      content: [
+        '1. Đơn phúc khảo được mở trong vòng 07 ngày kể từ khi công bố điểm thi môn học.',
+        '2. Vào mục "Báo cáo Điểm thi" ➔ Chọn môn học cần phúc khảo ➔ Bấm nút "Nộp đơn phúc khảo".',
+        '3. Nhập lý do phúc khảo và tải lên ảnh chụp minh chứng (nếu có).',
+        '4. Hội đồng Khảo thí sẽ chấm lại bài thi và cập nhật điểm mới lên hệ thống. Lịch sử thay đổi điểm được lưu minh bạch.',
+      ],
+    },
+    {
+      id: 'art-4',
       category: 'TEACHER',
-      question: 'Cách Giảng viên tạo và duyệt Ngân hàng câu hỏi theo chuẩn Bloom?',
-      answer:
-        'Giảng viên vào mục "Ngân hàng câu hỏi", chọn "Thêm câu hỏi mới" hoặc dùng công cụ "Nhập từ file Excel/Word". Câu hỏi sau khi tạo sẽ được gửi lên Trưởng bộ môn duyệt trước khi đưa vào ngân hàng đề thi.',
+      categoryLabel: 'Giảng viên',
+      title: 'Hướng dẫn tạo & duyệt Ngân hàng câu hỏi trắc nghiệm / tự luận',
+      summary: 'Cấu trúc ma trận đề thi theo 4 mức độ Bloom: Nhớ, Hiểu, Vận dụng, Phân tích và quy trình duyệt câu hỏi.',
+      readTime: '5 phút đọc',
+      tags: ['Ngân hàng câu hỏi', 'Duyệt đề', 'Bloom'],
+      updatedAt: '06/08/2026',
+      content: [
+        '1. Giảng viên truy cập menu "Ngân hàng câu hỏi" ➔ Chọn "Tạo câu hỏi mới" hoặc "Nhập từ Excel/Word".',
+        '2. Phân loại chuẩn xác mức độ nhận thức Bloom (Nhớ, Hiểu, Vận dụng, Phân tích) và môn học tương ứng.',
+        '3. Sau khi tạo xong, chuyển trạng thái câu hỏi sang "Chờ duyệt".',
+        '4. Trưởng bộ môn sẽ thẩm định và phê duyệt để đưa câu hỏi vào Ngân hàng chính thức phục vụ phát hành đề thi.',
+      ],
     },
     {
-      id: 'faq-4',
+      id: 'art-5',
+      category: 'RULES',
+      categoryLabel: 'Quy chế thi',
+      title: 'Quy chế An toàn An ninh phòng thi trực tuyến & Giám sát AI Proctored',
+      summary: 'Các quy định bắt buộc về bật Webcam, Fullscreen, cấm chuyển tab và phạt điểm vi phạm an ninh.',
+      readTime: '4 phút đọc',
+      tags: ['Quy chế thi', 'Chống gian lận', 'Webcam'],
+      updatedAt: '03/08/2026',
+      content: [
+        '1. Bắt buộc bật toàn màn hình (Fullscreen) và cho phép truy cập Camera/Microphone trong suốt quá trình làm bài.',
+        '2. Cấm tuyệt đối chuyển tab trình duyệt, mở tài liệu phụ hoặc sử dụng phần mềm điều khiển từ xa (TeamViewer, UltraViewer).',
+        '3. Mỗi hành vi chuyển tab hoặc rời màn hình thi sẽ bị hệ thống AI ghi nhận và cảnh cáo tự động.',
+        '4. Vi phạm quá 5 lần sẽ bị hệ thống tự động khóa bài thi (Auto-submit) và đánh dấu nghi vấn gian lận.',
+      ],
+    },
+    {
+      id: 'art-6',
       category: 'ADMIN',
-      question: 'Cách xử lý khi tài khoản bị khóa hoặc quên thông tin đăng nhập?',
-      answer:
-        'Bạn có thể sử dụng chức năng "Quên mật khẩu" ở màn hình đăng nhập hoặc gửi yêu cầu hỗ trợ trực tiếp bên dưới. Quản trị viên hệ thống sẽ kiểm tra và cấp lại mật khẩu trong vòng 15 phút.',
-    },
-    {
-      id: 'faq-5',
-      category: 'STUDENT',
-      question: 'Quy trình nộp đơn phúc khảo và xem kết quả chấm thi?',
-      answer:
-        'Sinh viên vào mục "Kết quả & Báo cáo", chọn môn thi cần phúc khảo và nhấn "Gửi yêu cầu phúc khảo". Kết quả sẽ được Phòng Khảo thí cập nhật và thông báo trên hệ thống.',
+      categoryLabel: 'Quản trị viên',
+      title: 'Khôi phục mật khẩu tài khoản & Cấp quyền truy cập hệ thống',
+      summary: 'Hướng dẫn Quản trị viên hỗ trợ người dùng reset mật khẩu và phân quyền Role (Admin, Teacher, Student).',
+      readTime: '3 phút đọc',
+      tags: ['Mật khẩu', 'Reset Account', 'Phân quyền'],
+      updatedAt: '02/08/2026',
+      content: [
+        '1. Người dùng có thể tự khôi phục mật khẩu qua liên kết "Quên mật khẩu?" tại trang Đăng nhập.',
+        '2. Trong trường hợp khẩn cấp, Quản trị viên vào mục "Quản lý Người dùng", chọn tài khoản và bấm "Reset Mật khẩu".',
+        '3. Mật khẩu tạm thời sẽ được tự động gửi về Email đăng ký của người dùng.',
+      ],
     },
   ];
 
-  const filteredFaqs = faqs.filter((item) => {
-    const matchesSearch =
-      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === 'ALL' || item.category === activeCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Quick Suggestion Tags
+  const popularSearchTags = [
+    'Quên mật khẩu',
+    'Rớt mạng 1800',
+    'Xem số báo danh',
+    'Ngân hàng câu hỏi',
+    'Nộp phúc khảo',
+    'Quy chế phòng thi',
+  ];
+
+  // Filtered Articles & Suggestions based on search
+  const searchSuggestions = useMemo(() => {
+    if (!searchQuery.trim()) return articles.slice(0, 4);
+    const query = searchQuery.toLowerCase().trim();
+    return articles.filter(
+      (a) =>
+        a.title.toLowerCase().includes(query) ||
+        a.summary.toLowerCase().includes(query) ||
+        a.tags.some((t) => t.toLowerCase().includes(query))
+    );
+  }, [searchQuery]);
+
+  const filteredFaqs = useMemo(() => {
+    return articles.filter((item) => {
+      const matchesSearch =
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.summary.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = activeCategory === 'ALL' || item.category === activeCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, activeCategory]);
 
   const handleSendSupportForm = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +215,9 @@ export default function ContactSupportPage() {
         message: message.trim(),
       });
       setToast({
-        message: res?.data?.message || 'Yêu cầu hỗ trợ đã được gửi thành công! Quản trị viên sẽ phản hồi qua email trong thời gian sớm nhất.',
+        message:
+          res?.data?.message ||
+          'Yêu cầu hỗ trợ đã được gửi thành công! Quản trị viên sẽ phản hồi qua email trong thời gian sớm nhất.',
         type: 'success',
       });
       setFullName('');
@@ -150,9 +247,11 @@ export default function ContactSupportPage() {
       let botReply =
         'Cảm ơn bạn đã liên hệ! Bộ phận hỗ trợ kỹ thuật Trung tâm Khảo thí đã ghi nhận câu hỏi. Bạn cũng có thể gọi Hotline 1800-EXAM-HELP để được hỗ trợ trực tiếp.';
       if (userText.toLowerCase().includes('mật khẩu') || userText.toLowerCase().includes('quen')) {
-        botReply = 'Để khôi phục mật khẩu, bạn vui lòng truy cập trang Quên mật khẩu hoặc liên hệ Quản trị viên hệ thống qua email support@exam.edu.vn.';
+        botReply =
+          'Để khôi phục mật khẩu, bạn vui lòng truy cập trang Quên mật khẩu hoặc liên hệ Quản trị viên hệ thống qua email support@exam.edu.vn.';
       } else if (userText.toLowerCase().includes('lịch thi') || userText.toLowerCase().includes('phòng thi')) {
-        botReply = 'Lịch thi và thông tin phòng thi được cập nhật realtime trong mục "Lịch thi cá nhân" khi bạn đăng nhập tài khoản sinh viên.';
+        botReply =
+          'Lịch thi và thông tin phòng thi được cập nhật realtime trong mục "Lịch thi cá nhân" khi bạn đăng nhập tài khoản sinh viên.';
       }
       setChatMessages((prev) => [...prev, { sender: 'bot', text: botReply }]);
     }, 600);
@@ -162,10 +261,9 @@ export default function ContactSupportPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* OpenAI Help Center Style Header */}
+      {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          {/* Logo & System Name */}
           <Link href="/login" className="flex items-center gap-3 group">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white font-black text-lg shadow-md group-hover:scale-105 transition">
               <GraduationCap className="h-6 w-6" />
@@ -180,7 +278,6 @@ export default function ContactSupportPage() {
             </div>
           </Link>
 
-          {/* Right Actions */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300">
               <Globe className="h-3.5 w-3.5 text-blue-600" />
@@ -201,7 +298,7 @@ export default function ContactSupportPage() {
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-10 space-y-10">
-        {/* Search Hero Section matching OpenAI Help Center */}
+        {/* Search Hero Section */}
         <div className="text-center space-y-6 max-w-3xl mx-auto pt-4">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-3.5 py-1.5 text-xs font-extrabold text-blue-700 dark:text-blue-300 shadow-2xs">
             <Sparkles className="h-3.5 w-3.5 text-amber-500" />
@@ -212,16 +309,83 @@ export default function ContactSupportPage() {
             Chúng tôi có thể giúp gì cho bạn?
           </h1>
 
-          {/* Big Search Bar */}
+          {/* Big Search Bar with Autocomplete Suggestions */}
           <div className="relative max-w-2xl mx-auto shadow-xl shadow-blue-950/5 rounded-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm hướng dẫn, quy chế thi, câu hỏi thường gặp..."
-              className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-4 pl-12 pr-4 text-sm font-semibold text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950 transition"
-            />
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm hướng dẫn, quy chế thi, câu hỏi thường gặp..."
+                className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-4 pl-12 pr-10 text-sm font-semibold text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950 transition"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer p-1"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Autocomplete Search Suggestions Dropdown */}
+            {(isSearchFocused || searchQuery.trim().length > 0) && (
+              <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-2xl space-y-2 text-left animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between px-2 text-[11px] font-black uppercase text-slate-400 tracking-wider">
+                  <span>{searchQuery.trim() ? 'Gợi ý bài viết phù hợp' : 'Tìm kiếm phổ biến nhất'}</span>
+                  <span>{searchSuggestions.length} kết quả</span>
+                </div>
+
+                <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-72 overflow-y-auto">
+                  {searchSuggestions.length > 0 ? (
+                    searchSuggestions.map((art) => (
+                      <div
+                        key={art.id}
+                        onMouseDown={() => setSelectedArticle(art)}
+                        className="p-2.5 hover:bg-blue-50/70 dark:hover:bg-slate-800/70 rounded-xl transition cursor-pointer flex items-start justify-between gap-3 group"
+                      >
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="shrink-0 rounded-md bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 text-[10px] font-extrabold text-blue-700 dark:text-blue-300">
+                              {art.categoryLabel}
+                            </span>
+                            <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
+                              {art.title}
+                            </h4>
+                          </div>
+                          <p className="text-[11px] text-slate-500 line-clamp-1 font-medium">{art.summary}</p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0 mt-1" />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-xs font-semibold text-slate-400">
+                      Không tìm thấy gợi ý phù hợp với "{searchQuery}"
+                    </div>
+                  )}
+                </div>
+
+                {/* Tag Pills */}
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center gap-1.5 flex-wrap px-1">
+                  <span className="text-[10px] font-bold text-slate-400 shrink-0">Từ khóa hot:</span>
+                  {popularSearchTags.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onMouseDown={() => setSearchQuery(tag)}
+                      className="rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[11px] font-bold px-2 py-1 transition cursor-pointer"
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Breadcrumb path indicator */}
@@ -249,7 +413,7 @@ export default function ContactSupportPage() {
           </div>
           <button
             type="button"
-            onClick={() => setActiveCategory('ALL')}
+            onClick={() => setIsAllArticlesModalOpen(true)}
             className="flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-2.5 text-xs font-bold transition shrink-0 cursor-pointer"
           >
             <span>Tất cả bài viết</span>
@@ -289,9 +453,9 @@ export default function ContactSupportPage() {
 
         {/* FAQs List Matching OpenAI Expandable List items */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <h2 className="text-lg font-black text-slate-900 dark:text-white">
-              Câu hỏi thường gặp (FAQs)
+              Câu hỏi & Hướng dẫn thường gặp (FAQs)
             </h2>
 
             {/* Category Filter Pills */}
@@ -300,16 +464,18 @@ export default function ContactSupportPage() {
                 { id: 'ALL', label: 'Tất cả' },
                 { id: 'STUDENT', label: 'Sinh viên' },
                 { id: 'TEACHER', label: 'Giảng viên' },
+                { id: 'RULES', label: 'Quy chế thi' },
                 { id: 'ADMIN', label: 'Quản trị viên' },
               ].map((pill) => (
                 <button
                   key={pill.id}
                   type="button"
                   onClick={() => setActiveCategory(pill.id)}
-                  className={`rounded-full px-3 py-1 text-xs font-extrabold transition cursor-pointer ${activeCategory === pill.id
+                  className={`rounded-full px-3 py-1 text-xs font-extrabold transition cursor-pointer ${
+                    activeCategory === pill.id
                       ? 'bg-blue-600 text-white shadow-2xs'
                       : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300'
-                    }`}
+                  }`}
                 >
                   {pill.label}
                 </button>
@@ -331,18 +497,40 @@ export default function ContactSupportPage() {
                       <div className="flex items-center gap-3">
                         <HelpCircle className="h-4.5 w-4.5 text-blue-600 shrink-0" />
                         <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-                          {faq.question}
+                          {faq.title}
                         </span>
                       </div>
-                      <ChevronRight
-                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${isExpanded ? 'rotate-90 text-blue-600' : ''
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="hidden sm:inline-block rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+                          {faq.categoryLabel}
+                        </span>
+                        <ChevronRight
+                          className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${
+                            isExpanded ? 'rotate-90 text-blue-600' : ''
                           }`}
-                      />
+                        />
+                      </div>
                     </button>
 
                     {isExpanded && (
-                      <div className="px-5 pb-5 pt-1 text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800">
-                        {faq.answer}
+                      <div className="px-5 pb-5 pt-3 text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                        <p className="font-semibold text-slate-900 dark:text-slate-100">{faq.summary}</p>
+                        <div className="space-y-1.5 pl-3 border-l-2 border-blue-500">
+                          {faq.content.map((paragraph, i) => (
+                            <p key={i}>{paragraph}</p>
+                          ))}
+                        </div>
+                        <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400">
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {faq.readTime}</span>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedArticle(faq)}
+                            className="font-bold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>Xem chi tiết bài viết</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -442,7 +630,109 @@ export default function ContactSupportPage() {
         </div>
       </main>
 
-      {/* Floating Support Chat Widget matching OpenAI Help Center Bottom Right Button */}
+      {/* MODAL 1: Tất cả bài viết & Hướng dẫn hệ thống */}
+      <Modal
+        isOpen={isAllArticlesModalOpen}
+        onClose={() => setIsAllArticlesModalOpen(false)}
+        title="Danh mục Tất cả Bài viết & Hướng dẫn Quản lý Khảo thí"
+      >
+        <div className="space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-100">
+            <p className="text-xs text-slate-500 font-medium">
+              Danh sách {articles.length} bài viết hướng dẫn sử dụng và quy chế phòng thi chính thức.
+            </p>
+          </div>
+
+          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+            {articles.map((art) => (
+              <div
+                key={art.id}
+                onClick={() => {
+                  setIsAllArticlesModalOpen(false);
+                  setSelectedArticle(art);
+                }}
+                className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-blue-50/50 hover:border-blue-200 transition cursor-pointer space-y-2 group"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-black text-blue-700">
+                    {art.categoryLabel}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                    <Clock className="h-3 w-3" /> {art.readTime}
+                  </span>
+                </div>
+                <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-blue-600 transition">
+                  {art.title}
+                </h4>
+                <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">{art.summary}</p>
+                <div className="pt-1 flex items-center justify-between text-xs font-bold text-blue-600">
+                  <span className="flex items-center gap-1">
+                    <FileText className="h-3.5 w-3.5" /> Đọc bài viết
+                  </span>
+                  <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
+
+      {/* MODAL 2: Đọc bài viết chi tiết */}
+      <Modal
+        isOpen={Boolean(selectedArticle)}
+        onClose={() => setSelectedArticle(null)}
+        title={selectedArticle?.title || 'Chi tiết bài viết'}
+      >
+        {selectedArticle && (
+          <div className="space-y-5">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                {selectedArticle.categoryLabel}
+              </span>
+              <div className="flex items-center gap-3 text-xs font-bold text-slate-400">
+                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {selectedArticle.readTime}</span>
+                <span>Cập nhật: {selectedArticle.updatedAt}</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-blue-50/70 p-4 text-xs font-semibold text-blue-900 border border-blue-100 leading-relaxed">
+              {selectedArticle.summary}
+            </div>
+
+            <div className="space-y-3 text-xs font-medium text-slate-700 leading-relaxed">
+              <h5 className="font-extrabold text-slate-900 text-sm">Nội dung chi tiết hướng dẫn:</h5>
+              <div className="space-y-2.5 pl-2 border-l-2 border-blue-500">
+                {selectedArticle.content.map((paragraph, idx) => (
+                  <p key={idx} className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-slate-800">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-2">
+              <span className="text-xs font-bold text-slate-400">Thẻ liên quan:</span>
+              {selectedArticle.tags.map((t) => (
+                <span key={t} className="rounded-lg bg-slate-100 px-2 py-1 text-[11px] font-bold text-slate-600">
+                  #{t}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedArticle(null)}
+                className="px-5 py-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 text-xs font-extrabold transition cursor-pointer"
+              >
+                Đóng bài viết
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Floating Support Chat Widget */}
       <div className="fixed bottom-6 right-6 z-50">
         {!isChatOpen ? (
           <button
@@ -481,15 +771,13 @@ export default function ContactSupportPage() {
             {/* Chat Body */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 text-xs bg-slate-50/50 dark:bg-slate-950/50">
               {chatMessages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
+                <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-xs font-medium leading-relaxed ${msg.sender === 'user'
+                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-xs font-medium leading-relaxed ${
+                      msg.sender === 'user'
                         ? 'bg-blue-600 text-white rounded-br-none'
                         : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-bl-none shadow-2xs'
-                      }`}
+                    }`}
                   >
                     {msg.text}
                   </div>
@@ -498,7 +786,10 @@ export default function ContactSupportPage() {
             </div>
 
             {/* Chat Input Footer */}
-            <form onSubmit={handleSendChatMessage} className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center gap-2">
+            <form
+              onSubmit={handleSendChatMessage}
+              className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center gap-2"
+            >
               <input
                 type="text"
                 value={chatInput}

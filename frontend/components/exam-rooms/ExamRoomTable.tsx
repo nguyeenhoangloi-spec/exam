@@ -125,7 +125,7 @@ export function ExamRoomTable({
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
                     <Users className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                    <span>Sức chứa: <strong>{r.capacity || 40} chỗ</strong></span>
+                    <span>Sức chứa: <strong>{r.capacity ?? 0} chỗ</strong></span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
                     <Building className="h-3.5 w-3.5 text-purple-500 shrink-0" />
@@ -222,7 +222,7 @@ export function ExamRoomTable({
                       {nameText}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{r.capacity || 40} chỗ</td>
+                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{r.capacity ?? 0} chỗ</td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{locText}</td>
                   <td className="p-2 whitespace-nowrap">{getTypeBadge(r.roomType)}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -320,7 +320,7 @@ export function ExamRoomTable({
                 {visibleColumns.capacity !== false && (
                   <td className="p-3.5 whitespace-nowrap">
                     <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700">
-                      <Users className="h-3.5 w-3.5 text-slate-400" /> {r.capacity || 40} Chỗ
+                      <Users className="h-3.5 w-3.5 text-slate-400" /> {r.capacity ?? 0} Chỗ
                     </span>
                   </td>
                 )}

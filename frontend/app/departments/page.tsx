@@ -128,9 +128,9 @@ export default function DepartmentsPage() {
   // Compute DYNAMIC KPI Metrics from real API data
   const kpiData = useMemo(() => {
     const total = departments.length;
-    const totalSubjects = departments.reduce((acc, curr: any) => acc + (curr.subjectsCount ?? curr.subjects?.length ?? 0), 0);
-    const totalClasses = departments.reduce((acc, curr: any) => acc + (curr.classesCount ?? curr.classes?.length ?? 0), 0);
-    const totalTeachers = departments.reduce((acc, curr: any) => acc + (curr.teachersCount ?? curr.teachers?.length ?? 0), 0);
+    const totalSubjects = departments.reduce((acc, curr: any) => acc + Math.max(curr.subjectsCount || 0, curr._count?.majorSubjects || 0, curr._count?.subjects || 0, curr.subjects?.length || 0), 0);
+    const totalClasses = departments.reduce((acc, curr: any) => acc + (curr.classesCount ?? curr._count?.classes ?? curr.classes?.length ?? 0), 0);
+    const totalTeachers = departments.reduce((acc, curr: any) => acc + (curr.teachersCount ?? curr._count?.teachers ?? curr.teachers?.length ?? 0), 0);
     return {
       total,
       totalSubjects: totalSubjects || allSubjects.length,
@@ -256,20 +256,32 @@ export default function DepartmentsPage() {
       setToast({ message: 'Thêm môn học vào khung chương trình thành công!', type: 'success' });
       setAddCurriculumForm({ subjectId: '', type: 'MANDATORY', recommendedSemester: '1', note: '' });
       fetchCurriculum(curriculumDept.id);
+      fetchData();
     } catch (err: any) {
       setToast({ message: err.response?.data?.message || 'Lỗi khi thêm môn học vào khung chương trình', type: 'error' });
     }
   };
 
-  const handleRemoveCurriculum = async (curriculumId: number) => {
+  const handleRemoveCurriculum = (curriculumId: number) => {
     if (!curriculumDept) return;
-    try {
-      await api.delete(`/departments/${curriculumDept.id}/curriculum/${curriculumId}`);
-      setToast({ message: 'Đã xóa môn học khỏi khung chương trình!', type: 'success' });
-      fetchCurriculum(curriculumDept.id);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi xóa môn khỏi khung', type: 'error' });
-    }
+    const item = curriculumList.find((c) => c.subjectId === curriculumId || c.id === curriculumId);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xóa môn khỏi Khung chương trình',
+      message: `Bạn có chắc chắn muốn xóa môn ${item?.subject?.subjectName || ''} khỏi khung chương trình của khoa ${curriculumDept.name}? Hành động này không thể hoàn tác.`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.delete(`/departments/${curriculumDept.id}/curriculum/${curriculumId}`);
+          setToast({ message: 'Đã xóa môn học khỏi khung chương trình!', type: 'success' });
+          fetchCurriculum(curriculumDept.id);
+          fetchData();
+        } catch (err: any) {
+          setToast({ message: err.response?.data?.message || err.message || 'Lỗi xóa môn khỏi khung', type: 'error' });
+        }
+      },
+    });
   };
 
   const exportExcel = () => {
@@ -286,9 +298,9 @@ export default function DepartmentsPage() {
       idx + 1,
       d.code,
       d.name,
-      d.subjectsCount ?? d.subjects?.length ?? 0,
-      d.classesCount ?? d.classes?.length ?? 0,
-      d.teachersCount ?? d.teachers?.length ?? 0,
+      Math.max(d.subjectsCount || 0, d._count?.majorSubjects || 0, d._count?.subjects || 0, d.subjects?.length || 0),
+      d.classesCount ?? d._count?.classes ?? d.classes?.length ?? 0,
+      d.teachersCount ?? d._count?.teachers ?? d.teachers?.length ?? 0,
     ]);
 
     exportToFormattedExcel({
@@ -320,9 +332,9 @@ export default function DepartmentsPage() {
         idx + 1,
         d.code,
         d.name,
-        d.subjectsCount ?? d.subjects?.length ?? 0,
-        d.classesCount ?? d.classes?.length ?? 0,
-        d.teachersCount ?? d.teachers?.length ?? 0,
+        Math.max(d.subjectsCount || 0, d._count?.majorSubjects || 0, d._count?.subjects || 0, d.subjects?.length || 0),
+        d.classesCount ?? d._count?.classes ?? d.classes?.length ?? 0,
+        d.teachersCount ?? d._count?.teachers ?? d.teachers?.length ?? 0,
       ]),
     });
   };
@@ -597,7 +609,7 @@ export default function DepartmentsPage() {
                           <td className="p-3 text-right">
                             <button
                               type="button"
-                              onClick={() => handleRemoveCurriculum(item.id)}
+                              onClick={() => handleRemoveCurriculum(item.subjectId || item.id)}
                               className="p-1 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition cursor-pointer"
                               title="Xóa khỏi khung"
                             >
@@ -630,18 +642,18 @@ export default function DepartmentsPage() {
           { label: 'Tên Khoa', value: drawerDepartment?.name, icon: Building2 },
           { label: 'Mã Khoa', value: drawerDepartment?.code },
           {
-            label: 'Số môn học',
-            value: `${(drawerDepartment as any)?.subjectsCount ?? (drawerDepartment as any)?.subjects?.length ?? 0} môn`,
+            label: 'Số môn học trong Khung CTDT',
+            value: `${Math.max((drawerDepartment as any)?.subjectsCount || 0, (drawerDepartment as any)?._count?.majorSubjects || 0, (drawerDepartment as any)?._count?.subjects || 0, (drawerDepartment as any)?.subjects?.length || 0)} môn`,
             icon: BookOpen,
           },
           {
             label: 'Số lớp học',
-            value: `${(drawerDepartment as any)?.classesCount ?? (drawerDepartment as any)?.classes?.length ?? 0} lớp`,
+            value: `${(drawerDepartment as any)?.classesCount ?? (drawerDepartment as any)?._count?.classes ?? (drawerDepartment as any)?.classes?.length ?? 0} lớp`,
             icon: GraduationCap,
           },
           {
             label: 'Số giảng viên',
-            value: `${(drawerDepartment as any)?.teachersCount ?? (drawerDepartment as any)?.teachers?.length ?? 0} cán bộ`,
+            value: `${(drawerDepartment as any)?.teachersCount ?? (drawerDepartment as any)?._count?.teachers ?? (drawerDepartment as any)?.teachers?.length ?? 0} cán bộ`,
             icon: Users,
           },
         ]}

@@ -172,7 +172,7 @@ export default function ExamRoomsPage() {
     setFormData({
       code: r.roomCode || r.code || '',
       name: r.roomName || r.name || '',
-      capacity: String(r.capacity || 40),
+      capacity: String(r.capacity ?? 40),
       location: r.building || r.location || '',
       roomType: r.roomType || 'COMPUTER_LAB',
       status: r.status || 'AVAILABLE',
@@ -551,7 +551,7 @@ export default function ExamRoomsPage() {
         details={[
           { label: 'Tên phòng thi', value: drawerRoom?.roomName || drawerRoom?.name, icon: DoorOpen },
           { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code },
-          { label: 'Sức chứa', value: `${drawerRoom?.capacity || 40} chỗ`, icon: Users },
+          { label: 'Sức chứa', value: `${drawerRoom?.capacity ?? 0} chỗ`, icon: Users },
           { label: 'Tòa nhà / Vị trí', value: drawerRoom?.building || drawerRoom?.location, icon: Building },
           { label: 'Loại phòng', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết', icon: Monitor },
         ]}

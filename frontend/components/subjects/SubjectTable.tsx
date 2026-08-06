@@ -45,7 +45,7 @@ export function SubjectTable({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {subjects.map((s) => {
           const isChecked = selected.includes(s.id);
-          const deptName = s.department?.name || (s as any).departmentName || 'Khoa Công nghệ Thông tin';
+          const deptName = s.department?.name || (s as any).departmentName || 'Chưa gán Khoa';
 
           return (
             <div

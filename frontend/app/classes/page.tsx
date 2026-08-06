@@ -103,10 +103,10 @@ export default function ClassesPage() {
   const kpiData = useMemo(() => {
     const total = classes.length;
     const setDept = new Set(classes.map((c) => c.departmentId).filter(Boolean));
-    const totalStudents = classes.reduce((acc, curr: any) => acc + (curr.studentsCount ?? curr.students?.length ?? 40), 0);
+    const totalStudents = classes.reduce((acc, curr: any) => acc + (curr._count?.students ?? curr.studentsCount ?? curr.students?.length ?? 0), 0);
     const avgStudents = total > 0 ? Math.round(totalStudents / total) : 0;
     const maxClassStudents = classes.reduce(
-      (max, curr: any) => Math.max(max, curr.studentsCount ?? curr.students?.length ?? 40),
+      (max, curr: any) => Math.max(max, curr._count?.students ?? curr.studentsCount ?? curr.students?.length ?? 0),
       0,
     );
 
@@ -133,8 +133,8 @@ export default function ClassesPage() {
         if (sortOrder === 'oldest') return a.id - b.id;
         if (sortOrder === 'name_asc') return a.name.localeCompare(b.name, 'vi');
         if (sortOrder === 'students_desc') {
-          const sA = a.studentsCount ?? a.students?.length ?? 40;
-          const sB = b.studentsCount ?? b.students?.length ?? 40;
+          const sA = a._count?.students ?? a.studentsCount ?? a.students?.length ?? 0;
+          const sB = b._count?.students ?? b.studentsCount ?? b.students?.length ?? 0;
           return sB - sA;
         }
         return b.id - a.id;
@@ -227,7 +227,7 @@ export default function ClassesPage() {
       c.code,
       c.name,
       c.department?.name || c.departmentName || '',
-      c.studentsCount ?? c.students?.length ?? 0,
+      c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0,
     ]);
 
     exportToFormattedExcel({
@@ -259,7 +259,7 @@ export default function ClassesPage() {
         c.code,
         c.name,
         c.department?.name || c.departmentName || '',
-        `${c.studentsCount ?? c.students?.length ?? 0} SV`,
+        `${c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0} SV`,
       ]),
     });
   };
@@ -478,7 +478,7 @@ export default function ClassesPage() {
           },
           {
             label: 'Sĩ số Sinh viên',
-            value: `${(drawerClass as any)?.studentsCount ?? (drawerClass as any)?.students?.length ?? 40} sinh viên`,
+            value: `${(drawerClass as any)?._count?.students ?? (drawerClass as any)?.studentsCount ?? (drawerClass as any)?.students?.length ?? 0} sinh viên`,
             icon: Users,
           },
         ]}

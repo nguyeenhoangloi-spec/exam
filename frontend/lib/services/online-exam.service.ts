@@ -4,6 +4,7 @@ export interface AnswerItem {
   questionId: string;
   selectedOptionIds?: string[];
   textAnswer?: string;
+  textAnswerRich?: Record<string, unknown>;
   isFlaggedForReview?: boolean;
   version: number;
   clientTimestamp: string;
@@ -53,6 +54,15 @@ export const onlineExamService = {
 
   async saveAnswers(token: string, answers: AnswerItem[]) {
     const res = await api.post(`/online-exams/attempt/${token}/answers/save`, { answers });
+    return res.data;
+  },
+
+  async uploadEssayFile(token: string, questionId: string, file: File) {
+    const form = new FormData();
+    form.append('file', file);
+    const res = await api.post(`/essay/attempt/${token}/answers/${questionId}/files`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return res.data;
   },
 

@@ -18,6 +18,15 @@ export class EssayService {
     return Boolean(await this.prisma.examScheduleRoom.findFirst({ where: { examScheduleId: scheduleId, supervisors: { some: { teacher: { userId } } } }, select: { id: true } }));
   }
 
+  async updateConfig(actor: any, scheduleId: number, data: any) {
+    if (actor.role !== 'ADMIN' && !(await this.teacherCanAccessSchedule(actor.id, scheduleId))) throw new ForbiddenException('Bạn không được cấu hình đề thi này.');
+    const config = await this.prisma.onlineExamConfig.findUnique({ where: { examScheduleId: scheduleId } });
+    if (!config) throw new NotFoundException('Chưa có cấu hình bài thi cho lịch này.');
+    const updated = await this.prisma.onlineExamConfig.update({ where: { examScheduleId: scheduleId }, data: { essayEnabled: Boolean(data.essayEnabled), allowEssayFileUpload: data.allowEssayFileUpload === undefined ? true : Boolean(data.allowEssayFileUpload), maxEssayFileSizeMb: Math.min(Math.max(Number(data.maxEssayFileSizeMb || 20), 1), 20), showEssayResultAfterApproval: data.showEssayResultAfterApproval === undefined ? true : Boolean(data.showEssayResultAfterApproval) } });
+    await this.audit.write({ actorId: actor.id, action: 'UPDATE', entityType: 'ONLINE_EXAM_CONFIG', entityId: scheduleId, description: 'Cập nhật cấu hình thi tự luận', metadata: data });
+    return updated;
+  }
+
   private async assertRubricAccess(actor: any, questionId: string) {
     if (actor.role === 'ADMIN') return;
     const question = await this.prisma.question.findUnique({ where: { id: questionId }, select: { subjectId: true } });
@@ -63,7 +72,13 @@ export class EssayService {
   async detail(actor: any, attemptId: string) {
     const attempt = await this.getAttempt(actor, attemptId);
     const snapshot = (attempt.snapshot?.snapshotData as any[]) || [];
-    return { ...attempt, snapshot: undefined, questions: snapshot.map((q) => ({ ...q, options: undefined, rubric: [] })) };
+    const questionIds = snapshot.filter((q) => q.type === 'ESSAY').map((q) => q.questionId);
+    const rubrics = questionIds.length
+      ? await this.prisma.essayRubricCriterion.findMany({ where: { questionId: { in: questionIds } }, orderBy: { sortOrder: 'asc' } })
+      : [];
+    const rubricByQuestion = new Map<string, typeof rubrics>();
+    for (const rubric of rubrics) rubricByQuestion.set(rubric.questionId, [...(rubricByQuestion.get(rubric.questionId) || []), rubric]);
+    return { ...attempt, snapshot: undefined, questions: snapshot.map((q) => ({ ...q, options: undefined, rubric: rubricByQuestion.get(q.questionId) || [] })) };
   }
 
   async gradeAnswer(actor: any, answerId: string, dto: GradeAnswerDto) {
@@ -132,7 +147,7 @@ export class EssayService {
     if (!file || !ALLOWED_MIME.has(file.mimetype) || file.size > MAX_BYTES) throw new BadRequestException('File không hợp lệ hoặc vượt quá 20 MB.');
     const attempt = await this.prisma.examAttempt.findUnique({ where: { attemptToken: token }, include: { student: true, onlineExamConfig: true, attemptAnswers: true } });
     if (!attempt || attempt.student.userId !== actorId) throw new ForbiddenException('Phiên thi không hợp lệ.');
-    if (![AttemptStatus.IN_PROGRESS, AttemptStatus.DISCONNECTED].includes(attempt.status)) throw new BadRequestException('Bài đã nộp, không thể tải file.');
+    if (![AttemptStatus.IN_PROGRESS, AttemptStatus.DISCONNECTED].includes(attempt.status as any)) throw new BadRequestException('Bài đã nộp, không thể tải file.');
     const answer = attempt.attemptAnswers.find((a) => a.questionId === questionId);
     if (!answer) throw new BadRequestException('Cần lưu câu trả lời trước khi tải file.');
     const dir = join(process.cwd(), 'uploads', 'essay'); await mkdir(dir, { recursive: true });

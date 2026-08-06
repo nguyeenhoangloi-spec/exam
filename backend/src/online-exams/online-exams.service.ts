@@ -288,7 +288,7 @@ export class OnlineExamsService {
       include: {
         student: true,
         snapshot: true,
-        attemptAnswers: true,
+        attemptAnswers: { include: { submissionFiles: true } },
         onlineExamConfig: true,
       },
     });
@@ -340,6 +340,9 @@ export class OnlineExamsService {
         requireFullscreen: attempt.onlineExamConfig.requireFullscreen,
         preventTabSwitch: attempt.onlineExamConfig.preventTabSwitch,
         preventCopyPaste: attempt.onlineExamConfig.preventCopyPaste,
+        essayEnabled: attempt.onlineExamConfig.essayEnabled,
+        allowEssayFileUpload: attempt.onlineExamConfig.allowEssayFileUpload,
+        maxEssayFileSizeMb: attempt.onlineExamConfig.maxEssayFileSizeMb,
       },
       savedAnswers: attempt.attemptAnswers.map((ans) => ({
         questionId: ans.questionId,
@@ -347,6 +350,9 @@ export class OnlineExamsService {
         textAnswer: ans.textAnswer,
         isFlaggedForReview: ans.isFlaggedForReview,
         version: ans.version,
+        textAnswerRich: ans.textAnswerRich,
+        lastSavedAt: ans.serverTimestamp,
+        files: ans.submissionFiles,
       })),
       questions: clientQuestions,
     };
@@ -403,17 +409,21 @@ export class OnlineExamsService {
           questionId: item.questionId,
           selectedOptionIds: item.selectedOptionIds ? (item.selectedOptionIds as any) : null,
           textAnswer: item.textAnswer || null,
+          textAnswerRich: item.textAnswerRich ? (item.textAnswerRich as any) : null,
           isFlaggedForReview: item.isFlaggedForReview || false,
           version: item.version,
           clientTimestamp: new Date(item.clientTimestamp),
+          lastSavedAt: now,
         },
         update: {
           selectedOptionIds: item.selectedOptionIds ? (item.selectedOptionIds as any) : null,
           textAnswer: item.textAnswer || null,
+          textAnswerRich: item.textAnswerRich ? (item.textAnswerRich as any) : null,
           isFlaggedForReview: item.isFlaggedForReview || false,
           version: item.version,
           clientTimestamp: new Date(item.clientTimestamp),
           serverTimestamp: now,
+          lastSavedAt: now,
         },
       });
       savedCount++;
@@ -571,17 +581,19 @@ export class OnlineExamsService {
     }
 
     if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'INVALIDATED'].includes(attempt.status)) {
+      const essayPending = attempt.gradingStatus === 'SUBMITTED' || attempt.gradingStatus === 'UNDER_GRADING' || attempt.gradingStatus === 'WAITING_APPROVAL';
       return {
         message: 'Bài thi đã được nộp từ trước',
         status: attempt.status,
         totalScore: attempt.totalScore ?? 0,
         maxScore: attempt.maxScore ?? 10,
-        showResultImmediately: true,
+        showResultImmediately: !essayPending || attempt.gradingStatus === 'PUBLISHED',
       };
     }
 
     // Tính điểm tự động dựa trên Snapshot & AttemptAnswers
     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
+    const hasEssay = snapshotQuestions.some((q) => q.type === 'ESSAY');
     let calculatedScore = 0;
 
     for (const q of snapshotQuestions) {
@@ -616,7 +628,8 @@ export class OnlineExamsService {
       data: {
         status: finalStatus,
         submittedAt: new Date(),
-        totalScore: calculatedScore,
+        totalScore: hasEssay ? null : calculatedScore,
+        gradingStatus: hasEssay ? 'SUBMITTED' : 'NOT_SUBMITTED',
       },
     });
 
@@ -625,9 +638,9 @@ export class OnlineExamsService {
       message: isAutoSubmit ? 'Bài thi đã tự động nộp do hết giờ' : 'Nộp bài thi thành công',
       status: updated.status,
       submittedAt: updated.submittedAt,
-      totalScore: calculatedScore,
+      totalScore: hasEssay ? null : calculatedScore,
       maxScore: attempt.maxScore ?? 10,
-      showResultImmediately: true,
+      showResultImmediately: !hasEssay,
     };
   }
 
@@ -645,6 +658,9 @@ export class OnlineExamsService {
           },
         },
         incidents: true,
+        attemptAnswers: {
+          include: { essayGrades: { include: { criterion: true } } },
+        },
       },
     });
 
@@ -669,10 +685,10 @@ export class OnlineExamsService {
       isExamEnded = true;
     }
 
-    const canShowScore =
-      Boolean(config?.showResultImmediately) ||
-      isExamEnded ||
-      attempt.status === 'GRADED';
+    const hasEssay = attempt.gradingStatus !== 'NOT_SUBMITTED';
+    const canShowScore = hasEssay
+      ? attempt.gradingStatus === 'PUBLISHED'
+      : Boolean(config?.showResultImmediately) || isExamEnded || attempt.status === 'GRADED';
 
     return {
       attemptId: attempt.id,
@@ -681,10 +697,19 @@ export class OnlineExamsService {
       totalScore: canShowScore ? (attempt.totalScore ?? 0) : null,
       maxScore: attempt.maxScore ?? 10,
       showResultImmediately: canShowScore,
+      gradingStatus: attempt.gradingStatus,
       isExamEnded,
       examEndTime: examEndTimeStr,
       isFlagged: attempt.isFlagged,
       incidents: attempt.incidents,
+      essayAnswers: canShowScore && hasEssay
+        ? attempt.attemptAnswers.map((answer: any) => ({
+            questionId: answer.questionId,
+            finalScore: answer.finalScore,
+            teacherComment: answer.teacherComment,
+            criteria: answer.essayGrades.map((grade: any) => ({ label: grade.criterion.label, score: grade.score, maxScore: grade.criterion.maxScore, comment: grade.comment })),
+          }))
+        : [],
     };
   }
 

@@ -13,6 +13,9 @@ export class SaveAnswerDto {
   @IsOptional()
   textAnswer?: string;
 
+  @IsOptional()
+  textAnswerRich?: Record<string, unknown>;
+
   @IsBoolean()
   @IsOptional()
   isFlaggedForReview?: boolean;

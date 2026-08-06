@@ -9,7 +9,7 @@ export class DepartmentsService {
     return this.prisma.department.findMany({
       include: {
         _count: {
-          select: { classes: true, teachers: true, subjects: true },
+          select: { classes: true, teachers: true, subjects: true, majorSubjects: true },
         },
       },
       orderBy: { code: 'asc' },
@@ -44,6 +44,26 @@ export class DepartmentsService {
 
   async getCurriculum(departmentId: number) {
     await this.findOne(departmentId);
+
+    // Auto-sync: Đảm bảo các môn học tạo trực thuộc Khoa tự động có mặt trong Khung CTDT
+    const deptSubjects = await this.prisma.subject.findMany({
+      where: { departmentId },
+    });
+
+    for (const sub of deptSubjects) {
+      await this.prisma.majorSubject.upsert({
+        where: { departmentId_subjectId: { departmentId, subjectId: sub.id } },
+        create: {
+          departmentId,
+          subjectId: sub.id,
+          type: 'MANDATORY',
+          recommendedSemester: 1,
+          note: 'Môn học thuộc Khoa',
+        },
+        update: {},
+      });
+    }
+
     return this.prisma.majorSubject.findMany({
       where: { departmentId },
       include: {
@@ -57,7 +77,7 @@ export class DepartmentsService {
           },
         },
       },
-      orderBy: [{ type: 'asc' }, { recommendedSemester: 'asc' }],
+      orderBy: [{ recommendedSemester: 'asc' }, { type: 'asc' }],
     });
   }
 
@@ -93,14 +113,15 @@ export class DepartmentsService {
     });
   }
 
-  async removeSubjectFromCurriculum(departmentId: number, subjectId: number) {
+  async removeSubjectFromCurriculum(departmentId: number, targetId: number) {
     await this.findOne(departmentId);
-    const existing = await this.prisma.majorSubject.findUnique({
+    const existing = await this.prisma.majorSubject.findFirst({
       where: {
-        departmentId_subjectId: {
-          departmentId,
-          subjectId,
-        },
+        departmentId,
+        OR: [
+          { subjectId: targetId },
+          { id: targetId },
+        ],
       },
     });
     if (!existing) throw new NotFoundException('Môn học không nằm trong khung chương trình của khoa.');

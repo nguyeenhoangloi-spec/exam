@@ -43,8 +43,8 @@ export function ClassTable({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {classes.map((c) => {
           const isChecked = selected.includes(c.id);
-          const deptName = c.department?.name || (c as any).departmentName || 'Khoa Công nghệ Thông tin';
-          const studentCount = (c as any).studentsCount ?? ((c as any).students?.length || 40);
+          const deptName = c.department?.name || (c as any).departmentName || 'Chưa gán Khoa';
+          const studentCount = (c as any)._count?.students ?? (c as any).studentsCount ?? ((c as any).students?.length || 0);
 
           return (
             <div
@@ -154,8 +154,8 @@ export function ClassTable({
           <tbody className="divide-y divide-slate-100 font-medium">
             {classes.map((c) => {
               const isChecked = selected.includes(c.id);
-              const deptName = c.department?.name || (c as any).departmentName || '---';
-              const studentCount = (c as any).studentsCount ?? ((c as any).students?.length || 40);
+              const deptName = c.department?.name || (c as any).departmentName || 'Chưa gán Khoa';
+              const studentCount = (c as any)._count?.students ?? (c as any).studentsCount ?? ((c as any).students?.length || 0);
 
               return (
                 <tr key={c.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
@@ -218,7 +218,7 @@ export function ClassTable({
           {classes.map((c) => {
             const isChecked = selected.includes(c.id);
             const deptName = c.department?.name || (c as any).departmentName || 'Chưa gán Khoa';
-            const studentCount = (c as any).studentsCount ?? ((c as any).students?.length || 40);
+            const studentCount = (c as any)._count?.students ?? (c as any).studentsCount ?? ((c as any).students?.length || 0);
 
             return (
               <tr
