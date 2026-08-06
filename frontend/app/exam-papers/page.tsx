@@ -33,6 +33,7 @@ function formatPaperForExport(paper: any) {
     subjectName,
     subjectCode,
     durationMinutes: paper.durationMinutes,
+    examType: paper.examSchedule?.examType || (paper as any).examType || 'TRAC_NGHIEM',
     totalScore: paper.totalScore,
     questions: details.map((d: any, idx: number) => {
       const q = d.question || d;
@@ -186,6 +187,16 @@ export default function ExamPapersPage() {
   const selectedSchedule = schedules.find((schedule) => String(schedule.id) === formData.examScheduleId);
   // isEssay is now driven by formData.examType (user-selected toggle)
   const isEssay = formData.examType === 'TU_LUAN';
+
+  // The schedule is the source of truth: a paper cannot change a published
+  // schedule from multiple-choice to essay (or vice versa).
+  useEffect(() => {
+    const scheduleType = selectedSchedule?.examType;
+    if (!scheduleType || scheduleType === formData.examType) return;
+    setFormData((previous) => scheduleType === 'TU_LUAN'
+      ? { ...previous, examType: scheduleType, easyCount: '3', mediumCount: '2', hardCount: '0' }
+      : { ...previous, examType: scheduleType, easyCount: '16', mediumCount: '16', hardCount: '8' });
+  }, [selectedSchedule?.id, selectedSchedule?.examType, formData.examType]);
   const scheduleDuration = selectedSchedule
     ? (() => {
         const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);

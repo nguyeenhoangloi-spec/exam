@@ -254,7 +254,7 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             aria-label="Mở menu điều hướng"
             onClick={onMenuClick}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 md:hidden cursor-pointer shadow-2xs"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 md:hidden cursor-pointer shadow-2xs"
           >
             <Menu className="h-4.5 w-4.5" />
           </button>

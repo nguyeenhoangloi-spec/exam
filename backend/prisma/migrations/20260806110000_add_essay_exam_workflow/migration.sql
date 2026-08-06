@@ -25,7 +25,7 @@ ALTER TABLE "online_exam_configs"
 
 CREATE TABLE "essay_rubric_criteria" (
   "id" TEXT NOT NULL,
-  "questionId" TEXT NOT NULL,
+  "questionId" UUID NOT NULL,
   "label" TEXT NOT NULL,
   "description" TEXT,
   "maxScore" DOUBLE PRECISION NOT NULL,

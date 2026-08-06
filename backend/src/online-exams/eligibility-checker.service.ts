@@ -223,7 +223,7 @@ export class EligibilityCheckerService {
     }
 
     // Kiểm tra đây có phải lịch thi online không
-    if (schedule.examType !== 'TRAC_NGHIEM' && schedule.examType !== 'ONLINE') {
+    if (!['TRAC_NGHIEM', 'TU_LUAN', 'ONLINE'].includes(schedule.examType)) {
       return this.fail(
         EligibilityErrorCode.EXAM_NOT_ONLINE,
         'Lịch thi này không phải hình thức thi trực tuyến',
@@ -261,6 +261,14 @@ export class EligibilityCheckerService {
     // ─────────────────────────────────────────
     // BƯỚC 5: Kiểm tra lượt thi & phiên thi hiện tại
     // ─────────────────────────────────────────
+    if (schedule.examType === 'TU_LUAN' && !config.essayEnabled) {
+      return this.fail(
+        EligibilityErrorCode.EXAM_NOT_CONFIGURED,
+        'Ca thi tu luan chua duoc bat cau hinh tu luan.',
+        { student, schedule, config },
+      );
+    }
+
     const allAttempts = await this.prisma.examAttempt.findMany({
       where: {
         onlineExamConfigId: config.id,

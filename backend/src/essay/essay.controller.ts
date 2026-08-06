@@ -45,11 +45,11 @@ export class EssayController {
   publish(@Request() req: any, @Param('attemptId', ParseUUIDPipe) attemptId: string) { return this.essay.approve(req.user, attemptId, true); }
 
   @Post('grading/attempts/:attemptId/reopen')
-  @Roles('ADMIN', 'TEACHER')
+  @Roles('ADMIN')
   reopen(@Request() req: any, @Param('attemptId', ParseUUIDPipe) attemptId: string, @Body() dto: ActionReasonDto) { return this.essay.reopen(req.user, attemptId, dto); }
 
   @Post('grading/attempts/:attemptId/extend-time')
-  @Roles('ADMIN', 'TEACHER')
+  @Roles('ADMIN')
   extend(@Request() req: any, @Param('attemptId', ParseUUIDPipe) attemptId: string, @Body() dto: ActionReasonDto) { return this.essay.extend(req.user, attemptId, dto); }
 
   @Post('grading/attempts/:attemptId/penalty')

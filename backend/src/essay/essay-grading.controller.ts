@@ -16,7 +16,7 @@ export class EssayGradingController {
   @Post('attempts/:attemptId/submit') @Roles('ADMIN', 'TEACHER') submit(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.submitGrading(req.user, id); }
   @Post('attempts/:attemptId/approve') @Roles('ADMIN') approve(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.approve(req.user, id, false); }
   @Post('attempts/:attemptId/publish') @Roles('ADMIN') publish(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.approve(req.user, id, true); }
-  @Post('attempts/:attemptId/reopen') @Roles('ADMIN', 'TEACHER') reopen(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string, @Body() dto: ActionReasonDto) { return this.essay.reopen(req.user, id, dto); }
-  @Post('attempts/:attemptId/extend-time') @Roles('ADMIN', 'TEACHER') extend(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string, @Body() dto: ActionReasonDto) { return this.essay.extend(req.user, id, dto); }
+  @Post('attempts/:attemptId/reopen') @Roles('ADMIN') reopen(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string, @Body() dto: ActionReasonDto) { return this.essay.reopen(req.user, id, dto); }
+  @Post('attempts/:attemptId/extend-time') @Roles('ADMIN') extend(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string, @Body() dto: ActionReasonDto) { return this.essay.extend(req.user, id, dto); }
   @Post('attempts/:attemptId/penalty') @Roles('ADMIN') penalty(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string, @Body() dto: ActionReasonDto) { return this.essay.penalty(req.user, id, dto); }
 }

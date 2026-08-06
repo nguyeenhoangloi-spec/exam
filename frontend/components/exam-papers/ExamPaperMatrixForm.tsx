@@ -54,6 +54,7 @@ export function ExamPaperMatrixForm({
 
   const examType = formData.examType || 'TRAC_NGHIEM';
   const isEssay  = examType === 'TU_LUAN';
+  const scheduleType = selectedSchedule?.examType === 'TU_LUAN' ? 'TU_LUAN' : selectedSchedule?.examType === 'TRAC_NGHIEM' ? 'TRAC_NGHIEM' : undefined;
 
   const pending = schedules.filter((s: any) => !s.examPapers || s.examPapers.length === 0);
   const created = schedules.filter((s: any) => s.examPapers && s.examPapers.length > 0);
@@ -65,6 +66,7 @@ export function ExamPaperMatrixForm({
   });
 
   const switchType = (type: 'TRAC_NGHIEM' | 'TU_LUAN') => {
+    if (scheduleType && type !== scheduleType) return;
     if (type === 'TU_LUAN') {
       setFormData((p: any) => ({ ...p, examType: type, ...ESSAY_DEFAULTS }));
     } else {
@@ -126,6 +128,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
+                disabled={scheduleType === 'TU_LUAN'}
                 className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[11px] font-extrabold border transition cursor-pointer ${
                   !isEssay
                     ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
@@ -138,6 +141,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
+                disabled={scheduleType === 'TRAC_NGHIEM'}
                 className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[11px] font-extrabold border transition cursor-pointer ${
                   isEssay
                     ? 'bg-slate-800 text-white border-slate-800 shadow-sm'

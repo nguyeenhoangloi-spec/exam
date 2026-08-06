@@ -4,189 +4,114 @@ import React, { useState } from 'react';
 import { Upload, FileSpreadsheet, Download, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { Modal } from './Modal';
 import { downloadCsv } from '../lib/export-csv';
+import api from '../lib/api';
 
 interface ExcelImportModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   templateFileName: string;
-  onImportSuccess: (data: any[]) => void;
+  onImportSuccess: (data: any[]) => void | Promise<void>;
 }
 
-export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
-  isOpen,
-  onClose,
-  title,
-  templateFileName,
-  onImportSuccess,
-}) => {
+/** Generic CSV preview/import dialog. It never invents rows or reports success
+ * before the parent has persisted the rows through the backend API. */
+export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onClose, title, templateFileName, onImportSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (!selectedFile) return;
-    setFile(selectedFile);
+  const parseCsv = (text: string) => {
+    const lines = text.split(/\r?\n/).filter((line) => line.trim());
+    if (lines.length < 2) throw new Error('Tệp không có dòng dữ liệu hợp lệ.');
+    const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
+    return lines.slice(1).map((line) => {
+      const values = line.split(',').map((v) => v.trim().replace(/^"|"$/g, ''));
+      return headers.reduce<Record<string, string>>((row, header, index) => {
+        row[header] = values[index] || '';
+        return row;
+      }, {});
+    });
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = event.target.files?.[0];
+    if (!selected) return;
+    setFile(selected);
     setErrorMsg('');
-
-    // Mock parsing demo Excel file
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target?.result as string;
-      const lines = text.split('\n').filter((l) => l.trim() !== '');
-      if (lines.length <= 1) {
-        setPreviewData([]);
-        setErrorMsg('Tệp không có dữ liệu hợp lệ để xem trước.');
-        return;
-        /* Legacy sample fallback intentionally unreachable; imports must use uploaded rows. */
-        // Demo default dataset if plain text or empty
-        setPreviewData([
-          { code: 'SV2026010', name: 'Nguyễn Văn Minh', email: 'minhnv@student.edu.vn', class: 'CNTT-K65', status: 'Hợp lệ' },
-          { code: 'SV2026011', name: 'Trần Thị Hà', email: 'hatt@student.edu.vn', class: 'CNTT-K66', status: 'Hợp lệ' },
-          { code: 'SV2026012', name: 'Lê Hoàng Nam', email: 'namlh@student.edu.vn', class: 'AI-K66', status: 'Hợp lệ' },
-        ]);
-      } else {
-        const headers = lines[0].split(',');
-        const parsed = lines.slice(1, 6).map((line, idx) => {
-          const parts = line.split(',');
-          return {
-            code: parts[0]?.trim() || '',
-            name: parts[1]?.trim() || '',
-            email: parts[2]?.trim() || '',
-            class: parts[3]?.trim() || '',
-            status: 'Hợp lệ',
-          };
-        });
-        setPreviewData(parsed);
-      }
-    };
-    reader.readAsText(selectedFile);
-  };
-
-
-
-  const downloadTemplate = () => {
-    const csvContent = 'Mã SV,Họ và Tên,Email,Mã Lớp\nSV2026099,Nguyễn Văn Mẫu,sample@student.edu.vn,CNTT-K65';
-    downloadCsv(templateFileName, csvContent);
-  };
-
-  const handleConfirmImport = () => {
-    if (!file && previewData.length === 0) {
-      setErrorMsg('Vui lòng chọn tệp Excel/CSV để nhập.');
+    if (selected.size > 5 * 1024 * 1024) {
+      setPreviewData([]);
+      setErrorMsg('Tệp vượt quá giới hạn 5 MB.');
       return;
     }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try { setPreviewData(parseCsv(String(reader.result || ''))); }
+      catch (error: any) { setPreviewData([]); setErrorMsg(error.message); }
+    };
+    reader.onerror = () => setErrorMsg('Không thể đọc tệp đã chọn.');
+    reader.readAsText(selected, 'UTF-8');
+  };
+
+  const downloadTemplate = () => {
+    const isTeacherImport = templateFileName.includes('giang_vien');
+    const content = isTeacherImport
+      ? 'teacherCode,fullName,email,departmentId,degree,phone\nGV2026001,Nguyen Van Mau,mau@example.edu.vn,1,ThS,0900000000'
+      : 'studentCode,fullName,email,classId,gender,dateOfBirth,phone\nSV2026099,Nguyen Van Mau,mau@example.edu.vn,1,Nam,2004-01-01,0900000000';
+    downloadCsv(templateFileName, content);
+  };
+
+  const handleConfirmImport = async () => {
+    if (!file || previewData.length === 0) { setErrorMsg('Vui lòng chọn tệp CSV có dữ liệu.'); return; }
     setLoading(true);
-    setTimeout(() => {
-      onImportSuccess(previewData);
-      setLoading(false);
+    setErrorMsg('');
+    try {
+      // The two legacy admin import dialogs are now backed by the same
+      // create endpoints used by the normal forms. No local/demo rows are
+      // accepted as a successful import.
+      const isStudentImport = templateFileName.includes('sinh_vien');
+      const isTeacherImport = templateFileName.includes('giang_vien');
+      if (isStudentImport || isTeacherImport) {
+        const failures: string[] = [];
+        for (let index = 0; index < previewData.length; index += 1) {
+          const row = previewData[index];
+          try {
+            if (isStudentImport) {
+              await api.post('/students', { studentCode: row.studentCode || row.code, fullName: row.fullName || row.name, email: row.email, gender: row.gender || 'Nam', dateOfBirth: row.dateOfBirth || '2004-01-01', phone: row.phone || undefined, classId: Number(row.classId || row.class) });
+            } else {
+              await api.post('/teachers', { teacherCode: row.teacherCode || row.code, fullName: row.fullName || row.name, degree: row.degree || 'ThS', email: row.email, phone: row.phone || undefined, departmentId: Number(row.departmentId || row.department) });
+            }
+          } catch (error: any) {
+            failures.push(`Dòng ${index + 2}: ${error?.response?.data?.message || error?.message || 'không hợp lệ'}`);
+          }
+        }
+        if (failures.length) throw new Error(`Đã lưu ${previewData.length - failures.length}/${previewData.length} dòng. ${failures.join('; ')}`);
+      }
+      await onImportSuccess(previewData);
       onClose();
-    }, 600);
+    }
+    catch (error: any) { setErrorMsg(error?.response?.data?.message || error?.message || 'Không thể nhập dữ liệu.'); }
+    finally { setLoading(false); }
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="space-y-5">
-        {/* Step 1: Download Template */}
         <div className="flex items-center justify-between rounded-xl border border-sky-100 bg-sky-50/70 p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-600 text-white shadow-xs">
-              <FileSpreadsheet className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-slate-800">Tải tệp mẫu Excel chuẩn</h4>
-              <p className="text-xs text-slate-500">Sử dụng tệp mẫu để nhập đúng cấu trúc cột dữ liệu</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={downloadTemplate}
-            className="flex items-center gap-1.5 rounded-lg border border-sky-200 bg-white px-3 py-1.5 text-xs font-semibold text-sky-700 shadow-xs hover:bg-sky-100 transition"
-          >
-            <Download className="h-4 w-4" /> Tải mẫu (.csv)
-          </button>
+          <div className="flex items-center gap-3"><FileSpreadsheet className="h-5 w-5 text-sky-600" /><div><h4 className="text-sm font-bold text-slate-800">Tải tệp CSV mẫu</h4><p className="text-xs text-slate-500">Dùng đúng tên cột để hệ thống kiểm tra dữ liệu.</p></div></div>
+          <button type="button" onClick={downloadTemplate} className="flex items-center gap-1.5 rounded-lg border border-sky-200 bg-white px-3 py-1.5 text-xs font-semibold text-sky-700"><Download className="h-4 w-4" /> Tải mẫu</button>
         </div>
-
-        {/* Step 2: Upload Area */}
-        <div className="relative border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-sky-500 transition-colors bg-slate-50/50">
-          <input
-            type="file"
-            accept=".csv, .xlsx, .xls"
-            onChange={handleFileChange}
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-          />
-          <div className="flex flex-col items-center justify-center gap-2">
-            <Upload className="h-8 w-8 text-sky-600" />
-            <p className="text-sm font-semibold text-slate-800">
-              {file ? file.name : 'Kéo thả tệp Excel/CSV vào đây hoặc bấm để chọn tệp'}
-            </p>
-            <p className="text-xs text-slate-400">Hỗ trợ định dạng .xlsx, .xls, .csv (Tối đa 10MB)</p>
-          </div>
+        <div className="relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center">
+          <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+          <Upload className="mx-auto h-8 w-8 text-sky-600" />
+          <p className="mt-2 text-sm font-semibold text-slate-800">{file ? file.name : 'Chọn tệp CSV để xem trước'}</p>
+          <p className="text-xs text-slate-400">Tối đa 5 MB. Dữ liệu chỉ được lưu sau khi xác nhận.</p>
         </div>
-
-        {errorMsg && (
-          <div className="flex items-center gap-2 rounded-xl bg-rose-50 p-3 text-xs font-medium text-rose-700 border border-rose-200">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {errorMsg}
-          </div>
-        )}
-
-        {/* Step 3: Table Preview */}
-        {previewData.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Xem trước dữ liệu ({previewData.length} dòng)
-            </h4>
-            <div className="max-h-48 overflow-y-auto rounded-xl border border-slate-200">
-              <table className="w-full text-left text-xs text-slate-600">
-                <thead className="bg-slate-100 text-slate-700 font-semibold sticky top-0">
-                  <tr>
-                    <th className="p-2.5">STT</th>
-                    <th className="p-2.5">Mã</th>
-                    <th className="p-2.5">Họ tên</th>
-                    <th className="p-2.5">Email / Đơn vị</th>
-                    <th className="p-2.5">Trạng thái</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
-                  {previewData.map((row, i) => (
-                    <tr key={i} className="hover:bg-slate-50">
-                      <td className="p-2.5">{i + 1}</td>
-                      <td className="p-2.5 font-bold text-slate-800">{row.code}</td>
-                      <td className="p-2.5">{row.name}</td>
-                      <td className="p-2.5">{row.email || row.class}</td>
-                      <td className="p-2.5">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                          <CheckCircle2 className="h-3 w-3" /> {row.status === 'success' ? 'Hợp lệ' : row.status === 'error' ? 'Lỗi' : row.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Modal Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 transition"
-          >
-            Hủy bỏ
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirmImport}
-            disabled={loading}
-            className="flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-700 transition disabled:opacity-50"
-          >
-            {loading ? 'Đang xử lý...' : 'Xác nhận nhập danh sách'}
-          </button>
-        </div>
+        {previewData.length > 0 && <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" /> Đã đọc {previewData.length} dòng từ tệp.</div>}
+        {errorMsg && <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700"><AlertCircle className="h-4 w-4" /> {errorMsg}</div>}
+        {previewData.length > 0 && <div className="max-h-48 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-left text-xs"><thead className="sticky top-0 bg-slate-50"><tr>{Object.keys(previewData[0]).map((key) => <th key={key} className="px-3 py-2 font-semibold">{key}</th>)}</tr></thead><tbody>{previewData.slice(0, 20).map((row, index) => <tr key={index} className="border-t border-slate-100">{Object.keys(previewData[0]).map((key) => <td key={key} className="px-3 py-2">{row[key]}</td>)}</tr>)}</tbody></table></div>}
+        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4"><button type="button" onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-slate-600">Hủy</button><button type="button" disabled={loading || previewData.length === 0} onClick={handleConfirmImport} className="rounded-xl bg-sky-600 px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Đang lưu...' : 'Xác nhận nhập'}</button></div>
       </div>
     </Modal>
   );

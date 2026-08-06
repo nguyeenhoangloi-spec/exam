@@ -115,6 +115,28 @@ export default function StudentExamTakePage() {
     return () => clearInterval(hbInterval);
   }, [handleAutoSubmit, tokenFromUrl]);
 
+  const flushPendingAnswers = useCallback(async () => {
+    const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
+    const payloadBatch = Object.values(pendingAnswersToSave.current);
+    if (!token || payloadBatch.length === 0) return false;
+    try {
+      await onlineExamService.saveAnswers(token, payloadBatch);
+      pendingAnswersToSave.current = {};
+      setSyncState('SAVED');
+      return true;
+    } catch (err) {
+      console.error('Auto save failed:', err);
+      setSyncState('OFFLINE');
+      return false;
+    }
+  }, [tokenFromUrl]);
+
+  useEffect(() => {
+    const handleOnline = () => { void flushPendingAnswers(); };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [flushPendingAnswers]);
+
   const triggerAutoSave = useCallback(
     (questionId: string, selectedOptionIds: string[], textAnswer: string, isFlagged: boolean, currentVersion: number, textAnswerRich?: Record<string, unknown>) => {
       const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
@@ -136,21 +158,9 @@ export default function StudentExamTakePage() {
 
       if (timerRef.current) clearTimeout(timerRef.current);
 
-      timerRef.current = setTimeout(async () => {
-        try {
-          const payloadBatch = Object.values(pendingAnswersToSave.current);
-          if (payloadBatch.length === 0) return;
-
-          await onlineExamService.saveAnswers(token, payloadBatch);
-          pendingAnswersToSave.current = {};
-          setSyncState('SAVED');
-        } catch (err) {
-          console.error('Auto save failed:', err);
-          setSyncState('OFFLINE');
-        }
-      }, 1000);
+      timerRef.current = setTimeout(() => { void flushPendingAnswers(); }, 1000);
     },
-    [tokenFromUrl],
+    [flushPendingAnswers, tokenFromUrl],
   );
 
   const handleEssayChange = (questionId: string, textAnswer: string) => {
@@ -295,6 +305,12 @@ export default function StudentExamTakePage() {
 
     try {
       setSubmitting(true);
+      await flushPendingAnswers();
+      if (Object.keys(pendingAnswersToSave.current).length > 0) {
+        alert('Chưa đồng bộ được câu trả lời. Vui lòng kiểm tra kết nối mạng rồi thử lại.');
+        setSubmitting(false);
+        return;
+      }
       await onlineExamService.submitAttempt(token);
       sessionStorage.removeItem('attemptToken');
       router.push(`/student/online-exam/${attemptData.attemptId}/result`);

@@ -85,6 +85,9 @@ export class EssayService {
     const answer = await this.prisma.attemptAnswer.findUnique({ where: { id: answerId }, include: { attempt: true } });
     if (!answer) throw new NotFoundException('Không tìm thấy câu trả lời.');
     await this.getAttempt(actor, answer.attemptId);
+    if (answer.attempt.gradingStatus === EssayAttemptGradingStatus.PUBLISHED) {
+      throw new BadRequestException('BÃ i tá»± luáº­n Ä‘Ã£ cÃ´ng bá»‘, khÃ´ng Ä‘Æ°á»£c sá»­a Ä‘iá»ƒm trá»±c tiáº¿p.');
+    }
     const rubrics = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: answer.questionId } });
     const map = new Map(rubrics.map((r) => [r.id, r]));
     for (const item of dto.criteria) {
@@ -134,6 +137,10 @@ export class EssayService {
 
   async submitGrading(actor: any, attemptId: string) {
     const attempt = await this.getAttempt(actor, attemptId);
+    const gradableStatuses: AttemptStatus[] = [AttemptStatus.SUBMITTED, AttemptStatus.AUTO_SUBMITTED, AttemptStatus.UNDER_REVIEW];
+    if (!gradableStatuses.includes(attempt.status as AttemptStatus)) {
+      throw new BadRequestException('BÃ i thi chÆ°a ná»™p, chÆ°a thá»ƒ hoÃ n táº¥t cháº¥m.');
+    }
     const answers = await this.prisma.attemptAnswer.findMany({ where: { attemptId } });
     if (answers.some((a) => a.gradingStatus !== 'GRADED')) throw new BadRequestException('Còn câu tự luận chưa chấm.');
     const total = answers.reduce((sum, a) => sum + (a.finalScore || 0), 0);
@@ -152,12 +159,14 @@ export class EssayService {
   }
 
   async reopen(actor: any, attemptId: string, dto: ActionReasonDto) {
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chá»‰ ADMIN Ä‘Æ°á»£c má»Ÿ láº¡i bÃ i tá»± luáº­n.');
     const attempt = await this.getAttempt(actor, attemptId);
     await this.prisma.$transaction(async (tx) => { await tx.examAttempt.update({ where: { id: attemptId }, data: { status: AttemptStatus.IN_PROGRESS, gradingStatus: EssayAttemptGradingStatus.NOT_SUBMITTED, endTime: null, submittedAt: null } }); await this.audit.write({ actorId: actor.id, action: 'ESSAY_REOPEN', entityType: 'ExamAttempt', entityId: attemptId, description: 'Mở lại bài tự luận', metadata: { reason: dto.reason } }, tx); });
     return { success: true, status: AttemptStatus.IN_PROGRESS };
   }
 
   async extend(actor: any, attemptId: string, dto: ActionReasonDto) {
+    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chá»‰ ADMIN Ä‘Æ°á»£c gia háº¡n bÃ i tá»± luáº­n.');
     const attempt = await this.getAttempt(actor, attemptId);
     const extra = dto.extraMinutes || 0;
     if (!extra) throw new BadRequestException('Số phút gia hạn phải lớn hơn 0.');

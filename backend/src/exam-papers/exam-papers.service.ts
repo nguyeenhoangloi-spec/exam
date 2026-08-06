@@ -49,7 +49,7 @@ export class ExamPapersService {
   ) { }
 
   private assertOwner(actor: Actor, paper: { createdById: number }) {
-    if (actor.role !== 'ADMIN' && paper.createdById !== actor.id) {
+    if (actor.role !== 'ADMIN' && paper.createdById !== actor.id && (paper as any).status !== ExamPaperStatus.PUBLISHED) {
       throw new ForbiddenException('Bạn chỉ được quản lý đề thi do mình tạo.');
     }
   }
@@ -76,6 +76,18 @@ export class ExamPapersService {
     const requestedCount = data.easyCount + data.mediumCount + data.hardCount;
     if (requestedCount < 1) {
       throw new BadRequestException('Đề thi phải có ít nhất một câu hỏi.');
+    }
+
+    // Validate the paper type before deeper matrix checks so users receive a
+    // useful error instead of a misleading question-count error.
+    if (data.examType && this.prisma.examSchedule?.findFirst) {
+      const scheduleType = await this.prisma.examSchedule.findFirst({
+        where: { id: data.examScheduleId, deletedAt: null },
+        select: { examType: true },
+      });
+      if (scheduleType && scheduleType.examType !== data.examType) {
+        throw new BadRequestException('Loáº¡i Ä‘á» khÃ´ng khá»›p vá»›i loáº¡i lá»‹ch thi Ä‘Ã£ chá»n.');
+      }
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -136,10 +148,15 @@ export class ExamPapersService {
         include: { options: { orderBy: { order: 'asc' } }, essayRubrics: { orderBy: { sortOrder: 'asc' } } },
       });
 
+      // A paper type must select only compatible question types. This prevents
+      // essay questions leaking into multiple-choice papers (and vice versa)
+      // when both kinds exist under the same subject.
+      const isCompatibleType = (question: { type: string }) =>
+        schedule.examType === 'TU_LUAN' ? question.type === 'ESSAY' : question.type !== 'ESSAY';
       const byDifficulty = {
-        EASY: approvedQuestions.filter((question) => question.difficulty === 'EASY' && (schedule.examType !== 'TU_LUAN' || question.type === 'ESSAY')),
-        MEDIUM: approvedQuestions.filter((question) => question.difficulty === 'MEDIUM' && (schedule.examType !== 'TU_LUAN' || question.type === 'ESSAY')),
-        HARD: approvedQuestions.filter((question) => question.difficulty === 'HARD' && (schedule.examType !== 'TU_LUAN' || question.type === 'ESSAY')),
+        EASY: approvedQuestions.filter((question) => question.difficulty === 'EASY' && isCompatibleType(question)),
+        MEDIUM: approvedQuestions.filter((question) => question.difficulty === 'MEDIUM' && isCompatibleType(question)),
+        HARD: approvedQuestions.filter((question) => question.difficulty === 'HARD' && isCompatibleType(question)),
       };
       const requirements = [
         { label: 'dễ', requested: data.easyCount, available: byDifficulty.EASY.length },
@@ -285,6 +302,7 @@ export class ExamPapersService {
 
     // Mật khẩu thi: bắt buộc với kỳ thi chính thức (OFFICIAL), hash bcrypt trước khi lưu
     const isOfficial = paper.examSchedule?.mode === 'OFFICIAL';
+    const hasEssayQuestions = paper.questions.some((item: any) => item.question?.type === 'ESSAY');
     let examPasswordHash: string | null = null;
     if (isOfficial) {
       if (!dto?.examPassword || dto.examPassword.trim().length < 4) {
@@ -306,7 +324,7 @@ export class ExamPapersService {
 
       await tx.onlineExamConfig.upsert({
         where: { examScheduleId: paper.examScheduleId },
-        update: { examPaperId: id, ...(examPasswordHash ? { examPasswordHash } : {}) },
+        update: { examPaperId: id, essayEnabled: hasEssayQuestions, ...(examPasswordHash ? { examPasswordHash } : {}) },
         create: {
           examScheduleId: paper.examScheduleId,
           examPaperId: id,
@@ -315,6 +333,7 @@ export class ExamPapersService {
           preventCopyPaste: true,
           shuffleQuestions: true,
           shuffleOptions: true,
+          essayEnabled: hasEssayQuestions,
           ...(examPasswordHash ? { examPasswordHash } : {}),
         },
       });
