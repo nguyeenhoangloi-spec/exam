@@ -78,6 +78,9 @@ model User {
 
   createdQuestions     Question[]        @relation("UserQuestions")
   approvedQuestions    Question[]        @relation("ApprovedQuestions")
+  essayGrades          EssayGrade[]      @relation("EssayGradeGrader")
+  essayGradedAttempts  ExamAttempt[]     @relation("EssayAttemptGrader")
+  essayApprovedAttempts ExamAttempt[]    @relation("EssayAttemptApprover")
   createdExamPapers    ExamPaper[]       @relation("UserExamPapers")
   deletedExamSchedules ExamSchedule[]    @relation("ExamScheduleDeletedBy")
   questionHistories    QuestionHistory[] @relation("QuestionHistoryActor")
@@ -347,6 +350,7 @@ model Question {
   examPaperQuestions ExamPaperQuestion[]
   histories          QuestionHistory[]
   statistic          QuestionStatistic?
+  essayRubrics       EssayRubricCriterion[]
 
   @@index([subjectId, chapterId, status])
   @@index([createdById, createdAt])
@@ -487,6 +491,20 @@ enum AttemptStatus {
   INVALIDATED
 }
 
+enum EssayAnswerGradingStatus {
+  NOT_GRADED
+  IN_PROGRESS
+  GRADED
+}
+
+enum EssayAttemptGradingStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  UNDER_GRADING
+  WAITING_APPROVAL
+  PUBLISHED
+}
+
 enum EventSeverity {
   LOW
   MEDIUM
@@ -532,6 +550,10 @@ model OnlineExamConfig {
   // --- Kết quả & đánh giá ---
   showResultImmediately Boolean @default(false)
   allowReview           Boolean @default(true)
+  essayEnabled          Boolean @default(false)
+  allowEssayFileUpload  Boolean @default(true)
+  maxEssayFileSizeMb    Int     @default(20)
+  showEssayResultAfterApproval Boolean @default(true)
 
   // --- Kiểm soát truy cập ---
   /// Danh sách IP/subnet được phép (JSON array of strings), null = không giới hạn
@@ -606,6 +628,14 @@ model ExamAttempt {
   penaltyPoints Float @default(0)
   riskScore  Int     @default(0)
   isFlagged  Boolean @default(false)
+  gradingStatus EssayAttemptGradingStatus @default(NOT_SUBMITTED)
+  gradedById    Int?
+  gradedBy      User? @relation("EssayAttemptGrader", fields: [gradedById], references: [id], onDelete: SetNull)
+  gradedAt      DateTime?
+  approvedById  Int?
+  approvedBy    User? @relation("EssayAttemptApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedAt    DateTime?
+  publishedAt   DateTime?
 
   /// Sinh viên đã chấp nhận quy định thi hay chưa
   rulesAcceptedAt DateTime?
@@ -615,6 +645,7 @@ model ExamAttempt {
   proctoringEvents ProctoringEvent[]
   incidents        ExamIncident[]
   deviceSessions   DeviceSession[]
+  submissionFiles  EssaySubmissionFile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -647,7 +678,15 @@ model AttemptAnswer {
 
   selectedOptionIds  Json?
   textAnswer         String?
+  textAnswerRich     Json?
   isFlaggedForReview Boolean @default(false)
+  lastSavedAt        DateTime?
+  submittedAt        DateTime?
+  gradingStatus      EssayAnswerGradingStatus @default(NOT_GRADED)
+  teacherComment     String?
+  finalScore         Float?
+  essayGrades        EssayGrade[]
+  submissionFiles    EssaySubmissionFile[]
 
   version         Int      @default(1)
   clientTimestamp DateTime
@@ -656,6 +695,58 @@ model AttemptAnswer {
   @@unique([attemptId, questionId])
   @@index([attemptId])
   @@map("attempt_answers")
+}
+
+model EssayRubricCriterion {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label       String
+  description String?
+  maxScore    Float
+  sortOrder   Int
+  grades      EssayGrade[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([questionId, sortOrder])
+  @@index([questionId])
+  @@map("essay_rubric_criteria")
+}
+
+model EssayGrade {
+  id              String   @id @default(uuid())
+  attemptAnswerId String
+  attemptAnswer   AttemptAnswer @relation(fields: [attemptAnswerId], references: [id], onDelete: Cascade)
+  criterionId     String
+  criterion       EssayRubricCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  score           Float
+  comment         String?
+  gradedById      Int
+  gradedBy        User @relation("EssayGradeGrader", fields: [gradedById], references: [id], onDelete: Restrict)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([attemptAnswerId, criterionId])
+  @@index([gradedById])
+  @@map("essay_grades")
+}
+
+model EssaySubmissionFile {
+  id         String @id @default(uuid())
+  attemptId  String
+  attempt    ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  answerId   String?
+  answer     AttemptAnswer? @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  url        String
+  fileName   String
+  mimeType   String
+  size       Int
+  createdAt  DateTime @default(now())
+
+  @@index([attemptId])
+  @@index([answerId])
+  @@map("essay_submission_files")
 }
 
 model ProctoringEvent {

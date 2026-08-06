@@ -26,6 +26,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { Toast } from '../../components/Toast';
+import api from '../../lib/api';
 
 interface FAQItem {
   id: string;
@@ -104,19 +105,37 @@ export default function ContactSupportPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleSendSupportForm = (e: React.FormEvent) => {
+  const handleSendSupportForm = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!fullName.trim() || !email.trim() || !message.trim()) {
+      setToast({ message: 'Vui lòng điền đầy đủ thông tin trước khi gửi.', type: 'error' });
+      return;
+    }
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
+    try {
+      const res = await api.post('/contact/send', {
+        fullName: fullName.trim(),
+        email: email.trim(),
+        role,
+        message: message.trim(),
+      });
       setToast({
-        message: 'Yêu cầu hỗ trợ đã được gửi thành công! Quản trị viên sẽ phản hồi qua email trong thời gian sớm nhất.',
+        message: res?.data?.message || 'Yêu cầu hỗ trợ đã được gửi thành công! Quản trị viên sẽ phản hồi qua email trong thời gian sớm nhất.',
         type: 'success',
       });
       setFullName('');
       setEmail('');
       setMessage('');
-    }, 800);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message || err?.message || 'Không thể gửi yêu cầu hỗ trợ. Vui lòng thử lại sau.';
+      setToast({
+        message: typeof msg === 'string' ? msg : 'Không thể gửi yêu cầu hỗ trợ. Vui lòng thử lại sau.',
+        type: 'error',
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleSendChatMessage = (e: React.FormEvent) => {
@@ -287,11 +306,10 @@ export default function ContactSupportPage() {
                   key={pill.id}
                   type="button"
                   onClick={() => setActiveCategory(pill.id)}
-                  className={`rounded-full px-3 py-1 text-xs font-extrabold transition cursor-pointer ${
-                    activeCategory === pill.id
+                  className={`rounded-full px-3 py-1 text-xs font-extrabold transition cursor-pointer ${activeCategory === pill.id
                       ? 'bg-blue-600 text-white shadow-2xs'
                       : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300'
-                  }`}
+                    }`}
                 >
                   {pill.label}
                 </button>
@@ -317,9 +335,8 @@ export default function ContactSupportPage() {
                         </span>
                       </div>
                       <ChevronRight
-                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                          isExpanded ? 'rotate-90 text-blue-600' : ''
-                        }`}
+                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${isExpanded ? 'rotate-90 text-blue-600' : ''
+                          }`}
                       />
                     </button>
 
@@ -469,11 +486,10 @@ export default function ContactSupportPage() {
                   className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-xs font-medium leading-relaxed ${
-                      msg.sender === 'user'
+                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-xs font-medium leading-relaxed ${msg.sender === 'user'
                         ? 'bg-blue-600 text-white rounded-br-none'
                         : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-bl-none shadow-2xs'
-                    }`}
+                      }`}
                   >
                     {msg.text}
                   </div>
