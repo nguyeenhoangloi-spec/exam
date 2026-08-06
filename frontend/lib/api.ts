@@ -12,6 +12,11 @@ const api = axios.create({
 const cache = new Map<string, { timestamp: number; data: any }>();
 let isWarmedUp = false;
 
+export function clearApiCache() {
+  cache.clear();
+  isWarmedUp = false;
+}
+
 export function getCachedData<T = any>(url: string, params?: any): T | null {
   if (typeof window === 'undefined') return null;
   const cacheKey = `${url}?${new URLSearchParams(params || {}).toString()}`;

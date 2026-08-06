@@ -1,338 +1,482 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { memo, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { setAuthToken } from '../../lib/auth';
 import {
+  GraduationCap,
+  BookOpen,
+  Settings2,
   Lock,
   User as UserIcon,
   Eye,
   EyeOff,
-  GraduationCap,
-  BookOpen,
-  ShieldCheck,
   ArrowRight,
+  Sun,
+  Moon,
+  Headphones,
   CheckCircle2,
-  ScrollText,
-  Library,
+  BarChart3,
+  CalendarDays,
+  FileSpreadsheet,
+  MonitorCheck,
   Users,
   Award,
-  CalendarDays,
-  FileCheck2,
-  MonitorCheck,
-  FileSpreadsheet,
+  Library,
+  ScrollText,
+  AlertCircle,
 } from 'lucide-react';
+
+type RoleId = 'ADMIN' | 'TEACHER' | 'STUDENT';
+
+interface RolePreset {
+  id: RoleId;
+  label: string;
+  sublabel: string;
+  user: string;
+  pass: string;
+  placeholder: string;
+  icon: React.ElementType;
+  color: string;
+  bg: string;
+}
+
+const ROLES: RolePreset[] = [
+  {
+    id: 'ADMIN',
+    label: 'Admin',
+    sublabel: 'Quản trị hệ thống',
+    user: 'admin',
+    pass: 'admin123',
+    placeholder: 'Nhập tài khoản quản trị',
+    icon: Settings2,
+    color: 'text-violet-600',
+    bg: 'bg-violet-50',
+  },
+  {
+    id: 'TEACHER',
+    label: 'Giảng viên',
+    sublabel: 'Quản lý kỳ thi',
+    user: 'GV001',
+    pass: 'GV001',
+    placeholder: 'Nhập mã giảng viên hoặc email',
+    icon: BookOpen,
+    color: 'text-sky-600',
+    bg: 'bg-sky-50',
+  },
+  {
+    id: 'STUDENT',
+    label: 'Sinh viên',
+    sublabel: 'Tham gia kỳ thi',
+    user: 'SV001',
+    pass: '123456',
+    placeholder: 'Nhập mã sinh viên',
+    icon: GraduationCap,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+  },
+];
+
+const RoleCard = memo(function RoleCard({
+  role,
+  isSelected,
+  onSelect,
+  isDark,
+}: {
+  role: RolePreset;
+  isSelected: boolean;
+  onSelect: (id: RoleId) => void;
+  isDark: boolean;
+}) {
+  const Icon = role.icon;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(role.id)}
+      aria-pressed={isSelected}
+      aria-label={`Chọn vai trò ${role.label}`}
+      className={[
+        'relative flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-blue-500 select-none',
+        isSelected
+          ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-200/50 scale-[1.02]'
+          : isDark
+          ? 'border-slate-700 bg-slate-800/60 hover:border-slate-600'
+          : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40',
+      ].join(' ')}
+    >
+      {isSelected && (
+        <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
+      )}
+      <div
+        className={[
+          'w-8 h-8 rounded-lg flex items-center justify-center',
+          isSelected ? 'bg-blue-100' : role.bg,
+        ].join(' ')}
+      >
+        <Icon className={['w-4 h-4', isSelected ? 'text-blue-600' : role.color].join(' ')} />
+      </div>
+      <span
+        className={[
+          'text-[11px] font-black leading-none',
+          isSelected ? 'text-blue-700' : isDark ? 'text-slate-200' : 'text-slate-800',
+        ].join(' ')}
+      >
+        {role.label}
+      </span>
+      <span
+        className={[
+          'text-[9.5px] font-semibold text-center leading-none',
+          isSelected ? 'text-blue-500' : isDark ? 'text-slate-400' : 'text-slate-500',
+        ].join(' ')}
+      >
+        {role.sublabel}
+      </span>
+    </button>
+  );
+});
 
 export default function LoginPage() {
   const router = useRouter();
+
+  const [selectedRole, setSelectedRole] = useState<RoleId>('ADMIN');
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'ADMIN' | 'TEACHER' | 'STUDENT'>('ADMIN');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isDark, setIsDark] = useState(false);
 
-  const rolePresets = [
-    { id: 'ADMIN', label: 'Quản trị viên', icon: ShieldCheck, user: 'admin', pass: 'admin123', badge: 'Hệ thống & Cấu hình' },
-    { id: 'TEACHER', label: 'Giảng viên', icon: BookOpen, user: 'GV001', pass: 'GV001', badge: 'Ngân hàng đề & Coi thi' },
-    { id: 'STUDENT', label: 'Sinh viên', icon: GraduationCap, user: 'SV001', pass: '123456', badge: 'Lịch thi & Làm bài' },
-  ];
-
-  const handleSelectRole = (role: 'ADMIN' | 'TEACHER' | 'STUDENT') => {
-    setSelectedRole(role);
-    const preset = rolePresets.find((r) => r.id === role);
-    if (preset) {
-      setUsername(preset.user);
-      setPassword(preset.pass);
-      setError('');
+  useEffect(() => {
+    if (localStorage.getItem('theme') === 'dark') {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
     }
-  };
+  }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username || !password) {
-      setError('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.');
-      return;
-    }
+  const toggleDark = useCallback(() => {
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle('dark', next);
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+      return next;
+    });
+  }, []);
 
-    setLoading(true);
+  const handleSelectRole = useCallback((id: RoleId) => {
+    const preset = ROLES.find((r) => r.id === id)!;
+    setSelectedRole(id);
+    setUsername(preset.user);
+    setPassword(preset.pass);
     setError('');
+    setUsernameError('');
+    setPasswordError('');
+  }, []);
 
-    try {
-      const res = await api.post('/auth/login', { username, password });
-      const { accessToken, user } = res.data;
+  const handleLogin = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      let valid = true;
+      if (!username.trim()) { setUsernameError('Vui lòng nhập tên đăng nhập.'); valid = false; } else setUsernameError('');
+      if (!password) { setPasswordError('Vui lòng nhập mật khẩu.'); valid = false; } else setPasswordError('');
+      if (!valid) return;
 
-      setAuthToken(accessToken, user);
-
-      if (user.role === 'ADMIN') {
-        router.push('/dashboard');
-      } else if (user.role === 'TEACHER') {
-        router.push('/teacher/assignments');
-      } else {
-        router.push('/student/exam-schedule');
+      setLoading(true);
+      setError('');
+      try {
+        const res = await api.post('/auth/login', { username: username.trim(), password });
+        const { accessToken, user } = res.data;
+        setAuthToken(accessToken, user);
+        if (user.role === 'ADMIN') router.push('/dashboard');
+        else if (user.role === 'TEACHER') router.push('/teacher/assignments');
+        else router.push('/student/exam-schedule');
+      } catch (err: any) {
+        setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.');
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [username, password, router]
+  );
+
+  const currentRole = ROLES.find((r) => r.id === selectedRole)!;
+  const isFormValid = username.trim().length > 0 && password.length > 0;
+
+  const inputCls = [
+    'w-full rounded-xl border py-2.5 pl-10 pr-4 text-sm font-medium placeholder-slate-400 transition duration-200 outline-none',
+    'focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
+    isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-800 focus:bg-white',
+  ].join(' ');
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex font-sans relative overflow-hidden">
-      {/* ===== LEFT: Branding Panel (White + Blue Dominant) ===== */}
-      <div className="hidden lg:flex lg:w-[58%] xl:w-[62%] bg-gradient-to-br from-blue-700 via-blue-800 to-blue-950 flex-col justify-between relative overflow-hidden border-r border-blue-900">
-        {/* Subtle white grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]"></div>
-        {/* Soft glow accents */}
-        <div className="absolute -top-40 -right-40 w-[560px] h-[560px] bg-sky-400/20 rounded-full blur-[140px] pointer-events-none"></div>
-        <div className="absolute -bottom-44 -left-32 w-[520px] h-[520px] bg-blue-500/25 rounded-full blur-[150px] pointer-events-none"></div>
-        {/* Watermark emblem */}
-        <GraduationCap className="absolute -bottom-24 -right-24 w-[420px] h-[420px] text-white/[0.04] rotate-12 pointer-events-none" />
+    /* Full viewport, no scroll */
+    <div
+      className={[
+        'h-screen w-screen overflow-hidden flex font-sans antialiased',
+        isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-900',
+      ].join(' ')}
+    >
+      {/* ══════════ LEFT 40% ══════════ */}
+      <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-br from-[#0f1c4d] via-[#1a3a8f] to-[#1d4ed8] relative overflow-hidden">
+        {/* Texture */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-sky-400/15 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 -left-16 w-72 h-72 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
+        <GraduationCap className="absolute -bottom-12 -right-12 w-72 h-72 text-white/[0.04] rotate-12 pointer-events-none" />
 
-        <div className="relative z-10 p-12 xl:p-16 flex flex-col flex-1">
-          {/* System Logo Header */}
-          <div className="flex items-start space-x-4">
-            <div className="relative shrink-0">
-              <div className="w-[68px] h-[68px] rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-xl shadow-blue-900/40 flex items-center justify-center">
-                <GraduationCap className="w-9 h-9 text-white" />
-              </div>
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-sky-300"></span>
+        <div className="relative z-10 flex flex-col h-full p-8 xl:p-10">
+          {/* Logo */}
+          <div className="flex items-center gap-3.5 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 shadow-lg shadow-blue-900/50 flex items-center justify-center shrink-0">
+              <GraduationCap className="w-7 h-7 text-white" />
             </div>
-            <div className="pt-1">
-              <p className="text-[11px] font-bold tracking-[0.28em] text-sky-300 uppercase">Nền tảng khảo thí số</p>
-              <h1 className="mt-1.5 text-2xl xl:text-[26px] font-black text-white tracking-tight leading-snug">
-                EduTest <span className="text-sky-300">Portal</span>
-              </h1>
-              <p className="mt-2 inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] text-white/70 uppercase">
-                <span className="w-6 h-px bg-sky-300"></span>
-                Hệ thống quản lý khảo thí của chúng tôi
-              </p>
+            <div>
+              <p className="text-[9.5px] font-bold tracking-[0.25em] text-sky-300 uppercase">Exam System</p>
+              <p className="text-[13px] font-black text-white leading-tight tracking-tight">HỆ THỐNG QUẢN LÝ KHẢO THÍ</p>
             </div>
           </div>
 
-          {/* Academic Divider */}
-          <div className="mt-8 mb-8 flex items-center gap-3">
-            <div className="flex-1 h-px bg-gradient-to-r from-sky-300/50 to-transparent"></div>
-            <ScrollText className="w-4 h-4 text-sky-300/80" />
-            <div className="flex-1 h-px bg-gradient-to-l from-sky-300/50 to-transparent"></div>
+          {/* Divider */}
+          <div className="my-5 flex items-center gap-2.5 shrink-0">
+            <div className="flex-1 h-px bg-gradient-to-r from-sky-400/40 to-transparent" />
+            <ScrollText className="w-3 h-3 text-sky-400/70" />
+            <div className="flex-1 h-px bg-gradient-to-l from-sky-400/40 to-transparent" />
           </div>
 
-          {/* Main Statement */}
-          <div className="max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-sky-200 text-[11px] font-bold uppercase tracking-[0.18em]">
-              <CalendarDays className="w-3.5 h-3.5" />
+          {/* Headline */}
+          <div className="shrink-0">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-sky-200 text-[9.5px] font-bold tracking-[0.14em] uppercase">
+              <CalendarDays className="w-2.5 h-2.5" />
               Năm học 2025 – 2026 &nbsp;•&nbsp; Học kỳ II
             </div>
-            <h2 className="mt-6 text-[34px] xl:text-[40px] font-black text-white leading-[1.15] tracking-tight">
+            <h2 className="mt-3.5 text-[26px] xl:text-[30px] font-black text-white leading-[1.2] tracking-tight">
               Quản lý khảo thí
-              <span className="block text-sky-300">toàn diện & minh bạch</span>
+              <span className="block text-sky-300">Hiệu quả – Minh bạch – Chính xác</span>
             </h2>
-            <p className="mt-5 text-[13.5px] leading-relaxed text-blue-100/80 font-medium max-w-lg">
-              Một hệ thống duy nhất cho toàn bộ quy trình khảo thí: xây dựng ngân hàng đề chuẩn,
-              tổ chức lịch thi, giám sát phòng thi trực tiếp và công bố kết quả — đơn giản, chính xác, đúng quy chế.
+            <p className="mt-2.5 text-[12px] leading-relaxed text-blue-100/70 font-medium max-w-xs">
+              Nền tảng quản lý toàn diện các hoạt động khảo thí dành cho trường đại học, cao đẳng và trung tâm đào tạo.
             </p>
           </div>
 
-          {/* Feature Pillars */}
-          <div className="grid grid-cols-3 gap-4 mt-10 max-w-2xl">
-            <div className="p-4 rounded-xl bg-white/[0.08] border border-white/15 backdrop-blur-sm">
-              <div className="w-10 h-10 rounded-lg bg-sky-400/20 border border-sky-300/30 flex items-center justify-center mb-3">
-                <FileSpreadsheet className="w-5 h-5 text-sky-200" />
+          {/* Features grid */}
+          <div className="grid grid-cols-2 gap-2.5 mt-5 shrink-0">
+            {[
+              { icon: Lock, label: 'Bảo mật & An toàn', desc: 'Tiêu chuẩn bảo mật cao nhất' },
+              { icon: BarChart3, label: 'Quản lý toàn diện', desc: 'Lịch thi, phòng thi, kết quả' },
+              { icon: FileSpreadsheet, label: 'Tự động hóa quy trình', desc: 'Giảm thiểu sai sót thủ công' },
+              { icon: MonitorCheck, label: 'Truy cập mọi lúc', desc: 'Hỗ trợ mọi lúc, mọi nơi' },
+            ].map(({ icon: Icon, label, desc }) => (
+              <div key={label} className="p-3 rounded-xl bg-white/[0.07] border border-white/10 flex items-start gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-sky-400/20 border border-sky-300/20 flex items-center justify-center shrink-0">
+                  <Icon className="w-3.5 h-3.5 text-sky-200" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold text-white leading-snug">{label}</p>
+                  <p className="text-[10px] text-blue-100/50 mt-0.5 leading-snug">{desc}</p>
+                </div>
               </div>
-              <h4 className="text-[12.5px] font-bold text-white tracking-wide">Ngân hàng đề chuẩn</h4>
-              <p className="text-[11px] text-blue-100/60 mt-1.5 leading-relaxed">Ma trận đề thi khoa học, phân quyền chặt chẽ</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white/[0.08] border border-white/15 backdrop-blur-sm">
-              <div className="w-10 h-10 rounded-lg bg-sky-400/20 border border-sky-300/30 flex items-center justify-center mb-3">
-                <MonitorCheck className="w-5 h-5 text-sky-200" />
-              </div>
-              <h4 className="text-[12.5px] font-bold text-white tracking-wide">Giám sát trực tiếp</h4>
-              <p className="text-[11px] text-blue-100/60 mt-1.5 leading-relaxed">Cảnh báo vi phạm theo thời gian thực</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white/[0.08] border border-white/15 backdrop-blur-sm">
-              <div className="w-10 h-10 rounded-lg bg-sky-400/20 border border-sky-300/30 flex items-center justify-center mb-3">
-                <FileCheck2 className="w-5 h-5 text-sky-200" />
-              </div>
-              <h4 className="text-[12.5px] font-bold text-white tracking-wide">Kết quả minh bạch</h4>
-              <p className="text-[11px] text-blue-100/60 mt-1.5 leading-relaxed">Chấm điểm tự động, lưu trữ hồ sơ đầy đủ</p>
-            </div>
+            ))}
           </div>
 
-          {/* System Stats */}
-          <div className="mt-auto pt-10">
-            <div className="grid grid-cols-3 max-w-2xl">
-              <div className="border-r border-white/15 pr-6">
-                <div className="flex items-center gap-2">
-                  <Library className="w-4 h-4 text-sky-300" />
-                  <span className="text-2xl font-black text-white">1.200+</span>
+          {/* Stats — push to bottom */}
+          <div className="mt-auto shrink-0">
+            <div className="grid grid-cols-3 border-t border-white/12 pt-4">
+              {[
+                { icon: Library, value: '1.200+', label: 'Đề thi & câu hỏi' },
+                { icon: Users, value: '50.000+', label: 'Lượt thí sinh' },
+                { icon: Award, value: '99.9%', label: 'Độ sẵn sàng' },
+              ].map(({ icon: Icon, value, label }, i) => (
+                <div key={label} className={['py-3', i < 2 ? 'border-r border-white/12 pr-3' : 'pl-3'].join(' ')}>
+                  <div className="flex items-center gap-1">
+                    <Icon className="w-3 h-3 text-sky-300" />
+                    <span className="text-lg font-black text-white">{value}</span>
+                  </div>
+                  <p className="text-[10px] text-blue-100/50 mt-0.5 font-medium">{label}</p>
                 </div>
-                <p className="text-[11px] text-blue-100/60 mt-1 font-medium">Đề thi & bộ câu hỏi</p>
-              </div>
-              <div className="border-r border-white/15 px-6">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-sky-300" />
-                  <span className="text-2xl font-black text-white">50.000+</span>
-                </div>
-                <p className="text-[11px] text-blue-100/60 mt-1 font-medium">Lượt thí sinh phục vụ</p>
-              </div>
-              <div className="pl-6">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-sky-300" />
-                  <span className="text-2xl font-black text-white">99.9%</span>
-                </div>
-                <p className="text-[11px] text-blue-100/60 mt-1 font-medium">Độ sẵn sàng hệ thống</p>
-              </div>
+              ))}
             </div>
-
-            {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-3 text-[11.5px] text-blue-100/70 font-medium">
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-sky-300" />
+            <div className="mt-3 flex items-center justify-between text-[10px] text-blue-100/45 font-medium">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-2.5 h-2.5 text-sky-400/60" />
                 Đạt chuẩn quy chế đào tạo tín chỉ
               </span>
-              <span>© 2026 EduTest Portal — Hệ thống quản lý khảo thí</span>
+              <span>© 2026 Exam System. All rights reserved.</span>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
 
-      {/* ===== RIGHT: Login Form (Clean White Card) ===== */}
-      <div className="flex-1 min-h-screen flex items-center justify-center p-6 md:p-12 bg-gradient-to-br from-white via-sky-50/50 to-blue-50/60">
-        <div className="w-full max-w-md bg-white border border-blue-100 rounded-2xl shadow-[0_24px_60px_-12px_rgba(29,78,216,0.18)] p-8 md:p-10">
-          {/* Blue top accent */}
-          <div className="w-16 h-1.5 rounded-full bg-gradient-to-r from-sky-400 to-blue-600 mb-6"></div>
+      {/* ══════════ RIGHT 60% ══════════ */}
+      <main
+        className={[
+          'flex-1 h-full flex flex-col overflow-hidden relative',
+          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-slate-50 via-sky-50/30 to-blue-50/30',
+        ].join(' ')}
+      >
+        {/* Dot pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(99,102,241,0.05)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
-          {/* Form Header */}
-          <div className="text-center lg:text-left">
-            <div className="lg:hidden flex items-center justify-center space-x-3 mb-5">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-lg shadow-blue-300/50 flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-left">
-                <p className="text-base font-black text-blue-950 leading-tight">EduTest Portal</p>
-                <p className="text-[10px] font-bold tracking-[0.18em] text-blue-500 uppercase">Quản lý khảo thí</p>
-              </div>
-            </div>
-            <h2 className="text-2xl md:text-[27px] font-black text-blue-950 tracking-tight">Đăng nhập hệ thống</h2>
-            <p className="mt-1.5 text-xs md:text-[13px] text-slate-500 font-medium">
-              Chọn vai trò và nhập thông tin tài khoản để tiếp tục
-            </p>
-          </div>
-
-          {/* Role Quick Tabs */}
-          <div className="mt-6 grid grid-cols-3 gap-1.5 bg-blue-50/80 p-1.5 rounded-xl border border-blue-100">
-            {rolePresets.map((r) => {
-              const Icon = r.icon;
-              const isSelected = selectedRole === r.id;
-              return (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => handleSelectRole(r.id as any)}
-                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-lg text-xs font-bold transition duration-200 ${
-                    isSelected
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 scale-[1.02]'
-                      : 'text-slate-500 hover:text-blue-700 hover:bg-white/80'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 mb-1" />
-                  <span className="text-[11px] font-extrabold">{r.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Error Banner */}
-          {error && (
-            <div className="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold leading-relaxed flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0 mt-1"></div>
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Main Form */}
-          <form onSubmit={handleLogin} className="mt-6 space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold text-blue-950 uppercase tracking-[0.12em] mb-2">
-                Tên đăng nhập / Mã số
-              </label>
-              <div className="relative">
-                <UserIcon className="w-5 h-5 text-blue-400 absolute left-3.5 top-3.5" />
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Nhập tên đăng nhập hoặc mã SV/GV"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 text-slate-800 text-sm font-medium placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 transition"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-blue-950 uppercase tracking-[0.12em] mb-2">
-                Mật khẩu
-              </label>
-              <div className="relative">
-                <Lock className="w-5 h-5 text-blue-400 absolute left-3.5 top-3.5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Nhập mật khẩu"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-11 pr-12 text-slate-800 text-sm font-medium placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 transition"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-blue-700 transition"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-600/25 transition duration-200 text-sm flex items-center justify-center gap-2 group disabled:opacity-50"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>Đang xác thực thông tin...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Đăng Nhập Hệ Thống</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition duration-200" />
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-
-          {/* Demo Account Notice */}
-          <div className="mt-5 p-3.5 rounded-xl bg-blue-50/60 border border-blue-100 text-[11px] text-slate-600 flex items-center justify-between font-medium">
-            <span>
-              Tài khoản: <strong className="text-blue-900 font-bold">{rolePresets.find((r) => r.id === selectedRole)?.label}</strong>
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-white border border-blue-100 text-blue-700 font-mono font-bold">
-              {username} / {password}
-            </span>
-          </div>
-
-          {/* Footer note */}
-          <p className="mt-6 pt-5 border-t border-slate-100 text-center text-[10.5px] text-slate-400 font-medium">
-            EduTest Portal — Hệ thống quản lý khảo thí của chúng tôi
-            <br />© 2026 • Hỗ trợ kỹ thuật: hotro@edutest.edu.vn
-          </p>
+        {/* Theme toggle */}
+        <div className="relative z-10 flex justify-end p-4 shrink-0">
+          <button
+            type="button"
+            onClick={toggleDark}
+            aria-label="Chuyển chủ đề sáng/tối"
+            className={[
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer',
+              isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50',
+            ].join(' ')}
+          >
+            {isDark ? <><Sun className="w-3 h-3 text-amber-400" /><span>Sáng</span></> : <><Moon className="w-3 h-3" /><span>Tối</span></>}
+          </button>
         </div>
-      </div>
+
+        {/* Card — centered, fits remaining height */}
+        <div className="relative z-10 flex-1 flex items-center justify-center px-4 pb-4 overflow-hidden">
+          <div
+            className={[
+              'w-full max-w-[480px] rounded-2xl border shadow-xl transition-colors duration-300',
+              isDark ? 'bg-slate-900 border-slate-800 shadow-black/40' : 'bg-white border-slate-200/80 shadow-slate-200/60',
+            ].join(' ')}
+          >
+            <div className="p-7">
+              {/* Accent bar */}
+              <div className="w-12 h-1 rounded-full bg-gradient-to-r from-blue-500 to-sky-400 mb-5" />
+
+              {/* Mobile logo */}
+              <div className="flex lg:hidden items-center gap-3 mb-4">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+                  <GraduationCap className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-slate-900">EXAM SYSTEM</p>
+                  <p className="text-[9px] font-bold tracking-[0.18em] text-blue-500 uppercase">Hệ thống quản lý khảo thí</p>
+                </div>
+              </div>
+
+              {/* Header */}
+              <div className="mb-4">
+                <h2 className={['text-[22px] font-black tracking-tight leading-tight', isDark ? 'text-white' : 'text-slate-900'].join(' ')}>
+                  Đăng nhập hệ thống
+                </h2>
+                <p className={['mt-1 text-xs font-medium', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>
+                  Chào mừng bạn quay trở lại!
+                </p>
+              </div>
+
+              {/* Role selector */}
+              <div className="mb-4">
+                <p className={['text-[9.5px] font-bold uppercase tracking-[0.14em] mb-2', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>
+                  Chọn vai trò đăng nhập
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {ROLES.map((role) => (
+                    <RoleCard key={role.id} role={role} isSelected={selectedRole === role.id} onSelect={handleSelectRole} isDark={isDark} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Error */}
+              {error && (
+                <div className="mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-start gap-2">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Form */}
+              <form onSubmit={handleLogin} noValidate className="space-y-3">
+                {/* Username */}
+                <div>
+                  <label htmlFor="login-username" className={['block text-[9.5px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+                    Tên đăng nhập / Mã số
+                  </label>
+                  <div className="relative">
+                    <UserIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      id="login-username"
+                      type="text"
+                      value={username}
+                      onChange={(e) => { setUsername(e.target.value); if (usernameError) setUsernameError(''); }}
+                      placeholder={currentRole.placeholder}
+                      autoComplete="username"
+                      aria-invalid={!!usernameError}
+                      className={[inputCls, usernameError ? 'border-rose-400 focus:border-rose-500' : ''].join(' ')}
+                    />
+                  </div>
+                  {usernameError && <p className="mt-1 text-[10.5px] text-rose-600 font-semibold">{usernameError}</p>}
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label htmlFor="login-password" className={['block text-[9.5px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+                    Mật khẩu
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      id="login-password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(''); }}
+                      placeholder="Nhập mật khẩu"
+                      autoComplete="current-password"
+                      aria-invalid={!!passwordError}
+                      className={[inputCls, 'pr-10', passwordError ? 'border-rose-400 focus:border-rose-500' : ''].join(' ')}
+                    />
+                    <button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {passwordError && <p className="mt-1 text-[10.5px] text-rose-600 font-semibold">{passwordError}</p>}
+                </div>
+
+                {/* Remember + Forgot */}
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 cursor-pointer" />
+                    <span className={['text-xs font-semibold', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>Ghi nhớ đăng nhập</span>
+                  </label>
+                  <button type="button" className="text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer">Quên mật khẩu?</button>
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={loading || !isFormValid}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-black text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+                >
+                  {loading ? (
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /><span>Đang xác thực...</span></>
+                  ) : (
+                    <><span>Đăng nhập</span><ArrowRight className="w-4 h-4" /></>
+                  )}
+                </button>
+              </form>
+
+              {/* Demo hint */}
+              <div className={['mt-4 p-2.5 rounded-xl border text-[10.5px] flex items-center justify-between font-medium', isDark ? 'bg-slate-800 border-slate-700 text-slate-400' : 'bg-blue-50/60 border-blue-100 text-slate-600'].join(' ')}>
+                <span>Vai trò: <strong className={isDark ? 'text-sky-400' : 'text-blue-800'}>{currentRole.label}</strong></span>
+                <span className={['px-2 py-0.5 rounded-lg font-mono font-bold text-[10px]', isDark ? 'bg-slate-700 text-sky-300 border border-slate-600' : 'bg-white text-blue-700 border border-blue-100'].join(' ')}>
+                  {username} / {password}
+                </span>
+              </div>
+
+              {/* Footer */}
+              <div className={['mt-4 pt-4 border-t text-center', isDark ? 'border-slate-800' : 'border-slate-100'].join(' ')}>
+                <p className={['flex items-center justify-center gap-1.5 text-xs font-medium', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>
+                  <Headphones className="w-3 h-3" />
+                  Cần hỗ trợ?{' '}
+                  <button type="button" className="text-blue-600 hover:text-blue-700 font-bold transition cursor-pointer">Liên hệ quản trị hệ thống</button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

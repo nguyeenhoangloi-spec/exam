@@ -1,4 +1,5 @@
 import { User } from '../types';
+import { clearApiCache } from './api';
 
 const TOKEN_KEY = 'exam_app_token';
 const USER_KEY = 'exam_app_user';
@@ -7,6 +8,8 @@ export const setAuthToken = (token: string, user: User) => {
   if (typeof window !== 'undefined') {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    clearApiCache();
+    window.dispatchEvent(new Event('auth-change'));
   }
 };
 
@@ -35,5 +38,8 @@ export const removeAuth = () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    clearApiCache();
+    window.dispatchEvent(new Event('auth-change'));
   }
 };
+

@@ -36,7 +36,7 @@ function formatPaperForExport(paper: any) {
     totalScore: paper.totalScore,
     questions: details.map((d: any, idx: number) => {
       const q = d.question || d;
-      const choices = [
+      const choices = Array.isArray(q.options) && q.options.length ? q.options.map((option: any, optionIndex: number) => ({ label: option.label || String.fromCharCode(65 + optionIndex), content: option.content || '', isCorrect: Boolean(option.isCorrect) })) : [
         { label: 'A', content: q.optionA, isCorrect: q.correctAnswer === 'A' },
         { label: 'B', content: q.optionB, isCorrect: q.correctAnswer === 'B' },
         { label: 'C', content: q.optionC, isCorrect: q.correctAnswer === 'C' },
@@ -53,6 +53,16 @@ function formatPaperForExport(paper: any) {
       };
     }),
   };
+}
+
+function questionChoices(q: any) {
+  if (Array.isArray(q.options) && q.options.length) return q.options.map((option: any, index: number) => ({ label: option.label || String.fromCharCode(65 + index), text: option.content || '', isCorrect: Boolean(option.isCorrect) })).filter((option: any) => option.text);
+  return [
+    { label: 'A', text: q.optionA, isCorrect: q.correctAnswer === 'A' },
+    { label: 'B', text: q.optionB, isCorrect: q.correctAnswer === 'B' },
+    { label: 'C', text: q.optionC, isCorrect: q.correctAnswer === 'C' },
+    { label: 'D', text: q.optionD, isCorrect: q.correctAnswer === 'D' },
+  ].filter((option) => option.text);
 }
 
 const initialForm = {
@@ -304,6 +314,15 @@ export default function ExamPapersPage() {
       setToast({ message: error.message, type: 'error' });
     } finally {
       setBusyId(null);
+    }
+  };
+
+  const exportPaper = async (paper: ExamPaper) => {
+    try {
+      const response = await api.get<ExamPaper>(`/exam-papers/${paper.id}`);
+      exportExamPaperToWord(formatPaperForExport(response.data), showAnswers);
+    } catch (error: any) {
+      setToast({ message: error.message || 'Không thể tải đầy đủ nội dung đề thi.', type: 'error' });
     }
   };
 
@@ -569,7 +588,7 @@ export default function ExamPapersPage() {
               setSelected(checked ? paginatedPapers.map((p) => p.id) : [])
             }
             onDetail={openDetail}
-            onExportWord={(p) => exportExamPaperToWord(formatPaperForExport(p))}
+            onExportWord={exportPaper}
             onAction={runAction}
             busyId={busyId}
             isAdmin={currentUser?.role === 'ADMIN'}
@@ -625,7 +644,7 @@ export default function ExamPapersPage() {
 
                 <button
                   type="button"
-                  onClick={() => exportExamPaperToWord(formatPaperForExport(selectedPaper))}
+                  onClick={() => exportExamPaperToWord(formatPaperForExport(selectedPaper), showAnswers)}
                   className="flex items-center gap-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 text-xs font-extrabold border border-blue-200 transition cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5" />
@@ -637,12 +656,7 @@ export default function ExamPapersPage() {
             <div className="max-h-[60vh] overflow-y-auto space-y-4 pr-1">
               {((selectedPaper as any).details || selectedPaper.questions || []).map((detail: any, index: number) => {
                 const q = detail.question || detail;
-                const choices = [
-                  { label: 'A', text: q.optionA },
-                  { label: 'B', text: q.optionB },
-                  { label: 'C', text: q.optionC },
-                  { label: 'D', text: q.optionD },
-                ].filter((c) => c.text);
+                const choices = questionChoices(q);
 
                 return (
                   <div key={detail.id || index} className="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-2 shadow-2xs">
@@ -657,7 +671,7 @@ export default function ExamPapersPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
                       {choices.map((c) => {
-                        const isCorrect = q.correctAnswer === c.label;
+                        const isCorrect = c.isCorrect;
                         return (
                           <div
                             key={c.label}

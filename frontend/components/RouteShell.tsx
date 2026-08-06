@@ -40,13 +40,25 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
     useEffect(() => {
         setCollapsed(window.localStorage.getItem('sidebar-collapsed') === 'true');
-        const u = getAuthUser();
-        setUser(u);
-        setAuthLoaded(true);
-        if (u?.role) {
-            warmupGlobalCache(u.role);
-        }
     }, []);
+
+    useEffect(() => {
+        const updateAuthUser = () => {
+            const u = getAuthUser();
+            setUser(u);
+            setAuthLoaded(true);
+            if (u?.role) {
+                warmupGlobalCache(u.role);
+            }
+        };
+
+        updateAuthUser();
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('auth-change', updateAuthUser);
+            return () => window.removeEventListener('auth-change', updateAuthUser);
+        }
+    }, [pathname]);
 
     useEffect(() => {
         window.localStorage.setItem('sidebar-collapsed', String(collapsed));
