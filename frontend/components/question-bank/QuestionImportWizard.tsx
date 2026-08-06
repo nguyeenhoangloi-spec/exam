@@ -85,6 +85,13 @@ export function QuestionImportWizard({
         subjectId: String(value),
         chapterId: '',
       }));
+    } else if (key === 'defaultType') {
+      const isEssay = value === 'ESSAY';
+      setMeta((prev) => ({
+        ...prev,
+        defaultType: String(value),
+        defaultScore: isEssay ? '1.0' : '0.25',
+      }));
     } else {
       setMeta((prev) => ({ ...prev, [key]: value }));
     }

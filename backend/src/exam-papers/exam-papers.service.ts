@@ -78,18 +78,6 @@ export class ExamPapersService {
       throw new BadRequestException('Đề thi phải có ít nhất một câu hỏi.');
     }
 
-    // Validate the paper type before deeper matrix checks so users receive a
-    // useful error instead of a misleading question-count error.
-    if (data.examType && this.prisma.examSchedule?.findFirst) {
-      const scheduleType = await this.prisma.examSchedule.findFirst({
-        where: { id: data.examScheduleId, deletedAt: null },
-        select: { examType: true },
-      });
-      if (scheduleType && scheduleType.examType !== data.examType) {
-        throw new BadRequestException('Loáº¡i Ä‘á» khÃ´ng khá»›p vá»›i loáº¡i lá»‹ch thi Ä‘Ã£ chá»n.');
-      }
-    }
-
     return this.prisma.$transaction(async (tx) => {
       const findSchedule = tx.examSchedule.findFirst || tx.examSchedule.findUnique;
       const schedule = await findSchedule.call(tx.examSchedule, {
@@ -105,11 +93,18 @@ export class ExamPapersService {
         },
       });
       if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
-      if (schedule.examType !== 'TU_LUAN' && data.durationMinutes === 60 && requestedCount !== 40) throw new BadRequestException(`Đề thi 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
-      if (schedule.examType !== 'TU_LUAN' && data.durationMinutes === 90 && requestedCount !== 60) throw new BadRequestException(`Đề thi 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
-      if (data.examType && data.examType !== schedule.examType) {
-        throw new BadRequestException('Loại đề không khớp với loại lịch thi đã chọn.');
+
+      const targetType = data.examType || schedule.examType || 'TRAC_NGHIEM';
+      if (schedule.examType !== targetType) {
+        await tx.examSchedule.update({
+          where: { id: schedule.id },
+          data: { examType: targetType },
+        });
+        schedule.examType = targetType;
       }
+
+      if (targetType !== 'TU_LUAN' && data.durationMinutes === 60 && requestedCount !== 40) throw new BadRequestException(`Đề thi trắc nghiệm 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
+      if (targetType !== 'TU_LUAN' && data.durationMinutes === 90 && requestedCount !== 60) throw new BadRequestException(`Đề thi trắc nghiệm 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
       if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(schedule.status)) {
         throw new BadRequestException('Không thể tạo đề cho lịch thi đã hủy hoặc hoàn thành.');
       }

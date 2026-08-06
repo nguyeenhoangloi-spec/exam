@@ -70,12 +70,8 @@ export function QuestionBankTable({
           const subjectName = q.subject?.subjectName || 'An toàn thông tin';
           const creatorName = q.createdByName || q.createdBy?.fullName || 'Nguyễn Văn A';
 
-          const optionsList = q.options && q.options.length > 0 ? q.options : [
-            { label: 'A', content: 'Phương án A', isCorrect: true },
-            { label: 'B', content: 'Phương án B', isCorrect: false },
-            { label: 'C', content: 'Phương án C', isCorrect: false },
-            { label: 'D', content: 'Phương án D', isCorrect: false },
-          ];
+          const isEssay = q.type === 'ESSAY';
+          const optionsList = Array.isArray(q.options) ? q.options : [];
 
           return (
             <div
@@ -121,30 +117,41 @@ export function QuestionBankTable({
                   {q.content}
                 </p>
 
-                {/* Options 2-Column Balanced Compact Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
-                  {optionsList.map((opt) => (
-                    <div
-                      key={opt.label + opt.content}
-                      className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-bold transition min-w-0 ${
-                        opt.isCorrect
-                          ? 'bg-emerald-100/90 text-emerald-950 border border-emerald-300 shadow-2xs font-extrabold'
-                          : 'bg-slate-50 text-slate-700 border border-slate-200/80'
-                      }`}
-                    >
-                      <span
-                        className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md text-[10px] font-black ${
-                          opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                {/* ESSAY vs MULTIPLE_CHOICE Display */}
+                {isEssay ? (
+                  <div className="rounded-xl bg-purple-50/80 border border-purple-200/70 p-2.5 text-[11px] font-semibold text-purple-900 space-y-1">
+                    <p className="font-extrabold text-purple-700 flex items-center gap-1">
+                      📝 Hướng dẫn chấm / Đáp án gợi ý:
+                    </p>
+                    <p className="text-purple-950 font-medium line-clamp-2">
+                      {q.sampleAnswer || 'Thí sinh tự luận trả lời bằng văn bản / tải tệp.'}
+                    </p>
+                  </div>
+                ) : optionsList.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                    {optionsList.map((opt) => (
+                      <div
+                        key={opt.label + opt.content}
+                        className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-bold transition min-w-0 ${
+                          opt.isCorrect
+                            ? 'bg-emerald-100/90 text-emerald-950 border border-emerald-300 shadow-2xs font-extrabold'
+                            : 'bg-slate-50 text-slate-700 border border-slate-200/80'
                         }`}
                       >
-                        {opt.label}
-                      </span>
-                      <span className="truncate leading-tight" title={opt.content}>
-                        {opt.content}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                        <span
+                          className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md text-[10px] font-black ${
+                            opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                          }`}
+                        >
+                          {opt.label}
+                        </span>
+                        <span className="truncate leading-tight" title={opt.content}>
+                          {opt.content}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
 
               {/* Card Footer: Metadata & Actions */}
@@ -369,22 +376,30 @@ export function QuestionBankTable({
                         {q.content}
                       </p>
 
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {optionsList.map((opt) => (
-                          <span
-                            key={opt.label + opt.content}
-                            className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
-                              opt.isCorrect
-                                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs'
-                                : 'bg-slate-100 text-slate-700 border border-slate-200'
-                            }`}
-                          >
-                            {opt.isCorrect && <Check className="h-3 w-3 text-emerald-600 shrink-0" />}
-                            <span className="font-extrabold">{opt.label}.</span>
-                            <span className="truncate max-w-[160px]">{opt.content}</span>
+                      {q.type === 'ESSAY' ? (
+                        <div className="pt-1">
+                          <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-purple-50 text-purple-900 border border-purple-200/80">
+                            📝 <span className="font-extrabold">Đáp án gợi ý:</span> {q.sampleAnswer || 'Thí sinh tự luận văn bản / tải tệp'}
                           </span>
-                        ))}
-                      </div>
+                        </div>
+                      ) : optionsList.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {optionsList.map((opt) => (
+                            <span
+                              key={opt.label + opt.content}
+                              className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
+                                opt.isCorrect
+                                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs'
+                                  : 'bg-slate-100 text-slate-700 border border-slate-200'
+                              }`}
+                            >
+                              {opt.isCorrect && <Check className="h-3 w-3 text-emerald-600 shrink-0" />}
+                              <span className="font-extrabold">{opt.label}.</span>
+                              <span className="truncate max-w-[160px]">{opt.content}</span>
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                   </td>
                 )}

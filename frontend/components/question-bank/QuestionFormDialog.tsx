@@ -112,6 +112,14 @@ export function QuestionFormDialog({
     );
   }, [open, question, subjects, reset]);
 
+  const watchType = watch('type');
+
+  useEffect(() => {
+    if (!question && watchType) {
+      setValue('score', watchType === 'ESSAY' ? 1.0 : 0.25);
+    }
+  }, [watchType, question, setValue]);
+
   const submit = async (data: Form) => {
     const html = data.contentRich?.html || '';
     const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;

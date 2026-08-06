@@ -56,8 +56,15 @@ export function ExamPaperMatrixForm({
   const isEssay  = examType === 'TU_LUAN';
   const scheduleType = selectedSchedule?.examType === 'TU_LUAN' ? 'TU_LUAN' : selectedSchedule?.examType === 'TRAC_NGHIEM' ? 'TRAC_NGHIEM' : undefined;
 
-  const pending = schedules.filter((s: any) => !s.examPapers || s.examPapers.length === 0);
-  const created = schedules.filter((s: any) => s.examPapers && s.examPapers.length > 0);
+  const hasPaper = (s: any) => {
+    if (s?.hasPublishedPaper) return true;
+    if (typeof s?.paperCount === 'number' && s.paperCount > 0) return true;
+    if (Array.isArray(s?.examPapers) && s.examPapers.length > 0) return true;
+    return false;
+  };
+
+  const pending = schedules.filter((s: any) => !hasPaper(s));
+  const created = schedules.filter((s: any) => hasPaper(s));
 
   const label = (s: any) => ({
     subCode:    s.subjectCode    || s.subject?.subjectCode    || 'MH',
@@ -331,10 +338,15 @@ export function ExamPaperMatrixForm({
                                 active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
                               }`}
                             >
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1.5">
                                 <p className={`text-xs font-black truncate flex-1 ${active ? 'text-blue-700' : 'text-slate-700'}`}>
                                   [{subCode}] {subName}
                                 </p>
+                                {s.examPapers?.some((p: any) => p.status === 'PUBLISHED') && (
+                                  <span className="shrink-0 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-extrabold px-1.5 py-0.5">
+                                    Đã phát hành
+                                  </span>
+                                )}
                                 <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
                                   {count} đề
                                 </span>

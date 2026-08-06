@@ -206,9 +206,18 @@ export default function ExamSchedulesPage() {
   }, [filteredSchedules, page, limit]);
 
   // Action Handlers
+  const getCurrentTimeFormatted = () => {
+    const now = new Date();
+    const minutes = Math.ceil(now.getMinutes() / 5) * 5;
+    now.setMinutes(minutes);
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes() % 60).padStart(2, '0');
+    return `${h}:${m}`;
+  };
+
   const openAddModal = () => {
     setEditingSchedule(null);
-    const defaultStart = '07:30';
+    const defaultStart = getCurrentTimeFormatted();
     const duration = 60;
     setSelectedDuration(duration);
     setFormData({

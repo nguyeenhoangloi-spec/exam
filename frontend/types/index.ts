@@ -170,6 +170,7 @@ export interface Question {
   createdBy?: Pick<User, 'id' | 'username' | 'role'> & { fullName?: string };
   createdByName?: string;
   keywords?: string;
+  sampleAnswer?: string;
   rejectionReason?: string;
   createdAt?: string;
   updatedAt?: string;

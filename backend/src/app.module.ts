@@ -23,6 +23,7 @@ import { ContactModule } from './contact/contact.module';
 import { SecurityModule } from './common/security/security.module';
 import { EssayModule } from './essay/essay.module';
 import { AiModule } from './ai/ai.module';
+import { TrashModule } from './trash/trash.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AiModule } from './ai/ai.module';
     EssayModule,
     ContactModule,
     AiModule,
+    TrashModule,
   ],
 })
 export class AppModule {}

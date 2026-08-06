@@ -23,9 +23,10 @@ import {
   BookMarked,
   Settings,
   Lock,
-  LogOut,
   ChevronDown,
   ChevronRight,
+  LogOut,
+  Trash2,
   type LucideIcon,
 } from 'lucide-react';
 import { Role, User } from '../types';
@@ -117,6 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Quản lý Môn học', href: '/subjects', icon: BookOpen },
         { name: 'Quản lý Giảng viên', href: '/teachers', icon: GraduationCap },
         { name: 'Quản lý Sinh viên', href: '/students', icon: Users },
+        { name: 'Thùng rác', href: '/trash', icon: Trash2 },
       ],
     },
   ];
@@ -129,6 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
+        { name: 'Thùng rác', href: '/trash', icon: Trash2 },
       ],
     },
   ];
