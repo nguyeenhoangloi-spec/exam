@@ -94,7 +94,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     return (
-        <div className="min-h-screen overflow-x-hidden bg-slate-50">
+        <div className="min-h-screen overflow-x-clip bg-slate-50">
             <NavigationProgress />
             <Sidebar
                 user={user}
@@ -119,7 +119,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                     } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
             >
                 <Header user={user} title={title} collapsed={collapsed} onMenuClick={() => setMobileOpen(true)} />
-                <div className="w-full">{children}</div>
+                <main className="w-full p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-56px)]">{children}</main>
             </div>
         </div>
     );

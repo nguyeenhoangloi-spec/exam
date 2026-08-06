@@ -12,11 +12,11 @@ interface ExamScheduleKPICardsProps {
 }
 
 export function ExamScheduleKPICards({
-  total = 128,
-  upcoming = 18,
-  completed = 96,
-  ongoing = 6,
-  cancelled = 8,
+  total = 0,
+  upcoming = 0,
+  completed = 0,
+  ongoing = 0,
+  cancelled = 0,
 }: ExamScheduleKPICardsProps) {
   const items = [
     {

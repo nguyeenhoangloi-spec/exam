@@ -13,26 +13,24 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
   const approvedCount = data?.find((x) => x.status === 'APPROVED')?.count ?? 0;
   const rejectedCount = data?.find((x) => x.status === 'REJECTED')?.count ?? 0;
 
-  const hasRealData = pendingCount > 0 || approvedCount > 0 || rejectedCount > 0;
-
-  // Items list matching mockup data format
+  // Items list matching real API data
   const rawItems = [
     {
       status: 'APPROVED',
       label: 'Đã duyệt',
-      count: hasRealData ? approvedCount : 1892,
+      count: approvedCount,
       color: '#16a34a',
     },
     {
       status: 'PENDING',
       label: 'Chờ duyệt',
-      count: hasRealData ? pendingCount : 12,
+      count: pendingCount,
       color: '#f59e0b',
     },
     {
       status: 'REJECTED',
       label: 'Bị từ chối',
-      count: hasRealData ? rejectedCount : 18,
+      count: rejectedCount,
       color: '#ef4444',
     },
   ];

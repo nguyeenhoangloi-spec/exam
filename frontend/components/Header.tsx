@@ -5,15 +5,19 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   Bell,
   ChevronDown,
+  ChevronRight,
   LogOut,
   Menu,
-  CheckCircle2,
+  User as UserIcon,
+  Settings,
+  Lock,
   Inbox,
   ArrowRight,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
 import api from '../lib/api';
+import { ConfirmModal } from './ConfirmModal';
 
 interface HeaderProps {
   user: User | null;
@@ -41,12 +45,15 @@ export const Header: React.FC<HeaderProps> = ({
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
   const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Admin';
   const roleCode = user?.role || 'ADMIN';
+  const displayRoleLabel =
+    roleCode === 'ADMIN' ? 'QUẢN TRỊ VIÊN' : roleCode === 'TEACHER' ? 'GIẢNG VIÊN' : 'SINH VIÊN';
 
   /* ── Load real notifications based on user role ── */
   useEffect(() => {
@@ -169,22 +176,34 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 w-full bg-[#F8FAFC]/90 backdrop-blur-md transition-all border-b border-slate-200/60">
+    <header className="sticky top-0 z-30 flex h-14 w-full bg-white/95 backdrop-blur-md transition-all border-b border-slate-200/70 shadow-2xs">
+      {/* Confirmation Modal for Logout */}
+      <ConfirmModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+        title="Xác nhận đăng xuất"
+        message="Bạn có chắc chắn muốn đăng xuất khỏi hệ thống quản lý khảo thí?"
+        type="warning"
+        confirmText="Đăng xuất"
+        cancelText="Hủy bỏ"
+      />
+
       <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
-        {/* Left Side: Breadcrumb */}
+        {/* Left Side: Navigation / Breadcrumb */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             aria-label="Mở menu điều hướng"
             onClick={onMenuClick}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 md:hidden cursor-pointer"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 md:hidden cursor-pointer"
           >
-            <Menu className="h-4 w-4" />
+            <Menu className="h-4.5 w-4.5" />
           </button>
 
-          <nav className="flex items-center gap-1 text-[11px] font-semibold text-slate-400" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
             <span
-              className="cursor-pointer transition hover:text-slate-700"
+              className="cursor-pointer transition hover:text-slate-800"
               onClick={() => {
                 if (user?.role === 'TEACHER') router.push('/teacher/assignments');
                 else if (user?.role === 'STUDENT') router.push('/student/exam-schedule');
@@ -194,14 +213,14 @@ export const Header: React.FC<HeaderProps> = ({
               Trang chủ
             </span>
             <span className="text-slate-300">/</span>
-            <span className="font-bold text-slate-800">
+            <span className="font-extrabold text-slate-900">
               {title === 'Hệ thống Quản lý Khảo thí' ? 'Tổng quan' : title}
             </span>
           </nav>
         </div>
 
-        {/* Right Side: Notification bell & Profile pill */}
-        <div className="flex items-center gap-3">
+        {/* Right Side: Notification bell & User Profile trigger */}
+        <div className="flex items-center gap-3.5">
           {/* Notification Bell */}
           <div className="relative">
             <button
@@ -209,18 +228,19 @@ export const Header: React.FC<HeaderProps> = ({
               aria-label="Xem thông báo"
               aria-expanded={openPanel === 'notifications'}
               onClick={() => togglePanel('notifications')}
-              className="relative flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-600 transition hover:bg-slate-50 shadow-2xs cursor-pointer"
+              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
-              <Bell className="h-4 w-4" />
+              <Bell className="h-4.5 w-4.5" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white shadow-2xs animate-pulse">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white shadow-xs animate-pulse">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </button>
 
+            {/* Notifications Dropdown Panel */}
             {openPanel === 'notifications' && (
-              <div className="absolute right-0 top-[calc(100%+8px)] w-80 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl text-xs z-50">
+              <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xl shadow-slate-200/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150">
                 <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2.5">
                   <p className="font-black text-slate-900 text-xs flex items-center gap-1.5">
                     <Bell className="w-3.5 h-3.5 text-blue-600" />
@@ -273,35 +293,129 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* User Profile Pill */}
+          {/* Vertical Divider */}
+          <div className="h-6 w-px bg-slate-200/80" />
+
+          {/* Header User Profile Trigger Button */}
           <div className="relative">
             <button
               type="button"
               aria-label="Mở menu tài khoản"
+              aria-haspopup="menu"
               aria-expanded={openPanel === 'account'}
+              aria-controls="user-account-dropdown"
               onClick={() => togglePanel('account')}
-              className="flex items-center gap-2 rounded-xl p-1 text-left transition hover:bg-slate-100/60 cursor-pointer"
+              className="flex items-center gap-2.5 rounded-xl p-1.5 text-left transition hover:bg-slate-100/70 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 font-black text-white shadow-2xs text-xs">
+              {/* Avatar Circle */}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#003896] font-black text-white shadow-2xs text-sm tracking-tight">
                 {displayName.charAt(0).toUpperCase()}
               </div>
+
+              {/* Name & Role text */}
               <div className="hidden sm:block text-left leading-none">
                 <span className="block text-xs font-black text-slate-900">{displayName}</span>
-                <span className="block text-[9.5px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">{roleCode}</span>
+                <span className="block text-[9.5px] font-extrabold text-[#0047BA] uppercase tracking-wider mt-1">
+                  {displayRoleLabel}
+                </span>
               </div>
-              <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+
+              {/* Chevron Down Arrow */}
+              <ChevronDown
+                className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+                  openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
+                }`}
+              />
             </button>
 
+            {/* Redesigned Account Dropdown Menu */}
             {openPanel === 'account' && (
-              <div className="absolute right-0 top-[calc(100%+8px)] w-52 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 z-50">
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-rose-600 hover:bg-rose-50 transition cursor-pointer"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Đăng xuất</span>
-                </button>
+              <div
+                id="user-account-dropdown"
+                role="menu"
+                aria-orientation="vertical"
+                className="absolute right-0 top-[calc(100%+10px)] w-[280px] sm:w-[300px] rounded-2xl border border-slate-200/90 bg-white p-2.5 shadow-xl shadow-slate-200/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150"
+              >
+                {/* Isometric Top Pointer Tip pointing up to Header trigger */}
+                <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 bg-white z-10" />
+
+                <div className="relative z-20 space-y-1">
+                  {/* Item 1: Hồ sơ cá nhân */}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setOpenPanel(null);
+                      router.push('/profile');
+                    }}
+                    className="flex h-12 w-full items-center justify-between rounded-xl px-4 text-slate-700 font-bold hover:bg-slate-50 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <UserIcon className="h-5 w-5 text-slate-600 group-hover:text-blue-600 transition-colors" />
+                      <span className="text-xs font-bold text-slate-800 group-hover:text-slate-900">
+                        Hồ sơ cá nhân
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all" />
+                  </button>
+
+                  {/* Item 2: Cài đặt tài khoản */}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setOpenPanel(null);
+                      router.push('/settings');
+                    }}
+                    className="flex h-12 w-full items-center justify-between rounded-xl px-4 text-slate-700 font-bold hover:bg-slate-50 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Settings className="h-5 w-5 text-slate-600 group-hover:text-blue-600 transition-colors" />
+                      <span className="text-xs font-bold text-slate-800 group-hover:text-slate-900">
+                        Cài đặt tài khoản
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all" />
+                  </button>
+
+                  {/* Item 3: Đổi mật khẩu */}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setOpenPanel(null);
+                      router.push('/change-password');
+                    }}
+                    className="flex h-12 w-full items-center justify-between rounded-xl px-4 text-slate-700 font-bold hover:bg-slate-50 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Lock className="h-5 w-5 text-slate-600 group-hover:text-blue-600 transition-colors" />
+                      <span className="text-xs font-bold text-slate-800 group-hover:text-slate-900">
+                        Đổi mật khẩu
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all" />
+                  </button>
+
+                  {/* Divider */}
+                  <div className="my-1.5 border-t border-slate-100" />
+
+                  {/* Item 4: Đăng xuất */}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setOpenPanel(null);
+                      setShowLogoutConfirm(true);
+                    }}
+                    className="flex h-12 w-full items-center justify-between rounded-xl px-4 text-rose-600 font-bold hover:bg-rose-50/80 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <LogOut className="h-5 w-5 text-rose-600 group-hover:scale-105 transition-transform" />
+                      <span className="text-xs font-extrabold text-rose-600">Đăng xuất</span>
+                    </div>
+                  </button>
+                </div>
               </div>
             )}
           </div>

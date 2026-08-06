@@ -117,5 +117,46 @@ export class AuthService {
     });
 
     return { message: 'Đổi mật khẩu thành công.' };
+
+  }
+
+  async updateProfile(userId: number, dto: { fullName?: string; email?: string; phone?: string }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { teacher: true, student: true },
+    });
+
+    if (!user) throw new NotFoundException('Người dùng không tồn tại.');
+
+    // Update User email
+    if (dto.email) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { email: dto.email },
+      });
+    }
+
+    // Update Teacher or Student fullName & phone
+    if (user.teacher && dto.fullName) {
+      await this.prisma.teacher.update({
+        where: { id: user.teacher.id },
+        data: {
+          fullName: dto.fullName,
+          ...(dto.phone ? { phone: dto.phone } : {}),
+          ...(dto.email ? { email: dto.email } : {}),
+        },
+      });
+    } else if (user.student && dto.fullName) {
+      await this.prisma.student.update({
+        where: { id: user.student.id },
+        data: {
+          fullName: dto.fullName,
+          ...(dto.phone ? { phone: dto.phone } : {}),
+          ...(dto.email ? { email: dto.email } : {}),
+        },
+      });
+    }
+
+    return this.getProfile(userId);
   }
 }

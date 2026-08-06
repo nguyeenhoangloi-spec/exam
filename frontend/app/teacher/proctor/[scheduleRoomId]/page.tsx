@@ -243,7 +243,7 @@ export default function ProctorDashboardPage() {
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-slate-700 font-medium">
           <span className="font-bold text-blue-700">Hướng dẫn: </span>
           <span className="text-slate-600">
-            "Gia hạn thời gian" cộng phút cho phiên đang thi; "Mở lại phiên thi" cho phép tiếp tục sau khi gián đoạn; "Mức cảnh báo" là điểm rủi ro từ giám sát, không phải điểm bài thi.
+            &quot;Gia hạn thời gian&quot; cộng phút cho phiên đang thi; &quot;Mở lại phiên thi&quot; cho phép tiếp tục sau khi gián đoạn; &quot;Mức cảnh báo&quot; là điểm rủi ro từ giám sát, không phải điểm bài thi.
           </span>
         </div>
 

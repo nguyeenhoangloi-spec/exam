@@ -15,3 +15,14 @@ export function downloadCsv(filename: string, csvContent: string) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+/** Escape one CSV field according to RFC 4180. */
+export function csvField(value: unknown): string {
+  const text = String(value ?? '');
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+/** Build a CSV row without corrupting commas, quotes or line breaks. */
+export function csvRow(values: unknown[]): string {
+  return values.map(csvField).join(',');
+}

@@ -227,7 +227,7 @@ export default function ClassesPage() {
       c.code,
       c.name,
       c.department?.name || c.departmentName || '',
-      c.studentsCount ?? c.students?.length ?? 40,
+      c.studentsCount ?? c.students?.length ?? 0,
     ]);
 
     exportToFormattedExcel({
@@ -259,7 +259,7 @@ export default function ClassesPage() {
         c.code,
         c.name,
         c.department?.name || c.departmentName || '',
-        `${c.studentsCount ?? c.students?.length ?? 40} SV`,
+        `${c.studentsCount ?? c.students?.length ?? 0} SV`,
       ]),
     });
   };

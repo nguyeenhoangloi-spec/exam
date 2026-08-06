@@ -17,8 +17,8 @@ export function DashboardWelcome({
 }: WelcomeBannerProps) {
   const router = useRouter();
 
-  const displayExamCount = examCount > 0 ? examCount : 3;
-  const displayPendingCount = pendingQuestionCount > 0 ? pendingQuestionCount : 12;
+  const displayExamCount = examCount ?? 0;
+  const displayPendingCount = pendingQuestionCount ?? 0;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md min-h-[140px] flex flex-col justify-between">

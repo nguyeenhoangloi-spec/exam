@@ -127,7 +127,7 @@ export function ExamPaperTable({
                     type="button"
                     onClick={() => onExportWord(p)}
                     className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-blue-50"
-                    title="Xuất Word (.docx)"
+                    title="Xuất Word (.doc)"
                   >
                     <Download className="h-3.5 w-3.5" />
                   </button>
@@ -340,7 +340,7 @@ export function ExamPaperTable({
                       type="button"
                       onClick={() => onExportWord(p)}
                       className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                      title="Xuất Word (.docx)"
+                      title="Xuất Word (.doc)"
                     >
                       <Download className="h-4 w-4" />
                     </button>
@@ -381,7 +381,7 @@ export function ExamPaperTable({
                             className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
                           >
                             <Download className="h-3.5 w-3.5 text-slate-500" />
-                            <span>Xuất Word (.docx)</span>
+                            <span>Xuất Word (.doc)</span>
                           </button>
 
                           {isAdmin && (

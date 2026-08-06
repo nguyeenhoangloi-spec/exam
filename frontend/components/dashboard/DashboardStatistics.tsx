@@ -8,112 +8,99 @@ import {
   FileText,
   Clock,
   XCircle,
-  LucideIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
 
-interface KPISpec {
-  key: string;
-  title: string;
-  icon: LucideIcon;
-  iconBg: string;
-  iconColor: string;
-  changeText: string;
-  badgeType?: 'green' | 'amber' | 'red' | 'grey';
-  fallbackValue: number;
-  route: string;
-}
-
-const kpiConfig: KPISpec[] = [
-  {
-    key: 'totalExams',
-    title: 'Tổng kỳ thi',
-    icon: Calendar,
-    iconBg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
-    changeText: '+3 kỳ thi so với tháng trước',
-    badgeType: 'green',
-    fallbackValue: 24,
-    route: '/exam-periods',
-  },
-  {
-    key: 'upcomingExams',
-    title: 'Kỳ thi sắp diễn ra',
-    icon: Send,
-    iconBg: 'bg-emerald-50',
-    iconColor: 'text-emerald-600',
-    changeText: 'Trong 7 ngày tới',
-    badgeType: 'grey',
-    fallbackValue: 8,
-    route: '/exam-schedules',
-  },
-  {
-    key: 'students',
-    title: 'Tổng thí sinh',
-    icon: Users,
-    iconBg: 'bg-purple-50',
-    iconColor: 'text-purple-600',
-    changeText: '+120 thí sinh so với tháng trước',
-    badgeType: 'green',
-    fallbackValue: 1248,
-    route: '/students',
-  },
-  {
-    key: 'totalQuestions',
-    title: 'Tổng câu hỏi',
-    icon: FileText,
-    iconBg: 'bg-amber-50',
-    iconColor: 'text-amber-600',
-    changeText: '+230 câu hỏi so với tháng trước',
-    badgeType: 'green',
-    fallbackValue: 2560,
-    route: '/question-bank',
-  },
-  {
-    key: 'pendingQuestions',
-    title: 'Câu hỏi chờ duyệt',
-    icon: Clock,
-    iconBg: 'bg-amber-100/70',
-    iconColor: 'text-amber-700',
-    changeText: 'Cần xử lý',
-    badgeType: 'amber',
-    fallbackValue: 12,
-    route: '/question-bank?status=PENDING',
-  },
-  {
-    key: 'rejectedQuestions',
-    title: 'Câu hỏi bị từ chối',
-    icon: XCircle,
-    iconBg: 'bg-rose-100/70',
-    iconColor: 'text-rose-700',
-    changeText: 'Cần xem xét lại',
-    badgeType: 'red',
-    fallbackValue: 18,
-    route: '/question-bank?status=REJECTED',
-  },
-];
-
-export function DashboardStatistics({ summary }: { summary?: DashboardOverview['summary'] }) {
+export function DashboardStatistics({
+  summary,
+  questionStatus = [],
+}: {
+  summary?: DashboardOverview['summary'];
+  questionStatus?: DashboardOverview['questionStatus'];
+}) {
   const router = useRouter();
 
-  // Helper format number to Vietnamese locale (e.g., 1248 -> 1.248)
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('vi-VN').format(num);
   };
 
+  const totalQuestionsCount = questionStatus.reduce((acc, curr) => acc + (curr.count || 0), 0);
+  const rejectedQuestionsCount = questionStatus.find((q) => q.status === 'REJECTED')?.count || 0;
+  const pendingQuestionsCount = summary?.pendingQuestions?.total ?? (questionStatus.find((q) => q.status === 'PENDING')?.count || 0);
+
+  const kpiItems = [
+    {
+      key: 'upcomingExams',
+      title: 'Kỳ thi sắp tới',
+      value: summary?.upcomingExams?.total ?? 0,
+      subtext: summary?.upcomingExams?.description || 'Theo lịch khảo thí',
+      icon: Send,
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-600',
+      badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
+      route: '/exam-schedules',
+    },
+    {
+      key: 'examRooms',
+      title: 'Tổng phòng thi',
+      value: summary?.examRooms?.total ?? 0,
+      subtext: summary?.examRooms?.description || 'Số lượng phòng thi',
+      icon: Calendar,
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
+      badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      route: '/exam-rooms',
+    },
+    {
+      key: 'students',
+      title: 'Tổng sinh viên',
+      value: summary?.students?.total ?? 0,
+      subtext: summary?.students?.description || 'Đã đăng ký hệ thống',
+      icon: Users,
+      iconBg: 'bg-purple-50',
+      iconColor: 'text-purple-600',
+      badgeBg: 'bg-purple-50 text-purple-700 border-purple-200',
+      route: '/students',
+    },
+    {
+      key: 'totalQuestions',
+      title: 'Tổng câu hỏi',
+      value: totalQuestionsCount,
+      subtext: 'Trong ngân hàng',
+      icon: FileText,
+      iconBg: 'bg-sky-50',
+      iconColor: 'text-sky-600',
+      badgeBg: 'bg-sky-50 text-sky-700 border-sky-200',
+      route: '/question-bank',
+    },
+    {
+      key: 'pendingQuestions',
+      title: 'Câu hỏi chờ duyệt',
+      value: pendingQuestionsCount,
+      subtext: 'Cần phê duyệt',
+      icon: Clock,
+      iconBg: 'bg-amber-100/70',
+      iconColor: 'text-amber-700',
+      badgeBg: 'bg-amber-50 text-amber-700 border-amber-200',
+      route: '/question-bank?status=PENDING',
+    },
+    {
+      key: 'rejectedQuestions',
+      title: 'Câu hỏi bị từ chối',
+      value: rejectedQuestionsCount,
+      subtext: 'Cần chỉnh sửa lại',
+      icon: XCircle,
+      iconBg: 'bg-rose-100/70',
+      iconColor: 'text-rose-700',
+      badgeBg: 'bg-rose-50 text-rose-700 border-rose-200',
+      route: '/question-bank?status=REJECTED',
+    },
+  ];
+
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
-      {kpiConfig.map((spec) => {
-        // Find matching summary field if available
-        let val = spec.fallbackValue;
-        if (summary) {
-          if (spec.key === 'students' && summary.students?.total) val = summary.students.total;
-          else if (spec.key === 'pendingQuestions' && summary.pendingQuestions?.total) val = summary.pendingQuestions.total;
-          else if (spec.key === 'totalExams' && summary.examRooms?.total) val = summary.examRooms.total * 3;
-          else if (spec.key === 'upcomingExams' && summary.upcomingExams?.total) val = summary.upcomingExams.total;
-        }
-
+      {kpiItems.map((spec) => {
         const Icon = spec.icon;
 
         return (
@@ -122,7 +109,7 @@ export function DashboardStatistics({ summary }: { summary?: DashboardOverview['
             onClick={() => router.push(spec.route)}
             className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
           >
-            {/* Top row: Icon & Title */}
+            {/* Top row: Icon */}
             <div className="flex items-center justify-between gap-2">
               <div className={`flex h-10 w-10 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${spec.iconBg} ${spec.iconColor}`}>
                 <Icon className="h-5 w-5 stroke-[2.2]" />
@@ -135,29 +122,15 @@ export function DashboardStatistics({ summary }: { summary?: DashboardOverview['
                 {spec.title}
               </span>
               <div className="text-2xl font-black tracking-tight text-slate-900 mt-0.5">
-                {formatNumber(val)}
+                {formatNumber(spec.value)}
               </div>
             </div>
 
-            {/* Bottom Subtext / Badge */}
+            {/* Bottom Subtext */}
             <div className="mt-2.5 pt-2 border-t border-slate-100/80">
-              {spec.badgeType === 'amber' ? (
-                <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-extrabold text-amber-700 border border-amber-200">
-                  {spec.changeText}
-                </span>
-              ) : spec.badgeType === 'red' ? (
-                <span className="inline-flex rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-extrabold text-rose-700 border border-rose-200">
-                  {spec.changeText}
-                </span>
-              ) : spec.badgeType === 'green' ? (
-                <span className="text-[10px] font-bold text-emerald-600 truncate block">
-                  {spec.changeText}
-                </span>
-              ) : (
-                <span className="text-[10px] font-medium text-slate-400 truncate block">
-                  {spec.changeText}
-                </span>
-              )}
+              <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold border ${spec.badgeBg}`}>
+                {spec.subtext}
+              </span>
             </div>
           </div>
         );

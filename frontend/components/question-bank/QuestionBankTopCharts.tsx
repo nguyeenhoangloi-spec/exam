@@ -50,10 +50,10 @@ export function QuestionBankTopCharts({
     easy = Math.round((easyRaw / sampleCount) * total);
     medium = Math.round((mediumRaw / sampleCount) * total);
     hard = Math.max(0, total - easy - medium);
-  } else if (total > 0) {
-    easy = Math.round(total * 0.45);
-    medium = Math.round(total * 0.38);
-    hard = Math.max(0, total - easy - medium);
+  } else {
+    easy = easyRaw;
+    medium = mediumRaw;
+    hard = hardRaw;
   }
 
   const difficultyData = [
@@ -73,9 +73,9 @@ export function QuestionBankTopCharts({
   if (typeSample > 0 && total > 0) {
     multipleChoice = Math.round((mcRaw / typeSample) * total);
     essay = Math.max(0, total - multipleChoice);
-  } else if (total > 0) {
-    multipleChoice = Math.round(total * 0.85);
-    essay = Math.max(0, total - multipleChoice);
+  } else {
+    multipleChoice = mcRaw;
+    essay = essayRaw;
   }
 
   const typeData = [

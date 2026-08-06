@@ -285,9 +285,9 @@ export default function LoginPage() {
           <div className="mt-auto shrink-0">
             <div className="grid grid-cols-3 border-t border-white/12 pt-4">
               {[
-                { icon: Library, value: '1.200+', label: 'Đề thi & câu hỏi' },
-                { icon: Users, value: '50.000+', label: 'Lượt thí sinh' },
-                { icon: Award, value: '99.9%', label: 'Độ sẵn sàng' },
+                { icon: Library, value: 'Chuẩn hóa', label: 'Ngân hàng câu hỏi' },
+                { icon: Users, value: 'Trực tuyến', label: 'Giám sát phòng thi' },
+                { icon: Award, value: 'Tự động', label: 'Sinh đề & chấm điểm' },
               ].map(({ icon: Icon, value, label }, i) => (
                 <div key={label} className={['py-3', i < 2 ? 'border-r border-white/12 pr-3' : 'pl-3'].join(' ')}>
                   <div className="flex items-center gap-1">

@@ -121,8 +121,8 @@ export default function ExamSchedulesPage() {
           periodName: s.examPeriod?.name || s.periodName || (realPeriods.find((p: any) => p.id === s.examPeriodId)?.name) || 'Kỳ thi học kỳ',
           shiftName: s.shiftName || (s.startTime?.startsWith('07') || s.startTime?.startsWith('08') ? 'Ca 1 - Sáng' : 'Ca 2 - Sáng'),
           roomName: s.roomName || (s.examScheduleRooms?.[0]?.examRoom?.roomCode || s.examScheduleRooms?.[0]?.examRoom?.name) || 'P.101',
-          studentCount: s.studentCount || 40,
-          supervisorCount: s.supervisorCount || '2/2',
+          studentCount: s.studentCount ?? 0,
+          supervisorCount: s.supervisorCount ?? '0/0',
           statusBadge: s.status === 'COMPLETED' ? 'COMPLETED' : s.status === 'ONGOING' ? 'ONGOING' : s.status === 'CANCELLED' ? 'CANCELLED' : 'UPCOMING',
         }));
         setSchedules(mappedRealSchedules);
@@ -302,10 +302,10 @@ export default function ExamSchedulesPage() {
       s.shiftName || 'Ca 1 - Sáng',
       s.roomName || 'P.101',
       s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
-      s.startTime || '07:00',
-      s.endTime || '09:00',
-      s.studentCount || 40,
-      s.supervisorCount || '2/2',
+      s.startTime || '',
+      s.endTime || '',
+      s.studentCount ?? 0,
+      s.supervisorCount ?? '0/0',
       s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : s.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã diễn ra',
     ]);
 

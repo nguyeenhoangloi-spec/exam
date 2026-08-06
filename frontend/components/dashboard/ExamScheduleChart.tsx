@@ -3,22 +3,12 @@
 import React, { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, LabelList } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { ChevronDown } from 'lucide-react';
-
-const mock7DaysMockup = [
-  { label: '24/05', count: 3 },
-  { label: '25/05', count: 5 },
-  { label: '26/05', count: 2 },
-  { label: '27/05', count: 8 },
-  { label: '28/05', count: 4 },
-  { label: '29/05', count: 2 },
-  { label: '30/05', count: 1 },
-];
+import { ChevronDown, CalendarDays } from 'lucide-react';
 
 export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChart'] }) {
   const [timeFilter, setTimeFilter] = useState('7 ngày tới');
 
-  const chartData = (data && data.length > 0 && data.some((x) => x.count > 0)) ? data : mock7DaysMockup;
+  const chartData = data && data.length > 0 ? data : [];
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3 h-full flex flex-col justify-between">
@@ -46,41 +36,46 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
       </div>
 
       {/* Chart Canvas */}
-      <div className="h-56 w-full min-w-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-            <XAxis
-              dataKey="label"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
-            />
-            <YAxis
-              allowDecimals={false}
-              domain={[0, 15]}
-              ticks={[0, 3, 6, 9, 12, 15]}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
-            />
-            <Tooltip
-              cursor={{ fill: '#f8fafc' }}
-              contentStyle={{
-                borderRadius: '12px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                fontSize: '12px',
-                fontWeight: 700,
-              }}
-              formatter={(value) => [`${value} kỳ thi`, 'Số kỳ thi']}
-            />
-            <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} maxBarSize={28}>
-              <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '11px', fontWeight: '900' }} />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {chartData.length > 0 ? (
+        <div className="h-56 w-full min-w-0">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis
+                dataKey="label"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
+              />
+              <YAxis
+                allowDecimals={false}
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
+              />
+              <Tooltip
+                cursor={{ fill: '#f8fafc' }}
+                contentStyle={{
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                }}
+                formatter={(value) => [`${value} kỳ thi`, 'Số kỳ thi']}
+              />
+              <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} maxBarSize={28}>
+                <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '11px', fontWeight: '900' }} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="h-56 flex flex-col items-center justify-center space-y-2 text-slate-400">
+          <CalendarDays className="w-8 h-8 text-slate-300" />
+          <p className="text-xs font-semibold text-slate-500">Chưa có lịch thi trong 7 ngày tới</p>
+        </div>
+      )}
 
       {/* Center Legend */}
       <div className="flex items-center justify-center border-t border-slate-100 pt-2 text-xs">

@@ -132,7 +132,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <main className="w-full min-h-screen bg-[#F8FAFC] px-4 sm:px-6 py-6 space-y-6">
+      <div className="w-full space-y-6">
         {/* Section 1: Dashboard Header */}
         <DashboardHeader
           onRefresh={() => loadOverview(false)}
@@ -151,12 +151,15 @@ export default function DashboardPage() {
             {/* Section 2: Blue Welcome Banner */}
             <DashboardWelcome
               username={user?.username || 'Admin'}
-              examCount={overview.today?.examCount || 3}
-              pendingQuestionCount={overview.today?.pendingQuestionCount || 12}
+              examCount={overview.today?.examCount ?? 0}
+              pendingQuestionCount={overview.today?.pendingQuestionCount ?? 0}
             />
 
             {/* Section 3: 6 KPI Statistic Cards Grid */}
-            <DashboardStatistics summary={overview.summary} />
+            <DashboardStatistics
+              summary={overview.summary}
+              questionStatus={overview.questionStatus}
+            />
 
             {/* Section 4: Middle Row (Lịch thi 7 ngày 5 cols + Donut Trạng thái câu hỏi 4 cols + Công việc cần xử lý 3 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
@@ -199,7 +202,7 @@ export default function DashboardPage() {
             />
           </div>
         )}
-      </main>
+      </div>
 
       {/* Reject Question Modal */}
       <Modal

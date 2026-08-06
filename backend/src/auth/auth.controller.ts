@@ -24,4 +24,10 @@ export class AuthController {
   async changePassword(@Request() req: any, @Body() dto: ChangePasswordDto) {
     return this.authService.changePassword(req.user.sub || req.user.id, dto);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('profile')
+  async updateProfile(@Request() req: any, @Body() dto: { fullName?: string; email?: string; phone?: string }) {
+    return this.authService.updateProfile(req.user.sub || req.user.id, dto);
+  }
 }

@@ -648,7 +648,7 @@ export default function ExamPapersPage() {
                   className="flex items-center gap-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 text-xs font-extrabold border border-blue-200 transition cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5" />
-                  <span>Tải Word (.docx)</span>
+                  <span>Tải Word (.doc)</span>
                 </button>
               </div>
             </div>
