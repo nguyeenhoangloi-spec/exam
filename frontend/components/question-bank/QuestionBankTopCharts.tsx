@@ -86,7 +86,7 @@ export function QuestionBankTopCharts({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 items-stretch">
       {/* Card 1: Tổng quan ngân hàng */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-4.5 shadow-2xs h-full min-h-[180px]">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2">
           <h3 className="text-xs sm:text-sm font-black text-slate-900">Tổng quan ngân hàng</h3>
           <div className="relative">
@@ -99,9 +99,9 @@ export function QuestionBankTopCharts({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 py-1 my-auto">
+        <div className="flex items-center gap-2 sm:gap-3 pt-2">
           {/* Donut canvas */}
-          <div className="relative h-22 w-22 sm:h-24 sm:w-24 shrink-0">
+          <div className="relative h-20 w-20 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -146,12 +146,12 @@ export function QuestionBankTopCharts({
       </div>
 
       {/* Card 2: Phân bố độ khó */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-4.5 shadow-2xs h-full min-h-[180px]">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
         <h3 className="text-xs sm:text-sm font-black text-slate-900 border-b border-slate-100 pb-2">
           Phân bố độ khó
         </h3>
 
-        <div className="space-y-2.5 py-1 my-auto pr-1">
+        <div className="space-y-2 pt-2 pr-1">
           {difficultyData.map((item) => (
             <div key={item.label} className="space-y-1">
               <div className="flex items-center justify-between text-[10.5px] font-bold">
@@ -173,14 +173,14 @@ export function QuestionBankTopCharts({
       </div>
 
       {/* Card 3: Phân bố loại câu hỏi */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-4.5 shadow-2xs h-full min-h-[180px]">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
         <h3 className="text-xs sm:text-sm font-black text-slate-900 border-b border-slate-100 pb-2">
           Phân bố loại câu hỏi
         </h3>
 
-        <div className="flex items-center gap-2 sm:gap-3 py-1 my-auto">
+        <div className="flex items-center gap-2 sm:gap-3 pt-2">
           {/* Donut canvas */}
-          <div className="relative h-22 w-22 sm:h-24 sm:w-24 shrink-0">
+          <div className="relative h-20 w-20 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -225,12 +225,12 @@ export function QuestionBankTopCharts({
       </div>
 
       {/* Card 4: Thao tác nhanh */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-4.5 shadow-2xs h-full min-h-[180px]">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
         <h3 className="text-xs sm:text-sm font-black text-slate-900 border-b border-slate-100 pb-2">
           Thao tác nhanh
         </h3>
 
-        <div className="space-y-1.5 py-0.5 my-auto">
+        <div className="space-y-1 pt-2">
           <button
             type="button"
             onClick={onAdd}

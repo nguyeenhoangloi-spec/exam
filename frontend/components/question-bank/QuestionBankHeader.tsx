@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Upload, Plus, Sparkles, Printer } from 'lucide-react';
+import { Upload, Plus, Sparkles } from 'lucide-react';
 
 interface QuestionBankHeaderProps {
   onAdd: () => void;
@@ -16,25 +16,30 @@ export function QuestionBankHeader({
   onAi,
   onPrint,
 }: QuestionBankHeaderProps) {
+  const btnBase =
+    'inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold leading-none transition active:scale-95 cursor-pointer whitespace-nowrap select-none';
+
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between pb-1">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Subtitle */}
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-slate-900">Ngân hàng câu hỏi</h1>
-        <p className="mt-0.5 text-xs font-medium text-slate-500">
+      <div className="space-y-1">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+          Ngân hàng câu hỏi
+        </h1>
+        <p className="text-xs font-semibold text-slate-500">
           Quản lý, tạo mới và tổ chức hệ thống câu hỏi cho kỳ thi
         </p>
       </div>
 
-      {/* Right Action Buttons matching Mockup Image */}
-      <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+      {/* Right Action Buttons — all same height via leading-none + py-2 */}
+      <div className="flex items-center gap-2.5 shrink-0">
         {onAi && (
           <button
             type="button"
             onClick={onAi}
-            className="flex items-center gap-2 rounded-xl border border-purple-200 bg-purple-50 px-3.5 py-2 text-xs font-bold text-purple-700 shadow-2xs transition hover:bg-purple-100 active:scale-95 cursor-pointer"
+            className={`${btnBase} border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 shadow-2xs`}
           >
-            <Sparkles className="h-4 w-4 text-purple-600" />
+            <Sparkles className="h-3.5 w-3.5 text-purple-600 shrink-0" />
             <span>Tạo bằng AI</span>
           </button>
         )}
@@ -42,18 +47,18 @@ export function QuestionBankHeader({
         <button
           type="button"
           onClick={onImport}
-          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+          className={`${btnBase} border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs`}
         >
-          <Upload className="h-4 w-4 text-slate-600" />
+          <Upload className="h-3.5 w-3.5 text-slate-500 shrink-0" />
           <span>Nhập câu hỏi</span>
         </button>
 
         <button
           type="button"
           onClick={onAdd}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer"
+          className={`${btnBase} border border-blue-600 bg-blue-600 text-white hover:bg-blue-700 hover:border-blue-700 shadow-xs font-black`}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3.5 w-3.5 shrink-0" />
           <span>Thêm câu hỏi</span>
         </button>
       </div>

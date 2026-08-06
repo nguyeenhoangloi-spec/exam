@@ -7,7 +7,6 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { KPICards, KPICardItem } from '../../components/KPICards';
 import {
   Layers,
   Sparkles,
@@ -15,7 +14,6 @@ import {
   DoorOpen,
   Zap,
   Users,
-  ShieldCheck,
   CheckCircle2,
   AlertCircle,
   History,
@@ -23,7 +21,6 @@ import {
   Printer,
   Grid,
   List,
-  FileSpreadsheet,
   RotateCcw,
 } from 'lucide-react';
 import { ExamPeriod, ExamSchedule } from '../../types';
@@ -81,7 +78,7 @@ function escapeHtml(val: unknown) {
 }
 
 export default function ExamArrangementPage() {
-  usePageTitle('Xếp Lịch Thi Tự Động');
+  usePageTitle('Xếp Phòng Thi Tự Động');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
@@ -95,7 +92,6 @@ export default function ExamArrangementPage() {
   const [arranging, setArranging] = useState(false);
   const [result, setResult] = useState<ArrangementResult | null>(null);
 
-  // Advanced features state
   const [activeTab, setActiveTab] = useState<'arrange' | 'history'>('arrange');
   const [historyLogs, setHistoryLogs] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
@@ -113,7 +109,7 @@ export default function ExamArrangementPage() {
     title: '',
     message: '',
     type: 'warning',
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
 
   const fetchRoomAvailability = useCallback(async (scheduleId: string) => {
@@ -121,7 +117,6 @@ export default function ExamArrangementPage() {
     try {
       const res = await api.get<RoomAvailability[]>(`/exam-arrangement/room-availability?examScheduleId=${scheduleId}`);
       setRooms(res.data);
-      // Auto select available rooms by default
       const availableIds = res.data.filter((r) => r.isAvailable).map((r) => r.id);
       setSelectedRoomIds(availableIds);
     } catch (err: any) {
@@ -130,17 +125,13 @@ export default function ExamArrangementPage() {
   }, []);
 
   const fetchExistingResults = useCallback(async (scheduleId: string) => {
-    if (!scheduleId) {
-      setResult(null);
-      return;
-    }
+    if (!scheduleId) { setResult(null); return; }
     try {
       const res = await api.get(`/exam-arrangement/result?examScheduleId=${scheduleId}`);
       if (res.data && res.data.length > 0) {
         const details: any[] = [];
         let totalCount = 0;
         const currentSched = schedules.find((s) => s.id.toString() === scheduleId);
-
         res.data.forEach((sr: any) => {
           sr.examRoomStudents?.forEach((ers: any) => {
             totalCount += 1;
@@ -157,7 +148,6 @@ export default function ExamArrangementPage() {
             });
           });
         });
-
         if (details.length > 0) {
           setResult({
             message: 'Dữ liệu xếp phòng hiện tại từ hệ thống',
@@ -178,7 +168,7 @@ export default function ExamArrangementPage() {
       } else {
         setResult(null);
       }
-    } catch (err) {
+    } catch {
       setResult(null);
     }
   }, [schedules]);
@@ -216,7 +206,6 @@ export default function ExamArrangementPage() {
     try {
       const resPeriods = await api.get('/exam-periods');
       setPeriods(resPeriods.data);
-      // Default to empty periodId to fetch all schedules across periods initially
       await fetchSchedules('');
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu ban đầu', type: 'error' });
@@ -225,10 +214,7 @@ export default function ExamArrangementPage() {
 
   useEffect(() => {
     const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
-      return;
-    }
+    if (!u) { router.push('/login'); return; }
     setCurrentUser(u);
     void fetchData();
     void fetchHistory();
@@ -261,15 +247,8 @@ export default function ExamArrangementPage() {
 
   const runPreview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedScheduleId) {
-      setToast({ message: 'Vui lòng chọn ca thi', type: 'error' });
-      return;
-    }
-    if (selectedRoomIds.length === 0) {
-      setToast({ message: 'Vui lòng chọn ít nhất 1 phòng thi trống', type: 'error' });
-      return;
-    }
-
+    if (!selectedScheduleId) { setToast({ message: 'Vui lòng chọn ca thi', type: 'error' }); return; }
+    if (selectedRoomIds.length === 0) { setToast({ message: 'Vui lòng chọn ít nhất 1 phòng thi trống', type: 'error' }); return; }
     setArranging(true);
     setResult(null);
     try {
@@ -346,123 +325,130 @@ export default function ExamArrangementPage() {
 
   const availableCount = useMemo(() => rooms.filter((r) => r.isAvailable).length, [rooms]);
 
-  const printDoorList = () => {
-    if (!result || !result.details.length) return;
-    const printable = window.open('', '_blank', 'width=900,height=720');
-    if (!printable) {
-      setToast({ message: 'Trình duyệt đang chặn cửa sổ in.', type: 'error' });
-      return;
-    }
-
-    const currentSched = schedules.find((s) => s.id.toString() === selectedScheduleId);
-    const filterDetails = filterRoomCode === 'ALL'
-      ? result.details
-      : result.details.filter((d) => d.roomCode === filterRoomCode);
-
-    const roomGroups = new Map<string, typeof filterDetails>();
-    filterDetails.forEach((d) => {
-      const group = roomGroups.get(d.roomCode) || [];
-      group.push(d);
-      roomGroups.set(d.roomCode, group);
-    });
-
-    const pages = Array.from(roomGroups.entries()).map(([roomCode, students]) => {
-      const roomInfo = rooms.find((r) => r.roomCode === roomCode);
-      const rows = students.map((st, i) => `
-        <tr>
-          <td style="text-align:center;">${i + 1}</td>
-          <td style="text-align:center;font-weight:bold;">SBN-${String(i + 1).padStart(3, '0')}</td>
-          <td style="font-weight:bold;color:#1e3a8a;">${escapeHtml(st.studentCode)}</td>
-          <td style="font-weight:bold;">${escapeHtml(st.fullName)}</td>
-          <td>${escapeHtml(st.className)}</td>
-          <td style="text-align:center;font-weight:bold;color:#0284c7;">Ghế #${st.seatNumber}</td>
-        </tr>
-      `).join('');
-
-      return `
-        <div className="page" style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;">
-          <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;">
-            <h2 style="margin:0;font-size:18px;text-transform:uppercase;color:#0f172a;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2>
-            <h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1>
-            <p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(currentSched?.subject?.subjectName)}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(currentSched?.examDate || Date.now()).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p>
-          </div>
-          <table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6">
-            <thead>
-              <tr style="background:#f1f5f9;color:#0f172a;text-align:left;">
-                <th style="width:40px;text-align:center;">STT</th>
-                <th style="width:70px;text-align:center;">MÃ SBN</th>
-                <th style="width:100px;">MÃ SV</th>
-                <th>HỌ VÀ TÊN</th>
-                <th style="width:90px;">LỚP SH</th>
-                <th style="width:70px;text-align:center;">VỊ TRÍ</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-          <div style="margin-top:20px;display:flex;justify-between;font-size:12px;">
-            <div>Tổng số thí sinh: <strong>${students.length}</strong> / ${roomInfo?.capacity || 40} chỗ</div>
-            <div>Cán bộ coi thi ký tên: ....................</div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Danh sách dán cửa</title><style>
-      body{font-family:Arial,sans-serif;margin:20px;color:#0f172a}
-      @media print{body{margin:0}}
-    </style></head><body>${pages}<script>window.onload=()=>window.print();</script></body></html>`);
-    printable.document.close();
-  };
-
-  const kpiItems: KPICardItem[] = [
-    { title: 'Ca thi đang chọn', value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn', subtext: `${schedules.length} ca thi trong kỳ`, icon: Zap, color: 'sky' },
-    { title: 'Phòng thi khả dụng', value: `${availableCount}/${rooms.length}`, subtext: 'Trạng thái rảnh trong khung giờ', icon: DoorOpen, color: 'emerald' },
-    { title: 'Sức chứa đã chọn', value: `${selectedCapacity} chỗ`, subtext: `${selectedRoomIds.length} phòng đang được chọn`, icon: Users, color: 'blue' },
-    { title: 'Kết quả phân bổ', value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp', subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu', icon: CheckCircle2, color: 'skyDeep' },
-  ];
-
   const filteredDetails = useMemo(() => {
     if (!result) return [];
     if (filterRoomCode === 'ALL') return result.details;
     return result.details.filter((d) => d.roomCode === filterRoomCode);
   }, [filterRoomCode, result]);
 
+  const printDoorList = () => {
+    if (!result || !result.details.length) return;
+    const printable = window.open('', '_blank', 'width=900,height=720');
+    if (!printable) { setToast({ message: 'Trình duyệt đang chặn cửa sổ in.', type: 'error' }); return; }
+    const currentSched = schedules.find((s) => s.id.toString() === selectedScheduleId);
+    const filterDetails = filterRoomCode === 'ALL' ? result.details : result.details.filter((d) => d.roomCode === filterRoomCode);
+    const roomGroups = new Map<string, typeof filterDetails>();
+    filterDetails.forEach((d) => {
+      const group = roomGroups.get(d.roomCode) || [];
+      group.push(d);
+      roomGroups.set(d.roomCode, group);
+    });
+    const pages = Array.from(roomGroups.entries()).map(([roomCode, students]) => {
+      const roomInfo = rooms.find((r) => r.roomCode === roomCode);
+      const rows = students.map((st, i) => `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:center;font-weight:bold;">SBN-${String(i + 1).padStart(3, '0')}</td><td style="font-weight:bold;color:#1e3a8a;">${escapeHtml(st.studentCode)}</td><td style="font-weight:bold;">${escapeHtml(st.fullName)}</td><td>${escapeHtml(st.className)}</td><td style="text-align:center;font-weight:bold;color:#0284c7;">Ghế #${st.seatNumber}</td></tr>`).join('');
+      return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;"><div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;"><h2 style="margin:0;font-size:18px;text-transform:uppercase;color:#0f172a;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2><h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1><p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(currentSched?.subject?.subjectName)}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(currentSched?.examDate || Date.now()).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p></div><table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6"><thead><tr style="background:#f1f5f9;color:#0f172a;text-align:left;"><th style="width:40px;text-align:center;">STT</th><th style="width:70px;text-align:center;">MÃ SBN</th><th style="width:100px;">MÃ SV</th><th>HỌ VÀ TÊN</th><th style="width:90px;">LỚP SH</th><th style="width:70px;text-align:center;">VỊ TRÍ</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:20px;display:flex;justify-content:space-between;font-size:12px;"><div>Tổng số thí sinh: <strong>${students.length}</strong> / ${roomInfo?.capacity || 40} chỗ</div><div>Cán bộ coi thi ký tên: ....................</div></div></div>`;
+    }).join('');
+    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Danh sách dán cửa</title><style>body{font-family:Arial,sans-serif;margin:20px;color:#0f172a}@media print{body{margin:0}}</style></head><body>${pages}<script>window.onload=()=>window.print();</script></body></html>`);
+    printable.document.close();
+  };
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-6">
-        {/* Header & Tab Switcher */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử</p>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              Xếp Phòng Thi Tự Động
+            </h1>
+            <p className="text-xs font-semibold text-slate-500">
+              Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
+            </p>
           </div>
+
+          {/* Tab Switcher */}
           <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs font-bold shadow-2xs">
             <button
+              type="button"
               onClick={() => setActiveTab('arrange')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${activeTab === 'arrange' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition cursor-pointer ${
+                activeTab === 'arrange' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
               <Sparkles className="h-3.5 w-3.5" /> Thực hiện Xếp phòng
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('history')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${activeTab === 'history' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition cursor-pointer ${
+                activeTab === 'history' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
               <History className="h-3.5 w-3.5" /> Lịch sử & Nhật ký ({historyLogs.length})
             </button>
           </div>
         </div>
 
-        {/* KPI Analytics Header */}
-        <KPICards items={kpiItems} />
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              title: 'Ca thi đang chọn',
+              value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn',
+              subtext: `${schedules.length} ca thi trong kỳ`,
+              icon: Zap,
+              iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+            },
+            {
+              title: 'Phòng thi khả dụng',
+              value: `${availableCount}/${rooms.length}`,
+              subtext: 'Trạng thái rảnh trong khung giờ',
+              icon: DoorOpen,
+              iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+            },
+            {
+              title: 'Sức chứa đã chọn',
+              value: `${selectedCapacity} chỗ`,
+              subtext: `${selectedRoomIds.length} phòng đang được chọn`,
+              icon: Users,
+              iconBg: 'bg-purple-50 text-purple-600 border-purple-200',
+            },
+            {
+              title: 'Kết quả phân bổ',
+              value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp',
+              subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu',
+              icon: CheckCircle2,
+              iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+            },
+          ].map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <div
+                key={item.title}
+                className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{item.title}</span>
+                    <p className="text-2xl font-black text-slate-900 leading-tight">{item.value}</p>
+                  </div>
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-transform group-hover:scale-110`}>
+                    <IconComponent className="h-5 w-5" />
+                  </div>
+                </div>
+                <span className="text-[10.5px] font-semibold text-slate-400 mt-2">{item.subtext}</span>
+              </div>
+            );
+          })}
+        </div>
 
         {activeTab === 'arrange' ? (
           /* Main Arrangement Form & Matrix Workspace */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column: Parameter Selection & Room Availability List */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <Layers className="h-4 w-4 text-sky-600" /> Tham số Thuật toán
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {/* Left Column: Parameter Selection & Room Availability */}
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5">
+              <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <Layers className="h-4 w-4 text-blue-600" /> Tham số Thuật toán
               </h3>
 
               <form onSubmit={runPreview} className="space-y-4">
@@ -470,17 +456,12 @@ export default function ExamArrangementPage() {
                   <label className="block text-xs font-bold text-slate-500 mb-1">Kỳ thi Trường</label>
                   <select
                     value={selectedPeriodId}
-                    onChange={(e) => {
-                      setSelectedPeriodId(e.target.value);
-                      void fetchSchedules(e.target.value);
-                    }}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none"
+                    onChange={(e) => { setSelectedPeriodId(e.target.value); void fetchSchedules(e.target.value); }}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
                   >
                     <option value="">Tất cả Kỳ thi ({periods.length} kỳ)</option>
                     {periods.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} ({p.semester} - {p.schoolYear})
-                      </option>
+                      <option key={p.id} value={p.id}>{p.name} ({p.semester} - {p.schoolYear})</option>
                     ))}
                   </select>
                 </div>
@@ -491,27 +472,26 @@ export default function ExamArrangementPage() {
                     value={selectedScheduleId}
                     onChange={(e) => void handleScheduleChange(e.target.value)}
                     disabled={schedules.length === 0}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none disabled:opacity-60"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none disabled:opacity-60 cursor-pointer"
                   >
                     {schedules.length === 0 ? (
                       <option value="">(Chưa có ca thi nào)</option>
                     ) : (
                       schedules.map((s) => (
                         <option key={s.id} value={s.id}>
-                          {s.mode === 'MOCK' ? '🟡 [THI THỬ] ' : '🔴 [CHÍNH THỨC] '}
+                          {(s as any).mode === 'MOCK' ? '🟡 [THI THỬ] ' : '🔴 [CHÍNH THỨC] '}
                           {s.subject?.subjectName} ({s.subject?.subjectCode}) - {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '---'} ({s.startTime}-{s.endTime})
                         </option>
                       ))
                     )}
                   </select>
+
                   {(() => {
                     const current = schedules.find((s) => s.id.toString() === selectedScheduleId);
-                    if (current?.mode === 'MOCK') {
+                    if ((current as any)?.mode === 'MOCK') {
                       return (
                         <div className="mt-3 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium space-y-1 shadow-2xs">
-                          <p className="font-bold text-amber-950 flex items-center gap-1.5">
-                            <span>🟡 Ca Thi Thử (MOCK)</span>
-                          </p>
+                          <p className="font-bold text-amber-950">🟡 Ca Thi Thử (MOCK)</p>
                           <p className="leading-relaxed text-amber-800">
                             Ca thi này áp dụng hình thức thi thử trực tuyến tự do. Sinh viên có thể tham gia thi trực tuyến mà không bắt buộc phải xếp phòng thi máy hay chia số báo danh.
                           </p>
@@ -520,6 +500,7 @@ export default function ExamArrangementPage() {
                     }
                     return null;
                   })()}
+
                   {schedules.length === 0 && (
                     <div className="mt-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 shadow-2xs">
                       <p className="font-bold flex items-center gap-1.5 text-amber-800">
@@ -527,7 +508,7 @@ export default function ExamArrangementPage() {
                         Kỳ thi này hiện chưa có ca thi nào
                       </p>
                       <p className="mt-1 text-[11px] text-amber-700 leading-relaxed">
-                        Vui lòng chọn <strong>&quot;Tất cả Kỳ thi&quot;</strong> từ menu thả xuống hoặc sang trang Quản lý Lịch thi để lập ca thi mới.
+                        Vui lòng chọn <strong>&quot;Tất cả Kỳ thi&quot;</strong> hoặc sang trang Quản lý Lịch thi để lập ca thi mới.
                       </p>
                       <button
                         type="button"
@@ -543,11 +524,7 @@ export default function ExamArrangementPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-bold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
-                    <button
-                      type="button"
-                      onClick={selectAvailableOnly}
-                      className="text-[11px] font-bold text-blue-600 hover:underline"
-                    >
+                    <button type="button" onClick={selectAvailableOnly} className="text-[11px] font-bold text-blue-600 hover:underline cursor-pointer">
                       Chọn phòng trống ({availableCount})
                     </button>
                   </div>
@@ -559,12 +536,13 @@ export default function ExamArrangementPage() {
                         <div
                           key={r.id}
                           onClick={() => handleToggleRoom(r)}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${!r.isAvailable
-                            ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
-                            : isSelected
+                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${
+                            !r.isAvailable
+                              ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
+                              : isSelected
                               ? 'border-sky-500 bg-sky-50 text-sky-900 font-bold shadow-2xs cursor-pointer'
                               : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 cursor-pointer'
-                            }`}
+                          }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-rose-500' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
@@ -572,12 +550,7 @@ export default function ExamArrangementPage() {
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span className="text-[11px] font-semibold text-slate-500">{r.capacity} chỗ</span>
-                            <span
-                              className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${r.isAvailable
-                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                : 'bg-rose-100 text-rose-800 border border-rose-300'
-                                }`}
-                            >
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${r.isAvailable ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'}`}>
                               {r.isAvailable ? 'TRỐNG' : r.busyReason || 'BẬN'}
                             </span>
                           </div>
@@ -591,16 +564,17 @@ export default function ExamArrangementPage() {
                   <button
                     type="submit"
                     disabled={arranging || selectedRoomIds.length === 0}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-black py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98 cursor-pointer"
                   >
-                    <Sparkles className="h-4 w-4" /> {arranging ? 'Đang chạy thuật toán AI...' : 'Xem trước phương án xếp phòng'}
+                    <Sparkles className="h-4 w-4" />
+                    {arranging ? 'Đang chạy thuật toán AI...' : 'Xem trước phương án xếp phòng'}
                   </button>
 
                   {result && (
                     <button
                       type="button"
                       onClick={handleResetArrangement}
-                      className="w-full flex items-center justify-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 font-semibold py-2 px-3 rounded-xl text-xs transition"
+                      className="w-full flex items-center justify-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 font-bold py-2 px-3 rounded-xl text-xs transition cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" /> Hủy phương án xếp phòng (Reset)
                     </button>
@@ -610,31 +584,29 @@ export default function ExamArrangementPage() {
             </div>
 
             {/* Right Column: Results & Interactive Matrix View */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs min-h-[500px] flex flex-col justify-between">
+            <div className="lg:col-span-2 space-y-5">
+              <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs min-h-[500px] flex flex-col justify-between">
                 <div>
                   <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-emerald-600" /> Kết quả & Ma trận Chỗ ngồi
                     </h3>
 
                     {result && (
                       <div className="flex flex-wrap items-center gap-2">
                         {/* View Switcher */}
-                        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-1 text-xs font-semibold">
+                        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-1 text-xs font-bold">
                           <button
                             type="button"
                             onClick={() => setViewMode('matrix')}
-                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
-                              }`}
+                            className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition cursor-pointer ${viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'}`}
                           >
                             <Grid className="h-3.5 w-3.5" /> Sơ đồ chỗ ngồi
                           </button>
                           <button
                             type="button"
                             onClick={() => setViewMode('table')}
-                            className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition ${viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
-                              }`}
+                            className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition cursor-pointer ${viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'}`}
                           >
                             <List className="h-3.5 w-3.5" /> Danh sách bảng
                           </button>
@@ -644,7 +616,7 @@ export default function ExamArrangementPage() {
                         <button
                           type="button"
                           onClick={printDoorList}
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
                         >
                           <Printer className="h-3.5 w-3.5 text-sky-600" /> In dán cửa (A4)
                         </button>
@@ -663,7 +635,7 @@ export default function ExamArrangementPage() {
                       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-xs font-semibold text-emerald-900">
                         <div>
                           <p className="text-sm font-extrabold text-emerald-950 flex items-center gap-1.5">
-                            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600" /> {result.message}
+                            <CheckCircle2 className="h-4 w-4 text-emerald-600" /> {result.message}
                           </p>
                           <p className="mt-1 text-slate-700 font-medium">
                             Môn thi: <strong>{result.summary.subjectName}</strong> ({result.summary.subjectCode}) · Ngày: {result.summary.examDate} ({result.summary.timeSlot})
@@ -685,7 +657,7 @@ export default function ExamArrangementPage() {
                                 onConfirm: runSaveArrangement,
                               })
                             }
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 shadow-sm transition"
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 shadow-sm transition cursor-pointer"
                           >
                             <CheckCircle className="h-4 w-4" /> Xác nhận lưu phương án
                           </button>
@@ -699,7 +671,7 @@ export default function ExamArrangementPage() {
                           <select
                             value={filterRoomCode}
                             onChange={(e) => setFilterRoomCode(e.target.value)}
-                            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:bg-white"
+                            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:bg-white cursor-pointer"
                           >
                             <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
                             {roomSummaries.map((rm) => (
@@ -712,7 +684,7 @@ export default function ExamArrangementPage() {
                         <span className="text-xs font-semibold text-slate-500">Hiển thị {filteredDetails.length} thí sinh</span>
                       </div>
 
-                      {/* View Mode 1: Interactive Seat Grid Matrix */}
+                      {/* View Mode 1: Seat Grid Matrix */}
                       {viewMode === 'matrix' && (
                         <div className="space-y-6">
                           {roomSummaries
@@ -734,7 +706,6 @@ export default function ExamArrangementPage() {
                                     </span>
                                   </div>
 
-                                  {/* Seat Matrix Grid */}
                                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 pt-1">
                                     {studentsInRoom.map((st) => (
                                       <div
@@ -747,20 +718,11 @@ export default function ExamArrangementPage() {
                                           </span>
                                           <span className="font-medium text-slate-400">{st.className}</span>
                                         </div>
-                                        <p className="font-bold text-slate-900 text-xs truncate" title={st.fullName}>
-                                          {st.fullName}
-                                        </p>
-                                        <p className="text-[11px] font-semibold text-slate-500 font-mono">
-                                          {st.studentCode}
-                                        </p>
+                                        <p className="font-bold text-slate-900 text-xs truncate" title={st.fullName}>{st.fullName}</p>
+                                        <p className="text-[11px] font-semibold text-slate-500 font-mono">{st.studentCode}</p>
                                         {st.requirementLabel && (
                                           <div className="pt-0.5">
-                                            <span
-                                              className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY'
-                                                ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                                : 'bg-sky-50 text-sky-700 border-sky-200'
-                                                }`}
-                                            >
+                                            <span className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-sky-50 text-sky-700 border-sky-200'}`}>
                                               {st.requirementLabel}
                                             </span>
                                           </div>
@@ -778,32 +740,27 @@ export default function ExamArrangementPage() {
                       {viewMode === 'table' && (
                         <div className="overflow-x-auto rounded-xl border border-slate-200">
                           <table className="w-full text-left text-xs">
-                            <thead className="bg-slate-100 text-slate-700 font-bold uppercase text-[11px]">
+                            <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                               <tr>
-                                <th className="p-3">Phòng</th>
-                                <th className="p-3 text-center">Vị trí</th>
-                                <th className="p-3">Mã SV</th>
-                                <th className="p-3">Họ và tên</th>
-                                <th className="p-3">Lớp SH</th>
-                                <th className="p-3">Khung Đào tạo Ngành</th>
+                                <th className="p-3.5">Phòng</th>
+                                <th className="p-3.5 text-center">Vị trí</th>
+                                <th className="p-3.5">Mã SV</th>
+                                <th className="p-3.5">Họ và tên</th>
+                                <th className="p-3.5">Lớp SH</th>
+                                <th className="p-3.5">Khung Đào tạo Ngành</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 bg-white">
                               {filteredDetails.map((st) => (
-                                <tr key={st.id} className="hover:bg-slate-50">
-                                  <td className="p-3 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
-                                  <td className="p-3 text-center font-extrabold text-sky-700">Ghế #{st.seatNumber}</td>
-                                  <td className="p-3 font-mono font-semibold text-slate-800">{st.studentCode}</td>
-                                  <td className="p-3 font-bold text-slate-900">{st.fullName}</td>
-                                  <td className="p-3 text-slate-600 font-medium">{st.className}</td>
-                                  <td className="p-3">
+                                <tr key={st.id} className="hover:bg-slate-50 transition">
+                                  <td className="p-3.5 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
+                                  <td className="p-3.5 text-center font-extrabold text-sky-700">Ghế #{st.seatNumber}</td>
+                                  <td className="p-3.5 font-mono font-semibold text-slate-800">{st.studentCode}</td>
+                                  <td className="p-3.5 font-bold text-slate-900">{st.fullName}</td>
+                                  <td className="p-3.5 text-slate-600 font-medium">{st.className}</td>
+                                  <td className="p-3.5">
                                     {st.requirementLabel ? (
-                                      <span
-                                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY'
-                                          ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                          : 'bg-sky-50 text-sky-700 border-sky-200'
-                                          }`}
-                                      >
+                                      <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-sky-50 text-sky-700 border-sky-200'}`}>
                                         {st.requirementLabel}
                                       </span>
                                     ) : (
@@ -824,17 +781,18 @@ export default function ExamArrangementPage() {
           </div>
         ) : (
           /* Tab 2: Arrangement Audit Logs & History */
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <History className="h-5 w-5 text-sky-600" /> Nhật ký thao tác & Lịch sử Xếp phòng thi
+                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <History className="h-5 w-5 text-blue-600" /> Nhật ký thao tác & Lịch sử Xếp phòng thi
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi</p>
               </div>
               <button
+                type="button"
                 onClick={fetchHistory}
-                className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline cursor-pointer"
               >
                 <RotateCcw className="h-3.5 w-3.5" /> Tải lại Nhật ký
               </button>
@@ -842,43 +800,38 @@ export default function ExamArrangementPage() {
 
             <div className="overflow-x-auto rounded-xl border border-slate-200/80">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
+                <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                   <tr>
-                    <th className="p-3">Thời gian</th>
-                    <th className="p-3">Người thực hiện</th>
-                    <th className="p-3">Hành động</th>
-                    <th className="p-3">Mô tả chi tiết</th>
+                    <th className="p-3.5">Thời gian</th>
+                    <th className="p-3.5">Người thực hiện</th>
+                    <th className="p-3.5">Hành động</th>
+                    <th className="p-3.5">Mô tả chi tiết</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
                   {!historyLogs.length ? (
                     <tr>
-                      <td colSpan={4} className="p-8 text-center text-slate-400">
-                        Chưa có lịch sử thao tác xếp phòng.
-                      </td>
+                      <td colSpan={4} className="p-12 text-center text-slate-400 font-semibold">Chưa có lịch sử thao tác xếp phòng.</td>
                     </tr>
                   ) : (
                     historyLogs.map((log) => (
                       <tr key={log.id} className="hover:bg-slate-50 transition">
-                        <td className="p-3 font-medium text-slate-500 whitespace-nowrap">
+                        <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
                           {new Date(log.createdAt).toLocaleString('vi-VN')}
                         </td>
-                        <td className="p-3 font-bold text-slate-800 whitespace-nowrap">
+                        <td className="p-3.5 font-bold text-slate-800 whitespace-nowrap">
                           {log.actor?.username || 'Quản trị viên'} ({log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role || 'Hệ thống'})
                         </td>
-                        <td className="p-3 whitespace-nowrap">
-                          <span
-                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${log.action === 'ARRANGE'
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : log.action === 'RESET_ARRANGEMENT'
-                                ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                                : 'bg-sky-50 text-sky-700 border border-sky-200'
-                              }`}
-                          >
+                        <td className="p-3.5 whitespace-nowrap">
+                          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                            log.action === 'ARRANGE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : log.action === 'RESET_ARRANGEMENT' ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                            : 'bg-sky-50 text-sky-700 border border-sky-200'
+                          }`}>
                             {log.action}
                           </span>
                         </td>
-                        <td className="p-3 text-slate-700 font-medium">{log.description}</td>
+                        <td className="p-3.5 text-slate-700 font-medium">{log.description}</td>
                       </tr>
                     ))
                   )}
@@ -889,7 +842,7 @@ export default function ExamArrangementPage() {
         )}
       </main>
 
-      {/* Confirm Popup */}
+      {/* Confirm Modal */}
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
@@ -903,4 +856,3 @@ export default function ExamArrangementPage() {
     </>
   );
 }
-

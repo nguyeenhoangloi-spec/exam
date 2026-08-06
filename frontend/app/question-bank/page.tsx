@@ -347,7 +347,7 @@ export default function QuestionBankPage() {
 
   return (
     <>
-      <main className="w-full px-4 md:px-6 py-5 space-y-5 bg-[#F8FAFC] min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header Section */}
         <QuestionBankHeader
           onAdd={() => {
