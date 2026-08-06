@@ -157,34 +157,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-[#213566] bg-[#132247] text-slate-200 shadow-2xl transition-all duration-300 ${
+      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-[#1a2e63]/60 bg-gradient-to-b from-[#070d24] via-[#0b1638] to-[#0e1d4a] text-slate-100 shadow-2xl transition-all duration-300 overflow-hidden ${
         collapsed ? 'w-[260px] md:w-[76px]' : 'w-[260px]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
     >
+      {/* Radiant Top Glow Accent */}
+      <div className="absolute -top-24 -left-24 w-60 h-60 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 -right-20 w-52 h-52 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
       {/* Header Section with Toggle Button */}
       {collapsed ? (
-        <div className="flex h-16 shrink-0 items-center justify-center border-b border-[#213566] px-3 bg-[#132247]">
+        <div className="flex h-16 shrink-0 items-center justify-center border-b border-[#254294]/40 px-3 bg-transparent">
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1E305C] hover:bg-[#2A437E] text-blue-300 transition active:scale-95 cursor-pointer border border-slate-600/50 shadow-xs"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-sky-200 transition active:scale-95 cursor-pointer border border-white/20 shadow-xs"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
-            <PanelLeftOpen className="h-5 w-5 text-blue-300" />
+            <PanelLeftOpen className="h-5 w-5 text-sky-200" />
           </button>
         </div>
       ) : (
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#213566] px-4 bg-[#132247]">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#254294]/40 px-4 bg-transparent">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 font-black text-white shadow-md">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-400 to-blue-600 font-black text-white shadow-md">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
               <h1 className="truncate text-xs font-black tracking-wider text-white uppercase leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[10px] font-bold tracking-tight text-blue-300 uppercase leading-tight mt-0.5">
+              <h2 className="truncate text-[10px] font-extrabold tracking-tight text-sky-300 uppercase leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
@@ -193,7 +196,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#1E305C] hover:bg-[#2A437E] text-slate-200 hover:text-white transition active:scale-95 cursor-pointer border border-slate-600/50"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition active:scale-95 cursor-pointer border border-white/20"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
@@ -228,13 +231,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onMouseEnter={() => router.prefetch(item.href)}
                   onClick={onMobileClose}
                   title={collapsed ? item.name : undefined}
-                  className={`group relative flex h-10 items-center justify-start rounded-xl px-3.5 text-xs font-bold transition-all duration-300 overflow-hidden ${
+                  className={`group relative flex h-10 items-center justify-start rounded-xl px-3.5 text-xs font-bold transition-all duration-200 overflow-hidden ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/35'
-                      : 'text-slate-200 hover:bg-[#1C305E] hover:text-white'
+                      ? 'bg-[#1c3673] text-white border border-blue-500/40 shadow-xs font-black'
+                      : 'text-slate-200/90 hover:bg-white/[0.08] hover:text-white'
                   }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-200/70 group-hover:text-blue-300'}`} />
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-sky-300 rounded-r-full shadow-xs" />
+                  )}
+
+                  <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-200/70 group-hover:text-blue-300'}`} />
 
                   <span
                     className={`whitespace-nowrap transition-all duration-200 overflow-hidden ${
@@ -263,12 +270,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       />
 
       {/* Footer User Profile Section matching User Screenshots */}
-      <div ref={footerRef} className="relative shrink-0 border-t border-[#213566] p-3 bg-[#132247]">
+      <div ref={footerRef} className="relative shrink-0 border-t border-[#254294]/40 p-3 bg-transparent">
         <button
           type="button"
           onClick={() => setShowUserMenu((prev) => !prev)}
           aria-expanded={showUserMenu}
-          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-[#1A2D5C] hover:bg-[#233B76] p-2.5 border border-blue-700/50 shadow-2xs transition cursor-pointer text-left ${
+          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-white/10 hover:bg-white/20 p-2.5 border border-white/20 shadow-md backdrop-blur-md transition cursor-pointer text-left ${
             collapsed ? 'justify-center p-2' : ''
           }`}
           title={collapsed ? displayName : undefined}
