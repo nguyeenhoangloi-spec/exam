@@ -476,67 +476,175 @@ export default function ExamSupervisorsPage() {
                       <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
 
                         {/* LEFT: Chưa phân công */}
-                        <div>
-                          <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                              Chưa phân công ({schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).length})
-                            </span>
-                          </div>
-                          {schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).length === 0 ? (
-                            <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Tất cả đã phân công</p>
-                          ) : schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).map((s: any) => {
-                            const isActive = selectedSchedule?.id === s.id;
-                            return (
-                              <button key={s.id} type="button"
-                                onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
-                                className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
-                              >
-                                <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
-                                  {s.mode === 'MOCK' ? '[THI THỪ] ' : '[CHÍNH THỨC] '}
-                                  {s.subject?.subjectName || s.subjectName}
-                                </p>
-                                <p className="text-[10.5px] text-slate-500 font-semibold mt-0.5">
-                                  {s.startTime} – {s.endTime}
-                                  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
-                                </p>
-                              </button>
-                            );
-                          })}
-                        </div>
+                        {(() => {
+                          const unassigned = schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount);
+                          const activeUnassigned = unassigned.filter((s: any) => {
+                            if (!s.examDate || !s.endTime) return true;
+                            const d = new Date(s.examDate);
+                            const [h, m] = (s.endTime || '23:59').split(':').map(Number);
+                            d.setHours(h, m, 0, 0);
+                            return d >= new Date();
+                          });
+                          const expiredUnassigned = unassigned.filter((s: any) => !activeUnassigned.includes(s));
+
+                          return (
+                            <div>
+                              <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10 flex items-center justify-between">
+                                <span className="text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                                  Chưa phân công ({unassigned.length})
+                                </span>
+                                {expiredUnassigned.length > 0 && (
+                                  <span className="text-[9.5px] font-bold text-slate-400 bg-slate-200/70 px-1.5 py-0.5 rounded">
+                                    {expiredUnassigned.length} quá hạn
+                                  </span>
+                                )}
+                              </div>
+
+                              {unassigned.length === 0 ? (
+                                <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Tất cả đã phân công</p>
+                              ) : (
+                                <>
+                                  {/* Ca thi sắp & đang diễn ra */}
+                                  {activeUnassigned.map((s: any) => {
+                                    const isActive = selectedSchedule?.id === s.id;
+                                    return (
+                                      <button key={s.id} type="button"
+                                        onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
+                                        className={`w-full text-left px-4 py-3 border-b border-slate-50 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+                                      >
+                                        <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
+                                          {s.mode === 'MOCK' ? '[THI THỬ] ' : '[CHÍNH THỨC] '}
+                                          {s.subject?.subjectName || s.subjectName}
+                                        </p>
+                                        <p className="text-[10.5px] text-slate-500 font-semibold mt-0.5 flex items-center gap-1.5">
+                                          <span>{s.startTime} – {s.endTime}</span>
+                                          {s.examDate && <span>· {new Date(s.examDate).toLocaleDateString('vi-VN')}</span>}
+                                        </p>
+                                      </button>
+                                    );
+                                  })}
+
+                                  {/* Ca thi đã kết thúc / quá hạn - Gom nhóm riêng */}
+                                  {expiredUnassigned.length > 0 && (
+                                    <div className="bg-slate-50/80 border-t-2 border-slate-200/80 mt-1">
+                                      <div className="px-4 py-1.5 text-[9.5px] font-extrabold text-slate-400 uppercase tracking-wider bg-slate-100 flex items-center gap-1">
+                                        <span>📁 Ca thi đã kết thúc / Quá hạn ({expiredUnassigned.length})</span>
+                                      </div>
+                                      {expiredUnassigned.map((s: any) => {
+                                        const isActive = selectedSchedule?.id === s.id;
+                                        return (
+                                          <button key={s.id} type="button"
+                                            onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
+                                            className={`w-full text-left px-4 py-2.5 border-b border-slate-100 opacity-60 hover:opacity-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600 opacity-100' : ''}`}
+                                          >
+                                            <div className="flex items-center justify-between gap-1">
+                                              <p className="text-[11px] font-bold text-slate-600 truncate">
+                                                {s.subject?.subjectName || s.subjectName}
+                                              </p>
+                                              <span className="text-[9px] font-bold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded shrink-0">Đã kết thúc</span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                                              {s.startTime} – {s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                            </p>
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         {/* RIGHT: Đã có giám thị */}
-                        <div>
-                          <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                              Đã phân công ({schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).length})
-                            </span>
-                          </div>
-                          {schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).length === 0 ? (
-                            <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
-                          ) : schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).map((s: any) => {
-                            const isActive = selectedSchedule?.id === s.id;
-                            const count = s.examSupervisors?.length || s.supervisorCount || 0;
-                            return (
-                              <button key={s.id} type="button"
-                                onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
-                                className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <p className={`text-xs font-black truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
-                                    {s.subject?.subjectName || s.subjectName}
-                                  </p>
-                                  <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
-                                    {count} GT
+                        {(() => {
+                          const assigned = schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount);
+                          const activeAssigned = assigned.filter((s: any) => {
+                            if (!s.examDate || !s.endTime) return true;
+                            const d = new Date(s.examDate);
+                            const [h, m] = (s.endTime || '23:59').split(':').map(Number);
+                            d.setHours(h, m, 0, 0);
+                            return d >= new Date();
+                          });
+                          const expiredAssigned = assigned.filter((s: any) => !activeAssigned.includes(s));
+
+                          return (
+                            <div>
+                              <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10 flex items-center justify-between">
+                                <span className="text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                                  Đã phân công ({assigned.length})
+                                </span>
+                                {expiredAssigned.length > 0 && (
+                                  <span className="text-[9.5px] font-bold text-slate-400 bg-slate-200/70 px-1.5 py-0.5 rounded">
+                                    {expiredAssigned.length} quá hạn
                                   </span>
-                                </div>
-                                <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
-                                  {s.startTime} – {s.endTime}
-                                  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
-                                </p>
-                              </button>
-                            );
-                          })}
-                        </div>
+                                )}
+                              </div>
+
+                              {assigned.length === 0 ? (
+                                <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
+                              ) : (
+                                <>
+                                  {/* Đã phân công & đang/sắp diễn ra */}
+                                  {activeAssigned.map((s: any) => {
+                                    const isActive = selectedSchedule?.id === s.id;
+                                    const count = s.examSupervisors?.length || s.supervisorCount || 0;
+                                    return (
+                                      <button key={s.id} type="button"
+                                        onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
+                                        className={`w-full text-left px-4 py-3 border-b border-slate-50 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <p className={`text-xs font-black truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
+                                            {s.subject?.subjectName || s.subjectName}
+                                          </p>
+                                          <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
+                                            {count} GT
+                                          </span>
+                                        </div>
+                                        <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                                          {s.startTime} – {s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                        </p>
+                                      </button>
+                                    );
+                                  })}
+
+                                  {/* Đã phân công & đã kết thúc / quá hạn - Gom nhóm riêng */}
+                                  {expiredAssigned.length > 0 && (
+                                    <div className="bg-slate-50/80 border-t-2 border-slate-200/80 mt-1">
+                                      <div className="px-4 py-1.5 text-[9.5px] font-extrabold text-slate-400 uppercase tracking-wider bg-slate-100 flex items-center gap-1">
+                                        <span>📁 Ca thi đã xong / Quá hạn ({expiredAssigned.length})</span>
+                                      </div>
+                                      {expiredAssigned.map((s: any) => {
+                                        const isActive = selectedSchedule?.id === s.id;
+                                        const count = s.examSupervisors?.length || s.supervisorCount || 0;
+                                        return (
+                                          <button key={s.id} type="button"
+                                            onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
+                                            className={`w-full text-left px-4 py-2.5 border-b border-slate-100 opacity-60 hover:opacity-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600 opacity-100' : ''}`}
+                                          >
+                                            <div className="flex items-center justify-between gap-1">
+                                              <p className="text-[11px] font-bold text-slate-600 truncate flex-1">
+                                                {s.subject?.subjectName || s.subjectName}
+                                              </p>
+                                              <span className="text-[9px] font-bold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded shrink-0">
+                                                {count} GT · Đã xong
+                                              </span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                                              {s.startTime} – {s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                            </p>
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       {/* Footer */}

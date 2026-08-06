@@ -371,11 +371,11 @@ export default function ProctorDashboardPage() {
                                   Gia hạn
                                 </button>
                               )}
-                              {['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'DISCONNECTED'].includes(att.status) && (
+                              {['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
                                 <button
                                   type="button"
                                   onClick={() => { setSelectedStudent(s); setActionType('REOPEN'); }}
-                                  title="Mở lại phiên thi"
+                                  title="Mở lại phiên thi khi có sự cố"
                                   className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 text-[10.5px] font-bold hover:bg-amber-100 transition cursor-pointer"
                                 >
                                   <RotateCcw className="w-3 h-3" />
@@ -462,6 +462,28 @@ export default function ProctorDashboardPage() {
                       min={1}
                       max={60}
                     />
+                  </div>
+                )}
+
+                {/* Reopen Penalty (REOPEN) */}
+                {actionType === 'REOPEN' && (
+                  <div>
+                    <label className="block text-[10.5px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-1.5">
+                      Điểm trừ vi phạm quy chế (Penalty Points)
+                    </label>
+                    <input
+                      type="number"
+                      step={0.25}
+                      min={0}
+                      max={10}
+                      value={penaltyPoints}
+                      onChange={(e) => setPenaltyPoints(Number(e.target.value))}
+                      placeholder="Số điểm trừ (Ví dụ: 0.5, 1.0...)"
+                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/15 transition"
+                    />
+                    <p className="mt-1 text-[11px] text-amber-700 font-semibold">
+                      * Điểm phạt sẽ tự động trừ trực tiếp vào tổng điểm thi cuối cùng sau khi sinh viên hoàn thành bài thi.
+                    </p>
                   </div>
                 )}
 

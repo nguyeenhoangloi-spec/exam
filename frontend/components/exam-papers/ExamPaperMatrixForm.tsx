@@ -66,7 +66,6 @@ export function ExamPaperMatrixForm({
   });
 
   const switchType = (type: 'TRAC_NGHIEM' | 'TU_LUAN') => {
-    if (scheduleType && type !== scheduleType) return;
     if (type === 'TU_LUAN') {
       setFormData((p: any) => ({ ...p, examType: type, ...ESSAY_DEFAULTS }));
     } else {
@@ -128,7 +127,6 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                disabled={scheduleType === 'TU_LUAN'}
                 className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[11px] font-extrabold border transition cursor-pointer ${
                   !isEssay
                     ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
@@ -141,10 +139,9 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                disabled={scheduleType === 'TRAC_NGHIEM'}
                 className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[11px] font-extrabold border transition cursor-pointer ${
                   isEssay
-                    ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                     : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700'
                 }`}
               >
@@ -440,7 +437,9 @@ export function ExamPaperMatrixForm({
           <button
             type="submit"
             disabled={creating || currentTotal < 1}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-xs font-black transition shadow-sm cursor-pointer active:scale-95 disabled:opacity-50"
+            className={`flex items-center gap-2 rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-sm cursor-pointer active:scale-95 disabled:opacity-50 ${
+              isEssay ? 'bg-slate-900 hover:bg-slate-800' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
             <Sparkles className="h-4 w-4" />
             {creating ? 'Đang sinh đề...' : isEssay ? 'Tạo Đề Tự luận' : 'Tạo Đề Trắc nghiệm'}

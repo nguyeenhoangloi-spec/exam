@@ -21,7 +21,7 @@ import { ExamScheduleTableToolbar } from '../../components/exam-schedules/ExamSc
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
 import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeScheduleStatus } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
-import { Calendar, Clock, Building, Users } from 'lucide-react';
+import { Calendar, Clock, Building, Users, AlertTriangle } from 'lucide-react';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
   if (!startTime) return '08:30';
@@ -248,10 +248,21 @@ export default function ExamSchedulesPage() {
     setIsModalOpen(true);
   };
 
+  const isPastTime = useMemo(() => {
+    if (!formData.examDate || !formData.startTime) return false;
+    const selectedDateTime = new Date(`${formData.examDate}T${formData.startTime}:00`);
+    return selectedDateTime < new Date();
+  }, [formData.examDate, formData.startTime]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.examPeriodId || !formData.subjectId) {
       setToast({ message: 'Vui lòng chọn Kỳ thi và Môn học hợp lệ!', type: 'error' });
+      return;
+    }
+
+    if (isPastTime) {
+      setToast({ message: 'Không thể tạo hoặc lưu lịch thi trong quá khứ! Vui lòng chọn ngày giờ trong tương lai.', type: 'error' });
       return;
     }
 
@@ -653,6 +664,13 @@ export default function ExamSchedulesPage() {
 
 
 
+          {isPastTime && (
+            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2 mt-2">
+              <AlertTriangle className="w-4.5 h-4.5 text-rose-600 shrink-0" />
+              <span>Thời gian thi không thể nằm trong quá khứ! Vui lòng chọn ngày và giờ bắt đầu lớn hơn thời điểm hiện tại.</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
@@ -663,7 +681,8 @@ export default function ExamSchedulesPage() {
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer"
+              disabled={isPastTime}
+              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Lưu Lịch Thi
             </button>

@@ -380,7 +380,9 @@ export class AiQuestionsService {
       }
 
       if (!rawQuestions || rawQuestions.length === 0) {
-        rawQuestions = parsePlainTextQuestions(raw, input.type);
+        // Nếu Gemini trả rỗng/bị cắt, vẫn trích được các mẫu Word phổ biến từ
+        // chính nội dung tài liệu để người dùng xem trước và chỉnh sửa.
+        rawQuestions = parsePlainTextQuestions(raw || input.prompt || '', input.type);
       }
 
       if (!rawQuestions || rawQuestions.length === 0) {

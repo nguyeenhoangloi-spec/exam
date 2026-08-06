@@ -168,7 +168,7 @@ export class ProctorService {
   /**
    * Cho phép sinh viên mở lại bài khi sự cố / rớt mạng
    */
-  async reopenAttempt(teacherUserId: number, attemptId: string, reason: string) {
+  async reopenAttempt(teacherUserId: number, attemptId: string, reason: string, penaltyPoints = 0) {
     const attempt = await this.prisma.examAttempt.findUnique({
       where: { id: attemptId },
     });
@@ -177,32 +177,37 @@ export class ProctorService {
       throw new NotFoundException('Không tìm thấy phiên thi');
     }
 
-    if (!['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'DISCONNECTED'].includes(attempt.status)) {
-      throw new BadRequestException('Chỉ có thể mở lại phiên đã nộp, tự động nộp hoặc bị gián đoạn');
+    if (!['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'DISCONNECTED', 'UNDER_REVIEW', 'READY'].includes(attempt.status) && !attempt.isFlagged) {
+      throw new BadRequestException('Chỉ có thể mở lại phiên đã nộp, tự động nộp, bị gián đoạn hoặc bị tạm khóa xem xét');
     }
     if (!reason?.trim()) {
       throw new BadRequestException('Vui lòng nhập lý do mở lại phiên thi');
     }
 
+    const penalty = Math.max(0, Math.min(Number(penaltyPoints) || 0, attempt.maxScore || 10));
+
     const updated = await this.prisma.examAttempt.update({
       where: { id: attemptId },
       data: {
         status: 'IN_PROGRESS',
+        isFlagged: false,
+        penaltyPoints: penalty,
       },
     });
 
     await this.prisma.auditLog.create({
       data: {
+        actorId: teacherUserId,
         action: 'REOPEN_EXAM_ATTEMPT',
         entityType: 'ExamAttempt',
         entityId: attemptId,
-        description: `Giám thị mở lại bài thi cho sinh viên. Lý do: ${reason}`,
+        description: `Giám thị mở lại bài thi cho sinh viên.${penalty > 0 ? ` Thiết lập điểm trừ vi phạm: ${penalty} điểm.` : ''} Lý do: ${reason}`,
       },
     });
 
     return {
       success: true,
-      message: 'Đã mở lại bài thi cho sinh viên',
+      message: `Đã mở lại bài thi cho sinh viên${penalty > 0 ? ` (Điểm phạt vi phạm: ${penalty} điểm)` : ''}`,
       status: updated.status,
     };
   }

@@ -45,12 +45,13 @@ export class ProctorController {
   reopenAttempt(
     @Request() req: any,
     @Param('attemptId') attemptId: string,
-    @Body() body: { reason: string },
+    @Body() body: { reason: string; penaltyPoints?: number },
   ) {
     return this.proctorService.reopenAttempt(
       req.user.id,
       attemptId,
       body.reason || 'Mở lại theo yêu cầu sinh viên',
+      Number(body.penaltyPoints) || 0,
     );
   }
 

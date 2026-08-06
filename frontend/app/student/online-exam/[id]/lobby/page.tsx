@@ -110,7 +110,22 @@ export default function StudentExamLobbyPage() {
   const studentCode = student?.studentCode || '---';
   const examNumber = student?.examNumber || eligibility?.roomStudentInfo?.examNumber || (schedule?.mode === 'MOCK' ? 'Thi thử tự do' : 'Chưa cấp');
   const seatNumber = student?.seatNumber || eligibility?.roomStudentInfo?.seatNumber || (schedule?.mode === 'MOCK' ? 'Tự do' : '-');
+  const roomName = student?.roomName || student?.roomCode || eligibilityData?.roomStudentInfo?.roomName;
+  const building = student?.building || eligibilityData?.roomStudentInfo?.building;
+  const examDateStr = examInfo?.examDate ? new Date(examInfo.examDate).toLocaleDateString('vi-VN') : '---';
+  const timeSlotStr = examInfo?.startTime && examInfo?.endTime ? `${examInfo.startTime} - ${examInfo.endTime}` : '---';
   const durationMinutes = examInfo?.durationMinutes || schedule?.onlineExamConfig?.examPaper?.durationMinutes || 60;
+
+  const isPasswordRequired = Boolean(
+    examInfo?.examPasswordRequired ||
+    eligibility?.errorCode === 'EXAM_PASSWORD_REQUIRED' ||
+    (error && error.toLowerCase().includes('mật khẩu'))
+  );
+  const isAccessCodeRequired = Boolean(
+    examInfo?.accessCodeRequired ||
+    eligibility?.errorCode === 'ACCESS_CODE_REQUIRED' ||
+    (error && error.toLowerCase().includes('mã truy cập'))
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-4 md:p-8">
@@ -151,15 +166,18 @@ export default function StudentExamLobbyPage() {
         ) : (
           <>
             {error && (
-              <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 flex items-center gap-3 shadow-xs">
-                <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
-                <p className="text-xs font-bold leading-relaxed">{error}</p>
+              <div className="mb-6 p-5 bg-rose-50 border-2 border-rose-300 rounded-2xl text-rose-900 space-y-1.5 shadow-sm animate-in fade-in duration-150">
+                <div className="flex items-center gap-2 text-rose-950 font-black text-sm">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
+                  <span>Thông báo từ Hệ thống Giám thị:</span>
+                </div>
+                <p className="text-xs font-bold leading-relaxed pl-7 text-rose-800">{error}</p>
               </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="bg-slate-50/80 border border-slate-200 p-5 rounded-2xl">
-                <h3 className="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-4">Thông tin Thí sinh</h3>
+                <h3 className="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-4">Thông tin Thí sinh & Ca thi</h3>
                 <div className="space-y-3 text-xs">
                   <div className="flex justify-between border-b border-slate-200/80 pb-2">
                     <span className="text-slate-500 font-medium">Họ và tên:</span>
@@ -168,6 +186,16 @@ export default function StudentExamLobbyPage() {
                   <div className="flex justify-between border-b border-slate-200/80 pb-2">
                     <span className="text-slate-500 font-medium">Mã sinh viên:</span>
                     <span className="font-mono font-bold text-blue-600">{studentCode}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/80 pb-2">
+                    <span className="text-slate-500 font-medium">Khung giờ thi:</span>
+                    <span className="font-bold text-slate-800">{examDateStr} ({timeSlotStr})</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/80 pb-2">
+                    <span className="text-slate-500 font-medium">Phòng thi & Địa điểm:</span>
+                    <span className="font-bold text-slate-800">
+                      {roomName ? `${roomName} ${building ? `(${building})` : ''}` : 'Chưa phân phòng thi'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500 font-medium">SBD / Số ghế:</span>
@@ -209,44 +237,44 @@ export default function StudentExamLobbyPage() {
               </p>
             </div>
 
-            {(examInfo?.examPasswordRequired || examInfo?.accessCodeRequired) && (
-              <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50/60 p-5 shadow-xs">
-                <h3 className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+            {(isPasswordRequired || isAccessCodeRequired) && (
+              <div className="mb-6 rounded-2xl border-2 border-blue-400 bg-blue-50 p-5 shadow-sm space-y-3">
+                <h3 className="text-xs font-black text-blue-900 uppercase tracking-wider flex items-center gap-2">
                   <KeyRound className="w-4 h-4 text-blue-600" />
-                  {examInfo?.examPasswordRequired
-                    ? 'Nhập mật khẩu thi'
-                    : 'Nhập mã truy cập phòng thi'}
+                  Xác thực Quyền dự thi
                 </h3>
-                {examInfo?.examPasswordRequired && (
-                  <div className="mb-3">
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                      Mật khẩu thi (do Giảng viên/Admin cung cấp) <span className="text-rose-500">*</span>
+
+                {isPasswordRequired && (
+                  <div>
+                    <label className="block text-xs font-bold text-blue-950 mb-1">
+                      Mật khẩu thi chính thức <span className="text-rose-600 font-extrabold">* (Bắt buộc)</span>
                     </label>
                     <input
                       type="password"
                       autoComplete="off"
-                      placeholder="Nhập mật khẩu thi chính thức"
+                      placeholder="Nhập Mật khẩu thi do Giám thị/Giảng viên phổ biến"
                       value={examPassword}
                       onChange={(e) => setExamPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-xl border-2 border-blue-300 bg-white px-4 py-3 text-sm font-bold text-slate-900 focus:border-blue-600 focus:outline-none shadow-xs"
                     />
-                    <p className="mt-1 text-[11px] text-slate-500 font-medium">
-                      Mật khẩu thi được cán bộ coi thi hoặc giảng viên phổ biến trước giờ thi.
+                    <p className="mt-1 text-[11px] text-blue-800 font-semibold">
+                      Vui lòng nhập Mật khẩu thi chính thức được Cán bộ coi thi phổ biến trước giờ làm bài.
                     </p>
                   </div>
                 )}
-                {examInfo?.accessCodeRequired && (
+
+                {isAccessCodeRequired && (
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                      Mã truy cập phòng thi <span className="text-rose-500">*</span>
+                    <label className="block text-xs font-bold text-blue-950 mb-1">
+                      Mã truy cập phòng thi <span className="text-rose-600 font-extrabold">* (Bắt buộc)</span>
                     </label>
                     <input
                       type="text"
                       autoComplete="off"
-                      placeholder="Nhập mã truy cập phòng thi"
+                      placeholder="Nhập Mã truy cập phòng thi"
                       value={accessCode}
                       onChange={(e) => setAccessCode(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-xl border-2 border-blue-300 bg-white px-4 py-3 text-sm font-bold text-slate-900 focus:border-blue-600 focus:outline-none shadow-xs"
                     />
                   </div>
                 )}
@@ -270,7 +298,7 @@ export default function StudentExamLobbyPage() {
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={() => router.back()}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition"
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer"
               >
                 Quay lại
               </button>
@@ -278,12 +306,12 @@ export default function StudentExamLobbyPage() {
                 onClick={handleStartExam}
                 disabled={
                   starting ||
-                  !eligibility?.isEligible ||
+                  (error && !isPasswordRequired && !isAccessCodeRequired) ||
                   (config?.requireRulesAcceptance !== false && !rulesAccepted) ||
-                  (examInfo?.examPasswordRequired && !examPassword.trim()) ||
-                  (examInfo?.accessCodeRequired && !accessCode.trim())
+                  (isPasswordRequired && !examPassword.trim()) ||
+                  (isAccessCodeRequired && !accessCode.trim())
                 }
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center shadow-md shadow-blue-600/20 transition"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold flex items-center shadow-md shadow-blue-600/20 transition cursor-pointer"
               >
                 {starting ? (
                   <span>Đang khởi tạo bài thi...</span>

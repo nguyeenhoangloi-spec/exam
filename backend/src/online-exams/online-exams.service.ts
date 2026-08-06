@@ -46,6 +46,9 @@ export class OnlineExamsService {
               examDate: result.data.schedule.examDate,
               startTime: result.data.schedule.startTime,
               endTime: result.data.schedule.endTime,
+              durationMinutes: (result.data as any)?.config?.examPaper?.durationMinutes || 60,
+              examPasswordRequired: result.errorCode === 'EXAM_PASSWORD_REQUIRED' || !!(result.data as any)?.config?.examPasswordHash,
+              accessCodeRequired: result.errorCode === 'ACCESS_CODE_REQUIRED' || !!(result.data as any)?.config?.accessCode,
             }
           : undefined,
         student: result.data?.student
@@ -55,6 +58,9 @@ export class OnlineExamsService {
               fullName: result.data.student.fullName,
               examNumber: result.data.roomStudentInfo?.examNumber,
               seatNumber: result.data.roomStudentInfo?.seatNumber,
+              roomCode: result.data.roomStudentInfo?.roomCode,
+              roomName: result.data.roomStudentInfo?.roomName,
+              building: result.data.roomStudentInfo?.building,
             }
           : undefined,
       };
@@ -87,6 +93,9 @@ export class OnlineExamsService {
         fullName: d.student?.fullName,
         examNumber: d.roomStudentInfo?.examNumber,
         seatNumber: d.roomStudentInfo?.seatNumber,
+        roomCode: d.roomStudentInfo?.roomCode,
+        roomName: d.roomStudentInfo?.roomName,
+        building: d.roomStudentInfo?.building,
       },
     };
   }
@@ -540,15 +549,35 @@ export class OnlineExamsService {
     const violationLimit = Math.max(1, attempt.onlineExamConfig.maxAllowedViolations || 5);
     const recordedEvents = await this.prisma.proctoringEvent.count({ where: { attemptId: attempt.id } });
     if (recordedEvents >= violationLimit) {
-      const submitted = await this.submitAttempt(studentUserId, attemptToken, true);
+      await this.prisma.examAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          status: 'TERMINATED',
+          isFlagged: true,
+          totalScore: 0,
+          submittedAt: new Date(),
+          gradingStatus: 'NOT_SUBMITTED',
+        },
+      });
+
+      await this.prisma.examIncident.create({
+        data: {
+          attemptId: attempt.id,
+          reportedById: 0,
+          reason: `Tự động đình chỉ và nộp bài (0 điểm) do vi phạm quy chế vượt quá ${violationLimit} lần cảnh báo.`,
+          decision: 'TERMINATED',
+        },
+      });
+
       return {
         success: true,
         currentRiskScore: newRiskScore,
         isFlagged: true,
         autoSubmitted: true,
+        isTerminated: true,
         violationLimit,
         recordedEvents,
-        status: submitted.status,
+        status: 'TERMINATED',
       };
     }
 

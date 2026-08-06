@@ -620,22 +620,25 @@ export default function StudentExamTakePage() {
           </div>
 
           {/* 5-Column Question Grid */}
-          <div className="grid grid-cols-5 gap-2 overflow-y-auto flex-1 max-h-[50vh] lg:max-h-none pr-1">
+          <div className="grid grid-cols-5 gap-2.5 p-2 overflow-y-auto flex-1 max-h-[50vh] lg:max-h-none border border-slate-100 rounded-2xl bg-slate-50/50">
             {questions.map((q: any, idx: number) => {
               const ans = answers[q.questionId];
-              const isAnswered = ans?.selectedOptionIds && ans.selectedOptionIds.length > 0;
-              const isFlagged = ans?.isFlagged;
+              const isAnswered = Boolean(
+                (ans?.selectedOptionIds && ans.selectedOptionIds.length > 0) ||
+                (ans?.textAnswer && ans.textAnswer.trim().length > 0)
+              );
+              const isFlagged = Boolean(ans?.isFlagged);
               const isCurrent = idx === currentIdx;
 
-              let btnStyle = 'bg-slate-100 border-slate-200 text-slate-600 font-bold hover:bg-slate-200/80';
+              let btnStyle = 'bg-white border-slate-200 text-slate-700 font-bold hover:bg-slate-100 hover:border-slate-300';
               if (isFlagged) {
-                btnStyle = 'bg-amber-500 text-white font-black border-amber-500 shadow-2xs';
+                btnStyle = 'bg-amber-500 text-white font-black border-amber-500 shadow-2xs hover:bg-amber-600';
               } else if (isAnswered) {
-                btnStyle = 'bg-[#003896] text-white font-black border-[#003896] shadow-2xs';
+                btnStyle = 'bg-[#003896] text-white font-black border-[#003896] shadow-2xs hover:bg-[#00286b]';
               }
 
               if (isCurrent) {
-                btnStyle += ' ring-2 ring-blue-600 ring-offset-2 scale-105 z-10 font-black';
+                btnStyle += ' ring-2 ring-blue-600 ring-offset-1 z-10 font-extrabold shadow-sm scale-105';
               }
 
               return (
@@ -643,7 +646,7 @@ export default function StudentExamTakePage() {
                   key={q.questionId}
                   type="button"
                   onClick={() => setCurrentIdx(idx)}
-                  className={`h-10 rounded-xl border text-xs flex items-center justify-center relative transition cursor-pointer ${btnStyle}`}
+                  className={`h-9.5 rounded-xl border text-xs flex items-center justify-center relative transition duration-150 cursor-pointer ${btnStyle}`}
                 >
                   {idx + 1}
                   {isFlagged && <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-amber-200 rounded-full"></span>}

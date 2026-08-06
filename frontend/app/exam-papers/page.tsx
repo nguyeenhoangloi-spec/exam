@@ -192,11 +192,11 @@ export default function ExamPapersPage() {
   // schedule from multiple-choice to essay (or vice versa).
   useEffect(() => {
     const scheduleType = selectedSchedule?.examType;
-    if (!scheduleType || scheduleType === formData.examType) return;
+    if (!scheduleType) return;
     setFormData((previous) => scheduleType === 'TU_LUAN'
       ? { ...previous, examType: scheduleType, easyCount: '3', mediumCount: '2', hardCount: '0' }
       : { ...previous, examType: scheduleType, easyCount: '16', mediumCount: '16', hardCount: '8' });
-  }, [selectedSchedule?.id, selectedSchedule?.examType, formData.examType]);
+  }, [selectedSchedule?.id]);
   const scheduleDuration = selectedSchedule
     ? (() => {
         const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);

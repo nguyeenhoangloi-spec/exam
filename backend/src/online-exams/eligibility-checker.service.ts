@@ -149,6 +149,7 @@ export class EligibilityCheckerService {
         subject: true,
         examScheduleRooms: {
           include: {
+            room: true,
             examRoomStudents: {
               where: { studentId: student.id },
             },
@@ -175,7 +176,12 @@ export class EligibilityCheckerService {
     for (const room of schedule.examScheduleRooms) {
       if (room.examRoomStudents && room.examRoomStudents.length > 0) {
         isAssigned = true;
-        roomStudentInfo = room.examRoomStudents[0];
+        roomStudentInfo = {
+          ...room.examRoomStudents[0],
+          roomCode: room.room?.roomCode,
+          roomName: room.room?.roomName,
+          building: room.room?.building,
+        };
         break;
       }
     }
@@ -212,12 +218,21 @@ export class EligibilityCheckerService {
       );
     }
 
-    // Kiểm tra đợt thi có đang hoạt động
-    const VALID_PERIOD_STATUSES = ['ONGOING', 'ACTIVE', 'IN_PROGRESS'];
-    if (!VALID_PERIOD_STATUSES.includes(schedule.examPeriod.status)) {
+    // Kiểm tra đợt thi có đang hoạt động (cho phép đợt thi ở trạng thái SCHEDULED, UPCOMING, PLANNED, ONGOING, ACTIVE, IN_PROGRESS)
+    const INVALID_PERIOD_STATUSES = ['CANCELLED', 'SUSPENDED', 'CLOSED', 'COMPLETED', 'FINISHED'];
+    if (INVALID_PERIOD_STATUSES.includes(schedule.examPeriod.status)) {
+      const periodStatusName =
+        schedule.examPeriod.status === 'COMPLETED' || schedule.examPeriod.status === 'FINISHED' ? 'Đã kết thúc'
+        : schedule.examPeriod.status === 'CANCELLED' ? 'Đã bị hủy'
+        : schedule.examPeriod.status;
+
+      const startDateStr = schedule.examPeriod.startDate ? new Date(schedule.examPeriod.startDate).toLocaleDateString('vi-VN') : '';
+      const endDateStr = schedule.examPeriod.endDate ? new Date(schedule.examPeriod.endDate).toLocaleDateString('vi-VN') : '';
+      const timeDetails = startDateStr && endDateStr ? ` (${startDateStr} - ${endDateStr})` : '';
+
       return this.fail(
         EligibilityErrorCode.EXAM_PERIOD_NOT_ACTIVE,
-        'Đợt thi hiện tại chưa được kích hoạt hoặc đã kết thúc',
+        `Đợt thi "${schedule.examPeriod.name}" hiện ở trạng thái "${periodStatusName}"${timeDetails}. Vui lòng liên hệ Cán bộ Khảo thí để biết chi tiết.`,
         { student, schedule },
       );
     }
