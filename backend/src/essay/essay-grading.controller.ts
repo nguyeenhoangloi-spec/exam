@@ -12,6 +12,7 @@ export class EssayGradingController {
   @Get('assignments') @Roles('ADMIN', 'TEACHER') assignments(@Request() req: any) { return this.essay.assignments(req.user); }
   @Get('attempts/:attemptId') @Roles('ADMIN', 'TEACHER') detail(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.detail(req.user, id); }
   @Patch('answers/:answerId') @Roles('ADMIN', 'TEACHER') grade(@Request() req: any, @Param('answerId', ParseUUIDPipe) id: string, @Body() dto: GradeAnswerDto) { return this.essay.gradeAnswer(req.user, id, dto); }
+  @Post('answers/:answerId/ai-suggest') @Roles('ADMIN', 'TEACHER') aiSuggest(@Request() req: any, @Param('answerId', ParseUUIDPipe) id: string) { return this.essay.aiSuggest(req.user, id); }
   @Post('attempts/:attemptId/submit') @Roles('ADMIN', 'TEACHER') submit(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.submitGrading(req.user, id); }
   @Post('attempts/:attemptId/approve') @Roles('ADMIN') approve(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.approve(req.user, id, false); }
   @Post('attempts/:attemptId/publish') @Roles('ADMIN') publish(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) { return this.essay.approve(req.user, id, true); }

@@ -11,6 +11,7 @@ export default function EssayGradingPage() {
   const [comments, setComments] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -37,6 +38,15 @@ export default function EssayGradingPage() {
     await api.patch(`/essay/grading/answers/${answer.id}`, { criteria });
     setMessage('Đã lưu điểm câu trả lời');
     await open(selected.id);
+  };
+  const aiSuggest = async (answer: any) => {
+    try {
+      setAiLoading(answer.id);
+      const res = await api.post(`/essay-grading/answers/${answer.id}/ai-suggest`);
+      (res.data.criteria || []).forEach((item: any) => setScores((s) => ({ ...s, [item.criterionId]: item.score })));
+      setMessage(`AI đã đề xuất điểm (${Math.round((res.data.confidence || 0) * 100)}% tin cậy). Hãy kiểm tra trước khi lưu.`);
+    } catch (e: any) { setMessage(e?.response?.data?.message || 'Không thể lấy đề xuất từ AI'); }
+    finally { setAiLoading(null); }
   };
   const complete = () => {
     if (!selected) return;

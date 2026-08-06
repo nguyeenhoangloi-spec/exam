@@ -101,6 +101,37 @@ export class EssayService {
     return { success: true, finalScore: total };
   }
 
+  async aiSuggest(actor: any, answerId: string) {
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!apiKey) throw new NotFoundException('Chưa cấu hình GEMINI_API_KEY cho hỗ trợ chấm AI.');
+    const answer = await this.prisma.attemptAnswer.findUnique({ where: { id: answerId }, include: { attempt: { include: { snapshot: true, student: true } } } });
+    if (!answer) throw new NotFoundException('Không tìm thấy câu trả lời.');
+    await this.getAttempt(actor, answer.attemptId);
+    const snapshot = ((answer.attempt.snapshot?.snapshotData as any[]) || []).find((q) => q.questionId === answer.questionId);
+    if (!snapshot || snapshot.type !== 'ESSAY') throw new BadRequestException('Chỉ hỗ trợ chấm AI cho câu tự luận.');
+    const rubric = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: answer.questionId }, orderBy: { sortOrder: 'asc' } });
+    if (!rubric.length) throw new BadRequestException('Câu hỏi chưa có rubric.');
+    const prompt = `Bạn là trợ lý chấm thi. Chỉ đề xuất, không quyết định điểm.\nCÂU HỎI:\n${snapshot.content}\nBÀI LÀM:\n${answer.textAnswer || ''}\nRUBRIC:\n${rubric.map((r) => `${r.id}|${r.label}|${r.description || ''}|tối đa ${r.maxScore}`).join('\n')}\nTrả JSON duy nhất dạng {"criteria":[{"criterionId":"...","score":0,"comment":"..."}],"overallComment":"...","confidence":0}. Điểm không vượt maxScore.`;
+    const controller = new AbortController();
+    const timeoutMs = Math.min(Math.max(Number(process.env.GEMINI_TIMEOUT_MS || 120000), 30000), 180000);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const model = process.env.GEMINI_MODEL?.trim() || 'gemini-2.0-flash';
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.1 } }) });
+      if (!response.ok) throw new BadRequestException(`Gemini trả lỗi HTTP ${response.status}.`);
+      const payload: any = await response.json();
+      const raw = payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) throw new BadRequestException('AI không trả đúng JSON chấm điểm.');
+      const parsed = JSON.parse(match[0]);
+      const byId = new Map(rubric.map((r) => [r.id, r]));
+      const criteria = Array.isArray(parsed.criteria) ? parsed.criteria.map((item: any) => { const r = byId.get(String(item.criterionId)); if (!r) return null; return { criterionId: r.id, score: Math.min(Math.max(Number(item.score) || 0, 0), r.maxScore), comment: String(item.comment || '') }; }).filter(Boolean) : [];
+      if (criteria.length !== rubric.length) throw new BadRequestException('AI chưa đánh giá đủ các tiêu chí rubric.');
+      return { criteria, overallComment: String(parsed.overallComment || ''), confidence: Math.min(Math.max(Number(parsed.confidence) || 0, 0), 1), requiresTeacherConfirmation: true };
+    } catch (error: any) { if (error instanceof BadRequestException) throw error; if (error?.name === 'AbortError') throw new BadRequestException('AI chấm quá thời gian chờ.'); throw new BadRequestException(error?.message || 'Không thể gọi AI chấm bài.'); }
+    finally { clearTimeout(timer); }
+  }
+
   async submitGrading(actor: any, attemptId: string) {
     const attempt = await this.getAttempt(actor, attemptId);
     const answers = await this.prisma.attemptAnswer.findMany({ where: { attemptId } });
