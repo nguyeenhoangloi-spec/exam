@@ -9,6 +9,15 @@ import { join } from 'node:path';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Document/AI import sends extracted text and (for PDF) inline image data
+  // in the follow-up JSON request. Express' default ~100 KB parser limit
+  // rejects legitimate 5–10 MB source files before the controller can
+  // validate them, which surfaced in the UI as a generic import failure.
+  // Keep multipart upload limits in the QuestionsController; this only raises
+  // the JSON envelope limit for the extraction/generation contract.
+  app.use(express.json({ limit: '25mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

@@ -791,9 +791,9 @@ export default function ExamArrangementPage() {
                                   </div>
 
                                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 pt-1">
-                                    {studentsInRoom.map((st) => (
+                                    {studentsInRoom.map((st, sIdx) => (
                                       <div
-                                        key={st.id}
+                                        key={st.id ? `st-${st.id}-${sIdx}` : `st-${st.studentCode}-${st.seatNumber}-${sIdx}`}
                                         className="rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs hover:border-blue-300 transition text-left space-y-1"
                                       >
                                         <div className="flex items-center justify-between text-[10px]">
@@ -835,8 +835,8 @@ export default function ExamArrangementPage() {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 bg-white">
-                              {filteredDetails.map((st) => (
-                                <tr key={st.id} className="hover:bg-slate-50 transition">
+                              {filteredDetails.map((st, dIdx) => (
+                                <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50 transition">
                                   <td className="p-3.5 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
                                   <td className="p-3.5 text-center font-extrabold text-sky-700">Ghế #{st.seatNumber}</td>
                                   <td className="p-3.5 font-mono font-semibold text-slate-800">{st.studentCode}</td>
@@ -898,8 +898,8 @@ export default function ExamArrangementPage() {
                       <td colSpan={4} className="p-12 text-center text-slate-400 font-semibold">Chưa có lịch sử thao tác xếp phòng.</td>
                     </tr>
                   ) : (
-                    historyLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-50 transition">
+                    historyLogs.map((log, lIdx) => (
+                      <tr key={log.id ? `log-${log.id}-${lIdx}` : `log-${lIdx}`} className="hover:bg-slate-50 transition">
                         <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
                           {new Date(log.createdAt).toLocaleString('vi-VN')}
                         </td>

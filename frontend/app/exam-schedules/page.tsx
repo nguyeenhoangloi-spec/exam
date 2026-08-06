@@ -44,6 +44,7 @@ export default function ExamSchedulesPage() {
   const [schedules, setSchedules] = useState<ExamScheduleItemExtended[]>([]);
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
   const [rooms, setRooms] = useState<ExamRoom[]>([]);
+  const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filters State
@@ -86,14 +87,12 @@ export default function ExamSchedulesPage() {
   const [editingSchedule, setEditingSchedule] = useState<ExamScheduleItemExtended | null>(null);
 
   const [formData, setFormData] = useState({
-    periodName: '',
+    examPeriodId: '',
+    subjectId: '',
     shiftName: 'Ca 1 - Sáng',
-    roomName: '',
     examDate: new Date().toISOString().split('T')[0],
     startTime: '07:30',
     endTime: '08:30',
-    studentCount: '40',
-    statusBadge: 'UPCOMING',
   });
   const [selectedDuration, setSelectedDuration] = useState<number>(60);
 
@@ -115,18 +114,21 @@ export default function ExamSchedulesPage() {
   const fetchInitialData = useCallback(async () => {
     setLoading(true);
     try {
-      const [resPeriods, resRooms, resSchedules] = await Promise.all([
+      const [resPeriods, resRooms, resSubjects, resSchedules] = await Promise.all([
         api.get('/exam-periods').catch(() => ({ data: [] })),
         api.get('/exam-rooms').catch(() => ({ data: [] })),
+        api.get('/subjects').catch(() => ({ data: [] })),
         api.get('/exam-schedules').catch(() => ({ data: [] })),
       ]);
 
       const realPeriods = resPeriods.data || [];
       const realRooms = resRooms.data || [];
+      const realSubjects = resSubjects.data || [];
       const rawSchedules = resSchedules.data || [];
 
       setPeriods(realPeriods);
       setRooms(realRooms);
+      setSubjects(realSubjects);
 
       if (Array.isArray(rawSchedules)) {
         const mappedRealSchedules: ExamScheduleItemExtended[] = rawSchedules.map((s: any) => ({
@@ -210,14 +212,12 @@ export default function ExamSchedulesPage() {
     const duration = 60;
     setSelectedDuration(duration);
     setFormData({
-      periodName: periods[0]?.name || 'Kỳ thi Học kỳ 2 Năm học 2025-2026',
+      examPeriodId: periods[0]?.id ? String(periods[0].id) : '',
+      subjectId: subjects[0]?.id ? String(subjects[0].id) : '',
       shiftName: computeShiftName(defaultStart),
-      roomName: rooms[0]?.roomCode || rooms[0]?.name || 'P.101',
       examDate: new Date().toISOString().split('T')[0],
       startTime: defaultStart,
       endTime: calculateEndTime(defaultStart, duration),
-      studentCount: '45',
-      statusBadge: 'UPCOMING',
     });
     setIsModalOpen(true);
   };
@@ -238,55 +238,44 @@ export default function ExamSchedulesPage() {
     setSelectedDuration(duration);
 
     setFormData({
-      periodName: s.periodName || s.examPeriod?.name || '',
+      examPeriodId: s.examPeriodId ? String(s.examPeriodId) : (periods[0]?.id ? String(periods[0].id) : ''),
+      subjectId: s.subjectId ? String(s.subjectId) : (subjects[0]?.id ? String(subjects[0].id) : ''),
       shiftName: computeShiftName(startT, s.shiftName),
-      roomName: s.roomName || 'P.101',
-      examDate: s.examDate ? new Date(s.examDate).toISOString().split('T')[0] : '',
+      examDate: s.examDate ? new Date(s.examDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       startTime: startT,
       endTime: s.endTime || calculateEndTime(startT, duration),
-      studentCount: String(s.studentCount ?? (s as any)._count?.examRoomStudents ?? 0),
-      statusBadge: (s.statusBadge || 'UPCOMING') as any,
     });
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.examPeriodId || !formData.subjectId) {
+      setToast({ message: 'Vui lòng chọn Kỳ thi và Môn học hợp lệ!', type: 'error' });
+      return;
+    }
+
+    const payload = {
+      examPeriodId: Number(formData.examPeriodId),
+      subjectId: Number(formData.subjectId),
+      examDate: formData.examDate,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+    };
+
     try {
       if (editingSchedule) {
-        await api.patch(`/exam-schedules/${editingSchedule.id}`, formData).catch(() => { });
-        setSchedules((prev) =>
-          prev.map((x) =>
-            x.id === editingSchedule.id
-              ? { ...x, ...formData, studentCount: Number(formData.studentCount) }
-              : x,
-          ),
-        );
+        await api.patch(`/exam-schedules/${editingSchedule.id}`, payload);
         setToast({ message: 'Cập nhật lịch thi thành công!', type: 'success' });
       } else {
-        const payload = {
-          ...formData,
-          studentCount: Number(formData.studentCount),
-        };
-        const res = await api.post('/exam-schedules', payload).catch(() => null);
-        const newId = res?.data?.id || Math.max(0, ...schedules.map((x) => x.id)) + 1;
-        setSchedules((prev) => [
-          {
-            id: newId,
-            code: `LCT${String(newId).padStart(6, '0')}`,
-            ...formData,
-            studentCount: Number(formData.studentCount),
-            supervisorCount: '2/2',
-            statusBadge: formData.statusBadge as any,
-          },
-          ...prev,
-        ]);
+        await api.post('/exam-schedules', payload);
         setToast({ message: 'Tạo lịch thi mới thành công!', type: 'success' });
       }
       setIsModalOpen(false);
-      fetchInitialData();
-    } catch {
-      setIsModalOpen(false);
+      await fetchInitialData();
+    } catch (err: any) {
+      const errMsg = err?.response?.data?.message || err?.message || 'Lưu lịch thi thất bại';
+      setToast({ message: Array.isArray(errMsg) ? errMsg.join(', ') : errMsg, type: 'error' });
     }
   };
 
@@ -533,16 +522,50 @@ export default function ExamSchedulesPage() {
         title={editingSchedule ? 'Chỉnh sửa Lịch thi' : 'Tạo Lịch thi Mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tên Kỳ thi</label>
-            <input
-              type="text"
-              required
-              placeholder="VD: Thi học kỳ II 2023-2024"
-              value={formData.periodName}
-              onChange={(e) => setFormData({ ...formData, periodName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                Kỳ thi <span className="text-red-500">*</span>
+              </label>
+              <select
+                required
+                value={formData.examPeriodId}
+                onChange={(e) => setFormData({ ...formData, examPeriodId: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none bg-white font-medium"
+              >
+                {periods.length === 0 ? (
+                  <option value="">-- Chưa có kỳ thi nào --</option>
+                ) : (
+                  periods.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.semester} - {p.schoolYear})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                Môn học / Môn thi <span className="text-red-500">*</span>
+              </label>
+              <select
+                required
+                value={formData.subjectId}
+                onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none bg-white font-medium"
+              >
+                {subjects.length === 0 ? (
+                  <option value="">-- Chưa có môn học nào --</option>
+                ) : (
+                  subjects.map((sub: any) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.subjectCode ? `[${sub.subjectCode}] ` : ''}{sub.subjectName || sub.name}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
           </div>
 
           <div>

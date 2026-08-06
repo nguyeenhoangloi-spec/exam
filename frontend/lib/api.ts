@@ -79,7 +79,11 @@ api.interceptors.response.use(
     }
     const rawMessage = error.response?.data?.message;
     const message = Array.isArray(rawMessage) ? rawMessage.join(', ') : (rawMessage || 'Đã có lỗi xảy ra');
-    return Promise.reject(new Error(message));
+    const normalizedError = new Error(message) as Error & { response?: any; code?: string; status?: number };
+    normalizedError.response = error.response;
+    normalizedError.code = error.code;
+    normalizedError.status = error.response?.status;
+    return Promise.reject(normalizedError);
   },
 );
 

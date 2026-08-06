@@ -14,32 +14,38 @@ export class GeminiProvider {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    const modelName = this.configService.get<string>('GEMINI_MODEL') || 'gemini-1.5-flash';
+    const modelName = this.configService.get<string>('GEMINI_MODEL') || 'gemini-2.0-flash';
+    const candidateModels = Array.from(new Set([modelName, 'gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.5-flash']));
     const timeoutMs = options?.timeoutMs || Number(this.configService.get<number>('GEMINI_TIMEOUT_MS')) || 30000;
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: modelName,
-      systemInstruction: options?.systemPrompt,
-    });
 
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error(`Gemini API timed out after ${timeoutMs}ms`)), timeoutMs);
-    });
+    let lastError: any = null;
+    for (const curModel of candidateModels) {
+      const model = genAI.getGenerativeModel({
+        model: curModel,
+        systemInstruction: options?.systemPrompt,
+      });
 
-    try {
-      this.logger.log(`Calling Gemini API (model: ${modelName})...`);
-      const apiPromise = model.generateContent(prompt);
-      const result = await Promise.race([apiPromise, timeoutPromise]);
-      const response = await result.response;
-      const text = response.text();
-      if (!text) {
-        throw new Error('Gemini API returned empty response');
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error(`Gemini API timed out after ${timeoutMs}ms`)), timeoutMs);
+      });
+
+      try {
+        this.logger.log(`Calling Gemini API (model: ${curModel})...`);
+        const apiPromise = model.generateContent(prompt);
+        const result = await Promise.race([apiPromise, timeoutPromise]);
+        const response = await result.response;
+        const text = response.text();
+        if (text) return text;
+      } catch (error: any) {
+        lastError = error;
+        const msg = String(error?.message || error);
+        if (!msg.includes('404') && !msg.includes('not found')) {
+          throw error;
+        }
       }
-      return text;
-    } catch (error: any) {
-      this.logger.error(`Gemini API error: ${error?.message || error}`);
-      throw error;
     }
+    throw lastError || new Error('Gemini API failed on all candidate models');
   }
 }

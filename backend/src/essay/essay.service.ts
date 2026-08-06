@@ -120,8 +120,19 @@ export class EssayService {
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const model = process.env.GEMINI_MODEL?.trim() || 'gemini-2.0-flash';
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.1 } }) });
-      if (!response.ok) throw new BadRequestException(`Gemini trả lỗi HTTP ${response.status}.`);
+      const candidateModels = Array.from(new Set([model, 'gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.5-flash']));
+      let response: Response | null = null;
+      for (const candidateModel of candidateModels) {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(candidateModel)}:generateContent?key=${encodeURIComponent(apiKey)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.1 } }) });
+        if (res.ok) {
+          response = res;
+          break;
+        }
+        if (res.status !== 404) {
+          throw new BadRequestException(`Gemini trả lỗi HTTP ${res.status}.`);
+        }
+      }
+      if (!response || !response.ok) throw new BadRequestException('Gemini trả lỗi HTTP 404.');
       const payload: any = await response.json();
       const raw = payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
       const match = raw.match(/\{[\s\S]*\}/);
