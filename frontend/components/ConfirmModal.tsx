@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, AlertTriangle, CheckCircle, Trash2, XCircle } from 'lucide-react';
+import { X, AlertTriangle, CheckCircle, LogOut, Info } from 'lucide-react';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  type = 'warning',
+  type = 'danger',
   requireReason = false,
   reasonPlaceholder = 'Nhập lý do (tối thiểu 3 ký tự)...',
   confirmText = 'Xác nhận',
@@ -48,52 +48,73 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     onConfirm(reason);
   };
 
-  const getIcon = () => {
+  const getIconConfig = () => {
     switch (type) {
       case 'danger':
-        return <Trash2 className="h-6 w-6 text-rose-600" />;
+        return {
+          icon: <LogOut className="h-4.5 w-4.5 text-rose-600" />,
+          bg: 'bg-rose-50 border-rose-200',
+        };
       case 'success':
-        return <CheckCircle className="h-6 w-6 text-emerald-600" />;
+        return {
+          icon: <CheckCircle className="h-4.5 w-4.5 text-emerald-600" />,
+          bg: 'bg-emerald-50 border-emerald-200',
+        };
+      case 'info':
+        return {
+          icon: <Info className="h-4.5 w-4.5 text-blue-600" />,
+          bg: 'bg-blue-50 border-blue-200',
+        };
       default:
-        return <AlertTriangle className="h-6 w-6 text-amber-600" />;
+        return {
+          icon: <AlertTriangle className="h-4.5 w-4.5 text-amber-600" />,
+          bg: 'bg-amber-50 border-amber-200',
+        };
     }
   };
 
   const getButtonBgClass = () => {
     switch (type) {
       case 'danger':
-        return 'bg-rose-600 hover:bg-rose-700 text-white';
+        return 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200';
       case 'success':
-        return 'bg-emerald-600 hover:bg-emerald-700 text-white';
+        return 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200';
+      case 'info':
+        return 'bg-[#003896] hover:bg-[#002d78] text-white shadow-blue-200';
       default:
-        return 'bg-amber-600 hover:bg-amber-700 text-white';
+        return 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-200';
     }
   };
 
+  const iconConfig = getIconConfig();
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
-              {getIcon()}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-sm my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-950/15 transition-all border border-slate-200/90 dark:border-slate-700">
+        {/* Header Bar - Compact & Sleek */}
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-4.5 py-3 sm:px-5 sm:py-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className={`flex h-8.5 w-8.5 items-center justify-center rounded-xl border ${iconConfig.bg} shadow-2xs shrink-0`}>
+              {iconConfig.icon}
             </div>
-            <h3 className="text-base font-bold text-slate-800">{title}</h3>
+            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-none">{title}</h3>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition"
+            className="flex h-7 w-7 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-slate-600 font-medium leading-relaxed">{message}</p>
+        {/* Modal Body - Compact Spacing */}
+        <div className="p-4.5 sm:p-5 space-y-3">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
 
           {requireReason && (
             <div className="space-y-1.5 pt-1">
-              <label className="block text-xs font-semibold text-slate-700">Lý do thực hiện:</label>
+              <label className="block text-xs font-bold text-slate-800 dark:text-slate-200">Lý do thực hiện:</label>
               <textarea
                 rows={3}
                 value={reason}
@@ -102,23 +123,26 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   if (reasonError) setReasonError('');
                 }}
                 placeholder={reasonPlaceholder}
-                className="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-xs font-semibold focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
-              {reasonError && <p className="text-xs font-medium text-rose-600">{reasonError}</p>}
+              {reasonError && <p className="text-xs font-bold text-rose-600">{reasonError}</p>}
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+        {/* Footer Actions - Compact Buttons */}
+        <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-4.5 py-3 sm:px-5 sm:py-3">
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition"
+            className="rounded-xl border border-slate-200/90 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer shadow-2xs"
           >
             {cancelText}
           </button>
           <button
+            type="button"
             onClick={handleConfirm}
-            className={`rounded-xl px-5 py-2.5 text-sm font-semibold shadow-sm transition ${getButtonBgClass()}`}
+            className={`rounded-xl px-4 py-2 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer ${getButtonBgClass()}`}
           >
             {confirmText}
           </button>

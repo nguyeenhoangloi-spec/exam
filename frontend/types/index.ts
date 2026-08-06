@@ -6,6 +6,7 @@ export interface User {
   email: string;
   role: Role;
   status: string;
+  avatarUrl?: string;
   student?: Student;
   teacher?: Teacher;
 }
@@ -40,6 +41,7 @@ export interface Student {
   dateOfBirth: string;
   email: string;
   phone?: string;
+  avatarUrl?: string;
   classId: number;
   class?: ClassItem;
   userId: number;
@@ -53,6 +55,7 @@ export interface Teacher {
   degree: string;
   email: string;
   phone?: string;
+  avatarUrl?: string;
   departmentId: number;
   department?: Department;
   userId: number;

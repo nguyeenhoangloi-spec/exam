@@ -15,7 +15,7 @@ import { usePageTitleValue } from './PageTitleContext';
  * Full-screen routes that must render without the sidebar/header shell
  * (online exam taking, proctor live dashboard, login, etc.).
  */
-const FULLSCREEN_PREFIXES = ['/login', '/student/online-exam', '/teacher/proctor'];
+const FULLSCREEN_PREFIXES = ['/login', '/student/online-exam', '/teacher/proctor', '/contact', '/forgot-password'];
 
 const isFullscreenRoute = (pathname: string) =>
     FULLSCREEN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -40,6 +40,16 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
     useEffect(() => {
         setCollapsed(window.localStorage.getItem('sidebar-collapsed') === 'true');
+    }, []);
+
+    // Apply saved theme (dark mode) on first load so it persists across pages
+    useEffect(() => {
+        try {
+            const theme = window.localStorage.getItem('theme');
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+        } catch (e) {
+            /* ignore */
+        }
     }, []);
 
     useEffect(() => {
@@ -94,7 +104,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     return (
-        <div className="min-h-screen overflow-x-clip bg-slate-50">
+        <div className="min-h-screen overflow-x-clip bg-slate-50 dark:bg-slate-950">
             <NavigationProgress />
             <Sidebar
                 user={user}
@@ -118,8 +128,8 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                 className={`app-shell-main min-h-screen min-w-0 ${isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
                     } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
             >
-                <Header user={user} title={title} collapsed={collapsed} onMenuClick={() => setMobileOpen(true)} />
-                <main className="w-full p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-56px)]">{children}</main>
+                <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
+                <main className="w-full min-h-[calc(100vh-56px)]">{children}</main>
             </div>
         </div>
     );

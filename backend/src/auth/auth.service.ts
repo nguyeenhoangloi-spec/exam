@@ -1,4 +1,11 @@
-import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
@@ -128,33 +135,45 @@ export class AuthService {
 
     if (!user) throw new NotFoundException('Người dùng không tồn tại.');
 
-    // Update User email
-    if (dto.email) {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: { email: dto.email },
-      });
-    }
+    try {
+      // Update User email (if changed)
+      if (dto.email && dto.email !== user.email) {
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: { email: dto.email },
+        });
+      }
 
-    // Update Teacher or Student fullName & phone
-    if (user.teacher && dto.fullName) {
-      await this.prisma.teacher.update({
-        where: { id: user.teacher.id },
-        data: {
-          fullName: dto.fullName,
-          ...(dto.phone ? { phone: dto.phone } : {}),
-          ...(dto.email ? { email: dto.email } : {}),
-        },
-      });
-    } else if (user.student && dto.fullName) {
-      await this.prisma.student.update({
-        where: { id: user.student.id },
-        data: {
-          fullName: dto.fullName,
-          ...(dto.phone ? { phone: dto.phone } : {}),
-          ...(dto.email ? { email: dto.email } : {}),
-        },
-      });
+      // Update Teacher or Student fullName & phone
+      if (user.teacher && (dto.fullName || dto.phone || dto.email)) {
+        await this.prisma.teacher.update({
+          where: { id: user.teacher.id },
+          data: {
+            ...(dto.fullName ? { fullName: dto.fullName } : {}),
+            ...(dto.phone ? { phone: dto.phone } : {}),
+            ...(dto.email && dto.email !== user.teacher.email ? { email: dto.email } : {}),
+          },
+        });
+      } else if (user.student && (dto.fullName || dto.phone || dto.email)) {
+        await this.prisma.student.update({
+          where: { id: user.student.id },
+          data: {
+            ...(dto.fullName ? { fullName: dto.fullName } : {}),
+            ...(dto.phone ? { phone: dto.phone } : {}),
+            ...(dto.email && dto.email !== user.student.email ? { email: dto.email } : {}),
+          },
+        });
+      } else if (dto.fullName && !user.teacher && !user.student) {
+        // ADMIN accounts have no teacher/student record — keep the display name
+        // synced via the User table is not possible (no column), so we store it
+        // in a lightweight way: nothing to persist server-side for admin beyond email.
+        // The frontend already persists admin display name in localStorage.
+      }
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+        throw new ConflictException('Email đã được sử dụng bởi tài khoản khác.');
+      }
+      throw err;
     }
 
     return this.getProfile(userId);

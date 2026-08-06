@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, RefreshCw, ChevronDown } from 'lucide-react';
+import { Calendar, RefreshCw } from 'lucide-react';
 
 export function DashboardHeader({
   onRefresh,
@@ -62,7 +62,6 @@ export function DashboardHeader({
           >
             <RefreshCw className={`h-4 w-4 text-blue-600 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Làm mới dữ liệu</span>
-            <ChevronDown className="h-3.5 w-3.5 text-blue-500 ml-0.5" />
           </button>
         </div>
 

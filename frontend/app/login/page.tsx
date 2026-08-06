@@ -440,7 +440,7 @@ export default function LoginPage() {
                     <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 cursor-pointer" />
                     <span className={['text-xs font-semibold', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>Ghi nhớ đăng nhập</span>
                   </label>
-                  <button type="button" className="text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer">Quên mật khẩu?</button>
+                  <button type="button" onClick={() => router.push('/forgot-password')} className="text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer">Quên mật khẩu?</button>
                 </div>
 
                 {/* Submit */}
@@ -470,7 +470,7 @@ export default function LoginPage() {
                 <p className={['flex items-center justify-center gap-1.5 text-xs font-medium', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>
                   <Headphones className="w-3 h-3" />
                   Cần hỗ trợ?{' '}
-                  <button type="button" className="text-blue-600 hover:text-blue-700 font-bold transition cursor-pointer">Liên hệ quản trị hệ thống</button>
+                  <button type="button" onClick={() => router.push('/contact')} className="text-blue-600 hover:text-blue-700 font-bold transition cursor-pointer">Liên hệ quản trị hệ thống</button>
                 </p>
               </div>
             </div>

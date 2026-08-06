@@ -95,7 +95,7 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-12 animate-fade-in">
+    <div className="space-y-6 max-w-4xl mx-auto p-4 sm:p-6 pb-12 animate-fade-in">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* Hero Banner Enterprise SaaS Style */}

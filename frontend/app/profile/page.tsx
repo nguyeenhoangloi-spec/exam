@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
-import { getAuthUser, setAuthToken } from '../../lib/auth';
+import { getAuthUser, getAuthToken, setAuthToken } from '../../lib/auth';
+import { User as UserType } from '../../types';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import {
@@ -20,6 +21,10 @@ import {
   Lock,
   Settings,
   MapPin,
+  Camera,
+  Upload,
+  Trash2,
+  ImageIcon,
 } from 'lucide-react';
 
 interface ProfileData {
@@ -29,6 +34,7 @@ interface ProfileData {
   status: string;
   createdAt: string;
   email?: string;
+  avatarUrl?: string;
   student?: any;
   teacher?: any;
 }
@@ -36,13 +42,15 @@ interface ProfileData {
 export default function ProfilePage() {
   usePageTitle('Hồ sơ cá nhân');
   const router = useRouter();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'info' | 'permissions' | 'edit'>('info');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Edit form state
+  // Avatar & Edit form state
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -55,6 +63,10 @@ export default function ProfilePage() {
       const res = await api.get('/auth/profile');
       const data = res.data;
       setProfile(data);
+
+      const localUser = getAuthUser();
+      const currentAvatar = data.avatarUrl || data.teacher?.avatarUrl || data.student?.avatarUrl || localUser?.avatarUrl || '';
+      setAvatarUrl(currentAvatar);
 
       const name = data.teacher?.fullName || data.student?.fullName || data.username || 'Admin';
       setFullName(name);
@@ -70,9 +82,11 @@ export default function ProfilePage() {
           role: u.role || 'ADMIN',
           status: 'ACTIVE',
           createdAt: new Date().toISOString(),
+          avatarUrl: u.avatarUrl,
           student: u.student || null,
           teacher: u.teacher || null,
         });
+        setAvatarUrl(u.avatarUrl || u.teacher?.avatarUrl || u.student?.avatarUrl || '');
         const name = u.teacher?.fullName || u.student?.fullName || u.username || 'Admin';
         setFullName(name);
         setEmail(u.email || `${u.username || 'user'}@exam.edu.vn`);
@@ -90,6 +104,61 @@ export default function ProfilePage() {
     fetchProfile();
   }, [fetchProfile]);
 
+  const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setToast({ message: 'Vui lòng chọn một file hình ảnh hợp lệ (PNG, JPG, WEBP)!', type: 'error' });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setToast({ message: 'Dung lượng ảnh tối đa là 5MB!', type: 'error' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setAvatarUrl(dataUrl);
+
+      // Persist avatar to localStorage & emit auth-change so Sidebar & Header update instantly
+      const token = getAuthToken();
+      const current = getAuthUser();
+      if (token && current) {
+        const updatedUser = {
+          ...current,
+          avatarUrl: dataUrl,
+        };
+        setAuthToken(token, updatedUser as UserType);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('auth-change'));
+        }
+      }
+      setToast({ message: 'Đã cập nhật ảnh đại diện thành công!', type: 'success' });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl('');
+    const token = getAuthToken();
+    const current = getAuthUser();
+    if (token && current) {
+      const updatedUser = {
+        ...current,
+        avatarUrl: undefined,
+      };
+      setAuthToken(token, updatedUser as UserType);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('auth-change'));
+      }
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    setToast({ message: 'Đã gỡ ảnh đại diện thành công!', type: 'success' });
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -98,18 +167,33 @@ export default function ProfilePage() {
         fullName: fullName.trim(),
         email: email.trim(),
         phone: phone.trim(),
+        avatarUrl,
       });
 
       const updated = res.data;
       setProfile(updated);
 
-      // Sync updated user profile to localStorage so Header updates realtime
-      const token = localStorage.getItem('auth_token') || '';
+      const savedName = updated.teacher?.fullName || updated.student?.fullName || updated.username || fullName.trim();
+      setFullName(savedName);
+      setEmail(updated.email || email.trim());
+      setPhone(updated.teacher?.phone || updated.student?.phone || phone.trim());
+
+      const token = getAuthToken();
       if (token && updated) {
-        setAuthToken(token, updated);
+        const current = getAuthUser();
+        setAuthToken(token, {
+          ...(current || {}),
+          ...updated,
+          avatarUrl: avatarUrl || updated.avatarUrl || current?.avatarUrl,
+          teacher: updated.teacher ?? current?.teacher,
+          student: updated.student ?? current?.student,
+        } as UserType);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('auth-change'));
+        }
       }
 
-      setToast({ message: 'Đã cập nhật hồ sơ cá nhân và lưu vào cơ sở dữ liệu thành công!', type: 'success' });
+      setToast({ message: 'Đã cập nhật hồ sơ cá nhân và lưu thành công!', type: 'success' });
       setActiveTab('info');
     } catch (err: any) {
       setToast({ message: err?.response?.data?.message || err.message || 'Cập nhật hồ sơ thất bại', type: 'error' });
@@ -142,8 +226,17 @@ export default function ProfilePage() {
     'Ban Quản trị Khảo thí Trung tâm';
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 animate-fade-in">
+    <div className="space-y-6 max-w-6xl mx-auto p-4 sm:p-6 pb-12 animate-fade-in">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+      {/* Hidden File Input for Avatar Selection */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleAvatarSelect}
+        className="hidden"
+      />
 
       {/* Hero Banner Enterprise SaaS Style */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
@@ -158,9 +251,23 @@ export default function ProfilePage() {
 
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-            {/* Avatar Circle */}
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 font-black text-white text-3xl shadow-xl">
-              {displayName.charAt(0).toUpperCase()}
+            {/* Avatar Circle with Camera Overlay */}
+            <div className="relative group shrink-0">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 font-black text-white text-3xl shadow-xl overflow-hidden">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  displayName.charAt(0).toUpperCase()
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg transition active:scale-95 cursor-pointer border border-white/30"
+                title="Tải ảnh đại diện mới"
+              >
+                <Camera className="h-3.5 w-3.5" />
+              </button>
             </div>
 
             <div className="space-y-1.5">
@@ -359,6 +466,45 @@ export default function ProfilePage() {
           </h2>
 
           <div className="space-y-3">
+            {/* Avatar Upload Section */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+              <label className="block text-xs font-black text-slate-800">Ảnh đại diện tài khoản</label>
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-black text-blue-600 text-2xl shadow-xs overflow-hidden shrink-0">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                  ) : (
+                    displayName.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div className="space-y-1.5 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
+                    >
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>Tải ảnh đại diện mới</span>
+                    </button>
+                    {avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveAvatar}
+                        className="flex items-center gap-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 px-3.5 py-2 text-xs font-bold border border-rose-200 transition active:scale-95 cursor-pointer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span>Gỡ ảnh đại diện</span>
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[11px] font-semibold text-slate-400">
+                    Chấp nhận định dạng PNG, JPG, WEBP. Dung lượng tối đa 5MB.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-1.5">
               <label className="block text-xs font-black text-slate-800">Họ và tên hiển thị</label>
               <input
