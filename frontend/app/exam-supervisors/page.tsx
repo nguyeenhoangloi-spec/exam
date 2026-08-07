@@ -297,15 +297,15 @@ export default function ExamSupervisorsPage() {
   const renderStatusBadge = (status: string) => {
     switch (status) {
       case 'CONFIRMED':
-        return <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 border border-emerald-200 whitespace-nowrap">Đã xác nhận</span>;
+        return <StatusBadge status="CONFIRMED" customLabel="Đã xác nhận" />;
       case 'CHANGE_REQUESTED':
-        return <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800 border border-amber-300 whitespace-nowrap">Xin đổi ca</span>;
+        return <StatusBadge status="CHANGE_REQUESTED" customLabel="Xin đổi ca" />;
       case 'COMPLETED':
-        return <span className="inline-flex items-center rounded-full bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 border border-sky-200 whitespace-nowrap">Hoàn thành</span>;
+        return <StatusBadge status="COMPLETED" customLabel="Hoàn thành" />;
       case 'ABSENT':
-        return <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 border border-rose-200 whitespace-nowrap">Vắng mặt</span>;
+        return <StatusBadge status="ABSENT" customLabel="Vắng mặt" />;
       default:
-        return <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600 border border-slate-200 whitespace-nowrap">Chờ phản hồi</span>;
+        return <StatusBadge status="PENDING" customLabel="Chờ phản hồi" />;
     }
   };
 
@@ -689,16 +689,15 @@ export default function ExamSupervisorsPage() {
             {/* Assignment Form - Admin only */}
             {currentUser?.role === 'ADMIN' && (
               <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
-                <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-700 mb-4 flex items-center gap-2">
-                  <UserPlus className="h-4 w-4 text-emerald-600" /> Thêm Phân công Giám thị
-                </h3>
-
-                <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+                <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
+                    THÊM PHÂN CÔNG GIÁM THỊ
+                  </h3>
                   <button
                     type="button"
                     onClick={() => void previewAutoAssign()}
                     disabled={autoLoading || !selectedSchedule?.id}
-                    className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700 hover:bg-sky-100 disabled:opacity-50 transition cursor-pointer"
+                    className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100 active:scale-98 disabled:opacity-50 transition cursor-pointer"
                   >
                     {autoLoading ? 'Đang tạo phương án...' : 'Đề xuất tự động'}
                   </button>
@@ -741,13 +740,13 @@ export default function ExamSupervisorsPage() {
                   </div>
                 )}
 
-                <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">Giảng viên coi thi</label>
+                <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                  <div className="md:col-span-5">
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Giảng viên coi thi</label>
                     <select
                       value={selectedTeacherId}
                       onChange={(e) => setSelectedTeacherId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
+                      className="w-full h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
                     >
                       {teachers.map((t) => (
                         <option key={t.id} value={t.id}>
@@ -757,24 +756,24 @@ export default function ExamSupervisorsPage() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">Vai trò Coi thi</label>
+                  <div className="md:col-span-4">
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Vai trò Coi thi</label>
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
+                      className="w-full h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
                     >
                       <option value="SUPERVISOR_1">Giám thị 1 (Cán bộ coi thi chính)</option>
                       <option value="SUPERVISOR_2">Giám thị 2 (Cán bộ coi thi phụ)</option>
                     </select>
                   </div>
 
-                  <div className="flex items-end">
+                  <div className="md:col-span-3">
                     <button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 text-sm shadow-sm transition cursor-pointer"
+                      className="w-full h-[42px] flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition active:scale-98 cursor-pointer"
                     >
-                      <UserPlus className="h-4 w-4" /> Phân công Giám thị
+                      Phân công Giám thị
                     </button>
                   </div>
                 </form>
@@ -824,8 +823,9 @@ export default function ExamSupervisorsPage() {
                             </td>
                             <td className="p-3.5 font-bold text-emerald-700 whitespace-nowrap">{rName}</td>
                             <td className="p-3.5 whitespace-nowrap">
-                              <span className="inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[10.5px] font-black text-sky-700 border border-sky-200">
-                                {sup.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
+                              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 dark:text-sky-400 select-none">
+                                <ShieldCheck className="h-4 w-4 shrink-0" />
+                                <span>{sup.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}</span>
                               </span>
                             </td>
                             <td className="p-3.5 min-w-[130px]">

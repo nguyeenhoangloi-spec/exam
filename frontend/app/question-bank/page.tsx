@@ -195,6 +195,60 @@ export default function QuestionBankPage() {
       return;
     }
 
+    if (name === 'submit') {
+      try {
+        await api.post(`/questions/${q.id}/submit`);
+        setToast({ message: `Đã gửi duyệt câu hỏi ${q.code || `QH${q.id}`} thành công.`, type: 'success' });
+        load();
+      } catch (e: any) {
+        setToast({ message: e.message || 'Không thể gửi duyệt câu hỏi.', type: 'error' });
+      }
+      return;
+    }
+
+    if (name === 'duplicate') {
+      try {
+        const res = await api.post(`/questions/${q.id}/duplicate`);
+        setToast({ message: `Đã nhân bản câu hỏi thành công (Mã mới: ${res.data?.code || ''})!`, type: 'success' });
+        load();
+      } catch (e: any) {
+        setToast({ message: e.message || 'Không thể nhân bản câu hỏi.', type: 'error' });
+      }
+      return;
+    }
+
+    if (name === 'archive') {
+      setConfirmConfig({
+        isOpen: true,
+        title: 'Lưu trữ câu hỏi',
+        message: `Bạn có chắc chắn muốn chuyển câu hỏi mã ${q.code || `QH${q.id}`} vào kho lưu trữ?`,
+        type: 'warning',
+        confirmText: 'Lưu trữ câu hỏi',
+        onConfirm: async () => {
+          closeConfirm();
+          try {
+            await api.post(`/questions/${q.id}/archive`);
+            setToast({ message: `Đã chuyển câu hỏi ${q.code || `QH${q.id}`} sang trạng thái lưu trữ.`, type: 'success' });
+            load();
+          } catch (e: any) {
+            setToast({ message: e.message || 'Không thể lưu trữ câu hỏi.', type: 'error' });
+          }
+        },
+      });
+      return;
+    }
+
+    if (name === 'restore') {
+      try {
+        await api.post(`/questions/${q.id}/restore`);
+        setToast({ message: `Đã khôi phục câu hỏi ${q.code || `QH${q.id}`} thành công.`, type: 'success' });
+        load();
+      } catch (e: any) {
+        setToast({ message: e.message || 'Không thể khôi phục câu hỏi.', type: 'error' });
+      }
+      return;
+    }
+
     if (name === 'approve') {
       setConfirmConfig({
         isOpen: true,
@@ -502,7 +556,10 @@ export default function QuestionBankPage() {
           setFormOpen(false);
           setEditing(null);
         }}
-        onSaved={load}
+        onSaved={(msg) => {
+          setToast({ message: msg || (editing ? 'Đã cập nhật câu hỏi thành công!' : 'Đã thêm mới câu hỏi thành công!'), type: 'success' });
+          load();
+        }}
       />
 
       {/* Right Drawer Quick View */}
@@ -512,14 +569,20 @@ export default function QuestionBankPage() {
         open={importOpen}
         subjects={subjects}
         onClose={() => setImportOpen(false)}
-        onDone={load}
+        onDone={(count) => {
+          setToast({ message: typeof count === 'number' ? `Đã nhập thành công ${count} câu hỏi vào ngân hàng dữ liệu!` : (count || 'Đã nhập dữ liệu câu hỏi thành công!'), type: 'success' });
+          load();
+        }}
       />
 
       <QuestionAIWizard
         open={aiOpen}
         subjects={subjects}
         onClose={() => setAiOpen(false)}
-        onDone={load}
+        onDone={(msg) => {
+          setToast({ message: (typeof msg === 'string' && msg) || 'Đã sinh câu hỏi bằng AI thành công!', type: 'success' });
+          load();
+        }}
       />
 
       <ConfirmModal

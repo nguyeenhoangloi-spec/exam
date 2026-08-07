@@ -60,7 +60,16 @@ const docUpload = FileInterceptor('file', {
   },
 });
 
-const mediaUpload = FilesInterceptor('files', 10, { limits: { fileSize: 5 * 1024 * 1024 } });
+const ALLOWED_MEDIA_MIME =
+  /^(image\/(jpeg|png|gif|webp|svg\+xml)|video\/(mp4|webm)|audio\/(mpeg|wav|ogg))$/;
+
+const mediaUpload = FilesInterceptor('files', 10, {
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => {
+    const ok = ALLOWED_MEDIA_MIME.test(file.mimetype);
+    callback(ok ? null : new BadRequestException('Chỉ chấp nhận ảnh (jpg/png/gif/webp), video (mp4/webm) hoặc audio (mp3/wav/ogg).'), ok);
+  },
+});
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'TEACHER')

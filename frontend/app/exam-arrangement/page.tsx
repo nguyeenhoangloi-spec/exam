@@ -705,23 +705,24 @@ export default function ExamArrangementPage() {
                   </div>
                 </div>
 
-                <div className="pt-2 space-y-2">
+                <div className="pt-2 grid grid-cols-2 gap-2.5">
                   <button
                     type="submit"
                     disabled={arranging || selectedRoomIds.length === 0}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-black py-3 px-4 rounded-xl text-sm shadow-md transition disabled:opacity-50 active:scale-98 cursor-pointer"
+                    className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition disabled:opacity-50 active:scale-98 cursor-pointer ${
+                      result ? 'col-span-1' : 'col-span-2'
+                    }`}
                   >
-                    <Sparkles className="h-4 w-4" />
-                    {arranging ? 'Đang chạy thuật toán AI...' : 'Xem trước phương án xếp phòng'}
+                    {arranging ? 'Đang xử lý...' : 'Xem sắp xếp'}
                   </button>
 
                   {result && (
                     <button
                       type="button"
                       onClick={handleResetArrangement}
-                      className="w-full flex items-center justify-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 font-bold py-2 px-3 rounded-xl text-xs transition cursor-pointer"
+                      className="col-span-1 flex items-center justify-center bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 font-bold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer"
                     >
-                      <Trash2 className="h-3.5 w-3.5" /> Hủy phương án xếp phòng (Reset)
+                      Hủy phương án
                     </button>
                   )}
                 </div>
@@ -865,11 +866,11 @@ export default function ExamArrangementPage() {
                                         </div>
                                         <p className="font-bold text-slate-900 text-xs truncate" title={st.fullName}>{st.fullName}</p>
                                         <p className="text-[11px] font-semibold text-slate-500 font-mono">{st.studentCode}</p>
-                                        {st.requirementLabel && (
+                                        {(st.requirementLabel || st.departmentName) && (
                                           <div className="pt-0.5">
-                                            <span className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-sky-50 text-sky-700 border-sky-200'}`}>
-                                              {st.requirementLabel}
-                                            </span>
+                                            <p className="font-bold text-slate-800 text-xs truncate" title={st.requirementLabel || st.departmentName}>
+                                              {(st.requirementLabel || st.departmentName || '').split(/[•\.\·]/)[0].trim()}
+                                            </p>
                                           </div>
                                         )}
                                       </div>
@@ -905,8 +906,8 @@ export default function ExamArrangementPage() {
                                   <td className="p-3.5 font-semibold text-slate-700">
                                     {st.className && st.className !== '---' ? st.className : 'CNTT-K65'}
                                   </td>
-                                  <td className="p-3.5 font-medium text-slate-700 whitespace-nowrap">
-                                    {st.requirementLabel || `${st.departmentName || 'Khoa Công nghệ thông tin'} • Bắt buộc`}
+                                  <td className="p-3.5 font-bold text-slate-800 whitespace-nowrap">
+                                    {(st.requirementLabel || st.departmentName || 'Khoa Công nghệ thông tin').split(/[•\.\·]/)[0].trim()}
                                   </td>
                                 </tr>
                               ))}

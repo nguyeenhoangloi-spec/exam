@@ -67,6 +67,7 @@ export default function ProctorDashboardPage() {
   const [resolutionDecision, setResolutionDecision] = useState<'REOPEN' | 'PENALTY' | 'TERMINATE'>('REOPEN');
   const [penaltyPoints, setPenaltyPoints] = useState(1);
   const [processing, setProcessing] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const loadDashboardRef = useRef<((isBackground?: boolean) => Promise<void>) | null>(null);
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function ProctorDashboardPage() {
   const handleAction = async () => {
     if (!selectedStudent?.attempt?.id) return;
     try {
+      setActionError(null);
       setProcessing(true);
       if (actionType === 'EXTEND') await onlineExamService.extendTime(selectedStudent.attempt.id, extraMinutes, reason);
       else if (actionType === 'REOPEN') await onlineExamService.reopenAttempt(selectedStudent.attempt.id, reason);
@@ -104,7 +106,7 @@ export default function ProctorDashboardPage() {
       setReason('');
       loadDashboard(true);
     } catch (err: any) {
-      alert(err.message || 'Thao tác thất bại');
+      setActionError(err?.response?.data?.message || err?.message || 'Thao tác thất bại. Vui lòng kiểm tra lại dữ liệu và thử lại.');
     } finally {
       setProcessing(false);
     }
@@ -363,7 +365,7 @@ export default function ProctorDashboardPage() {
                               {['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
                                 <button
                                   type="button"
-                                  onClick={() => { setSelectedStudent(s); setActionType('EXTEND'); }}
+                                  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
                                   title="Gia hạn thời gian làm bài"
                                   className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-[10.5px] font-bold hover:bg-blue-100 transition cursor-pointer"
                                 >
@@ -374,7 +376,7 @@ export default function ProctorDashboardPage() {
                               {['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
                                 <button
                                   type="button"
-                                  onClick={() => { setSelectedStudent(s); setActionType('REOPEN'); }}
+                                  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('REOPEN'); }}
                                   title="Mở lại phiên thi khi có sự cố"
                                   className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 text-[10.5px] font-bold hover:bg-amber-100 transition cursor-pointer"
                                 >
@@ -385,7 +387,7 @@ export default function ProctorDashboardPage() {
                               {att.isFlagged && (
                                 <button
                                   type="button"
-                                  onClick={() => { setSelectedStudent(s); setActionType('RESOLVE'); }}
+                                  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('RESOLVE'); }}
                                   className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-[10.5px] font-bold hover:bg-emerald-100 transition cursor-pointer"
                                 >
                                   <CheckCircle2 className="w-3 h-3" />
@@ -394,7 +396,7 @@ export default function ProctorDashboardPage() {
                               )}
                               <button
                                 type="button"
-                                onClick={() => { setSelectedStudent(s); setActionType('FLAG'); }}
+                                onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
                                 title="Lập biên bản sự cố"
                                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 text-[10.5px] font-bold hover:bg-rose-100 transition cursor-pointer"
                               >
@@ -551,6 +553,12 @@ export default function ProctorDashboardPage() {
                     className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 placeholder-slate-400 resize-none focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition"
                   />
                 </div>
+
+                {actionError && (
+                  <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium text-rose-700">
+                    {actionError}
+                  </div>
+                )}
 
                 {/* Footer buttons */}
                 <div className="flex items-center justify-end gap-2.5 pt-1">

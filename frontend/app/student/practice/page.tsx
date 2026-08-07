@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { BookOpen, CheckCircle2, Loader2, Play, Send } from 'lucide-react';
@@ -25,6 +26,7 @@ export default function PracticePage() {
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
@@ -71,18 +73,23 @@ export default function PracticePage() {
   };
 
   const submitPractice = async () => {
-    if (!session) return;
+    if (!session || working) return;
     try {
       setWorking(true);
       const response = await api.post(`/practice/${session.sessionId}/submit`, { answers });
       setResult(response.data);
       setSession(null);
+      setToast({ message: 'Đã nộp bài luyện tập và chấm kết quả thành công.', type: 'success' });
     } catch (error: any) {
       setToast({ message: error.message || 'Không thể nộp bài luyện tập', type: 'error' });
     } finally {
       setWorking(false);
     }
   };
+
+  const answeredCount = session
+    ? session.questions.filter((question) => (answers[question.id] || []).length > 0).length
+    : 0;
 
   return (
     <>
@@ -123,13 +130,27 @@ export default function PracticePage() {
                 </label>)}</div>
               </div>;
             })}
-            <button onClick={submitPractice} disabled={working} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"><Send className="h-4 w-4" /> Nộp bài luyện tập</button>
+            <button onClick={() => setShowSubmitConfirm(true)} disabled={working} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"><Send className="h-4 w-4" /> Nộp bài luyện tập</button>
           </div>
         )}
 
         {result && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" /><h2 className="mt-3 text-2xl font-bold text-slate-900">Hoàn thành bài luyện tập</h2><p className="mt-2 text-slate-700">Điểm: <strong>{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}</p><button onClick={() => setResult(null)} className="mt-5 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white">Tạo bài mới</button></div>}
       </div>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <ConfirmModal
+        isOpen={showSubmitConfirm}
+        isLoading={working}
+        onClose={() => setShowSubmitConfirm(false)}
+        onConfirm={() => {
+          setShowSubmitConfirm(false);
+          void submitPractice();
+        }}
+        title="Xác nhận nộp bài luyện tập"
+        message={`Bạn đã trả lời ${answeredCount}/${session?.questions.length ?? 0} câu. Sau khi nộp, phiên luyện tập này sẽ được chấm và không thể sửa đáp án.`}
+        type="warning"
+        confirmText="Nộp bài"
+        cancelText="Tiếp tục làm bài"
+      />
     </>
   );
 }

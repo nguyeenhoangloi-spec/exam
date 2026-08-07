@@ -8,8 +8,8 @@ export const QUESTION_TYPE_LABELS: Record<string, string> = {
 
 export const EXAM_TYPE_LABELS: Record<string, string> = {
   TRAC_NGHIEM: 'Trắc nghiệm',
-  DIEN_LO: 'Điền vào chỗ trống',
-  FILL_BLANK: 'Điền vào chỗ trống',
+  DIEN_LO: 'Điền khuyết',
+  FILL_BLANK: 'Điền khuyết',
   TU_LUAN: 'Tự luận',
   THUC_HANH: 'Thực hành',
   HON_HOP: 'Hỗn hợp',

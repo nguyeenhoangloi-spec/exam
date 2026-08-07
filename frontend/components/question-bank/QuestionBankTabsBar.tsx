@@ -14,12 +14,14 @@ export function QuestionBankTabsBar({
   onSelectStatus,
 }: QuestionBankTabsBarProps) {
   const totalCount = counts.total ?? counts.all ?? 0;
+  const draftCount = counts.DRAFT ?? counts.draft ?? 0;
   const pendingCount = counts.PENDING ?? counts.pending ?? 0;
   const approvedCount = counts.APPROVED ?? counts.approved ?? 0;
   const rejectedCount = counts.REJECTED ?? counts.rejected ?? 0;
 
   const tabs = [
     { key: '', label: 'Tất cả câu hỏi', count: totalCount },
+    { key: 'DRAFT', label: 'Bản nháp', count: draftCount },
     { key: 'PENDING', label: 'Chờ duyệt', count: pendingCount },
     { key: 'APPROVED', label: 'Đã duyệt', count: approvedCount },
     { key: 'REJECTED', label: 'Bị từ chối', count: rejectedCount },

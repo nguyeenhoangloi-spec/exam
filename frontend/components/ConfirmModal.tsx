@@ -14,6 +14,7 @@ interface ConfirmModalProps {
   reasonPlaceholder?: string;
   confirmText?: string;
   cancelText?: string;
+  isLoading?: boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -27,6 +28,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   reasonPlaceholder = 'Nhập lý do (tối thiểu 3 ký tự)...',
   confirmText = 'Xác nhận',
   cancelText = 'Hủy bỏ',
+  isLoading = false,
 }) => {
   const [reason, setReason] = useState('');
   const [reasonError, setReasonError] = useState('');
@@ -96,6 +98,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           <button
             type="button"
             onClick={onClose}
+            disabled={isLoading}
             className="flex h-7 w-7 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
           >
             <X className="h-4 w-4" />
@@ -126,10 +129,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Footer Actions - Compact Buttons */}
         <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-4.5 py-3 sm:px-5 sm:py-3">
-          <Button variant="outline" size="sm" onClick={onClose}>
-            {cancelText}
-          </Button>
-          <Button variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'secondary'} size="sm" onClick={handleConfirm}>
+          {Boolean(cancelText) && (
+            <Button variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
+              {cancelText}
+            </Button>
+          )}
+          <Button variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'secondary'} size="sm" onClick={handleConfirm} disabled={isLoading} isLoading={isLoading}>
             {confirmText}
           </Button>
         </div>

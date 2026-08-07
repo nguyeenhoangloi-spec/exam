@@ -205,8 +205,6 @@ export default function ExamPapersPage() {
   // isEssay is now driven by formData.examType (user-selected toggle)
   const isEssay = formData.examType === 'TU_LUAN';
 
-  // The schedule is the source of truth: a paper cannot change a published
-  // schedule from multiple-choice to essay (or vice versa).
   useEffect(() => {
     const scheduleType = selectedSchedule?.examType;
     if (!scheduleType) return;
@@ -214,6 +212,7 @@ export default function ExamPapersPage() {
       ? { ...previous, examType: scheduleType, easyCount: '3', mediumCount: '2', hardCount: '0' }
       : { ...previous, examType: scheduleType, easyCount: '16', mediumCount: '16', hardCount: '8' });
   }, [selectedSchedule?.examType, selectedSchedule?.id]);
+
   const scheduleDuration = selectedSchedule
     ? (() => {
         const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);

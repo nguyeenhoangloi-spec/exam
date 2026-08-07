@@ -238,7 +238,7 @@ export class EligibilityCheckerService {
     }
 
     // Kiểm tra đây có phải lịch thi online không
-    if (!['TRAC_NGHIEM', 'TU_LUAN', 'ONLINE'].includes(schedule.examType)) {
+    if (!['TRAC_NGHIEM', 'TU_LUAN', 'DIEN_LO', 'FILL_BLANK', 'ONLINE'].includes(schedule.examType)) {
       return this.fail(
         EligibilityErrorCode.EXAM_NOT_ONLINE,
         'Lịch thi này không phải hình thức thi trực tuyến',

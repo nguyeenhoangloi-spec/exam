@@ -84,7 +84,7 @@ Không tải toàn bộ module một cách mù quáng. Chỉ dùng module phù h
 
 ### Kích hoạt theo ngữ cảnh
 
-* Design System: khi làm giao diện UI/UX
+* Design System: khi làm giao diện UI/UX (bắt buộc áp dụng mục "🎨 Quy tắc Thiết kế Popup & Thông báo")
 * UI/UX Pro Max: khi thiết kế lại màn hình
 * Infra Blueprints: khi làm Docker, deploy, server hoặc CI/CD
 * Compliance: khi xử lý dữ liệu nhạy cảm của sinh viên/người dùng
@@ -199,6 +199,66 @@ Các quy tắc nghiệp vụ bắt buộc:
 8. Điểm thi phải có lịch sử cập nhật.
 9. Người dùng không được xem dữ liệu ngoài phạm vi quyền hạn.
 10. Admin có toàn quyền, nhưng các thao tác quan trọng phải được ghi log.
+
+---
+
+## 🎨 Quy tắc Thiết kế Popup & Thông báo
+
+Áp dụng BẮT BUỘC cho mọi popup, modal, toast, thông báo (thông cáo) trong toàn hệ thống. Khi làm giao diện UI/UX, phải tuân theo các quy định màu sắc, vị trí và chữ dưới đây, không được tự ý chọn màu hoặc vị trí khác.
+
+### Toast (thông báo nổi góc màn hình)
+
+* Vị trí: cố định góc dưới bên phải — `fixed bottom-5 right-5`. Không đặt toast ở góc trái hoặc phía trên.
+* Z-index: `z-[110]` — nổi trên mọi nội dung (cao hơn `Modal` z-[100], thấp hơn modal xác nhận z-[9999]).
+* Hình dạng: `rounded-2xl`, `px-4 py-3`, chữ trắng, `shadow-xl`, `max-w-[calc(100vw-2.5rem)]`.
+* Màu nền theo trạng thái:
+  * Success: nền xanh lá `#10B981` (emerald-500), icon `CheckCircle2`.
+  * Error: nền đỏ `#EF4444` (red-500), icon `AlertCircle`.
+* Chữ: `text-sm font-semibold`, màu trắng, căn trái, `leading-5`.
+* Nút đóng: icon `X` nhỏ bên phải, hover mờ nền `hover:bg-white/15`.
+* Thời gian: tự đóng sau 4 giây (4000ms), có nút đóng thủ công.
+* Accessibility: `role="status"`, `aria-live="polite"`.
+
+### ConfirmModal (hộp thoại xác nhận thao tác)
+
+* Overlay: `fixed inset-0 z-[9999]`, nền `bg-slate-950/60` kèm `backdrop-blur-sm`, căn giữa.
+* Hộp: `rounded-2xl`, `max-w-sm`, `bg-white dark:bg-slate-900`, `border border-slate-200/90 dark:border-slate-700`, `shadow-xl`.
+* Header: nền `bg-slate-50/80 dark:bg-slate-800/80`, icon trạng thái đặt trong ô tròn `rounded-xl` + border màu nhạt.
+* Màu sắc theo `type`:
+  * `danger`: icon `LogOut` màu `rose-600`, nền icon `bg-rose-50 border-rose-200`.
+  * `success`: icon `CheckCircle` màu `emerald-600`, nền icon `bg-emerald-50 border-emerald-200`.
+  * `info`: icon `Info` màu `blue-600`, nền icon `bg-blue-50 border-blue-200`.
+  * `warning` (mặc định): icon `AlertTriangle` màu `amber-600`, nền icon `bg-amber-50 border-amber-200`.
+* Chữ tiêu đề: `text-sm font-black`, `text-slate-900 dark:text-slate-100`, căn trái.
+* Chữ nội dung: `text-xs sm:text-sm`, `text-slate-600 dark:text-slate-300`, `font-medium`, `leading-relaxed`, căn trái.
+* Nút xác nhận theo type: `danger` → `variant="danger"`, `success` → `variant="success"`, `info` → `variant="primary"`, `warning` → `variant="secondary"`.
+* Lỗi validate lý do: chữ `text-xs font-bold text-rose-600`.
+
+### CriticalConfirmModal (thao tác nhạy cảm — xác thực an toàn nhiều lớp)
+
+* Overlay: `fixed inset-0 z-[9999]`, nền `bg-slate-950/60`, `backdrop-blur-sm`, căn giữa.
+* Hộp: `rounded-2xl`, `max-w-lg`, viền `border-rose-100`, `bg-white`, `max-h-[90vh]`.
+* Header: gradient `from-rose-600 via-rose-700 to-amber-600`, chữ trắng, icon `ShieldAlert` trong ô `bg-white/20`.
+* Cảnh báo hậu quả: nền `bg-rose-50/80 border-rose-200`, icon `AlertTriangle` màu `rose-600`, chữ `rose-900`; dòng "CẢNH BÁO HẬU QUẢ" dùng `font-bold`.
+* Lỗi: nền `bg-red-100 border-red-200`, chữ `text-red-700`, hiệu ứng `animate-shake`.
+* Input cụm từ xác nhận: hợp lệ → `border-emerald-500 bg-emerald-50/50 text-emerald-900`; chưa hợp lệ → `border-slate-200 focus:border-rose-500`.
+* Focus chung của form: `focus:border-rose-500`.
+
+### Modal (hộp thoại nội dung chung)
+
+* Overlay: `fixed inset-0 z-[100]`, nền `bg-slate-950/55`, `backdrop-blur-[2px]`, căn giữa.
+* Hộp: `rounded-2xl`, `max-w-2xl`, `border-slate-200 dark:border-slate-700`, `bg-white dark:bg-slate-900`, `shadow-2xl`.
+* Header: nền `bg-slate-50 dark:bg-slate-800`, tiêu đề `text-lg font-semibold`, nút đóng `X` màu `gray-400 hover:text-gray-600`.
+* Đóng khi click ra ngoài overlay; chặn click bên trong bằng `stopPropagation`.
+
+### Quy tắc chung
+
+* Màu popup/thông báo phải theo bảng màu trên; không tự chọn màu khác.
+* Chữ luôn căn trái trừ khi có quy định khác; tiêu đề in đậm, nội dung vừa phải (`text-sm`/`text-xs`).
+* Toast chỉ đặt góc dưới bên phải; không đặt trái hoặc phía trên.
+* Mọi popup phải có overlay tối + `backdrop-blur` để nhấn rõ nội dung phía sau.
+* Luôn hỗ trợ dark mode (`dark:`).
+* Thứ tự z-index: `Modal` (100) < `Toast` (110) < `ConfirmModal`/`CriticalConfirmModal` (9999).
 
 ---
 

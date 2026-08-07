@@ -102,8 +102,6 @@ export function ExamPaperMatrixForm({
   const switchType = (type: 'TRAC_NGHIEM' | 'DIEN_LO' | 'TU_LUAN') => {
     if (type === 'TU_LUAN') {
       setFormData((p: any) => ({ ...p, examType: type, ...ESSAY_DEFAULTS }));
-    } else if (type === 'DIEN_LO') {
-      setFormData((p: any) => ({ ...p, examType: type, easyCount: '3', mediumCount: '2', hardCount: '1' }));
     } else {
       const d = formData.durationMinutes === '90' ? MC_90 : MC_60;
       setFormData((p: any) => ({ ...p, examType: type, ...d }));
@@ -120,14 +118,9 @@ export function ExamPaperMatrixForm({
 
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-b border-slate-100">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-black text-slate-900">Tạo Đề thi theo Ma trận</h3>
-            <p className="text-[11px] font-semibold text-slate-400">Tự động chọn ngẫu nhiên từ Ngân hàng đề</p>
-          </div>
+        <div>
+          <h3 className="text-sm font-black text-slate-900">Tạo Đề thi theo Ma trận</h3>
+          <p className="text-[11px] font-semibold text-slate-400">Tự động chọn ngẫu nhiên từ Ngân hàng đề</p>
         </div>
 
         {/* Preset buttons — always visible, hint only */}
@@ -451,9 +444,8 @@ export function ExamPaperMatrixForm({
         <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5 text-blue-500" />
               <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-600">
-                {isEssay ? 'Phân bổ Tự luận' : 'Ma trận phân bổ đề thi'}
+                Ma trận phân bổ đề thi
               </span>
             </div>
 
@@ -486,9 +478,8 @@ export function ExamPaperMatrixForm({
 
           {formData.selectionMode === 'BY_SCORE' ? (
             <div className="space-y-2">
-              <p className="text-[11.5px] text-slate-600 font-semibold flex items-center gap-1.5 px-0.5 py-1">
-                <Sparkles className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-                <span>Hệ thống tự động quét Ngân hàng câu hỏi & lấy điểm gốc để tìm tập hợp khớp với thang điểm bên dưới.</span>
+              <p className="text-[11.5px] text-slate-600 font-semibold px-0.5 py-1">
+                Hệ thống tự động quét Ngân hàng câu hỏi & lấy điểm gốc để tìm tập hợp khớp với thang điểm bên dưới.
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {[
@@ -571,22 +562,17 @@ export function ExamPaperMatrixForm({
           <button
             type="submit"
             disabled={creating || currentTotal < 1 || isPublished}
-            className={`flex items-center gap-2 rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-sm active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed ${
+            className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-sm active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed ${
               isPublished
                 ? 'bg-slate-400 opacity-60'
-                : isEssay
-                ? 'bg-slate-900 hover:bg-slate-800'
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
-            <Sparkles className="h-4 w-4" />
             {creating
               ? 'Đang sinh đề...'
               : isPublished
               ? 'Đã Có Đề Công Bố'
-              : isEssay
-              ? 'Tạo Đề Tự luận'
-              : 'Tạo Đề Trắc nghiệm'}
+              : 'Tạo đề chung'}
           </button>
         </div>
       </div>

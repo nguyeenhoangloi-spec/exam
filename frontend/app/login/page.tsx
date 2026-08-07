@@ -4,6 +4,7 @@ import React, { memo, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthToken, getAuthUser, setAuthToken } from '../../lib/auth';
+import { Toast } from '../../components/Toast';
 import {
   GraduationCap,
   BookOpen,
@@ -149,6 +150,7 @@ export default function LoginPage() {
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isDark, setIsDark] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     if (localStorage.getItem('theme') === 'dark') {
@@ -195,7 +197,10 @@ export default function LoginPage() {
       let valid = true;
       if (!username.trim()) { setUsernameError('Vui lòng nhập tên đăng nhập.'); valid = false; } else setUsernameError('');
       if (!password) { setPasswordError('Vui lòng nhập mật khẩu.'); valid = false; } else setPasswordError('');
-      if (!valid) return;
+      if (!valid) {
+        setToast({ message: 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.', type: 'error' });
+        return;
+      }
 
       setLoading(true);
       setError('');
@@ -207,7 +212,9 @@ export default function LoginPage() {
         else if (user.role === 'TEACHER') router.replace('/teacher/assignments');
         else router.replace('/student/exam-schedule');
       } catch (err: any) {
-        setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.');
+        const msg = err.response?.data?.message || err.message || 'Tên đăng nhập hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại.';
+        setError(msg);
+        setToast({ message: msg, type: 'error' });
       } finally {
         setLoading(false);
       }
@@ -232,6 +239,7 @@ export default function LoginPage() {
         isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#d6dfef] text-slate-900',
       ].join(' ')}
     >
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       {/* ══════════ LEFT 40% ══════════ */}
       <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-b from-[#102040] via-[#152b55] to-[#1a3366] relative overflow-hidden">
         {/* Texture */}

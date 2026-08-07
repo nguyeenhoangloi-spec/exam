@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import api from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { ConfirmModal } from '../../../components/ConfirmModal';
@@ -23,6 +23,7 @@ import {
   Loader2,
   Search,
   X,
+  Sparkles,
 } from 'lucide-react';
 
 export default function AdminEssayReviewPage() {
@@ -45,9 +46,12 @@ export default function AdminEssayReviewPage() {
     title: string;
     message: string;
     type?: 'danger' | 'success' | 'warning' | 'info';
+    requireReason?: boolean;
+    reasonPlaceholder?: string;
     confirmText?: string;
-    onConfirm: () => void;
-  }>({ isOpen: false, title: '', message: '', type: 'info', confirmText: 'Xác nhận', onConfirm: () => {} });
+    cancelText?: string;
+    onConfirm: (reason?: string) => void;
+  }>({ isOpen: false, title: '', message: '', type: 'info', confirmText: 'Xác nhận', cancelText: 'Hủy bỏ', onConfirm: () => {} });
 
   const loadAssignments = async () => {
     setLoading(true);
@@ -65,15 +69,27 @@ export default function AdminEssayReviewPage() {
     loadAssignments();
   }, []);
 
-  const openAttempt = async (id: string) => {
+  const openAttempt = useCallback(async (id: string) => {
     try {
       const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
       setSelected(res.data);
       setMessage('');
-      setActionReason('');
     } catch (e: any) {
       setMessage(e?.response?.data?.message || 'Không thể tải bài làm.');
     }
+  }, []);
+
+  const showResultPopup = (title: string, message: string, type: 'success' | 'danger' | 'warning' | 'info' = 'success') => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      type,
+      requireReason: false,
+      confirmText: 'Đã hiểu',
+      cancelText: '',
+      onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+    });
   };
 
   const handleApprove = (publish = false) => {
@@ -84,17 +100,23 @@ export default function AdminEssayReviewPage() {
       message: publish
         ? `Bạn có chắc chắn muốn CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy điểm số và kết quả bài làm.`
         : `Xác nhận duyệt điểm bài thi của thí sinh ${selected.student?.fullName}?`,
-      type: publish ? 'warning' : 'success',
+      type: publish ? 'info' : 'success',
+      requireReason: false,
       confirmText: publish ? 'Công bố ngay' : 'Duyệt điểm',
+      cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/${publish ? 'publish' : 'approve'}`);
-          setMessage(publish ? 'Đã công bố điểm cho Sinh viên thành công.' : 'Đã duyệt điểm bài thi.');
+          const msg = publish ? 'Đã công bố điểm cho Sinh viên thành công.' : 'Đã duyệt điểm bài thi thành công.';
+          setMessage(msg);
           await loadAssignments();
           await openAttempt(selected.id);
+          showResultPopup(publish ? 'Đã Công Bố Điểm' : 'Đã Duyệt Điểm', msg, 'success');
         } catch (e: any) {
-          setMessage(e?.response?.data?.message || 'Thao tác không thành công.');
+          const errMsg = e?.response?.data?.message || 'Thao tác không thành công.';
+          setMessage(errMsg);
+          showResultPopup('Không Thể Thực Hiện', errMsg, 'danger');
         }
       },
     });
@@ -102,25 +124,29 @@ export default function AdminEssayReviewPage() {
 
   const handleReturn = () => {
     if (!selected) return;
-    if (!actionReason.trim()) {
-      alert('Vui lòng nhập lý do trả lại bài thi để Giảng viên chấm lại.');
-      return;
-    }
     setConfirmModal({
       isOpen: true,
       title: 'Trả lại bài thi để chấm lại',
-      message: `Bạn có chắc chắn muốn trả lại bài thi của ${selected.student?.fullName} cho Giảng viên chấm lại? Lý do: "${actionReason}"`,
+      message: `Bạn có chắc chắn muốn trả lại bài thi của ${selected.student?.fullName} cho Giảng viên chấm lại?`,
       type: 'danger',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do trả lại bài thi (tối thiểu 3 ký tự)...',
       confirmText: 'Trả lại chấm lại',
-      onConfirm: async () => {
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim();
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
-          await api.post(`/essay/grading/attempts/${selected.id}/return`, { reason: actionReason });
-          setMessage('Đã yêu cầu Giảng viên chấm lại bài thi.');
+          await api.post(`/essay/grading/attempts/${selected.id}/return`, { reason: finalReason });
+          const msg = 'Đã yêu cầu Giảng viên chấm lại bài thi thành công.';
+          setMessage(msg);
           await loadAssignments();
           await openAttempt(selected.id);
+          showResultPopup('Đã Yêu Cầu Chấm Lại', msg, 'success');
         } catch (e: any) {
-          setMessage(e?.response?.data?.message || 'Không thể trả lại bài thi.');
+          const errMsg = e?.response?.data?.message || 'Không thể trả lại bài thi.';
+          setMessage(errMsg);
+          showResultPopup('Không Thể Trả Bài', errMsg, 'danger');
         }
       },
     });
@@ -128,25 +154,29 @@ export default function AdminEssayReviewPage() {
 
   const handleReopen = () => {
     if (!selected) return;
-    if (!actionReason.trim()) {
-      alert('Vui lòng nhập lý do mở lại bài thi.');
-      return;
-    }
     setConfirmModal({
       isOpen: true,
       title: 'Mở lại phiên bài thi',
-      message: `Xác nhận mở lại phiên thi cho sinh viên ${selected.student?.fullName}? Lý do: "${actionReason}"`,
+      message: `Xác nhận mở lại phiên thi cho sinh viên ${selected.student?.fullName}?`,
       type: 'warning',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do mở lại bài thi (tối thiểu 3 ký tự)...',
       confirmText: 'Mở lại bài thi',
-      onConfirm: async () => {
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim();
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
-          await api.post(`/essay/grading/attempts/${selected.id}/reopen`, { reason: actionReason });
-          setMessage('Đã mở lại bài thi cho sinh viên tiếp tục.');
+          await api.post(`/essay/grading/attempts/${selected.id}/reopen`, { reason: finalReason });
+          const msg = 'Đã mở lại bài thi cho sinh viên tiếp tục.';
+          setMessage(msg);
           await loadAssignments();
           await openAttempt(selected.id);
+          showResultPopup('Đã Mở Lại Bài Thi', msg, 'success');
         } catch (e: any) {
-          setMessage(e?.response?.data?.message || 'Không thể mở lại bài thi.');
+          const errMsg = e?.response?.data?.message || 'Không thể mở lại bài thi.';
+          setMessage(errMsg);
+          showResultPopup('Không Thể Mở Lại Bài', errMsg, 'danger');
         }
       },
     });
@@ -155,31 +185,35 @@ export default function AdminEssayReviewPage() {
   const handleExtend = () => {
     if (!selected) return;
     if (extraMinutes <= 0) {
-      alert('Số phút gia hạn phải lớn hơn 0.');
-      return;
-    }
-    if (!actionReason.trim()) {
-      alert('Vui lòng nhập lý do gia hạn thời gian.');
+      showResultPopup('Số Phút Không Hợp Lệ', 'Số phút gia hạn phải lớn hơn 0.', 'warning');
       return;
     }
     setConfirmModal({
       isOpen: true,
       title: `Gia hạn ${extraMinutes} phút`,
-      message: `Gia hạn thêm ${extraMinutes} phút làm bài cho ${selected.student?.fullName}? Lý do: "${actionReason}"`,
+      message: `Gia hạn thêm ${extraMinutes} phút làm bài cho ${selected.student?.fullName}?`,
       type: 'info',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do gia hạn thời gian làm bài...',
       confirmText: 'Gia hạn ngay',
-      onConfirm: async () => {
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Gia hạn thời gian làm bài';
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/extend-time`, {
-            reason: actionReason,
+            reason: finalReason,
             extraMinutes: Number(extraMinutes),
           });
-          setMessage(`Đã gia hạn thêm ${extraMinutes} phút.`);
+          const msg = `Đã gia hạn thêm ${extraMinutes} phút làm bài thành công.`;
+          setMessage(msg);
           await loadAssignments();
           await openAttempt(selected.id);
+          showResultPopup('Đã Gia Hạn Thời Gian', msg, 'success');
         } catch (e: any) {
-          setMessage(e?.response?.data?.message || 'Không thể gia hạn.');
+          const errMsg = e?.response?.data?.message || 'Không thể gia hạn.';
+          setMessage(errMsg);
+          showResultPopup('Không Thể Gia Hạn', errMsg, 'danger');
         }
       },
     });
@@ -188,39 +222,51 @@ export default function AdminEssayReviewPage() {
   const handlePenalty = () => {
     if (!selected) return;
     if (penaltyInput < 0) {
-      alert('Điểm phạt không được âm.');
-      return;
-    }
-    if (!actionReason.trim()) {
-      alert('Vui lòng nhập lý do áp dụng điểm phạt.');
+      showResultPopup('Điểm Phạt Không Hợp Lệ', 'Điểm phạt không được âm.', 'warning');
       return;
     }
     setConfirmModal({
       isOpen: true,
       title: `Trừ ${penaltyInput} điểm`,
-      message: `Xác nhận trừ ${penaltyInput} điểm của bài thi ${selected.student?.fullName}? Lý do: "${actionReason}"`,
+      message: `Xác nhận trừ ${penaltyInput} điểm của bài thi ${selected.student?.fullName}?`,
       type: 'danger',
-      confirmText: 'Trừ điểm',
-      onConfirm: async () => {
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do áp dụng điểm phạt...',
+      confirmText: 'Trừ điểm ngay',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Điểm phạt vi phạm quy chế';
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/penalty`, {
-            reason: actionReason,
+            reason: finalReason,
             penaltyPoints: Number(penaltyInput),
           });
-          setMessage(`Đã áp dụng điểm phạt ${penaltyInput} điểm.`);
+          const msg = `Đã áp dụng điểm phạt trừ ${penaltyInput} điểm thành công.`;
+          setMessage(msg);
           await loadAssignments();
           await openAttempt(selected.id);
+          showResultPopup('Đã Áp Dụng Điểm Phạt', msg, 'success');
         } catch (e: any) {
-          setMessage(e?.response?.data?.message || 'Không thể trừ điểm.');
+          const errMsg = e?.response?.data?.message || 'Không thể trừ điểm.';
+          setMessage(errMsg);
+          showResultPopup('Không Thể Trừ Điểm', errMsg, 'danger');
         }
       },
     });
   };
 
+  const [dateFilter, setDateFilter] = useState<string>('ALL');
+  const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
+
   const availableSubjects = useMemo(() => {
     const map = new Map<string, string>();
     rows.forEach((r) => {
+      if (dateFilter !== 'ALL') {
+        const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+        const dStr = rawDate ? new Date(rawDate).toLocaleDateString('vi-VN') : '';
+        if (dStr !== dateFilter) return;
+      }
       const s = r.onlineExamConfig?.examSchedule?.subject;
       const code = s?.subjectCode || r.subjectCode;
       const name = s?.subjectName || r.subjectName;
@@ -229,7 +275,47 @@ export default function AdminEssayReviewPage() {
       }
     });
     return Array.from(map.entries()).map(([code, name]) => ({ code, name }));
-  }, [rows]);
+  }, [rows, dateFilter]);
+
+  const availableDates = useMemo(() => {
+    const set = new Set<string>();
+    rows.forEach((r) => {
+      if (subjectFilter !== 'ALL') {
+        const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
+        if (code !== subjectFilter) return;
+      }
+      const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+      if (rawDate) {
+        const dStr = new Date(rawDate).toLocaleDateString('vi-VN');
+        set.add(dStr);
+      }
+    });
+    return Array.from(set);
+  }, [rows, subjectFilter]);
+
+  const availableSchedules = useMemo(() => {
+    const map = new Map<string, string>();
+    rows.forEach((r) => {
+      if (dateFilter !== 'ALL') {
+        const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+        const dStr = rawDate ? new Date(rawDate).toLocaleDateString('vi-VN') : '';
+        if (dStr !== dateFilter) return;
+      }
+      if (subjectFilter !== 'ALL') {
+        const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
+        if (code !== subjectFilter) return;
+      }
+      const sched = r.onlineExamConfig?.examSchedule;
+      if (sched?.id) {
+        const code = sched.code || `Ca #${sched.id}`;
+        const timeStr = sched.startTime && sched.endTime ? `${sched.startTime}–${sched.endTime}` : '';
+        const subjName = sched.subject?.subjectName || r.subjectName || '';
+        const label = `${code}${timeStr ? ` (${timeStr})` : ''} · ${subjName}`;
+        map.set(sched.id.toString(), label);
+      }
+    });
+    return Array.from(map.entries()).map(([id, label]) => ({ id, label }));
+  }, [rows, dateFilter, subjectFilter]);
 
   const counts = useMemo(() => {
     let all = 0, waiting = 0, grading = 0, published = 0;
@@ -255,22 +341,33 @@ export default function AdminEssayReviewPage() {
         const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
         if (code !== subjectFilter) return false;
       }
-      // 3. Search Query
+      // 3. Date Filter
+      if (dateFilter !== 'ALL') {
+        const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+        const dStr = rawDate ? new Date(rawDate).toLocaleDateString('vi-VN') : '';
+        if (dStr !== dateFilter) return false;
+      }
+      // 4. Schedule Filter
+      if (scheduleFilter !== 'ALL') {
+        const schedId = r.onlineExamConfig?.examSchedule?.id?.toString();
+        if (schedId !== scheduleFilter) return false;
+      }
+      // 5. Search Query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const code = (r.student?.studentCode || '').toLowerCase();
         const name = (r.student?.fullName || '').toLowerCase();
-        const subj = (r.onlineExamConfig?.examSchedule?.subject?.subjectName || '').toLowerCase();
-        return code.includes(q) || name.includes(q) || subj.includes(q);
+        const subj = (r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || '').toLowerCase();
+        const schedCode = (r.onlineExamConfig?.examSchedule?.code || '').toLowerCase();
+        return code.includes(q) || name.includes(q) || subj.includes(q) || schedCode.includes(q);
       }
       return true;
     });
-  }, [rows, statusFilter, subjectFilter, searchQuery]);
+  }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 text-slate-900 space-y-6">
-      <div className="mx-auto max-w-7xl space-y-5">
-        {/* Page Header matching system standards */}
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
+      {/* Page Header matching system standards */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
@@ -284,9 +381,8 @@ export default function AdminEssayReviewPage() {
           <button
             type="button"
             onClick={loadAssignments}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs active:scale-95 shrink-0"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition cursor-pointer shadow-2xs active:scale-95 shrink-0 select-none"
           >
-            <RotateCcw className="h-3.5 w-3.5 text-blue-600" />
             <span>Làm mới danh sách</span>
           </button>
         </div>
@@ -308,17 +404,20 @@ export default function AdminEssayReviewPage() {
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Danh sách bài thi ({filteredRows.length}/{rows.length})
                 </span>
-                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || searchQuery) && (
+                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
                   <button
                     type="button"
                     onClick={() => {
                       setStatusFilter('ALL');
                       setSubjectFilter('ALL');
+                      setDateFilter('ALL');
+                      setScheduleFilter('ALL');
                       setSearchQuery('');
                     }}
-                    className="text-[11px] font-bold text-rose-600 hover:underline cursor-pointer"
+                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer select-none"
+                    title="Đặt lại bộ lọc"
                   >
-                    Đặt lại
+                    <RotateCcw className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>
@@ -335,35 +434,36 @@ export default function AdminEssayReviewPage() {
                 onChange={setStatusFilter}
               />
 
-              {/* Search & Subject Row */}
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Tìm Mã SV, Tên SV..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </div>
+              {/* Search Bar */}
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Tìm Mã SV, Tên SV, Môn, Ca thi..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
 
+              {/* Dropdown Filters Row: Môn thi & Ngày thi */}
+              <div className="grid grid-cols-2 gap-2">
                 {availableSubjects.length > 0 && (
                   <select
                     value={subjectFilter}
                     onChange={(e) => setSubjectFilter(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer max-w-[130px] shrink-0"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                   >
-                    <option value="ALL">Tất cả môn</option>
+                    <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
                     {availableSubjects.map((s) => (
                       <option key={s.code} value={s.code}>
                         [{s.code}] {s.name}
@@ -371,7 +471,40 @@ export default function AdminEssayReviewPage() {
                     ))}
                   </select>
                 )}
+
+                {availableDates.length > 0 && (
+                  <select
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  >
+                    <option value="ALL">Tất cả ngày thi</option>
+                    {availableDates.map((d) => (
+                      <option key={d} value={d}>
+                        Ngày {d}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
+
+              {/* Optional Schedule / Ca thi Filter if multiple schedules exist */}
+              {availableSchedules.length > 1 && (
+                <div>
+                  <select
+                    value={scheduleFilter}
+                    onChange={(e) => setScheduleFilter(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  >
+                    <option value="ALL">Tất cả ca thi / lịch thi</option>
+                    {availableSchedules.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               {loading ? (
                 <div className="text-center py-10 text-xs font-semibold text-slate-400">
@@ -380,18 +513,24 @@ export default function AdminEssayReviewPage() {
                 </div>
               ) : filteredRows.length === 0 ? (
                 <div className="text-center py-10 text-xs font-medium text-slate-400">
-                  Không tìm thấy bài thi tự luận nào.
+                  Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[68vh] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[64vh] overflow-y-auto pr-1">
                   {filteredRows.map((row) => {
                     const isSel = selected?.id === row.id;
+                    const dateStr = row.onlineExamConfig?.examSchedule?.examDate
+                      ? new Date(row.onlineExamConfig.examSchedule.examDate).toLocaleDateString('vi-VN')
+                      : row.submittedAt
+                      ? new Date(row.submittedAt).toLocaleDateString('vi-VN')
+                      : null;
+                    const schedCode = row.onlineExamConfig?.examSchedule?.code;
                     return (
                       <button
                         key={row.id}
                         type="button"
                         onClick={() => openAttempt(row.id)}
-                        className={`w-full text-left p-3.5 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
+                        className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
                           isSel
                             ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
                             : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
@@ -404,9 +543,17 @@ export default function AdminEssayReviewPage() {
                         <p className="text-[11px] text-slate-500 font-mono">
                           Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-slate-900">{row.totalScore ?? 'Chưa chấm'}</strong>
                         </p>
-                        <p className="text-[10px] text-slate-400 font-medium truncate">
-                          Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Môn thi'}
-                        </p>
+                        <div className="flex items-center justify-between gap-1 text-[10px] text-slate-500 font-medium border-t border-slate-100 pt-1.5 mt-0.5">
+                          <span className="truncate flex-1 font-semibold text-slate-700">
+                            {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
+                            {schedCode ? ` (${schedCode})` : ''}
+                          </span>
+                          {dateStr && (
+                            <span className="shrink-0 text-[9.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded-md">
+                              {dateStr}
+                            </span>
+                          )}
+                        </div>
                       </button>
                     );
                   })}
@@ -416,7 +563,7 @@ export default function AdminEssayReviewPage() {
           </div>
 
           {/* Right panel: Detail & Admin Controls */}
-          <div className="lg:col-span-7 space-y-4">
+          <div className="lg:col-span-8 space-y-4">
             {!selected ? (
               <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400 text-sm font-semibold">
                 Chọn một bài thi ở danh sách bên trái để xem chi tiết và thực hiện các thao tác quản trị.
@@ -504,7 +651,7 @@ export default function AdminEssayReviewPage() {
                         {ans?.aiSuggestedScore !== undefined && ans?.aiSuggestedScore !== null && (
                           <div className="p-3 rounded-xl bg-blue-50/70 text-xs text-blue-900 space-y-1">
                             <div className="flex justify-between font-bold">
-                              <span>✨ AI Đề xuất: {ans.aiSuggestedScore}đ</span>
+                              <span className="flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-blue-600" /> AI Đề xuất: {ans.aiSuggestedScore}đ</span>
                               <span>Tin cậy: {Math.round((ans.aiConfidence || 0) * 100)}%</span>
                             </div>
                             {ans.aiSuggestedComment && <p className="text-[11px] text-blue-800">{ans.aiSuggestedComment}</p>}
@@ -529,83 +676,129 @@ export default function AdminEssayReviewPage() {
                   })}
                 </div>
 
-                {/* Admin Actions Panel */}
-                <div className="border-t border-slate-200 pt-4 space-y-4">
-                  <h3 className="text-xs font-black uppercase text-slate-500 tracking-wider">Thao Tác Quản Trị ADMIN</h3>
-
-                  {/* Input reason */}
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700">Lý do thao tác (Bắt buộc khi Trả lại, Gia hạn, Mở lại, Trừ điểm):</label>
-                    <input
-                      type="text"
-                      placeholder="Nhập chi tiết lý do..."
-                      value={actionReason}
-                      onChange={(e) => setActionReason(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-blue-500"
-                    />
+                {/* Admin Actions Panel - Premium UI/UX Pro Max */}
+                <div className="border-t border-slate-200/80 pt-5 space-y-4">
+                  {/* Header & Status Indicator */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-1">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                      <h3 className="text-xs font-black uppercase text-slate-700 tracking-wider">Thao tác Quản trị Admin</h3>
+                    </div>
+                    {selected.gradingStatus === 'PUBLISHED' ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Điểm số đã công bố chính thức
+                      </span>
+                    ) : selected.gradingStatus === 'WAITING_APPROVAL' ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs">
+                        <Clock className="w-3.5 h-3.5" /> Bài thi đang chờ duyệt
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs">
+                        <FileText className="w-3.5 h-3.5" /> Đang chấm thi
+                      </span>
+                    )}
                   </div>
 
-                  {/* Quick Action Buttons */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <button
-                      onClick={() => handleApprove(false)}
-                      className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1 shadow-2xs transition cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Duyệt điểm
-                    </button>
-                    <button
-                      onClick={() => handleApprove(true)}
-                      className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1 shadow-2xs transition cursor-pointer"
-                    >
-                      <Send className="w-3.5 h-3.5" /> Công bố điểm
-                    </button>
-                    <button
-                      onClick={handleReturn}
-                      className="px-3 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1 shadow-2xs transition cursor-pointer"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" /> Trả lại chấm lại
-                    </button>
-                    <button
-                      onClick={handleReopen}
-                      className="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1 shadow-2xs transition cursor-pointer"
-                    >
-                      <Clock className="w-3.5 h-3.5" /> Mở lại bài thi
-                    </button>
-                  </div>
-
-                  {/* Extend & Penalty Row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <div className="flex gap-2 items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  {/* Input Reason with Icon & Micro-Interaction */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <label className="font-bold text-slate-700">Lý do thao tác</label>
+                      <span className="text-slate-400 font-medium">(Bắt buộc khi Trả lại, Mở lại, Gia hạn, Trừ điểm)</span>
+                    </div>
+                    <div className="relative">
                       <input
-                        type="number"
-                        min={1}
-                        max={240}
-                        value={extraMinutes}
-                        onChange={(e) => setExtraMinutes(Number(e.target.value))}
-                        className="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-center font-bold"
+                        type="text"
+                        placeholder="Nhập ghi chú hoặc lý do chi tiết..."
+                        value={actionReason}
+                        onChange={(e) => setActionReason(e.target.value)}
+                        className="w-full bg-slate-50/70 border border-slate-200/90 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-2xs placeholder-slate-400"
                       />
-                      <span className="text-xs text-slate-600 font-semibold">phút</span>
+                    </div>
+                  </div>
+
+                  {/* Context-Aware Action Buttons Row */}
+                  <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                    {selected.gradingStatus !== 'PUBLISHED' && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleApprove(true)}
+                          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                        >
+                          <Send className="w-3.5 h-3.5" /> Công bố điểm
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApprove(false)}
+                          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5" /> Duyệt điểm
+                        </button>
+                      </>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleReopen}
+                      className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" /> Mở lại bài thi
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleReturn}
+                      className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                    >
+                      <XCircle className="w-3.5 h-3.5" /> Trả lại chấm lại
+                    </button>
+                  </div>
+
+                  {/* Adjustment Controls Grid: Gia hạn & Trừ điểm */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    {/* Gia hạn làm bài */}
+                    <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-slate-600">Gia hạn:</span>
+                        <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 shadow-2xs">
+                          <input
+                            type="number"
+                            min={1}
+                            max={240}
+                            value={extraMinutes}
+                            onChange={(e) => setExtraMinutes(Number(e.target.value))}
+                            className="w-12 text-xs font-black text-center text-slate-900 focus:outline-none"
+                          />
+                          <span className="text-[11px] font-semibold text-slate-500 ml-1">phút</span>
+                        </div>
+                      </div>
                       <button
+                        type="button"
                         onClick={handleExtend}
-                        className="ml-auto px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg transition cursor-pointer"
+                        className="px-3.5 py-1.5 bg-slate-900 hover:bg-black active:bg-slate-950 text-white font-bold text-xs rounded-lg transition-all cursor-pointer shadow-xs select-none"
                       >
                         Gia hạn
                       </button>
                     </div>
 
-                    <div className="flex gap-2 items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                      <input
-                        type="number"
-                        min={0}
-                        step={0.5}
-                        value={penaltyInput}
-                        onChange={(e) => setPenaltyInput(Number(e.target.value))}
-                        className="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-center font-bold"
-                      />
-                      <span className="text-xs text-slate-600 font-semibold">đ phạt</span>
+                    {/* Trừ điểm phạt */}
+                    <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-slate-600">Điểm phạt:</span>
+                        <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 shadow-2xs">
+                          <input
+                            type="number"
+                            min={0}
+                            step={0.5}
+                            value={penaltyInput}
+                            onChange={(e) => setPenaltyInput(Number(e.target.value))}
+                            className="w-12 text-xs font-black text-center text-slate-900 focus:outline-none"
+                          />
+                          <span className="text-[11px] font-semibold text-slate-500 ml-1">điểm</span>
+                        </div>
+                      </div>
                       <button
+                        type="button"
                         onClick={handlePenalty}
-                        className="ml-auto px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs rounded-lg transition cursor-pointer"
+                        className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-bold text-xs rounded-lg transition-all cursor-pointer shadow-xs select-none"
                       >
                         Trừ điểm
                       </button>
@@ -616,17 +809,19 @@ export default function AdminEssayReviewPage() {
             )}
           </div>
         </div>
-      </div>
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
+        requireReason={confirmModal.requireReason}
+        reasonPlaceholder={confirmModal.reasonPlaceholder}
         confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
         onConfirm={confirmModal.onConfirm}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
       />
-    </div>
+    </main>
   );
 }

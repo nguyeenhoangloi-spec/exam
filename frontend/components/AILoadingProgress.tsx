@@ -13,12 +13,12 @@ export interface AILoadingProgressProps {
 export function AILoadingProgress({
   percent,
   step,
-  title = 'AI Gemini đang khởi tạo câu hỏi...',
+  title = 'Hệ thống AI đang khởi tạo câu hỏi...',
   message = 'Vui lòng chờ trong giây lát, hệ thống đang phân tích bài giảng và xây dựng đáp án',
 }: AILoadingProgressProps) {
   const steps = [
     { id: 1, label: 'Đọc ngữ cảnh bài giảng', icon: FileText },
-    { id: 2, label: 'Gemini AI phân tích', icon: Bot },
+    { id: 2, label: 'Trợ lý AI phân tích', icon: Bot },
     { id: 3, label: 'Xây dựng câu hỏi & đáp án', icon: Cpu },
     { id: 4, label: 'Kiểm tra trùng & Hoàn tất', icon: CheckCircle2 },
   ];

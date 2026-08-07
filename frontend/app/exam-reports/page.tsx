@@ -9,7 +9,7 @@ import { downloadCsv } from '../../lib/export-csv';
 import { Toast } from '../../components/Toast';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExamSchedule, User } from '../../types';
-import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle, GraduationCap, FileCheck } from 'lucide-react';
+import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle, GraduationCap, FileCheck, RotateCcw } from 'lucide-react';
 
 import { ExamReportHeader } from '../../components/exam-reports/ExamReportHeader';
 import { ExamReportKPICards } from '../../components/exam-reports/ExamReportKPICards';
@@ -683,9 +683,10 @@ export default function ExamReportsPage() {
                                 setModalSubjectFilter('ALL');
                                 setModalStatusFilter('ALL');
                               }}
-                              className="text-xs text-rose-600 hover:underline font-semibold ml-auto cursor-pointer"
+                              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer select-none ml-auto"
+                              title="Đặt lại bộ lọc"
                             >
-                              Đặt lại
+                              <RotateCcw className="h-3.5 w-3.5" />
                             </button>
                           )}
                         </div>

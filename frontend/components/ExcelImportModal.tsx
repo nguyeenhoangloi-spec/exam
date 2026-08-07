@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Upload, FileSpreadsheet, Download, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { Modal } from './Modal';
+import { ConfirmModal } from './ConfirmModal';
 import { downloadCsv } from '../lib/export-csv';
 import api from '../lib/api';
 
@@ -21,6 +22,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const parseCsv = (text: string) => {
     const lines = text.split(/\r?\n/).filter((line) => line.trim());
@@ -63,6 +65,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
   };
 
   const handleConfirmImport = async () => {
+    if (loading) return;
     if (!file || previewData.length === 0) { setErrorMsg('Vui lòng chọn tệp CSV có dữ liệu.'); return; }
     setLoading(true);
     setErrorMsg('');
@@ -96,6 +99,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
   };
 
   return (
+    <>
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="space-y-5">
         <div className="flex items-center justify-between rounded-xl border border-sky-100 bg-sky-50/70 p-4">
@@ -111,8 +115,23 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
         {previewData.length > 0 && <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" /> Đã đọc {previewData.length} dòng từ tệp.</div>}
         {errorMsg && <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700"><AlertCircle className="h-4 w-4" /> {errorMsg}</div>}
         {previewData.length > 0 && <div className="max-h-48 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-left text-xs"><thead className="sticky top-0 bg-slate-50"><tr>{Object.keys(previewData[0]).map((key) => <th key={key} className="px-3 py-2 font-semibold">{key}</th>)}</tr></thead><tbody>{previewData.slice(0, 20).map((row, index) => <tr key={index} className="border-t border-slate-100">{Object.keys(previewData[0]).map((key) => <td key={key} className="px-3 py-2">{row[key]}</td>)}</tr>)}</tbody></table></div>}
-        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4"><button type="button" onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-slate-600">Hủy</button><button type="button" disabled={loading || previewData.length === 0} onClick={handleConfirmImport} className="rounded-xl bg-sky-600 px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Đang lưu...' : 'Xác nhận nhập'}</button></div>
+        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4"><button type="button" onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-slate-600">Hủy</button><button type="button" disabled={loading || previewData.length === 0} onClick={() => setShowConfirm(true)} className="rounded-xl bg-sky-600 px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Đang lưu...' : 'Xác nhận nhập'}</button></div>
       </div>
     </Modal>
+    <ConfirmModal
+      isOpen={showConfirm}
+      isLoading={loading}
+      onClose={() => setShowConfirm(false)}
+      onConfirm={() => {
+        setShowConfirm(false);
+        void handleConfirmImport();
+      }}
+      title="Xác nhận nhập dữ liệu"
+      message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
+      type="warning"
+      confirmText="Nhập dữ liệu"
+      cancelText="Quay lại kiểm tra"
+    />
+    </>
   );
 };

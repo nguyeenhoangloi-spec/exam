@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { CheckCircle2, AlertCircle, FileText, Send, ArrowLeft, Eye } from 'lucide-react';
 import { ExamAttemptReviewModal } from '@/components/exam-reports/ExamAttemptReviewModal';
+import { ConfirmModal } from '@/components/ConfirmModal';
+import { Toast } from '@/components/Toast';
 
 export default function StudentExamResultPage() {
   const router = useRouter();
@@ -18,6 +20,8 @@ export default function StudentExamResultPage() {
   const [appealReason, setAppealReason] = useState('');
   const [submittingAppeal, setSubmittingAppeal] = useState(false);
   const [appealSuccess, setAppealSuccess] = useState(false);
+  const [showAppealConfirm, setShowAppealConfirm] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showReview, setShowReview] = useState(false);
 
   const loadResult = useCallback(async () => {
@@ -38,16 +42,16 @@ export default function StudentExamResultPage() {
     void loadResult();
   }, [attemptId, loadResult]);
 
-  const handleSendAppeal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!appealReason.trim()) return;
+  const handleSendAppeal = async () => {
+    if (!appealReason.trim() || submittingAppeal || appealSuccess) return;
 
     try {
       setSubmittingAppeal(true);
       await onlineExamService.submitAppeal(attemptId, appealReason);
       setAppealSuccess(true);
+      setToast({ type: 'success', message: 'Đã gửi giải trình để giám thị xem xét.' });
     } catch (err: any) {
-      alert(err.message || 'Không thể gửi giải trình');
+      setToast({ type: 'error', message: err?.response?.data?.message || err?.message || 'Không thể gửi giải trình' });
     } finally {
       setSubmittingAppeal(false);
     }
@@ -163,7 +167,7 @@ export default function StudentExamResultPage() {
                 Đã gửi giải trình thành công. Giám thị sẽ tiến hành xem xét biên bản.
               </div>
             ) : (
-              <form onSubmit={handleSendAppeal} className="space-y-4">
+              <form onSubmit={(event) => { event.preventDefault(); setShowAppealConfirm(true); }} className="space-y-4">
                 <textarea
                   rows={3}
                   value={appealReason}
@@ -208,6 +212,21 @@ export default function StudentExamResultPage() {
         onClose={() => setShowReview(false)}
       />
     )}
+    <ConfirmModal
+      isOpen={showAppealConfirm}
+      isLoading={submittingAppeal}
+      onClose={() => setShowAppealConfirm(false)}
+      onConfirm={() => {
+        setShowAppealConfirm(false);
+        void handleSendAppeal();
+      }}
+      title="Xác nhận gửi giải trình"
+      message="Giải trình sẽ được chuyển cho giám thị để xem xét. Bạn không thể chỉnh sửa nội dung sau khi gửi."
+      type="warning"
+      confirmText="Gửi giải trình"
+      cancelText="Quay lại sửa"
+    />
+    {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
 }

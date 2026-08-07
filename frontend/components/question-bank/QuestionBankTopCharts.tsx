@@ -48,20 +48,28 @@ export function QuestionBankTopCharts({
     { label: 'Khó', value: hard, percent: calcPct(hard), color: '#ef4444', pctNum: total > 0 ? (hard / total) * 100 : 0 },
   ];
 
-  // Question Type distribution
+  // Question Type distribution - 5 types
   const typeCounts = (counts.types || {}) as Record<string, number>;
-  const multipleChoice = (typeCounts.SINGLE_CHOICE ?? 0) + (typeCounts.MULTIPLE_CHOICE ?? 0) + (typeCounts.TRUE_FALSE ?? 0) || questions.filter((q) => !q.type || ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(q.type)).length;
-  const essay = (typeCounts.ESSAY ?? 0) + (typeCounts.FILL_BLANK ?? 0) || questions.filter((q) => ['ESSAY', 'FILL_BLANK'].includes(q.type)).length;
+  const singleChoice = typeCounts.SINGLE_CHOICE ?? questions.filter((q) => !q.type || q.type === 'SINGLE_CHOICE').length;
+  const multipleChoice = typeCounts.MULTIPLE_CHOICE ?? questions.filter((q) => q.type === 'MULTIPLE_CHOICE').length;
+  const trueFalse = typeCounts.TRUE_FALSE ?? questions.filter((q) => q.type === 'TRUE_FALSE').length;
+  const fillBlank = typeCounts.FILL_BLANK ?? questions.filter((q) => q.type === 'FILL_BLANK').length;
+  const essay = typeCounts.ESSAY ?? questions.filter((q) => q.type === 'ESSAY').length;
 
-  const typeData = [
-    { name: 'Trắc nghiệm', value: multipleChoice, color: '#2563eb', percent: calcPct(multipleChoice) },
-    { name: 'Tự luận', value: essay, color: '#06b6d4', percent: calcPct(essay) },
+  const allTypesData = [
+    { name: 'Trắc nghiệm', value: singleChoice, color: '#2563eb', percent: calcPct(singleChoice) },
+    { name: 'Nhiều đáp án', value: multipleChoice, color: '#6366f1', percent: calcPct(multipleChoice) },
+    { name: 'Đúng / Sai', value: trueFalse, color: '#8b5cf6', percent: calcPct(trueFalse) },
+    { name: 'Điền khuyết', value: fillBlank, color: '#06b6d4', percent: calcPct(fillBlank) },
+    { name: 'Tự luận', value: essay, color: '#10b981', percent: calcPct(essay) },
   ];
+
+  const typeData = total > 0 ? (allTypesData.filter((item) => item.value > 0).length > 0 ? allTypesData.filter((item) => item.value > 0) : allTypesData) : allTypesData;
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 items-stretch">
       {/* Card 1: Tổng quan ngân hàng */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs h-full">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2">
           <h3 className="text-xs sm:text-sm font-black text-slate-900">Tổng quan ngân hàng</h3>
           <div className="relative">
@@ -121,7 +129,7 @@ export function QuestionBankTopCharts({
       </div>
 
       {/* Card 2: Phân bố độ khó */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs h-full">
         <h3 className="text-xs sm:text-sm font-black text-slate-900 border-b border-slate-100 pb-2">
           Phân bố độ khó
         </h3>
@@ -148,7 +156,7 @@ export function QuestionBankTopCharts({
       </div>
 
       {/* Card 3: Phân bố loại câu hỏi */}
-      <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full">
+      <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs h-full">
         <h3 className="text-xs sm:text-sm font-black text-slate-900 border-b border-slate-100 pb-2">
           Phân bố loại câu hỏi
         </h3>
@@ -182,11 +190,11 @@ export function QuestionBankTopCharts({
           </div>
 
           {/* Donut Legend */}
-          <div className="flex-1 space-y-2 text-xs font-semibold min-w-0 pr-1">
+          <div className="flex-1 space-y-1 text-xs font-semibold min-w-0 pr-1 max-h-24 overflow-y-auto">
             {typeData.map((item) => (
               <div key={item.name} className="flex items-center justify-between text-[10.5px] gap-1">
                 <span className="flex items-center gap-1.5 min-w-0 truncate">
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
+                  <span className="h-2 w-2 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
                   <span className="text-slate-700 font-bold truncate">{item.name}</span>
                 </span>
                 <span className="font-extrabold text-slate-900 shrink-0">

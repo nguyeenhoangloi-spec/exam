@@ -1,24 +1,47 @@
 'use client';
-import { useState } from 'react';
+
+import { useState, useRef } from 'react';
 import api from '../../lib/api';
 import { Subject } from '../../types';
 import { Modal } from '../Modal';
+import { ConfirmModal } from '../ConfirmModal';
 
-export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: boolean; subjects: Subject[]; onClose: () => void; onDone: () => void }) {
-  const [form, setForm] = useState({ subjectId: '', type: 'SINGLE_CHOICE', difficulty: 'MEDIUM', bloomLevel: 'UNDERSTAND', count: 5, prompt: '' });
+export function QuestionAIWizard({
+  open,
+  subjects,
+  onClose,
+  onDone,
+}: {
+  open: boolean;
+  subjects: Subject[];
+  onClose: () => void;
+  onDone: (msg?: any) => void;
+}) {
+  const [form, setForm] = useState({
+    subjectId: '',
+    type: 'SINGLE_CHOICE',
+    difficulty: 'MEDIUM',
+    bloomLevel: 'UNDERSTAND',
+    count: 5,
+    prompt: '',
+  });
   const [items, setItems] = useState<any[]>([]);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
+  const [fileName, setFileName] = useState('');
   const [sourceImages, setSourceImages] = useState<Array<{ mimeType: string; data: string; altText?: string }>>([]);
   const [documentData, setDocumentData] = useState<{ mimeType: string; data: string } | undefined>();
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const set = (k: string, v: any) => setForm(p => ({ ...p, [k]: v }));
+  const set = (k: string, v: any) => setForm((p) => ({ ...p, [k]: v }));
 
   const handleFileUpload = async (file: File | null) => {
     if (!file) return;
+    setFileName(file.name);
     setUploading(true);
-    setUploadStatus('Đang đọc tệp tài liệu...');
+    setUploadStatus('Đang trích xuất nội dung từ tệp tài liệu...');
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -26,10 +49,14 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (res.data?.text || res.data?.images?.length || res.data?.documentData) {
-        set('prompt', res.data.text || 'Tài liệu có hình ảnh/PDF scan; hãy phân tích trực tiếp nội dung hình ảnh.');
+        set('prompt', res.data.text || 'Tài liệu chứa hình ảnh/scan; hệ thống sẽ phân tích trực tiếp nội dung.');
         setSourceImages(res.data?.images || []);
         setDocumentData(res.data?.documentData);
-        setUploadStatus(`Đã đọc xong tệp "${file.name}" (${res.data.text.length} ký tự${(res.data?.images?.length || res.data?.documentData) ? `, nhận ${res.data?.images?.length || 1} hình/tài liệu` : ''}).`);
+        setUploadStatus(
+          `Đã trích xuất xong tệp "${file.name}" (${res.data.text?.length || 0} ký tự${
+            res.data?.images?.length ? `, kèm ${res.data.images.length} hình ảnh` : ''
+          }).`
+        );
       }
     } catch (e: any) {
       setUploadStatus(`Lỗi đọc tệp: ${e.response?.data?.message || e.message}`);
@@ -38,33 +65,62 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
     }
   };
 
+  const clearUploadedFile = () => {
+    setFileName('');
+    setUploadStatus('');
+    setSourceImages([]);
+    setDocumentData(undefined);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const generate = async () => {
+    if (busy || uploading || !form.subjectId) return;
     setBusy(true);
+    setUploadStatus('');
     try {
-      const r = await api.post('/questions/ai-generate', { ...form, subjectId: Number(form.subjectId), count: Number(form.count), isExtractionOnly: Boolean(form.prompt), images: sourceImages, documentData });
+      const r = await api.post('/questions/ai-generate', {
+        ...form,
+        subjectId: Number(form.subjectId),
+        count: Number(form.count),
+        isExtractionOnly: Boolean(form.prompt),
+        images: sourceImages,
+        documentData,
+      });
       setItems(r.data);
+    } catch (e: any) {
+      const message = e?.response?.data?.message || e?.message || 'Không thể tạo câu hỏi bằng AI. Vui lòng thử lại.';
+      setUploadStatus(Array.isArray(message) ? message.join(', ') : message);
     } finally {
       setBusy(false);
     }
   };
 
   const save = async () => {
+    if (busy || !items.length) return;
     setBusy(true);
     try {
-      const saved = await api.post('/questions/ai-save', { questions: items.map(({ duplicate, sourceImages: _images, ...q }) => q) });
+      const saved = await api.post('/questions/ai-save', {
+        questions: items.map(({ duplicate, sourceImages: _images, ...q }) => q),
+      });
       const savedQuestions = Array.isArray(saved.data) ? saved.data : [];
       for (let i = 0; i < savedQuestions.length; i++) {
         const images = items[i]?.sourceImages || [];
         if (!images.length || !savedQuestions[i]?.id) continue;
-        const body = new FormData(); body.append('questionId', savedQuestions[i].id);
-        images.forEach((image: any, index: number) => { const binary = atob(image.data); const bytes = new Uint8Array(binary.length); for (let j = 0; j < binary.length; j++) bytes[j] = binary.charCodeAt(j); body.append('files', new File([bytes], `ai-image-${i + 1}-${index + 1}`, { type: image.mimeType })); });
+        const body = new FormData();
+        body.append('questionId', savedQuestions[i].id);
+        images.forEach((image: any, index: number) => {
+          const binary = atob(image.data);
+          const bytes = new Uint8Array(binary.length);
+          for (let j = 0; j < binary.length; j++) bytes[j] = binary.charCodeAt(j);
+          body.append('files', new File([bytes], `ai-image-${i + 1}-${index + 1}`, { type: image.mimeType }));
+        });
         await api.post('/questions/media/upload', body, { headers: { 'Content-Type': 'multipart/form-data' } });
       }
       onDone();
       onClose();
     } catch (e: any) {
       const msg = e.response?.data?.message;
-      const text = Array.isArray(msg) ? msg.join(', ') : (typeof msg === 'string' ? msg : e.message || 'Không thể lưu câu hỏi AI.');
+      const text = Array.isArray(msg) ? msg.join(', ') : typeof msg === 'string' ? msg : e.message || 'Không thể lưu câu hỏi AI.';
       setUploadStatus(`Lỗi lưu câu hỏi: ${text}`);
     } finally {
       setBusy(false);
@@ -72,117 +128,297 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title="Trình tạo câu hỏi bằng AI Gemini">
-      <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
-          <select value={form.subjectId} onChange={e => set('subjectId', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="">Chọn môn</option>
-            {subjects.map(s => <option key={s.id} value={s.id}>{s.subjectName}</option>)}
-          </select>
-          <select value={form.type} onChange={e => set('type', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="SINGLE_CHOICE">Trắc nghiệm</option>
-            <option value="FILL_BLANK">Điền vào chỗ trống</option>
-            <option value="ESSAY">Tự luận</option>
-          </select>
-          <select value={form.difficulty} onChange={e => set('difficulty', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="EASY">Dễ</option>
-            <option value="MEDIUM">Trung bình</option>
-            <option value="HARD">Khó</option>
-          </select>
-          <select value={form.bloomLevel} onChange={e => set('bloomLevel', e.target.value)} className="rounded-lg border p-2 text-sm">
-            <option value="REMEMBER">Nhận biết</option>
-            <option value="UNDERSTAND">Thông hiểu</option>
-            <option value="APPLY">Vận dụng</option>
-            <option value="ANALYZE">Phân tích</option>
-          </select>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">Số câu:</span>
-            <input type="number" min="1" max="20" value={form.count} onChange={e => set('count', e.target.value)} className="w-full rounded-lg border p-2 text-sm" />
+    <Modal isOpen={open} onClose={onClose} title="Trình tạo câu hỏi bằng AI">
+      <div className="space-y-4 text-slate-800">
+        {/* Banner Header */}
+        <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3.5">
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-blue-900">
+              Trợ lý AI thiết kế ngân hàng câu hỏi
+            </h4>
+            <p className="text-[11.5px] font-medium text-blue-700 leading-relaxed">
+              Tự động khởi tạo câu hỏi chuẩn hóa theo môn học, cấp độ Bloom & ma trận đề thi. Tải tài liệu bài giảng để AI tổng hợp tự động.
+            </p>
           </div>
         </div>
 
-        {/* Upload File tài liệu */}
-        <div className="rounded-xl border border-dashed border-sky-300 bg-sky-50/50 p-3 text-xs">
-          <label className="mb-1 block font-semibold text-sky-800">
-            📄 Hoặc tải lên tệp tài liệu bài giảng (PDF, Word .docx, .txt):
-          </label>
+        {/* Configuration Parameters Grid */}
+        <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-3">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            Cấu hình tham số khởi tạo
+          </h5>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            {/* Subject Select */}
+            <div className="space-y-1">
+              <label className="block font-bold text-slate-700">Môn học áp dụng <span className="text-rose-500">*</span></label>
+              <select
+                value={form.subjectId}
+                onChange={(e) => set('subjectId', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+              >
+                <option value="">-- Chọn môn học --</option>
+                {subjects.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.subjectCode} - {s.subjectName}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Question Type */}
+            <div className="space-y-1">
+              <label className="block font-bold text-slate-700">Hình thức câu hỏi</label>
+              <select
+                value={form.type}
+                onChange={(e) => set('type', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+              >
+                <option value="SINGLE_CHOICE">Trắc nghiệm chọn 1 đáp án</option>
+                <option value="FILL_BLANK">Điền vào chỗ trống</option>
+                <option value="ESSAY">Tự luận ngắn / Luận giải</option>
+              </select>
+            </div>
+
+            {/* Difficulty */}
+            <div className="space-y-1">
+              <label className="block font-bold text-slate-700">Mức độ khó</label>
+              <select
+                value={form.difficulty}
+                onChange={(e) => set('difficulty', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+              >
+                <option value="EASY">Dễ (Cơ bản)</option>
+                <option value="MEDIUM">Trung bình (Vừa phải)</option>
+                <option value="HARD">Khó (Phân hóa cao)</option>
+              </select>
+            </div>
+
+            {/* Bloom Level */}
+            <div className="space-y-1">
+              <label className="block font-bold text-slate-700">Cấp độ tư duy (Bloom)</label>
+              <select
+                value={form.bloomLevel}
+                onChange={(e) => set('bloomLevel', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+              >
+                <option value="REMEMBER">Nhận biết (Remember)</option>
+                <option value="UNDERSTAND">Thông hiểu (Understand)</option>
+                <option value="APPLY">Vận dụng (Apply)</option>
+                <option value="ANALYZE">Phân tích (Analyze)</option>
+              </select>
+            </div>
+
+            {/* Question Count */}
+            <div className="space-y-1 sm:col-span-2">
+              <div className="flex items-center justify-between">
+                <label className="block font-bold text-slate-700">Số lượng câu hỏi tạo tự động</label>
+                <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-[8px] border border-blue-200">
+                  {form.count} câu
+                </span>
+              </div>
+              <input
+                type="range"
+                min="1"
+                max="20"
+                value={form.count}
+                onChange={(e) => set('count', e.target.value)}
+                className="w-full accent-blue-600 cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* File Upload Dropzone */}
+        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-3.5 transition hover:border-slate-400">
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-xs font-bold text-slate-700">
+              Tải lên tài liệu bài giảng / đề tham khảo (PDF, Word, TXT)
+            </label>
+            {fileName && (
+              <button
+                type="button"
+                onClick={clearUploadedFile}
+                className="text-[10.5px] font-bold text-rose-600 hover:underline cursor-pointer"
+              >
+                Gỡ tệp
+              </button>
+            )}
+          </div>
+
           <input
+            ref={fileInputRef}
             type="file"
             accept=".pdf,.docx,.txt,.md"
-            onChange={e => handleFileUpload(e.target.files?.[0] || null)}
+            onChange={(e) => handleFileUpload(e.target.files?.[0] || null)}
             disabled={uploading}
-            className="w-full text-xs text-slate-600 file:mr-3 file:rounded-xl file:border-0 file:bg-blue-600 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-blue-700 cursor-pointer"
+            className="hidden"
           />
-          {uploadStatus && <p className="mt-1 text-xs text-blue-700 font-medium">{uploadStatus}</p>}
-        </div>
 
-        <div>
-          <label className="mb-1 block text-xs font-semibold text-slate-700">Chủ đề hoặc nội dung tài liệu tham khảo:</label>
-          <textarea
-            rows={4}
-            value={form.prompt}
-            onChange={e => set('prompt', e.target.value)}
-            placeholder="Dán nội dung bài giảng hoặc tải tệp tài liệu PDF/Word ở trên..."
-            className="w-full rounded-lg border p-2.5 text-sm"
-          />
-        </div>
-
-        <button
-          disabled={busy || !form.subjectId || uploading}
-          onClick={generate}
-          className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 px-4 py-2.5 font-bold text-white shadow-sm transition disabled:opacity-50"
-        >
-          {busy ? '⏳ AI đang sinh câu hỏi...' : '✨ Tạo câu hỏi tự động bằng Gemini'}
-        </button>
-
-        {items.map((q, i) => (
-          <div key={i} className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-sky-700">Câu {i + 1}:</span>
-              {q.duplicate && <span className="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">Trùng câu {q.duplicate.code}</span>}
-            </div>
-            <textarea
-              rows={2}
-              value={q.content}
-              onChange={e => setItems(items.map((x, j) => j === i ? { ...x, content: e.target.value } : x))}
-              className="w-full rounded-lg border border-slate-300 p-2 text-sm bg-white font-medium"
-            />
-            {q.sourceImages?.length > 0 && <div className="flex flex-wrap gap-2 rounded-lg border border-sky-200 bg-sky-50 p-2">{q.sourceImages.map((image: any, imageIdx: number) => <img key={imageIdx} src={`data:${image.mimeType};base64,${image.data}`} alt={image.altText || `Hình minh họa ${imageIdx + 1}`} className="h-20 w-28 rounded border border-sky-200 object-contain bg-white" />)}</div>}
-            {q.options && q.options.length > 0 && (
-              <div className="space-y-1 pt-1">
-                <span className="text-xs font-semibold text-slate-500">Đáp án (A, B, C, D):</span>
-                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                  {q.options.map((opt: any, optIdx: number) => (
-                    <div
-                      key={optIdx}
-                      className={`flex items-center gap-2 rounded-lg border p-2 text-xs font-medium ${opt.isCorrect ? 'border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold' : 'border-slate-200 bg-white text-slate-700'
-                        }`}
-                    >
-                      <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
-                        }`}>
-                        {opt.label}
-                      </span>
-                      <span className="flex-1">{opt.content}</span>
-                      {opt.isCorrect && <span className="text-[10px] text-emerald-700 font-bold">✓ Đáp án đúng</span>}
-                    </div>
-                  ))}
-                </div>
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-3.5 text-center cursor-pointer transition hover:border-blue-500"
+          >
+            {uploading ? (
+              <div className="flex flex-col items-center space-y-1">
+                <p className="text-xs font-bold text-blue-700">{uploadStatus}</p>
+              </div>
+            ) : fileName ? (
+              <div className="text-xs font-bold text-emerald-700">
+                {fileName}
+              </div>
+            ) : (
+              <div className="space-y-0.5">
+                <p className="text-xs font-bold text-slate-700">Bấm để tải tệp hoặc kéo thả vào đây</p>
+                <p className="text-[11px] font-medium text-slate-400">Định dạng hỗ trợ: PDF, Word (.docx), TXT, Markdown (.md)</p>
               </div>
             )}
-            {q.explanation && (
-              <p className="text-xs text-slate-600 italic bg-white p-2 rounded-lg border border-slate-200">
-                💡 <span className="font-semibold">Giải thích:</span> {q.explanation}
-              </p>
-            )}
           </div>
-        ))}
 
+          {uploadStatus && !uploading && (
+            <p className="mt-1.5 text-[11.5px] font-medium text-blue-700">
+              {uploadStatus}
+            </p>
+          )}
+        </div>
+
+        {/* Prompt Input Area */}
+        <div className="space-y-1">
+          <label className="block text-xs font-bold text-slate-700">
+            Chủ đề chi tiết hoặc ghi chú nội dung cho AI:
+          </label>
+          <textarea
+            rows={3}
+            value={form.prompt}
+            onChange={(e) => set('prompt', e.target.value)}
+            placeholder="Ví dụ: Tập trung vào Chương 2 - Thuật toán sắp xếp nhanh (QuickSort), yêu cầu có câu hỏi phân tích độ phức tạp thời gian O(n log n)..."
+            className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          />
+        </div>
+
+        {/* Generate Button - Standard Primary Button (bg-blue-600) */}
+        <button
+          type="button"
+          disabled={busy || !form.subjectId || uploading}
+          onClick={generate}
+          className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {busy ? 'AI đang tạo câu hỏi...' : 'Khởi tạo câu hỏi tự động bằng AI'}
+        </button>
+
+        {/* Generated Questions List */}
         {items.length > 0 && (
-          <button disabled={busy} onClick={save} className="w-full rounded-xl bg-emerald-600 px-4 py-2.5 font-semibold text-white hover:bg-emerald-700">
-            💾 Lưu {items.length} câu vào ngân hàng (DRAFT)
-          </button>
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <h5 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                Danh sách {items.length} câu hỏi AI vừa khởi tạo
+              </h5>
+              <span className="text-[11px] font-medium text-slate-500">Xem lại & chỉnh sửa trước khi lưu</span>
+            </div>
+
+            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+              {items.map((q, i) => (
+                <div key={i} className="rounded-xl border border-slate-200 bg-white p-3 space-y-2 text-left shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-[8px]">
+                      Câu {i + 1}
+                    </span>
+                    {q.duplicate && (
+                      <span className="rounded-[8px] bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
+                        Trùng câu {q.duplicate.code}
+                      </span>
+                    )}
+                  </div>
+
+                  <textarea
+                    rows={2}
+                    value={q.content}
+                    onChange={(e) =>
+                      setItems(items.map((x, j) => (j === i ? { ...x, content: e.target.value } : x)))
+                    }
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-blue-500 transition"
+                  />
+
+                  {q.sourceImages?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                      {q.sourceImages.map((image: any, imageIdx: number) => (
+                        <img
+                          key={imageIdx}
+                          src={`data:${image.mimeType};base64,${image.data}`}
+                          alt={image.altText || `Hình minh họa ${imageIdx + 1}`}
+                          className="h-20 w-28 rounded border border-slate-200 object-contain bg-white"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {q.options && q.options.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Các lựa chọn đáp án:</span>
+                      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                        {q.options.map((opt: any, optIdx: number) => (
+                          <div
+                            key={optIdx}
+                            className={`flex items-center gap-2 rounded-lg border p-2 text-xs font-medium transition ${
+                              opt.isCorrect
+                                ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
+                                : 'border-slate-200 bg-slate-50 text-slate-700'
+                            }`}
+                          >
+                            <span
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10.5px] font-bold ${
+                                opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                              }`}
+                            >
+                              {opt.label}
+                            </span>
+                            <span className="flex-1 text-[11.5px]">{opt.content}</span>
+                            {opt.isCorrect && (
+                              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.5 rounded-[8px]">
+                                Đáp án đúng
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {q.explanation && (
+                    <div className="rounded-lg bg-amber-50/70 border border-amber-200 p-2 text-xs text-amber-900 font-medium">
+                      <strong className="font-bold text-amber-950">Giải thích chi tiết:</strong> {q.explanation}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Save to Question Bank - Standard Emerald Success Button (bg-emerald-600) */}
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => setShowSaveConfirm(true)}
+              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50"
+            >
+              {busy ? 'Đang lưu vào ngân hàng dữ liệu...' : `Lưu ${items.length} câu hỏi AI vào Ngân hàng (Bản nháp DRAFT)`}
+            </button>
+          </div>
         )}
       </div>
+      <ConfirmModal
+        isOpen={showSaveConfirm}
+        isLoading={busy}
+        onClose={() => setShowSaveConfirm(false)}
+        onConfirm={() => {
+          setShowSaveConfirm(false);
+          void save();
+        }}
+        title="Xác nhận lưu câu hỏi AI"
+        message={`Hệ thống sẽ lưu ${items.length} câu hỏi AI đã xem trước vào Ngân hàng ở trạng thái Bản nháp. Các câu này không tự được duyệt.`}
+        type="warning"
+        confirmText="Lưu bản nháp"
+        cancelText="Quay lại kiểm tra"
+      />
     </Modal>
   );
 }

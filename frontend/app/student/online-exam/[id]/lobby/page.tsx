@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Clock, ShieldCheck, AlertCircle, CheckCircle2, Monitor, ArrowRight, Award, Trophy, KeyRound } from 'lucide-react';
+import { ConfirmModal } from '@/components/ConfirmModal';
+import { Toast } from '@/components/Toast';
 
 export default function StudentExamLobbyPage() {
   const router = useRouter();
@@ -12,11 +14,13 @@ export default function StudentExamLobbyPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [eligibility, setEligibility] = useState<any>(null);
   const [starting, setStarting] = useState(false);
   const [rulesAccepted, setRulesAccepted] = useState(false);
   const [examPassword, setExamPassword] = useState('');
   const [accessCode, setAccessCode] = useState('');
+  const [showStartConfirm, setShowStartConfirm] = useState(false);
 
   const loadEligibility = useCallback(async () => {
     try {
@@ -56,6 +60,7 @@ export default function StudentExamLobbyPage() {
   }, [loadEligibility, scheduleId]);
 
   const handleStartExam = async () => {
+    if (starting) return;
     try {
       setStarting(true);
       setError(null);
@@ -79,7 +84,9 @@ export default function StudentExamLobbyPage() {
       sessionStorage.setItem('attemptToken', res.attemptToken);
       router.push(`/student/online-exam/${res.attemptToken}/take`);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Không thể bắt đầu làm bài thi');
+      const msg = err.response?.data?.message || err.message || 'Không thể bắt đầu làm bài thi. Vui lòng kiểm tra lại mật khẩu/mã truy cập.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
       setStarting(false);
     }
   };
@@ -127,13 +134,22 @@ export default function StudentExamLobbyPage() {
     (error && error.toLowerCase().includes('mã truy cập'))
   );
 
+  const currentExamType = examInfo?.examType || schedule?.examType || eligibilityData?.schedule?.examType || 'TRAC_NGHIEM';
+  const examTypeBadgeText =
+    currentExamType === 'DIEN_LO' || currentExamType === 'FILL_BLANK'
+      ? 'Thi Điền Khuyết Trực Tuyến'
+      : currentExamType === 'TU_LUAN' || currentExamType === 'ESSAY'
+      ? 'Thi Tự Luận Trực Tuyến'
+      : 'Thi Trắc Nghiệm Trực Tuyến';
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-4 md:p-8">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-xl">
         <div className="border-b border-slate-100 pb-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <span className="px-3 py-1 bg-sky-50 text-sky-700 border border-sky-100 text-xs font-bold rounded-full uppercase tracking-wider">
-              Thi Trắc Nghiệm Trực Tuyến
+              {examTypeBadgeText}
             </span>
             <h1 className="text-2xl font-black mt-2 text-slate-900">{schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}</h1>
             <p className="text-slate-500 text-xs font-medium mt-1">
@@ -303,7 +319,7 @@ export default function StudentExamLobbyPage() {
                 Quay lại
               </button>
               <button
-                onClick={handleStartExam}
+                onClick={() => setShowStartConfirm(true)}
                 disabled={
                   starting ||
                   (error && !isPasswordRequired && !isAccessCodeRequired) ||
@@ -326,6 +342,20 @@ export default function StudentExamLobbyPage() {
           </>
         )}
       </div>
+      <ConfirmModal
+        isOpen={showStartConfirm}
+        isLoading={starting}
+        onClose={() => setShowStartConfirm(false)}
+        onConfirm={() => {
+          setShowStartConfirm(false);
+          void handleStartExam();
+        }}
+        title="Xác nhận bắt đầu làm bài"
+        message={`Thời gian làm bài ${durationMinutes} phút sẽ bắt đầu tính ngay sau khi xác nhận. Hãy kiểm tra kết nối mạng trước khi tiếp tục.`}
+        type="warning"
+        confirmText="Bắt đầu làm bài"
+        cancelText="Quay lại kiểm tra"
+      />
     </div>
   );
 }

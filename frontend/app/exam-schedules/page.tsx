@@ -93,6 +93,7 @@ export default function ExamSchedulesPage() {
     examDate: new Date().toISOString().split('T')[0],
     startTime: '07:30',
     endTime: '08:30',
+    examType: 'TRAC_NGHIEM',
   });
   const [selectedDuration, setSelectedDuration] = useState<number>(60);
 
@@ -227,6 +228,7 @@ export default function ExamSchedulesPage() {
       examDate: new Date().toISOString().split('T')[0],
       startTime: defaultStart,
       endTime: calculateEndTime(defaultStart, duration),
+      examType: 'TRAC_NGHIEM',
     });
     setIsModalOpen(true);
   };
@@ -247,12 +249,13 @@ export default function ExamSchedulesPage() {
     setSelectedDuration(duration);
 
     setFormData({
-      examPeriodId: s.examPeriodId ? String(s.examPeriodId) : (periods[0]?.id ? String(periods[0].id) : ''),
-      subjectId: s.subjectId ? String(s.subjectId) : (subjects[0]?.id ? String(subjects[0].id) : ''),
-      shiftName: computeShiftName(startT, s.shiftName),
-      examDate: s.examDate ? new Date(s.examDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      examPeriodId: s?.examPeriodId ? String(s.examPeriodId) : (periods[0]?.id ? String(periods[0].id) : ''),
+      subjectId: s?.subjectId ? String(s.subjectId) : (subjects[0]?.id ? String(subjects[0].id) : ''),
+      shiftName: computeShiftName(startT, s?.shiftName),
+      examDate: s?.examDate ? new Date(s.examDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       startTime: startT,
-      endTime: s.endTime || calculateEndTime(startT, duration),
+      endTime: s?.endTime || calculateEndTime(startT, duration),
+      examType: s?.examType || 'TRAC_NGHIEM',
     });
     setIsModalOpen(true);
   };
@@ -281,6 +284,7 @@ export default function ExamSchedulesPage() {
       examDate: formData.examDate,
       startTime: formData.startTime,
       endTime: formData.endTime,
+      examType: formData.examType || 'TRAC_NGHIEM',
     };
 
     try {
@@ -591,11 +595,29 @@ export default function ExamSchedulesPage() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi (Tự động xác định)</label>
-            <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-extrabold text-blue-700 flex items-center justify-between">
-              <span>{formData.shiftName || computeShiftName(formData.startTime)}</span>
-              <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md uppercase">Hệ thống tự động nhận diện</span>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                Hình thức thi <span className="text-red-500">*</span>
+              </label>
+              <select
+                required
+                value={formData.examType}
+                onChange={(e) => setFormData({ ...formData, examType: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none bg-white font-bold text-slate-900"
+              >
+                <option value="TRAC_NGHIEM">Trắc nghiệm</option>
+                <option value="DIEN_LO">Điền khuyết (Điền vào chỗ trống)</option>
+                <option value="TU_LUAN">Tự luận</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi (Tự động xác định)</label>
+              <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-extrabold text-blue-700 flex items-center justify-between">
+                <span>{formData.shiftName || computeShiftName(formData.startTime)}</span>
+                <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md uppercase">Tự động</span>
+              </div>
             </div>
           </div>
 

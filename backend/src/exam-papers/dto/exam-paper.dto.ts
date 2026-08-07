@@ -18,8 +18,8 @@ export class CreateRandomExamPaperDto {
   title?: string;
 
   @IsOptional()
-  @IsIn(['TRAC_NGHIEM', 'TU_LUAN'])
-  examType?: 'TRAC_NGHIEM' | 'TU_LUAN';
+  @IsIn(['TRAC_NGHIEM', 'TU_LUAN', 'DIEN_LO'])
+  examType?: 'TRAC_NGHIEM' | 'TU_LUAN' | 'DIEN_LO';
 
   @Type(() => Number)
   @IsInt()

@@ -3,7 +3,7 @@ import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsIn, IsInt, IsISO860
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
 const statuses = ['SCHEDULED', 'ONGOING', 'COMPLETED', 'CANCELLED', 'LOCKED'] as const;
-const examTypes = ['TRAC_NGHIEM', 'TU_LUAN'] as const;
+const examTypes = ['TRAC_NGHIEM', 'TU_LUAN', 'DIEN_LO'] as const;
 
 const modes = ['MOCK', 'OFFICIAL'] as const;
 

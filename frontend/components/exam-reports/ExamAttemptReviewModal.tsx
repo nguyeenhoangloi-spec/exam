@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -94,14 +94,14 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
         <div className="border-t border-slate-100 p-4 pt-3 space-y-3">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider rounded-lg bg-slate-100 px-2 py-1">
-              {q.type === 'ESSAY' ? 'Tu luan' : 'Trac nghiem'}
+              {q.type === 'ESSAY' ? 'Tự luận' : q.type === 'FILL_BLANK' ? 'Điền khuyết' : q.type === 'TRUE_FALSE' ? 'Đúng / Sai' : 'Trắc nghiệm'}
             </span>
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider rounded-lg bg-slate-100 px-2 py-1">
-              {q.difficulty || 'MEDIUM'}
+              {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
             </span>
           </div>
 
-          {q.type !== 'ESSAY' && q.options?.length > 0 && (
+          {q.type !== 'ESSAY' && q.type !== 'FILL_BLANK' && q.options?.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {q.options.map((opt: any) => (
                 <OptionItem
@@ -116,15 +116,42 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
             </div>
           )}
 
+          {q.type === 'FILL_BLANK' && (
+            <div className="space-y-2 bg-slate-50 border border-slate-200 p-3 rounded-xl">
+              <p className="text-[10.5px] font-extrabold text-slate-600 uppercase tracking-wider">Bài làm điền khuyết của sinh viên:</p>
+              <div className="space-y-2">
+                {((q.fillBlankAnswers && q.fillBlankAnswers.length > 0 ? q.fillBlankAnswers : [{ blankIndex: 1 }]) as any[]).map((expected: any) => {
+                  const bIdx = expected.blankIndex || 1;
+                  const studentItem = (sel?.fillBlankAnswers || []).find((ans: any) => Number(ans.blankIndex) === Number(bIdx));
+                  const studentVal = studentItem?.value || '';
+                  const correctVal = expected.answer || '';
+                  return (
+                    <div key={bIdx} className="flex flex-wrap items-center justify-between gap-2 bg-white border border-slate-200 p-2.5 rounded-lg text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-blue-600">Ô #{bIdx}:</span>
+                        <span className="font-bold text-slate-900">{studentVal || <span className="italic text-slate-400">Bỏ trống</span>}</span>
+                      </div>
+                      {showAnswer && (
+                        <div className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          Đáp án đúng: <span className="font-black">{correctVal || '---'}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {q.type === 'ESSAY' && (
             <div className="space-y-2">
-              <p className="text-[10.5px] font-extrabold text-slate-500 uppercase tracking-wider">Bai lam cua sinh vien:</p>
+              <p className="text-[10.5px] font-extrabold text-slate-500 uppercase tracking-wider">Bài làm của sinh viên:</p>
               <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs text-slate-800 whitespace-pre-wrap leading-relaxed min-h-[60px]">
-                {sel?.textAnswer || <span className="italic text-slate-400">Khong co bai lam tu luan</span>}
+                {sel?.textAnswer || <span className="italic text-slate-400">Không có bài làm tự luận</span>}
               </div>
               {showAnswer && sel?.teacherComment && (
                 <div className="rounded-xl border border-blue-200 bg-blue-50/80 p-3 space-y-1">
-                  <p className="text-[10px] font-black text-blue-700 uppercase tracking-wider">Nhan xet cua Giang vien:</p>
+                  <p className="text-[10px] font-black text-blue-700 uppercase tracking-wider">Nhận xét của Giảng viên:</p>
                   <p className="text-xs text-blue-900 whitespace-pre-wrap">{sel.teacherComment}</p>
                 </div>
               )}
@@ -288,7 +315,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
               href={`/teacher/essay-grading?attemptId=${attemptId}`}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold transition shadow-xs"
             >
-              📝 Chấm / Sửa Điểm Tự Luận
+              <FileText className="w-3.5 h-3.5" /> Chấm / Sửa Điểm Tự Luận
             </a>
           ) : <div />}
           <button

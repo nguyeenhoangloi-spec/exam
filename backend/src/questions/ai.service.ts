@@ -50,48 +50,114 @@ function parsePlainTextQuestions(rawText: string, defaultType = 'SINGLE_CHOICE')
   return results;
 }
 
-/** Parse common Word/PDF question layouts when Gemini returns plain text. */
+/** Parse common Word/PDF question layouts when AI returns plain text or API is unreachable. */
 function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOICE'): any[] {
+  if (!rawText || !rawText.trim()) return [];
   const results: any[] = [];
-  const lines = rawText.replace(/\r\n?/g, '\n').replace(/\u00a0/g, ' ').split('\n').map((line) => line.trim()).filter(Boolean);
-  const startsQuestion = (line: string) => /^(?:câu\s*(?:hỏi\s*)?\d+|cÃ¢u\s*(?:há»i\s*)?\d+|\d+)\s*[:.)-]\s*/iu.test(line);
+  const text = rawText.replace(/\r\n?/g, '\n').replace(/\u00a0/g, ' ');
+  const lines = text.split('\n').map((line) => line.trim()).filter(Boolean);
+
+  const startsQuestion = (line: string) =>
+    /^(?:câu\s*(?:hỏi\s*)?\d+|cÃ¢u\s*(?:há» i\s*)?\d+|bài\s*\d+|question\s*\d+|q\d+|\d+)\s*[:.)-]\s*/iu.test(line);
+  const isOptionLine = (line: string) => /^[A-D]\s*[.)-]\s*/i.test(line);
+  const isAnswerLine = (line: string) =>
+    /^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|lời\s*giải|giải\s*thích|explanation|answer)\s*[:.)-]?\s*/iu.test(line);
+
   const blocks: string[][] = [];
   let block: string[] = [];
+
   for (const line of lines) {
     if (startsQuestion(line)) {
-      if (block.length) blocks.push(block);
+      if (block.length > 0) blocks.push(block);
       block = [line];
-    } else if (block.length) block.push(line);
+    } else if (block.length > 0) {
+      block.push(line);
+    } else if (line.length >= 8 && !isOptionLine(line) && !isAnswerLine(line)) {
+      block = [line];
+    }
   }
-  if (block.length) blocks.push(block);
+  if (block.length > 0) blocks.push(block);
+
   for (const linesInQuestion of blocks) {
-    const content = linesInQuestion[0]
-      .replace(/^(?:câu\s*(?:hỏi\s*)?\d+|cÃ¢u\s*(?:há»i\s*)?\d+|\d+)\s*[:.)-]?\s*/iu, '')
+    if (linesInQuestion.length === 0) continue;
+    let content = linesInQuestion[0]
+      .replace(/^(?:câu\s*(?:hỏi\s*)?\d+|cÃ¢u\s*(?:há» i\s*)?\d+|bài\s*\d+|question\s*\d+|q\d+|\d+)\s*[:.)-]?\s*/iu, '')
       .trim();
     if (content.length < 3) continue;
+
     const options: any[] = [];
     let answerLabel = '';
     let explanation = '';
-    for (const line of linesInQuestion.slice(1)) {
-      const answer = line.match(/^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|cÃ¡p\sÃ¡n|answer)\s*[:.)-]?\s*([A-D])/iu);
-      if (answer) { answerLabel = answer[1].toUpperCase(); continue; }
-      const explanationMatch = line.match(/^(?:giải thích|giáº£i thÃ­ch|explanation)\s*[:.)-]?\s*(.*)$/iu);
-      if (explanationMatch) { explanation = explanationMatch[1].trim(); continue; }
+
+    for (let i = 1; i < linesInQuestion.length; i++) {
+      const line = linesInQuestion[i];
+      const answer = line.match(/^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|cÃ¡p\sÃ¡n|answer|lời\s*giải\s*đúng)\s*[:.)-]?\s*([A-D])/iu);
+      if (answer) {
+        answerLabel = answer[1].toUpperCase();
+        continue;
+      }
+      const explanationMatch = line.match(/^(?:giải thích|giáº£i thÃ­ch|hướng\s*dẫn|explanation|lời\s*giải)\s*[:.)-]?\s*(.*)$/iu);
+      if (explanationMatch) {
+        explanation = explanationMatch[1].trim();
+        continue;
+      }
       const option = line.match(/^([A-D])\s*[.)-]\s*(.*)$/i);
       if (option) {
-        options.push({ label: option[1].toUpperCase(), content: option[2].replace(/[★✓✔]\s*$/u, '').trim(), isCorrect: false, order: options.length });
-      } else if (options.length) {
+        let optText = option[2].replace(/[★✓✔*]\s*$/u, '').trim();
+        let isCorrect = line.includes('*') || line.includes('★') || line.includes('✓') || line.includes('✔');
+        options.push({
+          label: option[1].toUpperCase(),
+          content: optText,
+          isCorrect,
+          order: options.length,
+        });
+      } else if (options.length > 0) {
         options[options.length - 1].content += ` ${line}`;
+      } else {
+        content += ` ${line}`;
       }
     }
-    if (answerLabel) options.forEach((option) => { option.isCorrect = option.label === answerLabel; });
-    results.push({ content, score: 0.25, explanation, keywords: '', options: defaultType === 'ESSAY' ? [] : options });
+
+    if (answerLabel && options.length > 0) {
+      options.forEach((opt) => {
+        opt.isCorrect = opt.label === answerLabel;
+      });
+    }
+
+    if (options.length > 0 && !options.some((o) => o.isCorrect)) {
+      options[0].isCorrect = true;
+    }
+
+    results.push({
+      content,
+      score: 0.25,
+      explanation,
+      keywords: '',
+      options: defaultType === 'ESSAY' ? [] : options,
+    });
   }
+
   return results;
 }
 
 function extractValidQuestionsFromTruncatedJson(raw: string): any[] {
   const list: any[] = [];
+  if (!raw) return list;
+
+  // 1. Try direct JSON parse
+  try {
+    let cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    if (/^["']?questions["']?\s*:/i.test(cleaned) && !cleaned.startsWith('{')) {
+      cleaned = '{' + cleaned + '}';
+    }
+    const parsed = JSON.parse(cleaned);
+    const arr = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.questions) ? parsed.questions : null;
+    if (arr && arr.length > 0) {
+      return arr.filter((x: any) => x && typeof x === 'object' && x.content && typeof x.content === 'string');
+    }
+  } catch {}
+
+  // 2. Bracket balance scanner
   let depth = 0;
   let startIdx = -1;
   let inStr = false;
@@ -114,37 +180,26 @@ function extractValidQuestionsFromTruncatedJson(raw: string): any[] {
     if (inStr) continue;
 
     if (char === '{') {
-      if (depth === 0) {
-        startIdx = i;
-      }
+      if (depth === 0) startIdx = i;
       depth++;
     } else if (char === '}') {
       if (depth > 0) {
         depth--;
-        if (startIdx !== -1 && (depth === 0 || depth === 1)) {
+        if (depth === 0 && startIdx !== -1) {
           const sub = raw.slice(startIdx, i + 1);
           try {
             const parsedObj = JSON.parse(sub);
-            if (parsedObj && typeof parsedObj === 'object' && parsedObj.content && typeof parsedObj.content === 'string') {
-              list.push(parsedObj);
-              startIdx = -1;
+            if (parsedObj && typeof parsedObj === 'object') {
+              if (Array.isArray(parsedObj.questions)) {
+                list.push(...parsedObj.questions.filter((q: any) => q && typeof q === 'object' && q.content));
+              } else if (parsedObj.content && typeof parsedObj.content === 'string' && !parsedObj.content.includes('"content"')) {
+                list.push(parsedObj);
+              }
             }
-          } catch {
-            // Ignore incomplete object
-          }
+          } catch {}
+          startIdx = -1;
         }
       }
-    }
-  }
-
-  if (list.length === 0) {
-    const objectRegex = /\{\s*"content"\s*:\s*"[\s\S]*?"\s*,\s*"score"[\s\S]*?\}/g;
-    let match;
-    while ((match = objectRegex.exec(raw)) !== null) {
-      try {
-        const obj = JSON.parse(match[0]);
-        if (obj && obj.content) list.push(obj);
-      } catch {}
     }
   }
 
@@ -155,15 +210,44 @@ function repairAndParseJson(raw: string): any {
   let cleaned = raw.trim();
   cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
 
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/) || cleaned.match(/\[[\s\S]*\]/);
-  if (jsonMatch) {
-    cleaned = jsonMatch[0];
+  if (/^["']?questions["']?\s*:/i.test(cleaned) && !cleaned.startsWith('{')) {
+    cleaned = '{' + cleaned + '}';
+  }
+
+  // Try direct parse first!
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+
+  const qMatch = cleaned.match(/["']?questions["']?\s*:\s*(\[[\s\S]*)/i);
+  if (qMatch) {
+    try {
+      const fixed = '{"questions":' + qMatch[1] + (qMatch[1].endsWith('}') ? '' : '}');
+      return JSON.parse(fixed);
+    } catch {}
+  }
+
+  // Find outermost valid JSON structure ([...] or {...})
+  const firstBrace = cleaned.indexOf('{');
+  const firstBracket = cleaned.indexOf('[');
+
+  let targetJson = cleaned;
+  if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+    const lastBracket = cleaned.lastIndexOf(']');
+    if (lastBracket > firstBracket) {
+      targetJson = cleaned.slice(firstBracket, lastBracket + 1);
+    }
+  } else if (firstBrace !== -1) {
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (lastBrace > firstBrace) {
+      targetJson = cleaned.slice(firstBrace, lastBrace + 1);
+    }
   }
 
   try {
-    return JSON.parse(cleaned);
+    return JSON.parse(targetJson);
   } catch (e1) {
-    let repaired = cleaned.replace(/,\s*([}\]])/g, '$1');
+    let repaired = targetJson.replace(/,\s*([}\]])/g, '$1');
     let openBraces = 0, openSquare = 0;
     let inString = false;
     let escape = false;
@@ -260,20 +344,23 @@ export class AiQuestionsService {
           `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (tối đa ${input.count || 100} câu hỏi, không tự ý bỏ bớt).`,
           input.type === 'ESSAY'
             ? `2. Đây là dạng TỰ LUẬN. Đặt options: [] (không tạo lựa chọn A, B, C, D). Nếu trong tài liệu có sẵn Đáp án/Hướng dẫn trả lời thì trích xuất đầy đủ vào "explanation". NẾU TRONG TÀI LIỆU KHÔNG CÓ SẴN ĐÁP ÁN, BẠN PHẢI TỰ ĐỘNG BIÊN SOẠN HƯỚNG DẪN ĐÁP ÁN / GỢI Ý CHẤM MẪU CHUẨN XÁC VÀ ĐƯA VÀO "explanation" (Tuyệt đối không được để explanation bị rỗng).`
+            : input.type === 'FILL_BLANK'
+            ? `2. Đây là dạng ĐIỀN VÀO CHỖ TRỐNG (FILL_BLANK). Vị trí chỗ trống trong "content" BẮT BUỘC phải dùng thẻ {{blank_1}}, {{blank_2}}... (ví dụ: "Ngôn ngữ HTML dùng để {{blank_1}} trang web."). Đặt options: []. Bắt buộc trả về danh sách đáp án tương ứng trong "fillBlankAnswers": [{"blankIndex": 1, "answer": "đáp_án_đúng", "acceptedAnswers": ["đáp_án_chấp_nhận_khác"], "score": 0.25}]. Nếu tài liệu là bài giảng/lý thuyết, hãy chọn ra các từ khóa/thuật ngữ cốt lõi để tạo thành chỗ trống {{blank_1}} và cung cấp đáp án chính xác.`
             : `2. Trích xuất nội dung từng câu hỏi và danh sách đáp án A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng. Trích xuất lời giải (nếu có) hoặc tự tạo giải thích vào "explanation".`,
           `3. Không tự tạo thêm câu hỏi ngoài tài liệu.`,
           `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
-          `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[]}]}.`,
+          `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.`,
           `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
         ].join('\n')
       : [
           `Tạo đúng ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
           `Môn: ${subject.subjectName}; ${chapter ? `chương: ${chapter.name}.` : 'không phân chương.'}`,
           `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
-          'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.',
+          'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
           'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
           input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
         ].filter(Boolean).join('\n');
+    let rawQuestions: any[] = [];
     try {
       const parts: Array<Record<string, unknown>> = [{ text: prompt }];
       for (const image of input.images || []) {
@@ -307,8 +394,8 @@ export class AiQuestionsService {
 
         const errText = await res.text().catch(() => '');
         lastErrText = errText;
-        if (res.status === 429 || res.status === 403) {
-          // Exceeded Quota or Forbidden - break early to try DeepSeek
+        if (res.status >= 400) {
+          // API Key error, Quota exceeded, or Forbidden - break early to try DeepSeek / fallback
           break;
         }
       }
@@ -357,34 +444,52 @@ export class AiQuestionsService {
       } catch (dsErr: any) {
         const gMsg = geminiError?.message || 'Gemini error';
         const dMsg = dsErr?.message || 'DeepSeek error';
-        throw new BadGatewayException(`Hệ thống AI tạm thời bận (Gemini: ${gMsg.slice(0, 80)}, DeepSeek: ${dMsg.slice(0, 80)})`);
+        // Nếu gọi API AI thất bại (do Hết Quota/Key bận), chuyển sang chế độ Tự động bóc tách cục bộ từ văn bản tài liệu
+        rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
+        if (!rawQuestions || rawQuestions.length === 0) {
+          throw new BadGatewayException(`Hệ thống AI tạm thời bận (Gemini: ${gMsg.slice(0, 80)}, DeepSeek: ${dMsg.slice(0, 80)})`);
+        }
       }
     }
+
+    if (!rawQuestions || rawQuestions.length === 0) {
       if (!raw || raw.trim().length === 0) {
-        throw new BadGatewayException('AI không trả nội dung.');
-      }
+        rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
+      } else {
+        try {
+          const parsed = repairAndParseJson(raw);
+          rawQuestions = Array.isArray(parsed)
+            ? parsed
+            : Array.isArray(parsed?.questions)
+            ? parsed.questions
+            : [];
+        } catch {
+          // Fallthrough to fallback parsers
+        }
 
-      let rawQuestions: any[] = [];
-      try {
-        const parsed = repairAndParseJson(raw);
-        rawQuestions = Array.isArray(parsed)
-          ? parsed
-          : Array.isArray(parsed?.questions)
-          ? parsed.questions
-          : [];
-      } catch {
-        // Fallthrough to fallback parsers
-      }
+        if (!rawQuestions || rawQuestions.length === 0) {
+          rawQuestions = extractValidQuestionsFromTruncatedJson(raw);
+        }
 
-      if (!rawQuestions || rawQuestions.length === 0) {
-        rawQuestions = extractValidQuestionsFromTruncatedJson(raw);
+        if (!rawQuestions || rawQuestions.length === 0) {
+          rawQuestions = parsePlainTextQuestions(raw || input.prompt || '', input.type);
+        }
       }
+    }
 
-      if (!rawQuestions || rawQuestions.length === 0) {
-        // Nếu Gemini trả rỗng/bị cắt, vẫn trích được các mẫu Word phổ biến từ
-        // chính nội dung tài liệu để người dùng xem trước và chỉnh sửa.
-        rawQuestions = parsePlainTextQuestions(raw || input.prompt || '', input.type);
+      // Unpack rawQuestions neu gap chuoi JSON bi dong goi thanh 1 phan tu duy nhat
+      let unpacked: any[] = [];
+      for (const item of rawQuestions) {
+        if (item && typeof item === 'object' && typeof item.content === 'string' && (item.content.includes('"content"') || item.content.includes('"questions"'))) {
+          const extracted = extractValidQuestionsFromTruncatedJson(item.content);
+          if (extracted.length > 0) {
+            unpacked.push(...extracted);
+            continue;
+          }
+        }
+        unpacked.push(item);
       }
+      rawQuestions = unpacked;
 
       if (!rawQuestions || rawQuestions.length === 0) {
         throw new BadGatewayException('Không thể bóc tách câu hỏi từ tài liệu. Vui lòng kiểm tra lại nội dung file Word/PDF.');
@@ -412,6 +517,54 @@ export class AiQuestionsService {
             options[0].isCorrect = true;
           }
         }
+        let rawContentText = String(item.content || '').trim();
+
+        // If rawContentText trapped trailing JSON payload (e.g. ","score":0.25,"explanation":...)
+        if (rawContentText.includes('","score"') || rawContentText.includes('","explanation"') || rawContentText.includes('","options"') || rawContentText.includes('","fillBlankAnswers"')) {
+          const expMatch = rawContentText.match(/","explanation"\s*:\s*"([^"]+)"/i);
+          if (expMatch && (!item.explanation || !String(item.explanation).trim())) {
+            item.explanation = expMatch[1];
+          }
+          const optMatch = rawContentText.match(/","options"\s*:\s*(\[[^\]]+\])/i);
+          if (optMatch && (!item.options || !Array.isArray(item.options) || item.options.length === 0)) {
+            try { item.options = JSON.parse(optMatch[1]); } catch {}
+          }
+          rawContentText = rawContentText.replace(/","(score|explanation|keywords|options|fillBlankAnswers|imageIndexes)":[\s\S]*/gi, '');
+        }
+
+        let formattedContent = rawContentText
+          .replace(/^["']?questions["']?\s*:\s*\[\s*/i, '')
+          .replace(/^[{["]+|[}\]"]+$/g, '')
+          .replace(/^["']?\s*content["']?\s*:\s*["']?/i, '')
+          .trim();
+        let fillBlankAnswers = isFillBlank ? (Array.isArray(item.fillBlankAnswers) ? item.fillBlankAnswers.map((answer: any, index: number) => ({ blankIndex: Number(answer.blankIndex || index + 1), answer: String(answer.answer || ''), acceptedAnswers: Array.isArray(answer.acceptedAnswers) ? answer.acceptedAnswers.map(String) : [], score: Number(answer.score ?? Number(item.score || 0.25) / Math.max(1, item.fillBlankAnswers.length)), caseSensitive: Boolean(answer.caseSensitive), ignoreWhitespace: answer.ignoreWhitespace !== false, ignoreVietnameseTone: Boolean(answer.ignoreVietnameseTone) })) : []) : [];
+
+        if (isFillBlank) {
+          if (!formattedContent.includes('{{blank_')) {
+            let bCount = 0;
+            formattedContent = formattedContent.replace(/(?:\.\.\.|_{2,}|\[\s*\]|\(\s*\))/g, () => {
+              bCount++;
+              return `{{blank_${bCount}}}`;
+            });
+            if (bCount === 0) {
+              formattedContent += ' {{blank_1}}';
+              bCount = 1;
+            }
+          }
+          const matches = formattedContent.match(/\{\{blank_\d+\}\}/g) || [];
+          if (fillBlankAnswers.length === 0 && matches.length > 0) {
+            fillBlankAnswers = matches.map((_, idx) => ({
+              blankIndex: idx + 1,
+              answer: String(item.explanation || '').split('.')[0] || '',
+              acceptedAnswers: [],
+              score: Number(item.score || 0.25) / matches.length,
+              caseSensitive: false,
+              ignoreWhitespace: true,
+              ignoreVietnameseTone: false,
+            }));
+          }
+        }
+
         const imageIndexes = Array.isArray(item.imageIndexes) ? item.imageIndexes.filter((index: any) => Number.isInteger(index) && index >= 0 && index < (input.images || []).length) : [];
         questions.push({
           subjectId: input.subjectId,
@@ -419,12 +572,12 @@ export class AiQuestionsService {
           type: input.type,
           difficulty: input.difficulty,
           bloomLevel: input.bloomLevel,
-          content: item.content.trim(),
+          content: formattedContent,
           score: Number(item.score || 0.25),
           explanation: String(item.explanation || ''),
           keywords: String(item.keywords || ''),
           options,
-          fillBlankAnswers: isFillBlank ? (Array.isArray(item.fillBlankAnswers) ? item.fillBlankAnswers.map((answer: any, index: number) => ({ blankIndex: Number(answer.blankIndex || index + 1), answer: String(answer.answer || ''), acceptedAnswers: Array.isArray(answer.acceptedAnswers) ? answer.acceptedAnswers.map(String) : [], score: Number(answer.score ?? Number(item.score || 0.25) / Math.max(1, item.fillBlankAnswers.length)), caseSensitive: Boolean(answer.caseSensitive), ignoreWhitespace: answer.ignoreWhitespace !== false, ignoreVietnameseTone: Boolean(answer.ignoreVietnameseTone) })) : []) : [],
+          fillBlankAnswers,
           sourceImages: imageIndexes.map((index: number) => ({ ...(input.images || [])[index], index })),
         });
       }

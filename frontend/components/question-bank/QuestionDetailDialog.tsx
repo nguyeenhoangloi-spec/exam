@@ -63,10 +63,27 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           {/* Media Attachments */}
           {question.media?.length ? (
             <div className="space-y-2">
-              <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Hình ảnh đính kèm</h4>
+              <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Media đính kèm</h4>
               <div className="flex flex-wrap gap-3">
                 {question.media.map((media) => {
                   const fullUrl = getImageUrl(media.url);
+                  const mime: string = (media as any).mimeType || '';
+                  if (mime.startsWith('video/')) {
+                    return (
+                      <div key={media.id || media.url} className="rounded-xl border border-slate-200 overflow-hidden bg-black">
+                        <video src={fullUrl} controls className="max-h-48 max-w-full rounded-xl" />
+                      </div>
+                    );
+                  }
+                  if (mime.startsWith('audio/')) {
+                    return (
+                      <div key={media.id || media.url} className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <span className="text-[10px] font-semibold text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
+                        <audio src={fullUrl} controls className="h-9" />
+                      </div>
+                    );
+                  }
+                  // Default: image
                   return (
                     <div
                       key={media.id || media.url}

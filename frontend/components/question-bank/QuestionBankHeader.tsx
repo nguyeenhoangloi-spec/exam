@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Upload, Plus, Sparkles } from 'lucide-react';
+import { Upload, Plus } from 'lucide-react';
 
 interface QuestionBankHeaderProps {
   onAdd: () => void;
@@ -13,12 +13,7 @@ interface QuestionBankHeaderProps {
 export function QuestionBankHeader({
   onAdd,
   onImport,
-  onAi,
-  onPrint,
 }: QuestionBankHeaderProps) {
-  const btnBase =
-    'inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold leading-none transition active:scale-95 cursor-pointer whitespace-nowrap select-none';
-
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Subtitle */}
@@ -31,35 +26,25 @@ export function QuestionBankHeader({
         </p>
       </div>
 
-      {/* Right Action Buttons — all same height via leading-none + py-2 */}
+      {/* Right Action Buttons */}
       <div className="flex items-center gap-2.5 shrink-0">
-        {onAi && (
-          <button
-            type="button"
-            onClick={onAi}
-            className={`${btnBase} border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 shadow-2xs`}
-          >
-            <Sparkles className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-            <span>Tạo bằng AI</span>
-          </button>
-        )}
-
         <button
           type="button"
           onClick={onImport}
-          className={`${btnBase} border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs`}
+          className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold leading-none transition active:scale-95 cursor-pointer whitespace-nowrap select-none border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
         >
-          <Upload className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-          <span>Nhập câu hỏi</span>
+          <Upload className="h-3.5 w-3.5 text-slate-600 shrink-0" />
+          <span>Nhập dữ liệu</span>
         </button>
 
+        {/* Primary Action: Thêm câu hỏi mới */}
         <button
           type="button"
           onClick={onAdd}
-          className={`${btnBase} border border-blue-600 bg-blue-600 text-white hover:bg-blue-700 hover:border-blue-700 shadow-xs font-black`}
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black leading-none transition active:scale-95 cursor-pointer whitespace-nowrap select-none border border-blue-600 bg-blue-600 text-white hover:bg-blue-700 hover:border-blue-700 shadow-xs"
         >
           <Plus className="h-3.5 w-3.5 shrink-0" />
-          <span>Thêm câu hỏi</span>
+          <span>Thêm câu hỏi mới</span>
         </button>
       </div>
     </div>

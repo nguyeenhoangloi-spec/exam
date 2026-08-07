@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { RubricDialog } from './RubricDialog';
 import { Question } from '../../types';
@@ -70,7 +70,7 @@ export function QuestionBankTable({
           const isChecked = selected.includes(q.id);
           const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
           const subjectName = q.subject?.subjectName || 'Chưa gán môn';
-          const creatorName = q.createdByName || q.createdBy?.fullName || '—';
+          const creatorName = q.createdByName || (q.createdBy as any)?.teacher?.fullName || q.createdBy?.fullName || q.createdBy?.username || (q.createdById ? `User #${q.createdById}` : 'Hệ thống');
 
           const isEssay = q.type === 'ESSAY';
           const optionsList = Array.isArray(q.options) ? q.options : [];
@@ -122,8 +122,8 @@ export function QuestionBankTable({
                 {/* ESSAY vs MULTIPLE_CHOICE Display */}
                 {isEssay ? (
                   <div className="rounded-xl bg-blue-50/80 border border-blue-200/70 p-2.5 text-[11px] font-semibold text-blue-900 space-y-1">
-                    <p className="font-extrabold text-blue-700 flex items-center gap-1">
-                      📝 Câu tự luận
+                    <p className="font-extrabold text-blue-700 flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> Câu tự luận
                     </p>
                     <p className="text-blue-900 font-medium">
                       {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm. Mở chi tiết để xem.' : 'Chưa có hướng dẫn chấm.'}
@@ -321,7 +321,7 @@ export function QuestionBankTable({
             const isChecked = selected.includes(q.id);
             const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
             const subjectName = q.subject?.subjectName || 'Chưa gán môn';
-            const creatorName = q.createdByName || q.createdBy?.fullName || '—';
+            const creatorName = q.createdByName || (q.createdBy as any)?.teacher?.fullName || q.createdBy?.fullName || q.createdBy?.username || (q.createdById ? `User #${q.createdById}` : 'Hệ thống');
             const isLastRow = index >= Math.floor(questions.length / 2);
 
             // Options list (A, B, C, D)
@@ -372,7 +372,7 @@ export function QuestionBankTable({
                       {q.type === 'ESSAY' ? (
                         <div className="pt-1">
                           <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-blue-50 text-blue-900 border border-blue-200/80">
-                            📝 <span className="font-extrabold">Câu tự luận:</span> {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
+                            <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> <span className="font-extrabold">Câu tự luận:</span> {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
                           </span>
                         </div>
                       ) : optionsList.length > 0 ? (
@@ -415,8 +415,8 @@ export function QuestionBankTable({
 
                 {/* Điểm số */}
                 <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200/90 text-[11px] font-extrabold shadow-2xs">
-                    {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)} đ
+                  <span className="text-xs font-extrabold text-slate-800">
+                    {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
                   </span>
                 </td>
 
@@ -429,8 +429,13 @@ export function QuestionBankTable({
 
                 {/* Người tạo */}
                 {visibleColumns.creator !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-slate-700 font-semibold align-top pt-4">
-                    {creatorName}
+                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                      <div className="h-5 w-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] border border-slate-200">
+                        {creatorName.charAt(0).toUpperCase()}
+                      </div>
+                      <span>{creatorName}</span>
+                    </div>
                   </td>
                 )}
 

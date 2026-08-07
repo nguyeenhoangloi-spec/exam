@@ -590,8 +590,10 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
       AttemptStatus.SUBMITTED,
       AttemptStatus.AUTO_SUBMITTED,
       AttemptStatus.UNDER_REVIEW,
+      AttemptStatus.NOT_STARTED,
+      AttemptStatus.IN_PROGRESS,
     ];
-    if (!gradableStatuses.includes(attempt.status as AttemptStatus)) {
+    if (!gradableStatuses.includes(attempt.status as AttemptStatus) && actor.role !== 'ADMIN') {
       throw new BadRequestException('Bài thi chưa nộp, chưa thể hoàn tất chấm.');
     }
 
@@ -635,6 +637,7 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
         where: { id: attempt.id },
         data: {
           totalScore: finalAttemptScore,
+          status: AttemptStatus.SUBMITTED,
           gradingStatus: EssayAttemptGradingStatus.WAITING_APPROVAL,
           gradedById: actor.id,
           gradedAt: new Date(),
@@ -666,22 +669,15 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
     }
     const attempt = await this.prisma.examAttempt.findUnique({ where: { id: attemptId } });
     if (!attempt) throw new NotFoundException('Không tìm thấy bài thi.');
-    if (attempt.gradingStatus !== EssayAttemptGradingStatus.WAITING_APPROVAL && !publish) {
-      throw new BadRequestException('Bài thi chưa ở trạng thái chờ duyệt (WAITING_APPROVAL).');
-    }
 
-    const nextGradingStatus = publish
-      ? EssayAttemptGradingStatus.PUBLISHED
-      : EssayAttemptGradingStatus.WAITING_APPROVAL;
+    const nextGradingStatus = EssayAttemptGradingStatus.PUBLISHED;
 
     const data: Prisma.ExamAttemptUpdateInput = {
       gradingStatus: nextGradingStatus,
       approvedBy: { connect: { id: actor.id } },
       approvedAt: new Date(),
+      publishedAt: new Date(),
     };
-    if (publish) {
-      data.publishedAt = new Date();
-    }
 
     await this.prisma.$transaction(async (tx) => {
       await tx.examAttempt.update({ where: { id: attemptId }, data });

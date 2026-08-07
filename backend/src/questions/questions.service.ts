@@ -8,12 +8,12 @@ import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, ImportPreviewDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
-import { normalizeFillBlankAnswer, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
+import { autoFormatFillBlankData, normalizeFillBlankAnswer, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
 
 type Actor = { id: number; role: string };
 const include = {
   subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' as const } }, options: { orderBy: { order: 'asc' as const }, include: { media: { orderBy: { sortOrder: 'asc' as const } } } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' as const } },
-  createdBy: { select: { id: true, username: true } },
+  createdBy: { select: { id: true, username: true, teacher: { select: { fullName: true } } } },
   approvedBy: { select: { id: true, username: true } }, statistic: true,
   histories: { orderBy: { createdAt: 'desc' as const }, include: { changedBy: { select: { id: true, username: true } } } },
 };
@@ -55,8 +55,12 @@ export class QuestionsService {
     return false;
   }
   private validateMediaFile(file: Express.Multer.File) {
-    if (!file || file.size > Number(process.env.QUESTION_MEDIA_MAX_BYTES || 5 * 1024 * 1024)) throw new BadRequestException('Ảnh vượt quá dung lượng cho phép.');
-    if (!['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'].includes(file.mimetype) || !this.sniffImage(file)) throw new BadRequestException('File không phải ảnh PNG/JPG/WEBP/SVG hợp lệ.');
+    const maxBytes = Number(process.env.QUESTION_MEDIA_MAX_BYTES || 50 * 1024 * 1024);
+    if (!file || file.size > maxBytes) throw new BadRequestException('File vượt quá dung lượng cho phép (50 MB).');
+    const ALLOWED = /^(image\/(png|jpeg|webp|svg\+xml)|video\/(mp4|webm)|audio\/(mpeg|wav|ogg))$/;
+    if (!ALLOWED.test(file.mimetype)) throw new BadRequestException('Chỉ chấp nhận ảnh, video (mp4/webm) hoặc audio (mp3/wav/ogg).');
+    // Chỉ sniff magic bytes với ảnh; video/audio bỏ qua vì header phức tạp
+    if (file.mimetype.startsWith('image/') && !this.sniffImage(file)) throw new BadRequestException('File ảnh không hợp lệ.');
   }
   async previewMedia(a: Actor, files: Express.Multer.File[]) {
     this.access(a); if (!files?.length) throw new BadRequestException('Vui lòng chọn ít nhất một ảnh.');
@@ -161,7 +165,7 @@ export class QuestionsService {
       ...((q.fromDate || q.toDate) && { createdAt: { ...(q.fromDate && { gte: new Date(q.fromDate) }), ...(q.toDate && { lte: new Date(`${q.toDate}T23:59:59.999Z`) }) } }),
     };
     const [data, total] = await this.prisma.$transaction([
-      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' } }, options: { orderBy: { order: 'asc' }, include: { media: { orderBy: { sortOrder: 'asc' } } } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } }, createdBy: { select: { id: true, username: true } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
+      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' } }, options: { orderBy: { order: 'asc' }, include: { media: { orderBy: { sortOrder: 'asc' } } } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } }, createdBy: { select: { id: true, username: true, teacher: { select: { fullName: true } } } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
       this.prisma.question.count({ where }),
     ]);
     return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
@@ -201,7 +205,13 @@ export class QuestionsService {
     return { ...q, statistic: q.statistic ? { ...q.statistic, correctRate: q.statistic.totalAnswers ? q.statistic.correctAnswers / q.statistic.totalAnswers : null } : null };
   }
   async create(a: Actor, d: CreateQuestionDto) {
-    this.access(a); await this.chapter(d.subjectId, d.chapterId); validateQuestionOptions(d.type, d.options); validateFillBlankAnswers(d.type, d.content, d.score, d.fillBlankAnswers); await this.noDuplicate(a, d.content, d.overrideDuplicate);
+    this.access(a); await this.chapter(d.subjectId, d.chapterId);
+    if (d.type === 'FILL_BLANK') {
+      const formatted = autoFormatFillBlankData(d.type, d.content, d.score, d.fillBlankAnswers);
+      d.content = formatted.content;
+      d.fillBlankAnswers = formatted.fillBlankAnswers;
+    }
+    validateQuestionOptions(d.type, d.options); validateFillBlankAnswers(d.type, d.content, d.score, d.fillBlankAnswers); await this.noDuplicate(a, d.content, d.overrideDuplicate);
     return this.prisma.$transaction(async tx => this.createInTransaction(tx, a, d));
   }
   async update(a: Actor, id: string, d: UpdateQuestionDto) {
@@ -210,8 +220,16 @@ export class QuestionsService {
       throw new BadRequestException('Không thể sửa câu hỏi đã được đưa vào đề thi. Hãy nhân bản câu hỏi để chỉnh sửa.');
     }
     const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId === null ? null : (d.chapterId ?? old.chapterId); await this.chapter(subjectId, chapterId);
-    const nextType = d.type ?? old.type, nextContent = d.content ?? old.content, nextScore = d.score ?? old.score;
-    validateQuestionOptions(nextType, d.options ?? old.options); validateFillBlankAnswers(nextType, nextContent, nextScore, d.fillBlankAnswers ?? old.fillBlankAnswers); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
+    let nextType = d.type ?? old.type, nextContent = d.content ?? old.content, nextScore = d.score ?? old.score;
+    let nextFillBlank = d.fillBlankAnswers ?? old.fillBlankAnswers;
+    if (nextType === 'FILL_BLANK') {
+      const formatted = autoFormatFillBlankData(nextType, nextContent, nextScore, nextFillBlank);
+      nextContent = formatted.content;
+      nextFillBlank = formatted.fillBlankAnswers;
+      if (d.content !== undefined) d.content = nextContent;
+      if (d.fillBlankAnswers !== undefined || old.type !== 'FILL_BLANK') d.fillBlankAnswers = nextFillBlank as any;
+    }
+    validateQuestionOptions(nextType, d.options ?? old.options); validateFillBlankAnswers(nextType, nextContent, nextScore, nextFillBlank); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
     return this.prisma.$transaction(async tx => {
       if (d.options) await tx.questionOption.deleteMany({ where: { questionId: id } });
       if (d.fillBlankAnswers || (d.type && d.type !== 'FILL_BLANK')) await tx.fillBlankAnswer.deleteMany({ where: { questionId: id } });

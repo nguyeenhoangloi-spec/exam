@@ -13,7 +13,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Teacher, Department, User } from '../../types';
-import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon } from 'lucide-react';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info } from 'lucide-react';
 
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
@@ -373,8 +373,9 @@ export default function TeachersPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {!editingTeacher && (
-            <div className="p-3 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700 font-medium">
-              💡 <strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định được khởi tạo là <strong>Mã giảng viên</strong> (Ví dụ: GV001).
+            <div className="p-3 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700 font-medium flex items-start gap-2">
+              <Info className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+              <span><strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định được khởi tạo là <strong>Mã giảng viên</strong> (Ví dụ: GV001).</span>
             </div>
           )}
 

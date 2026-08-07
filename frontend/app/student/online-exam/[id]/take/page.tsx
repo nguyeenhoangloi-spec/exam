@@ -6,6 +6,8 @@ import { onlineExamService, AnswerItem, ProctoringEventItem } from '@/lib/servic
 import { Clock, Shield, Flag, CheckCircle, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
 import { fixHtmlImageUrls, getImageUrl } from '@/lib/media-utils';
 import { ImageLightboxModal } from '@/components/ImageLightboxModal';
+import { Toast } from '@/components/Toast';
+import { FillBlankQuestionRenderer } from '@/components/question-bank/FillBlankQuestionRenderer';
 
 export default function StudentExamTakePage() {
   const router = useRouter();
@@ -24,6 +26,7 @@ export default function StudentExamTakePage() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const eventQueue = useRef<ProctoringEventItem[]>([]);
   const pendingAnswersToSave = useRef<Record<string, AnswerItem>>({});
@@ -195,7 +198,10 @@ export default function StudentExamTakePage() {
       setSyncState('SAVED');
     } catch (e: any) {
       setSyncState('OFFLINE');
-      alert(e?.response?.data?.message || e?.message || 'Không thể tải tệp bài làm');
+      setToast({
+        type: 'error',
+        message: e?.response?.data?.message || e?.message || 'Không thể tải tệp bài làm',
+      });
     }
   };
 
@@ -318,7 +324,10 @@ export default function StudentExamTakePage() {
       setSubmitting(true);
       await flushPendingAnswers();
       if (Object.keys(pendingAnswersToSave.current).length > 0) {
-        alert('Chưa đồng bộ được câu trả lời. Vui lòng kiểm tra kết nối mạng rồi thử lại.');
+        setToast({
+          type: 'error',
+          message: 'Chưa đồng bộ được câu trả lời. Vui lòng kiểm tra kết nối mạng rồi thử lại.',
+        });
         setSubmitting(false);
         return;
       }
@@ -326,7 +335,7 @@ export default function StudentExamTakePage() {
       sessionStorage.removeItem('attemptToken');
       router.push(`/student/online-exam/${attemptData.attemptId}/result`);
     } catch (err: any) {
-      alert(err.message || 'Không thể nộp bài');
+      setToast({ type: 'error', message: err?.response?.data?.message || err?.message || 'Không thể nộp bài' });
       setSubmitting(false);
     }
   };
@@ -494,17 +503,41 @@ export default function StudentExamTakePage() {
 
               {/* Question Text / Rich Text Content */}
               <div className="text-slate-900 text-base sm:text-lg leading-relaxed font-bold space-y-3">
-                {currentQ.contentRich && typeof currentQ.contentRich === 'object' && 'html' in currentQ.contentRich ? (
+                {currentQ.type === 'FILL_BLANK' ? (
+                  <FillBlankQuestionRenderer
+                    content={currentQ.content}
+                    contentRich={currentQ.contentRich}
+                    answers={currentAns.fillBlankAnswers || []}
+                    onChange={(blankIndex, value) => handleFillBlankChange(currentQ.questionId, blankIndex, value)}
+                  />
+                ) : currentQ.contentRich && typeof currentQ.contentRich === 'object' && 'html' in currentQ.contentRich ? (
                   <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(String((currentQ.contentRich as { html?: string }).html || '')) }} />
                 ) : (
                   currentQ.content
                 )}
 
-                {/* Media Image Attachments */}
+                {/* Media Attachments */}
                 {currentQ.media && currentQ.media.length > 0 && (
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     {currentQ.media.map((mediaItem: any, idx: number) => {
                       const fullUrl = getImageUrl(mediaItem.url);
+                      const mime: string = mediaItem.mimeType || '';
+                      if (mime.startsWith('video/')) {
+                        return (
+                          <div key={mediaItem.id || idx} className="rounded-xl border border-slate-200 overflow-hidden bg-black">
+                            <video src={fullUrl} controls className="max-h-52 max-w-full rounded-xl" />
+                          </div>
+                        );
+                      }
+                      if (mime.startsWith('audio/')) {
+                        return (
+                          <div key={mediaItem.id || idx} className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                            <span className="text-[11px] font-semibold text-slate-600 max-w-[200px] truncate">{mediaItem.fileName || 'Audio đính kèm'}</span>
+                            <audio src={fullUrl} controls className="h-9" />
+                          </div>
+                        );
+                      }
+                      // Default: image
                       return (
                         <div
                           key={mediaItem.id || idx}
@@ -553,19 +586,8 @@ export default function StudentExamTakePage() {
                   )}
                 </div>
               ) : currentQ.type === 'FILL_BLANK' ? (
-                <div className="space-y-3 rounded-xl border border-blue-100 bg-blue-50/50 p-5">
-                  <p className="text-sm font-bold text-slate-700">Điền đáp án vào từng chỗ trống. Hệ thống tự lưu khi bạn nhập.</p>
-                  {(currentQ.blankIndexes || []).map((blankIndex: number) => (
-                    <label key={blankIndex} className="block text-sm font-semibold text-slate-700">
-                      Chỗ trống {blankIndex}
-                      <input
-                        value={currentAns.fillBlankAnswers?.find((item: any) => item.blankIndex === blankIndex)?.value || ''}
-                        onChange={(event) => handleFillBlankChange(currentQ.questionId, blankIndex, event.target.value)}
-                        placeholder={`Nhập đáp án cho chỗ trống ${blankIndex}`}
-                        className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      />
-                    </label>
-                  ))}
+                <div className="rounded-2xl border border-slate-200/90 bg-slate-50/60 p-4 text-xs font-semibold text-slate-600 space-y-1">
+                  <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
                 </div>
               ) : (
               <div className="space-y-3 pt-2">
@@ -735,6 +757,7 @@ export default function StudentExamTakePage() {
           </div>
         </div>
       )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }

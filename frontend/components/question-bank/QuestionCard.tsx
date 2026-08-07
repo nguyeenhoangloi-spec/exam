@@ -58,6 +58,7 @@ export function QuestionCard({
           <QuestionTypeBadge type={q.type} />
           <QuestionDifficultyBadge difficulty={q.difficulty} />
           <QuestionStatusBadge status={q.status} />
+          <span className="text-xs font-bold text-slate-700 ml-1">{q.score || (q.type === 'ESSAY' ? 1.0 : 0.25)}đ</span>
         </div>
 
         {/* Action Buttons on Card */}

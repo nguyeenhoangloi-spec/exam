@@ -51,13 +51,80 @@ export function normalizeFillBlankAnswer(value: string, settings?: { caseSensiti
   return settings?.caseSensitive ? normalized : normalized.toLocaleLowerCase('vi-VN');
 }
 
+export function autoFormatFillBlankData(
+  type: string,
+  content: string,
+  score: number,
+  fillBlankAnswers?: any[]
+): { content: string; fillBlankAnswers: any[] } {
+  if (type !== 'FILL_BLANK') {
+    return { content: String(content || '').trim(), fillBlankAnswers: fillBlankAnswers || [] };
+  }
+
+  let formattedContent = String(content || '').trim();
+
+  if (!formattedContent.includes('{{blank_')) {
+    let bCount = 0;
+    formattedContent = formattedContent.replace(/(?:\.\.\.|_{2,}|\[\s*\]|\(\s*\)|chỗ\s*trống)/gi, () => {
+      bCount++;
+      return `{{blank_${bCount}}}`;
+    });
+    if (bCount === 0) {
+      formattedContent = `${formattedContent} {{blank_1}}`;
+    }
+  }
+
+  const matches = [...formattedContent.matchAll(/\{\{blank_(\d+)\}\}/g)].map((m) => Number(m[1]));
+  const count = matches.length || 1;
+  let answers = Array.isArray(fillBlankAnswers) ? [...fillBlankAnswers] : [];
+
+  if (answers.length === 0) {
+    const itemScore = Number(score || 0.25) / count;
+    answers = matches.map((blankIndex) => ({
+      blankIndex,
+      answer: 'đáp_án_đúng',
+      acceptedAnswers: [],
+      score: itemScore,
+      caseSensitive: false,
+      ignoreWhitespace: true,
+      ignoreVietnameseTone: false,
+    }));
+  } else if (answers.length !== count) {
+    const itemScore = Number(score || 0.25) / count;
+    answers = matches.map((blankIndex, idx) => {
+      const existing = answers.find((a) => Number(a.blankIndex) === blankIndex) || answers[idx];
+      return {
+        blankIndex,
+        answer: String(existing?.answer || '').trim() || 'đáp_án_đúng',
+        acceptedAnswers: Array.isArray(existing?.acceptedAnswers) ? existing.acceptedAnswers : [],
+        score: Number(existing?.score) || itemScore,
+        caseSensitive: Boolean(existing?.caseSensitive),
+        ignoreWhitespace: existing?.ignoreWhitespace !== false,
+        ignoreVietnameseTone: Boolean(existing?.ignoreVietnameseTone),
+      };
+    });
+  } else {
+    const itemScore = Number(score || 0.25) / count;
+    answers = answers.map((ans, idx) => ({
+      ...ans,
+      blankIndex: matches[idx] || idx + 1,
+      answer: String(ans.answer || '').trim() || 'đáp_án_đúng',
+      score: Number(ans.score) || itemScore,
+    }));
+  }
+
+  return { content: formattedContent, fillBlankAnswers: answers };
+}
+
 export function validateFillBlankAnswers(type: string, content: string, score: number, answers?: any[]): void {
   if (type !== 'FILL_BLANK') {
     if (answers?.length) throw new BadRequestException('Chỉ câu điền khuyết mới được khai báo đáp án ô trống.');
     return;
   }
-  const placeholders = [...String(content || '').matchAll(/\{\{blank_(\d+)\}\}/g)].map(match => Number(match[1]));
-  if (!placeholders.length) throw new BadRequestException('Câu điền khuyết phải có ít nhất một chỗ trống theo mẫu {{blank_1}}.');
+  let placeholders = [...String(content || '').matchAll(/\{\{blank_(\d+)\}\}/g)].map(match => Number(match[1]));
+  if (!placeholders.length) {
+    placeholders = [1];
+  }
   const expected = Array.from({ length: placeholders.length }, (_, index) => index + 1);
   if (new Set(placeholders).size !== placeholders.length || placeholders.some((value, index) => value !== expected[index])) {
     throw new BadRequestException('Chỗ trống phải được đánh số liên tiếp: {{blank_1}}, {{blank_2}}, ...');

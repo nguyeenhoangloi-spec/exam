@@ -36,8 +36,9 @@ export default function TeacherEssayGradingPage() {
     message: string;
     type?: 'danger' | 'success' | 'warning' | 'info';
     confirmText?: string;
+    cancelText?: string;
     onConfirm: () => void;
-  }>({ isOpen: false, title: '', message: '', type: 'info', confirmText: 'Xác nhận', onConfirm: () => {} });
+  }>({ isOpen: false, title: '', message: '', type: 'info', confirmText: 'Xác nhận', cancelText: 'Hủy bỏ', onConfirm: () => {} });
 
   const [rubricQuestion, setRubricQuestion] = useState<any>(null);
 
@@ -93,11 +94,11 @@ export default function TeacherEssayGradingPage() {
     const num = Number(val);
     if (isNaN(num)) return;
     if (num < 0) {
-      alert('Điểm số không được nhỏ hơn 0.');
+      setMessage('Điểm số không được nhỏ hơn 0.');
       return;
     }
     if (num > maxScore) {
-      alert(`Điểm số không được vượt quá điểm tối đa của tiêu chí (${maxScore}đ).`);
+      setMessage(`Điểm số không được vượt quá điểm tối đa của tiêu chí (${maxScore}đ).`);
       return;
     }
     setScores((prev) => ({ ...prev, [criterionId]: num }));
@@ -106,13 +107,13 @@ export default function TeacherEssayGradingPage() {
   const gradeQuestionAnswer = async (answer: any, question: any) => {
     const rubric = question.rubric || [];
     if (!rubric.length) {
-      alert('Câu hỏi này chưa được cài đặt Rubric chấm điểm.');
+      setMessage('Câu hỏi này chưa được cài đặt rubric chấm điểm.');
       return;
     }
 
     for (const r of rubric) {
       if (scores[r.id] === undefined || scores[r.id] === null) {
-        alert(`Vui lòng nhập điểm cho tiêu chí "${r.label}".`);
+        setMessage(`Vui lòng nhập điểm cho tiêu chí "${r.label}".`);
         return;
       }
     }
@@ -169,6 +170,18 @@ export default function TeacherEssayGradingPage() {
     }
   };
 
+  const showResultPopup = (title: string, message: string, type: 'success' | 'danger' | 'warning' | 'info' = 'success') => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      type,
+      confirmText: 'Đã hiểu',
+      cancelText: '',
+      onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+    });
+  };
+
   const handleCompleteGrading = () => {
     if (!selected) return;
 
@@ -176,7 +189,11 @@ export default function TeacherEssayGradingPage() {
     for (const q of essayQuestions) {
       const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
       if (!ans || ans.finalScore === null || ans.finalScore === undefined) {
-        alert(`Câu hỏi "${q.code || q.content}" chưa được chấm điểm. Vui lòng chấm đủ các câu trước khi hoàn tất.`);
+        showResultPopup(
+          'Chưa Thể Hoàn Tất',
+          `Câu hỏi "${q.code || q.content}" chưa được chấm điểm. Vui lòng chấm đủ các câu trước khi hoàn tất.`,
+          'warning',
+        );
         return;
       }
     }
@@ -191,29 +208,61 @@ export default function TeacherEssayGradingPage() {
         : 'Bạn có chắc chắn muốn HOÀN TẤT CHẤM BÀI thi này? Bài thi sẽ được gửi tới ADMIN để duyệt và công bố chính thức.',
       type: 'success',
       confirmText: isAdmin ? 'Hoàn tất & Duyệt luôn' : 'Hoàn tất & Gửi duyệt',
+      cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/submit`);
           if (isAdmin) {
-            // Admin: auto approve luôn sau khi submit
             await api.post(`/essay/grading/attempts/${selected.id}/approve`);
-            setMessage('Đã hoàn tất chấm và duyệt điểm bài thi thành công!');
+            const msg = 'Đã hoàn tất chấm và duyệt điểm bài thi thành công!';
+            setMessage(msg);
+            await loadAssignments();
+            await openAttempt(selected.id);
+            showResultPopup('Duyệt Bài Thành Công', msg, 'success');
           } else {
-            setMessage('Đã hoàn tất chấm bài thi! Bài thi hiện đang chờ ADMIN duyệt.');
+            const msg = 'Đã hoàn tất chấm bài thi! Bài thi hiện đang chờ ADMIN duyệt.';
+            setMessage(msg);
+            await loadAssignments();
+            await openAttempt(selected.id);
+            showResultPopup('Hoàn Tất Chấm Bài', msg, 'success');
           }
-          await loadAssignments();
-          await openAttempt(selected.id);
         } catch (e: any) {
-          setMessage(e?.response?.data?.message || 'Không thể hoàn tất chấm bài.');
+          const errMsg = e?.response?.data?.message || 'Không thể hoàn tất chấm bài.';
+          setMessage(errMsg);
+          showResultPopup('Không Thể Hoàn Tất', errMsg, 'danger');
         }
       },
     });
   };
 
+  const [dateFilter, setDateFilter] = useState<string>('ALL');
+  const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
+
+  const availableDates = useMemo(() => {
+    const set = new Set<string>();
+    rows.forEach((r) => {
+      if (subjectFilter !== 'ALL') {
+        const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
+        if (code !== subjectFilter) return;
+      }
+      const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+      if (rawDate) {
+        const dStr = new Date(rawDate).toLocaleDateString('vi-VN');
+        set.add(dStr);
+      }
+    });
+    return Array.from(set);
+  }, [rows, subjectFilter]);
+
   const availableSubjects = useMemo(() => {
     const map = new Map<string, string>();
     rows.forEach((r) => {
+      if (dateFilter !== 'ALL') {
+        const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+        const dStr = rawDate ? new Date(rawDate).toLocaleDateString('vi-VN') : '';
+        if (dStr !== dateFilter) return;
+      }
       const s = r.onlineExamConfig?.examSchedule?.subject;
       const code = s?.subjectCode || r.subjectCode;
       const name = s?.subjectName || r.subjectName;
@@ -222,7 +271,31 @@ export default function TeacherEssayGradingPage() {
       }
     });
     return Array.from(map.entries()).map(([code, name]) => ({ code, name }));
-  }, [rows]);
+  }, [rows, dateFilter]);
+
+  const availableSchedules = useMemo(() => {
+    const map = new Map<string, string>();
+    rows.forEach((r) => {
+      if (dateFilter !== 'ALL') {
+        const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+        const dStr = rawDate ? new Date(rawDate).toLocaleDateString('vi-VN') : '';
+        if (dStr !== dateFilter) return;
+      }
+      if (subjectFilter !== 'ALL') {
+        const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
+        if (code !== subjectFilter) return;
+      }
+      const sched = r.onlineExamConfig?.examSchedule;
+      if (sched?.id) {
+        const code = sched.code || `Ca #${sched.id}`;
+        const timeStr = sched.startTime && sched.endTime ? `${sched.startTime}–${sched.endTime}` : '';
+        const subjName = sched.subject?.subjectName || r.subjectName || '';
+        const label = `${code}${timeStr ? ` (${timeStr})` : ''} · ${subjName}`;
+        map.set(sched.id.toString(), label);
+      }
+    });
+    return Array.from(map.entries()).map(([id, label]) => ({ id, label }));
+  }, [rows, dateFilter, subjectFilter]);
 
   const counts = useMemo(() => {
     let all = 0, grading = 0, waiting = 0, published = 0;
@@ -250,22 +323,35 @@ export default function TeacherEssayGradingPage() {
         if (code !== subjectFilter) return false;
       }
 
-      // 3. Search Query
+      // 3. Date Filter
+      if (dateFilter !== 'ALL') {
+        const rawDate = r.onlineExamConfig?.examSchedule?.examDate || r.submittedAt || r.createdAt;
+        const dStr = rawDate ? new Date(rawDate).toLocaleDateString('vi-VN') : '';
+        if (dStr !== dateFilter) return false;
+      }
+
+      // 4. Schedule Filter
+      if (scheduleFilter !== 'ALL') {
+        const schedId = r.onlineExamConfig?.examSchedule?.id?.toString();
+        if (schedId !== scheduleFilter) return false;
+      }
+
+      // 5. Search Query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const sCode = (r.student?.studentCode || '').toLowerCase();
         const name = (r.student?.fullName || '').toLowerCase();
-        const subj = (r.onlineExamConfig?.examSchedule?.subject?.subjectName || '').toLowerCase();
-        return sCode.includes(q) || name.includes(q) || subj.includes(q);
+        const subj = (r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || '').toLowerCase();
+        const schedCode = (r.onlineExamConfig?.examSchedule?.code || '').toLowerCase();
+        return sCode.includes(q) || name.includes(q) || subj.includes(q) || schedCode.includes(q);
       }
       return true;
     });
-  }, [rows, statusFilter, subjectFilter, searchQuery]);
+  }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 text-slate-900 space-y-6">
-      <div className="mx-auto max-w-7xl space-y-5">
-        {/* Page Header (Match System Standard Header Layout) */}
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
+      {/* Page Header (Match System Standard Header Layout) */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
@@ -306,17 +392,20 @@ export default function TeacherEssayGradingPage() {
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Danh sách bài làm ({filteredRows.length}/{rows.length})
                 </span>
-                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || searchQuery) && (
+                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
                   <button
                     type="button"
                     onClick={() => {
                       setStatusFilter('ALL');
                       setSubjectFilter('ALL');
+                      setDateFilter('ALL');
+                      setScheduleFilter('ALL');
                       setSearchQuery('');
                     }}
-                    className="text-[11px] font-bold text-rose-600 hover:underline cursor-pointer"
+                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer select-none"
+                    title="Đặt lại bộ lọc"
                   >
-                    Đặt lại
+                    <RotateCcw className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>
@@ -333,43 +422,73 @@ export default function TeacherEssayGradingPage() {
                 onChange={(k) => setStatusFilter(k as any)}
               />
 
-              {/* Search & Subject Dropdown Row */}
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Tìm Mã SV, Tên SV..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </div>
-
-                {availableSubjects.length > 0 && (
-                  <select
-                    value={subjectFilter}
-                    onChange={(e) => setSubjectFilter(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer max-w-[130px] shrink-0"
+              {/* Search Bar */}
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Tìm Mã SV, Tên SV, Môn, Ca thi..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
-                    <option value="ALL">Tất cả môn</option>
-                    {availableSubjects.map((s) => (
-                      <option key={s.code} value={s.code}>
-                        [{s.code}] {s.name}
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Dropdown Filters Row: Môn thi & Ngày thi (Phụ thuộc lẫn nhau) */}
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  value={subjectFilter}
+                  onChange={(e) => setSubjectFilter(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                >
+                  <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
+                  {availableSubjects.map((s) => (
+                    <option key={s.code} value={s.code}>
+                      [{s.code}] {s.name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                >
+                  <option value="ALL">Tất cả ngày thi ({availableDates.length})</option>
+                  {availableDates.map((d) => (
+                    <option key={d} value={d}>
+                      Ngày {d}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Optional Schedule / Ca thi Filter if multiple schedules exist */}
+              {availableSchedules.length > 1 && (
+                <div>
+                  <select
+                    value={scheduleFilter}
+                    onChange={(e) => setScheduleFilter(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  >
+                    <option value="ALL">Tất cả ca thi / lịch thi</option>
+                    {availableSchedules.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label}
                       </option>
                     ))}
                   </select>
-                )}
-              </div>
+                </div>
+              )}
 
               {loading ? (
                 <div className="text-center py-10 text-xs font-semibold text-slate-400">
@@ -378,18 +497,24 @@ export default function TeacherEssayGradingPage() {
                 </div>
               ) : filteredRows.length === 0 ? (
                 <div className="text-center py-10 text-xs font-medium text-slate-400">
-                  Không tìm thấy bài thi tự luận nào.
+                  Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[68vh] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[64vh] overflow-y-auto pr-1">
                   {filteredRows.map((row) => {
                     const isSel = selected?.id === row.id;
+                    const dateStr = row.onlineExamConfig?.examSchedule?.examDate
+                      ? new Date(row.onlineExamConfig.examSchedule.examDate).toLocaleDateString('vi-VN')
+                      : row.submittedAt
+                      ? new Date(row.submittedAt).toLocaleDateString('vi-VN')
+                      : null;
+                    const schedCode = row.onlineExamConfig?.examSchedule?.code;
                     return (
                       <button
                         key={row.id}
                         type="button"
                         onClick={() => openAttempt(row.id)}
-                        className={`w-full text-left p-3.5 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
+                        className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
                           isSel
                             ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
                             : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
@@ -402,9 +527,17 @@ export default function TeacherEssayGradingPage() {
                         <p className="text-[11px] text-slate-500 font-mono">
                           Mã SV: <strong className="text-slate-800">{row.student?.studentCode}</strong> · Điểm: <strong className="text-blue-700 font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
                         </p>
-                        <p className="text-[10.5px] text-slate-400 truncate">
-                          Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Môn thi'}
-                        </p>
+                        <div className="flex items-center justify-between gap-1 text-[10px] text-slate-500 font-medium border-t border-slate-100 pt-1.5 mt-0.5">
+                          <span className="truncate flex-1 font-semibold text-slate-700">
+                            Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
+                            {schedCode ? ` (${schedCode})` : ''}
+                          </span>
+                          {dateStr && (
+                            <span className="shrink-0 text-[9.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded-md">
+                              {dateStr}
+                            </span>
+                          )}
+                        </div>
                       </button>
                     );
                   })}
@@ -620,7 +753,6 @@ export default function TeacherEssayGradingPage() {
             )}
           </div>
         </div>
-      </div>
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}
@@ -628,6 +760,7 @@ export default function TeacherEssayGradingPage() {
         message={confirmModal.message}
         type={confirmModal.type}
         confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
         onConfirm={confirmModal.onConfirm}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
       />
@@ -643,6 +776,6 @@ export default function TeacherEssayGradingPage() {
           }}
         />
       )}
-    </div>
+    </main>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../lib/api';
@@ -77,9 +77,23 @@ export function QuestionFormDialog({
   subjects: Subject[];
   question?: Question | null;
   onClose: () => void;
-  onSaved: () => void;
+  onSaved: (msg?: string) => void;
 }) {
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const mediaUrlsRef = React.useRef<string[]>([]);
+
+  const addMediaFiles = (incoming: File[]) => {
+    const urls = incoming.map((f) => URL.createObjectURL(f));
+    setMediaFiles((cur) => [...cur, ...incoming]);
+    setMediaUrls((cur) => { const next = [...cur, ...urls]; mediaUrlsRef.current = next; return next; });
+  };
+
+  const removeMediaFile = (idx: number) => {
+    URL.revokeObjectURL(mediaUrlsRef.current[idx]);
+    setMediaFiles((cur) => cur.filter((_, i) => i !== idx));
+    setMediaUrls((cur) => { const next = cur.filter((_, i) => i !== idx); mediaUrlsRef.current = next; return next; });
+  };
   const {
     register,
     control,
@@ -104,7 +118,11 @@ export function QuestionFormDialog({
 
   useEffect(() => {
     if (!open) return;
+    // Revoke old URLs via ref to avoid dep-array warning
+    mediaUrlsRef.current.forEach((u) => URL.revokeObjectURL(u));
+    mediaUrlsRef.current = [];
     setMediaFiles([]);
+    setMediaUrls([]);
     reset(
       question
         ? {
@@ -137,22 +155,27 @@ export function QuestionFormDialog({
 
   const submit = async (data: Form) => {
     const html = data.contentRich?.html || '';
-    const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;
+    let plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;
+    if (data.type === 'FILL_BLANK' && !plain.includes('{{blank_')) {
+      plain = `${plain} {{blank_1}}`;
+    }
     const payload = {
       ...data,
       content: plain,
       contentRich: html ? { html } : undefined,
       fillBlankAnswers: data.type === 'FILL_BLANK'
-        ? (data.fillBlankAnswers || []).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
+        ? (data.fillBlankAnswers?.length ? data.fillBlankAnswers : [{ blankIndex: 1, answer: 'đáp_án_đúng', score: data.score || 0.25 }]).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
         : [],
     };
     const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
     const savedId = question?.id || response.data?.id;
     if (savedId && mediaFiles.length) {
-      const form = new FormData(); form.append('questionId', savedId); mediaFiles.forEach(file => form.append('files', file));
+      const form = new FormData();
+      form.append('questionId', savedId);
+      mediaFiles.forEach((file) => form.append('files', file));
       await api.post('/questions/media/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
     }
-    onSaved();
+    onSaved(question ? 'Đã cập nhật thông tin câu hỏi thành công!' : 'Đã tạo thành công câu hỏi mới vào ngân hàng!');
     onClose();
   };
 
@@ -207,8 +230,55 @@ export function QuestionFormDialog({
         </div>
 
         <input type="hidden" {...register('content')} />
-        <RichQuestionEditor value={watch('contentRich')} fallback={watch('content')} onFiles={(files) => setMediaFiles((current) => [...current, ...files])} onChange={(html) => { setValue('contentRich', { html }, { shouldDirty: true }); setValue('content', html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), { shouldValidate: true }); }} placeholder="Nội dung câu hỏi..." />
-        {mediaFiles.length > 0 && <p className="text-xs font-semibold text-sky-700">Đã chọn {mediaFiles.length} ảnh; ảnh sẽ được tải lên sau khi lưu bản nháp.</p>}
+        <RichQuestionEditor value={watch('contentRich')} fallback={watch('content')} onFiles={(files) => addMediaFiles(files)} onChange={(html) => { setValue('contentRich', { html }, { shouldDirty: true }); setValue('content', html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), { shouldValidate: true }); }} placeholder="Nội dung câu hỏi..." />
+
+        {/* Media Upload Section */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-700">Đính kèm media (Tùy chọn)</span>
+            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition">
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/mp4,video/webm,audio/*"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files) addMediaFiles(Array.from(e.target.files));
+                  e.target.value = '';
+                }}
+              />
+              Thêm ảnh / video / audio
+            </label>
+          </div>
+
+          {mediaFiles.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {mediaFiles.map((file, idx) => (
+                <div key={idx} className="relative group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
+                  {file.type.startsWith('image/') && (
+                    <img src={mediaUrls[idx]} alt={file.name} className="h-20 w-28 object-cover" />
+                  )}
+                  {file.type.startsWith('video/') && (
+                    <video src={mediaUrls[idx]} controls className="h-20 w-36 object-cover bg-black" />
+                  )}
+                  {file.type.startsWith('audio/') && (
+                    <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
+                      <span className="text-[10px] font-semibold text-slate-600 max-w-[120px] truncate">{file.name}</span>
+                      <audio src={mediaUrls[idx]} controls className="h-8 w-36" />
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeMediaFile(idx)}
+                    className="absolute top-1 right-1 rounded-full bg-slate-900/60 text-white w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition opacity-0 group-hover:opacity-100"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {!['FILL_BLANK', 'ESSAY'].includes(type) && (
           <div className="space-y-2.5 border-t border-slate-100 pt-3">

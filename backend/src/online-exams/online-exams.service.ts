@@ -844,15 +844,21 @@ export class OnlineExamsService {
       const studentAns = answersMap.get(q.questionId);
       const selectedOptionIds = (studentAns?.selectedOptionIds as string[]) || [];
       const textAnswer = studentAns?.textAnswer || '';
+      const fillBlankAnswers = studentAns?.fillBlankAnswers || [];
 
       const correctOptionIds = (q.options || [])
         .filter((opt: any) => opt.isCorrect)
         .map((opt: any) => opt.id);
 
-      const isCorrect =
-        selectedOptionIds.length > 0 &&
-        selectedOptionIds.length === correctOptionIds.length &&
-        selectedOptionIds.every((id) => correctOptionIds.includes(id));
+      let isCorrect = false;
+      if (q.type === 'FILL_BLANK') {
+        isCorrect = Boolean(studentAns?.isCorrect);
+      } else {
+        isCorrect =
+          selectedOptionIds.length > 0 &&
+          selectedOptionIds.length === correctOptionIds.length &&
+          selectedOptionIds.every((id) => correctOptionIds.includes(id));
+      }
 
       return {
         order: idx + 1,
@@ -863,10 +869,12 @@ export class OnlineExamsService {
         difficulty: q.difficulty,
         maxScore: q.score || 0.25,
         options: q.options || [],
+        fillBlankAnswers: q.fillBlankAnswers || [],
         explanation: q.explanation || '',
         studentSelection: {
           selectedOptionIds,
           textAnswer,
+          fillBlankAnswers,
           isCorrect: q.type === 'ESSAY' ? null : isCorrect,
           finalScore: q.type === 'ESSAY' ? studentAns?.finalScore : isCorrect ? (q.score || 0.25) : 0,
           teacherComment: studentAns?.teacherComment || '',

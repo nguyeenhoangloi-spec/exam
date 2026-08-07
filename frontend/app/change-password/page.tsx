@@ -59,15 +59,21 @@ export default function ChangePasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
-      setError('Vui lòng nhập mật khẩu hiện tại.');
+      const msg = 'Vui lòng nhập mật khẩu hiện tại.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
       return;
     }
     if (!newPassword || newPassword.length < 6) {
-      setError('Mật khẩu mới phải có tối thiểu 6 ký tự.');
+      const msg = 'Mật khẩu mới phải có tối thiểu 6 ký tự.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError('Mật khẩu xác nhận không trùng khớp.');
+      const msg = 'Mật khẩu xác nhận không trùng khớp.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
       return;
     }
 
@@ -86,7 +92,7 @@ export default function ChangePasswordPage() {
       setNewPassword('');
       setConfirmPassword('');
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err.message || 'Mật khẩu hiện tại không chính xác.';
+      const msg = err?.response?.data?.message || err.message || 'Mật khẩu hiện tại không chính xác. Vui lòng kiểm tra lại.';
       setError(msg);
       setToast({ message: msg, type: 'error' });
     } finally {

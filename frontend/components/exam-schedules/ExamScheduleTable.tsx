@@ -411,12 +411,23 @@ export function ExamScheduleTable({
                 {/* Kỳ thi */}
                 {visibleColumns.period !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <p
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
-                      onClick={() => onDetail(s)}
-                    >
-                      {periodName}
-                    </p>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p
+                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+                        onClick={() => onDetail(s)}
+                      >
+                        {periodName}
+                      </p>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                        s.examType === 'DIEN_LO' || s.examType === 'FILL_BLANK'
+                          ? 'bg-amber-50 text-amber-700 border-amber-200'
+                          : s.examType === 'TU_LUAN'
+                          ? 'bg-purple-50 text-purple-700 border-purple-200'
+                          : 'bg-blue-50 text-blue-700 border-blue-200'
+                      }`}>
+                        {s.examType === 'DIEN_LO' || s.examType === 'FILL_BLANK' ? 'Điền khuyết' : s.examType === 'TU_LUAN' ? 'Tự luận' : 'Trắc nghiệm'}
+                      </span>
+                    </div>
                   </td>
                 )}
 
