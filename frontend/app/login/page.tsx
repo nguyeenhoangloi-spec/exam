@@ -3,7 +3,7 @@
 import React, { memo, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
-import { setAuthToken } from '../../lib/auth';
+import { getAuthToken, getAuthUser, setAuthToken } from '../../lib/auth';
 import {
   GraduationCap,
   BookOpen,
@@ -155,7 +155,20 @@ export default function LoginPage() {
       setIsDark(true);
       document.documentElement.classList.add('dark');
     }
-  }, []);
+
+    // Khi người dùng bấm Back về /login, giữ phiên hiện tại và đưa họ trở lại
+    // màn hình đúng với quyền thay vì bắt đăng nhập lại.
+    const token = getAuthToken();
+    const user = getAuthUser();
+    if (token && user) {
+      const destination = user.role === 'ADMIN'
+        ? '/dashboard'
+        : user.role === 'TEACHER'
+          ? '/teacher/assignments'
+          : '/student/exam-schedule';
+      router.replace(destination);
+    }
+  }, [router]);
 
   const toggleDark = useCallback(() => {
     setIsDark((prev) => {
@@ -190,9 +203,9 @@ export default function LoginPage() {
         const res = await api.post('/auth/login', { username: username.trim(), password });
         const { accessToken, user } = res.data;
         setAuthToken(accessToken, user);
-        if (user.role === 'ADMIN') router.push('/dashboard');
-        else if (user.role === 'TEACHER') router.push('/teacher/assignments');
-        else router.push('/student/exam-schedule');
+        if (user.role === 'ADMIN') router.replace('/dashboard');
+        else if (user.role === 'TEACHER') router.replace('/teacher/assignments');
+        else router.replace('/student/exam-schedule');
       } catch (err: any) {
         setError(err.response?.data?.message || err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.');
       } finally {

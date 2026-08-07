@@ -1,10 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 
 export default function EssayGradingPage() {
+  const searchParams = useSearchParams();
+  const attemptIdParam = searchParams.get('attemptId');
+
   const [rows, setRows] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
@@ -23,11 +27,17 @@ export default function EssayGradingPage() {
 
   const load = async () => {
     setLoading(true);
-    try { const res = await api.get('/essay/grading/assignments', { params: { noCache: true } }); setRows(res.data || []); }
+    try {
+      const res = await api.get('/essay/grading/assignments', { params: { noCache: true } });
+      setRows(res.data || []);
+      if (attemptIdParam) {
+        await open(attemptIdParam);
+      }
+    }
     catch (e: any) { setMessage(e?.response?.data?.message || 'Không thể tải danh sách bài tự luận'); }
     finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [attemptIdParam]);
 
   const open = async (id: string) => {
     try { const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } }); setSelected(res.data); setMessage(''); }

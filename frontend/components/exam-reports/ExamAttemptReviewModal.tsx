@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -282,13 +282,21 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           )}
         </div>
 
-        <div className="border-t border-slate-100 p-4 shrink-0 flex justify-end">
+        <div className="border-t border-slate-100 p-4 shrink-0 flex items-center justify-between gap-3">
+          {data?.questions?.some((q: any) => q.type === 'ESSAY') ? (
+            <a
+              href={`/teacher/essay-grading?attemptId=${attemptId}`}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition shadow-xs"
+            >
+              📝 Chấm / Sửa Điểm Tự Luận
+            </a>
+          ) : <div />}
           <button
             type="button"
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
           >
-            Dong
+            Đóng
           </button>
         </div>
       </div>

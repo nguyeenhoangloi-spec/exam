@@ -27,6 +27,7 @@ import {
   ChevronRight,
   LogOut,
   Trash2,
+  FileCheck,
   type LucideIcon,
 } from 'lucide-react';
 import { Role, User } from '../types';
@@ -120,6 +121,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
+        { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
       ],
     },
@@ -152,6 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       group: 'NGHIỆP VỤ GIẢNG VIÊN',
       items: [
         { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
+        { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
