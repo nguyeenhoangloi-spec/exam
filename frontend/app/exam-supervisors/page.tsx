@@ -814,19 +814,16 @@ export default function ExamSupervisorsPage() {
                         const rName = roomObj?.roomName || roomObj?.roomCode || '---';
                         return (
                           <tr key={sup.id} className="hover:bg-blue-50/40 transition">
-                            <td className="p-3.5 pl-4 font-mono font-black text-sky-700 whitespace-nowrap">
+                            <td className="p-3.5 pl-4 font-mono font-black text-slate-900 whitespace-nowrap">
                               {sup.teacher?.teacherCode}
                             </td>
                             <td className="p-3.5 min-w-[160px]">
-                              <div className="font-extrabold text-slate-900">{sup.teacher?.fullName}</div>
-                              <div className="text-[11px] text-slate-400 font-normal">{sup.teacher?.degree || 'TS'}</div>
+                              <div className="font-extrabold text-slate-900 text-xs">{sup.teacher?.fullName}</div>
+                              <div className="text-[11px] text-slate-500 font-normal">{sup.teacher?.degree || 'TS'}</div>
                             </td>
-                            <td className="p-3.5 font-bold text-emerald-700 whitespace-nowrap">{rName}</td>
-                            <td className="p-3.5 whitespace-nowrap">
-                              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 dark:text-sky-400 select-none">
-                                <ShieldCheck className="h-4 w-4 shrink-0" />
-                                <span>{sup.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}</span>
-                              </span>
+                            <td className="p-3.5 font-extrabold text-slate-900 whitespace-nowrap text-xs">{rName}</td>
+                            <td className="p-3.5 whitespace-nowrap text-xs font-extrabold text-slate-800">
+                              {sup.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                             </td>
                             <td className="p-3.5 min-w-[130px]">
                               <div className="space-y-1">

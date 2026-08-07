@@ -13,7 +13,7 @@ import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { ExamPaper, ExamSchedule, User } from '../../types';
-import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award } from 'lucide-react';
+import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award, RotateCcw, RefreshCw } from 'lucide-react';
 
 import { ExamPaperHeader } from '../../components/exam-papers/ExamPaperHeader';
 import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICards';
@@ -130,6 +130,79 @@ export default function ExamPapersPage() {
 
   const [selected, setSelected] = useState<number[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Question Swap Modal State
+  const [swapModal, setSwapModal] = useState<{
+    isOpen: boolean;
+    questionIndex: number | null;
+    targetQuestion: any;
+    alternatives: any[];
+    loading: boolean;
+  }>({
+    isOpen: false,
+    questionIndex: null,
+    targetQuestion: null,
+    alternatives: [],
+    loading: false,
+  });
+
+  const openSwapModal = async (questionIndex: number, targetQuestion: any) => {
+    setSwapModal({
+      isOpen: true,
+      questionIndex,
+      targetQuestion,
+      alternatives: [],
+      loading: true,
+    });
+
+    try {
+      const response = await api.get('/questions', {
+        params: {
+          type: targetQuestion.type || 'MULTIPLE_CHOICE',
+          difficulty: targetQuestion.difficulty || 'MEDIUM',
+          limit: 10,
+        },
+      });
+
+      const rawList = Array.isArray(response.data) ? response.data : response.data?.data || [];
+      const list = rawList.filter(
+        (q: any) => q.id !== targetQuestion.id && q.id !== targetQuestion.questionId
+      );
+
+      setSwapModal((prev) => ({
+        ...prev,
+        alternatives: list,
+        loading: false,
+      }));
+    } catch (error: any) {
+      setToast({ message: 'Không thể tải danh sách câu hỏi thay thế từ Ngân hàng đề.', type: 'error' });
+      setSwapModal((prev) => ({ ...prev, loading: false }));
+    }
+  };
+
+  const handleSelectSwapQuestion = (newQ: any) => {
+    if (swapModal.questionIndex === null || !selectedPaper) return;
+
+    const updatedPaper = { ...selectedPaper };
+    const details = [...((updatedPaper as any).details || updatedPaper.questions || [])];
+
+    if (details[swapModal.questionIndex]) {
+      if (details[swapModal.questionIndex].question) {
+        details[swapModal.questionIndex] = {
+          ...details[swapModal.questionIndex],
+          question: newQ,
+          questionId: newQ.id,
+        };
+      } else {
+        details[swapModal.questionIndex] = newQ;
+      }
+    }
+
+    (updatedPaper as any).details = details;
+    setSelectedPaper(updatedPaper);
+    setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false });
+    setToast({ message: `🎉 Đã đổi thành công Câu #${swapModal.questionIndex + 1} bằng câu hỏi mới!`, type: 'success' });
+  };
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -683,9 +756,21 @@ export default function ExamPapersPage() {
                       <span className="text-xs font-black text-slate-900 leading-snug">
                         Câu {index + 1}: {q.content}
                       </span>
-                      <span className="shrink-0 rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700">
-                        {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'MULTIPLE_CHOICE' ? 'TRẮC NGHIỆM' : (q.type || 'CÂU HỎI')} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
-                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {selectedPaper.status === 'DRAFT' && (
+                          <button
+                            type="button"
+                            onClick={() => openSwapModal(index, q)}
+                            className="inline-flex items-center gap-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 px-2 py-1 text-[10.5px] font-black border border-purple-200 transition cursor-pointer"
+                            title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
+                          >
+                            <RotateCcw className="w-3 h-3 text-purple-600" /> Đổi câu hỏi
+                          </button>
+                        )}
+                        <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700">
+                          {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'MULTIPLE_CHOICE' ? 'TRẮC NGHIỆM' : (q.type || 'CÂU HỎI')} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
+                        </span>
+                      </div>
                     </div>
 
                     {/* Dạng Trắc Nghiệm */}
@@ -735,6 +820,74 @@ export default function ExamPapersPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Modal Đổi Câu Hỏi Lẻ */}
+      {swapModal.isOpen && (
+        <Modal
+          isOpen={swapModal.isOpen}
+          onClose={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
+          title={`Đổi Câu Hỏi #${(swapModal.questionIndex ?? 0) + 1} - Danh sách gợi ý thay thế`}
+        >
+          <div className="space-y-4">
+            <div className="rounded-xl bg-purple-50 p-3 border border-purple-200 text-xs text-purple-900">
+              <p className="font-bold">Câu hỏi hiện tại đang bị thay thế:</p>
+              <p className="mt-1 font-semibold text-slate-700 italic border-l-2 border-purple-400 pl-2">
+                &quot;{swapModal.targetQuestion?.content}&quot;
+              </p>
+              <p className="mt-1 text-[11px] text-purple-700 font-bold">
+                Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'Trắc nghiệm'}) & độ khó tương đương từ Ngân hàng đề.
+              </p>
+            </div>
+
+            {swapModal.loading ? (
+              <div className="py-8 text-center text-xs text-slate-400 font-semibold flex items-center justify-center gap-2">
+                <RefreshCw className="w-4 h-4 animate-spin text-purple-600" />
+                <span>Đang tải câu hỏi tương đương từ Ngân hàng đề...</span>
+              </div>
+            ) : swapModal.alternatives.length === 0 ? (
+              <p className="py-6 text-center text-xs font-semibold text-slate-400">
+                Không tìm thấy câu hỏi khác cùng dạng & độ khó trong ngân hàng đề.
+              </p>
+            ) : (
+              <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-1">
+                {swapModal.alternatives.map((altQ: any) => (
+                  <div key={altQ.id} className="rounded-2xl border border-slate-200 bg-white p-3.5 space-y-2 hover:border-purple-300 transition shadow-2xs">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-xs font-extrabold text-slate-900 leading-snug">
+                        {altQ.content}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSwapQuestion(altQ)}
+                        className="shrink-0 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-3 py-1.5 shadow-2xs transition cursor-pointer"
+                      >
+                        Chọn câu này
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[10.5px] font-semibold text-slate-500">
+                      <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-slate-700 font-bold">
+                        Mã câu: #{altQ.id}
+                      </span>
+                      <span>Độ khó: {altQ.difficulty || 'TRUNG BÌNH'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+              >
+                Đóng
+              </button>
             </div>
           </div>
         </Modal>

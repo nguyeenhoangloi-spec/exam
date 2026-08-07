@@ -20,6 +20,7 @@ import { RecentActivityList } from '../../components/dashboard/RecentActivityLis
 import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton';
 import { DashboardErrorState } from '../../components/dashboard/DashboardErrorState';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { printReport } from '../../lib/export-print';
 import { DashboardOverview } from '../../types/dashboard';
 import { User } from '../../types';
 import { AlertCircle, RefreshCw } from 'lucide-react';
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const cachedOverview = typeof window !== 'undefined' ? getCachedData<DashboardOverview>('/dashboard/overview') : null;
   const [user, setUser] = useState<User | null>(() => (typeof window !== 'undefined' ? getAuthUser() : null));
   const [overview, setOverview] = useState<DashboardOverview | null>(cachedOverview);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('ALL');
   const [loading, setLoading] = useState(!cachedOverview);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -130,6 +132,53 @@ export default function DashboardPage() {
     }
   };
 
+  const handleExportPDF = () => {
+    if (!overview) return;
+
+    const periodMap: Record<string, string> = {
+      ALL: 'Tất cả đợt thi & Học kỳ',
+      HK2_2025_2026: 'Học kỳ 2 (Năm học 2025 - 2026)',
+      HK1_2025_2026: 'Học kỳ 1 (Năm học 2025 - 2026)',
+      HK_HE_2025: 'Học kỳ Hè (Năm học 2024 - 2025)',
+    };
+    const periodLabel = periodMap[selectedPeriod] || 'Tất cả đợt thi';
+
+    const now = new Date();
+    const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+    const totalQuestions = overview.questionStatus?.reduce((acc, curr) => acc + (curr.count || 0), 0) || 0;
+    const approvedQuestions = overview.questionStatus?.find((q) => q.status === 'APPROVED')?.count || 0;
+    const pendingQuestions = overview.questionStatus?.find((q) => q.status === 'PENDING')?.count || 0;
+    const rejectedQuestions = overview.questionStatus?.find((q) => q.status === 'REJECTED')?.count || 0;
+
+    printReport({
+      title: 'BÁO CÁO TỔNG QUAN HỆ THỐNG KHẢO THÍ & NGÂN HÀNG ĐỀ THI',
+      subtitle: `Học kỳ / Đợt thi: ${periodLabel} · Ngày xuất báo cáo: ${dateStr}`,
+      metaInfo: [
+        { label: 'Đơn vị lập báo cáo', value: 'Ban Khảo thí & Đảm bảo chất lượng giáo dục' },
+        { label: 'Hệ thống', value: 'Hệ thống Quản lý Khảo thí Exam Management System' },
+      ],
+      columns: [
+        { header: 'STT', width: '50px', align: 'center' },
+        { header: 'Hạng mục / Chỉ số khảo thí', width: '260px', align: 'left' },
+        { header: 'Số lượng / Giá trị', width: '130px', align: 'center' },
+        { header: 'Ghi chú chi tiết', width: '200px', align: 'left' },
+      ],
+      rows: [
+        [1, 'Ca thi & Lịch thi sắp diễn ra', `${overview.summary?.upcomingExams?.total ?? 0} ca thi`, overview.summary?.upcomingExams?.description || 'Lịch thi khảo thí'],
+        [2, 'Tổng số Phòng thi máy tính', `${overview.summary?.examRooms?.total ?? 0} phòng`, overview.summary?.examRooms?.description || 'Hệ thống phòng thi'],
+        [3, 'Tổng số Thí sinh đã đăng ký', `${overview.summary?.students?.total ?? 0} sinh viên`, overview.summary?.students?.description || 'Tài khoản hệ thống'],
+        [4, 'Tổng số Câu hỏi trong Ngân hàng đề', `${totalQuestions} câu`, `Đã phê duyệt: ${approvedQuestions} câu`],
+        [5, 'Số câu hỏi Chờ phê duyệt', `${pendingQuestions} câu`, 'Cần Trưởng bộ môn kiểm duyệt'],
+        [6, 'Số câu hỏi Bị từ chối', `${rejectedQuestions} câu`, 'Cần giảng viên biên soạn lại'],
+      ],
+      footerNotes: 'Báo cáo được trích xuất tự động từ cơ sở dữ liệu hệ thống khảo thí.',
+      signers: [
+        { title: 'NGƯỜI LẬP BÁO CÁO', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'TRƯỜNG BAN KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
+      ],
+    });
+  };
+
   return (
     <>
       <div className="w-full space-y-6 px-4 sm:px-6 py-6">
@@ -137,6 +186,9 @@ export default function DashboardPage() {
         <DashboardHeader
           onRefresh={() => loadOverview(false)}
           isRefreshing={isRefreshing}
+          selectedPeriod={selectedPeriod}
+          onPeriodChange={setSelectedPeriod}
+          onExportPDF={handleExportPDF}
         />
 
         {loading ? (

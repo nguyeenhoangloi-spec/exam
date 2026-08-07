@@ -258,15 +258,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-black tracking-wider text-sky-300 uppercase hover:text-white transition cursor-pointer select-none ${
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-extrabold tracking-wider text-slate-400 uppercase hover:text-slate-200 transition cursor-pointer select-none ${
                     collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                   }`}
                 >
                   <span className="truncate">{group.group}</span>
                   {isExpanded ? (
-                    <ChevronDown className="h-3.5 w-3.5 text-sky-300 shrink-0" />
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                   ) : (
-                    <ChevronRight className="h-3.5 w-3.5 text-sky-300 shrink-0" />
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                   )}
                 </button>
               )}
@@ -301,23 +301,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                             {!collapsed && (
                               isSubOpen ? (
-                                <ChevronDown className="h-3.5 w-3.5 text-sky-300 shrink-0" />
+                                <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                               ) : (
-                                <ChevronRight className="h-3.5 w-3.5 text-sky-300 shrink-0" />
+                                <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                               )
                             )}
                           </button>
 
                           {/* Sub Items */}
                           {isSubOpen && !collapsed && (
-                            <div className="pl-7 space-y-1 border-l border-blue-400/30 ml-4 py-1">
+                            <div className="pl-7 space-y-1 border-l border-slate-700/60 ml-4 py-1">
                               {item.children?.map((sub) => {
                                 return (
                                   <Link
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className="block py-1.5 px-3 rounded-lg text-[11.5px] font-medium text-blue-100/75 hover:text-white hover:bg-blue-600/30 transition-all"
+                                    className="block py-1.5 px-3 rounded-lg text-[11.5px] font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-all"
                                   >
                                     {sub.name}
                                   </Link>
@@ -340,10 +340,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-xs font-bold transition-all duration-150 overflow-hidden ${
                           isActive
                             ? 'bg-blue-600 text-white shadow-md font-black border border-blue-500'
-                            : 'text-blue-100/85 hover:bg-white/10 hover:text-white'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-sky-300/90 group-hover:text-white'}`} />
+                        <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
 
                         <span
                           className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${

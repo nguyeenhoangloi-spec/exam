@@ -75,12 +75,6 @@ export class ExamArrangementService {
     if (rooms.length !== roomIds.length || new Set(roomIds).size !== roomIds.length) {
       throw new BadRequestException('Một hoặc nhiều phòng thi không tồn tại, không khả dụng hoặc bị chọn lặp.');
     }
-    const incompatibleRooms = schedule.examType === 'TU_LUAN'
-      ? rooms.filter((room) => ['THI_MAY_TINH', 'COMPUTER_LAB'].includes(room.roomType))
-      : [];
-    if (incompatibleRooms.length > 0) {
-      throw new BadRequestException(`Phòng ${incompatibleRooms.map((room) => room.roomCode).join(', ')} không phù hợp với hình thức tự luận.`);
-    }
 
     // Check phòng có bị trùng thời gian ở lịch thi khác không
     const overlappingScheduleRooms = await tx.examScheduleRoom.findMany({
@@ -137,28 +131,15 @@ export class ExamArrangementService {
       );
     }
 
-    const existingSupervisors = await tx.examSupervisor.count({
-      where: { examScheduleRoom: { examScheduleId } },
-    });
-    if (existingSupervisors > 0) {
-      throw new BadRequestException('Lịch thi đã có phân công giám thị. Hãy hủy phân công trước khi xếp lại phòng.');
-    }
-
-    // 4. Xóa kết quả xếp phòng cũ của lịch thi này (nếu có)
-    const existingAssignedStudents = await tx.examRoomStudent.count({
-      where: { examScheduleRoom: { examScheduleId } },
-    });
-    if (existingAssignedStudents > 0) {
-      throw new BadRequestException('Lịch thi đã có sinh viên được xếp phòng; không được ghi đè phương án hiện tại.');
-    }
-
+    // 4. Xóa kết quả xếp phòng cũ của lịch thi này nếu có khi lưu chính thức
     const existingScheduleRooms = await tx.examScheduleRoom.findMany({
       where: { examScheduleId },
       select: { id: true },
     });
     const existingScheduleRoomIds = existingScheduleRooms.map((r) => r.id);
+    const hasExistingArrangement = existingScheduleRoomIds.length > 0;
 
-    if (persist && existingScheduleRoomIds.length > 0) {
+    if (persist && hasExistingArrangement) {
       await tx.examSupervisor.deleteMany({
         where: { examScheduleRoomId: { in: existingScheduleRoomIds } },
       });

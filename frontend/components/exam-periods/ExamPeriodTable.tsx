@@ -113,7 +113,7 @@ export function ExamPeriodTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>

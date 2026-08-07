@@ -397,11 +397,11 @@ export function ExamScheduleTable({
 
                 {/* Mã lịch thi */}
                 {visibleColumns.code !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
+                  <td className="p-3.5 whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -411,71 +411,69 @@ export function ExamScheduleTable({
                 {/* Kỳ thi */}
                 {visibleColumns.period !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <div className="flex items-center gap-1.5 flex-wrap">
+                    <div className="space-y-0.5">
                       <p
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
                         onClick={() => onDetail(s)}
                       >
                         {periodName}
                       </p>
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
-                        s.examType === 'DIEN_LO' || s.examType === 'FILL_BLANK'
-                          ? 'bg-amber-50 text-amber-700 border-amber-200'
-                          : s.examType === 'TU_LUAN'
-                          ? 'bg-purple-50 text-purple-700 border-purple-200'
-                          : 'bg-blue-50 text-blue-700 border-blue-200'
-                      }`}>
+                      <p className="text-[11px] font-medium text-slate-500">
                         {s.examType === 'DIEN_LO' || s.examType === 'FILL_BLANK' ? 'Điền khuyết' : s.examType === 'TU_LUAN' ? 'Tự luận' : 'Trắc nghiệm'}
-                      </span>
+                      </p>
                     </div>
                   </td>
                 )}
 
                 {/* Ca thi */}
                 {visibleColumns.shift !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 text-xs">
                     {shiftName}
                   </td>
                 )}
 
                 {/* Phòng thi */}
                 {visibleColumns.room !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    {roomName}
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    {roomName === 'Chưa xếp phòng' || !roomName ? (
+                      <span className="font-medium text-slate-500">Chưa xếp phòng</span>
+                    ) : (
+                      <span className="font-extrabold text-slate-900">{roomName}</span>
+                    )}
                   </td>
                 )}
 
                 {/* Ngày thi */}
                 {visibleColumns.date !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-900">
+                  <td className="p-3.5 whitespace-nowrap font-extrabold text-slate-900 text-xs">
                     {formatDate(s.examDate)}
                   </td>
                 )}
 
                 {/* Giờ bắt đầu */}
                 {visibleColumns.startTime !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-xs">
                     {s.startTime || '07:00'}
                   </td>
                 )}
 
                 {/* Giờ kết thúc */}
                 {visibleColumns.endTime !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-xs">
                     {s.endTime || '09:00'}
                   </td>
                 )}
 
                 {/* Số TS */}
                 {visibleColumns.students !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-900">
+                  <td className="p-3.5 whitespace-nowrap font-extrabold text-slate-900 text-xs">
                     {studentCount}
                   </td>
                 )}
 
                 {/* Giám thị */}
                 {visibleColumns.supervisors !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 text-xs">
                     {supervisorCount}
                   </td>
                 )}

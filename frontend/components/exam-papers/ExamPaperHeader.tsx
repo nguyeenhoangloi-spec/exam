@@ -33,9 +33,9 @@ export function ExamPaperHeader({
           <button
             type="button"
             onClick={onExportAll}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-bold text-white shadow-xs transition active:scale-95 cursor-pointer"
           >
-            <Download className="h-4 w-4 text-slate-500" />
+            <Download className="h-4 w-4 text-white" />
             <span>Xuất báo cáo</span>
           </button>
         )}

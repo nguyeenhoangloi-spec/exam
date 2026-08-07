@@ -249,23 +249,18 @@ export function StudentTable({
 
                 {visibleColumns.studentCode !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-sky-700">{s.studentCode}</span>
+                    <span className="font-mono font-black text-slate-900">{s.studentCode}</span>
                   </td>
                 )}
 
                 {visibleColumns.fullName !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-200 text-blue-600">
-                        <Users className="h-4 w-4" />
-                      </div>
-                      <span
-                        onClick={() => onDetail(s)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight"
-                      >
-                        {s.fullName}
-                      </span>
-                    </div>
+                    <span
+                      onClick={() => onDetail(s)}
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
+                    >
+                      {s.fullName}
+                    </span>
                   </td>
                 )}
 

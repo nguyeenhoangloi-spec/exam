@@ -265,31 +265,24 @@ export function TeacherTable({
 
                 {visibleColumns.teacherCode !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-sky-700">{t.teacherCode}</span>
+                    <span className="font-mono font-black text-slate-900">{t.teacherCode}</span>
                   </td>
                 )}
 
                 {visibleColumns.fullName !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-200 text-blue-600">
-                        <GraduationCap className="h-4 w-4" />
-                      </div>
-                      <span
-                        onClick={() => onDetail(t)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight"
-                      >
-                        {t.fullName}
-                      </span>
-                    </div>
+                    <span
+                      onClick={() => onDetail(t)}
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
+                    >
+                      {t.fullName}
+                    </span>
                   </td>
                 )}
 
                 {visibleColumns.degree !== false && (
-                  <td className="p-3.5 whitespace-nowrap">
-                    <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
-                      {t.degree || 'TS'}
-                    </Badge>
+                  <td className="p-3.5 whitespace-nowrap text-xs font-bold text-slate-800">
+                    {t.degree || 'TS'}
                   </td>
                 )}
 

@@ -87,7 +87,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -204,7 +204,7 @@ export function ExamRoomTable({
 
                 {visibleColumns.code !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-sky-700">{codeText}</span>
+                    <span className="font-mono font-black text-slate-900">{codeText}</span>
                   </td>
                 )}
 
@@ -212,7 +212,7 @@ export function ExamRoomTable({
                   <td className="p-3.5 min-w-[180px]">
                     <span
                       onClick={() => onDetail(r)}
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight"
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
                     >
                       {nameText}
                     </span>
@@ -220,17 +220,15 @@ export function ExamRoomTable({
                 )}
 
                 {visibleColumns.capacity !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center">
-                    <span className="font-black text-slate-900">{r.capacity} chỗ</span>
+                  <td className="p-3.5 whitespace-nowrap text-center text-xs">
+                    <span className="font-extrabold text-slate-900">{r.capacity}</span>
+                    <span className="font-medium text-slate-500 ml-1">chỗ</span>
                   </td>
                 )}
 
                 {visibleColumns.building !== false && (
-                  <td className="p-3.5 min-w-[140px]">
-                    <div className="flex items-center gap-1.5 text-slate-600">
-                      <Building className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="font-semibold truncate">{locText}</span>
-                    </div>
+                  <td className="p-3.5 min-w-[140px] text-xs font-semibold text-slate-700">
+                    {locText}
                   </td>
                 )}
 

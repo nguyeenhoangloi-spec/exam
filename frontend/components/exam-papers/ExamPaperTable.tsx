@@ -82,7 +82,7 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p.id)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-700 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       Mã đề: {p.paperCode}
                     </button>
@@ -218,7 +218,9 @@ export function ExamPaperTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">{p.paperCode}</td>
+                  <td className="p-2 whitespace-nowrap">
+                    <span className="font-mono font-black text-slate-900">{p.paperCode}</span>
+                  </td>
                   <td className="p-2 min-w-[180px]">
                     <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(p.id)}>
                       {subCode ? `[${subCode}] ` : ''}{subName}
@@ -231,7 +233,10 @@ export function ExamPaperTable({
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">
                     {dateStr ? `${dateStr} (${timeStr || ''})` : `${p.durationMinutes} phút`}
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-emerald-600">{p.totalScore} đ</td>
+                  <td className="p-2 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{p.totalScore}</span>
+                    <span className="font-medium text-slate-500 ml-1">đ</span>
+                  </td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(p.id)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
                       <Eye className="h-3.5 w-3.5" />
@@ -303,11 +308,11 @@ export function ExamPaperTable({
                       <button
                         type="button"
                         onClick={() => onDetail(p.id)}
-                        className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-700 border border-blue-200/80 hover:bg-blue-100 transition cursor-pointer"
+                        className="font-mono text-xs font-extrabold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                       >
                         Mã {p.paperCode}
                       </button>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                      <p className="text-[11px] font-semibold text-slate-400">
                         {examType === 'TU_LUAN' ? 'Tự luận' : examType === 'DIEN_LO' ? 'Điền lỗ' : 'Trắc nghiệm'}
                       </p>
                     </div>
@@ -316,30 +321,25 @@ export function ExamPaperTable({
 
                 {visibleColumns.subjectName !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <div className="flex items-start gap-2.5">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shrink-0 mt-0.5 border border-blue-200/60">
-                        <BookOpen className="h-4 w-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {subCode && (
-                            <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-black text-blue-700 border border-blue-200/70 font-mono">
-                              {subCode}
-                            </span>
-                          )}
-                          <span
-                            onClick={() => onDetail(p.id)}
-                            className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
-                          >
-                            {subName}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {subCode && (
+                          <span className="font-mono font-bold text-slate-900 text-xs">
+                            [{subCode}]
                           </span>
-                        </div>
-                        {periodName && (
-                          <p className="text-[10.5px] font-medium text-slate-400 mt-0.5 truncate">
-                            {periodName}
-                          </p>
                         )}
+                        <span
+                          onClick={() => onDetail(p.id)}
+                          className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
+                        >
+                          {subName}
+                        </span>
                       </div>
+                      {periodName && (
+                        <p className="text-[11px] font-medium text-slate-400 mt-0.5 truncate">
+                          {periodName}
+                        </p>
+                      )}
                     </div>
                   </td>
                 )}
@@ -351,37 +351,36 @@ export function ExamPaperTable({
                 )}
 
                 {visibleColumns.questionCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700">
-                      <HelpCircle className="h-3.5 w-3.5 text-sky-600" /> {qCount} câu
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{qCount}</span>
+                    <span className="font-medium text-slate-500 ml-1">câu</span>
                   </td>
                 )}
 
                 {visibleColumns.durationMinutes !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700">
+                  <td className="p-3.5 whitespace-nowrap text-slate-700">
                     <div className="space-y-0.5">
                       {dateStr ? (
-                        <p className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                          <Calendar className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-                          <span>{dateStr}</span>
-                          {timeStr && <span className="text-slate-500 font-semibold">({timeStr})</span>}
+                        <p className="text-xs">
+                          <span className="font-extrabold text-slate-900">{dateStr}</span>
+                          {timeStr && <span className="text-slate-500 ml-1.5 font-medium">({timeStr})</span>}
                         </p>
                       ) : (
-                        <p className="text-xs font-semibold text-slate-400 flex items-center gap-1">
-                          <Calendar className="h-3.5 w-3.5 text-slate-300" /> Chưa xếp lịch thi
+                        <p className="text-xs font-medium text-slate-400">
+                          Chưa xếp lịch thi
                         </p>
                       )}
-                      <p className="text-[10.5px] font-semibold text-slate-400 flex items-center gap-1 pl-4.5">
-                        <Clock className="h-3 w-3 text-slate-400" /> Làm bài: {p.durationMinutes} phút
+                      <p className="text-[11px] font-medium text-slate-400">
+                        Làm bài: <span className="font-semibold text-slate-700">{p.durationMinutes} phút</span>
                       </p>
                     </div>
                   </td>
                 )}
 
                 {visibleColumns.totalScore !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center font-black text-emerald-600">
-                    {p.totalScore} đ
+                  <td className="p-3.5 whitespace-nowrap text-center text-xs">
+                    <span className="font-extrabold text-slate-900">{p.totalScore}</span>
+                    <span className="font-medium text-slate-500 ml-1">đ</span>
                   </td>
                 )}
 

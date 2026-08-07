@@ -279,9 +279,10 @@ export class ExamSupervisorsService {
     return updated;
   }
 
-  async getSupervisors(query: { examScheduleRoomId?: number; examScheduleId?: number; status?: string }) {
+  async getSupervisors(query: { examScheduleRoomId?: number; examScheduleId?: number; status?: string; teacherId?: number }) {
     return this.prisma.examSupervisor.findMany({
       where: {
+        ...(query.teacherId ? { teacherId: query.teacherId } : {}),
         ...(query.status ? { status: query.status } : {}),
         examScheduleRoom: {
           ...(query.examScheduleRoomId ? { id: query.examScheduleRoomId } : {}),

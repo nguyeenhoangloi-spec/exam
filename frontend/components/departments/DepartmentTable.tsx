@@ -189,8 +189,8 @@ export function DepartmentTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">
-                    <button type="button" onClick={() => onDetail(d)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
+                  <td className="p-2 whitespace-nowrap font-mono font-black text-slate-900">
+                    <button type="button" onClick={() => onDetail(d)} className="hover:text-blue-600">
                       {d.code}
                     </button>
                   </td>
@@ -263,11 +263,11 @@ export function DepartmentTable({
                 </td>
 
                 {visibleColumns.code !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
+                  <td className="p-3.5 whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {d.code}
                     </button>
@@ -276,54 +276,46 @@ export function DepartmentTable({
 
                 {visibleColumns.name !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                        <Building2 className="h-4 w-4" />
-                      </div>
-                      <span
-                        onClick={() => onDetail(d)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
-                      >
-                        {d.name}
-                      </span>
-                    </div>
+                    <span
+                      onClick={() => onDetail(d)}
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
+                    >
+                      {d.name}
+                    </span>
                   </td>
                 )}
 
                 {visibleColumns.subjectsCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700">
-                      <BookOpen className="h-3.5 w-3.5 text-emerald-600" /> {subjectsCount} môn
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{subjectsCount}</span>
+                    <span className="font-medium text-slate-500 ml-1">môn</span>
                   </td>
                 )}
 
                 {visibleColumns.classesCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700">
-                      <GraduationCap className="h-3.5 w-3.5 text-slate-600" /> {classesCount} lớp
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{classesCount}</span>
+                    <span className="font-medium text-slate-500 ml-1">lớp</span>
                   </td>
                 )}
 
                 {visibleColumns.teachersCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700">
-                      <Users className="h-3.5 w-3.5 text-blue-600" /> {teachersCount} giảng viên
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{teachersCount}</span>
+                    <span className="font-medium text-slate-500 ml-1">giảng viên</span>
                   </td>
                 )}
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
-                    {/* Curriculum Button */}
+                    {/* Curriculum Button - Clean Monochrome */}
                     <button
                       type="button"
                       onClick={() => onOpenCurriculum(d)}
-                      className="flex items-center gap-1 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-2.5 py-1 text-xs font-bold transition cursor-pointer"
+                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-bold transition cursor-pointer shadow-2xs"
                       title="Quản lý Khung Chương trình Đào tạo"
                     >
-                      <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+                      <Sparkles className="h-3.5 w-3.5 text-slate-500" />
                       <span>Khung CTDT</span>
                     </button>
 

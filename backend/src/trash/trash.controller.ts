@@ -34,6 +34,12 @@ export class TrashController {
     return this.trashService.restoreItem(req.user.id, body.type, body.id);
   }
 
+  @Post('auto-clean')
+  @Roles('ADMIN')
+  autoCleanTrash(@Request() req: any) {
+    return this.trashService.autoCleanExpiredTrash(30, req.user.id);
+  }
+
   @Delete('permanent')
   @Roles('ADMIN')
   hardDeleteItem(

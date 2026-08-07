@@ -709,27 +709,33 @@ export default function StudentsPage() {
                       <div className="flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3 border border-blue-100 text-sm">
                         <span className="font-semibold text-blue-900">Tổng quan:</span>
                         <span className="font-bold text-blue-700">
-                          {drawerSubjects.length} môn / {drawerSubjects.reduce((acc, s) => acc + (s.credits || 0), 0)} tín chỉ
+                          {drawerSubjects.length} môn / {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
                         </span>
                       </div>
                       <div className="space-y-3">
-                        {drawerSubjects.map((subject, idx) => (
-                          <div key={idx} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                              <BookOpen className="h-5 w-5 text-blue-600" />
+                        {drawerSubjects.map((item: any, idx: number) => {
+                          const sub = item.subject || item;
+                          return (
+                            <div key={idx} className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex items-start gap-3 hover:border-blue-300 transition-colors">
+                              <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
+                                <BookOpen className="h-5 w-5 text-blue-600" />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="text-sm font-bold text-slate-800">{sub.subjectName || sub.name}</h4>
+                                <p className="text-xs text-slate-500 font-medium mt-0.5">Mã môn: <span className="font-bold text-slate-700">{sub.subjectCode || sub.code}</span></p>
+                                {sub.department?.name && (
+                                  <p className="text-xs text-slate-400 mt-0.5">{sub.department.name}</p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold">
+                                  {sub.credits} TC
+                                </span>
+                                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">{item.semester} • {item.schoolYear || item.year || ''}</p>
+                              </div>
                             </div>
-                            <div className="flex-1">
-                              <h4 className="text-sm font-bold text-slate-800">{subject.name}</h4>
-                              <p className="text-xs text-slate-500 font-medium mt-1">Mã: <span className="text-slate-700">{subject.code}</span></p>
-                            </div>
-                            <div className="text-right">
-                              <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold">
-                                {subject.credits} TC
-                              </span>
-                              <p className="text-[10px] font-semibold text-slate-400 mt-1 uppercase">HK{subject.semester} - {subject.year}</p>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </>
                   )}
@@ -749,34 +755,43 @@ export default function StudentsPage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {drawerSchedule.map((sched, idx) => (
-                        <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                      {drawerSchedule.map((sched: any, idx: number) => (
+                        <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden hover:border-indigo-300 transition-colors">
                           <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-slate-400" />
+                              <Calendar className="h-4 w-4 text-indigo-600" />
                               <span className="text-xs font-bold text-slate-700">
-                                {new Date(sched.date).toLocaleDateString('vi-VN')} • {sched.startTime} - {sched.endTime}
+                                {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
                               </span>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700">
-                              {sched.examType}
+                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-amber-100 text-amber-800 border border-amber-200">
+                              {sched.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : sched.examType === 'TU_LUAN' ? 'Tự luận' : sched.examType || 'Thi'}
                             </span>
                           </div>
                           <div className="p-4 space-y-3">
-                            <h4 className="text-sm font-bold text-slate-800">{sched.subject?.name || 'Môn học'}</h4>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <h4 className="text-sm font-bold text-slate-900">{sched.subjectName || 'Môn thi'}</h4>
+                              <p className="text-xs font-medium text-slate-500 mt-0.5">Mã môn: {sched.subjectCode}</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
                               <div className="flex items-center gap-1.5 text-slate-600">
-                                <School className="h-3.5 w-3.5 text-slate-400" />
-                                <span>Phòng: <span className="font-semibold text-slate-800">{sched.room?.roomCode} ({sched.room?.building})</span></span>
+                                <School className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                <span>Phòng: <span className="font-bold text-slate-800">{sched.roomCode || sched.roomName} ({sched.building})</span></span>
                               </div>
                               <div className="flex items-center gap-1.5 text-slate-600">
-                                <UserIcon className="h-3.5 w-3.5 text-slate-400" />
-                                <span>SBD: <span className="font-semibold text-slate-800">{sched.studentCodeStr || drawerStudent.studentCode}</span></span>
+                                <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                <span>SBD: <span className="font-bold text-blue-600">{sched.examNumber || '---'}</span></span>
                               </div>
                               <div className="flex items-center gap-1.5 text-slate-600">
-                                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                                <span>Số ghế: <span className="font-semibold text-slate-800">{sched.seatNumber || '--'}</span></span>
+                                <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                <span>Số ghế: <span className="font-bold text-emerald-600">{sched.seatNumber || '--'}</span></span>
                               </div>
+                              {sched.periodName && (
+                                <div className="flex items-center gap-1.5 text-slate-600">
+                                  <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                  <span className="truncate">{sched.periodName}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

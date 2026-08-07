@@ -238,11 +238,11 @@ export function SubjectTable({
                 </td>
 
                 {visibleColumns.subjectCode !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
+                  <td className="p-3.5 whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {s.subjectCode}
                     </button>
@@ -251,46 +251,38 @@ export function SubjectTable({
 
                 {visibleColumns.subjectName !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                        <BookOpen className="h-4 w-4" />
-                      </div>
-                      <span
-                        onClick={() => onDetail(s)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
-                      >
-                        {s.subjectName}
-                      </span>
-                    </div>
+                    <span
+                      onClick={() => onDetail(s)}
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
+                    >
+                      {s.subjectName}
+                    </span>
                   </td>
                 )}
 
                 {visibleColumns.credits !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700">
-                      <Award className="h-3.5 w-3.5 text-emerald-600" /> {s.credits} Tín chỉ
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{s.credits}</span>
+                    <span className="font-medium text-slate-500 ml-1">tín chỉ</span>
                   </td>
                 )}
 
                 {visibleColumns.department !== false && (
-                  <td className="p-3.5 min-w-[200px] font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1.5 text-slate-700">
-                      <Building2 className="h-3.5 w-3.5 text-slate-400" /> {deptName}
-                    </span>
+                  <td className="p-3.5 min-w-[200px] text-xs font-semibold text-slate-700">
+                    {deptName}
                   </td>
                 )}
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
-                    {/* Enroll Student Button */}
+                    {/* Enroll Student Button - Clean Monochrome */}
                     <button
                       type="button"
                       onClick={() => onEnroll(s)}
-                      className="flex items-center gap-1 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-2.5 py-1 text-xs font-bold transition cursor-pointer"
+                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-bold transition cursor-pointer shadow-2xs"
                       title="Gán Sinh viên đăng ký môn học"
                     >
-                      <UserPlus className="h-3.5 w-3.5 text-sky-600" />
+                      <UserPlus className="h-3.5 w-3.5 text-slate-500" />
                       <span>Gán SV</span>
                     </button>
 

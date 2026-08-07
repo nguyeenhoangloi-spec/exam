@@ -239,11 +239,11 @@ export function ClassTable({
                 </td>
 
                 {visibleColumns.code !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
+                  <td className="p-3.5 whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {c.code}
                     </button>
@@ -252,33 +252,25 @@ export function ClassTable({
 
                 {visibleColumns.name !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                        <GraduationCap className="h-4 w-4" />
-                      </div>
-                      <span
-                        onClick={() => onDetail(c)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
-                      >
-                        {c.name}
-                      </span>
-                    </div>
+                    <span
+                      onClick={() => onDetail(c)}
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
+                    >
+                      {c.name}
+                    </span>
                   </td>
                 )}
 
                 {visibleColumns.department !== false && (
-                  <td className="p-3.5 min-w-[200px] font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1.5 text-slate-700">
-                      <Building2 className="h-3.5 w-3.5 text-slate-400" /> {deptName}
-                    </span>
+                  <td className="p-3.5 min-w-[200px] text-xs font-semibold text-slate-700">
+                    {deptName}
                   </td>
                 )}
 
                 {visibleColumns.studentCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-[8px] border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold text-slate-700">
-                      <Users className="h-3.5 w-3.5 text-slate-600" /> {studentCount} SV
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap text-xs">
+                    <span className="font-extrabold text-slate-900">{studentCount}</span>
+                    <span className="font-medium text-slate-500 ml-1">sinh viên</span>
                   </td>
                 )}
 

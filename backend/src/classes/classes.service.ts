@@ -18,10 +18,61 @@ export class ClassesService {
   async findOne(id: number) {
     const cls = await this.prisma.class.findUnique({
       where: { id },
-      include: { department: true, students: true },
+      include: {
+        department: true,
+        students: {
+          select: {
+            id: true,
+            studentCode: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            gender: true,
+          },
+        },
+      },
     });
     if (!cls) throw new NotFoundException('Không tìm thấy lớp học.');
     return cls;
+  }
+
+  async getClassSubjects(id: number) {
+    const cls = await this.prisma.class.findUnique({ where: { id } });
+    if (!cls) throw new NotFoundException('Không tìm thấy lớp học.');
+
+    const enrollments = await this.prisma.studentSubject.findMany({
+      where: { student: { classId: id } },
+      include: {
+        subject: {
+          select: {
+            id: true,
+            subjectCode: true,
+            subjectName: true,
+            credits: true,
+            department: { select: { id: true, name: true } },
+          },
+        },
+      },
+    });
+
+    const map = new Map<string, any>();
+    for (const e of enrollments) {
+      const key = `${e.subjectId}_${e.semester}_${e.schoolYear}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          subjectId: e.subject.id,
+          subjectCode: e.subject.subjectCode,
+          subjectName: e.subject.subjectName,
+          credits: e.subject.credits,
+          departmentName: e.subject.department?.name || '',
+          semester: e.semester,
+          schoolYear: e.schoolYear,
+          studentCount: 0,
+        });
+      }
+      map.get(key).studentCount++;
+    }
+    return Array.from(map.values()).sort((a, b) => a.subjectCode.localeCompare(b.subjectCode));
   }
 
   async create(data: { code: string; name: string; departmentId: number }) {

@@ -6,23 +6,75 @@ export class DepartmentsService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.department.findMany({
+    const depts = await this.prisma.department.findMany({
       include: {
+        classes: {
+          include: {
+            _count: { select: { students: true } },
+          },
+        },
         _count: {
           select: { classes: true, teachers: true, subjects: true, majorSubjects: true },
         },
       },
       orderBy: { code: 'asc' },
     });
+
+    return depts.map((d) => {
+      const studentCount = d.classes.reduce((sum, c) => sum + (c._count?.students || 0), 0);
+      return {
+        ...d,
+        _count: {
+          ...d._count,
+          students: studentCount,
+        },
+      };
+    });
   }
 
   async findOne(id: number) {
     const department = await this.prisma.department.findUnique({
       where: { id },
-      include: { classes: true, teachers: true, subjects: true },
+      include: {
+        classes: {
+          include: {
+            students: {
+              select: {
+                id: true,
+                studentCode: true,
+                fullName: true,
+                email: true,
+                phone: true,
+                gender: true,
+              },
+            },
+            _count: { select: { students: true } },
+          },
+        },
+        teachers: true,
+        subjects: true,
+      },
     });
     if (!department) throw new NotFoundException('Không tìm thấy khoa.');
-    return department;
+
+    const allStudents = department.classes.flatMap((c) =>
+      (c.students || []).map((s) => ({
+        ...s,
+        classCode: c.code,
+        className: c.name,
+      })),
+    );
+
+    return {
+      ...department,
+      students: allStudents,
+      _count: {
+        classes: department.classes.length,
+        teachers: department.teachers.length,
+        subjects: department.subjects.length,
+        students: allStudents.length,
+      },
+    };
   }
 
   async create(data: { code: string; name: string }) {

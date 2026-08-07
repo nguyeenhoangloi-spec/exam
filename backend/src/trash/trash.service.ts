@@ -1,10 +1,92 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class TrashService {
-  // Keep this service as a normal class so TypeScript Server can refresh the file cleanly.
+export class TrashService implements OnModuleInit {
+  private readonly logger = new Logger(TrashService.name);
+
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Tự động chạy khi NestJS Module khởi tạo & lập lịch quét dọn dẹp định kỳ 24h
+   */
+  async onModuleInit() {
+    // 1. Quét dọn dẹp thùng rác hết hạn ngay khi backend khởi động
+    await this.autoCleanExpiredTrash(30).catch((err) => {
+      this.logger.error(`Lỗi khi tự động dọn dẹp thùng rác lúc khởi động: ${err.message}`);
+    });
+
+    // 2. Lập lịch tự động dọn dẹp định kỳ 24 giờ một lần (Native NodeJS Interval)
+    setInterval(() => {
+      this.autoCleanExpiredTrash(30).catch((err) => {
+        this.logger.error(`Lỗi khi dọn dẹp thùng rác định kỳ 24h: ${err.message}`);
+      });
+    }, 24 * 60 * 60 * 1000);
+  }
+
+  /**
+   * Tự động xóa vĩnh viễn các bản ghi bị soft-delete quá N ngày (Mặc định: 30 ngày)
+   */
+  async autoCleanExpiredTrash(retentionDays = 30, actorId?: number) {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+
+    const [deletedSchedules, deletedPapers, deletedQuestions] = await Promise.all([
+      this.prisma.examSchedule.deleteMany({
+        where: {
+          deletedAt: {
+            not: null,
+            lte: cutoffDate,
+          },
+        },
+      }),
+      this.prisma.examPaper.deleteMany({
+        where: {
+          deletedAt: {
+            not: null,
+            lte: cutoffDate,
+          },
+        },
+      }),
+      this.prisma.question.deleteMany({
+        where: {
+          deletedAt: {
+            not: null,
+            lte: cutoffDate,
+          },
+        },
+      }),
+    ]);
+
+    const totalCleaned = deletedSchedules.count + deletedPapers.count + deletedQuestions.count;
+
+    if (totalCleaned > 0) {
+      this.logger.log(
+        `🧹 [TRASH AUTO-CLEANUP] Đã tự động xóa vĩnh viễn ${totalCleaned} bản ghi quá ${retentionDays} ngày (Schedules: ${deletedSchedules.count}, Papers: ${deletedPapers.count}, Questions: ${deletedQuestions.count})`,
+      );
+
+      await this.prisma.auditLog.create({
+        data: {
+          actorId: actorId || null,
+          action: 'AUTO_PURGE_TRASH',
+          entityType: 'Trash',
+          entityId: 'SYSTEM',
+          description: `Hệ thống tự động dọn dẹp xóa vĩnh viễn ${totalCleaned} bản ghi trong thùng rác quá ${retentionDays} ngày (Lịch thi: ${deletedSchedules.count}, Đề thi: ${deletedPapers.count}, Câu hỏi: ${deletedQuestions.count})`,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      totalCleaned,
+      details: {
+        schedules: deletedSchedules.count,
+        papers: deletedPapers.count,
+        questions: deletedQuestions.count,
+      },
+      cutoffDate,
+    };
+  }
 
   /**
    * Lấy thống kê số lượng items nằm trong thùng rác

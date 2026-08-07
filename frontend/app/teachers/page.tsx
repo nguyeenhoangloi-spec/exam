@@ -623,36 +623,52 @@ export default function TeachersPage() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {drawerAssignments.map((assignment: any, index: number) => (
-                        <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:border-orange-200 transition-colors">
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-bold text-slate-800 text-sm">
-                              {assignment.examScheduleRoom?.examSchedule?.subject?.name || 'Môn thi'}
-                            </h4>
-                            <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
-                              assignment.role === 'CHÁNH' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
-                            }`}>
-                              {assignment.role}
-                            </span>
-                          </div>
-                          <div className="space-y-1.5 text-xs text-slate-600">
-                            <div className="flex justify-between">
-                              <span className="text-slate-400">Phòng thi:</span>
-                              <span className="font-medium">{assignment.examScheduleRoom?.room?.name || '---'}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-slate-400">Ngày giờ:</span>
-                              <span className="font-medium">
-                                {assignment.examScheduleRoom?.examSchedule?.date || '---'} • {assignment.examScheduleRoom?.examSchedule?.time || '---'}
+                      {drawerAssignments.map((assignment: any, index: number) => {
+                        const sched = assignment.examScheduleRoom?.examSchedule;
+                        const room = assignment.examScheduleRoom?.room;
+                        const subject = sched?.subject;
+                        return (
+                          <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:border-orange-200 transition-colors space-y-2">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-bold text-slate-800 text-sm">
+                                  {subject?.subjectName || 'Môn thi'}
+                                </h4>
+                                {subject?.subjectCode && (
+                                  <span className="text-xs font-semibold text-slate-500">Mã môn: {subject.subjectCode}</span>
+                                )}
+                              </div>
+                              <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase shrink-0 ${
+                                assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
+                              }`}>
+                                {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                               </span>
                             </div>
-                            <div className="flex justify-between">
-                              <span className="text-slate-400">Trạng thái:</span>
-                              <span className="font-medium text-amber-600">{assignment.status || '---'}</span>
+                            <div className="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-2">
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Phòng thi:</span>
+                                <span className="font-bold text-slate-800">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Ngày thi:</span>
+                                <span className="font-bold text-slate-800">
+                                  {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Thời gian:</span>
+                                <span className="font-bold text-slate-800">
+                                  {sched?.startTime && sched?.endTime ? `${sched.startTime} - ${sched.endTime}` : '---'}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Trạng thái:</span>
+                                <span className="font-bold text-emerald-600">{assignment.status || 'Đã phân công'}</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>

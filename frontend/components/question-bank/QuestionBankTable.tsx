@@ -346,11 +346,11 @@ export function QuestionBankTable({
 
                 {/* Mã câu hỏi */}
                 {visibleColumns.code !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600 align-top pt-4">
+                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
                     <button
                       type="button"
                       onClick={() => onDetail(q)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>

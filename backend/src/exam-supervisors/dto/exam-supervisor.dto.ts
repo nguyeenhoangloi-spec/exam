@@ -27,6 +27,12 @@ export class FindSupervisorsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  teacherId?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   examScheduleRoomId?: number;
 
   @IsOptional()

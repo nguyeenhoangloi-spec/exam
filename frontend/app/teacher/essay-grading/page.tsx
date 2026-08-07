@@ -525,7 +525,7 @@ export default function TeacherEssayGradingPage() {
                           <StatusBadge status={row.gradingStatus} />
                         </div>
                         <p className="text-[11px] text-slate-500 font-mono">
-                          Mã SV: <strong className="text-slate-800">{row.student?.studentCode}</strong> · Điểm: <strong className="text-blue-700 font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
+                          Mã SV: <strong className="text-slate-800">{row.student?.studentCode}</strong> · Điểm: <strong className="text-slate-900 font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
                         </p>
                         <div className="flex items-center justify-between gap-1 text-[10px] text-slate-500 font-medium border-t border-slate-100 pt-1.5 mt-0.5">
                           <span className="truncate flex-1 font-semibold text-slate-700">
@@ -533,7 +533,7 @@ export default function TeacherEssayGradingPage() {
                             {schedCode ? ` (${schedCode})` : ''}
                           </span>
                           {dateStr && (
-                            <span className="shrink-0 text-[9.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded-md">
+                            <span className="shrink-0 text-[9.5px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md">
                               {dateStr}
                             </span>
                           )}
@@ -563,7 +563,7 @@ export default function TeacherEssayGradingPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-xl font-mono font-bold text-blue-700">
+                    <span className="text-xl font-mono font-black text-slate-900">
                       {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10} điểm</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
@@ -584,7 +584,7 @@ export default function TeacherEssayGradingPage() {
                         {/* Question Title & Actions */}
                         <div className="flex justify-between items-start font-bold text-xs text-slate-900 border-b border-slate-200/60 pb-2">
                           <div className="pr-4">
-                            <span className="text-blue-700 font-bold">Câu {idx + 1} (Tự luận):</span> {q.content}
+                            <span className="text-slate-700 font-bold">Câu {idx + 1} (Tự luận):</span> {q.content}
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <button
@@ -595,7 +595,7 @@ export default function TeacherEssayGradingPage() {
                               <Sliders className="h-3 w-3 text-slate-500" />
                               <span>Sửa Rubric</span>
                             </button>
-                            <span className="text-blue-700 font-mono text-sm font-bold">
+                            <span className="text-slate-900 font-mono text-sm font-black">
                               {ans?.finalScore ?? '--'} / {q.score}đ
                             </span>
                           </div>

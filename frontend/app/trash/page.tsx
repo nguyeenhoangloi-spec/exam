@@ -186,6 +186,30 @@ function TrashPageContent() {
     }
   };
 
+  const handleAutoClean = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Tự động dọn dẹp Thùng Rác',
+      message: 'Hệ thống sẽ quét và XÓA VĨNH VIỄN toàn bộ các bản ghi trong Thùng rác đã quá 30 ngày. Bạn có chắc chắn muốn thực hiện?',
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          const res = await api.post('/trash/auto-clean');
+          const count = res.data?.totalCleaned ?? 0;
+          setToast({
+            message: count > 0 ? `🧹 Đã tự động dọn dẹp vĩnh viễn ${count} bản ghi quá 30 ngày!` : 'Thành công: Không có bản ghi nào quá 30 ngày cần dọn dẹp.',
+            type: 'success',
+          });
+          fetchStats();
+          fetchItems();
+        } catch (err: any) {
+          setToast({ message: err?.response?.data?.message || 'Không thể dọn dẹp thùng rác', type: 'error' });
+        }
+      },
+    });
+  };
+
   const CATEGORY_MAP: Record<string, { title: string; subtitle: string; label: string }> = {
     schedules: { title: 'Lịch thi đã xóa', subtitle: 'Quản lý các lịch thi khảo thí đã bị xóa tạm thời', label: 'Lịch thi đã xóa' },
     papers: { title: 'Đề thi đã xóa', subtitle: 'Quản lý các bộ đề thi trắc nghiệm & tự luận đã bị xóa tạm thời', label: 'Đề thi đã xóa' },
@@ -231,6 +255,14 @@ function TrashPageContent() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleAutoClean}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-black transition shadow-2xs cursor-pointer"
+            title="Quét và xóa vĩnh viễn toàn bộ bản ghi trong Thùng rác đã quá 30 ngày"
+          >
+            <Trash2 className="w-4 h-4 text-rose-600" />
+            Dọn dẹp bản ghi &gt; 30 ngày
+          </button>
           <button
             onClick={() => { fetchStats(); fetchItems(); }}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer"

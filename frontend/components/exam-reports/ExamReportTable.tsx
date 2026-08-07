@@ -279,8 +279,8 @@ export function ExamReportTable({
                 </td>
 
                 {visibleColumns.studentCode !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5">
+                  <td className="p-3.5 whitespace-nowrap">
+                    <span className="font-mono font-black text-slate-900">
                       {c.studentCode}
                     </span>
                   </td>

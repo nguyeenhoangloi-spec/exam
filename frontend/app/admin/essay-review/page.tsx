@@ -549,7 +549,7 @@ export default function AdminEssayReviewPage() {
                             {schedCode ? ` (${schedCode})` : ''}
                           </span>
                           {dateStr && (
-                            <span className="shrink-0 text-[9.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded-md">
+                            <span className="shrink-0 text-[9.5px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md">
                               {dateStr}
                             </span>
                           )}
@@ -579,7 +579,7 @@ export default function AdminEssayReviewPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-mono font-black text-blue-700">
+                    <span className="text-2xl font-mono font-black text-slate-900">
                       {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-bold">/ {selected.maxScore || 10}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
@@ -596,7 +596,7 @@ export default function AdminEssayReviewPage() {
                       <div key={q.questionId || idx} className="rounded-xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
                         <div className="flex justify-between font-bold text-xs text-slate-900 border-b border-slate-200 pb-2">
                           <span>Câu {idx + 1}: {q.content}</span>
-                          <span className="text-blue-600 font-mono">{ans?.finalScore ?? '--'} / {q.score}đ</span>
+                          <span className="text-slate-900 font-mono font-black">{ans?.finalScore ?? '--'} / {q.score}đ</span>
                         </div>
 
                         {/* Student Answer */}
@@ -618,7 +618,7 @@ export default function AdminEssayReviewPage() {
                                   href={f.url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold hover:bg-blue-100 transition"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition"
                                 >
                                   <Download className="w-3.5 h-3.5" />
                                   {f.fileName} ({(f.size / 1024 / 1024).toFixed(2)} MB)

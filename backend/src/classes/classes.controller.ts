@@ -16,6 +16,11 @@ export class ClassesController {
     return this.classesService.findAll();
   }
 
+  @Get(':id/subjects')
+  getClassSubjects(@Param('id', ParseIntPipe) id: number) {
+    return this.classesService.getClassSubjects(id);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.classesService.findOne(id);

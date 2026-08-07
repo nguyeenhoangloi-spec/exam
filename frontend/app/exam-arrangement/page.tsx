@@ -23,6 +23,7 @@ import {
   Grid,
   List,
   RotateCcw,
+  Shuffle,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 
@@ -263,7 +264,8 @@ export default function ExamArrangementPage() {
       setResult(res.data);
       setToast({ message: 'Đã tạo phương án xem trước. Bấm "Xác nhận lưu" để ghi dữ liệu.', type: 'success' });
     } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi khi tạo phương án xem trước', type: 'error' });
+      const msg = err?.response?.data?.message || err.message || 'Lỗi khi tạo phương án xem trước';
+      setToast({ message: Array.isArray(msg) ? msg.join(', ') : msg, type: 'error' });
     } finally {
       setArranging(false);
     }
@@ -283,10 +285,161 @@ export default function ExamArrangementPage() {
       await fetchExistingResults(selectedScheduleId);
       await fetchHistory();
     } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi khi lưu phương án xếp phòng', type: 'error' });
+      const msg = err?.response?.data?.message || err.message || 'Lỗi khi lưu phương án xếp phòng';
+      setToast({ message: Array.isArray(msg) ? msg.join(', ') : msg, type: 'error' });
     } finally {
       setArranging(false);
     }
+  };
+
+  const handleShuffleSeats = () => {
+    if (!result || !result.details?.length) return;
+
+    // Group by roomCode
+    const roomGroups: Record<string, typeof result.details> = {};
+    result.details.forEach((d) => {
+      if (!roomGroups[d.roomCode]) roomGroups[d.roomCode] = [];
+      roomGroups[d.roomCode].push(d);
+    });
+
+    const shuffledDetails: typeof result.details = [];
+    let globalCounter = 1;
+
+    Object.values(roomGroups).forEach((students) => {
+      const arr = [...students];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      arr.forEach((st, idx) => {
+        shuffledDetails.push({
+          ...st,
+          seatNumber: idx + 1,
+          examNumber: `SBD-${String(globalCounter++).padStart(3, '0')}`,
+        });
+      });
+    });
+
+    setResult({
+      ...result,
+      details: shuffledDetails,
+    });
+
+    setToast({
+      message: '🔀 Đã trộn ghế ngẫu nhiên và đánh lại Số Báo Danh (chống nhìn bài) thành công!',
+      type: 'success',
+    });
+  };
+
+  const handlePrintAttendanceSheet = () => {
+    if (!result || !result.details?.length) return;
+
+    const currentSched = schedules.find((s) => s.id.toString() === selectedScheduleId);
+    const subjectName = result.summary.subjectName || (currentSched?.subject as any)?.subjectName || 'Môn thi';
+    const subjectCode = result.summary.subjectCode || (currentSched?.subject as any)?.subjectCode || '';
+    const examDate = result.summary.examDate || ((currentSched as any)?.examDate ? new Date((currentSched as any)?.examDate).toLocaleDateString('vi-VN') : '---');
+    const timeSlot = result.summary.timeSlot || `${currentSched?.startTime || ''} – ${currentSched?.endTime || ''}`;
+
+    const targetRoomCode = filterRoomCode === 'ALL' ? (roomSummaries[0]?.roomCode || '') : filterRoomCode;
+    const filteredStudents = result.details.filter((d) => filterRoomCode === 'ALL' || d.roomCode === filterRoomCode);
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const rowsHtml = filteredStudents
+      .map(
+        (st, idx) => `
+      <tr>
+        <td style="text-align:center;">${idx + 1}</td>
+        <td style="text-align:center;font-weight:bold;">${escapeHtml(st.examNumber || `SBD-${idx + 1}`)}</td>
+        <td style="text-align:center;font-family:monospace;">${escapeHtml(st.studentCode)}</td>
+        <td style="font-weight:bold;">${escapeHtml(st.fullName)}</td>
+        <td style="text-align:center;">${escapeHtml(st.className || 'CNTT-K65')}</td>
+        <td style="text-align:center;font-weight:bold;">Ghế #${st.seatNumber}</td>
+        <td style="height:32px;"></td>
+        <td></td>
+      </tr>`
+      )
+      .join('');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Danh sách ký tên dự thi - ${escapeHtml(subjectName)}</title>
+          <style>
+            @page { size: A4 portrait; margin: 15mm; }
+            body { font-family: 'Times New Roman', serif; font-size: 13px; color: #000; margin: 0; padding: 10px; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+            .title { text-align: center; margin: 15px 0; }
+            .title h2 { margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase; }
+            .title p { margin: 4px 0 0 0; font-size: 13px; font-style: italic; }
+            .meta { margin-bottom: 15px; line-height: 1.6; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid #000; padding: 6px 8px; font-size: 12px; }
+            th { background: #f2f2f2; text-transform: uppercase; font-size: 11px; }
+            .footer { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; }
+            .signature-box { width: 45%; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div style="text-align:center;">
+              <strong>BỘ GIÁO DỤC VÀ ĐÀO TẠO</strong><br/>
+              <strong>TRƯỜNG ĐẠI HỌC KHOA HỌC</strong>
+            </div>
+            <div style="text-align:center;">
+              <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
+              <u>Độc lập - Tự do - Hạnh phúc</u>
+            </div>
+          </div>
+
+          <div class="title">
+            <h2>DANH SÁCH THÍ SINH DỰ THI VÀ KÝ TÊN</h2>
+            <p>Môn thi: ${escapeHtml(subjectName)} (${escapeHtml(subjectCode)})</p>
+          </div>
+
+          <div class="meta">
+            <strong>Phòng thi:</strong> ${escapeHtml(targetRoomCode || 'Tất cả các phòng')} &nbsp;&nbsp;|&nbsp;&nbsp;
+            <strong>Ngày thi:</strong> ${escapeHtml(examDate)} &nbsp;&nbsp;|&nbsp;&nbsp;
+            <strong>Ca thi:</strong> ${escapeHtml(timeSlot)} &nbsp;&nbsp;|&nbsp;&nbsp;
+            <strong>Tổng số thí sinh:</strong> ${filteredStudents.length} SV
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width:35px;">STT</th>
+                <th style="width:70px;">Số SBD</th>
+                <th style="width:90px;">Mã SV</th>
+                <th>Họ và Tên thí sinh</th>
+                <th style="width:80px;">Lớp</th>
+                <th style="width:65px;">Số Ghế</th>
+                <th style="width:100px;">Chữ ký thí sinh</th>
+                <th style="width:80px;">Ghi chú</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="signature-box">
+              <strong>CÁN BỘ COI THI 1</strong><br/>
+              <i>(Ký và ghi rõ họ tên)</i>
+            </div>
+            <div class="signature-box">
+              <strong>CÁN BỘ COI THI 2</strong><br/>
+              <i>(Ký và ghi rõ họ tên)</i>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
   };
 
   const handleResetArrangement = () => {
@@ -791,23 +944,43 @@ export default function ExamArrangementPage() {
                           </p>
                         </div>
 
-                        {result.preview && (
+                        <div className="flex flex-wrap items-center gap-2">
                           <button
                             type="button"
-                            onClick={() =>
-                              setConfirmModal({
-                                isOpen: true,
-                                title: 'Xác nhận Lưu Phương án Xếp phòng',
-                                message: 'Kết quả sẽ được ghi chính thức vào cơ sở dữ liệu. Bạn có chắc chắn?',
-                                type: 'warning',
-                                onConfirm: runSaveArrangement,
-                              })
-                            }
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 shadow-xs transition cursor-pointer"
+                            onClick={handleShuffleSeats}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-extrabold text-xs px-3 py-2 border border-purple-200 transition cursor-pointer shadow-2xs"
+                            title="Trộn ngẫu nhiên thí sinh các lớp ngồi xen kẽ chống nhìn bài"
                           >
-                            <CheckCircle className="h-4 w-4" /> Xác nhận lưu phương án
+                            <Shuffle className="h-3.5 w-3.5" /> Trộn ghế ngẫu nhiên
                           </button>
-                        )}
+
+                          <button
+                            type="button"
+                            onClick={handlePrintAttendanceSheet}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-3 py-2 border border-slate-300 transition cursor-pointer shadow-2xs"
+                            title="In danh sách thí sinh dự thi và ký tên A4 theo chuẩn Bộ GD&ĐT"
+                          >
+                            <Printer className="h-3.5 w-3.5" /> In Danh sách ký tên A4
+                          </button>
+
+                          {result.preview && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setConfirmModal({
+                                  isOpen: true,
+                                  title: 'Xác nhận Lưu Phương án Xếp phòng',
+                                  message: 'Kết quả sẽ được ghi chính thức vào cơ sở dữ liệu. Bạn có chắc chắn?',
+                                  type: 'warning',
+                                  onConfirm: runSaveArrangement,
+                                })
+                              }
+                              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 shadow-xs transition cursor-pointer"
+                            >
+                              <CheckCircle className="h-4 w-4" /> Xác nhận lưu phương án
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {/* Filter by Room */}

@@ -132,7 +132,7 @@ export default function ClassesPage() {
       } else if (drawerTab === 'enrollments' && !drawerEnrollments) {
         setIsLoadingDrawer(true);
         try {
-          const res = await api.get(`/subjects/enrollments/by-class/${drawerClass.id}`);
+          const res = await api.get(`/classes/${drawerClass.id}/subjects`);
           setDrawerEnrollments(res.data || []);
         } catch (err) {
           setDrawerEnrollments([]);
@@ -673,45 +673,66 @@ export default function ClassesPage() {
               )}
 
               {drawerTab === 'enrollments' && (
-                <div className="h-full flex flex-col items-center justify-center text-center p-6 animate-in fade-in duration-300">
-                  <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 mb-4">
-                    <BookOpen className="h-8 w-8" />
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 className="text-sm font-bold text-slate-900">Danh sách môn học đã đăng ký</h3>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
+                      {drawerEnrollments?.length || 0} môn
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">Môn học đã đăng ký</h3>
-                  
+
                   {isLoadingDrawer ? (
-                    <div className="w-full space-y-3 mt-4">
-                      {[1, 2].map((i) => (
-                        <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />
+                    <div className="space-y-3 mt-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
                       ))}
                     </div>
                   ) : drawerEnrollments && drawerEnrollments.length > 0 ? (
-                    <div className="w-full text-left space-y-3 mt-4">
-                      {drawerEnrollments.map((enr: any, idx: number) => (
-                        <div key={idx} className="p-3 rounded-xl border border-slate-200 bg-white shadow-sm flex items-start gap-3">
-                           <div className="h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 mt-0.5">
-                             <BookOpen className="h-5 w-5" />
-                           </div>
-                           <div>
-                             <p className="text-sm font-bold text-slate-900">{enr.subject?.name || enr.name || 'Tên môn học'}</p>
-                             <p className="text-xs text-slate-500 mt-0.5">Mã môn: {enr.subject?.code || enr.code}</p>
-                             <p className="text-xs text-indigo-600 font-medium mt-1">{enr.credits || enr.subject?.credits} tín chỉ</p>
-                           </div>
+                    <div className="space-y-3">
+                      {drawerEnrollments.map((sub: any, idx: number) => (
+                        <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs hover:border-emerald-300 transition-all">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-3">
+                              <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 font-black text-xs shrink-0 border border-teal-100">
+                                <BookOpen className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs font-black text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+                                    {sub.subjectCode}
+                                  </span>
+                                  <span className="text-xs font-bold text-slate-500">{sub.credits} tín chỉ</span>
+                                </div>
+                                <p className="text-sm font-bold text-slate-900">{sub.subjectName}</p>
+                                {sub.departmentName && (
+                                  <p className="text-xs text-slate-500 font-medium mt-0.5">{sub.departmentName}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
+                                {sub.semester} ({sub.schoolYear})
+                              </span>
+                              <p className="text-xs text-slate-500 font-medium mt-1">
+                                <span className="font-bold text-emerald-600">{sub.studentCount}</span> SV học
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <>
-                      <p className="text-sm text-slate-500 mb-6">
-                        Tính năng xem danh sách môn học theo lớp đang trong quá trình phát triển. Vui lòng xem thông tin chi tiết tại trang Quản lý Môn học.
-                      </p>
+                    <div className="py-12 text-center text-slate-400">
+                      <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-2" />
+                      <p className="text-sm font-bold text-slate-600">Lớp chưa có sinh viên nào đăng ký môn.</p>
+                      <p className="text-xs text-slate-400 mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý Môn học.</p>
                       <button
                         onClick={() => router.push('/subjects')}
-                        className="px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition cursor-pointer"
+                        className="mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition cursor-pointer"
                       >
-                        Xem tại trang Môn học
+                        Đến trang Quản lý Môn học
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               )}
