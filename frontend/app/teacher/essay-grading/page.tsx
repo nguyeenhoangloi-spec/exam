@@ -312,7 +312,7 @@ export default function TeacherEssayGradingPage() {
     return rows.filter((r) => {
       // 1. Status Filter
       if (statusFilter !== 'ALL') {
-        if (statusFilter === 'GRADING' && r.gradingStatus && r.gradingStatus !== 'GRADING') return false;
+        if (statusFilter === 'GRADING' && r.gradingStatus && r.gradingStatus !== 'GRADING' && r.gradingStatus !== 'IN_PROGRESS') return false;
         if (statusFilter === 'WAITING_APPROVAL' && r.gradingStatus !== 'WAITING_APPROVAL') return false;
         if (statusFilter === 'PUBLISHED' && r.gradingStatus !== 'PUBLISHED') return false;
       }

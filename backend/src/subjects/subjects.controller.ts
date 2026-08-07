@@ -26,10 +26,45 @@ export class SubjectsController {
     return this.subjectsService.findChapters(id);
   }
 
+  @Get(':id/enrollments/summary')
+  @Roles('ADMIN')
+  getEnrollmentsSummary(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('semester') semester?: string,
+    @Query('schoolYear') schoolYear?: string,
+  ) {
+    return this.subjectsService.getEnrollmentsSummary(id, semester, schoolYear);
+  }
+
   @Get(':id/enrollments')
   @Roles('ADMIN')
-  getEnrollments(@Param('id', ParseIntPipe) id: number, @Query('semester') semester?: string, @Query('schoolYear') schoolYear?: string) {
-    return this.subjectsService.getEnrollments(id, semester, schoolYear);
+  getEnrollments(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('semester') semester?: string,
+    @Query('schoolYear') schoolYear?: string,
+    @Query('classId') classId?: string,
+  ) {
+    return this.subjectsService.getEnrollments(id, semester, schoolYear, classId ? Number(classId) : undefined);
+  }
+
+  @Get(':id/enroll-class/preview')
+  @Roles('ADMIN')
+  previewEnrollByClass(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('classId') classId: string,
+    @Query('semester') semester?: string,
+    @Query('schoolYear') schoolYear?: string,
+  ) {
+    return this.subjectsService.previewEnrollByClass(id, Number(classId), semester || '', schoolYear || '');
+  }
+
+  @Roles('ADMIN')
+  @Post(':id/enroll-by-class')
+  enrollByClass(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { classId: number; semester: string; schoolYear: string },
+  ) {
+    return this.subjectsService.enrollByClass(id, body);
   }
 
   @Roles('ADMIN')

@@ -10,7 +10,6 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Department, Subject } from '../../types';
 import { Building2, Search, X, Plus, Trash2, BookOpen, GraduationCap, Users } from 'lucide-react';
 
@@ -63,7 +62,12 @@ export default function DepartmentsPage() {
   };
 
   const [selected, setSelected] = useState<number[]>([]);
+  
+  // Custom Drawer State
   const [drawerDepartment, setDrawerDepartment] = useState<Department | null>(null);
+  const [drawerTab, setDrawerTab] = useState<'info' | 'subjects' | 'classes' | 'teachers'>('info');
+  const [drawerDetail, setDrawerDetail] = useState<any>(null);
+  const [loadingDrawer, setLoadingDrawer] = useState(false);
 
   // Department Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -167,6 +171,22 @@ export default function DepartmentsPage() {
     const start = (page - 1) * limit;
     return filteredDepartments.slice(start, start + limit);
   }, [filteredDepartments, page, limit]);
+
+  // Drawer Actions
+  const handleOpenDrawer = useCallback(async (dept: Department) => {
+    setDrawerDepartment(dept);
+    setDrawerTab('info');
+    setLoadingDrawer(true);
+    setDrawerDetail(null);
+    try {
+      const res = await api.get(`/departments/${dept.id}`);
+      setDrawerDetail(res.data);
+    } catch (err: any) {
+      setToast({ message: 'Lỗi tải chi tiết khoa', type: 'error' });
+    } finally {
+      setLoadingDrawer(false);
+    }
+  }, []);
 
   // Department Actions
   const openAddModal = () => {
@@ -423,7 +443,7 @@ export default function DepartmentsPage() {
             onSelectAll={(checked) =>
               setSelected(checked ? paginatedDepartments.map((d) => d.id) : [])
             }
-            onDetail={setDrawerDepartment}
+            onDetail={handleOpenDrawer}
             onOpenCurriculum={handleOpenCurriculumModal}
             onEdit={openEditModal}
             onDelete={handleDelete}
@@ -627,37 +647,171 @@ export default function DepartmentsPage() {
         </div>
       </Modal>
 
-      {/* Department Detail Profile Drawer */}
-      <ProfileDrawer
-        isOpen={Boolean(drawerDepartment)}
-        onClose={() => setDrawerDepartment(null)}
-        title={drawerDepartment?.name || 'Chi tiết Khoa đào tạo'}
-        subtitle={`Mã khoa: ${drawerDepartment?.code || ''}`}
-        avatarText={drawerDepartment?.code || 'KH'}
-        badge={{
-          label: 'Đang đào tạo',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
-        details={[
-          { label: 'Tên Khoa', value: drawerDepartment?.name, icon: Building2 },
-          { label: 'Mã Khoa', value: drawerDepartment?.code },
-          {
-            label: 'Số môn học trong Khung CTDT',
-            value: `${Math.max((drawerDepartment as any)?.subjectsCount || 0, (drawerDepartment as any)?._count?.majorSubjects || 0, (drawerDepartment as any)?._count?.subjects || 0, (drawerDepartment as any)?.subjects?.length || 0)} môn`,
-            icon: BookOpen,
-          },
-          {
-            label: 'Số lớp học',
-            value: `${(drawerDepartment as any)?.classesCount ?? (drawerDepartment as any)?._count?.classes ?? (drawerDepartment as any)?.classes?.length ?? 0} lớp`,
-            icon: GraduationCap,
-          },
-          {
-            label: 'Số giảng viên',
-            value: `${(drawerDepartment as any)?.teachersCount ?? (drawerDepartment as any)?._count?.teachers ?? (drawerDepartment as any)?.teachers?.length ?? 0} cán bộ`,
-            icon: Users,
-          },
-        ]}
-      />
+      {/* Custom Department Detail Drawer */}
+      {drawerDepartment && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setDrawerDepartment(null)}
+          />
+
+          {/* Drawer Content */}
+          <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-violet-600 to-purple-700 p-6 text-white shrink-0">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 font-black text-xl backdrop-blur-md shadow-inner border border-white/20">
+                    {drawerDepartment.code.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold leading-tight">{drawerDepartment.name}</h2>
+                    <p className="text-sm font-medium text-violet-100 mt-1">Mã Khoa: {drawerDepartment.code}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setDrawerDepartment(null)}
+                  className="rounded-full p-2 text-white/70 hover:bg-white/20 hover:text-white transition cursor-pointer"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
+              {[
+                { id: 'info', label: 'Thông tin' },
+                { id: 'subjects', label: 'Môn học' },
+                { id: 'classes', label: 'Lớp học' },
+                { id: 'teachers', label: 'Giảng viên' },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setDrawerTab(t.id as any)}
+                  className={`whitespace-nowrap border-b-2 px-4 py-4 text-sm font-bold transition cursor-pointer ${
+                    drawerTab === t.id
+                      ? 'border-violet-600 text-violet-600'
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+              {loadingDrawer ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
+                  ))}
+                </div>
+              ) : !drawerDetail ? (
+                <div className="text-center text-slate-500 py-10 font-medium">Không tải được thông tin</div>
+              ) : (
+                <div className="space-y-4">
+                  {drawerTab === 'info' && (
+                    <div className="space-y-4">
+                      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
+                        <h3 className="text-sm font-extrabold uppercase text-slate-500 mb-4">Tổng quan</h3>
+                        <div className="grid gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                              <BookOpen className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-slate-500">Môn học</p>
+                              <p className="text-sm font-black text-slate-900">{drawerDetail.subjects?.length || 0}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                              <GraduationCap className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-slate-500">Lớp học</p>
+                              <p className="text-sm font-black text-slate-900">{drawerDetail.classes?.length || 0}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                              <Users className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-slate-500">Giảng viên</p>
+                              <p className="text-sm font-black text-slate-900">{drawerDetail.teachers?.length || 0}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {drawerTab === 'subjects' && (
+                    <div className="space-y-3">
+                      {drawerDetail.subjects?.length > 0 ? (
+                        drawerDetail.subjects.map((sub: any) => (
+                          <div key={sub.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
+                            <div className="flex justify-between items-start">
+                                <span className="text-sm font-bold text-slate-900">{sub.subjectName}</span>
+                                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600 shrink-0">{sub.credits} TC</span>
+                            </div>
+                            <span className="text-xs font-medium text-slate-500">Mã: {sub.subjectCode}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center text-slate-500 py-10 font-medium">Chưa có môn học</div>
+                      )}
+                    </div>
+                  )}
+
+                  {drawerTab === 'classes' && (
+                    <div className="space-y-3">
+                      {drawerDetail.classes?.length > 0 ? (
+                        drawerDetail.classes.map((cls: any) => (
+                          <div key={cls.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
+                            <div className="flex justify-between items-start">
+                                <span className="text-sm font-bold text-slate-900">{cls.className}</span>
+                                <span className="rounded bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 text-xs font-bold shrink-0">{cls._count?.students || 0} SV</span>
+                            </div>
+                            <span className="text-xs font-medium text-slate-500">Mã: {cls.classCode}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center text-slate-500 py-10 font-medium">Chưa có lớp học</div>
+                      )}
+                    </div>
+                  )}
+
+                  {drawerTab === 'teachers' && (
+                    <div className="space-y-3">
+                      {drawerDetail.teachers?.length > 0 ? (
+                        drawerDetail.teachers.map((teacher: any) => (
+                          <div key={teacher.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
+                            <div className="flex justify-between items-start">
+                                <span className="text-sm font-bold text-slate-900">{teacher.fullName}</span>
+                                {teacher.academicTitle && (
+                                    <span className="rounded bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 text-xs font-bold shrink-0">{teacher.academicTitle}</span>
+                                )}
+                            </div>
+                            <span className="text-xs font-medium text-slate-500">Mã: {teacher.teacherCode}</span>
+                            <span className="text-xs font-medium text-slate-500">Email: {teacher.email}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center text-slate-500 py-10 font-medium">Chưa có giảng viên</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirm Popup */}
       <ConfirmModal

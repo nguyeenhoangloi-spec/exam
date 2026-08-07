@@ -10,7 +10,6 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Teacher, Department, User } from '../../types';
 import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info } from 'lucide-react';
@@ -52,6 +51,26 @@ export default function TeachersPage() {
 
   const [selected, setSelected] = useState<number[]>([]);
   const [drawerTeacher, setDrawerTeacher] = useState<Teacher | null>(null);
+  const [drawerTab, setDrawerTab] = useState<'info' | 'assignments' | 'department'>('info');
+  const [drawerAssignments, setDrawerAssignments] = useState<any[]>([]);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
+
+  useEffect(() => {
+    if (drawerTab === 'assignments' && drawerTeacher) {
+      const fetchAssignments = async () => {
+        setLoadingAssignments(true);
+        try {
+          const res = await api.get('/exam-supervisors', { params: { teacherId: drawerTeacher.id } });
+          setDrawerAssignments(res.data || []);
+        } catch (error) {
+          setDrawerAssignments([]);
+        } finally {
+          setLoadingAssignments(false);
+        }
+      };
+      fetchAssignments();
+    }
+  }, [drawerTab, drawerTeacher]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -344,7 +363,10 @@ export default function TeachersPage() {
             onSelectAll={(checked) =>
               setSelected(checked ? paginatedTeachers.map((t) => t.id) : [])
             }
-            onDetail={setDrawerTeacher}
+            onDetail={(t) => {
+              setDrawerTeacher(t);
+              setDrawerTab('info');
+            }}
             onEdit={openEditModal}
             onDelete={handleDelete}
             isAdmin={currentUser?.role === 'ADMIN'}
@@ -482,23 +504,173 @@ export default function TeachersPage() {
         }}
       />
 
-      {/* Teacher Profile Drawer */}
-      <ProfileDrawer
-        isOpen={Boolean(drawerTeacher)}
-        onClose={() => setDrawerTeacher(null)}
-        title={drawerTeacher?.fullName || ''}
-        subtitle={`Mã cán bộ: ${drawerTeacher?.teacherCode}`}
-        avatarText={drawerTeacher?.fullName ? drawerTeacher.fullName.slice(-1) : 'GV'}
-        badge={{ label: drawerTeacher?.degree || 'TS', className: 'bg-blue-50 text-blue-700 border-blue-200' }}
-        details={[
-          { label: 'Mã giảng viên', value: drawerTeacher?.teacherCode, icon: UserIcon },
-          { label: 'Họ và tên', value: drawerTeacher?.fullName },
-          { label: 'Học vị / Học hàm', value: drawerTeacher?.degree || 'TS', icon: GraduationCap },
-          { label: 'Khoa trực thuộc', value: drawerTeacher?.department?.name, icon: Building2 },
-          { label: 'Email công vụ', value: drawerTeacher?.email, icon: Mail },
-          { label: 'Số điện thoại', value: drawerTeacher?.phone || '---', icon: Phone },
-        ]}
-      />
+      {/* Custom Profile Drawer with 3 Tabs */}
+      {drawerTeacher && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity"
+            onClick={() => setDrawerTeacher(null)}
+          />
+          {/* Drawer Panel */}
+          <div className="relative w-full max-w-md bg-slate-50 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            {/* Header */}
+            <div className="relative pt-8 pb-6 px-6 bg-gradient-to-br from-amber-600 to-orange-700 text-white shrink-0">
+              <button 
+                onClick={() => setDrawerTeacher(null)}
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 transition-colors text-white/90 hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-bold backdrop-blur-sm border border-white/30 shadow-inner">
+                  {drawerTeacher.fullName.slice(-1)}
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold leading-tight">{drawerTeacher.fullName}</h2>
+                  <p className="text-amber-100 text-sm mt-1 font-medium">Mã cán bộ: {drawerTeacher.teacherCode}</p>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex bg-white/10 p-1 rounded-xl backdrop-blur-md">
+                {[
+                  { id: 'info', label: 'Thông tin' },
+                  { id: 'assignments', label: 'Lịch coi thi' },
+                  { id: 'department', label: 'Khoa' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setDrawerTab(tab.id as any)}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+                      drawerTab === tab.id 
+                        ? 'bg-white text-orange-700 shadow-sm' 
+                        : 'text-amber-100 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {drawerTab === 'info' && (
+                <div className="space-y-4">
+                  <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                        <UserIcon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Mã giảng viên</p>
+                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.teacherCode}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <GraduationCap className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Học vị / Học hàm</p>
+                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.degree || 'TS'}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+                        <Building2 className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Khoa trực thuộc</p>
+                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.department?.name || '---'}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
+                        <Mail className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Email công vụ</p>
+                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                        <Phone className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Số điện thoại</p>
+                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.phone || '---'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {drawerTab === 'assignments' && (
+                <div className="space-y-4">
+                  {loadingAssignments ? (
+                    <div className="flex justify-center p-8">
+                      <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  ) : drawerAssignments.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm text-center">
+                      <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                        <Info className="w-8 h-8 text-slate-300" />
+                      </div>
+                      <p className="text-slate-500 font-medium">Không có lịch coi thi</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {drawerAssignments.map((assignment: any, index: number) => (
+                        <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:border-orange-200 transition-colors">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-bold text-slate-800 text-sm">
+                              {assignment.examScheduleRoom?.examSchedule?.subject?.name || 'Môn thi'}
+                            </h4>
+                            <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
+                              assignment.role === 'CHÁNH' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
+                            }`}>
+                              {assignment.role}
+                            </span>
+                          </div>
+                          <div className="space-y-1.5 text-xs text-slate-600">
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Phòng thi:</span>
+                              <span className="font-medium">{assignment.examScheduleRoom?.room?.name || '---'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Ngày giờ:</span>
+                              <span className="font-medium">
+                                {assignment.examScheduleRoom?.examSchedule?.date || '---'} • {assignment.examScheduleRoom?.examSchedule?.time || '---'}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Trạng thái:</span>
+                              <span className="font-medium text-amber-600">{assignment.status || '---'}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {drawerTab === 'department' && (
+                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+                  <div className="w-16 h-16 mx-auto bg-amber-50 rounded-full flex items-center justify-center text-amber-600 mb-4">
+                    <Building2 className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800 mb-1">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
+                  <p className="text-sm font-medium text-slate-500 uppercase">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirm Modal */}
       <ConfirmModal

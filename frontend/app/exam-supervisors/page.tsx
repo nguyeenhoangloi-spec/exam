@@ -697,7 +697,7 @@ export default function ExamSupervisorsPage() {
                     type="button"
                     onClick={() => void previewAutoAssign()}
                     disabled={autoLoading || !selectedSchedule?.id}
-                    className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100 active:scale-98 disabled:opacity-50 transition cursor-pointer"
+                    className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
                     {autoLoading ? 'Đang tạo phương án...' : 'Đề xuất tự động'}
                   </button>

@@ -30,6 +30,7 @@ export class SubjectsService {
     return this.prisma.chapter.findMany({ where: { subjectId }, orderBy: { order: 'asc' } });
   }
 
+  // Gán từng sinh viên riêng lẻ (legacy)
   async enrollStudents(subjectId: number, data: { studentIds: number[]; semester: string; schoolYear: string }) {
     await this.findOne(subjectId);
     const ids = Array.from(new Set((data.studentIds || []).map(Number).filter((id) => Number.isInteger(id) && id > 0)));
@@ -45,13 +46,137 @@ export class SubjectsService {
     return { successCount: ids.length, subjectId, semester: data.semester.trim(), schoolYear: data.schoolYear.trim() };
   }
 
-  async getEnrollments(subjectId: number, semester?: string, schoolYear?: string) {
+  // Gán cả lớp vào môn học
+  async enrollByClass(subjectId: number, data: { classId: number; semester: string; schoolYear: string }) {
+    await this.findOne(subjectId);
+    if (!data.classId) throw new BadRequestException('Vui lòng chọn lớp.');
+    if (!data.semester?.trim() || !data.schoolYear?.trim()) throw new BadRequestException('Vui lòng nhập học kỳ và năm học.');
+
+    const cls = await this.prisma.class.findUnique({
+      where: { id: data.classId },
+      include: { students: { select: { id: true } } },
+    });
+    if (!cls) throw new BadRequestException('Lớp không tồn tại.');
+    if (!cls.students.length) throw new BadRequestException(`Lớp ${cls.name} chưa có sinh viên nào.`);
+
+    const semester = data.semester.trim();
+    const schoolYear = data.schoolYear.trim();
+
+    await this.prisma.$transaction(
+      cls.students.map((s) =>
+        this.prisma.studentSubject.upsert({
+          where: { studentId_subjectId_semester_schoolYear: { studentId: s.id, subjectId, semester, schoolYear } },
+          create: { studentId: s.id, subjectId, semester, schoolYear, status: 'ELIGIBLE' },
+          update: { status: 'ELIGIBLE' },
+        }),
+      ),
+    );
+
+    return {
+      successCount: cls.students.length,
+      classId: cls.id,
+      className: cls.name,
+      classCode: cls.code,
+      subjectId,
+      semester,
+      schoolYear,
+    };
+  }
+
+  // Preview số SV sẽ được gán nếu chọn lớp này
+  async previewEnrollByClass(subjectId: number, classId: number, semester: string, schoolYear: string) {
+    await this.findOne(subjectId);
+    const cls = await this.prisma.class.findUnique({
+      where: { id: classId },
+      include: {
+        students: { select: { id: true, studentCode: true, fullName: true } },
+        department: { select: { name: true } },
+      },
+    });
+    if (!cls) throw new BadRequestException('Lớp không tồn tại.');
+
+    const existingIds = new Set(
+      (await this.prisma.studentSubject.findMany({
+        where: {
+          subjectId,
+          studentId: { in: cls.students.map((s) => s.id) },
+          ...(semester?.trim() && { semester: semester.trim() }),
+          ...(schoolYear?.trim() && { schoolYear: schoolYear.trim() }),
+        },
+        select: { studentId: true },
+      })).map((r) => r.studentId),
+    );
+
+    return {
+      classId: cls.id,
+      className: cls.name,
+      classCode: cls.code,
+      departmentName: (cls as any).department?.name,
+      totalStudents: cls.students.length,
+      newStudents: cls.students.filter((s) => !existingIds.has(s.id)).length,
+      alreadyEnrolled: existingIds.size,
+    };
+  }
+
+  // Danh sách SV đã đăng ký, kèm thông tin lớp
+  async getEnrollments(subjectId: number, semester?: string, schoolYear?: string, classId?: number) {
     await this.findOne(subjectId);
     return this.prisma.studentSubject.findMany({
-      where: { subjectId, ...(semester && { semester }), ...(schoolYear && { schoolYear }) },
-      include: { student: { select: { id: true, studentCode: true, fullName: true, email: true } } },
-      orderBy: { student: { studentCode: 'asc' } },
+      where: {
+        subjectId,
+        ...(semester && { semester }),
+        ...(schoolYear && { schoolYear }),
+        ...(classId && { student: { classId } }),
+      },
+      include: {
+        student: {
+          select: {
+            id: true,
+            studentCode: true,
+            fullName: true,
+            email: true,
+            class: { select: { id: true, code: true, name: true } },
+          },
+        },
+      },
+      orderBy: [{ student: { class: { code: 'asc' } } }, { student: { studentCode: 'asc' } }],
     });
+  }
+
+  // Thống kê đăng ký môn theo lớp
+  async getEnrollmentsSummary(subjectId: number, semester?: string, schoolYear?: string) {
+    await this.findOne(subjectId);
+    const enrollments = await this.prisma.studentSubject.findMany({
+      where: {
+        subjectId,
+        ...(semester && { semester }),
+        ...(schoolYear && { schoolYear }),
+      },
+      include: {
+        student: {
+          select: {
+            classId: true,
+            class: { select: { id: true, code: true, name: true, department: { select: { name: true } } } },
+          },
+        },
+      },
+    });
+
+    const map = new Map<number, { classId: number; classCode: string; className: string; departmentName: string; count: number; semesters: Set<string> }>();
+    for (const e of enrollments) {
+      const cls = e.student.class;
+      if (!cls) continue;
+      if (!map.has(cls.id)) {
+        map.set(cls.id, { classId: cls.id, classCode: cls.code, className: cls.name, departmentName: (cls as any).department?.name || '', count: 0, semesters: new Set() });
+      }
+      const entry = map.get(cls.id)!;
+      entry.count++;
+      entry.semesters.add(`${e.semester} / ${(e as any).schoolYear || ''}`);
+    }
+
+    return Array.from(map.values())
+      .map((e) => ({ ...e, semesters: Array.from(e.semesters) }))
+      .sort((a, b) => a.classCode.localeCompare(b.classCode));
   }
 
   async create(data: { subjectCode: string; subjectName: string; credits: number; departmentId: number }) {

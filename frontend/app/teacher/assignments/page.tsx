@@ -254,10 +254,10 @@ export default function TeacherAssignmentsPage() {
   };
 
   const KPI = [
-    { label: 'Tổng ca coi thi', value: `${assignments.length} ca`, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Giám thị 1 (Chính)', value: `${sup1Count} ca`, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length} ca`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200/60' },
-    { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Tổng ca coi thi', value: `${assignments.length} ca`, subtext: 'Học kỳ hiện tại', icon: Calendar, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Giám thị 1 (Chính)', value: `${sup1Count} ca`, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length} ca`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, iconBg: 'bg-amber-50 text-amber-600 border-amber-100' },
   ];
 
   return (
@@ -326,18 +326,31 @@ export default function TeacherAssignmentsPage() {
           </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {KPI.map(({ label, value, subtext, icon: Icon, color, bg, border }) => (
-            <div key={label} className={`rounded-2xl border ${border} ${bg} p-4 shadow-2xs flex items-center justify-between`}>
-              <div>
-                <p className="text-[10.5px] font-semibold text-slate-500">{label}</p>
-                <p className={`text-xl font-black ${color} leading-tight mt-0.5`}>{value}</p>
-                <p className="text-[10px] text-slate-400 font-medium mt-1">{subtext}</p>
+        {/* KPI Cards — Standardized White Flat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {KPI.map(({ label, value, subtext, icon: Icon, iconBg }) => (
+            <div
+              key={label}
+              className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    {label}
+                  </span>
+                  <p className="text-2xl font-black text-slate-900 leading-tight">
+                    {value}
+                  </p>
+                </div>
+
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-transform group-hover:scale-110`}>
+                  <Icon className="h-5 w-5" />
+                </div>
               </div>
-              <div className={`w-10 h-10 rounded-xl ${bg} border ${border} flex items-center justify-center shrink-0`}>
-                <Icon className={`w-5 h-5 ${color}`} />
-              </div>
+
+              <span className="text-[10.5px] font-semibold text-slate-400 mt-2">
+                {subtext}
+              </span>
             </div>
           ))}
         </div>

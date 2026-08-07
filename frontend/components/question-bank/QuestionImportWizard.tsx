@@ -606,9 +606,9 @@ export function QuestionImportWizard({
                     <button
                       type="button"
                       onClick={template}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 px-3.5 py-2 rounded-xl transition cursor-pointer shadow-2xs"
+                      className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline transition cursor-pointer px-2 py-1"
                     >
-                      <Download className="h-3.5 w-3.5 text-slate-500" /> Tải mẫu CSV
+                      Tải mẫu CSV
                     </button>
                   )}
                   <button

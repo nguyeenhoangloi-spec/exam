@@ -119,10 +119,10 @@ export default function StudentExamSchedulePage() {
   const sbdCount = schedules.filter((s) => Boolean(s.examNumber || s.registrationNumber)).length;
 
   const KPI = [
-    { label: 'Tổng số môn thi', value: `${schedules.length} môn`, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Đã xếp phòng thi', value: `${roomAssignedCount} môn`, subtext: 'Theo lịch thi chuẩn', icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200/60' },
-    { label: 'Thi trắc nghiệm', value: `${tracNghiemCount} môn`, subtext: 'Làm bài trực tuyến', icon: BookOpen, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Đã cấp số báo danh', value: `${sbdCount} thí sinh`, subtext: 'Đã duyệt SBD & Ghế', icon: Award, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Tổng số môn thi', value: `${schedules.length} môn`, subtext: 'Học kỳ hiện tại', icon: Calendar, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Đã xếp phòng thi', value: `${roomAssignedCount} môn`, subtext: 'Theo lịch thi chuẩn', icon: CheckCircle2, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    { label: 'Thi trắc nghiệm', value: `${tracNghiemCount} môn`, subtext: 'Làm bài trực tuyến', icon: BookOpen, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Đã cấp số báo danh', value: `${sbdCount} thí sinh`, subtext: 'Đã duyệt SBD & Ghế', icon: Award, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
   ];
 
   const modeCounts = useMemo(() => {
@@ -233,18 +233,31 @@ export default function StudentExamSchedulePage() {
           </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {KPI.map(({ label, value, subtext, icon: Icon, color, bg, border }) => (
-            <div key={label} className={`rounded-2xl border ${border} ${bg} p-4 shadow-2xs flex items-center justify-between`}>
-              <div>
-                <p className="text-[10.5px] font-semibold text-slate-500">{label}</p>
-                <p className={`text-xl font-black ${color} leading-tight mt-0.5`}>{value}</p>
-                <p className="text-[10px] text-slate-400 font-medium mt-1">{subtext}</p>
+        {/* KPI Cards — Standardized White Flat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {KPI.map(({ label, value, subtext, icon: Icon, iconBg }) => (
+            <div
+              key={label}
+              className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    {label}
+                  </span>
+                  <p className="text-2xl font-black text-slate-900 leading-tight">
+                    {value}
+                  </p>
+                </div>
+
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-transform group-hover:scale-110`}>
+                  <Icon className="h-5 w-5" />
+                </div>
               </div>
-              <div className={`w-10 h-10 rounded-xl ${bg} border ${border} flex items-center justify-center shrink-0`}>
-                <Icon className={`w-5 h-5 ${color}`} />
-              </div>
+
+              <span className="text-[10.5px] font-semibold text-slate-400 mt-2">
+                {subtext}
+              </span>
             </div>
           ))}
         </div>

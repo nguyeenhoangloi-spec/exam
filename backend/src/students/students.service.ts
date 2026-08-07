@@ -38,6 +38,58 @@ export class StudentsService {
     return student;
   }
 
+  // Admin xem môn học của 1 sinh viên cụ thể
+  async getStudentSubjects(id: number) {
+    const student = await this.prisma.student.findUnique({ where: { id } });
+    if (!student) throw new NotFoundException('Không tìm thấy sinh viên.');
+    return this.prisma.studentSubject.findMany({
+      where: { studentId: id },
+      include: {
+        subject: {
+          select: { id: true, subjectCode: true, subjectName: true, credits: true, department: { select: { name: true } } },
+        },
+      },
+      orderBy: [{ schoolYear: 'desc' }, { semester: 'asc' }, { subject: { subjectName: 'asc' } }],
+    });
+  }
+
+  // Admin xem lịch thi của 1 sinh viên cụ thể
+  async getStudentExamSchedule(id: number) {
+    const student = await this.prisma.student.findUnique({ where: { id } });
+    if (!student) throw new NotFoundException('Không tìm thấy sinh viên.');
+    const roomStudents = await this.prisma.examRoomStudent.findMany({
+      where: {
+        studentId: id,
+        examScheduleRoom: { examSchedule: { status: { not: 'CANCELLED' }, deletedAt: null } },
+      },
+      include: {
+        examScheduleRoom: {
+          include: {
+            room: true,
+            examSchedule: { include: { subject: true, examPeriod: true } },
+          },
+        },
+      },
+      orderBy: { examScheduleRoom: { examSchedule: { examDate: 'asc' } } },
+    });
+    return roomStudents.map((rs) => ({
+      id: rs.id,
+      examNumber: rs.examNumber,
+      seatNumber: rs.seatNumber,
+      status: rs.status,
+      subjectCode: rs.examScheduleRoom.examSchedule.subject.subjectCode,
+      subjectName: rs.examScheduleRoom.examSchedule.subject.subjectName,
+      examDate: rs.examScheduleRoom.examSchedule.examDate,
+      startTime: rs.examScheduleRoom.examSchedule.startTime,
+      endTime: rs.examScheduleRoom.examSchedule.endTime,
+      examType: rs.examScheduleRoom.examSchedule.examType,
+      roomCode: rs.examScheduleRoom.room.roomCode,
+      roomName: rs.examScheduleRoom.room.roomName,
+      building: rs.examScheduleRoom.room.building,
+      periodName: rs.examScheduleRoom.examSchedule.examPeriod.name,
+    }));
+  }
+
   async create(data: {
     studentCode: string;
     fullName: string;

@@ -73,7 +73,7 @@ export function SubjectTable({
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 rounded-[8px] bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700">
                     <Award className="h-3 w-3 text-emerald-600" /> {s.credits} Tín chỉ
                   </span>
                 </div>
@@ -267,7 +267,7 @@ export function SubjectTable({
 
                 {visibleColumns.credits !== false && (
                   <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-[8px] border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700">
                       <Award className="h-3.5 w-3.5 text-emerald-600" /> {s.credits} Tín chỉ
                     </span>
                   </td>

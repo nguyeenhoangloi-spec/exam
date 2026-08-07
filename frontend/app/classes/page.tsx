@@ -10,9 +10,8 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ClassItem, Department } from '../../types';
-import { GraduationCap, Building2, Search, X, Users, ChevronDown } from 'lucide-react';
+import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen } from 'lucide-react';
 
 import { ClassHeader } from '../../components/classes/ClassHeader';
 import { ClassKPICards } from '../../components/classes/ClassKPICards';
@@ -47,7 +46,14 @@ export default function ClassesPage() {
   };
 
   const [selected, setSelected] = useState<number[]>([]);
+  
+  // Drawer State
   const [drawerClass, setDrawerClass] = useState<ClassItem | null>(null);
+  const [drawerTab, setDrawerTab] = useState<'info' | 'students' | 'enrollments'>('info');
+  const [drawerDetail, setDrawerDetail] = useState<any>(null);
+  const [drawerEnrollments, setDrawerEnrollments] = useState<any[] | null>(null);
+  const [isLoadingDrawer, setIsLoadingDrawer] = useState(false);
+  const [drawerStudentSearch, setDrawerStudentSearch] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,6 +104,45 @@ export default function ClassesPage() {
     setCurrentUser(u);
     fetchData();
   }, [fetchData, router]);
+
+  // Handle opening drawer
+  const handleOpenDrawer = (c: ClassItem) => {
+    setDrawerClass(c);
+    setDrawerTab('info');
+    setDrawerDetail(null);
+    setDrawerEnrollments(null);
+    setDrawerStudentSearch('');
+  };
+
+  // Fetch Drawer Data based on Tabs
+  useEffect(() => {
+    const fetchDrawerData = async () => {
+      if (!drawerClass?.id) return;
+      
+      if (drawerTab === 'students' && !drawerDetail) {
+        setIsLoadingDrawer(true);
+        try {
+          const res = await api.get(`/classes/${drawerClass.id}`);
+          setDrawerDetail(res.data);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsLoadingDrawer(false);
+        }
+      } else if (drawerTab === 'enrollments' && !drawerEnrollments) {
+        setIsLoadingDrawer(true);
+        try {
+          const res = await api.get(`/subjects/enrollments/by-class/${drawerClass.id}`);
+          setDrawerEnrollments(res.data || []);
+        } catch (err) {
+          setDrawerEnrollments([]);
+        } finally {
+          setIsLoadingDrawer(false);
+        }
+      }
+    };
+    fetchDrawerData();
+  }, [drawerClass, drawerTab, drawerDetail, drawerEnrollments]);
 
   // Compute DYNAMIC KPI Metrics from real API data
   const kpiData = useMemo(() => {
@@ -370,7 +415,7 @@ export default function ClassesPage() {
             onSelectAll={(checked) =>
               setSelected(checked ? paginatedClasses.map((c) => c.id) : [])
             }
-            onDetail={setDrawerClass}
+            onDetail={handleOpenDrawer}
             onEdit={openEditModal}
             onDelete={handleDelete}
             isAdmin={currentUser?.role === 'ADMIN'}
@@ -457,32 +502,223 @@ export default function ClassesPage() {
         </form>
       </Modal>
 
-      {/* Class Detail Profile Drawer */}
-      <ProfileDrawer
-        isOpen={Boolean(drawerClass)}
-        onClose={() => setDrawerClass(null)}
-        title={drawerClass?.name || 'Chi tiết lớp học'}
-        subtitle={`Mã lớp: ${drawerClass?.code || ''}`}
-        avatarText={drawerClass?.code?.slice(0, 3) || 'LH'}
-        badge={{
-          label: 'Đang theo học',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
-        details={[
-          { label: 'Tên lớp học', value: drawerClass?.name, icon: GraduationCap },
-          { label: 'Mã lớp', value: drawerClass?.code },
-          {
-            label: 'Khoa trực thuộc',
-            value: drawerClass?.department?.name || (drawerClass as any)?.departmentName || 'Chưa gán Khoa',
-            icon: Building2,
-          },
-          {
-            label: 'Sĩ số Sinh viên',
-            value: `${(drawerClass as any)?._count?.students ?? (drawerClass as any)?.studentsCount ?? (drawerClass as any)?.students?.length ?? 0} sinh viên`,
-            icon: Users,
-          },
-        ]}
-      />
+      {/* Custom Profile Drawer */}
+      {drawerClass && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          <div 
+            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" 
+            onClick={() => setDrawerClass(null)} 
+          />
+          
+          <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
+            {/* Drawer Header */}
+            <div className="bg-gradient-to-br from-teal-600 to-emerald-700 p-6 text-white shrink-0">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/30 font-black text-xl shadow-inner">
+                    {drawerClass.code.slice(0, 3)}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold leading-tight line-clamp-2">{drawerClass.name}</h2>
+                    <p className="text-teal-50 font-medium mt-1">Mã lớp: {drawerClass.code}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setDrawerClass(null)}
+                  className="rounded-full p-2 bg-white/10 hover:bg-white/20 transition-colors text-white cursor-pointer"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-slate-200 px-4 pt-2 bg-slate-50 shrink-0">
+              <button
+                onClick={() => setDrawerTab('info')}
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
+                  drawerTab === 'info'
+                    ? 'border-emerald-600 text-emerald-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Thông tin
+              </button>
+              <button
+                onClick={() => setDrawerTab('students')}
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
+                  drawerTab === 'students'
+                    ? 'border-emerald-600 text-emerald-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Sinh viên
+              </button>
+              <button
+                onClick={() => setDrawerTab('enrollments')}
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
+                  drawerTab === 'enrollments'
+                    ? 'border-emerald-600 text-emerald-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Môn đăng ký
+              </button>
+            </div>
+
+            {/* Drawer Body */}
+            <div className="flex-1 overflow-y-auto p-6 bg-white">
+              {drawerTab === 'info' && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                      <GraduationCap className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase text-slate-500">Tên lớp học</p>
+                      <p className="text-sm font-bold text-slate-900">{drawerClass.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div className="h-10 w-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                      <Building2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase text-slate-500">Khoa trực thuộc</p>
+                      <p className="text-sm font-bold text-slate-900">{drawerClass.department?.name || (drawerClass as any).departmentName || 'Chưa gán Khoa'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase text-slate-500">Sĩ số Sinh viên</p>
+                      <p className="text-sm font-bold text-slate-900">{(drawerClass as any)._count?.students ?? (drawerClass as any).studentsCount ?? (drawerClass as any).students?.length ?? 0} sinh viên</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {drawerTab === 'students' && (
+                <div className="space-y-4 flex flex-col h-full animate-in fade-in duration-300">
+                  <div className="relative shrink-0">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Tìm sinh viên..."
+                      value={drawerStudentSearch}
+                      onChange={(e) => setDrawerStudentSearch(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-sm focus:bg-white focus:border-emerald-500 focus:outline-none transition"
+                    />
+                  </div>
+
+                  {isLoadingDrawer ? (
+                    <div className="space-y-3 mt-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex-1 overflow-y-auto space-y-3 pb-4">
+                      {drawerDetail?.students
+                        ?.filter((sv: any) => 
+                          (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) || 
+                          (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
+                        )
+                        .map((sv: any) => (
+                          <div key={sv.id} className="p-3 rounded-xl border border-slate-100 hover:border-emerald-200 bg-slate-50 hover:bg-emerald-50/30 transition-colors flex gap-3">
+                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold shrink-0">
+                              {sv.fullName?.charAt(0) || 'U'}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-slate-900 truncate">{sv.fullName}</p>
+                              <p className="text-xs text-slate-500">{sv.studentCode}</p>
+                              <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-600">
+                                {sv.email && (
+                                  <span className="flex items-center gap-1">
+                                    <Mail className="h-3 w-3" />
+                                    <span className="truncate max-w-[100px]">{sv.email}</span>
+                                  </span>
+                                )}
+                                {sv.phone && (
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="h-3 w-3" />
+                                    {sv.phone}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )) || (
+                          <div className="text-center text-sm text-slate-500 mt-10">
+                            Không có sinh viên nào.
+                          </div>
+                        )}
+                        
+                        {drawerDetail?.students?.length > 0 && 
+                         drawerDetail?.students?.filter((sv: any) => 
+                           (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) || 
+                           (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
+                         ).length === 0 && (
+                           <div className="text-center text-sm text-slate-500 mt-10">
+                             Không tìm thấy kết quả phù hợp.
+                           </div>
+                         )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {drawerTab === 'enrollments' && (
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 animate-in fade-in duration-300">
+                  <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 mb-4">
+                    <BookOpen className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">Môn học đã đăng ký</h3>
+                  
+                  {isLoadingDrawer ? (
+                    <div className="w-full space-y-3 mt-4">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />
+                      ))}
+                    </div>
+                  ) : drawerEnrollments && drawerEnrollments.length > 0 ? (
+                    <div className="w-full text-left space-y-3 mt-4">
+                      {drawerEnrollments.map((enr: any, idx: number) => (
+                        <div key={idx} className="p-3 rounded-xl border border-slate-200 bg-white shadow-sm flex items-start gap-3">
+                           <div className="h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 mt-0.5">
+                             <BookOpen className="h-5 w-5" />
+                           </div>
+                           <div>
+                             <p className="text-sm font-bold text-slate-900">{enr.subject?.name || enr.name || 'Tên môn học'}</p>
+                             <p className="text-xs text-slate-500 mt-0.5">Mã môn: {enr.subject?.code || enr.code}</p>
+                             <p className="text-xs text-indigo-600 font-medium mt-1">{enr.credits || enr.subject?.credits} tín chỉ</p>
+                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm text-slate-500 mb-6">
+                        Tính năng xem danh sách môn học theo lớp đang trong quá trình phát triển. Vui lòng xem thông tin chi tiết tại trang Quản lý Môn học.
+                      </p>
+                      <button
+                        onClick={() => router.push('/subjects')}
+                        className="px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition cursor-pointer"
+                      >
+                        Xem tại trang Môn học
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirm Popup */}
       <ConfirmModal

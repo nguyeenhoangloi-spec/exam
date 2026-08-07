@@ -199,7 +199,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-gradient-to-b from-[#1e293b] via-[#1e1b4b] to-[#0f172a] text-slate-100 border-r border-slate-700/60 shadow-xl transition-all duration-200 ease-in-out ${
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-[#0f1b33] text-slate-100 border-r border-slate-800 shadow-2xl transition-all duration-200 ease-in-out ${
         collapsed ? 'w-[76px]' : 'w-64'
       } ${
         mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
@@ -207,11 +207,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     >
       {/* Header Section with Toggle Button */}
       {collapsed ? (
-        <div className="flex h-16 shrink-0 items-center justify-center border-b border-slate-700/60 px-3 bg-white/5 backdrop-blur-xs">
+        <div className="flex h-16 shrink-0 items-center justify-center border-b border-slate-800 px-3 bg-slate-900/40">
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-sky-200 transition active:scale-95 cursor-pointer border border-white/20 shadow-xs"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-sky-200 transition active:scale-95 cursor-pointer border border-white/15 shadow-xs"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
@@ -219,10 +219,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       ) : (
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-700/60 px-4 bg-white/5 backdrop-blur-xs">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-800 px-4 bg-slate-900/40">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600/30 border border-blue-400/40 text-blue-300 shadow-md">
-              <GraduationCap className="h-5 w-5 text-sky-200" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
+              <GraduationCap className="h-5 w-5 text-white" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
               <h1 className="truncate text-xs font-black tracking-wider text-white uppercase leading-tight">
@@ -237,7 +237,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition active:scale-95 cursor-pointer border border-white/20"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition active:scale-95 cursor-pointer border border-white/15"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
@@ -258,7 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-black tracking-wider text-sky-200 uppercase hover:text-white transition cursor-pointer select-none ${
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-black tracking-wider text-sky-300 uppercase hover:text-white transition cursor-pointer select-none ${
                     collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                   }`}
                 >
@@ -288,8 +288,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onClick={() => toggleSubMenu(item.href)}
                             className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-xs font-bold transition-all duration-200 overflow-hidden cursor-pointer ${
                               isActive
-                                ? 'bg-blue-600/40 text-white border border-blue-400/50 shadow-xs font-black'
-                                : 'text-slate-100 hover:bg-white/10 hover:text-white'
+                                ? 'bg-blue-600 text-white shadow-md font-black border border-blue-500'
+                                : 'text-blue-100/90 hover:bg-white/10 hover:text-white'
                             }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
@@ -317,7 +317,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className="block py-1.5 px-3 rounded-lg text-[11.5px] font-medium text-slate-200 hover:text-white hover:bg-blue-500/20 transition-all"
+                                    className="block py-1.5 px-3 rounded-lg text-[11.5px] font-medium text-blue-100/75 hover:text-white hover:bg-blue-600/30 transition-all"
                                   >
                                     {sub.name}
                                   </Link>
@@ -339,11 +339,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         title={collapsed ? item.name : undefined}
                         className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-xs font-bold transition-all duration-150 overflow-hidden ${
                           isActive
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md font-black border border-blue-400/30'
-                            : 'text-slate-200 hover:bg-slate-700/60 hover:text-white'
+                            ? 'bg-blue-600 text-white shadow-md font-black border border-blue-500'
+                            : 'text-blue-100/85 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-sky-300/80 group-hover:text-white'}`} />
+                        <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-sky-300/90 group-hover:text-white'}`} />
 
                         <span
                           className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${
@@ -375,12 +375,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       />
 
       {/* Footer User Profile Section matching User Screenshots */}
-      <div ref={footerRef} className="relative shrink-0 border-t border-slate-700/60 p-3 bg-slate-900/40">
+      <div ref={footerRef} className="relative shrink-0 border-t border-blue-900/40 p-3 bg-black/20">
         <button
           type="button"
           onClick={() => setShowUserMenu((prev) => !prev)}
           aria-expanded={showUserMenu}
-          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/90 p-2.5 border border-slate-700/80 shadow-md backdrop-blur-md transition cursor-pointer text-left ${
+          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-white/5 hover:bg-white/10 p-2.5 border border-white/10 shadow-md backdrop-blur-md transition cursor-pointer text-left ${
             collapsed ? 'justify-center p-2' : ''
           }`}
           title={collapsed ? displayName : undefined}

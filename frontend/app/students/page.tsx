@@ -10,10 +10,9 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Student, ClassItem, User } from '../../types';
-import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar } from 'lucide-react';
+import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar, BookOpen, Clock, FileText, CheckCircle2, ChevronRight } from 'lucide-react';
 
 import { StudentHeader } from '../../components/students/StudentHeader';
 import { StudentKPICards } from '../../components/students/StudentKPICards';
@@ -50,7 +49,67 @@ export default function StudentsPage() {
   };
 
   const [selected, setSelected] = useState<number[]>([]);
+  
+  // Custom Drawer State
   const [drawerStudent, setDrawerStudent] = useState<Student | null>(null);
+  const [drawerTab, setDrawerTab] = useState<'info' | 'subjects' | 'schedule'>('info');
+  const [drawerSubjects, setDrawerSubjects] = useState<any[] | null>(null);
+  const [drawerSchedule, setDrawerSchedule] = useState<any[] | null>(null);
+  const [loadingTab, setLoadingTab] = useState(false);
+
+  const openDrawer = (s: Student) => {
+    setDrawerStudent(s);
+    setDrawerTab('info');
+    setDrawerSubjects(null);
+    setDrawerSchedule(null);
+  };
+
+  const closeDrawer = () => {
+    setDrawerStudent(null);
+    setDrawerTab('info');
+    setDrawerSubjects(null);
+    setDrawerSchedule(null);
+  };
+
+  const fetchDrawerSubjects = async (studentId: number) => {
+    if (drawerSubjects) return;
+    setLoadingTab(true);
+    try {
+      const res = await api.get(`/students/${studentId}/subjects`);
+      setDrawerSubjects(res.data || []);
+    } catch (error) {
+      console.error(error);
+      setToast({ message: 'Không thể tải danh sách môn học', type: 'error' });
+    } finally {
+      setLoadingTab(false);
+    }
+  };
+
+  const fetchDrawerSchedule = async (studentId: number) => {
+    if (drawerSchedule) return;
+    setLoadingTab(true);
+    try {
+      const res = await api.get(`/students/${studentId}/exam-schedule`);
+      setDrawerSchedule(res.data || []);
+    } catch (error) {
+      console.error(error);
+      setToast({ message: 'Không thể tải lịch thi', type: 'error' });
+    } finally {
+      setLoadingTab(false);
+    }
+  };
+
+  const handleTabChange = (tab: 'info' | 'subjects' | 'schedule') => {
+    setDrawerTab(tab);
+    if (drawerStudent) {
+      if (tab === 'subjects') {
+        fetchDrawerSubjects(drawerStudent.id);
+      } else if (tab === 'schedule') {
+        fetchDrawerSchedule(drawerStudent.id);
+      }
+    }
+  };
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -363,7 +422,7 @@ export default function StudentsPage() {
             onSelectAll={(checked) =>
               setSelected(checked ? paginatedStudents.map((s) => s.id) : [])
             }
-            onDetail={setDrawerStudent}
+            onDetail={openDrawer}
             onEdit={openEditModal}
             onDelete={handleDelete}
             isAdmin={currentUser?.role === 'ADMIN'}
@@ -490,28 +549,246 @@ export default function StudentsPage() {
         }}
       />
 
-      {/* Student Profile Drawer */}
-      <ProfileDrawer
-        isOpen={Boolean(drawerStudent)}
-        onClose={() => setDrawerStudent(null)}
-        title={drawerStudent?.fullName || ''}
-        subtitle={`Mã sinh viên: ${drawerStudent?.studentCode}`}
-        avatarText={drawerStudent?.fullName ? drawerStudent.fullName.slice(-1) : 'SV'}
-        badge={{ label: 'Đang học', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }}
-        details={[
-          { label: 'Mã sinh viên', value: drawerStudent?.studentCode, icon: UserIcon },
-          { label: 'Họ và tên', value: drawerStudent?.fullName },
-          { label: 'Giới tính', value: drawerStudent?.gender || 'Nam' },
-          {
-            label: 'Ngày sinh',
-            value: drawerStudent?.dateOfBirth ? new Date(drawerStudent.dateOfBirth).toLocaleDateString('vi-VN') : '---',
-            icon: Calendar,
-          },
-          { label: 'Lớp học', value: drawerStudent?.class?.name, icon: School },
-          { label: 'Email', value: drawerStudent?.email, icon: Mail },
-          { label: 'Số điện thoại', value: drawerStudent?.phone || '---', icon: Phone },
-        ]}
-      />
+      {/* CUSTOM DRAWER: 3 TABS */}
+      {drawerStudent && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          <div
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity"
+            onClick={closeDrawer}
+          />
+          <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
+            
+            {/* Header (gradient from-blue-600 to-indigo-700) */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white shrink-0">
+              <div className="flex items-start justify-between">
+                <div className="flex gap-4 items-center">
+                  <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-black shadow-inner">
+                    {drawerStudent.fullName.charAt(0)}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold leading-tight">{drawerStudent.fullName}</h2>
+                    <p className="text-blue-100 text-sm mt-1">{drawerStudent.studentCode}</p>
+                    <span className="inline-block mt-2 px-2.5 py-0.5 rounded-md bg-white/20 text-white text-xs font-semibold backdrop-blur-md">
+                      {drawerStudent.class?.name || 'Chưa xếp lớp'}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={closeDrawer}
+                  className="p-2 rounded-xl hover:bg-white/10 transition-colors text-blue-100 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-slate-200 shrink-0">
+              {[
+                { id: 'info', label: 'Thông tin', icon: FileText },
+                { id: 'subjects', label: 'Môn đăng ký', icon: BookOpen },
+                { id: 'schedule', label: 'Lịch thi', icon: Clock },
+              ].map((t) => {
+                const Icon = t.icon;
+                const isActive = drawerTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => handleTabChange(t.id as any)}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all border-b-2 ${
+                      isActive
+                        ? 'border-blue-600 text-blue-600'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+              {drawerTab === 'info' && (
+                <div className="space-y-6">
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-4 shadow-sm">
+                    <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">Thông tin cá nhân</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="block text-xs font-semibold text-slate-500 mb-1">Mã sinh viên</span>
+                        <p className="text-sm font-medium text-slate-800">{drawerStudent.studentCode}</p>
+                      </div>
+                      <div>
+                        <span className="block text-xs font-semibold text-slate-500 mb-1">Họ và tên</span>
+                        <p className="text-sm font-medium text-slate-800">{drawerStudent.fullName}</p>
+                      </div>
+                      <div>
+                        <span className="block text-xs font-semibold text-slate-500 mb-1">Giới tính</span>
+                        <p className="text-sm font-medium text-slate-800">{drawerStudent.gender || 'Nam'}</p>
+                      </div>
+                      <div>
+                        <span className="block text-xs font-semibold text-slate-500 mb-1">Ngày sinh</span>
+                        <p className="text-sm font-medium text-slate-800">
+                          {drawerStudent.dateOfBirth ? new Date(drawerStudent.dateOfBirth).toLocaleDateString('vi-VN') : '---'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-4 shadow-sm">
+                    <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">Thông tin học tập</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <School className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500 font-semibold">Lớp học</p>
+                          <p className="font-medium text-slate-800">{drawerStudent.class?.name || '---'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <Mail className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500 font-semibold">Email</p>
+                          <p className="font-medium text-slate-800">{drawerStudent.email || '---'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <Phone className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500 font-semibold">Số điện thoại</p>
+                          <p className="font-medium text-slate-800">{drawerStudent.phone || '---'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* KPI Metrics in Info tab */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-blue-100 p-4">
+                      <div className="flex items-center gap-2 text-blue-600 mb-2">
+                        <BookOpen className="h-4 w-4" />
+                        <span className="text-xs font-bold uppercase">Môn đăng ký</span>
+                      </div>
+                      <p className="text-2xl font-black text-blue-900">
+                        {drawerSubjects ? drawerSubjects.length : '--'}
+                      </p>
+                    </div>
+                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-4">
+                      <div className="flex items-center gap-2 text-amber-600 mb-2">
+                        <Clock className="h-4 w-4" />
+                        <span className="text-xs font-bold uppercase">Lịch thi</span>
+                      </div>
+                      <p className="text-2xl font-black text-amber-900">
+                        {drawerSchedule ? drawerSchedule.length : '--'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {drawerTab === 'subjects' && (
+                <div className="space-y-4">
+                  {loadingTab ? (
+                    <div className="flex items-center justify-center py-10">
+                      <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    </div>
+                  ) : !drawerSubjects || drawerSubjects.length === 0 ? (
+                    <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-slate-200">
+                      <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                      <p className="text-sm font-semibold text-slate-600">Sinh viên chưa đăng ký môn nào</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3 border border-blue-100 text-sm">
+                        <span className="font-semibold text-blue-900">Tổng quan:</span>
+                        <span className="font-bold text-blue-700">
+                          {drawerSubjects.length} môn / {drawerSubjects.reduce((acc, s) => acc + (s.credits || 0), 0)} tín chỉ
+                        </span>
+                      </div>
+                      <div className="space-y-3">
+                        {drawerSubjects.map((subject, idx) => (
+                          <div key={idx} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-start gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                              <BookOpen className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="text-sm font-bold text-slate-800">{subject.name}</h4>
+                              <p className="text-xs text-slate-500 font-medium mt-1">Mã: <span className="text-slate-700">{subject.code}</span></p>
+                            </div>
+                            <div className="text-right">
+                              <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold">
+                                {subject.credits} TC
+                              </span>
+                              <p className="text-[10px] font-semibold text-slate-400 mt-1 uppercase">HK{subject.semester} - {subject.year}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {drawerTab === 'schedule' && (
+                <div className="space-y-4">
+                  {loadingTab ? (
+                    <div className="flex items-center justify-center py-10">
+                      <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    </div>
+                  ) : !drawerSchedule || drawerSchedule.length === 0 ? (
+                    <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-slate-200">
+                      <Clock className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                      <p className="text-sm font-semibold text-slate-600">Chưa có lịch thi nào</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {drawerSchedule.map((sched, idx) => (
+                        <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                          <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-slate-400" />
+                              <span className="text-xs font-bold text-slate-700">
+                                {new Date(sched.date).toLocaleDateString('vi-VN')} • {sched.startTime} - {sched.endTime}
+                              </span>
+                            </div>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700">
+                              {sched.examType}
+                            </span>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            <h4 className="text-sm font-bold text-slate-800">{sched.subject?.name || 'Môn học'}</h4>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <School className="h-3.5 w-3.5 text-slate-400" />
+                                <span>Phòng: <span className="font-semibold text-slate-800">{sched.room?.roomCode} ({sched.room?.building})</span></span>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <UserIcon className="h-3.5 w-3.5 text-slate-400" />
+                                <span>SBD: <span className="font-semibold text-slate-800">{sched.studentCodeStr || drawerStudent.studentCode}</span></span>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-slate-600">
+                                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
+                                <span>Số ghế: <span className="font-semibold text-slate-800">{sched.seatNumber || '--'}</span></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirm Modal */}
       <ConfirmModal

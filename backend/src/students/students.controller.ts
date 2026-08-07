@@ -28,6 +28,16 @@ export class StudentsController {
     return this.studentsService.findAll(search);
   }
 
+  @Get(':id/subjects')
+  getStudentSubjects(@Param('id', ParseIntPipe) id: number) {
+    return this.studentsService.getStudentSubjects(id);
+  }
+
+  @Get(':id/exam-schedule')
+  getStudentExamSchedule(@Param('id', ParseIntPipe) id: number) {
+    return this.studentsService.getStudentExamSchedule(id);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.findOne(id);

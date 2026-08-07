@@ -106,10 +106,10 @@ export default function StudentCurriculumPage() {
     : 0;
 
   const KPI = [
-    { label: 'Tổng môn trong khung', value: `${stats?.totalSubjects ?? 0} môn`, icon: BookOpen, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC`, icon: Layers, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Môn bắt buộc', value: `${stats?.totalMandatoryCredits ?? 0} TC`, icon: Award, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
-    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200/60' },
+    { label: 'Tổng môn trong khung', value: `${stats?.totalSubjects ?? 0} môn`, icon: BookOpen, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC`, icon: Layers, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Môn bắt buộc', value: `${stats?.totalMandatoryCredits ?? 0} TC`, icon: Award, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
   ];
 
   return (
@@ -173,23 +173,31 @@ export default function StudentCurriculumPage() {
                 </div>
                 <div className="text-center">
                   <p className="text-lg font-black text-white">{(stats?.totalSubjects ?? 0) - (stats?.completedSubjects ?? 0)}</p>
-                  <p className="text-[10px] text-white/55 font-semibold">Môn còn lại</p>
+                  <p className="text-[10px] text-white/55 font-semibold">Môn chưa học</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── KPI Cards ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {KPI.map(({ label, value, icon: Icon, color, bg, border }) => (
-            <div key={label} className={`rounded-2xl border ${border} ${bg} p-4 shadow-2xs flex items-center gap-3`}>
-              <div className={`w-10 h-10 rounded-xl ${bg} border ${border} flex items-center justify-center shrink-0`}>
-                <Icon className={`w-5 h-5 ${color}`} />
+        {/* ── KPI Cards Standardized White Flat ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {KPI.map(({ label, value, icon: Icon, iconBg }) => (
+            <div
+              key={label}
+              className="group flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+            >
+              <div className="space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  {label}
+                </span>
+                <p className="text-2xl font-black text-slate-900 leading-tight">
+                  {value}
+                </p>
               </div>
-              <div>
-                <p className="text-[10.5px] font-semibold text-slate-500">{label}</p>
-                <p className={`text-lg font-black ${color} leading-tight`}>{value}</p>
+
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-transform group-hover:scale-110`}>
+                <Icon className="h-5 w-5" />
               </div>
             </div>
           ))}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical } from 'lucide-react';
+import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical, Calendar } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { StatusBadge } from '../common/StatusBadge';
 import { ExamPaper } from '../../types';
@@ -55,8 +55,12 @@ export function ExamPaperTable({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {papers.map((p) => {
           const isChecked = selected.includes(p.id);
-          const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
-          const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || 'Môn học';
+          const sched = (p as any).examSchedule || {};
+          const subCode = (p as any).subjectCode || sched.subjectCode || sched.subject?.subjectCode || '';
+          const subName = (p as any).subjectName || sched.subjectName || sched.subject?.subjectName || 'Môn thi';
+          const periodName = sched.periodName || sched.examPeriod?.name || sched.period?.name || '';
+          const dateStr = sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : null;
+          const timeStr = sched.startTime && sched.endTime ? `${sched.startTime} – ${sched.endTime}` : null;
           const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
 
           return (
@@ -78,7 +82,7 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p.id)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-700 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
                     >
                       Mã đề: {p.paperCode}
                     </button>
@@ -88,15 +92,34 @@ export function ExamPaperTable({
                 </div>
 
                 <div>
-                  <h4
-                    onClick={() => onDetail(p.id)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
-                  >
-                    {subjectName}
-                  </h4>
-                  <span className="text-xs font-semibold text-slate-500 flex items-center gap-1 mt-0.5">
-                    <Clock className="h-3.5 w-3.5 text-slate-400" /> {p.durationMinutes} phút làm bài
-                  </span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {subCode && (
+                      <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-black text-blue-700 border border-blue-200/70 font-mono">
+                        {subCode}
+                      </span>
+                    )}
+                    <h4
+                      onClick={() => onDetail(p.id)}
+                      className="text-xs font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition truncate"
+                    >
+                      {subName}
+                    </h4>
+                  </div>
+                  {periodName && (
+                    <p className="text-[10.5px] font-medium text-slate-400 mt-0.5 truncate">
+                      {periodName}
+                    </p>
+                  )}
+                  
+                  <div className="mt-2 space-y-0.5 text-[11px] font-semibold text-slate-600">
+                    <span className="flex items-center gap-1 text-slate-700">
+                      <Clock className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+                      {dateStr ? `${dateStr} (${timeStr || 'Chưa có giờ'})` : 'Chưa xếp lịch thi'}
+                    </span>
+                    <span className="text-[10.5px] text-slate-400 font-medium block pl-4.5">
+                      Thời gian làm bài: {p.durationMinutes} phút
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
@@ -167,10 +190,10 @@ export function ExamPaperTable({
                 />
               </th>
               <th scope="col" className="p-2 whitespace-nowrap">Mã Đề</th>
-              <th scope="col" className="p-2 min-w-[180px]">Môn học</th>
+              <th scope="col" className="p-2 min-w-[180px]">Môn học & Kỳ thi</th>
               <th scope="col" className="p-2 whitespace-nowrap">Trạng thái</th>
               <th scope="col" className="p-2 whitespace-nowrap">Số câu</th>
-              <th scope="col" className="p-2 whitespace-nowrap">Thời gian</th>
+              <th scope="col" className="p-2 whitespace-nowrap">Lịch & Thời gian</th>
               <th scope="col" className="p-2 whitespace-nowrap">Tổng điểm</th>
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
@@ -178,8 +201,11 @@ export function ExamPaperTable({
           <tbody className="divide-y divide-slate-100 font-medium">
             {papers.map((p) => {
               const isChecked = selected.includes(p.id);
-              const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
-              const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---';
+              const sched = (p as any).examSchedule || {};
+              const subCode = (p as any).subjectCode || sched.subjectCode || sched.subject?.subjectCode || '';
+              const subName = (p as any).subjectName || sched.subjectName || sched.subject?.subjectName || '---';
+              const dateStr = sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : null;
+              const timeStr = sched.startTime && sched.endTime ? `${sched.startTime} – ${sched.endTime}` : null;
               const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
 
               return (
@@ -195,14 +221,16 @@ export function ExamPaperTable({
                   <td className="p-2 whitespace-nowrap font-bold text-blue-600">{p.paperCode}</td>
                   <td className="p-2 min-w-[180px]">
                     <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(p.id)}>
-                      {subjectName}
+                      {subCode ? `[${subCode}] ` : ''}{subName}
                     </p>
                   </td>
                   <td className="p-2 whitespace-nowrap">
                     <StatusBadge status={p.status} />
                   </td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{qCount} câu</td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{p.durationMinutes} phút</td>
+                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">
+                    {dateStr ? `${dateStr} (${timeStr || ''})` : `${p.durationMinutes} phút`}
+                  </td>
                   <td className="p-2 whitespace-nowrap font-bold text-emerald-600">{p.totalScore} đ</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(p.id)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
@@ -233,10 +261,10 @@ export function ExamPaperTable({
               />
             </th>
             {visibleColumns.paperCode !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã Đề thi</th>}
-            {visibleColumns.subjectName !== false && <th scope="col" className="p-3.5 min-w-[200px]">Tên Môn học</th>}
+            {visibleColumns.subjectName !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên Môn học & Kỳ thi</th>}
             {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
             {visibleColumns.questionCount !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số câu hỏi</th>}
-            {visibleColumns.durationMinutes !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Thời gian làm bài</th>}
+            {visibleColumns.durationMinutes !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Lịch thi & Thời gian</th>}
             {visibleColumns.totalScore !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Tổng điểm</th>}
             <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
@@ -244,10 +272,14 @@ export function ExamPaperTable({
         <tbody className="divide-y divide-slate-100 font-medium">
           {papers.map((p, index) => {
             const isChecked = selected.includes(p.id);
-            const badge = statusStyle[p.status] || { label: p.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
-            const subjectName = (p as any).subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---';
+            const sched = (p as any).examSchedule || {};
+            const subCode = (p as any).subjectCode || sched.subjectCode || sched.subject?.subjectCode || '';
+            const subName = (p as any).subjectName || sched.subjectName || sched.subject?.subjectName || 'Môn thi';
+            const periodName = sched.periodName || sched.examPeriod?.name || sched.period?.name || '';
+            const dateStr = sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : null;
+            const timeStr = sched.startTime && sched.endTime ? `${sched.startTime} – ${sched.endTime}` : null;
             const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
-            const isLastRow = index >= Math.floor(papers.length / 2);
+            const examType = sched.examType || (p as any).examType || 'TRAC_NGHIEM';
 
             return (
               <tr
@@ -266,29 +298,48 @@ export function ExamPaperTable({
                 </td>
 
                 {visibleColumns.paperCode !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(p.id)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono hover:bg-blue-100 transition cursor-pointer"
-                    >
-                      {p.paperCode}
-                    </button>
+                  <td className="p-3.5 whitespace-nowrap">
+                    <div className="space-y-0.5">
+                      <button
+                        type="button"
+                        onClick={() => onDetail(p.id)}
+                        className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-700 border border-blue-200/80 hover:bg-blue-100 transition cursor-pointer"
+                      >
+                        Mã {p.paperCode}
+                      </button>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                        {examType === 'TU_LUAN' ? 'Tự luận' : examType === 'DIEN_LO' ? 'Điền lỗ' : 'Trắc nghiệm'}
+                      </p>
+                    </div>
                   </td>
                 )}
 
                 {visibleColumns.subjectName !== false && (
-                  <td className="p-3.5 min-w-[200px]">
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
+                  <td className="p-3.5 min-w-[220px]">
+                    <div className="flex items-start gap-2.5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shrink-0 mt-0.5 border border-blue-200/60">
                         <BookOpen className="h-4 w-4" />
                       </div>
-                      <span
-                        onClick={() => onDetail(p.id)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate"
-                      >
-                        {subjectName}
-                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {subCode && (
+                            <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-black text-blue-700 border border-blue-200/70 font-mono">
+                              {subCode}
+                            </span>
+                          )}
+                          <span
+                            onClick={() => onDetail(p.id)}
+                            className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
+                          >
+                            {subName}
+                          </span>
+                        </div>
+                        {periodName && (
+                          <p className="text-[10.5px] font-medium text-slate-400 mt-0.5 truncate">
+                            {periodName}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </td>
                 )}
@@ -308,10 +359,23 @@ export function ExamPaperTable({
                 )}
 
                 {visibleColumns.durationMinutes !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700">
-                    <span className="inline-flex items-center gap-1 text-slate-700">
-                      <Clock className="h-3.5 w-3.5 text-slate-400" /> {p.durationMinutes} phút
-                    </span>
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700">
+                    <div className="space-y-0.5">
+                      {dateStr ? (
+                        <p className="text-xs font-bold text-slate-800 flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+                          <span>{dateStr}</span>
+                          {timeStr && <span className="text-slate-500 font-semibold">({timeStr})</span>}
+                        </p>
+                      ) : (
+                        <p className="text-xs font-semibold text-slate-400 flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5 text-slate-300" /> Chưa xếp lịch thi
+                        </p>
+                      )}
+                      <p className="text-[10.5px] font-semibold text-slate-400 flex items-center gap-1 pl-4.5">
+                        <Clock className="h-3 w-3 text-slate-400" /> Làm bài: {p.durationMinutes} phút
+                      </p>
+                    </div>
                   </td>
                 )}
 

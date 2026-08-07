@@ -123,22 +123,33 @@ export function ExamPaperMatrixForm({
           <p className="text-[11px] font-semibold text-slate-400">Tự động chọn ngẫu nhiên từ Ngân hàng đề</p>
         </div>
 
-        {/* Preset buttons — always visible, hint only */}
-        <div className="flex items-center gap-2 shrink-0">
-          {(['60', '90'] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => handleDurationChange(m)}
-              className={`rounded-xl px-3 py-1.5 text-xs font-extrabold transition cursor-pointer border ${
-                formData.durationMinutes === m
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
-              }`}
-            >
-              {m} phút
-            </button>
-          ))}
+        {/* Preset buttons — sliding pill tab segment control */}
+        <div className="relative inline-flex items-center rounded-full bg-slate-100 p-1 border border-slate-200 shrink-0">
+          <div
+            className="absolute top-1 bottom-1 rounded-full bg-blue-600 transition-all duration-300 ease-in-out shadow-2xs"
+            style={{
+              width: 'calc(50% - 4px)',
+              left: formData.durationMinutes === '90' ? 'calc(50% + 2px)' : '4px',
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => handleDurationChange('60')}
+            className={`relative z-10 rounded-full px-4 py-1.5 text-xs font-black transition-colors duration-200 cursor-pointer ${
+              formData.durationMinutes !== '90' ? 'text-white' : 'text-slate-700 hover:text-slate-900'
+            }`}
+          >
+            60 phút
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDurationChange('90')}
+            className={`relative z-10 rounded-full px-4 py-1.5 text-xs font-black transition-colors duration-200 cursor-pointer ${
+              formData.durationMinutes === '90' ? 'text-white' : 'text-slate-700 hover:text-slate-900'
+            }`}
+          >
+            90 phút
+          </button>
         </div>
       </div>
 
@@ -242,39 +253,49 @@ export function ExamPaperMatrixForm({
           </label>
 
           {selectedSchedule ? (
-            <button
-              type="button"
-              onClick={() => setShowPanel(!showPanel)}
-              className="w-full flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50/60 px-4 py-2.5 text-left hover:bg-blue-50 transition cursor-pointer"
-            >
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-blue-600 shrink-0">
-                <Calendar className="h-3.5 w-3.5" />
+            <div className="flex flex-wrap items-center justify-between gap-3 py-2">
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-600 text-white text-[11px] font-black uppercase tracking-wide">
+                    {(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}
+                  </span>
+                  <span className="text-sm font-black text-slate-900 truncate">
+                    {(selectedSchedule as any).subjectName || (selectedSchedule as any).subject?.subjectName || 'Môn thi'}
+                  </span>
+                  <span className="text-xs font-bold text-slate-500">
+                    — {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name || 'Kỳ thi'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-xs font-semibold text-slate-600 flex-wrap">
+                  <span className="text-slate-800 font-bold">
+                    {fmt(selectedSchedule.examDate)}
+                  </span>
+                  <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
+                  {scheduleDuration > 0 && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white border border-blue-200 text-blue-700 text-[10.5px] font-bold">
+                      {scheduleDuration} phút
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-black text-slate-800 truncate">
-                  [{(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}]{' '}
-                  {(selectedSchedule as any).subjectName || (selectedSchedule as any).subject?.subjectName || 'Môn thi'}
-                  {' — '}
-                  {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name || 'Kỳ thi'}
-                </p>
-                <p className="text-[10.5px] text-slate-500 font-semibold mt-0.5">
-                  {fmt(selectedSchedule.examDate)} · {selectedSchedule.startTime} – {selectedSchedule.endTime}
-                  {scheduleDuration > 0 && ` · ${scheduleDuration} phút`}
-                </p>
-              </div>
-              <span className="text-[10px] font-bold text-blue-500 shrink-0 flex items-center gap-0.5">
-                Đổi <ChevronDown className="h-3 w-3" />
-              </span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setShowPanel(!showPanel)}
+                className="inline-flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition cursor-pointer shadow-2xs shrink-0 active:scale-95"
+              >
+                Đổi ca thi
+              </button>
+            </div>
           ) : (
             <button
               type="button"
               onClick={() => setShowPanel(!showPanel)}
-              className="w-full flex items-center gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-left hover:border-blue-400 hover:bg-blue-50/40 transition cursor-pointer"
+              className="w-full flex items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/40 p-3.5 text-left hover:bg-blue-50/80 hover:border-blue-400 transition cursor-pointer"
             >
-              <Calendar className="h-4 w-4 text-slate-400 shrink-0" />
-              <span className="text-xs font-bold text-slate-400">Nhấn để chọn Ca thi / Lịch thi</span>
-              <ChevronDown className="h-4 w-4 text-slate-400 ml-auto shrink-0" />
+              <span className="text-xs font-bold text-blue-700">Chưa chọn ca thi — Nhấn để chọn Lịch thi</span>
+              <span className="inline-flex items-center justify-center text-xs font-bold text-white bg-blue-600 px-4 py-1.5 rounded-xl shrink-0">
+                Chọn ca
+              </span>
             </button>
           )}
 
@@ -441,23 +462,21 @@ export function ExamPaperMatrixForm({
         </div>
 
         {/* ── ROW 3: Difficulty Matrix ── */}
-        <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-600">
-                Ma trận phân bổ đề thi
-              </span>
-            </div>
+        <div className="space-y-3 pt-1 border-t border-slate-100">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              Ma trận phân bổ đề thi
+            </h4>
 
-            {/* Switch Mode */}
-            <div className="flex items-center rounded-lg bg-slate-200/70 p-0.5 text-[10px] font-extrabold">
+            {/* Switch Mode — underline tab style */}
+            <div className="flex items-center gap-4 text-xs font-bold border-b border-slate-200 shrink-0">
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
-                className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
-                  (formData.selectionMode || 'BY_COUNT') === 'BY_COUNT'
-                    ? 'bg-white text-slate-900 shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${
+                  formData.selectionMode !== 'BY_SCORE'
+                    ? 'text-blue-600 border-blue-600 font-extrabold'
+                    : 'text-slate-500 border-transparent hover:text-slate-800'
                 }`}
               >
                 Theo Số câu
@@ -465,74 +484,53 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
-                className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
+                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${
                   formData.selectionMode === 'BY_SCORE'
-                    ? 'bg-blue-600 text-white shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'text-blue-600 border-blue-600 font-extrabold'
+                    : 'text-slate-500 border-transparent hover:text-slate-800'
                 }`}
               >
-                Theo Thang điểm (Ngân hàng)
+                Theo Thang điểm
               </button>
             </div>
           </div>
 
           {formData.selectionMode === 'BY_SCORE' ? (
-            <div className="space-y-2">
-              <p className="text-[11.5px] text-slate-600 font-semibold px-0.5 py-1">
-                Hệ thống tự động quét Ngân hàng câu hỏi & lấy điểm gốc để tìm tập hợp khớp với thang điểm bên dưới.
-              </p>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: 'Dễ (Điểm mục tiêu)', key: 'easyScore', accent: 'emerald' },
-                  { label: 'TB (Điểm mục tiêu)', key: 'mediumScore', accent: 'amber'   },
-                  { label: 'Khó (Điểm mục tiêu)', key: 'hardScore', accent: 'red'     },
-                ].map(({ label: lb, key, accent }) => (
-                  <div key={key} className="rounded-xl bg-white border border-slate-200 p-2.5 space-y-1.5">
-                    <span className={`text-[10px] font-bold uppercase tracking-wide block ${
-                      accent === 'emerald' ? 'text-emerald-700' :
-                      accent === 'amber'   ? 'text-amber-700'   :
-                      'text-red-700'
-                    }`}>
-                      {lb}
-                    </span>
-                    <input
-                      type="number"
-                      step="0.25"
-                      min={0}
-                      max={10}
-                      value={(formData as any)[key] || ''}
-                      onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                      className="w-full rounded-lg border border-blue-200 bg-blue-50/20 px-2.5 py-1.5 text-sm font-black text-slate-900 outline-none focus:bg-white transition"
-                    />
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { label: 'Dễ (Điểm)', key: 'easyScore' },
+                { label: 'Trung bình (Điểm)', key: 'mediumScore' },
+                { label: 'Khó (Điểm)', key: 'hardScore' },
+              ].map(({ label: lb, key }) => (
+                <div key={key} className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">{lb}</label>
+                  <input
+                    type="number"
+                    step="0.25"
+                    min={0}
+                    max={10}
+                    value={(formData as any)[key] || ''}
+                    onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
+                    className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-900 focus:border-blue-500 outline-none transition"
+                  />
+                </div>
+              ))}
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { label: 'Dễ (Số câu)',        key: 'easyCount',   accent: 'emerald' },
-                { label: 'Trung bình (Số câu)', key: 'mediumCount', accent: 'amber'   },
-                { label: 'Khó (Số câu)',        key: 'hardCount',   accent: 'red'     },
-              ].map(({ label: lb, key, accent }) => (
-                <div key={key} className="rounded-xl bg-white border border-slate-200 p-2.5 space-y-1.5">
-                  <span className={`text-[10px] font-bold uppercase tracking-wide block ${
-                    accent === 'emerald' ? 'text-emerald-700' :
-                    accent === 'amber'   ? 'text-amber-700'   :
-                    'text-red-700'
-                  }`}>
-                    {lb}
-                  </span>
+                { label: 'Dễ (Số câu)', key: 'easyCount' },
+                { label: 'Trung bình (Số câu)', key: 'mediumCount' },
+                { label: 'Khó (Số câu)', key: 'hardCount' },
+              ].map(({ label: lb, key }) => (
+                <div key={key} className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">{lb}</label>
                   <input
                     type="number"
                     min={0}
                     value={(formData as any)[key]}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className={`w-full rounded-lg border bg-slate-50 px-2.5 py-1.5 text-sm font-black text-slate-900 outline-none focus:bg-white transition ${
-                      accent === 'emerald' ? 'border-emerald-200 focus:border-emerald-400' :
-                      accent === 'amber'   ? 'border-amber-200   focus:border-amber-400'   :
-                      'border-red-200      focus:border-red-400'
-                    }`}
+                    className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-900 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -541,7 +539,7 @@ export function ExamPaperMatrixForm({
         </div>
 
         {/* ── FOOTER ── */}
-        <div className="flex items-center justify-between gap-3 pt-1">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           {isPublished ? (
             <p className="text-xs font-bold text-rose-600 flex items-center gap-1.5">
               <AlertTriangle className="h-4 w-4 shrink-0 text-rose-500" />
@@ -562,9 +560,9 @@ export function ExamPaperMatrixForm({
           <button
             type="submit"
             disabled={creating || currentTotal < 1 || isPublished}
-            className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-sm active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed ${
+            className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-2xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
               isPublished
-                ? 'bg-slate-400 opacity-60'
+                ? 'bg-slate-300 text-slate-500 border border-slate-300'
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >

@@ -73,12 +73,12 @@ export function QuestionBankTopCharts({
         <div className="flex items-center justify-between border-b border-slate-100 pb-2">
           <h3 className="text-xs sm:text-sm font-black text-slate-900">Tổng quan ngân hàng</h3>
           <div className="relative">
-            <select className="appearance-none rounded-xl border border-slate-200 bg-white px-2 py-0.5 pr-5 text-[10px] sm:text-[10.5px] font-bold text-slate-600 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs">
+            <select className="appearance-none bg-transparent py-0.5 pl-1 pr-4 text-[10px] sm:text-[10.5px] font-bold text-slate-600 outline-none hover:text-slate-900 cursor-pointer">
               <option>Tất cả thời gian</option>
               <option>Tháng này</option>
               <option>Học kỳ này</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-400" />
+            <ChevronDown className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-400" />
           </div>
         </div>
 

@@ -778,16 +778,16 @@ export default function ExamArrangementPage() {
                   ) : (
                     <div className="space-y-5">
                       {/* Summary Banner */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-xs font-semibold text-emerald-900">
+                      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 text-xs font-semibold">
                         <div>
-                          <p className="text-sm font-extrabold text-emerald-950 flex items-center gap-1.5">
+                          <p className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
                             <CheckCircle2 className="h-4 w-4 text-emerald-600" /> {result.message}
                           </p>
-                          <p className="mt-1 text-slate-700 font-medium">
-                            Môn thi: <strong>{result.summary.subjectName}</strong> ({result.summary.subjectCode}) · Ngày: {result.summary.examDate} ({result.summary.timeSlot})
+                          <p className="mt-1 text-slate-600 font-medium">
+                            Môn thi: <strong className="text-slate-800">{result.summary.subjectName}</strong> ({result.summary.subjectCode}) · Ngày: {result.summary.examDate} ({result.summary.timeSlot})
                           </p>
-                          <p className="mt-0.5 text-emerald-800">
-                            Đã xếp: <strong>{result.summary.totalStudents} thí sinh</strong> vào <strong>{roomSummaries.length} phòng thi</strong>.
+                          <p className="mt-0.5 text-slate-600">
+                            Đã xếp: <strong className="text-slate-900">{result.summary.totalStudents} thí sinh</strong> vào <strong className="text-slate-900">{roomSummaries.length} phòng thi</strong>.
                           </p>
                         </div>
 
@@ -803,7 +803,7 @@ export default function ExamArrangementPage() {
                                 onConfirm: runSaveArrangement,
                               })
                             }
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 shadow-sm transition cursor-pointer"
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 shadow-xs transition cursor-pointer"
                           >
                             <CheckCircle className="h-4 w-4" /> Xác nhận lưu phương án
                           </button>
