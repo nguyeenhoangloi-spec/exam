@@ -14,8 +14,8 @@ export class GeminiProvider {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    const modelName = this.configService.get<string>('GEMINI_MODEL') || 'gemini-2.0-flash';
-    const candidateModels = Array.from(new Set([modelName, 'gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.5-flash']));
+    const modelName = this.configService.get<string>('GEMINI_MODEL') || 'gemini-1.5-flash';
+    const candidateModels = Array.from(new Set([modelName, 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-exp']));
     const timeoutMs = options?.timeoutMs || Number(this.configService.get<number>('GEMINI_TIMEOUT_MS')) || 30000;
 
     const genAI = new GoogleGenerativeAI(apiKey);

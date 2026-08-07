@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, Check } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, Check, HelpCircle } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
+import { RubricDialog } from './RubricDialog';
 import { Question } from '../../types';
 import {
   QuestionDifficultyBadge,
@@ -43,6 +44,7 @@ export function QuestionBankTable({
   isAdmin,
 }: QuestionBankTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [rubricQuestion, setRubricQuestion] = useState<Question | null>(null);
   const allSelected = questions.length > 0 && selected.length === questions.length;
 
   const formatDate = (dateStr?: string) => {
@@ -295,6 +297,7 @@ export function QuestionBankTable({
 
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
+    <>
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
         <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
@@ -482,6 +485,20 @@ export function QuestionBankTable({
                             <span>Xem chi tiết</span>
                           </button>
 
+                          {q.type === 'ESSAY' && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                setRubricQuestion(q);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-violet-50 text-violet-700 font-bold cursor-pointer"
+                            >
+                              <HelpCircle className="h-3.5 w-3.5 text-violet-600" />
+                              <span>Cấu hình Rubric</span>
+                            </button>
+                          )}
+
                           <button
                             type="button"
                             onClick={() => {
@@ -546,5 +563,12 @@ export function QuestionBankTable({
         </tbody>
       </table>
     </div>
+
+    <RubricDialog
+      isOpen={Boolean(rubricQuestion)}
+      question={rubricQuestion}
+      onClose={() => setRubricQuestion(null)}
+    />
+    </>
   );
 }

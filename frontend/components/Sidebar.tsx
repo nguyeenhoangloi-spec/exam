@@ -122,6 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
         { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
+        { name: 'Duyệt bài Tự luận', href: '/admin/essay-review', icon: ShieldCheck },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
       ],
     },

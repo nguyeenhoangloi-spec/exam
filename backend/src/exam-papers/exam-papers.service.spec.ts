@@ -60,6 +60,7 @@ describe('ExamPapersService permissions', () => {
           subject: { subjectName: 'Lập trình' },
           examPeriod: {},
         }),
+        update: jest.fn().mockResolvedValue({}),
       },
     };
     const timedService = new ExamPapersService(

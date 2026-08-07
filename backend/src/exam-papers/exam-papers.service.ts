@@ -371,6 +371,29 @@ export class ExamPapersService {
     // Mật khẩu thi: bắt buộc với kỳ thi chính thức (OFFICIAL), hash bcrypt trước khi lưu
     const isOfficial = paper.examSchedule?.mode === 'OFFICIAL';
     const hasEssayQuestions = paper.questions.some((item: any) => item.question?.type === 'ESSAY');
+
+    // Kiểm tra Rubric bắt buộc cho câu hỏi tự luận trước khi phát hành đề
+    const essayQuestions = paper.questions
+      .map((item: any) => item.question)
+      .filter((q: any) => q && q.type === 'ESSAY');
+
+    for (const q of essayQuestions) {
+      const rubrics = await this.prisma.essayRubricCriterion.findMany({
+        where: { questionId: q.id },
+      });
+      if (!rubrics || rubrics.length === 0) {
+        throw new BadRequestException(
+          `Câu hỏi tự luận "${q.content || q.code || q.id}" chưa được tạo Rubric chấm điểm. Vui lòng tạo Rubric trước khi phát hành.`,
+        );
+      }
+      const totalRubricScore = rubrics.reduce((sum, r) => sum + r.maxScore, 0);
+      const expectedScore = q.score || 0;
+      if (Math.abs(totalRubricScore - expectedScore) > 0.001) {
+        throw new BadRequestException(
+          `Tổng điểm Rubric (${Number(totalRubricScore.toFixed(2))}đ) không khớp với điểm số của câu hỏi tự luận "${q.content || q.code}" (${expectedScore}đ).`,
+        );
+      }
+    }
     let examPasswordHash: string | null = null;
     if (isOfficial) {
       if (!dto?.examPassword || dto.examPassword.trim().length < 4) {

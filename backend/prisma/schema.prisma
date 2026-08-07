@@ -85,6 +85,7 @@ model User {
   deletedExamSchedules ExamSchedule[]    @relation("ExamScheduleDeletedBy")
   questionHistories    QuestionHistory[] @relation("QuestionHistoryActor")
   auditLogs            AuditLog[]        @relation("AuditLogActor")
+  essayGradeHistories  EssayGradeHistory[] @relation("EssayGradeHistoryActor")
 
   @@map("users")
 }
@@ -626,6 +627,7 @@ model ExamAttempt {
   totalScore Float?
   maxScore   Float?
   penaltyPoints Float @default(0)
+  penaltyReason String?
   riskScore  Int     @default(0)
   isFlagged  Boolean @default(false)
   gradingStatus EssayAttemptGradingStatus @default(NOT_SUBMITTED)
@@ -688,6 +690,15 @@ model AttemptAnswer {
   essayGrades        EssayGrade[]
   submissionFiles    EssaySubmissionFile[]
 
+  aiSuggestedScore   Float?
+  aiSuggestedComment String?
+  aiConfidence       Float?
+  aiGeneratedAt      DateTime?
+  aiConfirmedById    Int?
+  aiConfirmedAt      DateTime?
+
+  gradeHistories     EssayGradeHistory[]
+
   version         Int      @default(1)
   clientTimestamp DateTime
   serverTimestamp DateTime @default(now())
@@ -695,6 +706,24 @@ model AttemptAnswer {
   @@unique([attemptId, questionId])
   @@index([attemptId])
   @@map("attempt_answers")
+}
+
+model EssayGradeHistory {
+  id              String        @id @default(uuid())
+  attemptAnswerId String
+  attemptAnswer   AttemptAnswer @relation(fields: [attemptAnswerId], references: [id], onDelete: Cascade)
+  criterionId     String?
+  oldScore        Float?
+  newScore        Float
+  oldComment      String?
+  newComment      String?
+  actorId         Int
+  actor           User          @relation("EssayGradeHistoryActor", fields: [actorId], references: [id], onDelete: Restrict)
+  reason          String?
+  createdAt       DateTime      @default(now())
+
+  @@index([attemptAnswerId])
+  @@map("essay_grade_histories")
 }
 
 model EssayRubricCriterion {
