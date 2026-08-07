@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
-import { CheckCircle2, AlertCircle, FileText, Send, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, AlertCircle, FileText, Send, ArrowLeft, Eye } from 'lucide-react';
+import { ExamAttemptReviewModal } from '@/components/exam-reports/ExamAttemptReviewModal';
 
 export default function StudentExamResultPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function StudentExamResultPage() {
   const [appealReason, setAppealReason] = useState('');
   const [submittingAppeal, setSubmittingAppeal] = useState(false);
   const [appealSuccess, setAppealSuccess] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
   const loadResult = useCallback(async () => {
     try {
@@ -95,6 +97,7 @@ export default function StudentExamResultPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-slate-50 text-slate-900 p-6 md:p-12">
       <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
         <div className="text-center pb-8 border-b border-slate-200">
@@ -182,7 +185,13 @@ export default function StudentExamResultPage() {
           </div>
         )}
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-3 flex-wrap">
+          <button
+            onClick={() => setShowReview(true)}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl flex items-center transition shadow-xs"
+          >
+            <Eye className="w-4 h-4 mr-2" /> Xem Lại Bài Làm
+          </button>
           <button
             onClick={() => router.push('/student/exam-schedule')}
             className="px-6 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl flex items-center transition"
@@ -192,5 +201,13 @@ export default function StudentExamResultPage() {
         </div>
       </div>
     </div>
+
+    {showReview && (
+      <ExamAttemptReviewModal
+        attemptId={attemptId}
+        onClose={() => setShowReview(false)}
+      />
+    )}
+    </>
   );
 }

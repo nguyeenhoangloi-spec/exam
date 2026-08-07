@@ -299,23 +299,19 @@ export default function StudentExamSchedulePage() {
 
                 {/* Footer actions */}
                 <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  {item.examType === 'TRAC_NGHIEM' ? (
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                      className={[
-                        'inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl shadow-xs transition cursor-pointer active:scale-95',
-                        item.mode === 'MOCK'
-                          ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20'
-                          : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
-                      ].join(' ')}
-                    >
-                      <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  ) : (
-                    <span className="text-[11px] font-semibold text-slate-400 italic">Tự luận / Trực tiếp</span>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
+                    className={[
+                      'inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl shadow-xs transition cursor-pointer active:scale-95',
+                      item.mode === 'MOCK'
+                        ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20'
+                        : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
+                    ].join(' ')}
+                  >
+                    <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi Online'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
 
                   <button
                     type="button"

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, GraduationCap, AlertTriangle, Clock, CheckCircle2, MoreVertical } from 'lucide-react';
+import { ExamAttemptReviewModal } from './ExamAttemptReviewModal';
 
 export interface CandidateReport {
   studentId: number;
@@ -13,6 +14,7 @@ export interface CandidateReport {
   maxScore: number;
   submittedAt: string | null;
   violationCount: number;
+  attemptId?: string;
 }
 
 const statusBadgeMap: Record<string, { label: string; className: string }> = {
@@ -52,16 +54,18 @@ export function ExamReportTable({
   onDetail,
 }: ExamReportTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+  const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
   const allSelected = candidates.length > 0 && selected.length === candidates.length;
 
   // 1. Dạng Lưới (Grid View Mode)
   if (viewMode === 'grid') {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {candidates.map((c) => {
-          const isChecked = selected.includes(c.studentId);
-          const badge = statusBadgeMap[c.status] || { label: c.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
-          const isPassed = c.status !== 'ABSENT' && c.totalScore >= 5;
+      <>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {candidates.map((c) => {
+            const isChecked = selected.includes(c.studentId);
+            const badge = statusBadgeMap[c.status] || { label: c.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+            const isPassed = c.status !== 'ABSENT' && c.totalScore >= 5;
 
           return (
             <div
@@ -129,14 +133,22 @@ export function ExamReportTable({
               </div>
             </div>
           );
-        })}
-      </div>
+          })}
+        </div>
+        {reviewAttemptId && (
+          <ExamAttemptReviewModal
+            attemptId={reviewAttemptId}
+            onClose={() => setReviewAttemptId(null)}
+          />
+        )}
+      </>
     );
   }
 
   // 2. Dạng Thu Gọn (Compact View Mode)
   if (viewMode === 'compact') {
     return (
+      <>
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
           <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
@@ -188,9 +200,21 @@ export function ExamReportTable({
                     {c.status === 'ABSENT' ? 'Vắng' : c.totalScore}
                   </td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
-                    <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
-                      <Eye className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="flex items-center justify-end gap-1">
+                      {c.attemptId && (
+                        <button
+                          type="button"
+                          onClick={() => setReviewAttemptId(c.attemptId!)}
+                          className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[10px] font-bold transition cursor-pointer"
+                          title="Xem chi tiết bài làm"
+                        >
+                          <Eye className="h-3 w-3" />
+                        </button>
+                      )}
+                      <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
+                        <Eye className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
@@ -198,11 +222,19 @@ export function ExamReportTable({
           </tbody>
         </table>
       </div>
+      {reviewAttemptId && (
+        <ExamAttemptReviewModal
+          attemptId={reviewAttemptId}
+          onClose={() => setReviewAttemptId(null)}
+        />
+      )}
+    </>
     );
   }
 
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
+    <>
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
         <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
@@ -324,11 +356,22 @@ export function ExamReportTable({
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
+                    {c.attemptId && (
+                      <button
+                        type="button"
+                        onClick={() => setReviewAttemptId(c.attemptId!)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[10.5px] font-bold transition cursor-pointer"
+                        title="Xem chi tiết bài làm"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        <span>Bài làm</span>
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
                       className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                      title="Xem chi tiết thí sinh"
+                      title="Xem hồ sơ thí sinh"
                     >
                       <Eye className="h-4 w-4" />
                     </button>
@@ -340,5 +383,13 @@ export function ExamReportTable({
         </tbody>
       </table>
     </div>
+
+    {reviewAttemptId && (
+      <ExamAttemptReviewModal
+        attemptId={reviewAttemptId}
+        onClose={() => setReviewAttemptId(null)}
+      />
+    )}
+  </>
   );
 }

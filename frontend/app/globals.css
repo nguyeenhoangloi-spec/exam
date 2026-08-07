@@ -61,6 +61,10 @@
     margin-left: 76px !important;
   }
 
+  html.sidebar-collapsed header.app-header-fixed {
+    left: 76px !important;
+  }
+
   html.sidebar-collapsed .sidebar-text-node {
     opacity: 0 !important;
     max-width: 0 !important;
@@ -125,8 +129,8 @@ html.dark .app-shell-main .border-slate-200,
 html.dark .app-shell-main .border-slate-200\/70,
 html.dark .app-shell-main .border-slate-200\/80,
 html.dark .app-shell-main .border-slate-200\/90,
-html.dark .app-shell-main .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
-html.dark .app-shell-main .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+html.dark .app-shell-main .divide-slate-100> :not([hidden])~ :not([hidden]),
+html.dark .app-shell-main .divide-slate-200> :not([hidden])~ :not([hidden]) {
   border-color: rgb(51 65 85) !important;
 }
 

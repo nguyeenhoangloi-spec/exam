@@ -743,6 +743,111 @@ export class OnlineExamsService {
   }
 
   /**
+   * Xem toàn bộ bài làm chi tiết của sinh viên (Review Attempt Details)
+   */
+  async getAttemptReviewDetails(user: any, attemptId: string) {
+    const attempt = await this.prisma.examAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        student: true,
+        snapshot: true,
+        attemptAnswers: {
+          include: { essayGrades: { include: { criterion: true } } },
+        },
+        incidents: true,
+        proctoringEvents: { orderBy: { occurredAt: 'desc' } },
+        onlineExamConfig: {
+          include: {
+            examSchedule: {
+              include: {
+                subject: true,
+              },
+            },
+            examPaper: true,
+          },
+        },
+      },
+    }) as any;
+
+    if (!attempt) {
+      throw new NotFoundException('Không tìm thấy phiên làm bài thi');
+    }
+
+    const isAdminOrTeacher = ['ADMIN', 'TEACHER'].includes(user?.role);
+    if (!isAdminOrTeacher && attempt.student.userId !== user?.id) {
+      throw new ForbiddenException('Bạn không có quyền xem bài làm của thí sinh này');
+    }
+
+    const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
+    const answersMap = new Map<string, any>();
+    for (const ans of attempt.attemptAnswers) {
+      answersMap.set(ans.questionId, ans);
+    }
+
+    const questionsReview = snapshotQuestions.map((q: any, idx: number) => {
+      const studentAns = answersMap.get(q.questionId);
+      const selectedOptionIds = (studentAns?.selectedOptionIds as string[]) || [];
+      const textAnswer = studentAns?.textAnswer || '';
+
+      const correctOptionIds = (q.options || [])
+        .filter((opt: any) => opt.isCorrect)
+        .map((opt: any) => opt.id);
+
+      const isCorrect =
+        selectedOptionIds.length > 0 &&
+        selectedOptionIds.length === correctOptionIds.length &&
+        selectedOptionIds.every((id) => correctOptionIds.includes(id));
+
+      return {
+        order: idx + 1,
+        questionId: q.questionId,
+        code: q.code || `Q${idx + 1}`,
+        type: q.type || 'MULTIPLE_CHOICE',
+        content: q.content,
+        difficulty: q.difficulty,
+        maxScore: q.score || 0.25,
+        options: q.options || [],
+        explanation: q.explanation || '',
+        studentSelection: {
+          selectedOptionIds,
+          textAnswer,
+          isCorrect: q.type === 'ESSAY' ? null : isCorrect,
+          finalScore: q.type === 'ESSAY' ? studentAns?.finalScore : isCorrect ? (q.score || 0.25) : 0,
+          teacherComment: studentAns?.teacherComment || '',
+          essayGrades: studentAns?.essayGrades || [],
+        },
+      };
+    });
+
+    return {
+      attemptId: attempt.id,
+      student: {
+        studentCode: attempt.student.studentCode,
+        fullName: attempt.student.fullName,
+        className: attempt.student.className,
+      },
+      paper: {
+        paperCode: attempt.onlineExamConfig?.examPaper?.paperCode || 'STD',
+        subjectName: attempt.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Môn thi',
+        durationMinutes: attempt.onlineExamConfig?.examPaper?.durationMinutes || 60,
+      },
+      attemptInfo: {
+        status: attempt.status,
+        startTime: attempt.startTime,
+        submittedAt: attempt.submittedAt,
+        totalScore: attempt.totalScore,
+        maxScore: attempt.maxScore || 10,
+        riskScore: attempt.riskScore,
+        isFlagged: attempt.isFlagged,
+        gradingStatus: attempt.gradingStatus,
+      },
+      questions: questionsReview,
+      incidents: attempt.incidents,
+      proctoringEvents: isAdminOrTeacher ? attempt.proctoringEvents : [],
+    };
+  }
+
+  /**
    * Gửi giải trình nếu phiên thi bị đánh dấu vi phạm
    */
   async submitAppeal(studentUserId: number, attemptId: string, appealText: string) {
@@ -856,6 +961,7 @@ export class OnlineExamsService {
 
       candidatesMap.set(st.id, {
         ...existing,
+        attemptId: att.id,
         status: att.status,
         totalScore: att.totalScore || 0,
         maxScore: att.maxScore || 10,

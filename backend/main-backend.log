@@ -10149,3 +10149,375 @@ Error: listen EADDRINUSE: address already in use :::3001
 }
 
 Node.js v24.18.1
+[2J[3J[H[[90m4:43:50 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m4:43:58 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +210ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +16ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSecurityModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +30ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDepartmentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClassesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStudentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubjectsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContactModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProctorModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTrashModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTeachersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamRoomsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPeriodsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSchedulesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamArrangementModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamSupervisorsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mQuestionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExamPapersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEssayModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOnlineExamsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +113ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +10ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/change-password, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/profile, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/dashboard-stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDepartmentsController {/departments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, GET} route[39m[38;5;3m +11ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, PATCH} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id/curriculum/:subjectId, DELETE} route[39m[38;5;3m +21ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/departments/:id, DELETE} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClassesController {/classes}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, GET} route[39m[38;5;3m +19ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/classes/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStudentsController {/students}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-schedule, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/my-curriculum, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, GET} route[39m[38;5;3m +16ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/students/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTeachersController {/teachers}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/status, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/my-assignments/:id/attendance-sheet, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/lock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id/unlock, POST} route[39m[38;5;3m +16ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers, POST} route[39m[38;5;3m +63ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/teachers/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubjectsController {/subjects}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/chapters, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enrollments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id/enroll-students, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/subjects/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamRoomsController {/exam-rooms}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/lock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id/unlock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-rooms/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPeriodsController {/exam-periods}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/lock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-periods/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSchedulesController {/exam-schedules}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/conflicts, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/trash, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/auto-apply, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/lock, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/unlock, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules, POST} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id, DELETE} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/reopen-entry, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-schedules/:id/restore, POST} route[39m[38;5;3m +16ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamArrangementController {/exam-arrangement}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/auto-arrange, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/result, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/room-availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/reset/:examScheduleId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-arrangement/history, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamSupervisorsController {/exam-supervisors}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/assign, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-preview, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/auto-assign, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id/status, PATCH} route[39m[38;5;3m +19ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-supervisors/:id, DELETE} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mQuestionsController {/questions}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/statistics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/filter-options, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/template, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/preview, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/upload, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/media/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/export, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/bulk-action, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/preview, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/import/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-generate, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-save, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/ai-extract-text, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, GET} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/duplicate, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/reject, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/archive, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id/restore, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/questions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mExamPapersController {/exam-papers}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/create-random, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/preview-random, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/publish, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/archive, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id/restore, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/exam-papers/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard/overview, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOnlineExamsController {/online-exams}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/check-eligibility, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/start, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/questions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/answers/save, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/heartbeat, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/events, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:token/submit, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/result, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/attempt/:attemptId/appeal, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exams/schedule/:scheduleId/grade-report, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProctorController {/proctor}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/live-dashboard/:scheduleRoomId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/extend-time, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/flag-incident, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/proctor/attempt/:attemptId/resolve-incident, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayController {/essay}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/questions/:questionId/rubric, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/assignments, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/answers/:answerId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay/attempt/:token/answers/:questionId/files, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayGradingController {/essay-grading}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/assignments, GET} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId, PATCH} route[39m[38;5;3m +14ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/answers/:answerId/ai-suggest, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/submit, POST} route[39m[38;5;3m +17ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/approve, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/publish, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/reopen, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/extend-time, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/essay-grading/attempts/:attemptId/penalty, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEssayConfigController {/online-exam-config}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/online-exam-config/:scheduleId/essay, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContactController {/contact}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/contact/send, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/grade-essay, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/generate-questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTrashController {/trash}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/trash/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/trash/items, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/trash/restore, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:12 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/trash/permanent, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 19684  - [39m08/06/2026, 4:44:13 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +146ms[39m
+[31m[Nest] 19684  - [39m08/06/2026, 4:44:13 PM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +9ms[39m
+node:net:2009
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:2009:16)
+    at listenInCluster (node:net:2066:12)
+    at Server.listen (node:net:2171:7)
+    at ExpressAdapter.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\src\main.ts:41:3) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v24.18.1
+[2J[3J[H[[90m4:55:48 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m758[0m:[93m40[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'timestamp' does not exist in type 'ProctoringEventOrderByWithRelationInput | ProctoringEventOrderByWithRelationInput[]'.
+
+[7m758[0m         proctoringEvents: { orderBy: { timestamp: 'desc' } },
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m777[0m:[93m38[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m777[0m     if (!isAdminOrTeacher && attempt.student.userId !== user?.id) {
+[7m   [0m [91m                                     ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m781[0m:[93m47[0m - [91merror[0m[90m TS2339: [0mProperty 'snapshot' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m781[0m     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
+[7m   [0m [91m                                              ~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m783[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'attemptAnswers' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m783[0m     for (const ans of attempt.attemptAnswers) {
+[7m   [0m [91m                              ~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m825[0m:[93m30[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m825[0m         studentCode: attempt.student.studentCode,
+[7m   [0m [91m                             ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m826[0m:[93m27[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m826[0m         fullName: attempt.student.fullName,
+[7m   [0m [91m                          ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m827[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m827[0m         className: attempt.student.className,
+[7m   [0m [91m                           ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m830[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'onlineExamConfig' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'onlineExamConfigId'?
+
+[7m830[0m         paperCode: attempt.onlineExamConfig?.examPaper?.paperCode || 'STD',
+[7m   [0m [91m                           ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m831[0m:[93m30[0m - [91merror[0m[90m TS2551: [0mProperty 'onlineExamConfig' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'onlineExamConfigId'?
+
+[7m831[0m         subjectName: attempt.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Môn thi',
+[7m   [0m [91m                             ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m832[0m:[93m34[0m - [91merror[0m[90m TS2551: [0mProperty 'onlineExamConfig' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'onlineExamConfigId'?
+
+[7m832[0m         durationMinutes: attempt.onlineExamConfig?.examPaper?.durationMinutes || 60,
+[7m   [0m [91m                                 ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m845[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'incidents' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m845[0m       incidents: attempt.incidents,
+[7m   [0m [91m                         ~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m846[0m:[93m52[0m - [91merror[0m[90m TS2339: [0mProperty 'proctoringEvents' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m846[0m       proctoringEvents: isAdminOrTeacher ? attempt.proctoringEvents : [],
+[7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~[0m
+
+[[90m4:55:54 PM[0m] Found 12 errors. Watching for file changes.
+
+[2J[3J[H[[90m4:55:59 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m758[0m:[93m40[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'timestamp' does not exist in type 'ProctoringEventOrderByWithRelationInput | ProctoringEventOrderByWithRelationInput[]'.
+
+[7m758[0m         proctoringEvents: { orderBy: { timestamp: 'desc' } },
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m777[0m:[93m38[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m777[0m     if (!isAdminOrTeacher && attempt.student.userId !== user?.id) {
+[7m   [0m [91m                                     ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m781[0m:[93m47[0m - [91merror[0m[90m TS2339: [0mProperty 'snapshot' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m781[0m     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
+[7m   [0m [91m                                              ~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m783[0m:[93m31[0m - [91merror[0m[90m TS2339: [0mProperty 'attemptAnswers' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m783[0m     for (const ans of attempt.attemptAnswers) {
+[7m   [0m [91m                              ~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m825[0m:[93m30[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m825[0m         studentCode: attempt.student.studentCode,
+[7m   [0m [91m                             ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m826[0m:[93m27[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m826[0m         fullName: attempt.student.fullName,
+[7m   [0m [91m                          ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m827[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'student' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'studentId'?
+
+[7m827[0m         className: attempt.student.className,
+[7m   [0m [91m                           ~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m830[0m:[93m28[0m - [91merror[0m[90m TS2551: [0mProperty 'onlineExamConfig' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'onlineExamConfigId'?
+
+[7m830[0m         paperCode: attempt.onlineExamConfig?.examPaper?.paperCode || 'STD',
+[7m   [0m [91m                           ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m831[0m:[93m30[0m - [91merror[0m[90m TS2551: [0mProperty 'onlineExamConfig' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'onlineExamConfigId'?
+
+[7m831[0m         subjectName: attempt.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Môn thi',
+[7m   [0m [91m                             ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m832[0m:[93m34[0m - [91merror[0m[90m TS2551: [0mProperty 'onlineExamConfig' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'. Did you mean 'onlineExamConfigId'?
+
+[7m832[0m         durationMinutes: attempt.onlineExamConfig?.examPaper?.durationMinutes || 60,
+[7m   [0m [91m                                 ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m845[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'incidents' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m845[0m       incidents: attempt.incidents,
+[7m   [0m [91m                         ~~~~~~~~~[0m
+
+[96msrc/online-exams/online-exams.service.ts[0m:[93m846[0m:[93m52[0m - [91merror[0m[90m TS2339: [0mProperty 'proctoringEvents' does not exist on type '{ id: string; mode: ExamMode; attemptNumber: number; attemptToken: string; status: AttemptStatus; startTime: Date; endTime: Date; expectedEndTime: Date; ... 21 more ...; approvedById: number; }'.
+
+[7m846[0m       proctoringEvents: isAdminOrTeacher ? attempt.proctoringEvents : [],
+[7m   [0m [91m                                                   ~~~~~~~~~~~~~~~~[0m
+
+[[90m4:56:02 PM[0m] Found 12 errors. Watching for file changes.
+

@@ -57,7 +57,23 @@ function formatPaperForExport(paper: any) {
 }
 
 function questionChoices(q: any) {
-  if (Array.isArray(q.options) && q.options.length) return q.options.map((option: any, index: number) => ({ label: option.label || String.fromCharCode(65 + index), text: option.content || '', isCorrect: Boolean(option.isCorrect) })).filter((option: any) => option.text);
+  let opts = q.options;
+  if (typeof opts === 'string') {
+    try {
+      opts = JSON.parse(opts);
+    } catch {
+      opts = [];
+    }
+  }
+  if (Array.isArray(opts) && opts.length > 0) {
+    return opts
+      .map((option: any, index: number) => ({
+        label: option.label || String.fromCharCode(65 + index),
+        text: option.content || option.text || option.answer || '',
+        isCorrect: Boolean(option.isCorrect),
+      }))
+      .filter((option: any) => option.text);
+  }
   return [
     { label: 'A', text: q.optionA, isCorrect: q.correctAnswer === 'A' },
     { label: 'B', text: q.optionB, isCorrect: q.correctAnswer === 'B' },
@@ -683,37 +699,63 @@ export default function ExamPapersPage() {
               {((selectedPaper as any).details || selectedPaper.questions || []).map((detail: any, index: number) => {
                 const q = detail.question || detail;
                 const choices = questionChoices(q);
+                const answerText = q.correctAnswer || q.sampleAnswer || q.explanation || q.answer || q.solution || '';
 
                 return (
-                  <div key={detail.id || index} className="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-2 shadow-2xs">
+                  <div key={detail.id || index} className="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-3 shadow-2xs">
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-xs font-black text-slate-900 leading-snug">
                         Câu {index + 1}: {q.content}
                       </span>
-                      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
-                        {q.difficulty || 'DỄ'} · {detail.score || 0.25}đ
+                      <span className="shrink-0 rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700">
+                        {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'MULTIPLE_CHOICE' ? 'TRẮC NGHIỆM' : (q.type || 'CÂU HỎI')} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
-                      {choices.map((c) => {
-                        const isCorrect = c.isCorrect;
-                        return (
-                          <div
-                            key={c.label}
-                            className={`rounded-xl border p-2 font-medium transition ${
-                              showAnswers && isCorrect
-                                ? 'border-emerald-500 bg-emerald-50 text-emerald-900 font-bold'
-                                : 'border-slate-200 bg-slate-50/70 text-slate-700'
-                            }`}
-                          >
-                            <span className="font-black text-slate-900 mr-1.5">{c.label}.</span>
-                            <span>{c.text}</span>
-                            {showAnswers && isCorrect && <span className="ml-2 text-emerald-600 font-black">✓ Đáp án đúng</span>}
+                    {/* Dạng Trắc Nghiệm */}
+                    {choices.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                        {choices.map((c) => {
+                          const isCorrect = c.isCorrect;
+                          return (
+                            <div
+                              key={c.label}
+                              className={`rounded-xl border p-2.5 font-medium transition ${
+                                showAnswers && isCorrect
+                                  ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-extrabold'
+                                  : 'border-slate-200 bg-slate-50/70 text-slate-700'
+                              }`}
+                            >
+                              <span className="font-black text-slate-900 mr-1.5">{c.label}.</span>
+                              <span>{c.text}</span>
+                              {showAnswers && isCorrect && (
+                                <span className="ml-2 inline-flex items-center text-emerald-700 font-black text-[10.5px]">
+                                  ✓ Đáp án đúng
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      /* Dạng Tự Luận hoặc Không Có Trắc Nghiệm */
+                      <div className="text-xs pt-1">
+                        {showAnswers ? (
+                          <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
+                            <p className="font-black text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án & Thang điểm Tự luận:
+                            </p>
+                            <p className="font-semibold whitespace-pre-wrap leading-relaxed">
+                              {answerText || 'Đáp án tự luận mẫu / Hướng dẫn giải chi tiết cho câu hỏi này.'}
+                            </p>
                           </div>
-                        );
-                      })}
-                    </div>
+                        ) : (
+                          <p className="text-[11px] italic font-semibold text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            (Nội dung câu hỏi tự luận - Bấm nút &quot;Hiện Đáp án&quot; ở góc trên để xem đáp án gợi ý & thang điểm)
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}

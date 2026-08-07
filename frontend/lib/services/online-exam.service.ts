@@ -88,6 +88,13 @@ export const onlineExamService = {
     return res.data;
   },
 
+  async getAttemptReview(attemptId: string) {
+    const res = await api.get(`/online-exams/attempt/${attemptId}/review`, {
+      params: { noCache: true },
+    });
+    return res.data;
+  },
+
   async submitAppeal(attemptId: string, reason: string) {
     const res = await api.post(`/online-exams/attempt/${attemptId}/appeal`, { reason });
     return res.data;

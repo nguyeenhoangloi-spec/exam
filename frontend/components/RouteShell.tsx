@@ -129,7 +129,8 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                     } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
             >
                 <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
-                <main className="w-full min-h-[calc(100vh-56px)]">{children}</main>
+                {/* pt-14 (56px) matches the fixed header height (h-14) so content never hides underneath it */}
+                <main className="w-full pt-14 min-h-screen">{children}</main>
             </div>
         </div>
     );

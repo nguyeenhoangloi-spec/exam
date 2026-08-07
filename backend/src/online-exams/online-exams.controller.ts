@@ -138,6 +138,19 @@ export class OnlineExamsController {
   }
 
   /**
+   * GET /online-exams/attempt/:attemptId/review
+   * Xem toàn bộ chi tiết bài làm của sinh viên (Review câu hỏi, câu trả lời, đáp án)
+   */
+  @Get('attempt/:attemptId/review')
+  @Roles('STUDENT', 'TEACHER', 'ADMIN')
+  getAttemptReview(
+    @Request() req: any,
+    @Param('attemptId') attemptId: string,
+  ) {
+    return this.onlineExamsService.getAttemptReviewDetails(req.user, attemptId);
+  }
+
+  /**
    * POST /online-exams/attempt/:attemptId/appeal
    * Gửi giải trình nếu bị đánh dấu vi phạm
    */
