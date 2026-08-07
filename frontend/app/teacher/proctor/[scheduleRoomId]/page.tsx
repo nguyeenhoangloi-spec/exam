@@ -424,7 +424,7 @@ export default function ProctorDashboardPage() {
               {/* Modal header */}
               <div className="flex items-start gap-3.5 p-6 border-b border-slate-100">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  actionType === 'EXTEND' ? 'bg-blue-50' : actionType === 'REOPEN' ? 'bg-amber-50' : actionType === 'FLAG' ? 'bg-rose-50' : 'bg-violet-50'
+                  actionType === 'EXTEND' ? 'bg-blue-50' : actionType === 'REOPEN' ? 'bg-amber-50' : actionType === 'FLAG' ? 'bg-rose-50' : 'bg-blue-50'
                 }`}>
                   <MetaIcon className={`w-5 h-5 ${meta.color}`} />
                 </div>
@@ -570,7 +570,7 @@ export default function ProctorDashboardPage() {
                       actionType === 'EXTEND' ? 'bg-blue-600 hover:bg-blue-700' :
                       actionType === 'REOPEN' ? 'bg-amber-500 hover:bg-amber-600' :
                       actionType === 'FLAG' ? 'bg-rose-600 hover:bg-rose-700' :
-                      'bg-violet-600 hover:bg-violet-700',
+                      'bg-blue-600 hover:bg-blue-700',
                     ].join(' ')}
                   >
                     {processing ? (

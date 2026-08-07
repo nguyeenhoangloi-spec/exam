@@ -7,6 +7,7 @@ import { getAuthUser, getAuthToken, setAuthToken } from '../../lib/auth';
 import { User as UserType } from '../../types';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
+import { TabBar } from '../../components/ui/TabBar';
 import {
   User,
   Mail,
@@ -71,8 +72,8 @@ export default function ProfilePage() {
       const name = data.teacher?.fullName || data.student?.fullName || data.username || 'Admin';
       setFullName(name);
       setEmail(data.email || `${data.username}@exam.edu.vn`);
-      setPhone(data.teacher?.phone || data.student?.phone || '0988 123 456');
-      setAddress('Thành phố Hồ Chí Minh, Việt Nam');
+      setPhone(data.teacher?.phone || data.student?.phone || '');
+      setAddress(data.teacher?.address || data.student?.address || '');
     } catch (err: any) {
       const u = getAuthUser();
       if (u) {
@@ -90,8 +91,8 @@ export default function ProfilePage() {
         const name = u.teacher?.fullName || u.student?.fullName || u.username || 'Admin';
         setFullName(name);
         setEmail(u.email || `${u.username || 'user'}@exam.edu.vn`);
-        setPhone('0988 123 456');
-        setAddress('Thành phố Hồ Chí Minh, Việt Nam');
+        setPhone(u.teacher?.phone || u.student?.phone || '');
+        setAddress('');
       } else {
         router.push('/login');
       }
@@ -210,7 +211,7 @@ export default function ProfilePage() {
     profile?.role === 'ADMIN'
       ? 'bg-[#003896] text-white border-blue-400/40'
       : profile?.role === 'TEACHER'
-      ? 'bg-purple-600 text-white border-purple-400/40'
+      ? 'bg-blue-600 text-white border-blue-400/40'
       : 'bg-emerald-600 text-white border-emerald-400/40';
 
   const userCode =
@@ -353,44 +354,16 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Tabs Bar */}
-      <div className="flex border-b border-slate-200 gap-6">
-        <button
-          type="button"
-          onClick={() => setActiveTab('info')}
-          className={`pb-3 text-xs font-black transition cursor-pointer border-b-2 ${
-            activeTab === 'info'
-              ? 'border-[#003896] text-[#003896]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          Thông tin chi tiết
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('permissions')}
-          className={`pb-3 text-xs font-black transition cursor-pointer border-b-2 ${
-            activeTab === 'permissions'
-              ? 'border-[#003896] text-[#003896]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          Nhật ký & Phân quyền
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('edit')}
-          className={`pb-3 text-xs font-black transition cursor-pointer border-b-2 ${
-            activeTab === 'edit'
-              ? 'border-[#003896] text-[#003896]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          Chỉnh sửa hồ sơ cá nhân
-        </button>
-      </div>
+      {/* Navigation Tabs */}
+      <TabBar
+        tabs={[
+          { key: 'info', label: 'Thông tin chi tiết' },
+          { key: 'permissions', label: 'Nhật ký & Phân quyền' },
+          { key: 'edit', label: 'Chỉnh sửa hồ sơ cá nhân' },
+        ]}
+        active={activeTab}
+        onChange={(key) => setActiveTab(key as any)}
+      />
 
       {/* Tab 1: Info Details */}
       {activeTab === 'info' && (

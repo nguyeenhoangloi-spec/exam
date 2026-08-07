@@ -310,7 +310,7 @@ export default function QuestionBankPage() {
         q.content,
         q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'MEDIUM' ? 'Trung bình' : 'Khó',
         q.status === 'APPROVED' ? 'Đã duyệt' : q.status === 'PENDING' ? 'Chờ duyệt' : q.status === 'DRAFT' ? 'Nháp' : q.status,
-        q.createdByName || q.createdBy?.fullName || 'Nguyễn Văn A',
+        q.createdByName || q.createdBy?.fullName || '—',
       ]);
 
       exportToFormattedExcel({

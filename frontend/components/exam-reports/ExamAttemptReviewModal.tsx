@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -286,7 +286,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           {data?.questions?.some((q: any) => q.type === 'ESSAY') ? (
             <a
               href={`/teacher/essay-grading?attemptId=${attemptId}`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold transition shadow-xs"
             >
               📝 Chấm / Sửa Điểm Tự Luận
             </a>

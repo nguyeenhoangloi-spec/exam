@@ -161,11 +161,12 @@ export class ExamPapersService {
         include: { options: { orderBy: { order: 'asc' } }, essayRubrics: { orderBy: { sortOrder: 'asc' } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } } },
       });
 
-      // A paper type must select only compatible question types. This prevents
-      // essay questions leaking into multiple-choice papers (and vice versa)
-      // when both kinds exist under the same subject.
-      const isCompatibleType = (question: { type: string }) =>
-        schedule.examType === 'TU_LUAN' ? question.type === 'ESSAY' : question.type !== 'ESSAY';
+      const isCompatibleType = (question: { type: string }) => {
+        if (schedule.examType === 'TU_LUAN') return question.type === 'ESSAY';
+        if (schedule.examType === 'DIEN_LO' || schedule.examType === 'FILL_BLANK') return question.type === 'FILL_BLANK';
+        if (schedule.examType === 'TRAC_NGHIEM') return question.type !== 'ESSAY' && question.type !== 'FILL_BLANK';
+        return true;
+      };
       const byDifficulty = {
         EASY: approvedQuestions.filter((question) => question.difficulty === 'EASY' && isCompatibleType(question)),
         MEDIUM: approvedQuestions.filter((question) => question.difficulty === 'MEDIUM' && isCompatibleType(question)),

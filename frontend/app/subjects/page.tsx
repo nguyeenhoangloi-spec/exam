@@ -235,8 +235,7 @@ export default function SubjectsPage() {
     e.preventDefault();
     if (!enrollSubject || selectedStudentIds.length === 0) return;
     try {
-      await api.post('/student-subjects/bulk', {
-        subjectId: enrollSubject.id,
+      await api.post(`/subjects/${enrollSubject.id}/enroll-students`, {
         studentIds: selectedStudentIds,
         semester: enrollData.semester,
         schoolYear: enrollData.schoolYear,

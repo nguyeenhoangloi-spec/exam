@@ -15,10 +15,11 @@ module.exports = {
           300: '#93c5fd',
           400: '#60a5fa',
           500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
+          600: '#2563eb', // Primary Standard #2563EB
+          700: '#1d4ed8', // Primary Hover #1D4ED8
           800: '#1e40af',
           900: '#1e3a8a',
+          950: '#172554', // Sidebar Hover #172554
         },
         success: {
           50: '#f0fdf4',

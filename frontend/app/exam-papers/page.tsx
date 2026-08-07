@@ -20,6 +20,7 @@ import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICard
 import { ExamPaperMatrixForm } from '../../components/exam-papers/ExamPaperMatrixForm';
 import { ExamPaperTableToolbar } from '../../components/exam-papers/ExamPaperTableToolbar';
 import { ExamPaperTable } from '../../components/exam-papers/ExamPaperTable';
+import { TabBar } from '../../components/ui/TabBar';
 import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
 
 function formatPaperForExport(paper: any) {
@@ -212,7 +213,7 @@ export default function ExamPapersPage() {
     setFormData((previous) => scheduleType === 'TU_LUAN'
       ? { ...previous, examType: scheduleType, easyCount: '3', mediumCount: '2', hardCount: '0' }
       : { ...previous, examType: scheduleType, easyCount: '16', mediumCount: '16', hardCount: '8' });
-  }, [selectedSchedule?.id]);
+  }, [selectedSchedule?.examType, selectedSchedule?.id]);
   const scheduleDuration = selectedSchedule
     ? (() => {
         const [startHour, startMinute] = selectedSchedule.startTime.split(':').map(Number);
@@ -531,46 +532,22 @@ export default function ExamPapersPage() {
           />
         )}
 
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-              {[
-                { id: 'ALL', label: 'Tất cả đề thi', count: kpiData.total, badgeClass: 'bg-blue-100 text-blue-700' },
-                { id: 'PUBLISHED', label: 'Đã phát hành', count: kpiData.publishedCount, badgeClass: 'bg-emerald-100 text-emerald-700' },
-                { id: 'DRAFT', label: 'Bản nháp', count: kpiData.draftCount, badgeClass: 'bg-amber-100 text-amber-700' },
-                { id: 'ARCHIVED', label: 'Lưu trữ', count: kpiData.archivedCount, badgeClass: 'bg-slate-100 text-slate-700' },
-              ].map((tab) => {
-                const isActive = statusFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => {
-                      setStatusFilter(tab.id);
-                      setPage(1);
-                    }}
-                    className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition cursor-pointer shrink-0 ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                    }`}
-                  >
-                    <span>{tab.label}</span>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                        isActive ? 'bg-white/20 text-white' : tab.badgeClass
-                      }`}
-                    >
-                      {tab.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        {/* Status Tabs & Search Row */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-1">
+          <TabBar
+            tabs={[
+              { key: 'ALL', label: 'Tất cả đề thi', count: kpiData.total },
+              { key: 'PUBLISHED', label: 'Đã phát hành', count: kpiData.publishedCount },
+              { key: 'DRAFT', label: 'Bản nháp', count: kpiData.draftCount },
+              { key: 'ARCHIVED', label: 'Lưu trữ', count: kpiData.archivedCount },
+            ]}
+            active={statusFilter}
+            onChange={(key) => { setStatusFilter(key); setPage(1); }}
+            className="border-b-0 pt-0 w-auto"
+          />
 
-          <div className="relative flex-1 min-w-[260px]">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+          <div className="relative w-full md:w-80 shrink-0 pb-1 md:pb-0">
+            <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã đề, Tên môn học..."
@@ -579,7 +556,7 @@ export default function ExamPapersPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-8 py-1.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
             {search && (
               <button
@@ -588,7 +565,7 @@ export default function ExamPapersPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -665,7 +642,7 @@ export default function ExamPapersPage() {
                 <span className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700 border border-emerald-200">
                   {selectedPaper.totalScore} điểm
                 </span>
-                <span className="rounded-lg bg-purple-50 px-2.5 py-1 text-xs font-black text-purple-700 border border-purple-200">
+                <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-black text-slate-700 border border-slate-200">
                   {selectedPaper.durationMinutes} phút
                 </span>
               </div>
@@ -746,7 +723,7 @@ export default function ExamPapersPage() {
                               <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án & Thang điểm Tự luận:
                             </p>
                             <p className="font-semibold whitespace-pre-wrap leading-relaxed">
-                              {answerText || 'Đáp án tự luận mẫu / Hướng dẫn giải chi tiết cho câu hỏi này.'}
+                              {answerText || 'Chưa có đáp án mẫu hoặc hướng dẫn chấm cho câu hỏi này.'}
                             </p>
                           </div>
                         ) : (

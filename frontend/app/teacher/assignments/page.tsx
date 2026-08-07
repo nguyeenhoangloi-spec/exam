@@ -254,10 +254,10 @@ export default function TeacherAssignmentsPage() {
   };
 
   const KPI = [
-    { label: 'Tổng ca coi thi', value: `${assignments.length} ca`, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'text-sky-700', bg: 'bg-sky-50', border: 'border-sky-200' },
-    { label: 'Giám thị 1 (Chính)', value: `${sup1Count} ca`, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-    { label: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length} ca`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
-    { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
+    { label: 'Tổng ca coi thi', value: `${assignments.length} ca`, subtext: 'Học kỳ hiện tại', icon: Calendar, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Giám thị 1 (Chính)', value: `${sup1Count} ca`, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length} ca`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200/60' },
+    { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
   ];
 
   return (
@@ -398,8 +398,8 @@ export default function TeacherAssignmentsPage() {
                         </span>
                         <span
                           className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${item.role === 'SUPERVISOR_1'
-                            ? 'bg-sky-50 text-sky-800 border border-sky-200'
-                            : 'bg-violet-50 text-violet-800 border border-violet-200'
+                            ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                            : 'bg-slate-100 text-slate-700 border border-slate-200'
                             }`}
                         >
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
@@ -508,7 +508,7 @@ export default function TeacherAssignmentsPage() {
         avatarText="GT"
         badge={{
           label: drawerDuty?.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
-          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-violet-50 text-violet-700 border-violet-200',
+          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-slate-100 text-slate-700 border-slate-200',
         }}
         details={[
           { label: 'Môn thi', value: drawerDuty?.subjectName, icon: BookOpen },

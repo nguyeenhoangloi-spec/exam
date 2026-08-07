@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
+import { StatusBadge } from '../common/StatusBadge';
 import { ExamPaper } from '../../types';
 
 const statusStyle: Record<string, { label: string; className: string }> = {
@@ -83,9 +84,7 @@ export function ExamPaperTable({
                     </button>
                   </div>
 
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border ${badge.className}`}>
-                    {badge.label}
-                  </span>
+                  <StatusBadge status={p.status} />
                 </div>
 
                 <div>
@@ -200,9 +199,7 @@ export function ExamPaperTable({
                     </p>
                   </td>
                   <td className="p-2 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10.5px] font-bold border ${badge.className}`}>
-                      {badge.label}
-                    </span>
+                    <StatusBadge status={p.status} />
                   </td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{qCount} câu</td>
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{p.durationMinutes} phút</td>
@@ -298,9 +295,7 @@ export function ExamPaperTable({
 
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border ${badge.className}`}>
-                      {badge.label}
-                    </span>
+                    <StatusBadge status={p.status} />
                   </td>
                 )}
 

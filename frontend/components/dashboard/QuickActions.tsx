@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import {
@@ -86,8 +86,8 @@ const quickActions: QuickActionItem[] = [
     desc: 'Thống kê',
     icon: BarChart3,
     route: '/reports',
-    iconBg: 'bg-purple-50',
-    iconColor: 'text-purple-600',
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
   },
 ];
 

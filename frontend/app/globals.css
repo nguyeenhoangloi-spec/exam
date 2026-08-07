@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ui-page: #f8fafc;
+  --ui-surface: #ffffff;
+  --ui-surface-muted: #f1f5f9;
+  --ui-text: #0f172a;
+  --ui-text-muted: #64748b;
+  --ui-border: #e2e8f0;
+  --ui-primary: #005cc7;
+  --ui-primary-hover: #0047aa;
+  --ui-radius: 0.75rem;
+}
+
+html.dark {
+  --ui-page: #020617;
+  --ui-surface: #0f172a;
+  --ui-surface-muted: #1e293b;
+  --ui-text: #e2e8f0;
+  --ui-text-muted: #94a3b8;
+  --ui-border: #334155;
+  --ui-primary: #4e95f5;
+  --ui-primary-hover: #86bbff;
+}
+
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased;
@@ -17,6 +40,26 @@
   html.dark body {
     @apply bg-slate-950 text-slate-100;
   }
+
+  button, input, select, textarea {
+    font: inherit;
+  }
+
+  button:not(:disabled), [role='button']:not([aria-disabled='true']) {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .ui-page { @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100; }
+  .ui-card { @apply rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900; }
+  .ui-card-header { @apply border-b border-slate-100 px-5 py-4 dark:border-slate-800; }
+  .ui-table-wrap { @apply overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900; }
+  .ui-table { @apply min-w-full text-left text-sm; }
+  .ui-table thead { @apply bg-slate-50 text-xs font-bold uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-400; }
+  .ui-table th { @apply whitespace-nowrap px-4 py-3.5; }
+  .ui-table td { @apply border-t border-slate-100 px-4 py-3.5 text-slate-700 dark:border-slate-800 dark:text-slate-200; }
+  .ui-table tbody tr { @apply transition-colors hover:bg-primary-50/60 dark:hover:bg-primary-950/25; }
 }
 
 /* Custom sleek thin scrollbars */
@@ -211,6 +254,59 @@ html.dark .app-shell-main .group:hover .group-hover\:bg-slate-50 {
   background-color: rgb(30 41 59) !important;
 }
 
+/* Purple/violet used to be sprinkled across older admin screens for ordinary
+   actions. They are now aliases of the single primary blue brand color. */
+.app-shell-main .bg-purple-50,
+.app-shell-main .bg-violet-50 { background-color: rgb(237 245 255) !important; }
+.app-shell-main .bg-purple-100,
+.app-shell-main .bg-violet-100 { background-color: rgb(217 234 255) !important; }
+.app-shell-main .bg-purple-600,
+.app-shell-main .bg-violet-600 { background-color: rgb(0 92 199) !important; }
+.app-shell-main .bg-purple-700,
+.app-shell-main .bg-violet-700 { background-color: rgb(0 71 170) !important; }
+.app-shell-main .text-purple-600,
+.app-shell-main .text-purple-700,
+.app-shell-main .text-purple-800,
+.app-shell-main .text-purple-900,
+.app-shell-main .text-purple-950,
+.app-shell-main .text-violet-600,
+.app-shell-main .text-violet-700,
+.app-shell-main .text-violet-800,
+.app-shell-main .text-violet-900 { color: rgb(0 71 170) !important; }
+.app-shell-main .border-purple-200,
+.app-shell-main .border-purple-300,
+.app-shell-main .border-violet-200,
+.app-shell-main .border-violet-300 { border-color: rgb(184 215 255) !important; }
+.app-shell-main .hover\:bg-purple-700:hover,
+.app-shell-main .hover\:bg-violet-700:hover { background-color: rgb(0 71 170) !important; }
+.app-shell-main .from-purple-500,
+.app-shell-main .from-purple-600,
+.app-shell-main .from-violet-500,
+.app-shell-main .from-violet-600 {
+  --tw-gradient-from: rgb(0 92 199) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(0 92 199 / 0) var(--tw-gradient-to-position) !important;
+}
+.app-shell-main .to-purple-500,
+.app-shell-main .to-purple-600,
+.app-shell-main .to-violet-500,
+.app-shell-main .to-violet-600 {
+  --tw-gradient-to: rgb(22 118 223) var(--tw-gradient-to-position) !important;
+}
+
+html.dark .app-shell-main .bg-purple-50,
+html.dark .app-shell-main .bg-purple-100,
+html.dark .app-shell-main .bg-violet-50,
+html.dark .app-shell-main .bg-violet-100 { background-color: rgb(23 48 92 / 0.62) !important; }
+html.dark .app-shell-main .text-purple-600,
+html.dark .app-shell-main .text-purple-700,
+html.dark .app-shell-main .text-purple-800,
+html.dark .app-shell-main .text-purple-900,
+html.dark .app-shell-main .text-purple-950,
+html.dark .app-shell-main .text-violet-600,
+html.dark .app-shell-main .text-violet-700,
+html.dark .app-shell-main .text-violet-800,
+html.dark .app-shell-main .text-violet-900 { color: rgb(147 197 253) !important; }
+
 html.dark .app-shell-main .hover\:text-slate-900:hover,
 html.dark .app-shell-main .hover\:text-slate-800:hover,
 html.dark .app-shell-main .hover\:text-slate-700:hover {
@@ -244,3 +340,12 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
     left: 0 !important;
   }
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

@@ -1,112 +1,84 @@
-import React, { useRef } from 'react';
+'use client';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'warning';
-type ButtonSize = 'xs' | 'sm' | 'md';
+import React from 'react';
+import { Loader2 } from 'lucide-react';
 
-type ButtonProps = {
-    children: React.ReactNode;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    disabled?: boolean;
-    loading?: boolean;
-    type?: 'button' | 'submit';
-    className?: string;
-    title?: string;
-    ariaLabel?: string;
-    icon?: React.ReactNode;
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'icon';
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  isLoading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  icon?: React.ReactNode;
+  children?: React.ReactNode;
+}
+
+const variantStyles: Record<ButtonVariant, string> = {
+  primary:
+    'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/25',
+  secondary:
+    'bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 border border-slate-200/80 focus:ring-2 focus:ring-slate-400/20',
+  outline:
+    'bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 border border-slate-300 focus:ring-2 focus:ring-blue-500/20',
+  ghost:
+    'bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200 border border-transparent focus:ring-2 focus:ring-slate-400/20',
+  danger:
+    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/25',
+  success:
+    'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-emerald-500/25',
 };
 
-const variantClasses: Record<ButtonVariant, string> = {
-    primary:
-        'bg-primary-600 text-white border border-primary-600 hover:bg-primary-700 hover:border-primary-700 shadow-xs hover:shadow-md focus-visible:ring-primary-200',
-    secondary:
-        'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-2xs focus-visible:ring-slate-200',
-    ghost:
-        'bg-transparent text-slate-600 border border-transparent hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-200',
-    danger:
-        'bg-danger-500 text-white border border-danger-500 hover:bg-danger-600 hover:border-danger-600 shadow-xs focus-visible:ring-danger-200',
-    success:
-        'bg-success-500 text-white border border-success-500 hover:bg-success-600 hover:border-success-600 shadow-xs focus-visible:ring-success-100',
-    warning:
-        'bg-warning-500 text-white border border-warning-500 hover:bg-warning-600 hover:border-warning-600 shadow-xs focus-visible:ring-warning-200',
+const sizeStyles: Record<ButtonSize, string> = {
+  xs: 'h-7 px-2.5 text-[11px] font-semibold rounded-[8px] gap-1',
+  sm: 'h-8 px-3 text-xs font-semibold rounded-[10px] gap-1.5',
+  md: 'h-10 px-4 text-xs font-semibold rounded-[10px] gap-2',
+  lg: 'h-11 px-5 text-sm font-semibold rounded-[10px] gap-2',
+  icon: 'h-10 w-10 p-0 rounded-[10px] justify-center items-center',
 };
 
-const sizeClasses: Record<ButtonSize, string> = {
-    xs: 'px-2.5 py-1.5 text-[11px] gap-1.5 rounded-lg',
-    sm: 'px-3.5 py-2 text-xs gap-2 rounded-xl',
-    md: 'px-4 py-2.5 text-sm gap-2 rounded-xl',
-};
-
-/**
- * Primary interactive button with ripple feedback, focus ring for keyboard
- * navigation and loading spinner. No layout shift on state change.
- */
-export function Button({
-    children,
-    onClick,
-    variant = 'primary',
-    size = 'sm',
-    disabled = false,
-    loading = false,
-    type = 'button',
-    className = '',
-    title,
-    ariaLabel,
-    icon,
-}: ButtonProps) {
-    const rippleRef = useRef<HTMLSpanElement | null>(null);
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        // Lightweight ripple
-        const button = event.currentTarget;
-        const ripple = rippleRef.current;
-        if (ripple) {
-            const rect = button.getBoundingClientRect();
-            const diameter = Math.max(rect.width, rect.height);
-            const size = `${diameter}px`;
-            ripple.style.width = size;
-            ripple.style.height = size;
-            ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
-            ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
-            ripple.classList.remove('animate-ripple');
-            void ripple.offsetWidth; // restart animation
-            ripple.classList.add('animate-ripple');
-        }
-        onClick?.(event);
-    };
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      variant = 'primary',
+      size = 'md',
+      isLoading = false,
+      leftIcon,
+      rightIcon,
+      icon,
+      className = '',
+      disabled,
+      children,
+      type = 'button',
+      ...props
+    },
+    ref,
+  ) => {
+    const isBtnDisabled = disabled || isLoading;
+    const effectiveLeftIcon = leftIcon || icon;
 
     return (
-        <button
-            type={type}
-            onClick={handleClick}
-            disabled={disabled || loading}
-            title={title}
-            aria-label={ariaLabel}
-            className={[
-                'relative inline-flex items-center justify-center overflow-hidden font-semibold cursor-pointer select-none',
-                'transition-all duration-200 active:scale-[0.97]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
-                'disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100',
-                variantClasses[variant],
-                sizeClasses[size],
-                className,
-            ].join(' ')}
-        >
-            {icon ? <span className="shrink-0">{icon}</span> : null}
-            {loading ? (
-                <span
-                    className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
-                    aria-hidden="true"
-                />
-            ) : null}
-            <span className="relative z-[1]">{children}</span>
-            <span
-                ref={rippleRef}
-                className="pointer-events-none absolute rounded-full bg-white/25 opacity-0 [animation-duration:600ms]"
-                style={{ transform: 'translate(-50%, -50%)' }}
-                aria-hidden="true"
-            />
-        </button>
+      <button
+        ref={ref}
+        type={type}
+        disabled={isBtnDisabled}
+        className={`inline-flex items-center justify-center font-sans tracking-tight transition-all duration-150 ease-in-out cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        {...props}
+      >
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin shrink-0 text-current" />
+        ) : (
+          <>
+            {effectiveLeftIcon && <span className="shrink-0">{effectiveLeftIcon}</span>}
+            {children}
+            {rightIcon && <span className="shrink-0">{rightIcon}</span>}
+          </>
+        )}
+      </button>
     );
-}
+  },
+);
+
+Button.displayName = 'Button';

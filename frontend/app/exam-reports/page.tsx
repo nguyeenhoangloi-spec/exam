@@ -16,6 +16,7 @@ import { ExamReportKPICards } from '../../components/exam-reports/ExamReportKPIC
 import { ExamReportTableToolbar } from '../../components/exam-reports/ExamReportTableToolbar';
 import { ExamReportTable, CandidateReport } from '../../components/exam-reports/ExamReportTable';
 import { ExamReportPaginationBar } from '../../components/exam-reports/ExamReportPaginationBar';
+import { TabBar } from '../../components/ui/TabBar';
 
 interface GradeReportResponse {
   schedule: {
@@ -623,55 +624,17 @@ export default function ExamReportsPage() {
                           )}
                         </div>
 
-                        {/* Row 1: Segmented Control Tabs (Nút chọn dạng Tab gọn gàng) */}
-                        <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-200/70 w-fit">
-                          <button
-                            type="button"
-                            onClick={() => setModalModeFilter('ALL')}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                              modalModeFilter === 'ALL'
-                                ? 'bg-white text-slate-900 shadow-2xs'
-                                : 'text-slate-600 hover:text-slate-900'
-                            }`}
-                          >
-                            Tất cả ({modeCounts.all})
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setModalModeFilter('OFFICIAL')}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                              modalModeFilter === 'OFFICIAL'
-                                ? 'bg-white text-blue-700 shadow-2xs'
-                                : 'text-slate-600 hover:text-slate-900'
-                            }`}
-                          >
-                            Chính thức ({modeCounts.official})
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setModalModeFilter('MOCK')}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                              modalModeFilter === 'MOCK'
-                                ? 'bg-white text-amber-700 shadow-2xs'
-                                : 'text-slate-600 hover:text-slate-900'
-                            }`}
-                          >
-                            Thi thử ({modeCounts.mock})
-                          </button>
-                          {modeCounts.retake > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => setModalModeFilter('RETAKE')}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                                modalModeFilter === 'RETAKE'
-                                  ? 'bg-white text-purple-700 shadow-2xs'
-                                  : 'text-slate-600 hover:text-slate-900'
-                              }`}
-                            >
-                              Thi lại ({modeCounts.retake})
-                            </button>
-                          )}
-                        </div>
+                        {/* Row 1: Status Tabs */}
+                        <TabBar
+                          tabs={[
+                            { key: 'ALL', label: 'Tất cả', count: modeCounts.all },
+                            { key: 'OFFICIAL', label: 'Chính thức', count: modeCounts.official },
+                            { key: 'MOCK', label: 'Thi thử', count: modeCounts.mock },
+                            ...(modeCounts.retake > 0 ? [{ key: 'RETAKE', label: 'Thi lại', count: modeCounts.retake }] : []),
+                          ]}
+                          active={modalModeFilter}
+                          onChange={(key) => setModalModeFilter(key as any)}
+                        />
 
                         {/* Row 2: Secondary Dropdown Filters */}
                         <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60">

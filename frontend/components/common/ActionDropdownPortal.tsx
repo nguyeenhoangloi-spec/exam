@@ -65,7 +65,7 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
         ref={buttonRef}
         type="button"
         onClick={toggleMenu}
-        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+        className="inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
         title="Thao tác khác"
       >
         {trigger || <MoreVertical className="h-4 w-4" />}

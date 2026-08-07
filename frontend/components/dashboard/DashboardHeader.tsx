@@ -35,40 +35,38 @@ export function DashboardHeader({
   }, [isRefreshing]);
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between pb-2">
-      {/* Left Title & Subtitle matching Screenshot */}
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-slate-900">Tổng quan hệ thống</h1>
-        <p className="mt-0.5 text-xs font-medium text-slate-500">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
+      {/* Title & Subtitle matching QuestionBankHeader standard */}
+      <div className="space-y-1">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+          Tổng quan hệ thống
+        </h1>
+        <p className="text-xs font-semibold text-slate-500">
           Theo dõi tình hình tổ chức thi và các công việc cần xử lý
         </p>
       </div>
 
-      {/* Right Action Toolbar Controls matching Screenshot */}
-      <div className="flex flex-col items-end gap-1 shrink-0">
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Date pill */}
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs">
-            <Calendar className="h-4 w-4 shrink-0 text-blue-600" />
-            <span>{currentDateStr}</span>
-          </div>
-
-          {/* Refresh button with dropdown arrow matching Screenshot */}
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-blue-600 shadow-2xs transition hover:bg-slate-50 active:scale-95 disabled:opacity-50 cursor-pointer"
-          >
-            <RefreshCw className={`h-4 w-4 text-blue-600 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Làm mới dữ liệu</span>
-          </button>
+      {/* Right Controls: Date Text, Refresh Button */}
+      <div className="flex flex-wrap items-center gap-3 shrink-0">
+        {/* Date & timestamp as clean flat text without icons */}
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 select-none">
+          <span className="text-slate-700 font-bold">{currentDateStr}</span>
+          {lastUpdatedStr && (
+            <span className="hidden sm:inline text-[11px] text-slate-400 font-medium">
+              (Cập nhật {lastUpdatedStr})
+            </span>
+          )}
         </div>
 
-        {/* Timestamp subtext matching Screenshot */}
-        <span className="text-[11px] font-medium text-slate-400 pr-1">
-          Cập nhật lần cuối: {lastUpdatedStr}
-        </span>
+        {/* Refresh button without leading icon */}
+        <button
+          type="button"
+          onClick={onRefresh}
+          disabled={isRefreshing}
+          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-blue-600 shadow-2xs transition hover:bg-slate-50 active:scale-95 disabled:opacity-50 cursor-pointer select-none"
+        >
+          {isRefreshing ? 'Đang làm mới...' : 'Làm mới'}
+        </button>
       </div>
     </div>
   );

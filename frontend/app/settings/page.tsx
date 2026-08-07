@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
+import { TabBar } from '../../components/ui/TabBar';
 import {
   Settings,
   Bell,
@@ -154,44 +155,16 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Tabs Bar */}
-      <div className="flex border-b border-slate-200 dark:border-slate-700 gap-6">
-        <button
-          type="button"
-          onClick={() => setActiveTab('notifications')}
-          className={`pb-3 text-xs font-black transition cursor-pointer border-b-2 flex items-center gap-2 ${activeTab === 'notifications'
-            ? 'border-[#003896] dark:border-blue-400 text-[#003896] dark:text-blue-400'
-            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
-        >
-          <Bell className="h-4 w-4" />
-          <span>Cấu hình thông báo</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('appearance')}
-          className={`pb-3 text-xs font-black transition cursor-pointer border-b-2 flex items-center gap-2 ${activeTab === 'appearance'
-            ? 'border-[#003896] dark:border-blue-400 text-[#003896] dark:text-blue-400'
-            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
-        >
-          <Sliders className="h-4 w-4" />
-          <span>Giao diện & Theme</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('security')}
-          className={`pb-3 text-xs font-black transition cursor-pointer border-b-2 flex items-center gap-2 ${activeTab === 'security'
-            ? 'border-[#003896] dark:border-blue-400 text-[#003896] dark:text-blue-400'
-            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
-        >
-          <Shield className="h-4 w-4" />
-          <span>Bảo mật & Quyền riêng tư</span>
-        </button>
-      </div>
+      {/* Navigation Tabs */}
+      <TabBar
+        tabs={[
+          { key: 'notifications', label: 'Cấu hình thông báo' },
+          { key: 'appearance', label: 'Giao diện & Theme' },
+          { key: 'security', label: 'Bảo mật & Quyền riêng tư' },
+        ]}
+        active={activeTab}
+        onChange={(key) => setActiveTab(key as any)}
+      />
 
       {/* Form Container */}
       <form onSubmit={handleSaveSettings}>
@@ -258,7 +231,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
                 <div className="space-y-0.5">
                   <span className="text-xs font-black text-slate-900 dark:text-slate-100 block flex items-center gap-1.5">
-                    {isDarkMode ? <Moon className="h-4 w-4 text-purple-600" /> : <Sun className="h-4 w-4 text-amber-500" />}
+                    {isDarkMode ? <Moon className="h-4 w-4 text-blue-600" /> : <Sun className="h-4 w-4 text-amber-500" />}
                     Chế độ Dark Mode (Giao diện tối)
                   </span>
                   <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">Chuyển đổi giao diện sáng / tối cho toàn bộ màn hình</span>

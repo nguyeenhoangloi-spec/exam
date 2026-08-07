@@ -290,15 +290,31 @@ export class ExamArrangementService {
   }
 
   async getArrangementResults(examScheduleId: number) {
-    const schedule = await this.prisma.examSchedule.findFirst({ where: { id: examScheduleId, deletedAt: null }, select: { id: true } });
+    const schedule = await this.prisma.examSchedule.findFirst({
+      where: { id: examScheduleId, deletedAt: null },
+      select: { id: true, subjectId: true },
+    });
     if (!schedule) throw new NotFoundException('Không tìm thấy ca thi.');
+
+    const majorSubjects = await this.prisma.majorSubject.findMany({
+      where: { subjectId: schedule.subjectId },
+      include: { department: true },
+    });
+    const majorSubjectMap = new Map(majorSubjects.map((ms) => [ms.departmentId, ms]));
+
     const scheduleRooms = await this.prisma.examScheduleRoom.findMany({
       where: { examScheduleId },
       include: {
         room: true,
         examRoomStudents: {
           include: {
-            student: { include: { class: true } },
+            student: {
+              include: {
+                class: {
+                  include: { department: true },
+                },
+              },
+            },
           },
           orderBy: { seatNumber: 'asc' },
         },
@@ -308,7 +324,25 @@ export class ExamArrangementService {
       },
     });
 
-    return scheduleRooms;
+    return scheduleRooms.map((sr) => ({
+      ...sr,
+      examRoomStudents: sr.examRoomStudents.map((ers) => {
+        const deptId = ers.student?.class?.departmentId;
+        const deptName = ers.student?.class?.department?.name || 'Khoa Công nghệ thông tin';
+        const majorSub = deptId ? majorSubjectMap.get(deptId) : null;
+        const requirementType = majorSub ? majorSub.type : 'ELECTIVE';
+        const requirementLabel = majorSub
+          ? `${deptName} • ${majorSub.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}`
+          : `${deptName} • Tự chọn ngoài khung`;
+
+        return {
+          ...ers,
+          requirementType,
+          requirementLabel,
+          departmentName: deptName,
+        };
+      }),
+    }));
   }
 
   async getRoomAvailability(examScheduleId: number) {

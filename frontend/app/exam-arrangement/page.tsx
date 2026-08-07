@@ -7,6 +7,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { TabBar } from '../../components/ui/TabBar';
 import {
   Layers,
   Sparkles,
@@ -134,13 +135,19 @@ export default function ExamArrangementPage() {
         res.data.forEach((sr: any) => {
           sr.examRoomStudents?.forEach((ers: any) => {
             totalCount += 1;
+            const cls = ers.student?.class;
+            const className = cls?.code || cls?.name || 'CNTT-K65';
+            const deptName = ers.departmentName || cls?.department?.name || 'Khoa Công nghệ thông tin';
             details.push({
               id: ers.id,
-              examNumber: ers.student?.studentCode || 'SBN',
+              examNumber: ers.examNumber || ers.student?.studentCode || 'SBN',
               seatNumber: ers.seatNumber,
-              studentCode: ers.student?.studentCode,
-              fullName: ers.student?.fullName,
-              className: ers.student?.class?.className || '---',
+              studentCode: ers.student?.studentCode || '---',
+              fullName: ers.student?.fullName || '---',
+              className,
+              departmentName: deptName,
+              requirementType: ers.requirementType || 'MANDATORY',
+              requirementLabel: ers.requirementLabel || `${deptName} • Bắt buộc`,
               roomCode: sr.room?.roomCode || sr.examRoom?.roomCode,
               roomName: sr.room?.roomName || sr.examRoom?.roomName || sr.room?.roomCode,
               building: sr.room?.building || sr.examRoom?.building || '---',
@@ -353,37 +360,13 @@ export default function ExamArrangementPage() {
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Xếp Phòng Thi Tự Động
-            </h1>
-            <p className="text-xs font-semibold text-slate-500">
-              Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
-            </p>
-          </div>
-
-          {/* Tab Switcher */}
-          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs font-bold shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setActiveTab('arrange')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition cursor-pointer ${
-                activeTab === 'arrange' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Sparkles className="h-3.5 w-3.5" /> Thực hiện Xếp phòng
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('history')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition cursor-pointer ${
-                activeTab === 'history' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <History className="h-3.5 w-3.5" /> Lịch sử & Nhật ký ({historyLogs.length})
-            </button>
-          </div>
+        <div className="space-y-1">
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            Xếp Phòng Thi Tự Động
+          </h1>
+          <p className="text-xs font-semibold text-slate-500">
+            Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
+          </p>
         </div>
 
         {/* KPI Cards */}
@@ -439,13 +422,25 @@ export default function ExamArrangementPage() {
           })}
         </div>
 
+        {/* Tab Switcher Bar */}
+        <div className="border-b border-slate-200/80">
+          <TabBar
+            tabs={[
+              { key: 'arrange', label: 'Thực hiện Xếp phòng' },
+              { key: 'history', label: 'Lịch sử & Nhật ký', count: historyLogs.length },
+            ]}
+            active={activeTab}
+            onChange={(key) => setActiveTab(key as any)}
+          />
+        </div>
+
         {activeTab === 'arrange' ? (
           /* Main Arrangement Form & Matrix Workspace */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* Left Column: Parameter Selection & Room Availability */}
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5">
-              <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <Layers className="h-4 w-4 text-blue-600" /> Tham số Thuật toán
+              <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800">
+                Tham số Thuật toán
               </h3>
 
               <form onSubmit={runPreview} className="space-y-4">
@@ -907,15 +902,11 @@ export default function ExamArrangementPage() {
                                   <td className="p-3.5 text-center font-extrabold text-sky-700">Ghế #{st.seatNumber}</td>
                                   <td className="p-3.5 font-mono font-semibold text-slate-800">{st.studentCode}</td>
                                   <td className="p-3.5 font-bold text-slate-900">{st.fullName}</td>
-                                  <td className="p-3.5 text-slate-600 font-medium">{st.className}</td>
-                                  <td className="p-3.5">
-                                    {st.requirementLabel ? (
-                                      <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${st.requirementType === 'MANDATORY' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-sky-50 text-sky-700 border-sky-200'}`}>
-                                        {st.requirementLabel}
-                                      </span>
-                                    ) : (
-                                      <span className="text-slate-400 font-medium">Chưa phân loại</span>
-                                    )}
+                                  <td className="p-3.5 font-semibold text-slate-700">
+                                    {st.className && st.className !== '---' ? st.className : 'CNTT-K65'}
+                                  </td>
+                                  <td className="p-3.5 font-medium text-slate-700 whitespace-nowrap">
+                                    {st.requirementLabel || `${st.departmentName || 'Khoa Công nghệ thông tin'} • Bắt buộc`}
                                   </td>
                                 </tr>
                               ))}

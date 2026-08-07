@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, AlertTriangle, CheckCircle, LogOut, Info } from 'lucide-react';
+import { Button } from './ui';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -79,19 +80,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     }
   };
 
-  const getButtonBgClass = () => {
-    switch (type) {
-      case 'danger':
-        return 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200';
-      case 'success':
-        return 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200';
-      case 'info':
-        return 'bg-[#003896] hover:bg-[#002d78] text-white shadow-blue-200';
-      default:
-        return 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-200';
-    }
-  };
-
   const iconConfig = getIconConfig();
 
   return createPortal(
@@ -138,20 +126,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Footer Actions - Compact Buttons */}
         <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-4.5 py-3 sm:px-5 sm:py-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl border border-slate-200/90 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer shadow-2xs"
-          >
+          <Button variant="outline" size="sm" onClick={onClose}>
             {cancelText}
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            className={`rounded-xl px-4 py-2 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer ${getButtonBgClass()}`}
-          >
+          </Button>
+          <Button variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'secondary'} size="sm" onClick={handleConfirm}>
             {confirmText}
-          </button>
+          </Button>
         </div>
       </div>
     </div>,

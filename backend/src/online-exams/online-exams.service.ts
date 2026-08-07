@@ -11,12 +11,14 @@ import {
   EligibilityErrorCode,
   EligibilityInput,
 } from './eligibility-checker.service';
+import { EssayService } from '../essay/essay.service';
 
 @Injectable()
 export class OnlineExamsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eligibilityChecker: EligibilityCheckerService,
+    private readonly essayService: EssayService,
   ) {}
 
   /**
@@ -711,6 +713,10 @@ export class OnlineExamsService {
         },
       });
     });
+    // 🤖 Trigger AI auto-grade ngay sau khi SV nộp bài có câu tự luận (fire-and-forget)
+    if (hasEssay) {
+      this.essayService.autoGradeAttempt(updated.id).catch(() => void 0);
+    }
 
     return {
       success: true,

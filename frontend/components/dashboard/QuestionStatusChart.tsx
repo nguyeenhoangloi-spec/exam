@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
 import { ChevronDown } from 'lucide-react';
 
 export function QuestionStatusChart({ data }: { data?: DashboardOverview['questionStatus'] }) {
   const [filter, setFilter] = useState('Tất cả');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Find counts from real API data
   const pendingCount = data?.find((x) => x.status === 'PENDING')?.count ?? 0;
@@ -71,33 +76,37 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       <div className="flex-1 flex flex-row items-center justify-between gap-6 py-4 min-w-0 my-auto">
         {/* Large Donut Canvas */}
         <div className="relative h-52 w-52 shrink-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                dataKey="count"
-                nameKey="label"
-                innerRadius={58}
-                outerRadius={92}
-                paddingAngle={3}
-                stroke="none"
-              >
-                {chartData.map((item) => (
-                  <Cell key={item.status} fill={item.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                }}
-                formatter={(value, name) => [`${Number(value).toLocaleString('vi-VN')} câu`, name]}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          {mounted ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="count"
+                  nameKey="label"
+                  innerRadius={58}
+                  outerRadius={92}
+                  paddingAngle={3}
+                  stroke="none"
+                >
+                  {chartData.map((item) => (
+                    <Cell key={item.status} fill={item.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                  }}
+                  formatter={(value, name) => [`${Number(value).toLocaleString('vi-VN')} câu`, name]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full w-full rounded-full bg-slate-100 animate-pulse" />
+          )}
 
           {/* Large Center Text */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
@@ -109,17 +118,19 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
           </div>
         </div>
 
-        {/* Large Legend List on Right */}
-        <div className="flex-1 min-w-0 space-y-4">
+        {/* Legend List on Right */}
+        <div className="flex-1 min-w-0 space-y-3">
           {chartData.map((item) => (
-            <div key={item.status} className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2 min-w-0">
-                <span className="h-3.5 w-3.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
-                <span className="text-sm font-extrabold text-slate-800 truncate">{item.label}</span>
-              </span>
-              <div className="text-right shrink-0 whitespace-nowrap">
-                <span className="text-base font-black text-slate-900">{item.count.toLocaleString('vi-VN')}</span>{' '}
-                <span className="text-xs text-slate-400 font-bold ml-1">({item.percent})</span>
+            <div key={item.status} className="flex flex-col gap-0.5 border-b border-slate-100 pb-2 last:border-b-0">
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2 min-w-0">
+                  <span className="h-2.5 w-2.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
+                  <span className="text-xs font-extrabold text-slate-800 truncate">{item.label}</span>
+                </span>
+                <span className="text-xs font-black text-slate-900">{item.count.toLocaleString('vi-VN')}</span>
+              </div>
+              <div className="text-right text-[11px] text-slate-400 font-medium">
+                {item.percent} tổng số câu hỏi
               </div>
             </div>
           ))}

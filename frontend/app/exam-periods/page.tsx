@@ -213,8 +213,7 @@ export default function ExamPeriodsPage() {
           setToast({ message: 'Đã xóa kỳ thi thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
-          setPeriods((prev) => prev.filter((x) => x.id !== id));
-          setToast({ message: 'Đã xóa kỳ thi thành công!', type: 'success' });
+          setToast({ message: err?.response?.data?.message || err?.message || 'Không thể xóa kỳ thi vì đang có dữ liệu liên quan.', type: 'error' });
         }
       },
     });

@@ -99,9 +99,11 @@ export function ExamPaperMatrixForm({
     periodName: s.periodName     || s.period?.name            || s.examPeriod?.name || 'Kỳ thi',
   });
 
-  const switchType = (type: 'TRAC_NGHIEM' | 'TU_LUAN') => {
+  const switchType = (type: 'TRAC_NGHIEM' | 'DIEN_LO' | 'TU_LUAN') => {
     if (type === 'TU_LUAN') {
       setFormData((p: any) => ({ ...p, examType: type, ...ESSAY_DEFAULTS }));
+    } else if (type === 'DIEN_LO') {
+      setFormData((p: any) => ({ ...p, examType: type, easyCount: '3', mediumCount: '2', hardCount: '1' }));
     } else {
       const d = formData.durationMinutes === '90' ? MC_90 : MC_60;
       setFormData((p: any) => ({ ...p, examType: type, ...d }));
@@ -153,38 +155,47 @@ export function ExamPaperMatrixForm({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-start">
 
           {/* 1. Loại đề */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 col-span-2 sm:col-span-1">
             <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
               Loại đề <span className="text-red-500">*</span>
             </label>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-3 gap-1">
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[11px] font-extrabold border transition cursor-pointer ${
-                  !isEssay
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${
+                  examType === 'TRAC_NGHIEM'
                     ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                     : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
                 }`}
               >
-                <CheckSquare className="h-3 w-3 shrink-0" />
                 TN
               </button>
               <button
                 type="button"
+                onClick={() => switchType('DIEN_LO')}
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${
+                  examType === 'DIEN_LO' || examType === 'FILL_BLANK'
+                    ? 'bg-blue-700 text-white border-blue-700 shadow-sm'
+                    : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
+                }`}
+              >
+                Điền lỗ
+              </button>
+              <button
+                type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[11px] font-extrabold border transition cursor-pointer ${
-                  isEssay
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${
+                  examType === 'TU_LUAN'
                     ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                     : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700'
                 }`}
               >
-                <FileText className="h-3 w-3 shrink-0" />
                 TL
               </button>
             </div>
             <p className="text-[9.5px] text-slate-400 font-semibold">
-              {isEssay ? 'Tự luận' : 'Trắc nghiệm'}
+              {examType === 'DIEN_LO' || examType === 'FILL_BLANK' ? 'Điền vào chỗ trống' : isEssay ? 'Tự luận' : 'Trắc nghiệm'}
             </p>
           </div>
 
@@ -464,7 +475,7 @@ export function ExamPaperMatrixForm({
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
                 className={`rounded-md px-2.5 py-1 transition cursor-pointer ${
                   formData.selectionMode === 'BY_SCORE'
-                    ? 'bg-purple-600 text-white shadow-2xs'
+                    ? 'bg-blue-600 text-white shadow-2xs'
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
@@ -475,8 +486,9 @@ export function ExamPaperMatrixForm({
 
           {formData.selectionMode === 'BY_SCORE' ? (
             <div className="space-y-2">
-              <p className="text-[11px] text-purple-700 font-semibold bg-purple-50 p-2 rounded-lg border border-purple-200">
-                💡 Hệ thống sẽ tự động quét Ngân hàng câu hỏi & lấy điểm gốc từng câu để tìm tập hợp phù hợp với tổng điểm độ khó bên dưới.
+              <p className="text-[11.5px] text-slate-600 font-semibold flex items-center gap-1.5 px-0.5 py-1">
+                <Sparkles className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+                <span>Hệ thống tự động quét Ngân hàng câu hỏi & lấy điểm gốc để tìm tập hợp khớp với thang điểm bên dưới.</span>
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {[
@@ -499,7 +511,7 @@ export function ExamPaperMatrixForm({
                       max={10}
                       value={(formData as any)[key] || ''}
                       onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                      className="w-full rounded-lg border border-purple-200 bg-purple-50/30 px-2.5 py-1.5 text-sm font-black text-purple-900 outline-none focus:bg-white transition"
+                      className="w-full rounded-lg border border-blue-200 bg-blue-50/20 px-2.5 py-1.5 text-sm font-black text-slate-900 outline-none focus:bg-white transition"
                     />
                   </div>
                 ))}
@@ -540,8 +552,8 @@ export function ExamPaperMatrixForm({
         {/* ── FOOTER ── */}
         <div className="flex items-center justify-between gap-3 pt-1">
           {isPublished ? (
-            <p className="text-xs font-bold text-red-600 flex items-center gap-1.5 bg-red-50 px-3 py-1.5 rounded-lg border border-red-200">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+            <p className="text-xs font-bold text-rose-600 flex items-center gap-1.5">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-rose-500" />
               Lịch thi này đã có đề công bố. Không thể sinh thêm đề tự động.
             </p>
           ) : currentTotal < 1 ? (

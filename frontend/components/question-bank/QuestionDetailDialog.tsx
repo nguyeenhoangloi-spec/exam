@@ -165,7 +165,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                   <User className="h-3.5 w-3.5 text-blue-500" /> Người tạo
                 </span>
-                <p className="font-extrabold text-slate-800">{question.createdByName || question.createdBy?.fullName || 'Nguyễn Văn A'}</p>
+                <p className="font-extrabold text-slate-800">{question.createdByName || question.createdBy?.fullName || '—'}</p>
               </div>
 
               <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">

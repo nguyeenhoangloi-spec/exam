@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Users, School, Mail, Phone, CheckCircle2, MoreVertical } from 'lucide-react';
+import { StatusBadge } from '../common/StatusBadge';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { Student } from '../../types';
 
 interface StudentTableProps {
@@ -70,10 +72,7 @@ export function StudentTable({
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-black text-emerald-700">
-                    <CheckCircle2 className="h-3 w-3" />
-                    Đang học
-                  </span>
+                  <StatusBadge status="CONFIRMED" customLabel="Đang học" />
                 </div>
 
                 <div>
@@ -315,25 +314,12 @@ export function StudentTable({
                     </button>
 
                     {isAdmin && (
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setActiveMenuId(activeMenuId === s.id ? null : s.id)}
-                          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-
-                        {activeMenuId === s.id && (
-                          <div
-                            className={`absolute right-2 ${
-                              isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
-                            } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
-                            onMouseLeave={() => setActiveMenuId(null)}
-                          >
+                      <ActionDropdownPortal>
+                        {(closeMenu) => (
+                          <>
                             <button
                               type="button"
-                              onClick={() => { setActiveMenuId(null); onDetail(s); }}
+                              onClick={() => { closeMenu(); onDetail(s); }}
                               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
                             >
                               <Eye className="h-3.5 w-3.5 text-slate-500" />
@@ -341,7 +327,7 @@ export function StudentTable({
                             </button>
                             <button
                               type="button"
-                              onClick={() => { setActiveMenuId(null); onEdit(s); }}
+                              onClick={() => { closeMenu(); onEdit(s); }}
                               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-amber-50 text-amber-700"
                             >
                               <Edit className="h-3.5 w-3.5 text-amber-500" />
@@ -349,15 +335,15 @@ export function StudentTable({
                             </button>
                             <button
                               type="button"
-                              onClick={() => { setActiveMenuId(null); onDelete(s.id); }}
+                              onClick={() => { closeMenu(); onDelete(s.id); }}
                               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                               <span>Xóa Sinh viên</span>
                             </button>
-                          </div>
+                          </>
                         )}
-                      </div>
+                      </ActionDropdownPortal>
                     )}
                   </div>
                 </td>

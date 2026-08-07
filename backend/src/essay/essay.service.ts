@@ -468,7 +468,7 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
       try {
         const aiRes = await this.aiService.gradeEssay({
           questionText: snapshot.content,
-          sampleAnswer: snapshot.explanation || 'Kiểm tra mức độ đúng đắn của bài làm so với nội dung câu hỏi.',
+          sampleAnswer: snapshot.explanation || '',
           answerText: answer.textAnswer || '(Sinh viên không nhập văn bản)',
           criteria: rubric.map((r) => ({
             criterionId: r.id,
@@ -918,5 +918,138 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
     });
 
     return created;
+  }
+
+  /**
+   * Auto-grade all ESSAY answers for an attempt using AI immediately after student submits.
+   * Runs as a background fire-and-forget job. Does NOT throw on failure.
+   */
+  async autoGradeAttempt(attemptId: string): Promise<void> {
+    try {
+      const attempt = await this.prisma.examAttempt.findUnique({
+        where: { id: attemptId },
+        include: { snapshot: true },
+      });
+      if (!attempt) return;
+
+      const snapshot = (attempt.snapshot?.snapshotData as any[]) || [];
+      const essayQuestions = snapshot.filter((q) => q.type === 'ESSAY');
+      if (!essayQuestions.length) return;
+
+      const answers = await this.prisma.attemptAnswer.findMany({
+        where: { attemptId, questionId: { in: essayQuestions.map((q) => q.questionId) } },
+      });
+
+      // System actor for AI grading
+      const systemActor = { id: 0, role: 'SYSTEM' };
+
+      for (const qs of essayQuestions) {
+        const answer = answers.find((a) => a.questionId === qs.questionId);
+        if (!answer) continue;
+
+        // Skip if already graded
+        if (answer.gradingStatus === 'GRADED') continue;
+
+        const rubric = await this.prisma.essayRubricCriterion.findMany({
+          where: { questionId: qs.questionId },
+          orderBy: { sortOrder: 'asc' },
+        });
+
+        // Build default rubric if none defined
+        const effectiveRubric = rubric.length
+          ? rubric
+          : [{ id: `auto-${qs.questionId}`, label: 'Nội dung tổng quát', maxScore: qs.maxScore ?? 10, description: '', sortOrder: 1, questionId: qs.questionId, createdAt: new Date(), updatedAt: new Date() }];
+
+        let criteria: { criterionId: string; score: number; comment: string }[] = [];
+        let overallComment = '';
+
+        try {
+          const aiRes = await this.aiService.gradeEssay({
+            questionText: qs.content,
+            sampleAnswer: qs.explanation || '',
+            answerText: (answer.textAnswer as string) || '(Sinh viên không nhập nội dung)',
+            criteria: effectiveRubric.map((r) => ({ criterionId: r.id, label: r.label, maxScore: r.maxScore, description: r.description })),
+          });
+
+          if (aiRes && Array.isArray(aiRes.criteriaGrades) && aiRes.criteriaGrades.length) {
+            const byId = new Map(effectiveRubric.map((r) => [r.id, r]));
+            const parsed = aiRes.criteriaGrades
+              .map((item: any) => {
+                const r = byId.get(String(item.criterionId));
+                if (!r) return null;
+                return { criterionId: r.id, score: Math.min(Math.max(Number(item.score) || 0, 0), r.maxScore), comment: String(item.comment || '').trim() };
+              })
+              .filter(Boolean) as { criterionId: string; score: number; comment: string }[];
+            if (parsed.length) {
+              criteria = parsed;
+              overallComment = String(aiRes.generalFeedback || '').trim();
+            }
+          }
+        } catch (aiErr: any) {
+          this.logger.warn(`[AutoGrade] AI failed for answer ${answer.id}: ${aiErr?.message}. Using heuristic.`);
+        }
+
+        // Heuristic fallback
+        if (!criteria.length) {
+          const rawAns = ((answer.textAnswer as string) || '').trim();
+          const refText = (qs.content + ' ' + (qs.explanation || '')).toLowerCase();
+          const words = rawAns.toLowerCase().split(/\s+/).filter((w) => w.length > 2);
+          const matched = words.filter((w) => refText.includes(w));
+          const ratio = words.length > 0 ? matched.length / words.length : 0;
+          const factor = rawAns.length < 10 ? 0 : ratio > 0.25 || rawAns.length > 80 ? 0.75 : ratio > 0.1 ? 0.5 : 0.25;
+
+          criteria = effectiveRubric.map((r) => ({
+            criterionId: r.id,
+            score: Number((r.maxScore * factor).toFixed(2)),
+            comment: factor === 0 ? 'AI: Bài làm chưa có nội dung hợp lệ.' : 'AI: Chấm tự động dựa trên phân tích nội dung.',
+          }));
+          overallComment = 'Chấm tự động bằng AI heuristic (chờ GV xem xét).';
+        }
+
+        const totalScore = Number(criteria.reduce((s, c) => s + c.score, 0).toFixed(2));
+
+        await this.prisma.$transaction(async (tx) => {
+          // Upsert từng tiêu chí vào EssayGrade
+          for (const item of criteria) {
+            await tx.essayGrade.upsert({
+              where: { attemptAnswerId_criterionId: { attemptAnswerId: answer.id, criterionId: item.criterionId } },
+              create: { attemptAnswerId: answer.id, criterionId: item.criterionId, score: item.score, comment: item.comment, gradedById: null },
+              update: { score: item.score, comment: item.comment },
+            });
+          }
+          // Cập nhật answer: lưu điểm AI, đánh dấu AI đã chấm
+          await tx.attemptAnswer.update({
+            where: { id: answer.id },
+            data: {
+              finalScore: totalScore,
+              teacherComment: overallComment,
+              gradingStatus: 'GRADED',
+              aiSuggestedScore: totalScore,
+              aiSuggestedComment: overallComment,
+            },
+          });
+        });
+
+        this.logger.log(`[AutoGrade] AI graded answer ${answer.id} → ${totalScore}đ`);
+      }
+
+      // Sau khi chấm xong tất cả câu, cập nhật attempt → UNDER_REVIEW (chờ GV xem xét)
+      const totalEssayScore = (
+        await this.prisma.attemptAnswer.findMany({ where: { attemptId, questionId: { in: essayQuestions.map((q) => q.questionId) } } })
+      ).reduce((s, a) => s + (a.finalScore ?? 0), 0);
+
+      await this.prisma.examAttempt.update({
+        where: { id: attemptId },
+        data: {
+          gradingStatus: EssayAttemptGradingStatus.UNDER_GRADING,
+          totalScore: Number(totalEssayScore.toFixed(2)),
+        },
+      });
+
+      this.logger.log(`[AutoGrade] Attempt ${attemptId} auto-graded. Total essay score: ${totalEssayScore}`);
+    } catch (err: any) {
+      // Fire-and-forget: không throw, chỉ log lỗi
+      this.logger.error(`[AutoGrade] Failed for attempt ${attemptId}: ${err?.message}`);
+    }
   }
 }

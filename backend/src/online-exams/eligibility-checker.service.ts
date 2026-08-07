@@ -532,16 +532,46 @@ export class EligibilityCheckerService {
 
   /**
    * Kiểm tra clientIp có nằm trong whitelist không
-   * Hỗ trợ: IP đơn (192.168.1.1) và prefix/subnet đơn giản (192.168.1.)
+   * Hỗ trợ: IP đơn (192.168.1.1), prefix/subnet đơn giản (192.168.1.)
+   * và CIDR IPv4 (192.168.1.0/24).
    */
   private checkIpWhitelist(clientIp: string, whitelist: string[]): boolean {
     return whitelist.some((entry) => {
+      const normalizedEntry = entry.trim();
+      const normalizedClientIp = clientIp.trim();
+
       // Exact match
-      if (clientIp === entry) return true;
+      if (normalizedClientIp === normalizedEntry) return true;
       // Prefix match (ví dụ: "192.168.1." khớp với "192.168.1.100")
-      if (entry.endsWith('.') && clientIp.startsWith(entry)) return true;
-      // CIDR (TODO: cần lib `ip-cidr` cho production)
-      return false;
+      if (normalizedEntry.endsWith('.') && normalizedClientIp.startsWith(normalizedEntry)) return true;
+
+      const [network, prefixText, ...rest] = normalizedEntry.split('/');
+      if (rest.length || prefixText === undefined) return false;
+
+      const prefix = Number(prefixText);
+      const networkValue = this.ipv4ToInteger(network);
+      const clientValue = this.ipv4ToInteger(normalizedClientIp);
+      if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32 || networkValue === null || clientValue === null) {
+        return false;
+      }
+
+      const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+      return (networkValue & mask) === (clientValue & mask);
     });
+  }
+
+  private ipv4ToInteger(value: string): number | null {
+    const octets = value.split('.');
+    if (octets.length !== 4) return null;
+
+    let result = 0;
+    for (const octetText of octets) {
+      if (!/^\d{1,3}$/.test(octetText)) return null;
+      const octet = Number(octetText);
+      if (octet < 0 || octet > 255) return null;
+      result = (result * 256) + octet;
+    }
+
+    return result >>> 0;
   }
 }

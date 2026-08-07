@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, GraduationCap, Building2, Mail, Phone, MoreVertical } from 'lucide-react';
 import { Teacher } from '../../types';
+import { Badge } from '../ui/Badge';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 
 const DEGREE_BADGE: Record<string, string> = {
-  'GS.TS': 'bg-purple-50 text-purple-700 border-purple-200',
-  'PGS.TS': 'bg-violet-50 text-violet-700 border-violet-200',
-  'TS': 'bg-blue-50 text-blue-700 border-blue-200',
-  'ThS': 'bg-sky-50 text-sky-700 border-sky-200',
+  'GS.TS': 'border-l-blue-600 bg-blue-50/60 text-blue-900 border-slate-200/80',
+  'PGS.TS': 'border-l-blue-600 bg-blue-50/60 text-blue-900 border-slate-200/80',
+  'TS': 'border-l-blue-600 bg-blue-50/60 text-blue-900 border-slate-200/80',
+  'ThS': 'border-l-blue-600 bg-blue-50/60 text-blue-900 border-slate-200/80',
 };
 
 interface TeacherTableProps {
@@ -79,9 +81,9 @@ export function TeacherTable({
                     </button>
                   </div>
 
-                  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10.5px] font-black ${degreeBadge}`}>
+                  <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
                     {t.degree || 'TS'}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div>
@@ -197,9 +199,9 @@ export function TeacherTable({
                     </span>
                   </td>
                   <td className="p-2 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-black ${degreeBadge}`}>
+                    <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
                       {t.degree || 'TS'}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-2 text-slate-700 min-w-[140px]">{t.department?.name || '---'}</td>
                   <td className="p-2 text-slate-500 min-w-[170px]">{t.email}</td>
@@ -285,9 +287,9 @@ export function TeacherTable({
 
                 {visibleColumns.degree !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10.5px] font-black ${degreeBadge}`}>
+                    <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
                       {t.degree || 'TS'}
-                    </span>
+                    </Badge>
                   </td>
                 )}
 
@@ -330,25 +332,12 @@ export function TeacherTable({
                     </button>
 
                     {isAdmin && (
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setActiveMenuId(activeMenuId === t.id ? null : t.id)}
-                          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-
-                        {activeMenuId === t.id && (
-                          <div
-                            className={`absolute right-2 ${
-                              isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
-                            } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
-                            onMouseLeave={() => setActiveMenuId(null)}
-                          >
+                      <ActionDropdownPortal>
+                        {(closeMenu) => (
+                          <>
                             <button
                               type="button"
-                              onClick={() => { setActiveMenuId(null); onDetail(t); }}
+                              onClick={() => { closeMenu(); onDetail(t); }}
                               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
                             >
                               <Eye className="h-3.5 w-3.5 text-slate-500" />
@@ -356,7 +345,7 @@ export function TeacherTable({
                             </button>
                             <button
                               type="button"
-                              onClick={() => { setActiveMenuId(null); onEdit(t); }}
+                              onClick={() => { closeMenu(); onEdit(t); }}
                               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-amber-50 text-amber-700"
                             >
                               <Edit className="h-3.5 w-3.5 text-amber-500" />
@@ -364,15 +353,15 @@ export function TeacherTable({
                             </button>
                             <button
                               type="button"
-                              onClick={() => { setActiveMenuId(null); onDelete(t.id); }}
+                              onClick={() => { closeMenu(); onDelete(t.id); }}
                               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                               <span>Xóa Giảng viên</span>
                             </button>
-                          </div>
+                          </>
                         )}
-                      </div>
+                      </ActionDropdownPortal>
                     )}
                   </div>
                 </td>

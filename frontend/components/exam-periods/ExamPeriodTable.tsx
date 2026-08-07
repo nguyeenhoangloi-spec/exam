@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Calendar, Clock, Award, MoreVertical } from 'lucide-react';
 import { ExamPeriod } from '../../types';
 
+import { StatusBadge } from '../common/StatusBadge';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
+
 interface ExamPeriodTableProps {
   periods: ExamPeriod[];
   selected: number[];
@@ -80,32 +83,7 @@ export function ExamPeriodTable({
 
   const getStatusBadge = (status?: string, period?: ExamPeriod) => {
     const s = (period ? computePeriodStatus(period) : status?.toUpperCase()) || 'UPCOMING';
-    if (s === 'ONGOING' || s === 'ACTIVE') {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">
-          <Clock className="h-3.5 w-3.5" /> Đang diễn ra
-        </span>
-      );
-    }
-    if (s === 'COMPLETED' || s === 'FINISHED') {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-lg bg-purple-50 px-2.5 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">
-          <Award className="h-3.5 w-3.5" /> Đã hoàn thành
-        </span>
-      );
-    }
-    if (s === 'CANCELLED' || s === 'REJECTED') {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-0.5 text-xs font-bold text-rose-700 border border-rose-200">
-          Đã hủy
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
-        <Calendar className="h-3.5 w-3.5" /> Sắp diễn ra
-      </span>
-    );
+    return <StatusBadge status={s} />;
   };
 
   // 1. Dạng Lưới (Grid View Mode)
@@ -158,7 +136,7 @@ export function ExamPeriodTable({
                     <span>Học kỳ: <strong>{p.semester}</strong></span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Clock className="h-3.5 w-3.5 text-purple-500 shrink-0" />
+                    <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                     <span>Năm: <strong>{p.schoolYear}</strong></span>
                   </div>
                 </div>
@@ -357,27 +335,13 @@ export function ExamPeriodTable({
                       <Eye className="h-4 w-4" />
                     </button>
 
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === p.id ? null : p.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        title="Thao tác khác"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-
-                      {activeMenuId === p.id && (
-                        <div
-                          className={`absolute right-2 ${
-                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
-                          } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
-                          onMouseLeave={() => setActiveMenuId(null)}
-                        >
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onDetail(p);
                             }}
                             className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
@@ -391,7 +355,7 @@ export function ExamPeriodTable({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onEdit(p);
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-blue-600"
@@ -403,7 +367,7 @@ export function ExamPeriodTable({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onDelete(p.id);
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
@@ -413,9 +377,9 @@ export function ExamPeriodTable({
                               </button>
                             </>
                           )}
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

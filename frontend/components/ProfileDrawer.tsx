@@ -26,6 +26,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  const shortAvatar = avatarText ? avatarText.trim().slice(0, 3).toUpperCase() : 'HD';
+
   return (
     <div className="fixed inset-0 z-[70] overflow-hidden">
       {/* Backdrop */}
@@ -37,27 +39,27 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
           {/* Header */}
-          <div className="relative bg-slate-900 px-6 py-6 text-white">
+          <div className="relative bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] px-6 py-5 text-white">
             <button
               onClick={onClose}
-              className="absolute right-4 top-4 z-10 rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition"
+              className="absolute right-4 top-4 z-10 rounded-xl p-1.5 text-white/70 hover:bg-white/10 hover:text-white transition cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-3.5 pr-8">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-700 text-lg font-bold text-white shadow-lg">
-                {avatarText}
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 border border-white/20 text-sm font-black text-white shadow-xs tracking-wider">
+                {shortAvatar}
               </div>
-              <div className="min-w-0 flex-1 space-y-0.5">
+              <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="truncate text-lg font-bold text-white max-w-[180px]" title={title}>{title}</h2>
+                  <h2 className="truncate text-base font-bold text-white max-w-[200px]" title={title}>{title}</h2>
                   {badge && (
-                    <span className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${badge.className}`}>
+                    <span className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider ${badge.className}`}>
                       {badge.label}
                     </span>
                   )}
                 </div>
-                {subtitle && <p className="truncate text-xs font-medium text-slate-300">{subtitle}</p>}
+                {subtitle && <p className="truncate text-xs font-medium text-blue-100">{subtitle}</p>}
               </div>
             </div>
           </div>

@@ -71,7 +71,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ items }) => {
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{item.title}</p>
                 <h3 className="mt-1 text-2xl font-bold text-slate-900">{item.value}</h3>
                 {item.subtext && <p className="mt-1 text-xs text-slate-500 font-medium">{item.subtext}</p>}
-                {item.trend && <span className="mt-2 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">{item.trend}</span>}
+                {item.trend && <span className="mt-1.5 block text-xs font-medium text-slate-500">{item.trend}</span>}
               </div>
               <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${style.bg} ${style.text}`}>
                 <Icon className="h-6 w-6" />

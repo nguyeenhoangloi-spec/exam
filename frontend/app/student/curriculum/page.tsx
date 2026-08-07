@@ -6,6 +6,7 @@ import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
+import { TabBar } from '../../../components/ui/TabBar';
 import {
   BookOpen,
   CheckCircle2,
@@ -105,10 +106,10 @@ export default function StudentCurriculumPage() {
     : 0;
 
   const KPI = [
-    { label: 'Tổng môn trong khung', value: `${stats?.totalSubjects ?? 0} môn`, icon: BookOpen, color: 'text-sky-700', bg: 'bg-sky-50', border: 'border-sky-200' },
-    { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC`, icon: Layers, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
-    { label: 'Môn bắt buộc', value: `${stats?.totalMandatoryCredits ?? 0} TC`, icon: Award, color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
-    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+    { label: 'Tổng môn trong khung', value: `${stats?.totalSubjects ?? 0} môn`, icon: BookOpen, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC`, icon: Layers, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Môn bắt buộc', value: `${stats?.totalMandatoryCredits ?? 0} TC`, icon: Award, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200/60' },
+    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200/60' },
   ];
 
   return (
@@ -213,19 +214,16 @@ export default function StudentCurriculumPage() {
             )}
           </div>
 
-          {/* Type filter */}
-          <div className="relative">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="appearance-none pl-3.5 pr-8 py-2 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
-            >
-              <option value="ALL">Tất cả loại môn</option>
-              <option value="MANDATORY">Môn bắt buộc</option>
-              <option value="ELECTIVE">Môn tự chọn</option>
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-          </div>
+          {/* Type filter tabs */}
+          <TabBar
+            tabs={[
+              { key: 'ALL', label: 'Tất cả loại môn' },
+              { key: 'MANDATORY', label: 'Môn bắt buộc' },
+              { key: 'ELECTIVE', label: 'Môn tự chọn' },
+            ]}
+            active={filterType}
+            onChange={setFilterType}
+          />
 
           {/* Semester filter */}
           <div className="relative">
@@ -356,7 +354,7 @@ export default function StudentCurriculumPage() {
                               {/* Type */}
                               <td className="py-3.5 px-5 text-center">
                                 {item.type === 'MANDATORY' ? (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-violet-50 text-violet-700 border border-violet-200">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                                     Bắt buộc
                                   </span>
                                 ) : (

@@ -128,7 +128,7 @@ export function DashboardStatistics({
 
             {/* Bottom Subtext */}
             <div className="mt-2.5 pt-2 border-t border-slate-100/80">
-              <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold border ${spec.badgeBg}`}>
+              <span className="text-[11px] font-medium text-slate-500">
                 {spec.subtext}
               </span>
             </div>

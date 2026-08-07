@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Eye, ArrowRight, ChevronLeft, ChevronRight, CalendarX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { StatusBadge } from '../common/StatusBadge';
 import type { DashboardOverview } from '../../types/dashboard';
 
 export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomingExams'] }) {
@@ -67,19 +68,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
                   <td className="py-2.5 px-2 text-center font-bold text-slate-700 whitespace-nowrap">{exam.rooms}</td>
                   <td className="py-2.5 px-2 text-center font-black text-slate-900 whitespace-nowrap">{exam.students}</td>
                   <td className="py-2.5 px-2 text-center whitespace-nowrap">
-                    {exam.status === 'UPCOMING' ? (
-                      <span className="inline-flex rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 text-[10px] font-extrabold">
-                        Sắp diễn ra
-                      </span>
-                    ) : exam.status === 'ONGOING' ? (
-                      <span className="inline-flex rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-extrabold">
-                        Đang diễn ra
-                      </span>
-                    ) : (
-                      <span className="inline-flex rounded-full bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-0.5 text-[10px] font-extrabold">
-                        {exam.status}
-                      </span>
-                    )}
+                    <StatusBadge status={exam.status} />
                   </td>
                   <td className="py-2.5 px-1.5 text-center whitespace-nowrap">
                     <button

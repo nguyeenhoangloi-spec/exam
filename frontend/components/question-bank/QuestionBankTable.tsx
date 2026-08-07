@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, Check, HelpCircle } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { RubricDialog } from './RubricDialog';
 import { Question } from '../../types';
@@ -48,7 +48,7 @@ export function QuestionBankTable({
   const allSelected = questions.length > 0 && selected.length === questions.length;
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return '24/05/2026 15:57';
+    if (!dateStr) return '—';
     try {
       const d = new Date(dateStr);
       const dd = String(d.getDate()).padStart(2, '0');
@@ -69,8 +69,8 @@ export function QuestionBankTable({
         {questions.map((q) => {
           const isChecked = selected.includes(q.id);
           const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
-          const subjectName = q.subject?.subjectName || 'An toàn thông tin';
-          const creatorName = q.createdByName || q.createdBy?.fullName || 'Nguyễn Văn A';
+          const subjectName = q.subject?.subjectName || 'Chưa gán môn';
+          const creatorName = q.createdByName || q.createdBy?.fullName || '—';
 
           const isEssay = q.type === 'ESSAY';
           const optionsList = Array.isArray(q.options) ? q.options : [];
@@ -121,12 +121,12 @@ export function QuestionBankTable({
 
                 {/* ESSAY vs MULTIPLE_CHOICE Display */}
                 {isEssay ? (
-                  <div className="rounded-xl bg-purple-50/80 border border-purple-200/70 p-2.5 text-[11px] font-semibold text-purple-900 space-y-1">
-                    <p className="font-extrabold text-purple-700 flex items-center gap-1">
-                      📝 Hướng dẫn chấm / Đáp án gợi ý:
+                  <div className="rounded-xl bg-blue-50/80 border border-blue-200/70 p-2.5 text-[11px] font-semibold text-blue-900 space-y-1">
+                    <p className="font-extrabold text-blue-700 flex items-center gap-1">
+                      📝 Câu tự luận
                     </p>
-                    <p className="text-purple-950 font-medium line-clamp-2">
-                      {q.sampleAnswer || 'Thí sinh tự luận trả lời bằng văn bản / tải tệp.'}
+                    <p className="text-blue-900 font-medium">
+                      {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm. Mở chi tiết để xem.' : 'Chưa có hướng dẫn chấm.'}
                     </p>
                   </div>
                 ) : optionsList.length > 0 ? (
@@ -134,16 +134,10 @@ export function QuestionBankTable({
                     {optionsList.map((opt) => (
                       <div
                         key={opt.label + opt.content}
-                        className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-bold transition min-w-0 ${
-                          opt.isCorrect
-                            ? 'bg-emerald-100/90 text-emerald-950 border border-emerald-300 shadow-2xs font-extrabold'
-                            : 'bg-slate-50 text-slate-700 border border-slate-200/80'
-                        }`}
+                        className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-[11px] font-bold text-slate-700 transition"
                       >
                         <span
-                          className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md text-[10px] font-black ${
-                            opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
-                          }`}
+                          className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[10px] font-black text-slate-700"
                         >
                           {opt.label}
                         </span>
@@ -278,7 +272,7 @@ export function QuestionBankTable({
                       {q.content}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{q.subject?.subjectName || 'Toán cao cấp'}</td>
+                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{q.subject?.subjectName || 'Chưa gán môn'}</td>
                   <td className="p-2 whitespace-nowrap"><QuestionDifficultyBadge difficulty={q.difficulty || 'MEDIUM'} /></td>
                   <td className="p-2 whitespace-nowrap"><QuestionStatusBadge status={q.status || 'APPROVED'} /></td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -326,17 +320,12 @@ export function QuestionBankTable({
           {questions.map((q, index) => {
             const isChecked = selected.includes(q.id);
             const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
-            const subjectName = q.subject?.subjectName || 'An toàn thông tin';
-            const creatorName = q.createdByName || q.createdBy?.fullName || 'Nguyễn Văn A';
+            const subjectName = q.subject?.subjectName || 'Chưa gán môn';
+            const creatorName = q.createdByName || q.createdBy?.fullName || '—';
             const isLastRow = index >= Math.floor(questions.length / 2);
 
             // Options list (A, B, C, D)
-            const optionsList = q.options && q.options.length > 0 ? q.options : [
-              { label: 'A', content: 'Phương án A', isCorrect: true },
-              { label: 'B', content: 'Phương án B', isCorrect: false },
-              { label: 'C', content: 'Phương án C', isCorrect: false },
-              { label: 'D', content: 'Phương án D', isCorrect: false },
-            ];
+            const optionsList = q.options && q.options.length > 0 ? q.options : [];
 
             return (
               <tr
@@ -382,8 +371,8 @@ export function QuestionBankTable({
 
                       {q.type === 'ESSAY' ? (
                         <div className="pt-1">
-                          <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-purple-50 text-purple-900 border border-purple-200/80">
-                            📝 <span className="font-extrabold">Đáp án gợi ý:</span> {q.sampleAnswer || 'Thí sinh tự luận văn bản / tải tệp'}
+                          <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-blue-50 text-blue-900 border border-blue-200/80">
+                            📝 <span className="font-extrabold">Câu tự luận:</span> {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
                           </span>
                         </div>
                       ) : optionsList.length > 0 ? (
@@ -391,13 +380,8 @@ export function QuestionBankTable({
                           {optionsList.map((opt) => (
                             <span
                               key={opt.label + opt.content}
-                              className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
-                                opt.isCorrect
-                                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs'
-                                  : 'bg-slate-100 text-slate-700 border border-slate-200'
-                              }`}
+                              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition"
                             >
-                              {opt.isCorrect && <Check className="h-3 w-3 text-emerald-600 shrink-0" />}
                               <span className="font-extrabold">{opt.label}.</span>
                               <span className="truncate max-w-[160px]">{opt.content}</span>
                             </span>
@@ -492,9 +476,9 @@ export function QuestionBankTable({
                                 closeMenu();
                                 setRubricQuestion(q);
                               }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-violet-50 text-violet-700 font-bold cursor-pointer"
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700 font-bold cursor-pointer"
                             >
-                              <HelpCircle className="h-3.5 w-3.5 text-violet-600" />
+                              <HelpCircle className="h-3.5 w-3.5 text-blue-600" />
                               <span>Cấu hình Rubric</span>
                             </button>
                           )}

@@ -11,13 +11,13 @@ export class TrashController {
   constructor(private readonly trashService: TrashService) {}
 
   @Get('stats')
-  @Roles('ADMIN', 'TEACHER')
+  @Roles('ADMIN')
   getTrashStats() {
     return this.trashService.getTrashStats();
   }
 
   @Get('items')
-  @Roles('ADMIN', 'TEACHER')
+  @Roles('ADMIN')
   getTrashItems(
     @Query('type') type: 'schedules' | 'papers' | 'questions',
     @Query('search') search?: string,
@@ -26,7 +26,7 @@ export class TrashController {
   }
 
   @Post('restore')
-  @Roles('ADMIN', 'TEACHER')
+  @Roles('ADMIN')
   restoreItem(
     @Request() req: any,
     @Body() body: { type: string; id: number | string },

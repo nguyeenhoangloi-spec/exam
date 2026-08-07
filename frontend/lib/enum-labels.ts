@@ -1,9 +1,18 @@
 export const QUESTION_TYPE_LABELS: Record<string, string> = {
-  SINGLE_CHOICE: 'Trắc nghiệm',
-  MULTIPLE_CHOICE: 'Trắc nghiệm',
-  TRUE_FALSE: 'Trắc nghiệm',
-  FILL_BLANK: 'Tự luận',
+  SINGLE_CHOICE: 'Trắc nghiệm (1 đáp án)',
+  MULTIPLE_CHOICE: 'Trắc nghiệm (Nhiều đáp án)',
+  TRUE_FALSE: 'Đúng / Sai',
+  FILL_BLANK: 'Điền vào chỗ trống',
   ESSAY: 'Tự luận',
+};
+
+export const EXAM_TYPE_LABELS: Record<string, string> = {
+  TRAC_NGHIEM: 'Trắc nghiệm',
+  DIEN_LO: 'Điền vào chỗ trống',
+  FILL_BLANK: 'Điền vào chỗ trống',
+  TU_LUAN: 'Tự luận',
+  THUC_HANH: 'Thực hành',
+  HON_HOP: 'Hỗn hợp',
 };
 
 export const DIFFICULTY_LABELS: Record<string, string> = {

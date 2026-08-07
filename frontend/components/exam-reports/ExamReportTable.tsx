@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Eye, GraduationCap, AlertTriangle, Clock, CheckCircle2, MoreVertical } from 'lucide-react';
 import { ExamAttemptReviewModal } from './ExamAttemptReviewModal';
+import { StatusBadge } from '../common/StatusBadge';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 
 export interface CandidateReport {
   studentId: number;
@@ -88,9 +90,7 @@ export function ExamReportTable({
                     </span>
                   </div>
 
-                  <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold ${badge.className}`}>
-                    {badge.label}
-                  </span>
+                  <StatusBadge status={c.status} />
                 </div>
 
                 <div>
@@ -305,18 +305,14 @@ export function ExamReportTable({
 
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold ${badge.className}`}>
-                      {badge.label}
-                    </span>
+                    <StatusBadge status={c.status} />
                   </td>
                 )}
 
                 {visibleColumns.totalScore !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center font-black">
                     {c.status === 'ABSENT' ? (
-                      <span className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
-                        Vắng thi
-                      </span>
+                      <StatusBadge status="ABSENT" customLabel="Vắng thi" />
                     ) : (
                       <span
                         className={`text-sm ${
@@ -367,14 +363,36 @@ export function ExamReportTable({
                         <span>Bài làm</span>
                       </button>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => onDetail(c)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                      title="Xem hồ sơ thí sinh"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
+                          {c.attemptId && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                setReviewAttemptId(c.attemptId!);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700"
+                            >
+                              <Eye className="h-3.5 w-3.5 text-blue-600" />
+                              <span>Xem bài làm</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              closeMenu();
+                              onDetail(c);
+                            }}
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                          >
+                            <Eye className="h-3.5 w-3.5 text-slate-500" />
+                            <span>Hồ sơ thí sinh</span>
+                          </button>
+                        </>
+                      )}
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

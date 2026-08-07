@@ -9,7 +9,9 @@ import { downloadCsv } from '../../lib/export-csv';
 import { printReport } from '../../lib/export-print';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { StatusBadge } from '../../components/common/StatusBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { TabBar } from '../../components/ui/TabBar';
 import {
   UserCheck,
   Trash2,
@@ -395,35 +397,19 @@ export default function ExamSupervisorsPage() {
           })}
         </div>
 
-        {/* Status Filter Bar */}
-        <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl border border-slate-200/90 shadow-2xs">
-          {[
-            { key: 'ALL', label: 'Tất cả theo phòng', icon: ShieldCheck, count: assignedSupervisors.length },
-            { key: 'CHANGE_REQUESTED', label: 'Xin đổi ca', icon: RefreshCw, count: changeRequestedCount },
-            { key: 'CONFIRMED', label: 'Đã xác nhận', icon: CheckCircle2, count: confirmedCount },
-            { key: 'PENDING', label: 'Chờ phản hồi', icon: Clock, count: allScheduleSupervisors.filter((s) => s.status === 'PENDING').length },
-            { key: 'COMPLETED', label: 'Hoàn thành', icon: UserCheck, count: completedCount },
-            { key: 'ABSENT', label: 'Vắng mặt', icon: XCircle, count: allScheduleSupervisors.filter((s) => s.status === 'ABSENT').length },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = statusFilter === tab.key;
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setStatusFilter(tab.key)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${isActive ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                  }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-                <span className={`px-2 py-0.5 rounded-full text-[11px] font-black ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        {/* Status Tabs */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả theo phòng', count: assignedSupervisors.length },
+            { key: 'CHANGE_REQUESTED', label: 'Xin đổi ca', count: changeRequestedCount },
+            { key: 'CONFIRMED', label: 'Đã xác nhận', count: confirmedCount },
+            { key: 'PENDING', label: 'Chờ phản hồi', count: allScheduleSupervisors.filter((s) => s.status === 'PENDING').length },
+            { key: 'COMPLETED', label: 'Hoàn thành', count: completedCount },
+            { key: 'ABSENT', label: 'Vắng mặt', count: allScheduleSupervisors.filter((s) => s.status === 'ABSENT').length },
+          ]}
+          active={statusFilter}
+          onChange={setStatusFilter}
+        />
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">

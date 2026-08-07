@@ -22,7 +22,7 @@ const routeAccess: Array<{ prefix: string; roles: Role[] }> = [
   { prefix: '/question-bank', roles: ['ADMIN', 'TEACHER'] },
   { prefix: '/exam-papers', roles: ['ADMIN', 'TEACHER'] },
   {prefix: '/exam-reports', roles: ['ADMIN', 'TEACHER'] },
-  { prefix: '/trash', roles: ['ADMIN', 'TEACHER'] },
+  { prefix: '/trash', roles: ['ADMIN'] },
   { prefix: '/teacher/assignments', roles: ['TEACHER'] },
   { prefix: '/teacher/essay-grading', roles: ['ADMIN', 'TEACHER'] },
   { prefix: '/admin/essay-review', roles: ['ADMIN'] },

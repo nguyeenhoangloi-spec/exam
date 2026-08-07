@@ -12,15 +12,14 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
     ? periods.slice(0, 5).map((p, idx) => {
         const pct = Math.min(100, Math.max(0, p.paperProgress || p.roomProgress || 0));
         const isComplete = pct === 100;
-        const isAmber = pct < 50;
         const periodItem = p as any;
         return {
           code: periodItem.periodCode || `KT-${p.id}`,
           name: p.name || periodItem.periodName || 'Kỳ thi',
           progress: pct,
           status: isComplete ? 'COMPLETED' : 'IN_PROGRESS',
-          color: isComplete ? 'bg-emerald-500' : isAmber ? 'bg-amber-500' : 'bg-blue-600',
-          textColor: isComplete ? 'text-emerald-600' : isAmber ? 'text-amber-600' : 'text-blue-600',
+          color: isComplete ? 'bg-emerald-600' : 'bg-blue-600',
+          textColor: isComplete ? 'text-emerald-700' : 'text-blue-700',
         };
       })
     : [];
@@ -55,9 +54,9 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
                 </span>
               </div>
 
-              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="h-2 w-full overflow-hidden rounded-md bg-slate-100">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${item.color}`}
+                  className={`h-full rounded-md transition-all duration-500 ${item.color}`}
                   style={{ width: `${item.progress}%` }}
                 />
               </div>
@@ -71,18 +70,18 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
         </div>
       )}
 
-      {/* Footer Legend matching mockup */}
+      {/* Footer Legend */}
       <div className="flex items-center justify-center gap-4 border-t border-slate-100 pt-3 text-xs font-bold text-slate-600">
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-slate-300 inline-block" />
+          <span className="h-2.5 w-2.5 rounded-sm bg-slate-300 inline-block" />
           <span>Chưa bắt đầu</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-blue-600 inline-block" />
+          <span className="h-2.5 w-2.5 rounded-sm bg-blue-600 inline-block" />
           <span>Đang thực hiện</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block" />
+          <span className="h-2.5 w-2.5 rounded-sm bg-emerald-600 inline-block" />
           <span>Hoàn thành</span>
         </div>
       </div>

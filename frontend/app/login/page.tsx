@@ -51,8 +51,8 @@ const ROLES: RolePreset[] = [
     pass: 'admin123',
     placeholder: 'Nhập tài khoản quản trị',
     icon: Settings2,
-    color: 'text-violet-600',
-    bg: 'bg-violet-50',
+    color: 'text-blue-700',
+    bg: 'bg-blue-50',
   },
   {
     id: 'TEACHER',

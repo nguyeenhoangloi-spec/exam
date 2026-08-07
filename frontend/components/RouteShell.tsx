@@ -126,7 +126,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
             <div
                 className={`app-shell-main min-h-screen min-w-0 ${isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
-                    } ${collapsed ? 'md:ml-[76px]' : 'md:ml-[260px]'}`}
+                    } ${collapsed ? 'md:ml-[76px]' : 'md:ml-64'}`}
             >
                 <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
                 {/* pt-14 (56px) matches the fixed header height (h-14) so content never hides underneath it */}
@@ -135,4 +135,3 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         </div>
     );
 };
-

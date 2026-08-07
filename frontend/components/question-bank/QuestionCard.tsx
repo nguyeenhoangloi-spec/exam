@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Archive, Check, CheckCircle2, ChevronDown, ChevronUp, Copy, Eye, HelpCircle, ImageIcon, Maximize2, Pencil, RotateCcw, Send, Trash2, X } from 'lucide-react';
+import { Archive, Check, ChevronDown, ChevronUp, Copy, Eye, HelpCircle, ImageIcon, Maximize2, Pencil, RotateCcw, Send, Trash2, X } from 'lucide-react';
 import { Question } from '../../types';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
 import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
@@ -46,12 +46,12 @@ export function QuestionCard({
           />
           <b className="text-blue-600 font-mono text-sm">{q.code}</b>
           {q.subject?.subjectName && (
-            <span className="rounded-full bg-sky-50 border border-sky-200 px-2.5 py-0.5 text-xs font-extrabold text-sky-800">
+            <span className="rounded-[8px] bg-sky-50 border border-sky-200 px-2.5 py-0.5 text-[11px] font-bold text-sky-800 h-6 inline-flex items-center">
               {q.subject.subjectName}
             </span>
           )}
           {q.chapter?.name && (
-            <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-xs font-semibold text-slate-700">
+            <span className="rounded-[8px] bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-700 h-6 inline-flex items-center">
               {q.chapter.name}
             </span>
           )}
@@ -208,7 +208,7 @@ export function QuestionCard({
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between border-t border-slate-100 pt-2.5">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-              Đáp án ({options.length} lựa chọn)
+              Lựa chọn ({options.length} phương án)
             </span>
             <button
               onClick={() => setShowOptions(!showOptions)}
@@ -217,7 +217,7 @@ export function QuestionCard({
               {showOptions ? (
                 <>Thu gọn <ChevronUp className="w-3.5 h-3.5" /></>
               ) : (
-                <>Hiện đáp án <ChevronDown className="w-3.5 h-3.5" /></>
+                <>Hiện lựa chọn <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
           </div>
@@ -226,30 +226,19 @@ export function QuestionCard({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {options.map((opt, idx) => {
                 const label = opt.label || String.fromCharCode(65 + idx);
-                const isCorrect = opt.isCorrect;
                 return (
                   <div
                     key={opt.id || idx}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition ${isCorrect
-                        ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950 font-bold shadow-2xs'
-                        : 'bg-slate-50/80 border-slate-200 text-slate-700 font-medium'
-                      }`}
+                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-xs font-medium text-slate-700 transition"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <span
-                        className={`h-6 min-w-6 px-1.5 rounded-lg flex items-center justify-center text-[11px] font-black shrink-0 ${isCorrect ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-200 text-slate-700'
-                          }`}
+                        className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 px-1.5 text-[11px] font-black text-slate-700"
                       >
                         {label}
                       </span>
                       <span className="truncate leading-tight">{opt.content}</span>
                     </div>
-
-                    {isCorrect && (
-                      <span className="flex items-center gap-1 text-[10px] font-extrabold uppercase text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md shrink-0">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Đúng
-                      </span>
-                    )}
                   </div>
                 );
               })}

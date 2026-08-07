@@ -82,7 +82,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       setErrorMsg('');
       setLoading(false);
     }
-  }, [isOpen]);
+  }, [isOpen, reasons]);
 
   if (!isOpen || !mounted) return null;
 

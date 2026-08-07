@@ -28,7 +28,7 @@ export default function DashboardPage() {
   usePageTitle('Tổng quan');
   const router = useRouter();
   const cachedOverview = typeof window !== 'undefined' ? getCachedData<DashboardOverview>('/dashboard/overview') : null;
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => (typeof window !== 'undefined' ? getAuthUser() : null));
   const [overview, setOverview] = useState<DashboardOverview | null>(cachedOverview);
   const [loading, setLoading] = useState(!cachedOverview);
   const [isRefreshing, setIsRefreshing] = useState(false);

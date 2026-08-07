@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { RubricDialog } from '../../../components/question-bank/RubricDialog';
 import { usePageTitle } from '../../../components/PageTitleContext';
+import { StatusBadge } from '../../../components/common/StatusBadge';
+import { TabBar } from '../../../components/ui/TabBar';
 import { Search, X, RotateCcw, Sparkles, Sliders, Save, CheckCircle2, FileText, User, AlertCircle } from 'lucide-react';
 
 export default function TeacherEssayGradingPage() {
@@ -39,7 +41,34 @@ export default function TeacherEssayGradingPage() {
 
   const [rubricQuestion, setRubricQuestion] = useState<any>(null);
 
-  const loadAssignments = async () => {
+  const openAttempt = useCallback(async (id: string) => {
+    try {
+      const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
+      const attemptData = res.data;
+      setSelected(attemptData);
+      setMessage('');
+
+      const initScores: Record<string, number> = {};
+      const initComments: Record<string, string> = {};
+      const initTeacherComments: Record<string, string> = {};
+
+      (attemptData.attemptAnswers || []).forEach((ans: any) => {
+        if (ans.teacherComment) initTeacherComments[ans.questionId] = ans.teacherComment;
+        (ans.essayGrades || []).forEach((grade: any) => {
+          initScores[grade.criterionId] = grade.score;
+          if (grade.comment) initComments[grade.criterionId] = grade.comment;
+        });
+      });
+
+      setScores(initScores);
+      setComments(initComments);
+      setTeacherComments(initTeacherComments);
+    } catch (e: any) {
+      setMessage(e?.response?.data?.message || 'Không thể tải chi tiết bài làm.');
+    }
+  }, []);
+
+  const loadAssignments = useCallback(async () => {
     setLoading(true);
     try {
       const user = getAuthUser();
@@ -54,40 +83,11 @@ export default function TeacherEssayGradingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [attemptIdParam, openAttempt]);
 
   useEffect(() => {
     loadAssignments();
-  }, [attemptIdParam]);
-
-  const openAttempt = async (id: string) => {
-    try {
-      const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
-      const attemptData = res.data;
-      setSelected(attemptData);
-      setMessage('');
-
-      const initScores: Record<string, number> = {};
-      const initComments: Record<string, string> = {};
-      const initTeacherComments: Record<string, string> = {};
-
-      (attemptData.attemptAnswers || []).forEach((ans: any) => {
-        if (ans.teacherComment) {
-          initTeacherComments[ans.questionId] = ans.teacherComment;
-        }
-        (ans.essayGrades || []).forEach((g: any) => {
-          initScores[g.criterionId] = g.score;
-          if (g.comment) initComments[g.criterionId] = g.comment;
-        });
-      });
-
-      setScores(initScores);
-      setComments(initComments);
-      setTeacherComments(initTeacherComments);
-    } catch (e: any) {
-      setMessage(e?.response?.data?.message || 'Không thể tải chi tiết bài làm.');
-    }
-  };
+  }, [loadAssignments]);
 
   const handleScoreChange = (criterionId: string, val: string, maxScore: number) => {
     const num = Number(val);
@@ -181,17 +181,27 @@ export default function TeacherEssayGradingPage() {
       }
     }
 
+    const isAdmin = currentUser?.role === 'ADMIN';
+
     setConfirmModal({
       isOpen: true,
-      title: 'Hoàn tất chấm bài thi',
-      message: 'Bạn có chắc chắn muốn HOÀN TẤT CHẤM BÀI thi này? Bài thi sẽ được gửi tới ADMIN để duyệt và công bố chính thức.',
+      title: isAdmin ? 'Hoàn tất chấm & Duyệt luôn' : 'Hoàn tất chấm bài thi',
+      message: isAdmin
+        ? `Xác nhận hoàn tất chấm và duyệt điểm bài thi của thí sinh ${selected.student?.fullName}? Vì bạn là Admin, điểm sẽ được duyệt luôn không qua bước chờ.`
+        : 'Bạn có chắc chắn muốn HOÀN TẤT CHẤM BÀI thi này? Bài thi sẽ được gửi tới ADMIN để duyệt và công bố chính thức.',
       type: 'success',
-      confirmText: 'Hoàn tất & Gửi duyệt',
+      confirmText: isAdmin ? 'Hoàn tất & Duyệt luôn' : 'Hoàn tất & Gửi duyệt',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/submit`);
-          setMessage('Đã hoàn tất chấm bài thi! Bài thi hiện đang chờ ADMIN duyệt.');
+          if (isAdmin) {
+            // Admin: auto approve luôn sau khi submit
+            await api.post(`/essay/grading/attempts/${selected.id}/approve`);
+            setMessage('Đã hoàn tất chấm và duyệt điểm bài thi thành công!');
+          } else {
+            setMessage('Đã hoàn tất chấm bài thi! Bài thi hiện đang chờ ADMIN duyệt.');
+          }
           await loadAssignments();
           await openAttempt(selected.id);
         } catch (e: any) {
@@ -311,53 +321,17 @@ export default function TeacherEssayGradingPage() {
                 )}
               </div>
 
-              {/* Status Segmented Button Tabs */}
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200/60 w-full overflow-x-auto">
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('ALL')}
-                  className={`flex-1 min-w-[55px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
-                    statusFilter === 'ALL'
-                      ? 'bg-white text-slate-900 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Tất cả ({counts.all})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('GRADING')}
-                  className={`flex-1 min-w-[60px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
-                    statusFilter === 'GRADING'
-                      ? 'bg-white text-blue-700 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Đang chấm ({counts.grading})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('WAITING_APPROVAL')}
-                  className={`flex-1 min-w-[60px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
-                    statusFilter === 'WAITING_APPROVAL'
-                      ? 'bg-white text-amber-700 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Chờ duyệt ({counts.waiting})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('PUBLISHED')}
-                  className={`flex-1 min-w-[55px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
-                    statusFilter === 'PUBLISHED'
-                      ? 'bg-white text-emerald-700 shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Công bố ({counts.published})
-                </button>
-              </div>
+              {/* Status Tabs */}
+              <TabBar
+                tabs={[
+                  { key: 'ALL', label: 'Tất cả', count: counts.all },
+                  { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
+                  { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
+                  { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
+                ]}
+                active={statusFilter}
+                onChange={(k) => setStatusFilter(k as any)}
+              />
 
               {/* Search & Subject Dropdown Row */}
               <div className="flex items-center gap-2">
@@ -410,19 +384,6 @@ export default function TeacherEssayGradingPage() {
                 <div className="space-y-2 max-h-[68vh] overflow-y-auto pr-1">
                   {filteredRows.map((row) => {
                     const isSel = selected?.id === row.id;
-                    const statusText =
-                      row.gradingStatus === 'PUBLISHED'
-                        ? 'Đã công bố'
-                        : row.gradingStatus === 'WAITING_APPROVAL'
-                        ? 'Chờ duyệt'
-                        : 'Đang chấm';
-                    const statusBg =
-                      row.gradingStatus === 'PUBLISHED'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 font-bold'
-                        : row.gradingStatus === 'WAITING_APPROVAL'
-                        ? 'bg-amber-50 text-amber-700 border-amber-200 font-bold'
-                        : 'bg-blue-50 text-blue-700 border-blue-200 font-bold';
-
                     return (
                       <button
                         key={row.id}
@@ -436,7 +397,7 @@ export default function TeacherEssayGradingPage() {
                       >
                         <div className="flex justify-between items-center gap-2">
                           <span className="font-bold text-xs text-slate-900">{row.student?.fullName}</span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-md border ${statusBg}`}>{statusText}</span>
+                          <StatusBadge status={row.gradingStatus} />
                         </div>
                         <p className="text-[11px] text-slate-500 font-mono">
                           Mã SV: <strong className="text-slate-800">{row.student?.studentCode}</strong> · Điểm: <strong className="text-blue-700 font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
@@ -635,7 +596,9 @@ export default function TeacherEssayGradingPage() {
                 {/* Bottom Action Footer */}
                 <div className="border-t border-slate-100 pt-4 flex justify-between items-center flex-wrap gap-3">
                   <div className="text-xs text-slate-500 font-medium">
-                    Sau khi hoàn tất chấm tất cả các câu, bấm nút bên phải để gửi bài thi lên ADMIN duyệt.
+                    {currentUser?.role === 'ADMIN'
+                      ? 'Admin có thể duyệt điểm luôn sau khi chấm xong, không cần qua bước chờ.'
+                      : 'Sau khi hoàn tất chấm tất cả các câu, bấm nút bên phải để gửi bài thi lên ADMIN duyệt.'}
                   </div>
 
                   <div className="flex gap-2">
@@ -645,7 +608,11 @@ export default function TeacherEssayGradingPage() {
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs hover:shadow-xs active:scale-95 transition cursor-pointer"
                     >
                       <CheckCircle2 className="h-4 w-4 text-blue-100" />
-                      <span>Hoàn tất chấm & Gửi ADMIN duyệt</span>
+                      <span>
+                        {currentUser?.role === 'ADMIN'
+                          ? 'Hoàn tất chấm & Duyệt luôn'
+                          : 'Hoàn tất chấm & Gửi ADMIN duyệt'}
+                      </span>
                     </button>
                   </div>
                 </div>

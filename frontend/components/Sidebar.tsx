@@ -159,16 +159,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
-        {
-          name: 'Thùng rác hệ thống',
-          href: '/trash',
-          icon: Trash2,
-          children: [
-            { name: 'Lịch thi đã xóa', href: '/trash?type=schedules' },
-            { name: 'Đề thi đã xóa', href: '/trash?type=papers' },
-            { name: 'Ngân hàng câu hỏi', href: '/trash?type=questions' },
-          ],
-        },
       ],
     },
   ];
@@ -209,13 +199,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-[#1a2e63]/60 bg-gradient-to-b from-[#070d24] via-[#0b1638] to-[#0e1d4a] text-slate-100 shadow-2xl transition-all duration-300 ${
-        collapsed ? 'w-[260px] md:w-[76px]' : 'w-[260px]'
-      } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-[#0F172A] text-slate-200 border-r border-slate-800 shadow-md transition-all duration-200 ease-in-out ${
+        collapsed ? 'w-[76px]' : 'w-64'
+      } ${
+        mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
+      }`}
     >
-      {/* Radiant Top Glow Accent */}
-      <div className="absolute -top-24 -left-24 w-60 h-60 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 -right-20 w-52 h-52 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
       {/* Header Section with Toggle Button */}
       {collapsed ? (
         <div className="flex h-16 shrink-0 items-center justify-center border-b border-[#254294]/40 px-3 bg-transparent">
@@ -348,20 +337,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onMouseEnter={() => router.prefetch(item.href)}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group relative flex h-10 items-center justify-start rounded-xl px-3 text-xs font-bold transition-all duration-200 overflow-hidden ${
+                        className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-xs font-bold transition-all duration-150 overflow-hidden ${
                           isActive
-                            ? 'bg-[#1c3673] text-white border border-blue-500/40 shadow-xs font-black'
-                            : 'text-slate-200/90 hover:bg-white/[0.08] hover:text-white'
+                            ? 'bg-blue-600 text-white shadow-2xs font-extrabold'
+                            : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                         }`}
                       >
-                        {isActive && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-sky-300 rounded-r-full shadow-xs" />
-                        )}
-
-                        <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-200/70 group-hover:text-blue-300'}`} />
+                        <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-400'}`} />
 
                         <span
-                          className={`whitespace-nowrap transition-all duration-200 overflow-hidden ${
+                          className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${
                             collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
                           }`}
                         >

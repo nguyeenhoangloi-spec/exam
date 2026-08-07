@@ -224,8 +224,7 @@ export default function ExamRoomsPage() {
           setToast({ message: 'Đã xóa phòng thi thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
-          setRooms((prev) => prev.filter((x) => x.id !== id));
-          setToast({ message: 'Đã xóa phòng thi thành công!', type: 'success' });
+          setToast({ message: err?.response?.data?.message || err?.message || 'Không thể xóa phòng thi vì phòng đang được sử dụng.', type: 'error' });
         }
       },
     });

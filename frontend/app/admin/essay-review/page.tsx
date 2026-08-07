@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import api from '../../../lib/api';
+import { usePageTitle } from '../../../components/PageTitleContext';
 import { ConfirmModal } from '../../../components/ConfirmModal';
+import { StatusBadge } from '../../../components/common/StatusBadge';
+import { TabBar } from '../../../components/ui/TabBar';
 import {
   FileCheck,
   ShieldCheck,
@@ -18,14 +21,18 @@ import {
   History,
   Download,
   Loader2,
+  Search,
+  X,
 } from 'lucide-react';
 
 export default function AdminEssayReviewPage() {
+  usePageTitle('Duyệt bài thi Tự luận');
   const [rows, setRows] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Action inputs
@@ -211,107 +218,193 @@ export default function AdminEssayReviewPage() {
     });
   };
 
-  const filteredRows = rows.filter((r) => {
-    if (statusFilter !== 'ALL' && r.gradingStatus !== statusFilter) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const code = (r.student?.studentCode || '').toLowerCase();
-      const name = (r.student?.fullName || '').toLowerCase();
-      return code.includes(q) || name.includes(q);
-    }
-    return true;
-  });
+  const availableSubjects = useMemo(() => {
+    const map = new Map<string, string>();
+    rows.forEach((r) => {
+      const s = r.onlineExamConfig?.examSchedule?.subject;
+      const code = s?.subjectCode || r.subjectCode;
+      const name = s?.subjectName || r.subjectName;
+      if (code && name && !map.has(code)) {
+        map.set(code, name);
+      }
+    });
+    return Array.from(map.entries()).map(([code, name]) => ({ code, name }));
+  }, [rows]);
+
+  const counts = useMemo(() => {
+    let all = 0, waiting = 0, grading = 0, published = 0;
+    rows.forEach((r) => {
+      all++;
+      if (r.gradingStatus === 'PUBLISHED') published++;
+      else if (r.gradingStatus === 'WAITING_APPROVAL') waiting++;
+      else grading++;
+    });
+    return { all, waiting, grading, published };
+  }, [rows]);
+
+  const filteredRows = useMemo(() => {
+    return rows.filter((r) => {
+      // 1. Status Filter
+      if (statusFilter !== 'ALL') {
+        if (statusFilter === 'WAITING_APPROVAL' && r.gradingStatus !== 'WAITING_APPROVAL') return false;
+        if (statusFilter === 'PUBLISHED' && r.gradingStatus !== 'PUBLISHED') return false;
+        if (statusFilter === 'GRADING' && (r.gradingStatus === 'PUBLISHED' || r.gradingStatus === 'WAITING_APPROVAL')) return false;
+      }
+      // 2. Subject Filter
+      if (subjectFilter !== 'ALL') {
+        const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
+        if (code !== subjectFilter) return false;
+      }
+      // 3. Search Query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const code = (r.student?.studentCode || '').toLowerCase();
+        const name = (r.student?.fullName || '').toLowerCase();
+        const subj = (r.onlineExamConfig?.examSchedule?.subject?.subjectName || '').toLowerCase();
+        return code.includes(q) || name.includes(q) || subj.includes(q);
+      }
+      return true;
+    });
+  }, [rows, statusFilter, subjectFilter, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8 text-slate-900">
-      <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-black flex items-center gap-2">
-              <ShieldCheck className="w-7 h-7 text-blue-600" />
-              Quản Lý & Duyệt Điểm Bài Thi Tự Luận
+    <div className="min-h-screen bg-slate-50/50 p-6 text-slate-900 space-y-6">
+      <div className="mx-auto max-w-7xl space-y-5">
+        {/* Page Header matching system standards */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              Duyệt & Quản Lý Bài Thi Tự Luận
             </h1>
-            <p className="text-sm text-slate-500">
-              Khu vực dành cho ADMIN duyệt điểm, công bố kết quả, trả lại chấm lại hoặc xử lý vi phạm.
+            <p className="text-xs font-semibold text-slate-500">
+              Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.
             </p>
           </div>
+
           <button
+            type="button"
             onClick={loadAssignments}
-            className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs active:scale-95 shrink-0"
           >
-            Làm mới danh sách
+            <RotateCcw className="h-3.5 w-3.5 text-blue-600" />
+            <span>Làm mới danh sách</span>
           </button>
         </div>
 
         {message && (
-          <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm font-semibold text-blue-800 flex items-center justify-between">
+          <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5 text-xs font-semibold text-blue-800 flex items-center justify-between shadow-2xs">
             <span>{message}</span>
-            <button onClick={() => setMessage('')} className="text-blue-500 hover:text-blue-700">✕</button>
+            <button onClick={() => setMessage('')} className="text-blue-500 hover:text-blue-700 font-bold ml-4">
+              ✕
+            </button>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Left panel: List */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Tìm theo Mã SV hoặc Họ tên..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500"
-                />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500"
-                >
-                  <option value="ALL">Tất cả trạng thái</option>
-                  <option value="WAITING_APPROVAL">Chờ duyệt (WAITING_APPROVAL)</option>
-                  <option value="UNDER_GRADING">Đang chấm (UNDER_GRADING)</option>
-                  <option value="PUBLISHED">Đã công bố (PUBLISHED)</option>
-                </select>
+          <div className="lg:col-span-4 space-y-4">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Danh sách bài thi ({filteredRows.length}/{rows.length})
+                </span>
+                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || searchQuery) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter('ALL');
+                      setSubjectFilter('ALL');
+                      setSearchQuery('');
+                    }}
+                    className="text-[11px] font-bold text-rose-600 hover:underline cursor-pointer"
+                  >
+                    Đặt lại
+                  </button>
+                )}
+              </div>
+
+              {/* Status Tabs */}
+              <TabBar
+                tabs={[
+                  { key: 'ALL', label: 'Tất cả', count: counts.all },
+                  { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
+                  { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
+                  { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
+                ]}
+                active={statusFilter}
+                onChange={setStatusFilter}
+              />
+
+              {/* Search & Subject Row */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Tìm Mã SV, Tên SV..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {availableSubjects.length > 0 && (
+                  <select
+                    value={subjectFilter}
+                    onChange={(e) => setSubjectFilter(e.target.value)}
+                    className="rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer max-w-[130px] shrink-0"
+                  >
+                    <option value="ALL">Tất cả môn</option>
+                    {availableSubjects.map((s) => (
+                      <option key={s.code} value={s.code}>
+                        [{s.code}] {s.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {loading ? (
-                <div className="flex justify-center py-10">
-                  <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                <div className="text-center py-10 text-xs font-semibold text-slate-400">
+                  <RotateCcw className="h-4 w-4 animate-spin mx-auto mb-2 text-blue-600" />
+                  Đang tải danh sách bài làm...
                 </div>
               ) : filteredRows.length === 0 ? (
-                <div className="text-center py-10 text-xs font-semibold text-slate-400">
-                  Không có bài thi nào phù hợp bộ lọc.
+                <div className="text-center py-10 text-xs font-medium text-slate-400">
+                  Không tìm thấy bài thi tự luận nào.
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[68vh] overflow-y-auto pr-1">
                   {filteredRows.map((row) => {
                     const isSel = selected?.id === row.id;
-                    const stCls =
-                      row.gradingStatus === 'PUBLISHED'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : row.gradingStatus === 'WAITING_APPROVAL'
-                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                        : 'bg-blue-50 text-blue-700 border-blue-200';
-
                     return (
                       <button
                         key={row.id}
+                        type="button"
                         onClick={() => openAttempt(row.id)}
-                        className={`w-full text-left p-3.5 rounded-xl border transition ${
-                          isSel ? 'border-blue-500 bg-blue-50/40 shadow-xs' : 'border-slate-200 bg-white hover:bg-slate-50'
+                        className={`w-full text-left p-3.5 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
+                          isSel
+                            ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
+                            : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
                         }`}
                       >
-                        <div className="flex justify-between items-start mb-1">
+                        <div className="flex justify-between items-center gap-2">
                           <span className="font-bold text-xs text-slate-900">{row.student?.fullName}</span>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border ${stCls}`}>
-                            {row.gradingStatus}
-                          </span>
+                          <StatusBadge status={row.gradingStatus} />
                         </div>
                         <p className="text-[11px] text-slate-500 font-mono">
-                          Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-slate-800">{row.totalScore ?? 'Chưa chấm'}</strong>
+                          Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-slate-900">{row.totalScore ?? 'Chưa chấm'}</strong>
                         </p>
-                        <p className="text-[10px] text-slate-400 mt-1">
+                        <p className="text-[10px] text-slate-400 font-medium truncate">
                           Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Môn thi'}
                         </p>
                       </button>
@@ -409,12 +502,12 @@ export default function AdminEssayReviewPage() {
 
                         {/* AI Suggestion */}
                         {ans?.aiSuggestedScore !== undefined && ans?.aiSuggestedScore !== null && (
-                          <div className="p-3 rounded-lg bg-violet-50 border border-violet-200 text-xs text-violet-900 space-y-1">
+                          <div className="p-3 rounded-xl bg-blue-50/70 text-xs text-blue-900 space-y-1">
                             <div className="flex justify-between font-bold">
                               <span>✨ AI Đề xuất: {ans.aiSuggestedScore}đ</span>
                               <span>Tin cậy: {Math.round((ans.aiConfidence || 0) * 100)}%</span>
                             </div>
-                            {ans.aiSuggestedComment && <p className="text-[11px] text-violet-800">{ans.aiSuggestedComment}</p>}
+                            {ans.aiSuggestedComment && <p className="text-[11px] text-blue-800">{ans.aiSuggestedComment}</p>}
                           </div>
                         )}
 

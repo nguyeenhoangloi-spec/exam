@@ -7,6 +7,7 @@ import api from '../../lib/api';
 import { Question, Subject } from '../../types';
 import { Modal } from '../Modal';
 import { RichQuestionEditor } from './RichQuestionEditor';
+import { Button, controlClassName } from '../ui';
 import {
   QUESTION_TYPE_LABELS,
   DIFFICULTY_LABELS,
@@ -160,7 +161,7 @@ export function QuestionFormDialog({
       <form onSubmit={handleSubmit(submit)} className="space-y-4">
         <div className="grid gap-3 md:grid-cols-2">
           {/* Môn */}
-          <select {...register('subjectId', { valueAsNumber: true })} className="rounded-xl border p-2.5 text-sm font-medium">
+          <select {...register('subjectId', { valueAsNumber: true })} className={controlClassName}>
             {subjects.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.subjectName}
@@ -169,7 +170,7 @@ export function QuestionFormDialog({
           </select>
 
           {/* Loại câu hỏi */}
-          <select {...register('type')} className="rounded-xl border p-2.5 text-sm font-medium">
+          <select {...register('type')} className={controlClassName}>
             {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
               <option key={k} value={k}>
                 {v}
@@ -178,7 +179,7 @@ export function QuestionFormDialog({
           </select>
 
           {/* Độ khó */}
-          <select {...register('difficulty')} className="rounded-xl border p-2.5 text-sm font-medium">
+          <select {...register('difficulty')} className={controlClassName}>
             {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
               <option key={k} value={k}>
                 {v}
@@ -187,7 +188,7 @@ export function QuestionFormDialog({
           </select>
 
           {/* Mức độ Bloom */}
-          <select {...register('bloomLevel')} className="rounded-xl border p-2.5 text-sm font-medium">
+          <select {...register('bloomLevel')} className={controlClassName}>
             {Object.entries(BLOOM_LABELS).map(([k, v]) => (
               <option key={k} value={k}>
                 {v}
@@ -201,7 +202,7 @@ export function QuestionFormDialog({
             step="0.25"
             {...register('score', { valueAsNumber: true })}
             placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-            className="rounded-xl border p-2.5 text-sm font-semibold"
+            className={controlClassName}
           />
         </div>
 
@@ -288,13 +289,13 @@ export function QuestionFormDialog({
         <input
           {...register('keywords')}
           placeholder="Từ khóa tìm kiếm (ngăn cách bởi dấu phẩy)..."
-          className="w-full rounded-xl border p-2.5 text-sm"
+          className={controlClassName}
         />
         <textarea
           {...register('explanation')}
           rows={2}
           placeholder="Giải thích lý do đáp án đúng..."
-          className="w-full rounded-xl border p-2.5 text-sm"
+          className={controlClassName}
         />
 
         {Object.keys(errors).length > 0 && (
@@ -304,19 +305,8 @@ export function QuestionFormDialog({
         )}
 
         <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            Hủy
-          </button>
-          <button
-            disabled={isSubmitting}
-            className="rounded-xl bg-sky-600 px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-sky-700 disabled:opacity-50"
-          >
-            {isSubmitting ? 'Đang lưu...' : 'Lưu câu hỏi'}
-          </button>
+          <Button type="button" variant="outline" onClick={onClose}>Hủy</Button>
+          <Button type="submit" isLoading={isSubmitting}>Lưu câu hỏi</Button>
         </div>
       </form>
     </Modal>

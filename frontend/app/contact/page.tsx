@@ -70,7 +70,7 @@ export default function ContactSupportPage() {
   const [chatInput, setChatInput] = useState('');
 
   // Knowledge Base Articles
-  const articles: ArticleItem[] = [
+  const articles = useMemo<ArticleItem[]>(() => [
     {
       id: 'art-1',
       category: 'STUDENT',
@@ -166,7 +166,7 @@ export default function ContactSupportPage() {
         '3. Mật khẩu tạm thời sẽ được tự động gửi về Email đăng ký của người dùng.',
       ],
     },
-  ];
+  ], []);
 
   // Quick Suggestion Tags
   const popularSearchTags = [
@@ -188,7 +188,7 @@ export default function ContactSupportPage() {
         a.summary.toLowerCase().includes(query) ||
         a.tags.some((t) => t.toLowerCase().includes(query))
     );
-  }, [searchQuery]);
+  }, [articles, searchQuery]);
 
   const filteredFaqs = useMemo(() => {
     return articles.filter((item) => {
@@ -198,7 +198,7 @@ export default function ContactSupportPage() {
       const matchesCategory = activeCategory === 'ALL' || item.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, activeCategory]);
+  }, [activeCategory, articles, searchQuery]);
 
   const handleSendSupportForm = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -433,7 +433,7 @@ export default function ContactSupportPage() {
           </div>
 
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold">
               <Mail className="h-5 w-5" />
             </div>
             <h3 className="text-sm font-black text-slate-900 dark:text-white">Email Tiếp nhận Sự cố</h3>

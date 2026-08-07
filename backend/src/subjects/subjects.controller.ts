@@ -27,10 +27,12 @@ export class SubjectsController {
   }
 
   @Get(':id/enrollments')
+  @Roles('ADMIN')
   getEnrollments(@Param('id', ParseIntPipe) id: number, @Query('semester') semester?: string, @Query('schoolYear') schoolYear?: string) {
     return this.subjectsService.getEnrollments(id, semester, schoolYear);
   }
 
+  @Roles('ADMIN')
   @Post(':id/enroll-students')
   enrollStudents(@Param('id', ParseIntPipe) id: number, @Body() body: { studentIds: number[]; semester: string; schoolYear: string }) {
     return this.subjectsService.enrollStudents(id, body);

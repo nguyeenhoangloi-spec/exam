@@ -24,6 +24,7 @@ import { SecurityModule } from './common/security/security.module';
 import { EssayModule } from './essay/essay.module';
 import { AiModule } from './ai/ai.module';
 import { TrashModule } from './trash/trash.module';
+import { PracticeModule } from './practice/practice.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { TrashModule } from './trash/trash.module';
     ContactModule,
     AiModule,
     TrashModule,
+    PracticeModule,
   ],
 })
 export class AppModule {}

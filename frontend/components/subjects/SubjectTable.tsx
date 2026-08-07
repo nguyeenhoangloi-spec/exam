@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, BookOpen, Building2, Award, UserPlus, MoreVertical } from 'lucide-react';
 import { Subject } from '../../types';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 
 interface SubjectTableProps {
   subjects: Subject[];
@@ -72,7 +73,7 @@ export function SubjectTable({
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center gap-1 rounded-[8px] bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
                     <Award className="h-3 w-3 text-emerald-600" /> {s.credits} Tín chỉ
                   </span>
                 </div>
@@ -266,7 +267,7 @@ export function SubjectTable({
 
                 {visibleColumns.credits !== false && (
                   <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+                    <span className="inline-flex items-center gap-1 rounded-[8px] border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
                       <Award className="h-3.5 w-3.5 text-emerald-600" /> {s.credits} Tín chỉ
                     </span>
                   </td>
@@ -302,27 +303,13 @@ export function SubjectTable({
                       <Eye className="h-4 w-4" />
                     </button>
 
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === s.id ? null : s.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        title="Thao tác khác"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-
-                      {activeMenuId === s.id && (
-                        <div
-                          className={`absolute right-2 ${
-                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
-                          } z-30 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
-                          onMouseLeave={() => setActiveMenuId(null)}
-                        >
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onEnroll(s);
                             }}
                             className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-sky-50 text-sky-700"
@@ -334,7 +321,7 @@ export function SubjectTable({
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onDetail(s);
                             }}
                             className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
@@ -348,7 +335,7 @@ export function SubjectTable({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onEdit(s);
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-blue-600"
@@ -360,7 +347,7 @@ export function SubjectTable({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onDelete(s.id);
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
@@ -370,9 +357,9 @@ export function SubjectTable({
                               </button>
                             </>
                           )}
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

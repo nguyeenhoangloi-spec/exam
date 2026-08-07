@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { FileText, Layers, UserCheck, Send, ChevronRight, ArrowRight } from 'lucide-react';
+import { FileText, Layers, UserCheck, Send, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Badge } from '../ui/Badge';
 import type { DashboardAttention } from '../../types/dashboard';
 
 export function TaskAttention({ attention }: { attention?: Partial<DashboardAttention> }) {
@@ -15,8 +16,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       subtitle: 'Cần duyệt các câu hỏi mới',
       count: attention?.pendingQuestions ?? 0,
       priority: 'Cao',
-      priorityColor: 'bg-rose-50 text-rose-700 border-rose-200',
-      iconBg: 'bg-rose-100 text-rose-700',
+      tone: 'rose' as const,
       icon: FileText,
       route: '/question-bank?status=PENDING',
     },
@@ -26,8 +26,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       subtitle: 'Chưa hoàn tất xếp phòng thi',
       count: attention?.unassignedRooms ?? 0,
       priority: 'Trung bình',
-      priorityColor: 'bg-amber-50 text-amber-700 border-amber-200',
-      iconBg: 'bg-amber-100 text-amber-700',
+      tone: 'amber' as const,
       icon: Layers,
       route: '/exam-arrangement',
     },
@@ -37,8 +36,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       subtitle: 'Chưa đủ giám thị cho ca thi',
       count: attention?.missingSupervisors ?? 0,
       priority: 'Trung bình',
-      priorityColor: 'bg-amber-50 text-amber-700 border-amber-200',
-      iconBg: 'bg-amber-100 text-amber-700',
+      tone: 'amber' as const,
       icon: UserCheck,
       route: '/exam-supervisors',
     },
@@ -48,8 +46,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       subtitle: 'Trong 7 ngày tới',
       count: attention?.upcomingExams ?? 0,
       priority: 'Thấp',
-      priorityColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      iconBg: 'bg-emerald-100 text-emerald-700',
+      tone: 'emerald' as const,
       icon: Send,
       route: '/exam-periods',
     },
@@ -62,7 +59,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
         <h3 className="text-base font-black text-slate-900">Công việc cần xử lý</h3>
       </div>
 
-      {/* 4 Priority Items */}
+      {/* 4 Items */}
       <div className="space-y-2.5">
         {tasks.map((task) => {
           const Icon = task.icon;
@@ -75,7 +72,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
             >
               {/* Left icon & text */}
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl font-bold ${task.iconBg}`}>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-blue-50 border border-blue-200/60 text-blue-600 font-bold">
                   <Icon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0 leading-tight">
@@ -87,9 +84,9 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
               {/* Right count, priority badge, arrow */}
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-xs font-black text-slate-900">{task.count}</span>
-                <span className={`inline-flex rounded-full border px-2 py-0.5 text-[9.5px] font-extrabold ${task.priorityColor}`}>
+                <Badge tone={task.tone} size="xs">
                   {task.priority}
-                </span>
+                </Badge>
                 <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
               </div>
             </button>
@@ -98,14 +95,13 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       </div>
 
       {/* Footer Link */}
-      <div className="border-t border-slate-100 pt-2">
+      <div className="border-t border-slate-100 pt-2 text-center">
         <button
           type="button"
           onClick={() => router.push('/question-bank?status=PENDING')}
-          className="w-full flex items-center justify-between text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
-          <span>Xem tất cả công việc</span>
-          <ArrowRight className="h-3.5 w-3.5" />
+          Xem tất cả công việc cần xử lý →
         </button>
       </div>
     </div>

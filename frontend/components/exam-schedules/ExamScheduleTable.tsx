@@ -5,6 +5,8 @@ import { Eye, MoreVertical, Edit, Trash2, RotateCcw, Clock, Calendar, Users, Bui
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { ExamSchedule } from '../../types';
 
+import { StatusBadge } from '../common/StatusBadge';
+
 export interface ExamScheduleItemExtended {
   id: number;
   examPeriodId?: number;
@@ -155,33 +157,7 @@ export function ExamScheduleTable({
 
   const getStatusBadge = (st?: string, sched?: ExamScheduleItemExtended) => {
     const s = (sched ? computeScheduleStatus(sched) : st?.toUpperCase()) || 'UPCOMING';
-    if (s === 'ONGOING' || s === 'ACTIVE') {
-      return (
-        <span className="inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
-          Đang diễn ra
-        </span>
-      );
-    }
-    if (s === 'COMPLETED' || s === 'FINISHED') {
-      return (
-        <span className="inline-flex items-center rounded-lg bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-700 border border-slate-200">
-          Đã diễn ra
-        </span>
-      );
-    }
-    if (s === 'CANCELLED' || s === 'REJECTED') {
-      return (
-        <span className="inline-flex items-center rounded-lg bg-rose-50 px-2.5 py-0.5 text-xs font-bold text-rose-700 border border-rose-200">
-          Đã hủy
-        </span>
-      );
-    }
-    // Default UPCOMING
-    return (
-      <span className="inline-flex items-center rounded-lg bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">
-        Sắp diễn ra
-      </span>
-    );
+    return <StatusBadge status={s} />;
   };
 
   // 1. Dạng Lưới (Grid View Mode)
@@ -243,7 +219,7 @@ export function ExamScheduleTable({
                     <span>Phòng {roomName}</span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Users className="h-3.5 w-3.5 text-purple-500 shrink-0" />
+                    <Users className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                     <span>{studentCount} TS ({supervisorCount} GT)</span>
                   </div>
                 </div>

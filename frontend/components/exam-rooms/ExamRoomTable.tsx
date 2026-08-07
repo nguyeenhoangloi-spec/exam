@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Monitor, DoorOpen, Users, Building, MoreVertical } from 'lucide-react';
 import { ExamRoom } from '../../types';
+import { StatusBadge } from '../common/StatusBadge';
+import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 
 interface ExamRoomTableProps {
   rooms: ExamRoom[];
@@ -41,39 +43,19 @@ export function ExamRoomTable({
 
   const getTypeBadge = (type?: string) => {
     if (type === 'COMPUTER_LAB') {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
-          <Monitor className="h-3.5 w-3.5" /> Phòng Máy tính
-        </span>
-      );
+      return <StatusBadge status="ROOM_COMPUTER" />;
     }
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-bold text-sky-700 border border-sky-200">
-        <DoorOpen className="h-3.5 w-3.5" /> Phòng Lý thuyết
-      </span>
-    );
+    return <StatusBadge status="ROOM_THEORY" />;
   };
 
   const getStatusBadge = (status?: string) => {
     if (status === 'MAINTENANCE') {
-      return (
-        <span className="inline-flex items-center rounded-lg bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-700 border border-amber-200">
-          Bảo trì
-        </span>
-      );
+      return <StatusBadge status="MAINTENANCE" />;
     }
     if (status === 'BUSY' || status === 'IN_USE') {
-      return (
-        <span className="inline-flex items-center rounded-lg bg-purple-50 px-2.5 py-0.5 text-xs font-bold text-purple-700 border border-purple-200">
-          Đang thi
-        </span>
-      );
+      return <StatusBadge status="BUSY" customLabel="Đang dùng" />;
     }
-    return (
-      <span className="inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
-        Sẵn sàng
-      </span>
-    );
+    return <StatusBadge status="READY" />;
   };
 
   // 1. Dạng Lưới (Grid View Mode)
@@ -84,7 +66,7 @@ export function ExamRoomTable({
           const isChecked = selected.includes(r.id);
           const codeText = r.roomCode || r.code || '';
           const nameText = r.roomName || r.name || '';
-          const locText = r.building || r.location || 'Tòa nhà A';
+          const locText = r.building || r.location || 'Chưa cập nhật';
 
           return (
             <div
@@ -110,38 +92,41 @@ export function ExamRoomTable({
                       {codeText}
                     </button>
                   </div>
-                  {getTypeBadge(r.roomType)}
+
+                  {getStatusBadge(r.status)}
                 </div>
 
-                <div>
+                <div className="flex items-center justify-between gap-2">
                   <h4
                     onClick={() => onDetail(r)}
                     className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
                   >
                     {nameText}
                   </h4>
+
+                  {getTypeBadge(r.roomType)}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
-                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Users className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                    <span>Sức chứa: <strong>{r.capacity ?? 0} chỗ</strong></span>
+                <div className="space-y-1.5 text-xs text-slate-600 font-medium pt-1">
+                  <div className="flex items-center gap-1.5">
+                    <Building className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    <span className="truncate">{locText}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Building className="h-3.5 w-3.5 text-purple-500 shrink-0" />
-                    <span>{locText}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    <span>Sức chứa: <strong className="font-extrabold text-slate-900">{r.capacity} thí sinh</strong></span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              {/* Action Toolbar */}
+              <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
                 <button
                   type="button"
                   onClick={() => onDetail(r)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-1 font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
                 >
-                  <Eye className="h-3.5 w-3.5" />
-                  <span>Xem chi tiết</span>
+                  <Eye className="h-3.5 w-3.5" /> Chi tiết
                 </button>
 
                 {isAdmin && (
@@ -149,16 +134,16 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onEdit(r)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100"
-                      title="Sửa"
+                      className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer"
+                      title="Sửa phòng thi"
                     >
                       <Edit className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
                       onClick={() => onDelete(r.id)}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-rose-50"
-                      title="Xóa"
+                      className="rounded-lg p-1.5 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
+                      title="Xóa phòng thi"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -172,80 +157,13 @@ export function ExamRoomTable({
     );
   }
 
-  // 2. Dạng Thu Gọn (Compact View Mode)
-  if (viewMode === 'compact') {
-    return (
-      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
-            <tr>
-              <th scope="col" className="p-2 pl-3 text-center w-8">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                />
-              </th>
-              <th scope="col" className="p-2 whitespace-nowrap">Mã phòng</th>
-              <th scope="col" className="p-2 min-w-[180px]">Tên phòng thi</th>
-              <th scope="col" className="p-2 whitespace-nowrap">Sức chứa</th>
-              <th scope="col" className="p-2 whitespace-nowrap">Tòa nhà</th>
-              <th scope="col" className="p-2 whitespace-nowrap">Loại phòng</th>
-              <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
-            {rooms.map((r) => {
-              const isChecked = selected.includes(r.id);
-              const codeText = r.roomCode || r.code || '';
-              const nameText = r.roomName || r.name || '';
-              const locText = r.building || r.location || 'Tòa nhà A';
-
-              return (
-                <tr key={r.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
-                  <td className="p-2 pl-3 text-center">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => onSelect(r.id, e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                  </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">
-                    <button type="button" onClick={() => onDetail(r)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
-                      {codeText}
-                    </button>
-                  </td>
-                  <td className="p-2 min-w-[180px]">
-                    <p className="truncate font-bold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(r)}>
-                      {nameText}
-                    </p>
-                  </td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{r.capacity ?? 0} chỗ</td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{locText}</td>
-                  <td className="p-2 whitespace-nowrap">{getTypeBadge(r.roomType)}</td>
-                  <td className="p-2 pr-3 text-right whitespace-nowrap">
-                    <button type="button" onClick={() => onDetail(r)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
-                      <Eye className="h-3.5 w-3.5" />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-
-  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
+  // 2. Dạng Bảng Chuẩn (List View Mode)
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+      <table className="w-full text-left text-xs border-collapse">
+        <thead className="bg-slate-50/90 text-slate-600 font-extrabold text-[11px] uppercase tracking-wider border-b border-slate-200/90">
           <tr>
-            <th scope="col" className="p-3.5 pl-4 text-center w-10">
+            <th className="p-3.5 pl-4 text-center whitespace-nowrap w-10">
               <input
                 type="checkbox"
                 checked={allSelected}
@@ -253,29 +171,27 @@ export function ExamRoomTable({
                 className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </th>
-            {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã phòng</th>}
-            {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[200px]">Tên phòng thi</th>}
-            {visibleColumns.capacity !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Sức chứa</th>}
-            {visibleColumns.building !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Tòa nhà / Vị trí</th>}
-            {visibleColumns.roomType !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại phòng</th>}
-            {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
-            <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
+            {visibleColumns.code !== false && <th className="p-3.5 whitespace-nowrap">Mã phòng</th>}
+            {visibleColumns.name !== false && <th className="p-3.5 min-w-[180px]">Tên phòng thi</th>}
+            {visibleColumns.capacity !== false && <th className="p-3.5 whitespace-nowrap text-center">Sức chứa</th>}
+            {visibleColumns.building !== false && <th className="p-3.5 min-w-[140px]">Tòa nhà / Vị trí</th>}
+            {visibleColumns.roomType !== false && <th className="p-3.5 whitespace-nowrap">Loại phòng</th>}
+            {visibleColumns.status !== false && <th className="p-3.5 whitespace-nowrap">Trạng thái</th>}
+            <th className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 font-medium">
+        <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
           {rooms.map((r, index) => {
             const isChecked = selected.includes(r.id);
+            const isLastRow = index >= Math.floor(rooms.length / 2);
             const codeText = r.roomCode || r.code || '';
             const nameText = r.roomName || r.name || '';
-            const locText = r.building || r.location || 'Tòa nhà A';
-            const isLastRow = index >= Math.floor(rooms.length / 2);
+            const locText = r.building || r.location || 'Chưa cập nhật';
 
             return (
               <tr
                 key={r.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
-                }`}
+                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input
@@ -287,48 +203,34 @@ export function ExamRoomTable({
                 </td>
 
                 {visibleColumns.code !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-blue-600">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(r)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 hover:bg-blue-100 transition cursor-pointer"
-                    >
-                      {codeText}
-                    </button>
+                  <td className="p-3.5 whitespace-nowrap">
+                    <span className="font-mono font-black text-sky-700">{codeText}</span>
                   </td>
                 )}
 
                 {visibleColumns.name !== false && (
-                  <td className="p-3.5 min-w-[200px]">
-                    <div className="flex items-center gap-2 font-extrabold text-slate-900">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                        {r.roomType === 'COMPUTER_LAB' ? (
-                          <Monitor className="h-3.5 w-3.5 text-emerald-600" />
-                        ) : (
-                          <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
-                        )}
-                      </div>
-                      <span
-                        onClick={() => onDetail(r)}
-                        className="cursor-pointer hover:text-blue-600 transition"
-                      >
-                        {nameText}
-                      </span>
-                    </div>
-                  </td>
-                )}
-
-                {visibleColumns.capacity !== false && (
-                  <td className="p-3.5 whitespace-nowrap">
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700">
-                      <Users className="h-3.5 w-3.5 text-slate-400" /> {r.capacity ?? 0} Chỗ
+                  <td className="p-3.5 min-w-[180px]">
+                    <span
+                      onClick={() => onDetail(r)}
+                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight"
+                    >
+                      {nameText}
                     </span>
                   </td>
                 )}
 
+                {visibleColumns.capacity !== false && (
+                  <td className="p-3.5 whitespace-nowrap text-center">
+                    <span className="font-black text-slate-900">{r.capacity} chỗ</span>
+                  </td>
+                )}
+
                 {visibleColumns.building !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    {locText}
+                  <td className="p-3.5 min-w-[140px]">
+                    <div className="flex items-center gap-1.5 text-slate-600">
+                      <Building className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                      <span className="font-semibold truncate">{locText}</span>
+                    </div>
                   </td>
                 )}
 
@@ -344,7 +246,8 @@ export function ExamRoomTable({
                   </td>
                 )}
 
-                <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
+                {/* Actions dropdown / buttons */}
+                <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                   <div className="flex items-center justify-end gap-1">
                     <button
                       type="button"
@@ -355,33 +258,18 @@ export function ExamRoomTable({
                       <Eye className="h-4 w-4" />
                     </button>
 
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === r.id ? null : r.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        title="Thao tác khác"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-
-                      {activeMenuId === r.id && (
-                        <div
-                          className={`absolute right-2 ${
-                            isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'
-                          } z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left animate-in fade-in duration-100`}
-                          onMouseLeave={() => setActiveMenuId(null)}
-                        >
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveMenuId(null);
+                              closeMenu();
                               onDetail(r);
                             }}
                             className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
                           >
-                            <Eye className="h-3.5 w-3.5 text-slate-500" />
-                            <span>Xem chi tiết</span>
+                            <Eye className="h-3.5 w-3.5 text-slate-500" /> Xem chi tiết
                           </button>
 
                           {isAdmin && (
@@ -389,31 +277,28 @@ export function ExamRoomTable({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onEdit(r);
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-blue-600"
                               >
-                                <Edit className="h-3.5 w-3.5" />
-                                <span>Chỉnh sửa phòng</span>
+                                <Edit className="h-3.5 w-3.5" /> Chỉnh sửa
                               </button>
-
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setActiveMenuId(null);
+                                  closeMenu();
                                   onDelete(r.id);
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                <span>Xóa phòng thi</span>
+                                <Trash2 className="h-3.5 w-3.5" /> Xóa phòng
                               </button>
                             </>
                           )}
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

@@ -134,9 +134,9 @@ export default function ExamSchedulesPage() {
         const mappedRealSchedules: ExamScheduleItemExtended[] = rawSchedules.map((s: any) => ({
           ...s,
           code: s.code || `LCT${String(s.id).padStart(6, '0')}`,
-          periodName: s.examPeriod?.name || s.periodName || (realPeriods.find((p: any) => p.id === s.examPeriodId)?.name) || 'Kỳ thi học kỳ',
+          periodName: s.examPeriod?.name || s.periodName || (realPeriods.find((p: any) => p.id === s.examPeriodId)?.name) || 'Chưa gán kỳ thi',
           shiftName: computeShiftName(s.startTime, s.shiftName),
-          roomName: s.roomName || (s.examScheduleRooms?.[0]?.examRoom?.roomCode || s.examScheduleRooms?.[0]?.examRoom?.name) || 'P.101',
+          roomName: s.roomName || (s.examScheduleRooms?.[0]?.examRoom?.roomCode || s.examScheduleRooms?.[0]?.examRoom?.name) || 'Chưa xếp phòng',
           studentCount: s.studentCount ?? 0,
           supervisorCount: s.supervisorCount ?? '0/0',
           statusBadge: computeScheduleStatus(s),
@@ -309,12 +309,11 @@ export default function ExamSchedulesPage() {
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
-          await api.delete(`/exam-schedules/${id}`).catch(() => { });
+          await api.delete(`/exam-schedules/${id}`);
           setSchedules((prev) => prev.filter((x) => x.id !== id));
           setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
-        } catch {
-          setSchedules((prev) => prev.filter((x) => x.id !== id));
-          setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
+        } catch (error: any) {
+          setToast({ message: error?.response?.data?.message || error?.message || 'Không thể xóa lịch thi. Vui lòng kiểm tra các dữ liệu liên quan.', type: 'error' });
         }
       },
     });
@@ -339,8 +338,8 @@ export default function ExamSchedulesPage() {
       idx + 1,
       s.code || `LCT${String(s.id).padStart(6, '0')}`,
       s.periodName || s.examPeriod?.name || '',
-      s.shiftName || 'Ca 1 - Sáng',
-      s.roomName || 'P.101',
+      s.shiftName || '—',
+      s.roomName || 'Chưa xếp phòng',
       s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
       s.startTime || '',
       s.endTime || '',
@@ -381,7 +380,7 @@ export default function ExamSchedulesPage() {
         s.periodName || '',
         s.roomName || '',
         s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
-        `${s.startTime || '07:00'} - ${s.endTime || '09:00'}`,
+        `${s.startTime || '—'} - ${s.endTime || '—'}`,
         s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : 'Đã diễn ra',
       ]),
     });
@@ -518,12 +517,16 @@ export default function ExamSchedulesPage() {
               onConfirm: async () => {
                 setConfirmModal((prev) => ({ ...prev, isOpen: false }));
                 try {
-                  await Promise.all(selected.map((id) => api.delete(`/exam-schedules/${id}`).catch(() => { })));
-                  setSchedules((prev) => prev.filter((x) => !selected.includes(x.id)));
-                  setToast({ message: `Đã xóa ${count} ca thi đã chọn!`, type: 'success' });
-                } catch {
-                  setSchedules((prev) => prev.filter((x) => !selected.includes(x.id)));
-                  setToast({ message: `Đã xóa ${count} ca thi đã chọn!`, type: 'success' });
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/exam-schedules/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  const failedCount = count - deletedIds.length;
+                  if (deletedIds.length) setSchedules((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                  setToast({
+                    message: failedCount
+                      ? `Đã xóa ${deletedIds.length}/${count} ca thi. ${failedCount} ca không thể xóa do còn dữ liệu liên quan hoặc không hợp lệ.`
+                      : `Đã xóa ${count} ca thi đã chọn!`,
+                    type: failedCount ? 'error' : 'success',
+                  });
                 } finally {
                   setSelected([]);
                 }
@@ -705,7 +708,7 @@ export default function ExamSchedulesPage() {
         onClose={() => setDrawerSchedule(null)}
         title={drawerSchedule?.periodName || 'Chi tiết ca thi'}
         subtitle={`Mã ca thi: ${drawerSchedule?.code || ''}`}
-        avatarText={drawerSchedule?.roomName || 'LCT'}
+        avatarText="LCT"
         badge={{
           label: drawerSchedule?.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : drawerSchedule?.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã diễn ra',
           className: 'bg-blue-50 text-blue-700 border-blue-200',
