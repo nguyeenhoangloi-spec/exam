@@ -28,6 +28,10 @@ export class GradeEssayDto {
   @IsNotEmpty()
   questionText: string;
 
+  @IsString()
+  @IsOptional()
+  sampleAnswer?: string;
+
   @IsNumber()
   @IsOptional()
   questionMaxScore?: number;

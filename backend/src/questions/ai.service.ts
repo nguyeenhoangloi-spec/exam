@@ -272,6 +272,7 @@ export class AiQuestionsService {
           `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
           'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}]}]}.',
           'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
+          input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
         ].filter(Boolean).join('\n');
     try {
       const parts: Array<Record<string, unknown>> = [{ text: prompt }];
@@ -394,7 +395,8 @@ export class AiQuestionsService {
           continue;
         }
         const isEssay = input.type === 'ESSAY';
-        const options: QuestionOptionDto[] = (Array.isArray(item.options) && !isEssay)
+        const isFillBlank = input.type === 'FILL_BLANK';
+        const options: QuestionOptionDto[] = (Array.isArray(item.options) && !isEssay && !isFillBlank)
           ? item.options.map((option: any, order: number) => ({
               label: String(option.label || String.fromCharCode(65 + order)),
               content: String(option.content || ''),
@@ -422,6 +424,7 @@ export class AiQuestionsService {
           explanation: String(item.explanation || ''),
           keywords: String(item.keywords || ''),
           options,
+          fillBlankAnswers: isFillBlank ? (Array.isArray(item.fillBlankAnswers) ? item.fillBlankAnswers.map((answer: any, index: number) => ({ blankIndex: Number(answer.blankIndex || index + 1), answer: String(answer.answer || ''), acceptedAnswers: Array.isArray(answer.acceptedAnswers) ? answer.acceptedAnswers.map(String) : [], score: Number(answer.score ?? Number(item.score || 0.25) / Math.max(1, item.fillBlankAnswers.length)), caseSensitive: Boolean(answer.caseSensitive), ignoreWhitespace: answer.ignoreWhitespace !== false, ignoreVietnameseTone: Boolean(answer.ignoreVietnameseTone) })) : []) : [],
           sourceImages: imageIndexes.map((index: number) => ({ ...(input.images || [])[index], index })),
         });
       }

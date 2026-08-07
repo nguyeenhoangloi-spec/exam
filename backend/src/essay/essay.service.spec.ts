@@ -21,7 +21,8 @@ describe('EssayService', () => {
       $transaction: jest.fn((cb) => cb(prisma)),
     };
     audit = { write: jest.fn().mockResolvedValue({}) };
-    service = new EssayService(prisma, audit);
+    const aiService = { gradeEssay: jest.fn().mockRejectedValue(new Error('AI failed')) } as any;
+    service = new EssayService(prisma, audit, aiService);
   });
 
   describe('saveRubric', () => {

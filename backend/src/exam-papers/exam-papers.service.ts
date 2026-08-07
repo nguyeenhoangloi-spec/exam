@@ -30,6 +30,10 @@ const paperDetailInclude = {
             orderBy: { order: 'asc' as const },
             select: { id: true, label: true, content: true, isCorrect: true, order: true },
           },
+          fillBlankAnswers: {
+            orderBy: { blankIndex: 'asc' as const },
+            select: { blankIndex: true, answer: true, acceptedAnswers: true, score: true, caseSensitive: true, ignoreWhitespace: true, ignoreVietnameseTone: true },
+          },
         },
       },
     },
@@ -154,7 +158,7 @@ export class ExamPapersService {
           isActive: true,
           deletedAt: null,
         },
-        include: { options: { orderBy: { order: 'asc' } }, essayRubrics: { orderBy: { sortOrder: 'asc' } } },
+        include: { options: { orderBy: { order: 'asc' } }, essayRubrics: { orderBy: { sortOrder: 'asc' } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } } },
       });
 
       // A paper type must select only compatible question types. This prevents
@@ -392,6 +396,13 @@ export class ExamPapersService {
         throw new BadRequestException(
           `Tổng điểm Rubric (${Number(totalRubricScore.toFixed(2))}đ) không khớp với điểm số của câu hỏi tự luận "${q.content || q.code}" (${expectedScore}đ).`,
         );
+      }
+    }
+    for (const q of paper.questions.map((item: any) => item.question).filter((question: any) => question?.type === 'FILL_BLANK')) {
+      const blanks = q.fillBlankAnswers || [];
+      const total = blanks.reduce((sum: number, blank: any) => sum + Number(blank.score || 0), 0);
+      if (!blanks.length || Math.abs(total - Number((paper.questions.find((item: any) => item.questionId === q.id)?.score) || 0)) > 0.001) {
+        throw new BadRequestException(`Câu điền khuyết "${q.code}" thiếu đáp án hoặc tổng điểm chỗ trống không khớp điểm trong đề.`);
       }
     }
     let examPasswordHash: string | null = null;

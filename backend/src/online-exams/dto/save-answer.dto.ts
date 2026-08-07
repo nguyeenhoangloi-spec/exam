@@ -1,4 +1,16 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class FillBlankResponseDto {
+  @IsInt()
+  @Min(1)
+  @Max(20)
+  blankIndex: number;
+
+  @IsString()
+  @Max(2000)
+  value: string;
+}
 
 export class SaveAnswerDto {
   @IsString()
@@ -15,6 +27,12 @@ export class SaveAnswerDto {
 
   @IsOptional()
   textAnswerRich?: Record<string, unknown>;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FillBlankResponseDto)
+  fillBlankAnswers?: FillBlankResponseDto[];
 
   @IsBoolean()
   @IsOptional()

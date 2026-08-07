@@ -50,10 +50,14 @@ export class AiService {
   }
 
   async gradeEssay(dto: GradeEssayDto) {
-    const systemPrompt = `Bạn là một trợ lý giảng viên chấm bài thi tự luận chuyên nghiệp và công bằng.
-Nhiệm vụ của bạn là đọc đề bài, bài làm của sinh viên và danh sách các tiêu chí chấm (Rubric).
-Sau đó đưa ra điểm số phù hợp cho từng tiêu chí và nhận xét ngắn gọn, mang tính xây dựng bằng Tiếng Việt.
-BẮT BUỘC chỉ trả về định dạng JSON thuần túy (không kèm chuỗi giải thích ngoài JSON).`;
+    const systemPrompt = `Bạn là trợ lý giảng viên chấm bài tự luận nghiêm túc, công bằng và chính xác.
+Nhiệm vụ của bạn là đánh giá xem bài làm của sinh viên có thực sự ĐÚNG và TRỦNG KHỚP với Đề bài cũng như Đáp án gợi ý hay không.
+
+QUY TẮC CHẤM BẮT BUỘC:
+1. Nếu sinh viên nhập ký tự ngắn/vô nghĩa (ví dụ: "1", "a", "abc", "test", "không biết"), hoặc viết lạc đề không liên quan, BẮT BUỘC chấm 0 ĐIỂM cho tiêu chí đó.
+2. KHÔNG BAO GIỜ cho điểm nếu nội dung bài làm không đúng với câu hỏi hoặc đáp án gợi ý.
+3. Chỉ cho điểm tương ứng với tỷ lệ nội dung trả lời ĐÚNG thực tế.
+4. BẮT BUỘC chỉ trả về định dạng JSON thuần túy (không kèm chuỗi giải thích ngoài JSON).`;
 
     const rubricText = dto.criteria
       .map(
@@ -62,8 +66,11 @@ BẮT BUỘC chỉ trả về định dạng JSON thuần túy (không kèm chu�
       )
       .join('\n');
 
-    const userPrompt = `ĐỀ BÀI:
+    const userPrompt = `ĐỀ BÀI CÂU HỎI:
 ${dto.questionText}
+
+HƯỚNG DẪN ĐÁP ÁN / Ý CHÍNH CẦN ĐẠT:
+${dto.sampleAnswer || 'Đánh giá mức độ đúng đắn và chính xác của câu trả lời theo kiến thức môn học.'}
 
 BÀI LÀM CỦA SINH VIÊN:
 ${dto.answerText}
@@ -76,8 +83,8 @@ Vui lòng chấm điểm và trả về kết quả theo cấu trúc JSON như s
   "criteriaGrades": [
     {
       "criterionId": "string (khớp chính xác với ID tiêu chí)",
-      "score": number (không âm, không quá điểm tối đa của tiêu chí),
-      "comment": "nhận xét chi tiết ngắn gọn"
+      "score": number (không âm, không quá điểm tối đa của tiêu chí. Nếu làm sai hoặc gõ linh tinh thì ghi 0),
+      "comment": "nhận xét chi tiết đúng/sai ngắn gọn"
     }
   ],
   "totalScore": number,

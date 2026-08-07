@@ -81,6 +81,7 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
           </select>
           <select value={form.type} onChange={e => set('type', e.target.value)} className="rounded-lg border p-2 text-sm">
             <option value="SINGLE_CHOICE">Trắc nghiệm</option>
+            <option value="FILL_BLANK">Điền vào chỗ trống</option>
             <option value="ESSAY">Tự luận</option>
           </select>
           <select value={form.difficulty} onChange={e => set('difficulty', e.target.value)} className="rounded-lg border p-2 text-sm">
@@ -185,4 +186,3 @@ export function QuestionAIWizard({ open, subjects, onClose, onDone }: { open: bo
     </Modal>
   );
 }
-

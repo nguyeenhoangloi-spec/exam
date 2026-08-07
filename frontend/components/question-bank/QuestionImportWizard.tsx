@@ -10,6 +10,7 @@ type Mode = 'table' | 'document';
 
 const types = [
   ['SINGLE_CHOICE', 'Trắc nghiệm'],
+  ['FILL_BLANK', 'Điền vào chỗ trống'],
   ['ESSAY', 'Tự luận'],
 ];
 

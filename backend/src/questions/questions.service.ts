@@ -8,11 +8,11 @@ import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, ImportPreviewDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
-import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
+import { normalizeFillBlankAnswer, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
 
 type Actor = { id: number; role: string };
 const include = {
-  subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' as const } }, options: { orderBy: { order: 'asc' as const }, include: { media: { orderBy: { sortOrder: 'asc' as const } } } },
+  subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' as const } }, options: { orderBy: { order: 'asc' as const }, include: { media: { orderBy: { sortOrder: 'asc' as const } } } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' as const } },
   createdBy: { select: { id: true, username: true } },
   approvedBy: { select: { id: true, username: true } }, statistic: true,
   histories: { orderBy: { createdAt: 'desc' as const }, include: { changedBy: { select: { id: true, username: true } } } },
@@ -32,7 +32,7 @@ export class QuestionsService {
     return this.json({ html: html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '').replace(/javascript:/gi, '') });
   }
   private async current(id: string) {
-    const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include: { options: true, statistic: true } });
+    const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include: { options: true, fillBlankAnswers: true, statistic: true } });
     if (!q) throw new NotFoundException('Không tìm thấy câu hỏi.');
     return q;
   }
@@ -115,6 +115,7 @@ export class QuestionsService {
     for (const question of d.questions) {
       await this.chapter(question.subjectId, question.chapterId);
       validateQuestionOptions(question.type, question.options);
+      validateFillBlankAnswers(question.type, question.content, question.score, question.fillBlankAnswers);
       if (!Number.isFinite(question.score) || question.score < 0.01 || question.score > 100) {
         throw new BadRequestException('Điểm câu hỏi AI không hợp lệ.');
       }
@@ -137,7 +138,9 @@ export class QuestionsService {
       normalizedContent: normalizeQuestionContent(d.content), ...(d.contentRich ? { contentRich: this.rich(d.contentRich) } : {}), type: d.type, difficulty: d.difficulty, bloomLevel: d.bloomLevel,
       score: d.score, explanation: d.explanation || null, keywords: d.keywords || null, status: QuestionStatus.DRAFT, createdBy: { connect: { id: a.id } },
       ...(d.media?.length ? { media: { create: d.media.map((m, i) => ({ url: m.url, mimeType: m.mimeType, fileName: m.fileName, width: m.width, height: m.height, sortOrder: m.sortOrder ?? i, altText: m.altText })) } } : {}),
-      options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, ...(o.contentRich ? { contentRich: this.json(o.contentRich) } : {}), isCorrect: o.isCorrect, order: o.order ?? i })) }, statistic: { create: {} },
+      options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, ...(o.contentRich ? { contentRich: this.json(o.contentRich) } : {}), isCorrect: o.isCorrect, order: o.order ?? i })) },
+      ...(d.fillBlankAnswers?.length ? { fillBlankAnswers: { create: d.fillBlankAnswers.map(item => ({ blankIndex: item.blankIndex, answer: item.answer.trim(), normalizedAnswer: normalizeFillBlankAnswer(item.answer, item), acceptedAnswers: item.acceptedAnswers?.length ? this.json(item.acceptedAnswers) : Prisma.JsonNull, score: item.score, caseSensitive: Boolean(item.caseSensitive), ignoreWhitespace: item.ignoreWhitespace !== false, ignoreVietnameseTone: Boolean(item.ignoreVietnameseTone) })) } } : {}),
+      statistic: { create: {} },
     }, include });
     for (const option of d.options) {
       const createdOption = q.options.find((item) => item.order === (option.order ?? d.options.indexOf(option)));
@@ -158,7 +161,7 @@ export class QuestionsService {
       ...((q.fromDate || q.toDate) && { createdAt: { ...(q.fromDate && { gte: new Date(q.fromDate) }), ...(q.toDate && { lte: new Date(`${q.toDate}T23:59:59.999Z`) }) } }),
     };
     const [data, total] = await this.prisma.$transaction([
-      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' } }, options: { orderBy: { order: 'asc' }, include: { media: { orderBy: { sortOrder: 'asc' } } } }, createdBy: { select: { id: true, username: true } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
+      this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' } }, options: { orderBy: { order: 'asc' }, include: { media: { orderBy: { sortOrder: 'asc' } } } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } }, createdBy: { select: { id: true, username: true } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
       this.prisma.question.count({ where }),
     ]);
     return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
@@ -198,7 +201,7 @@ export class QuestionsService {
     return { ...q, statistic: q.statistic ? { ...q.statistic, correctRate: q.statistic.totalAnswers ? q.statistic.correctAnswers / q.statistic.totalAnswers : null } : null };
   }
   async create(a: Actor, d: CreateQuestionDto) {
-    this.access(a); await this.chapter(d.subjectId, d.chapterId); validateQuestionOptions(d.type, d.options); await this.noDuplicate(a, d.content, d.overrideDuplicate);
+    this.access(a); await this.chapter(d.subjectId, d.chapterId); validateQuestionOptions(d.type, d.options); validateFillBlankAnswers(d.type, d.content, d.score, d.fillBlankAnswers); await this.noDuplicate(a, d.content, d.overrideDuplicate);
     return this.prisma.$transaction(async tx => this.createInTransaction(tx, a, d));
   }
   async update(a: Actor, id: string, d: UpdateQuestionDto) {
@@ -207,9 +210,11 @@ export class QuestionsService {
       throw new BadRequestException('Không thể sửa câu hỏi đã được đưa vào đề thi. Hãy nhân bản câu hỏi để chỉnh sửa.');
     }
     const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId === null ? null : (d.chapterId ?? old.chapterId); await this.chapter(subjectId, chapterId);
-    validateQuestionOptions(d.type ?? old.type, d.options ?? old.options); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
+    const nextType = d.type ?? old.type, nextContent = d.content ?? old.content, nextScore = d.score ?? old.score;
+    validateQuestionOptions(nextType, d.options ?? old.options); validateFillBlankAnswers(nextType, nextContent, nextScore, d.fillBlankAnswers ?? old.fillBlankAnswers); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
     return this.prisma.$transaction(async tx => {
       if (d.options) await tx.questionOption.deleteMany({ where: { questionId: id } });
+      if (d.fillBlankAnswers || (d.type && d.type !== 'FILL_BLANK')) await tx.fillBlankAnswer.deleteMany({ where: { questionId: id } });
       if (d.media) await tx.questionMedia.deleteMany({ where: { questionId: id, optionId: null } });
       const q = await tx.question.update({ where: { id }, data: {
         ...(d.subjectId && { subject: { connect: { id: d.subjectId } } }), ...(d.chapterId !== undefined && { chapter: d.chapterId ? { connect: { id: d.chapterId } } : { disconnect: true } }),
@@ -219,6 +224,7 @@ export class QuestionsService {
         ...(d.keywords !== undefined && { keywords: d.keywords || null }),
         ...(d.media?.length && { media: { create: d.media.map((m, i) => ({ url: m.url, mimeType: m.mimeType, fileName: m.fileName, width: m.width, height: m.height, sortOrder: m.sortOrder ?? i, altText: m.altText })) } }),
         ...(d.options && { options: { create: d.options.map((o, i) => ({ label: o.label, content: o.content, ...(o.contentRich ? { contentRich: this.json(o.contentRich) } : {}), isCorrect: o.isCorrect, order: o.order ?? i })) } }),
+        ...(d.fillBlankAnswers && { fillBlankAnswers: { create: d.fillBlankAnswers.map(item => ({ blankIndex: item.blankIndex, answer: item.answer.trim(), normalizedAnswer: normalizeFillBlankAnswer(item.answer, item), acceptedAnswers: item.acceptedAnswers?.length ? this.json(item.acceptedAnswers) : Prisma.JsonNull, score: item.score, caseSensitive: Boolean(item.caseSensitive), ignoreWhitespace: item.ignoreWhitespace !== false, ignoreVietnameseTone: Boolean(item.ignoreVietnameseTone) })) } }),
       }, include });
       if (d.options) {
         for (const option of d.options) {

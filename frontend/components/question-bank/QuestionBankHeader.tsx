@@ -37,9 +37,9 @@ export function QuestionBankHeader({
           <button
             type="button"
             onClick={onAi}
-            className={`${btnBase} border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 shadow-2xs`}
+            className={`${btnBase} border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 shadow-2xs`}
           >
-            <Sparkles className="h-3.5 w-3.5 text-purple-600 shrink-0" />
+            <Sparkles className="h-3.5 w-3.5 text-blue-600 shrink-0" />
             <span>Tạo bằng AI</span>
           </button>
         )}

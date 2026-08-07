@@ -352,6 +352,7 @@ model Question {
   histories          QuestionHistory[]
   statistic          QuestionStatistic?
   essayRubrics       EssayRubricCriterion[]
+  fillBlankAnswers   FillBlankAnswer[]
 
   @@index([subjectId, chapterId, status])
   @@index([createdById, createdAt])
@@ -387,6 +388,29 @@ model QuestionOption {
 
   @@unique([questionId, order])
   @@map("question_options")
+}
+
+// Đáp án cho từng vị trí {{blank_1}}, {{blank_2}} của câu điền khuyết.
+// Đáp án chính và các biến thể được lưu riêng để backend tự chấm mà không
+// bao giờ gửi lời giải xuống trình duyệt của sinh viên.
+model FillBlankAnswer {
+  id                  String   @id @default(uuid())
+  questionId          String
+  question            Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  blankIndex          Int
+  answer              String
+  normalizedAnswer    String
+  acceptedAnswers     Json?
+  score               Float
+  caseSensitive       Boolean  @default(false)
+  ignoreWhitespace    Boolean  @default(true)
+  ignoreVietnameseTone Boolean @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([questionId, blankIndex])
+  @@index([questionId])
+  @@map("fill_blank_answers")
 }
 
 model QuestionMedia {
@@ -681,6 +705,9 @@ model AttemptAnswer {
   selectedOptionIds  Json?
   textAnswer         String?
   textAnswerRich     Json?
+  fillBlankAnswers   Json?
+  fillBlankScore     Float?
+  fillBlankResult    Json?
   isFlaggedForReview Boolean @default(false)
   lastSavedAt        DateTime?
   submittedAt        DateTime?

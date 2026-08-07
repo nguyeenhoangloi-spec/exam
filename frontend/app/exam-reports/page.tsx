@@ -53,6 +53,119 @@ function escapeHtml(str: string) {
   });
 }
 
+function computeScheduleStatus(s: {
+  status?: string;
+  statusBadge?: string;
+  examDate?: string;
+  startTime?: string;
+  endTime?: string;
+}): 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED' {
+  const rawStatus = (s.statusBadge || s.status || '').toUpperCase();
+  if (rawStatus === 'CANCELLED' || rawStatus === 'REJECTED') {
+    return 'CANCELLED';
+  }
+
+  if (!s.examDate) {
+    return (rawStatus as any) || 'UPCOMING';
+  }
+
+  try {
+    const now = new Date();
+    let dateStr = s.examDate;
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+    const parts = dateStr.split('-').map(Number);
+    if (parts.length < 3) return (rawStatus as any) || 'UPCOMING';
+    const [y, m, d] = parts;
+
+    const [startH, startM] = (s.startTime || '00:00').split(':').map(Number);
+    const [endH, endM] = (s.endTime || '23:59').split(':').map(Number);
+
+    const startDateTime = new Date(y, m - 1, d, startH || 0, startM || 0);
+    const endDateTime = new Date(y, m - 1, d, endH || 23, endM || 59);
+
+    if (now < startDateTime) {
+      return 'UPCOMING';
+    } else if (now >= startDateTime && now <= endDateTime) {
+      return 'ONGOING';
+    } else {
+      return 'COMPLETED';
+    }
+  } catch {
+    return (rawStatus as any) || 'UPCOMING';
+  }
+}
+
+function getScheduleTypeBadge(s: any) {
+  const mode = (s.mode || '').toUpperCase();
+  const examType = (s.examType || '').toUpperCase();
+
+  if (mode === 'MOCK' || examType.includes('THỬ')) {
+    return {
+      label: 'Thi thử',
+      key: 'MOCK',
+      badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+    };
+  }
+  if (mode === 'RETAKE' || examType.includes('LẠI') || examType.includes('CẢI THIỆN')) {
+    return {
+      label: 'Thi lại',
+      key: 'RETAKE',
+      badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+    };
+  }
+  return {
+    label: 'Chính thức',
+    key: 'OFFICIAL',
+    badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold',
+  };
+}
+
+function getExamFormatBadge(s: any) {
+  const raw = (s.examType || '').toUpperCase();
+  if (raw === 'TU_LUAN' || raw.includes('TỰ LUẬN') || raw.includes('ESSAY')) {
+    return {
+      label: 'Tự luận',
+      key: 'TU_LUAN',
+      badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+    };
+  }
+  if (raw === 'HON_HOP' || raw.includes('HỖN HỢP') || (raw.includes('TRẮC NGHIỆM') && raw.includes('TỰ LUẬN'))) {
+    return {
+      label: 'Hỗn hợp',
+      key: 'HON_HOP',
+      badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+    };
+  }
+  if (raw === 'THUC_HANH' || raw.includes('THỰC HÀNH')) {
+    return {
+      label: 'Thực hành',
+      key: 'THUC_HANH',
+      badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+    };
+  }
+  return {
+    label: 'Trắc nghiệm',
+    key: 'TRAC_NGHIEM',
+    badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+  };
+}
+
+function getScheduleStatusBadge(s: any) {
+  const st = computeScheduleStatus(s);
+  if (st === 'ONGOING') {
+    return { label: 'Đang diễn ra', key: 'ONGOING', dotClass: 'bg-emerald-500', textClass: 'text-emerald-700 font-bold' };
+  }
+  if (st === 'UPCOMING') {
+    return { label: 'Sắp diễn ra', key: 'UPCOMING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-bold' };
+  }
+  if (st === 'CANCELLED') {
+    return { label: 'Đã hủy', key: 'CANCELLED', dotClass: 'bg-rose-500', textClass: 'text-rose-700 font-bold' };
+  }
+  return { label: 'Đã kết thúc', key: 'COMPLETED', dotClass: 'bg-slate-300', textClass: 'text-slate-500 font-medium' };
+}
+
 export default function ExamReportsPage() {
   usePageTitle('Báo cáo Điểm thi');
   const router = useRouter();
@@ -67,6 +180,87 @@ export default function ExamReportsPage() {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+
+  // Modal filter states for schedule picker
+  const [modalSearch, setModalSearch] = useState('');
+  const [modalModeFilter, setModalModeFilter] = useState<'ALL' | 'OFFICIAL' | 'MOCK' | 'RETAKE'>('ALL');
+  const [modalFormatFilter, setModalFormatFilter] = useState<'ALL' | 'TRAC_NGHIEM' | 'TU_LUAN' | 'HON_HOP' | 'THUC_HANH'>('ALL');
+  const [modalSubjectFilter, setModalSubjectFilter] = useState<string>('ALL');
+  const [modalStatusFilter, setModalStatusFilter] = useState<'ALL' | 'UPCOMING' | 'ONGOING' | 'COMPLETED'>('ALL');
+
+  // Extract unique subjects from schedules
+  const availableSubjects = useMemo(() => {
+    const subjectsMap = new Map<string, { code: string; name: string }>();
+    schedules.forEach((s: any) => {
+      const code = s.subjectCode || s.subject?.subjectCode || '';
+      const name = s.subjectName || s.subject?.subjectName || '';
+      if (code) {
+        subjectsMap.set(code, { code, name: name || code });
+      }
+    });
+    return Array.from(subjectsMap.values());
+  }, [schedules]);
+
+  // Compute counts for schedule types (mode)
+  const modeCounts = useMemo(() => {
+    let official = 0;
+    let mock = 0;
+    let retake = 0;
+    schedules.forEach((s: any) => {
+      const typeInfo = getScheduleTypeBadge(s);
+      if (typeInfo.key === 'OFFICIAL') official++;
+      else if (typeInfo.key === 'MOCK') mock++;
+      else if (typeInfo.key === 'RETAKE') retake++;
+    });
+    return { all: schedules.length, official, mock, retake };
+  }, [schedules]);
+
+  // Compute counts for exam formats (Trắc nghiệm, Tự luận...)
+  const formatCounts = useMemo(() => {
+    let tracNghiem = 0;
+    let tuLuan = 0;
+    let honHop = 0;
+    let thucHanh = 0;
+    schedules.forEach((s: any) => {
+      const fmt = getExamFormatBadge(s);
+      if (fmt.key === 'TU_LUAN') tuLuan++;
+      else if (fmt.key === 'HON_HOP') honHop++;
+      else if (fmt.key === 'THUC_HANH') thucHanh++;
+      else tracNghiem++;
+    });
+    return { all: schedules.length, tracNghiem, tuLuan, honHop, thucHanh };
+  }, [schedules]);
+
+  // Modal filtered schedules
+  const modalFilteredSchedules = useMemo(() => {
+    return schedules.filter((s: any) => {
+      const code = (s.subjectCode || s.subject?.subjectCode || '').toLowerCase();
+      const name = (s.subjectName || s.subject?.subjectName || '').toLowerCase();
+      const period = (s.periodName || s.examPeriod?.name || '').toLowerCase();
+      const q = modalSearch.trim().toLowerCase();
+
+      const matchesSearch = !q || code.includes(q) || name.includes(q) || period.includes(q);
+
+      const typeInfo = getScheduleTypeBadge(s);
+      const matchesMode =
+        modalModeFilter === 'ALL' ||
+        (modalModeFilter === 'OFFICIAL' && typeInfo.key === 'OFFICIAL') ||
+        (modalModeFilter === 'MOCK' && typeInfo.key === 'MOCK') ||
+        (modalModeFilter === 'RETAKE' && typeInfo.key === 'RETAKE');
+
+      const fmtInfo = getExamFormatBadge(s);
+      const matchesFormat =
+        modalFormatFilter === 'ALL' || fmtInfo.key === modalFormatFilter;
+
+      const sCode = s.subjectCode || s.subject?.subjectCode || '';
+      const matchesSubject = modalSubjectFilter === 'ALL' || sCode === modalSubjectFilter;
+
+      const statusInfo = getScheduleStatusBadge(s);
+      const matchesStatus = modalStatusFilter === 'ALL' || statusInfo.key === modalStatusFilter;
+
+      return matchesSearch && matchesMode && matchesFormat && matchesSubject && matchesStatus;
+    });
+  }, [schedules, modalSearch, modalModeFilter, modalFormatFilter, modalSubjectFilter, modalStatusFilter]);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -302,121 +496,329 @@ export default function ExamReportsPage() {
           onPrint={printOfficialReport}
         />
 
-        {/* Schedule Selector Toolbar */}
+        {/* Schedule Selector Toolbar - Chuẩn Edu (Giáo dục / Khảo thí) */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-600 shrink-0" />
-              <span className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                Chọn Ca thi / Lịch thi để xem Báo cáo
-              </span>
+            <div className="flex items-center gap-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-blue-600 shrink-0" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Ca Thi / Lịch Thi Xem Báo Cáo
+              </h2>
             </div>
 
-            <div className="relative flex-1 max-w-md">
-              {/* Custom popup trigger */}
-              <button
-                type="button"
-                disabled={loadingSchedules}
-                onClick={() => setShowSchedulePicker(true)}
-                className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-left hover:bg-white hover:border-blue-300 transition cursor-pointer disabled:opacity-60"
-              >
-                <span className={selectedScheduleId ? 'text-slate-800 truncate' : 'text-slate-400'}>
-                  {loadingSchedules ? 'Đang tải...' : selectedScheduleId
-                    ? (() => { const s = schedules.find((x) => String(x.id) === selectedScheduleId); return s ? `[${(s as any).subjectCode || s.subject?.subjectCode || 'MH'}] ${(s as any).subjectName || s.subject?.subjectName} \u00b7 ${s.startTime}\u2013${s.endTime}` : '-- Chọn lịch thi --'; })()
-                    : schedules.length === 0 ? 'Không có lịch thi nào' : '-- Chọn lịch thi --'}
-                </span>
-                <ChevronDown className="h-4 w-4 text-slate-400 shrink-0" />
-              </button>
+            <button
+              type="button"
+              disabled={loadingSchedules}
+              onClick={() => setShowSchedulePicker(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-blue-700 hover:shadow-xs active:scale-95 transition cursor-pointer disabled:opacity-60 shrink-0"
+            >
+              <Calendar className="h-3.5 w-3.5 text-blue-100" />
+              <span>Đổi ca thi khác</span>
+            </button>
+          </div>
 
-              {/* Modal popup */}
-              {showSchedulePicker && (
+          {/* Active Schedule Info Bar: Chuẩn Edu (Đơn sắc Blue/Slate chuyên nghiệp, ngày giờ định dạng chuẩn 06/08/2026) */}
+          {report?.schedule ? (
+            (() => {
+              const activeSched = schedules.find((x) => String(x.id) === selectedScheduleId);
+              const fmt = activeSched ? getExamFormatBadge(activeSched) : null;
+              const typeBadge = activeSched ? getScheduleTypeBadge(activeSched) : null;
+
+              let formattedDate = report.schedule.examDate || '';
+              if (formattedDate.includes('T')) {
+                formattedDate = formattedDate.split('T')[0];
+              }
+              if (formattedDate.includes('-')) {
+                const parts = formattedDate.split('-');
+                if (parts.length === 3) {
+                  formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+              }
+
+              return (
+                <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-3.5 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span className="px-2.5 py-0.5 rounded bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
+                      {typeBadge?.label || 'Chính thức'}
+                    </span>
+                    <span className="text-xs font-bold text-slate-900">
+                      {report.schedule.subjectName}
+                    </span>
+                    <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded">
+                      {report.schedule.subjectCode}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-xs text-slate-600 flex-wrap">
+                    {fmt && (
+                      <div>
+                        <span className="text-slate-400">Hình thức: </span>
+                        <strong className="text-slate-800 font-semibold">{fmt.label}</strong>
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-slate-400">Kỳ thi: </span>
+                      <strong className="text-slate-800 font-semibold">{report.schedule.periodName}</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-400">Thời gian: </span>
+                      <strong className="text-slate-900 font-bold">
+                        {report.schedule.startTime} – {report.schedule.endTime} ({formattedDate})
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()
+          ) : (
+            <div className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 font-medium">
+              {loadingSchedules ? 'Đang tải dữ liệu ca thi...' : 'Vui lòng nhấn "Đổi ca thi khác" để chọn lịch thi cần xem.'}
+            </div>
+          )}
+
+          {/* Modal popup */}
+          {showSchedulePicker && (
                 <>
-                  <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
+                  <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
                   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-                    <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+                    <div className="pointer-events-auto w-full max-w-3xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
 
                       {/* Header */}
-                      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
+                      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50/70">
                         <div>
                           <p className="text-sm font-black text-slate-900">Chọn Lịch thi để xem Báo cáo</p>
-                          <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
-                            {schedules.length} lịch thi · chọn để tải điểm
+                          <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                            Phân loại theo dạng lịch thi, môn học & trạng thái
                           </p>
                         </div>
-                        <button type="button" onClick={() => setShowSchedulePicker(false)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+                        <button
+                          type="button"
+                          onClick={() => setShowSchedulePicker(false)}
+                          className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 transition cursor-pointer"
+                          title="Đóng"
+                        >
                           <X className="h-4 w-4" />
                         </button>
                       </div>
 
-                      {/* Body: 2 columns — split by CHÍNH THỨC vs THI THỬ */}
-                      <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-
-                        {/* LEFT: Chính thức */}
-                        <div>
-                          <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                              Chính thức ({schedules.filter((s: any) => s.mode !== 'MOCK').length})
-                            </span>
-                          </div>
-                          {schedules.filter((s: any) => s.mode !== 'MOCK').length === 0 ? (
-                            <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
-                          ) : schedules.filter((s: any) => s.mode !== 'MOCK').map((s: any) => {
-                            const isActive = selectedScheduleId === String(s.id);
-                            const code = s.subjectCode || s.subject?.subjectCode || 'MH';
-                            const name = s.subjectName || s.subject?.subjectName || 'Môn học';
-                            return (
-                              <button key={s.id} type="button"
-                                onClick={() => { setSelectedScheduleId(String(s.id)); setPage(1); setShowSchedulePicker(false); }}
-                                className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
-                              >
-                                <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
-                                  [{code}] {name}
-                                </p>
-                                <p className="text-[10.5px] text-slate-500 font-semibold mt-0.5">
-                                  {s.startTime}–{s.endTime}
-                                  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
-                                </p>
-                              </button>
-                            );
-                          })}
+                      {/* Filter Controls Bar: Clean & Minimalist */}
+                      <div className="p-4 border-b border-slate-100 bg-slate-50/50 space-y-3">
+                        {/* Search Input */}
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Tìm kiếm theo Tên môn, Mã môn, Kỳ thi..."
+                            value={modalSearch}
+                            onChange={(e) => setModalSearch(e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                          />
+                          {modalSearch && (
+                            <button
+                              type="button"
+                              onClick={() => setModalSearch('')}
+                              className="absolute right-3 top-2 text-xs text-slate-400 hover:text-slate-600 cursor-pointer"
+                            >
+                              Xóa
+                            </button>
+                          )}
                         </div>
 
-                        {/* RIGHT: Thi thử */}
-                        <div>
-                          <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
-                              Thi thử ({schedules.filter((s: any) => s.mode === 'MOCK').length})
-                            </span>
-                          </div>
-                          {schedules.filter((s: any) => s.mode === 'MOCK').length === 0 ? (
-                            <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
-                          ) : schedules.filter((s: any) => s.mode === 'MOCK').map((s: any) => {
-                            const isActive = selectedScheduleId === String(s.id);
-                            const code = s.subjectCode || s.subject?.subjectCode || 'MH';
-                            const name = s.subjectName || s.subject?.subjectName || 'Môn học';
-                            return (
-                              <button key={s.id} type="button"
-                                onClick={() => { setSelectedScheduleId(String(s.id)); setPage(1); setShowSchedulePicker(false); }}
-                                className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
-                              >
-                                <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-amber-800'}`}>
-                                  [THI THỬ] {name}
-                                </p>
-                                <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
-                                  {s.startTime}–{s.endTime}
-                                  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
-                                </p>
-                              </button>
-                            );
-                          })}
+                        {/* Row 1: Segmented Control Tabs (Nút chọn dạng Tab gọn gàng) */}
+                        <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-200/70 w-fit">
+                          <button
+                            type="button"
+                            onClick={() => setModalModeFilter('ALL')}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                              modalModeFilter === 'ALL'
+                                ? 'bg-white text-slate-900 shadow-2xs'
+                                : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                          >
+                            Tất cả ({modeCounts.all})
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setModalModeFilter('OFFICIAL')}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                              modalModeFilter === 'OFFICIAL'
+                                ? 'bg-white text-blue-700 shadow-2xs'
+                                : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                          >
+                            Chính thức ({modeCounts.official})
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setModalModeFilter('MOCK')}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                              modalModeFilter === 'MOCK'
+                                ? 'bg-white text-amber-700 shadow-2xs'
+                                : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                          >
+                            Thi thử ({modeCounts.mock})
+                          </button>
+                          {modeCounts.retake > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setModalModeFilter('RETAKE')}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                                modalModeFilter === 'RETAKE'
+                                  ? 'bg-white text-purple-700 shadow-2xs'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                            >
+                              Thi lại ({modeCounts.retake})
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Row 2: Secondary Dropdown Filters */}
+                        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60">
+                          <select
+                            value={modalFormatFilter}
+                            onChange={(e) => setModalFormatFilter(e.target.value as any)}
+                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+                          >
+                            <option value="ALL">Hình thức: Tất cả</option>
+                            <option value="TRAC_NGHIEM">Hình thức: Trắc nghiệm</option>
+                            <option value="TU_LUAN">Hình thức: Tự luận</option>
+                            <option value="HON_HOP">Hình thức: Hỗn hợp</option>
+                          </select>
+
+                          <select
+                            value={modalSubjectFilter}
+                            onChange={(e) => setModalSubjectFilter(e.target.value)}
+                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer max-w-[200px]"
+                          >
+                            <option value="ALL">Môn học: Tất cả</option>
+                            {availableSubjects.map((sb) => (
+                              <option key={sb.code} value={sb.code}>
+                                [{sb.code}] {sb.name}
+                              </option>
+                            ))}
+                          </select>
+
+                          <select
+                            value={modalStatusFilter}
+                            onChange={(e) => setModalStatusFilter(e.target.value as any)}
+                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+                          >
+                            <option value="ALL">Trạng thái: Tất cả</option>
+                            <option value="ONGOING">Đang diễn ra</option>
+                            <option value="UPCOMING">Sắp diễn ra</option>
+                            <option value="COMPLETED">Đã kết thúc</option>
+                          </select>
+
+                          {(modalSearch || modalModeFilter !== 'ALL' || modalFormatFilter !== 'ALL' || modalSubjectFilter !== 'ALL' || modalStatusFilter !== 'ALL') && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setModalSearch('');
+                                setModalModeFilter('ALL');
+                                setModalFormatFilter('ALL');
+                                setModalSubjectFilter('ALL');
+                                setModalStatusFilter('ALL');
+                              }}
+                              className="text-xs text-rose-600 hover:underline font-semibold ml-auto cursor-pointer"
+                            >
+                              Đặt lại
+                            </button>
+                          )}
                         </div>
                       </div>
 
+                      {/* List of filtered schedules */}
+                      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 px-1">
+                          <span>
+                            Hiển thị {modalFilteredSchedules.length} / {schedules.length} ca thi
+                          </span>
+                        </div>
+
+                        {modalFilteredSchedules.length === 0 ? (
+                          <div className="py-12 text-center">
+                            <p className="text-xs font-bold text-slate-500">Không tìm thấy ca thi phù hợp với bộ lọc hiện tại.</p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setModalSearch('');
+                                setModalModeFilter('ALL');
+                                setModalFormatFilter('ALL');
+                                setModalSubjectFilter('ALL');
+                                setModalStatusFilter('ALL');
+                              }}
+                              className="mt-2 text-xs font-black text-blue-600 hover:underline cursor-pointer"
+                            >
+                              Xóa bộ lọc để xem tất cả
+                            </button>
+                          </div>
+                        ) : (
+                          modalFilteredSchedules.map((s: any) => {
+                            const isActive = selectedScheduleId === String(s.id);
+                            const typeBadge = getScheduleTypeBadge(s);
+                            const formatBadge = getExamFormatBadge(s);
+                            const statusBadge = getScheduleStatusBadge(s);
+                            const code = s.subjectCode || s.subject?.subjectCode || 'MH';
+                            const name = s.subjectName || s.subject?.subjectName || 'Môn học';
+                            const period = s.periodName || s.examPeriod?.name || 'Kỳ thi chung';
+
+                            return (
+                              <button
+                                key={s.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedScheduleId(String(s.id));
+                                  setPage(1);
+                                  setShowSchedulePicker(false);
+                                }}
+                                className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
+                                  isActive
+                                    ? 'bg-blue-50/50 border-blue-500 border-l-4 shadow-2xs'
+                                    : 'bg-white border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/60'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-slate-900">{name}</span>
+                                    <span className="text-[10.5px] font-mono font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                                      {code}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center gap-1.5 shrink-0">
+                                    <span className={`w-2 h-2 rounded-full ${statusBadge.dotClass}`} />
+                                    <span className={`text-[11px] ${statusBadge.textClass}`}>{statusBadge.label}</span>
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-500 gap-2">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] ${typeBadge.badgeClass}`}>
+                                      {typeBadge.label}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded text-[10px] ${formatBadge.badgeClass}`}>
+                                      {formatBadge.label}
+                                    </span>
+                                    <span className="text-slate-400">· {period}</span>
+                                  </div>
+                                  <span className="font-semibold text-slate-700">
+                                    {s.startTime}–{s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                  </span>
+                                </div>
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+
                       {/* Footer */}
-                      <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+                      <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+                        <span className="text-[11px] font-semibold text-slate-500">
+                          Đã chọn lịch thi ID: <strong className="text-slate-800">#{selectedScheduleId || '---'}</strong>
+                        </span>
                         <button type="button" onClick={() => setShowSchedulePicker(false)}
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                          className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
                           Đóng
                         </button>
                       </div>
@@ -424,27 +826,6 @@ export default function ExamReportsPage() {
                   </div>
                 </>
               )}
-            </div>
-          </div>
-
-          {report?.schedule && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-semibold text-slate-600">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-blue-600 shrink-0" />
-                <span>
-                  <strong className="text-slate-900">{report.schedule.subjectName}</strong> ({report.schedule.subjectCode})
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span>Kỳ thi: <strong className="text-slate-900">{report.schedule.periodName}</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-purple-600 shrink-0" />
-                <span>Ngày: <strong className="text-slate-900">{report.schedule.examDate}</strong> ({report.schedule.startTime} - {report.schedule.endTime})</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Dynamic KPI Cards Row calculated from REAL API data */}

@@ -4,6 +4,7 @@ import { StartExamDto } from './dto/start-exam.dto';
 import { SaveAnswersBatchDto } from './dto/save-answer.dto';
 import { ProctoringEventsBatchDto } from './dto/proctoring-event.dto';
 import { AttemptStatus, EventSeverity, ProctoringEventType } from '@prisma/client';
+import { normalizeFillBlankAnswer } from '../questions/question-validation';
 import * as crypto from 'crypto';
 import {
   EligibilityCheckerService,
@@ -189,6 +190,7 @@ export class OnlineExamsService {
             question: {
               include: {
                 options: true,
+                fillBlankAnswers: { orderBy: { blankIndex: 'asc' } },
               },
             },
           },
@@ -230,6 +232,15 @@ export class OnlineExamsService {
         difficulty: pq.question.difficulty,
         score: pq.score,
         options,
+        fillBlankAnswers: pq.question.fillBlankAnswers.map((answer) => ({
+          blankIndex: answer.blankIndex,
+          answer: answer.answer,
+          acceptedAnswers: answer.acceptedAnswers,
+          score: answer.score,
+          caseSensitive: answer.caseSensitive,
+          ignoreWhitespace: answer.ignoreWhitespace,
+          ignoreVietnameseTone: answer.ignoreVietnameseTone,
+        })),
       };
     });
 
@@ -335,6 +346,7 @@ export class OnlineExamsService {
         label: opt.label,
         content: opt.content,
       })),
+      blankIndexes: (q.fillBlankAnswers || []).map((answer: any) => answer.blankIndex),
     }));
 
     return {
@@ -360,6 +372,8 @@ export class OnlineExamsService {
         isFlaggedForReview: ans.isFlaggedForReview,
         version: ans.version,
         textAnswerRich: ans.textAnswerRich,
+        fillBlankAnswers: ans.fillBlankAnswers,
+        fillBlankScore: ans.fillBlankScore,
         lastSavedAt: ans.serverTimestamp,
         files: ans.submissionFiles,
       })),
@@ -373,7 +387,7 @@ export class OnlineExamsService {
   async saveAnswers(studentUserId: number, attemptToken: string, dto: SaveAnswersBatchDto) {
     const attempt = await this.prisma.examAttempt.findUnique({
       where: { attemptToken },
-      include: { student: true },
+      include: { student: true, snapshot: true },
     });
 
     if (!attempt || attempt.student.userId !== studentUserId) {
@@ -391,7 +405,18 @@ export class OnlineExamsService {
     }
 
     let savedCount = 0;
+    const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
     for (const item of dto.answers) {
+      const snapshotQuestion = snapshotQuestions.find((question) => question.questionId === item.questionId);
+      if (!snapshotQuestion) throw new BadRequestException('Câu hỏi không thuộc đề thi này.');
+      if (snapshotQuestion.type !== 'FILL_BLANK' && item.fillBlankAnswers?.length) throw new BadRequestException('Chỉ câu điền khuyết mới nhận dữ liệu ô trống.');
+      if (snapshotQuestion.type === 'FILL_BLANK') {
+        const expected = (snapshotQuestion.fillBlankAnswers || []).map((answer: any) => Number(answer.blankIndex)).sort((a: number, b: number) => a - b);
+        const received = item.fillBlankAnswers || [];
+        if (received.some(answer => !expected.includes(Number(answer.blankIndex))) || new Set(received.map(answer => answer.blankIndex)).size !== received.length) {
+          throw new BadRequestException('Dữ liệu chỗ trống không hợp lệ.');
+        }
+      }
       const existing = await this.prisma.attemptAnswer.findUnique({
         where: {
           attemptId_questionId: {
@@ -419,6 +444,7 @@ export class OnlineExamsService {
           selectedOptionIds: item.selectedOptionIds ? (item.selectedOptionIds as any) : null,
           textAnswer: item.textAnswer || null,
           textAnswerRich: item.textAnswerRich ? (item.textAnswerRich as any) : null,
+          fillBlankAnswers: item.fillBlankAnswers ? (item.fillBlankAnswers as any) : null,
           isFlaggedForReview: item.isFlaggedForReview || false,
           version: item.version,
           clientTimestamp: new Date(item.clientTimestamp),
@@ -428,6 +454,7 @@ export class OnlineExamsService {
           selectedOptionIds: item.selectedOptionIds ? (item.selectedOptionIds as any) : null,
           textAnswer: item.textAnswer || null,
           textAnswerRich: item.textAnswerRich ? (item.textAnswerRich as any) : null,
+          fillBlankAnswers: item.fillBlankAnswers ? (item.fillBlankAnswers as any) : null,
           isFlaggedForReview: item.isFlaggedForReview || false,
           version: item.version,
           clientTimestamp: new Date(item.clientTimestamp),
@@ -625,9 +652,27 @@ export class OnlineExamsService {
     const hasEssay = snapshotQuestions.some((q) => q.type === 'ESSAY');
     let calculatedScore = 0;
 
+    const fillBlankUpdates: Array<{ questionId: string; score: number; result: any[] }> = [];
     for (const q of snapshotQuestions) {
       const studentAns = attempt.attemptAnswers.find((a) => a.questionId === q.questionId);
-      if (!studentAns || !studentAns.selectedOptionIds) continue;
+      if (!studentAns) continue;
+
+      if (q.type === 'FILL_BLANK') {
+        const submitted = new Map<number, string>(((studentAns.fillBlankAnswers as any[]) || []).map(item => [Number(item.blankIndex), String(item.value || '')]));
+        const result = (q.fillBlankAnswers || []).map((expected: any) => {
+          const settings = { caseSensitive: expected.caseSensitive, ignoreWhitespace: expected.ignoreWhitespace, ignoreVietnameseTone: expected.ignoreVietnameseTone };
+          const actual = submitted.get(Number(expected.blankIndex)) || '';
+          const accepted = [expected.answer, ...((expected.acceptedAnswers as string[]) || [])];
+          const correct = accepted.some(value => normalizeFillBlankAnswer(value, settings) === normalizeFillBlankAnswer(actual, settings));
+          return { blankIndex: expected.blankIndex, value: actual, correct, score: correct ? Number(expected.score || 0) : 0 };
+        });
+        const score = result.reduce((sum: number, item: any) => sum + item.score, 0);
+        calculatedScore += score;
+        fillBlankUpdates.push({ questionId: q.questionId, score, result });
+        continue;
+      }
+
+      if (!studentAns.selectedOptionIds) continue;
 
       const selectedIds: string[] = (studentAns.selectedOptionIds as string[]) || [];
       const correctOptionIds: string[] = (q.options || [])
@@ -652,14 +697,19 @@ export class OnlineExamsService {
       ? AttemptStatus.AUTO_SUBMITTED
       : AttemptStatus.SUBMITTED;
 
-    const updated = await this.prisma.examAttempt.update({
-      where: { id: attempt.id },
-      data: {
-        status: finalStatus,
-        submittedAt: new Date(),
-        totalScore: hasEssay ? null : calculatedScore,
-        gradingStatus: hasEssay ? 'SUBMITTED' : 'NOT_SUBMITTED',
-      },
+    const updated = await this.prisma.$transaction(async tx => {
+      for (const item of fillBlankUpdates) {
+        await tx.attemptAnswer.updateMany({ where: { attemptId: attempt.id, questionId: item.questionId }, data: { fillBlankScore: item.score, fillBlankResult: item.result as any, finalScore: item.score } });
+      }
+      return tx.examAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          status: finalStatus,
+          submittedAt: new Date(),
+          totalScore: hasEssay ? null : calculatedScore,
+          gradingStatus: hasEssay ? 'SUBMITTED' : 'NOT_SUBMITTED',
+        },
+      });
     });
 
     return {

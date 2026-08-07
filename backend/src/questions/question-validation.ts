@@ -43,3 +43,31 @@ export function validateQuestionOptions(type: string, options: any[]): void {
     labels.add(option.label);
   }
 }
+
+export function normalizeFillBlankAnswer(value: string, settings?: { caseSensitive?: boolean; ignoreWhitespace?: boolean; ignoreVietnameseTone?: boolean }): string {
+  let normalized = String(value || '').trim();
+  if (settings?.ignoreWhitespace !== false) normalized = normalized.replace(/\s+/g, '');
+  if (settings?.ignoreVietnameseTone) normalized = normalized.normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+  return settings?.caseSensitive ? normalized : normalized.toLocaleLowerCase('vi-VN');
+}
+
+export function validateFillBlankAnswers(type: string, content: string, score: number, answers?: any[]): void {
+  if (type !== 'FILL_BLANK') {
+    if (answers?.length) throw new BadRequestException('Chỉ câu điền khuyết mới được khai báo đáp án ô trống.');
+    return;
+  }
+  const placeholders = [...String(content || '').matchAll(/\{\{blank_(\d+)\}\}/g)].map(match => Number(match[1]));
+  if (!placeholders.length) throw new BadRequestException('Câu điền khuyết phải có ít nhất một chỗ trống theo mẫu {{blank_1}}.');
+  const expected = Array.from({ length: placeholders.length }, (_, index) => index + 1);
+  if (new Set(placeholders).size !== placeholders.length || placeholders.some((value, index) => value !== expected[index])) {
+    throw new BadRequestException('Chỗ trống phải được đánh số liên tiếp: {{blank_1}}, {{blank_2}}, ...');
+  }
+  if (!Array.isArray(answers) || answers.length !== expected.length) throw new BadRequestException('Cần khai báo đáp án và điểm cho từng chỗ trống.');
+  const sorted = [...answers].sort((a, b) => Number(a.blankIndex) - Number(b.blankIndex));
+  sorted.forEach((item, index) => {
+    if (Number(item.blankIndex) !== expected[index] || !String(item.answer || '').trim()) throw new BadRequestException(`Đáp án cho blank_${expected[index]} không hợp lệ.`);
+    if (!Number.isFinite(Number(item.score)) || Number(item.score) < 0) throw new BadRequestException(`Điểm cho blank_${expected[index]} không hợp lệ.`);
+  });
+  const total = sorted.reduce((sum, item) => sum + Number(item.score), 0);
+  if (Math.abs(total - Number(score)) > 0.0001) throw new BadRequestException(`Tổng điểm các chỗ trống (${total}) phải bằng điểm câu hỏi (${score}).`);
+}

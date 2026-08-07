@@ -5,6 +5,7 @@ export interface AnswerItem {
   selectedOptionIds?: string[];
   textAnswer?: string;
   textAnswerRich?: Record<string, unknown>;
+  fillBlankAnswers?: Array<{ blankIndex: number; value: string }>;
   isFlaggedForReview?: boolean;
   version: number;
   clientTimestamp: string;

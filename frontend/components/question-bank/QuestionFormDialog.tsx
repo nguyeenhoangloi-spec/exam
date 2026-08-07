@@ -20,6 +20,16 @@ const option = z.object({
   order: z.number(),
 });
 
+const fillBlankAnswer = z.object({
+  blankIndex: z.number().int().min(1),
+  answer: z.string().min(1),
+  acceptedAnswersText: z.string().optional(),
+  score: z.number().min(0),
+  caseSensitive: z.boolean().optional(),
+  ignoreWhitespace: z.boolean().optional(),
+  ignoreVietnameseTone: z.boolean().optional(),
+});
+
 const schema = z.object({
   subjectId: z.number().min(1),
   content: z.string().min(5),
@@ -31,6 +41,7 @@ const schema = z.object({
   explanation: z.string().optional(),
   keywords: z.string().optional(),
   options: z.array(option),
+  fillBlankAnswers: z.array(fillBlankAnswer).optional(),
 });
 
 type Form = z.infer<typeof schema>;
@@ -51,6 +62,7 @@ const defaults: Form = {
     isCorrect: order === 0,
     order,
   })),
+  fillBlankAnswers: [],
 };
 
 export function QuestionFormDialog({
@@ -84,6 +96,7 @@ export function QuestionFormDialog({
     control,
     name: 'options',
   });
+  const fillBlankFields = useFieldArray({ control, name: 'fillBlankAnswers' });
 
   const subjectId = watch('subjectId');
   const type = watch('type');
@@ -104,6 +117,7 @@ export function QuestionFormDialog({
             explanation: question.explanation || '',
             keywords: question.keywords || '',
             options: question.options || [],
+            fillBlankAnswers: (question as any).fillBlankAnswers?.map((item: any) => ({ ...item, acceptedAnswersText: (item.acceptedAnswers || []).join(', ') })) || [],
           }
         : {
             ...defaults,
@@ -123,7 +137,14 @@ export function QuestionFormDialog({
   const submit = async (data: Form) => {
     const html = data.contentRich?.html || '';
     const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;
-    const payload = { ...data, content: plain, contentRich: html ? { html } : undefined };
+    const payload = {
+      ...data,
+      content: plain,
+      contentRich: html ? { html } : undefined,
+      fillBlankAnswers: data.type === 'FILL_BLANK'
+        ? (data.fillBlankAnswers || []).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
+        : [],
+    };
     const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
     const savedId = question?.id || response.data?.id;
     if (savedId && mediaFiles.length) {
@@ -237,6 +258,30 @@ export function QuestionFormDialog({
             >
               + Thêm lựa chọn đáp án
             </button>
+          </div>
+        )}
+
+        {type === 'FILL_BLANK' && (
+          <div className="space-y-3 border-t border-slate-100 pt-3">
+            <div className="rounded-xl bg-sky-50 p-3 text-xs leading-5 text-sky-800">
+              Đặt chỗ trống trong nội dung theo mẫu <b>{'{{blank_1}}'}</b>, <b>{'{{blank_2}}'}</b>. Tổng điểm các ô phải bằng điểm của câu hỏi.
+            </div>
+            {fillBlankFields.fields.map((field, index) => (
+              <div key={field.id} className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[70px_1fr_100px_auto]">
+                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-lg border bg-slate-50 p-2 text-sm" />
+                <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-lg border p-2 text-sm" />
+                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-lg border p-2 text-sm" />
+                <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600">×</button>
+                <input {...register(`fillBlankAnswers.${index}.acceptedAnswersText`)} placeholder="Đáp án chấp nhận thêm, ngăn cách bằng dấu phẩy" className="md:col-span-4 rounded-lg border p-2 text-xs" />
+              </div>
+            ))}
+            <button type="button" onClick={() => {
+              const index = fillBlankFields.fields.length + 1;
+              const currentScore = Number(watch('score')) || 0;
+              fillBlankFields.append({ blankIndex: index, answer: '', acceptedAnswersText: '', score: index === 1 ? currentScore : 0, ignoreWhitespace: true, caseSensitive: false, ignoreVietnameseTone: false });
+              const raw = watch('contentRich')?.html || watch('content') || '';
+              if (!raw.includes(`{{blank_${index}}}`)) setValue('contentRich', { html: `${raw}${raw ? ' ' : ''}{{blank_${index}}}` });
+            }} className="text-xs font-bold text-sky-600 hover:underline">+ Thêm chỗ trống</button>
           </div>
         )}
 

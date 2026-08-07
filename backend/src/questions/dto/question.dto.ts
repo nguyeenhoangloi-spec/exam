@@ -91,6 +91,43 @@ export class QuestionOptionDto {
   media?: QuestionMediaDto[];
 }
 
+export class FillBlankAnswerDto {
+  @IsInt()
+  @Min(1)
+  @Max(20)
+  blankIndex: number;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(1000)
+  answer: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsString({ each: true })
+  @MaxLength(1000, { each: true })
+  acceptedAnswers?: string[];
+
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  score: number;
+
+  @IsOptional()
+  @IsBoolean()
+  caseSensitive?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  ignoreWhitespace?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  ignoreVietnameseTone?: boolean;
+}
+
 export class CreateQuestionDto {
   @Type(() => Number)
   @IsInt()
@@ -144,6 +181,13 @@ export class CreateQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => QuestionOptionDto)
   options: QuestionOptionDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @ValidateNested({ each: true })
+  @Type(() => FillBlankAnswerDto)
+  fillBlankAnswers?: FillBlankAnswerDto[];
 
   @IsOptional()
   @IsArray()
@@ -212,6 +256,13 @@ export class UpdateQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => QuestionOptionDto)
   options?: QuestionOptionDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @ValidateNested({ each: true })
+  @Type(() => FillBlankAnswerDto)
+  fillBlankAnswers?: FillBlankAnswerDto[];
 
   @IsOptional()
   @IsArray()

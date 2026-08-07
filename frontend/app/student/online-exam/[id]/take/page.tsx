@@ -17,7 +17,7 @@ export default function StudentExamTakePage() {
   const [error, setError] = useState<string | null>(null);
 
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, { selectedOptionIds: string[]; textAnswer: string; textAnswerRich?: Record<string, unknown>; isFlagged: boolean; version: number; files?: any[] }>>({});
+  const [answers, setAnswers] = useState<Record<string, { selectedOptionIds: string[]; textAnswer: string; textAnswerRich?: Record<string, unknown>; fillBlankAnswers?: Array<{ blankIndex: number; value: string }>; isFlagged: boolean; version: number; files?: any[] }>>({});
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
 
   const [syncState, setSyncState] = useState<'SAVED' | 'SAVING' | 'OFFLINE'>('SAVED');
@@ -66,6 +66,7 @@ export default function StudentExamTakePage() {
             selectedOptionIds: ans.selectedOptionIds || [],
             textAnswer: ans.textAnswer || '',
             textAnswerRich: ans.textAnswerRich || undefined,
+            fillBlankAnswers: ans.fillBlankAnswers || [],
             isFlagged: ans.isFlaggedForReview || false,
             version: ans.version || 1,
             files: ans.files || [],
@@ -138,7 +139,7 @@ export default function StudentExamTakePage() {
   }, [flushPendingAnswers]);
 
   const triggerAutoSave = useCallback(
-    (questionId: string, selectedOptionIds: string[], textAnswer: string, isFlagged: boolean, currentVersion: number, textAnswerRich?: Record<string, unknown>) => {
+    (questionId: string, selectedOptionIds: string[], textAnswer: string, isFlagged: boolean, currentVersion: number, textAnswerRich?: Record<string, unknown>, fillBlankAnswers?: Array<{ blankIndex: number; value: string }>) => {
       const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
       if (!token) return;
 
@@ -148,6 +149,7 @@ export default function StudentExamTakePage() {
         selectedOptionIds,
         textAnswer,
         textAnswerRich,
+        fillBlankAnswers,
         isFlaggedForReview: isFlagged,
         version: newVersion,
         clientTimestamp: new Date().toISOString(),
@@ -168,6 +170,15 @@ export default function StudentExamTakePage() {
     const version = (current.version || 0) + 1;
     setAnswers((prev) => ({ ...prev, [questionId]: { ...current, textAnswer, version } }));
     triggerAutoSave(questionId, current.selectedOptionIds || [], textAnswer, current.isFlagged, current.version || 0);
+  };
+
+  const handleFillBlankChange = (questionId: string, blankIndex: number, value: string) => {
+    const current = answers[questionId] || { selectedOptionIds: [], textAnswer: '', fillBlankAnswers: [], isFlagged: false, version: 0 };
+    const fillBlankAnswers = [...(current.fillBlankAnswers || []).filter(item => item.blankIndex !== blankIndex), { blankIndex, value }]
+      .sort((a, b) => a.blankIndex - b.blankIndex);
+    const version = (current.version || 0) + 1;
+    setAnswers(prev => ({ ...prev, [questionId]: { ...current, fillBlankAnswers, version } }));
+    triggerAutoSave(questionId, current.selectedOptionIds || [], current.textAnswer || '', current.isFlagged, current.version || 0, undefined, fillBlankAnswers);
   };
 
   const handleEssayFile = async (questionId: string, file?: File) => {
@@ -368,10 +379,10 @@ export default function StudentExamTakePage() {
 
   const questions = attemptData.questions || [];
   const currentQ = questions[currentIdx];
-  const currentAns = answers[currentQ?.questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false };
+  const currentAns = answers[currentQ?.questionId] || { selectedOptionIds: [], textAnswer: '', fillBlankAnswers: [] as Array<{ blankIndex: number; value: string }>, isFlagged: false, version: 0 };
 
   const totalCount = questions.length;
-  const answeredCount = Object.values(answers).filter((a) => (a.selectedOptionIds && a.selectedOptionIds.length > 0) || Boolean(a.textAnswer?.trim())).length;
+  const answeredCount = Object.values(answers).filter((a) => (a.selectedOptionIds && a.selectedOptionIds.length > 0) || Boolean(a.textAnswer?.trim()) || Boolean(a.fillBlankAnswers?.some(item => item.value.trim()))).length;
   const flaggedCount = Object.values(answers).filter((a) => a.isFlagged).length;
 
   return (
@@ -541,6 +552,21 @@ export default function StudentExamTakePage() {
                     </div>
                   )}
                 </div>
+              ) : currentQ.type === 'FILL_BLANK' ? (
+                <div className="space-y-3 rounded-xl border border-blue-100 bg-blue-50/50 p-5">
+                  <p className="text-sm font-bold text-slate-700">Điền đáp án vào từng chỗ trống. Hệ thống tự lưu khi bạn nhập.</p>
+                  {(currentQ.blankIndexes || []).map((blankIndex: number) => (
+                    <label key={blankIndex} className="block text-sm font-semibold text-slate-700">
+                      Chỗ trống {blankIndex}
+                      <input
+                        value={currentAns.fillBlankAnswers?.find((item: any) => item.blankIndex === blankIndex)?.value || ''}
+                        onChange={(event) => handleFillBlankChange(currentQ.questionId, blankIndex, event.target.value)}
+                        placeholder={`Nhập đáp án cho chỗ trống ${blankIndex}`}
+                        className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      />
+                    </label>
+                  ))}
+                </div>
               ) : (
               <div className="space-y-3 pt-2">
                 {currentQ.options?.map((opt: any) => {
@@ -625,7 +651,8 @@ export default function StudentExamTakePage() {
               const ans = answers[q.questionId];
               const isAnswered = Boolean(
                 (ans?.selectedOptionIds && ans.selectedOptionIds.length > 0) ||
-                (ans?.textAnswer && ans.textAnswer.trim().length > 0)
+                (ans?.textAnswer && ans.textAnswer.trim().length > 0) ||
+                Boolean(ans?.fillBlankAnswers?.some((item: any) => item.value?.trim()))
               );
               const isFlagged = Boolean(ans?.isFlagged);
               const isCurrent = idx === currentIdx;

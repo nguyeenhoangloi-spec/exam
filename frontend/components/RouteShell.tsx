@@ -90,7 +90,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }, [user, authLoaded, pathname, router]);
 
     if (!authLoaded) {
-        return <div className="min-h-screen bg-slate-50" aria-live="polite" />;
+        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
     }
 
     // Login / full-screen routes render without the shell
@@ -100,7 +100,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
     // While redirecting to the workspace, keep the shell mounted but blank
     if (!canAccessPath(user.role, pathname)) {
-        return <div className="min-h-screen bg-slate-50" aria-live="polite" />;
+        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
     }
 
     return (
