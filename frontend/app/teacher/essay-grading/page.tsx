@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -25,6 +25,8 @@ export default function TeacherEssayGradingPage() {
   const [message, setMessage] = useState('');
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'GRADING' | 'WAITING_APPROVAL' | 'PUBLISHED'>('ALL');
+  const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -199,15 +201,56 @@ export default function TeacherEssayGradingPage() {
     });
   };
 
-  const filteredRows = rows.filter((r) => {
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const code = (r.student?.studentCode || '').toLowerCase();
-      const name = (r.student?.fullName || '').toLowerCase();
-      return code.includes(q) || name.includes(q);
-    }
-    return true;
-  });
+  const availableSubjects = useMemo(() => {
+    const map = new Map<string, string>();
+    rows.forEach((r) => {
+      const s = r.onlineExamConfig?.examSchedule?.subject;
+      const code = s?.subjectCode || r.subjectCode;
+      const name = s?.subjectName || r.subjectName;
+      if (code && name && !map.has(code)) {
+        map.set(code, name);
+      }
+    });
+    return Array.from(map.entries()).map(([code, name]) => ({ code, name }));
+  }, [rows]);
+
+  const counts = useMemo(() => {
+    let all = 0, grading = 0, waiting = 0, published = 0;
+    rows.forEach((r) => {
+      all++;
+      if (r.gradingStatus === 'PUBLISHED') published++;
+      else if (r.gradingStatus === 'WAITING_APPROVAL') waiting++;
+      else grading++;
+    });
+    return { all, grading, waiting, published };
+  }, [rows]);
+
+  const filteredRows = useMemo(() => {
+    return rows.filter((r) => {
+      // 1. Status Filter
+      if (statusFilter !== 'ALL') {
+        if (statusFilter === 'GRADING' && r.gradingStatus && r.gradingStatus !== 'GRADING') return false;
+        if (statusFilter === 'WAITING_APPROVAL' && r.gradingStatus !== 'WAITING_APPROVAL') return false;
+        if (statusFilter === 'PUBLISHED' && r.gradingStatus !== 'PUBLISHED') return false;
+      }
+
+      // 2. Subject Filter
+      if (subjectFilter !== 'ALL') {
+        const code = r.onlineExamConfig?.examSchedule?.subject?.subjectCode || r.subjectCode;
+        if (code !== subjectFilter) return false;
+      }
+
+      // 3. Search Query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const sCode = (r.student?.studentCode || '').toLowerCase();
+        const name = (r.student?.fullName || '').toLowerCase();
+        const subj = (r.onlineExamConfig?.examSchedule?.subject?.subjectName || '').toLowerCase();
+        return sCode.includes(q) || name.includes(q) || subj.includes(q);
+      }
+      return true;
+    });
+  }, [rows, statusFilter, subjectFilter, searchQuery]);
 
   return (
     <div className="min-h-screen bg-slate-50/50 p-6 text-slate-900 space-y-6">
@@ -251,28 +294,106 @@ export default function TeacherEssayGradingPage() {
             <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Danh sách bài làm ({filteredRows.length})
+                  Danh sách bài làm ({filteredRows.length}/{rows.length})
                 </span>
-              </div>
-
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Tìm mã sinh viên hoặc họ tên..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-9 pr-8 py-2 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                />
-                {searchQuery && (
+                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || searchQuery) && (
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    onClick={() => {
+                      setStatusFilter('ALL');
+                      setSubjectFilter('ALL');
+                      setSearchQuery('');
+                    }}
+                    className="text-[11px] font-bold text-rose-600 hover:underline cursor-pointer"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    Đặt lại
                   </button>
+                )}
+              </div>
+
+              {/* Status Segmented Button Tabs */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200/60 w-full overflow-x-auto">
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('ALL')}
+                  className={`flex-1 min-w-[55px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
+                    statusFilter === 'ALL'
+                      ? 'bg-white text-slate-900 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Tất cả ({counts.all})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('GRADING')}
+                  className={`flex-1 min-w-[60px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
+                    statusFilter === 'GRADING'
+                      ? 'bg-white text-blue-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Đang chấm ({counts.grading})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('WAITING_APPROVAL')}
+                  className={`flex-1 min-w-[60px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
+                    statusFilter === 'WAITING_APPROVAL'
+                      ? 'bg-white text-amber-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Chờ duyệt ({counts.waiting})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('PUBLISHED')}
+                  className={`flex-1 min-w-[55px] px-1.5 py-1 rounded-lg text-[11px] font-bold transition text-center cursor-pointer ${
+                    statusFilter === 'PUBLISHED'
+                      ? 'bg-white text-emerald-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Công bố ({counts.published})
+                </button>
+              </div>
+
+              {/* Search & Subject Dropdown Row */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Tìm Mã SV, Tên SV..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {availableSubjects.length > 0 && (
+                  <select
+                    value={subjectFilter}
+                    onChange={(e) => setSubjectFilter(e.target.value)}
+                    className="rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer max-w-[130px] shrink-0"
+                  >
+                    <option value="ALL">Tất cả môn</option>
+                    {availableSubjects.map((s) => (
+                      <option key={s.code} value={s.code}>
+                        [{s.code}] {s.name}
+                      </option>
+                    ))}
+                  </select>
                 )}
               </div>
 
