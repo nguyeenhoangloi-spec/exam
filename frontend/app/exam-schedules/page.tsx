@@ -94,6 +94,7 @@ export default function ExamSchedulesPage() {
     startTime: '07:30',
     endTime: '08:30',
     examType: 'TRAC_NGHIEM',
+    mode: 'OFFICIAL' as 'OFFICIAL' | 'MOCK',
   });
   const [selectedDuration, setSelectedDuration] = useState<number>(60);
 
@@ -236,6 +237,7 @@ export default function ExamSchedulesPage() {
       startTime: defaultStart,
       endTime: calculateEndTime(defaultStart, duration),
       examType: 'TRAC_NGHIEM',
+      mode: 'OFFICIAL',
     });
     setIsModalOpen(true);
   };
@@ -263,6 +265,7 @@ export default function ExamSchedulesPage() {
       startTime: startT,
       endTime: s?.endTime || calculateEndTime(startT, duration),
       examType: s?.examType || 'TRAC_NGHIEM',
+      mode: (s as any)?.mode === 'MOCK' ? 'MOCK' : 'OFFICIAL',
     });
     setIsModalOpen(true);
   };
@@ -292,6 +295,7 @@ export default function ExamSchedulesPage() {
       startTime: formData.startTime,
       endTime: formData.endTime,
       examType: formData.examType || 'TRAC_NGHIEM',
+      mode: formData.mode || 'OFFICIAL',
     };
 
     try {
@@ -613,6 +617,21 @@ export default function ExamSchedulesPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+                Loại ca thi (Chế độ dự thi) <span className="text-red-500">*</span>
+              </label>
+              <select
+                required
+                value={formData.mode}
+                onChange={(e) => setFormData({ ...formData, mode: e.target.value as 'OFFICIAL' | 'MOCK' })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none bg-white font-extrabold text-blue-700 shadow-2xs"
+              >
+                <option value="OFFICIAL">Thi chính thức (Bắt buộc xếp SBD & Phòng thi)</option>
+                <option value="MOCK">Thi thử (Tự do tham gia trực tuyến)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
                 Hình thức thi <span className="text-red-500">*</span>
               </label>
               <select
@@ -626,22 +645,14 @@ export default function ExamSchedulesPage() {
                 <option value="TU_LUAN">Tự luận</option>
               </select>
             </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ca thi (Tự động xác định)</label>
-              <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-extrabold text-blue-700 flex items-center justify-between">
-                <span>{formData.shiftName || computeShiftName(formData.startTime)}</span>
-                <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md uppercase">Tự động</span>
-              </div>
-            </div>
           </div>
 
           {/* Quick Duration Selection */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-xs font-bold uppercase text-slate-500">Thời lượng thi (Tự động tính Giờ kết thúc)</label>
-              <span className="text-[11px] font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
-                Đang chọn: {selectedDuration} phút
+              <span className="text-xs font-bold text-slate-500">
+                Đang chọn: <span className="font-extrabold text-blue-600">{selectedDuration} phút</span>
               </span>
             </div>
             <div className="grid grid-cols-4 gap-2">
