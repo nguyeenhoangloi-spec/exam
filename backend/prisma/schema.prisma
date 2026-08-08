@@ -572,6 +572,14 @@ model OnlineExamConfig {
   shuffleOptions       Boolean @default(true)
   maxAllowedViolations Int     @default(5)
 
+  // --- Hiển thị media câu hỏi & đáp án ---
+  /// Hiển thị ảnh (image/*) của câu hỏi và đáp án
+  showImages Boolean @default(true)
+  /// Hiển thị video (video/*) của câu hỏi và đáp án
+  showVideos Boolean @default(true)
+  /// Hiển thị âm thanh (audio/*) của câu hỏi và đáp án
+  showAudios Boolean @default(true)
+
   // --- Kết quả & đánh giá ---
   showResultImmediately Boolean @default(false)
   allowReview           Boolean @default(true)

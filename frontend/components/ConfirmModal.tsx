@@ -86,14 +86,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-sm my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-950/15 transition-all border border-slate-200/90 dark:border-slate-700">
+      <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-950/15 transition-all border border-slate-200/90 dark:border-slate-700">
         {/* Header Bar - Compact & Sleek */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-4.5 py-3 sm:px-5 sm:py-3.5">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
           <div className="flex items-center gap-2.5">
             <div className={`flex h-8.5 w-8.5 items-center justify-center rounded-xl border ${iconConfig.bg} shadow-2xs shrink-0`}>
               {iconConfig.icon}
             </div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-none">{title}</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-none">{title}</h3>
           </div>
           <button
             type="button"
@@ -106,7 +106,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </div>
 
         {/* Modal Body - Compact Spacing */}
-        <div className="p-4.5 sm:p-5 space-y-3">
+        <div className="p-6 space-y-3">
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
 
           {requireReason && (
@@ -128,7 +128,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </div>
 
         {/* Footer Actions - Compact Buttons */}
-        <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-4.5 py-3 sm:px-5 sm:py-3">
+        <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-6 py-4">
           {Boolean(cancelText) && (
             <Button variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
               {cancelText}

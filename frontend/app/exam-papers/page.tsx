@@ -805,7 +805,7 @@ export default function ExamPapersPage() {
                 const answerText = q.correctAnswer || q.sampleAnswer || q.explanation || q.answer || q.solution || '';
 
                 return (
-                  <div key={detail.id || index} className="rounded-2xl border border-slate-200/90 bg-white p-4 space-y-3 shadow-2xs">
+                  <div key={detail.id || index} className="py-4 space-y-3 border-b border-slate-100 last:border-0">
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-xs font-black text-slate-900 leading-snug">
                         Câu {index + 1}: {q.content}
@@ -865,9 +865,9 @@ export default function ExamPapersPage() {
                             </p>
                           </div>
                         ) : (
-                          <p className="text-[11px] italic font-semibold text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                            (Nội dung câu hỏi tự luận - Bấm nút &quot;Hiện Đáp án&quot; ở góc trên để xem đáp án gợi ý & thang điểm)
-                          </p>
+                          <p className="text-[11px] italic font-semibold text-slate-400">
+                             (Bấm "Hiện Đáp án" để xem đáp án gợi ý &amp; thang điểm)
+                           </p>
                         )}
                         <div className="flex justify-end pt-1">
                           <button

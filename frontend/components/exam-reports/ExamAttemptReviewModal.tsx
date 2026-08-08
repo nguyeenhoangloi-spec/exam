@@ -201,11 +201,11 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
   const skipped = data?.questions?.filter((q: any) => q.studentSelection?.isCorrect === null && (q.studentSelection?.selectedOptionIds?.length ?? 0) === 0).length ?? 0;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
       <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-        <div className="flex items-start justify-between gap-4 p-5 border-b border-slate-100 shrink-0">
+        <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-slate-100 shrink-0">
           <div>
-            <h2 className="text-base font-black text-slate-900 leading-tight">Xem Lai Chi Tiet Bai Thi</h2>
+            <h2 className="text-base font-bold text-slate-900 leading-tight">Xem Lai Chi Tiet Bai Thi</h2>
             {data && (
               <p className="text-xs text-slate-500 font-semibold mt-0.5">
                 {data.student?.fullName} ({data.student?.studentCode}) - {data.paper?.subjectName} - Ma de: {data.paper?.paperCode}
@@ -238,7 +238,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           )}
 
           {data && !loading && (
-            <div className="p-5 space-y-5">
+            <div className="p-6 space-y-5">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div className="rounded-2xl bg-blue-50 p-4 text-center space-y-1">
                   <Award className="w-5 h-5 text-blue-600 mx-auto" />
@@ -309,7 +309,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           )}
         </div>
 
-        <div className="border-t border-slate-100 p-4 shrink-0 flex items-center justify-between gap-3">
+        <div className="border-t border-slate-100 px-6 py-4 shrink-0 flex items-center justify-between gap-3">
           {data?.questions?.some((q: any) => q.type === 'ESSAY') ? (
             <a
               href={`/teacher/essay-grading?attemptId=${attemptId}`}

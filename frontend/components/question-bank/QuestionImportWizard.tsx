@@ -5,7 +5,7 @@ import api from '../../lib/api';
 import { Subject } from '../../types';
 import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
-import { FileSpreadsheet, FileText, Download } from 'lucide-react';
+import { FileSpreadsheet, FileText, Download, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 type Mode = 'table' | 'document' | 'ai_generate';
@@ -357,9 +357,8 @@ export function QuestionImportWizard({
         <div className="flex gap-2 border-b border-slate-200 pb-3">
           <button
             type="button"
-            className={`rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${
-              mode === 'table' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
+            className={`rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${mode === 'table' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
             onClick={() => {
               setMode('table');
               setPreview(null);
@@ -371,9 +370,8 @@ export function QuestionImportWizard({
           </button>
           <button
             type="button"
-            className={`rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${
-              mode === 'document' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
+            className={`rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${mode === 'document' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
             onClick={() => {
               setMode('document');
               setPreview(null);
@@ -385,9 +383,8 @@ export function QuestionImportWizard({
           </button>
           <button
             type="button"
-            className={`rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${
-              mode === 'ai_generate' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
+            className={`rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${mode === 'ai_generate' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
             onClick={() => {
               setMode('ai_generate');
               setPreview(null);
@@ -658,15 +655,17 @@ export function QuestionImportWizard({
           <div
             role="status"
             aria-live="polite"
-            className="fixed bottom-5 right-5 z-[110] flex items-center gap-3 rounded-2xl bg-red-500 px-4 py-3 text-sm font-semibold text-white shadow-xl max-w-[calc(100vw-2.5rem)]"
+            className="fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl border border-white/20 px-4 py-3 text-white shadow-2xl transition-all transform slide-in-from-bottom duration-300"
+            style={{ backgroundColor: '#EF4444' }}
           >
-            <span className="leading-5">{toast}</span>
+            <span className="text-xs sm:text-sm font-semibold leading-relaxed flex-1">{toast}</span>
             <button
               type="button"
               onClick={() => setToast('')}
-              className="ml-1 rounded hover:bg-white/15 p-0.5 transition"
+              className="ml-2 rounded-lg p-1 hover:bg-white/15 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 shrink-0 cursor-pointer"
+              aria-label="Đóng thông báo"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -690,9 +689,8 @@ export function QuestionImportWizard({
                 return (
                   <div
                     key={r.row}
-                    className={`rounded-2xl border p-4 text-xs space-y-3 transition ${
-                      isChecked ? 'border-blue-300 bg-blue-50/40' : 'border-slate-200 bg-white opacity-70'
-                    }`}
+                    className={`rounded-2xl border p-4 text-xs space-y-3 transition ${isChecked ? 'border-blue-300 bg-blue-50/40' : 'border-slate-200 bg-white opacity-70'
+                      }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <label className="flex items-center gap-2 font-bold text-slate-800 cursor-pointer">
@@ -769,23 +767,23 @@ export function QuestionImportWizard({
                         Array.isArray(q.options) && q.options.length > 0
                           ? q.options
                           : ['A', 'B', 'C', 'D']
-                              .filter((key) => q[`option${key}`])
-                              .map((key) => {
-                                const correctAnsStr = String(q.correctAnswer || '').trim().toUpperCase();
-                                const isCorrect =
-                                  q[`correct${key}`] === 'true' ||
-                                  q[`correct${key}`] === true ||
-                                  correctAnsStr.includes(key) ||
-                                  (key === 'A' && (correctAnsStr === '1' || correctAnsStr.startsWith('A'))) ||
-                                  (key === 'B' && (correctAnsStr === '2' || correctAnsStr.startsWith('B'))) ||
-                                  (key === 'C' && (correctAnsStr === '3' || correctAnsStr.startsWith('C'))) ||
-                                  (key === 'D' && (correctAnsStr === '4' || correctAnsStr.startsWith('D')));
-                                return {
-                                  label: key,
-                                  content: q[`option${key}`],
-                                  isCorrect,
-                                };
-                              });
+                            .filter((key) => q[`option${key}`])
+                            .map((key) => {
+                              const correctAnsStr = String(q.correctAnswer || '').trim().toUpperCase();
+                              const isCorrect =
+                                q[`correct${key}`] === 'true' ||
+                                q[`correct${key}`] === true ||
+                                correctAnsStr.includes(key) ||
+                                (key === 'A' && (correctAnsStr === '1' || correctAnsStr.startsWith('A'))) ||
+                                (key === 'B' && (correctAnsStr === '2' || correctAnsStr.startsWith('B'))) ||
+                                (key === 'C' && (correctAnsStr === '3' || correctAnsStr.startsWith('C'))) ||
+                                (key === 'D' && (correctAnsStr === '4' || correctAnsStr.startsWith('D')));
+                              return {
+                                label: key,
+                                content: q[`option${key}`],
+                                isCorrect,
+                              };
+                            });
 
                       if (q.type === 'ESSAY' || q.type === 'FILL_BLANK' || !optionsList.length) return null;
 
@@ -794,16 +792,14 @@ export function QuestionImportWizard({
                           {optionsList.map((opt: any, optIdx: number) => (
                             <div
                               key={optIdx}
-                              className={`flex items-center gap-2 p-2 rounded-lg border text-xs font-medium transition ${
-                                opt.isCorrect
+                              className={`flex items-center gap-2 p-2 rounded-lg border text-xs font-medium transition ${opt.isCorrect
                                   ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold'
                                   : 'bg-white border-slate-200 text-slate-700'
-                              }`}
+                                }`}
                             >
                               <span
-                                className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                                  opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
-                                }`}
+                                className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                                  }`}
                               >
                                 {opt.label || String.fromCharCode(65 + optIdx)}
                               </span>

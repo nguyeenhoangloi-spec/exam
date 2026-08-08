@@ -119,7 +119,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                 <button
                     type="button"
                     aria-label="Đóng menu điều hướng"
-                    className="fixed inset-0 z-40 bg-slate-950/55 md:hidden"
+                    className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm md:hidden"
                     onClick={() => setMobileOpen(false)}
                 />
             )}

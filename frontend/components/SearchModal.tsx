@@ -278,14 +278,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
       {/* Click outside backdrop */}
       <div className="fixed inset-0 -z-10" onClick={onClose} />
 
       {/* Modal Card matching User Screenshot */}
       <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150">
         {/* Search Header Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 dark:border-slate-800 gap-3">
+        <div className="flex items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <Search className="w-4.5 h-4.5 shrink-0 text-slate-400" />
           <input
             type="text"
@@ -365,7 +365,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         </div>
 
         {/* Footer shortcuts hint */}
-        <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
           <span>Bấm để truy cập nhanh trang</span>
           <span className="font-medium">Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border rounded text-[10px]">ESC</kbd> để thoát</span>
         </div>

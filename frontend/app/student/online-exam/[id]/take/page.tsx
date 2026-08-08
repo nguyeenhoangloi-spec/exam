@@ -470,7 +470,7 @@ export default function StudentExamTakePage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col select-none">
       {/* Enterprise Dark Navy Header */}
-      <header className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 text-white px-4 sm:px-6 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md">
+      <header className="bg-[#1E40AF] text-white px-4 sm:px-6 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md border-b border-white/10">
         <div className="flex items-center space-x-3.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-black text-white text-base shadow-sm">
             {attemptData.paperTitle ? attemptData.paperTitle.charAt(0).toUpperCase() : 'T'}

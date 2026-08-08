@@ -136,12 +136,12 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
   if (!isOpen || !question) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white flex justify-between items-center shrink-0">
+        <div className="px-6 py-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white flex justify-between items-center shrink-0">
           <div>
-            <h2 className="text-base font-black flex items-center gap-2">
+            <h2 className="text-base font-bold flex items-center gap-2">
               <HelpCircle className="w-5 h-5 text-blue-400" />
               Thiết Lập Rubric Chấm Điểm Tự Luận
             </h2>
@@ -155,7 +155,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
         </div>
 
         {/* Content Body */}
-        <div className="p-5 overflow-y-auto space-y-4 flex-1">
+        <div className="p-6 overflow-y-auto space-y-4 flex-1">
           {/* Question preview */}
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800">
             <span className="font-bold text-slate-900">Nội dung câu hỏi: </span>
@@ -170,11 +170,10 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
           )}
 
           {/* Real-time score balance status badge */}
-          <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-bold ${
-            isMatched
+          <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-bold ${isMatched
               ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-amber-50 border-amber-200 text-amber-800'
-          }`}>
+            }`}>
             <span className="flex items-center gap-1.5">
               {isMatched ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertTriangle className="w-4 h-4 text-amber-600" />}
               {isMatched ? 'Tổng điểm Rubric đã khớp hoàn hảo với điểm câu hỏi' : 'Tổng điểm Rubric CHƯA khớp với điểm câu hỏi'}
@@ -267,7 +266,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 shrink-0">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 shrink-0">
           <button
             type="button"
             onClick={onClose}

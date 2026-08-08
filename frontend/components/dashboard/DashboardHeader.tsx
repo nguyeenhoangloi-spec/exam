@@ -41,7 +41,7 @@ export function DashboardHeader({
   }, [isRefreshing]);
 
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between border-b border-slate-100/80 pb-3">
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       {/* Title & Subtitle */}
       <div className="space-y-1">
         <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">

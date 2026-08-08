@@ -12,6 +12,8 @@ import {
   EligibilityInput,
 } from './eligibility-checker.service';
 import { EssayService } from '../essay/essay.service';
+import { UpdateMediaDisplayConfigDto } from './dto/media-display-config.dto';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class OnlineExamsService {
@@ -19,7 +21,66 @@ export class OnlineExamsService {
     private readonly prisma: PrismaService,
     private readonly eligibilityChecker: EligibilityCheckerService,
     private readonly essayService: EssayService,
-  ) {}
+    private readonly audit: AuditService,
+  ) { }
+
+  /**
+   * Cập nhật cấu hình hiển thị media (Ảnh / Video / Âm thanh) của một ca thi.
+   * Chỉ ADMIN hoặc Giảng viên được phân công coi thi lịch đó mới được thao tác.
+   */
+  async updateMediaDisplayConfig(actor: any, scheduleId: number, dto: UpdateMediaDisplayConfigDto) {
+    if (actor.role !== 'ADMIN') {
+      const isSupervisor = await this.prisma.examScheduleRoom.findFirst({
+        where: {
+          examScheduleId: scheduleId,
+          supervisors: { some: { teacher: { userId: actor.id } } },
+        },
+        select: { id: true },
+      });
+      if (!isSupervisor) {
+        throw new ForbiddenException('Bạn không được cấu hình hiển thị media cho lịch thi này.');
+      }
+    }
+
+    let config = await this.prisma.onlineExamConfig.findUnique({ where: { examScheduleId: scheduleId } });
+
+    if (!config) {
+      // Nếu chưa có config, tạo mới với đề PUBLISHED gần nhất (đồng hành với startAttempt)
+      const publishedPaper = await this.prisma.examPaper.findFirst({
+        where: { examScheduleId: scheduleId, status: 'PUBLISHED' },
+        orderBy: { publishedAt: 'desc' },
+      });
+      if (!publishedPaper) {
+        throw new BadRequestException('Lịch thi chưa có đề thi chính thức được phát hành.');
+      }
+      config = await this.prisma.onlineExamConfig.create({
+        data: {
+          examScheduleId: scheduleId,
+          examPaperId: publishedPaper.id,
+        },
+      });
+    }
+
+    const updated = await this.prisma.onlineExamConfig.update({
+      where: { examScheduleId: scheduleId },
+      data: {
+        ...(dto.showImages !== undefined ? { showImages: Boolean(dto.showImages) } : {}),
+        ...(dto.showVideos !== undefined ? { showVideos: Boolean(dto.showVideos) } : {}),
+        ...(dto.showAudios !== undefined ? { showAudios: Boolean(dto.showAudios) } : {}),
+      },
+    });
+
+    await this.audit.write({
+      actorId: actor.id,
+      action: 'UPDATE',
+      entityType: 'ONLINE_EXAM_CONFIG',
+      entityId: scheduleId,
+      description: 'Cập nhật cấu hình hiển thị media của ca thi',
+      metadata: dto as any,
+    });
+
+    return updated;
+  }
 
   /**
    * Kiểm tra điều kiện dự thi của sinh viên (endpoint GET – chưa bắt đầu phiên)
@@ -43,28 +104,28 @@ export class OnlineExamsService {
         existingAttempt: result.data?.existingAttempt,
         examInfo: result.data?.schedule
           ? {
-              subjectName: result.data.schedule.subject?.subjectName,
-              subjectCode: result.data.schedule.subject?.subjectCode,
-              examPeriodName: result.data.schedule.examPeriod?.name,
-              examDate: result.data.schedule.examDate,
-              startTime: result.data.schedule.startTime,
-              endTime: result.data.schedule.endTime,
-              durationMinutes: (result.data as any)?.config?.examPaper?.durationMinutes || 60,
-              examPasswordRequired: result.errorCode === 'EXAM_PASSWORD_REQUIRED' || !!(result.data as any)?.config?.examPasswordHash,
-              accessCodeRequired: result.errorCode === 'ACCESS_CODE_REQUIRED' || !!(result.data as any)?.config?.accessCode,
-            }
+            subjectName: result.data.schedule.subject?.subjectName,
+            subjectCode: result.data.schedule.subject?.subjectCode,
+            examPeriodName: result.data.schedule.examPeriod?.name,
+            examDate: result.data.schedule.examDate,
+            startTime: result.data.schedule.startTime,
+            endTime: result.data.schedule.endTime,
+            durationMinutes: (result.data as any)?.config?.examPaper?.durationMinutes || 60,
+            examPasswordRequired: result.errorCode === 'EXAM_PASSWORD_REQUIRED' || !!(result.data as any)?.config?.examPasswordHash,
+            accessCodeRequired: result.errorCode === 'ACCESS_CODE_REQUIRED' || !!(result.data as any)?.config?.accessCode,
+          }
           : undefined,
         student: result.data?.student
           ? {
-              id: result.data.student.id,
-              studentCode: result.data.student.studentCode,
-              fullName: result.data.student.fullName,
-              examNumber: result.data.roomStudentInfo?.examNumber,
-              seatNumber: result.data.roomStudentInfo?.seatNumber,
-              roomCode: result.data.roomStudentInfo?.roomCode,
-              roomName: result.data.roomStudentInfo?.roomName,
-              building: result.data.roomStudentInfo?.building,
-            }
+            id: result.data.student.id,
+            studentCode: result.data.student.studentCode,
+            fullName: result.data.student.fullName,
+            examNumber: result.data.roomStudentInfo?.examNumber,
+            seatNumber: result.data.roomStudentInfo?.seatNumber,
+            roomCode: result.data.roomStudentInfo?.roomCode,
+            roomName: result.data.roomStudentInfo?.roomName,
+            building: result.data.roomStudentInfo?.building,
+          }
           : undefined,
       };
     }
@@ -167,7 +228,7 @@ export class OnlineExamsService {
         where: { examScheduleId: scheduleId, status: 'PUBLISHED' },
       });
       if (!publishedPaper) {
-      throw new BadRequestException('Kỳ thi chưa có đề thi chính thức được phát hành.');
+        throw new BadRequestException('Kỳ thi chưa có đề thi chính thức được phát hành.');
       }
       config = await this.prisma.onlineExamConfig.create({
         data: {
@@ -191,7 +252,8 @@ export class OnlineExamsService {
           include: {
             question: {
               include: {
-                options: true,
+                options: { include: { media: true } },
+                media: true,
                 fillBlankAnswers: { orderBy: { blankIndex: 'asc' } },
               },
             },
@@ -218,6 +280,8 @@ export class OnlineExamsService {
         id: opt.id,
         label: opt.label,
         content: opt.content,
+        contentRich: opt.contentRich,
+        media: opt.media,
         isCorrect: opt.isCorrect, // Giữ trong DB snapshot để Backend chấm điểm, KHÔNG trả về Client!
       }));
 
@@ -230,6 +294,8 @@ export class OnlineExamsService {
         questionId: pq.question.id,
         code: pq.question.code,
         content: pq.question.content,
+        contentRich: pq.question.contentRich,
+        media: pq.question.media,
         type: pq.question.type,
         difficulty: pq.question.difficulty,
         score: pq.score,
@@ -334,12 +400,33 @@ export class OnlineExamsService {
 
     const rawQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
 
+    const cfg = attempt.onlineExamConfig;
+    const mediaFlags = {
+      showImages: cfg.showImages !== false,
+      showVideos: cfg.showVideos !== false,
+      showAudios: cfg.showAudios !== false,
+    };
+
+    // Lọc media theo thiết lập hiển thị của ca thi (image/video/audio)
+    const filterMedia = (mediaList: any[] | null | undefined): any[] =>
+      (mediaList || [])
+        .filter((m: any) => {
+          const t = (m.mimeType || '').toLowerCase();
+          if (t.startsWith('image/')) return mediaFlags.showImages;
+          if (t.startsWith('video/')) return mediaFlags.showVideos;
+          if (t.startsWith('audio/')) return mediaFlags.showAudios;
+          return true;
+        })
+        .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
     // BỌC AN TOÀN BẢO MẬT: Lọc sạch thuộc tính isCorrect trước khi gửi cho Client!
     const clientQuestions = rawQuestions.map((q) => ({
       order: q.order,
       questionId: q.questionId,
       code: q.code,
       content: q.content,
+      contentRich: q.contentRich,
+      media: filterMedia(q.media),
       type: q.type,
       difficulty: q.difficulty,
       score: q.score,
@@ -347,6 +434,8 @@ export class OnlineExamsService {
         id: opt.id,
         label: opt.label,
         content: opt.content,
+        contentRich: opt.contentRich,
+        media: filterMedia(opt.media),
       })),
       blankIndexes: (q.fillBlankAnswers || []).map((answer: any) => answer.blankIndex),
     }));
@@ -696,8 +785,8 @@ export class OnlineExamsService {
     const finalStatus = attempt.isFlagged
       ? AttemptStatus.UNDER_REVIEW
       : isAutoSubmit
-      ? AttemptStatus.AUTO_SUBMITTED
-      : AttemptStatus.SUBMITTED;
+        ? AttemptStatus.AUTO_SUBMITTED
+        : AttemptStatus.SUBMITTED;
 
     const updated = await this.prisma.$transaction(async tx => {
       for (const item of fillBlankUpdates) {
@@ -789,11 +878,11 @@ export class OnlineExamsService {
       incidents: attempt.incidents,
       essayAnswers: canShowScore && hasEssay
         ? attempt.attemptAnswers.map((answer: any) => ({
-            questionId: answer.questionId,
-            finalScore: answer.finalScore,
-            teacherComment: answer.teacherComment,
-            criteria: answer.essayGrades.map((grade: any) => ({ label: grade.criterion.label, score: grade.score, maxScore: grade.criterion.maxScore, comment: grade.comment })),
-          }))
+          questionId: answer.questionId,
+          finalScore: answer.finalScore,
+          teacherComment: answer.teacherComment,
+          criteria: answer.essayGrades.map((grade: any) => ({ label: grade.criterion.label, score: grade.score, maxScore: grade.criterion.maxScore, comment: grade.comment })),
+        }))
         : [],
     };
   }
@@ -1075,3 +1164,4 @@ export class OnlineExamsService {
     };
   }
 }
+

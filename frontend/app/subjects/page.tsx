@@ -514,7 +514,7 @@ export default function SubjectsPage() {
           </div>
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button type="button" onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition cursor-pointer">Hủy</button>
+              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition cursor-pointer">Hủy</button>
             <button type="submit"
               className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer">Lưu Môn Học</button>
           </div>
@@ -601,7 +601,7 @@ export default function SubjectsPage() {
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button type="button" onClick={() => setEnrollClassSubject(null)}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition cursor-pointer">Hủy</button>
+              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition cursor-pointer">Hủy</button>
             <button type="submit" disabled={!enrollClassData.classId || enrollClassLoading}
               className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-sm font-black transition shadow-xs cursor-pointer">
               {enrollClassLoading ? 'Đang gán...' : 'Xác nhận Gán Lớp'}

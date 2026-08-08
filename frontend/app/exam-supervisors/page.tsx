@@ -716,13 +716,15 @@ export default function ExamSupervisorsPage() {
                 </div>
 
                 {autoProposal && (
-                  <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-                    <p className="font-bold">Phương án xem trước · điểm {autoProposal.score}/100</p>
-                    <div className="mt-2 space-y-1">
+                  <div className="mb-2 space-y-2">
+                    <p className="text-xs font-semibold text-slate-500">
+                      Đề xuất tự động · <span className="text-emerald-600 font-bold">{autoProposal.score}/100 điểm</span>
+                    </p>
+                    <div className="flex flex-wrap gap-x-5 gap-y-1">
                       {autoProposal.proposals.map((p: any) => {
                         const key = `${p.examScheduleRoomId}-${p.role}`;
                         return (
-                          <label key={key} className="flex items-center gap-2 cursor-pointer">
+                          <label key={key} className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-700">
                             <input
                               type="checkbox"
                               checked={selectedAutoProposalKeys.includes(key)}
@@ -733,24 +735,25 @@ export default function ExamSupervisorsPage() {
                               }
                               className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 cursor-pointer"
                             />
-                            {p.roomCode} · {p.teacherName} · {p.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
+                            <span className="font-medium">{p.roomCode}</span> · {p.teacherName} · {p.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                           </label>
                         );
                       })}
                     </div>
                     {autoProposal.unassigned?.length > 0 && (
-                      <p className="mt-2 text-amber-700">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>
+                      <p className="text-xs text-amber-600 font-medium">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>
                     )}
                     <button
                       type="button"
                       onClick={() => void acceptAutoAssign()}
                       disabled={autoLoading || !selectedAutoProposalKeys.length}
-                      className="mt-3 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition cursor-pointer"
+                      className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition cursor-pointer"
                     >
                       Xác nhận lưu phương án đã chọn
                     </button>
                   </div>
                 )}
+
 
                 <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                   <div className="md:col-span-5">
@@ -871,17 +874,19 @@ export default function ExamSupervisorsPage() {
                                   <>
                                     <button
                                       type="button"
+                                      title="Hoàn thành"
                                       onClick={() => void handleUpdateStatus(sup.id, 'COMPLETED', 'đánh dấu Hoàn thành ca thi')}
-                                      className="px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition cursor-pointer"
+                                      className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white transition active:scale-95 cursor-pointer"
                                     >
-                                      Hoàn thành
+                                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                                     </button>
                                     <button
                                       type="button"
+                                      title="Vắng mặt"
                                       onClick={() => void handleUpdateStatus(sup.id, 'ABSENT', 'báo Vắng mặt')}
-                                      className="px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition cursor-pointer"
+                                      className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-100 text-rose-600 hover:bg-rose-500 hover:text-white transition active:scale-95 cursor-pointer"
                                     >
-                                      Vắng mặt
+                                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
                                     </button>
                                   </>
                                 )}

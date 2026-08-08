@@ -18,7 +18,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 

@@ -32,14 +32,14 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
     <div className="fixed inset-0 z-[70] overflow-hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 px-6 py-5 text-white">
+          <div className="relative bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 px-6 py-4 text-white">
             <button
               onClick={onClose}
               className="absolute right-4 top-4 z-10 rounded-xl p-1.5 text-white/70 hover:bg-white/10 hover:text-white transition cursor-pointer"
@@ -98,7 +98,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-slate-200 bg-slate-50 p-4 text-right">
+          <div className="border-t border-slate-200 bg-slate-50 px-6 py-4 text-right">
             <button
               onClick={onClose}
               className="rounded-xl border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-100 transition"

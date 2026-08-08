@@ -117,7 +117,7 @@ export default function StudentCurriculumPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
 
         {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
+        <div className="relative overflow-hidden rounded-2xl bg-[#1E40AF] border border-white/10 p-6 text-white shadow-xl">
           {/* BG decorations */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
           <div className="absolute -right-16 -top-16 w-64 h-64 bg-blue-400/15 rounded-full blur-[80px] pointer-events-none" />

@@ -171,7 +171,7 @@ export default function StudentExamSchedulePage() {
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Hero Banner matching Admin Dashboard style */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
+        <div className="relative overflow-hidden rounded-2xl bg-[#1E40AF] border border-white/10 p-6 text-white shadow-xl">
           {/* 3D Isometric Vector Illustration Overlay */}
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-85">
             <svg viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">

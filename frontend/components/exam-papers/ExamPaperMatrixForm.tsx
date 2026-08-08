@@ -59,7 +59,7 @@ export function ExamPaperMatrixForm({
   const [showPanel, setShowPanel] = useState(false);
 
   const examType = formData.examType || 'TRAC_NGHIEM';
-  const isEssay  = examType === 'TU_LUAN';
+  const isEssay = examType === 'TU_LUAN';
   const scheduleType = selectedSchedule?.examType === 'TU_LUAN' ? 'TU_LUAN' : selectedSchedule?.examType === 'TRAC_NGHIEM' ? 'TRAC_NGHIEM' : undefined;
 
   const isPublished = Boolean(
@@ -96,9 +96,9 @@ export function ExamPaperMatrixForm({
   const expired = schedules.filter((s: any) => !hasPaper(s) && isScheduleExpired(s));
 
   const label = (s: any) => ({
-    subCode:    s.subjectCode    || s.subject?.subjectCode    || 'MH',
-    subName:    s.subjectName    || s.subject?.subjectName    || 'Môn',
-    periodName: s.periodName     || s.period?.name            || s.examPeriod?.name || 'Kỳ thi',
+    subCode: s.subjectCode || s.subject?.subjectCode || 'MH',
+    subName: s.subjectName || s.subject?.subjectName || 'Môn',
+    periodName: s.periodName || s.period?.name || s.examPeriod?.name || 'Kỳ thi',
   });
 
   const switchType = (type: 'TRAC_NGHIEM' | 'DIEN_LO' | 'TU_LUAN') => {
@@ -137,18 +137,16 @@ export function ExamPaperMatrixForm({
           <button
             type="button"
             onClick={() => handleDurationChange('60')}
-            className={`relative z-10 rounded-full px-4 py-1.5 text-xs font-black transition-colors duration-200 cursor-pointer ${
-              formData.durationMinutes !== '90' ? 'text-white' : 'text-slate-700 hover:text-slate-900'
-            }`}
+            className={`relative z-10 rounded-full px-4 py-1.5 text-xs font-black transition-colors duration-200 cursor-pointer ${formData.durationMinutes !== '90' ? 'text-white' : 'text-slate-700 hover:text-slate-900'
+              }`}
           >
             60 phút
           </button>
           <button
             type="button"
             onClick={() => handleDurationChange('90')}
-            className={`relative z-10 rounded-full px-4 py-1.5 text-xs font-black transition-colors duration-200 cursor-pointer ${
-              formData.durationMinutes === '90' ? 'text-white' : 'text-slate-700 hover:text-slate-900'
-            }`}
+            className={`relative z-10 rounded-full px-4 py-1.5 text-xs font-black transition-colors duration-200 cursor-pointer ${formData.durationMinutes === '90' ? 'text-white' : 'text-slate-700 hover:text-slate-900'
+              }`}
           >
             90 phút
           </button>
@@ -169,33 +167,30 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${
-                  examType === 'TRAC_NGHIEM'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                    : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
-                }`}
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
+                  }`}
               >
                 TN
               </button>
               <button
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${
-                  examType === 'DIEN_LO' || examType === 'FILL_BLANK'
-                    ? 'bg-blue-700 text-white border-blue-700 shadow-sm'
-                    : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
-                }`}
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
+                  ? 'bg-blue-700 text-white border-blue-700 shadow-sm'
+                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
+                  }`}
               >
                 Điền lỗ
               </button>
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${
-                  examType === 'TU_LUAN'
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                    : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700'
-                }`}
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${examType === 'TU_LUAN'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700'
+                  }`}
               >
                 TL
               </button>
@@ -306,7 +301,7 @@ export function ExamPaperMatrixForm({
             <>
               {/* Backdrop */}
               <div
-                className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]"
+                className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm"
                 onClick={() => setShowPanel(false)}
               />
 
@@ -315,9 +310,9 @@ export function ExamPaperMatrixForm({
                 <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
 
                   {/* Header */}
-                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                     <div>
-                      <p className="text-sm font-black text-slate-900">Chọn Ca thi / Lịch thi</p>
+                      <p className="text-base font-bold text-slate-900">Chọn Ca thi / Lịch thi</p>
                       <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
                         {pending.length} ca chưa có đề · {created.length} ca đã có đề
                       </p>
@@ -352,9 +347,8 @@ export function ExamPaperMatrixForm({
                               key={s.id}
                               type="button"
                               onClick={() => selectSchedule(String(s.id))}
-                              className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${
-                                active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
-                              }`}
+                              className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+                                }`}
                             >
                               <p className={`text-xs font-black truncate ${active ? 'text-blue-700' : 'text-slate-800'}`}>
                                 [{subCode}] {subName}
@@ -414,15 +408,14 @@ export function ExamPaperMatrixForm({
                         created.map((s: any) => {
                           const { subCode, subName, periodName } = label(s);
                           const active = formData.examScheduleId === String(s.id);
-                          const count  = s.examPapers?.length || 0;
+                          const count = s.examPapers?.length || 0;
                           return (
                             <button
                               key={s.id}
                               type="button"
                               onClick={() => selectSchedule(String(s.id))}
-                              className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${
-                                active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
-                              }`}
+                              className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+                                }`}
                             >
                               <div className="flex items-center gap-1.5">
                                 <p className={`text-xs font-black truncate flex-1 ${active ? 'text-blue-700' : 'text-slate-700'}`}>
@@ -475,22 +468,20 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
-                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${
-                  formData.selectionMode !== 'BY_SCORE'
-                    ? 'text-blue-600 border-blue-600 font-extrabold'
-                    : 'text-slate-500 border-transparent hover:text-slate-800'
-                }`}
+                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${formData.selectionMode !== 'BY_SCORE'
+                  ? 'text-blue-600 border-blue-600 font-extrabold'
+                  : 'text-slate-500 border-transparent hover:text-slate-800'
+                  }`}
               >
                 Theo Số câu
               </button>
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
-                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${
-                  formData.selectionMode === 'BY_SCORE'
-                    ? 'text-blue-600 border-blue-600 font-extrabold'
-                    : 'text-slate-500 border-transparent hover:text-slate-800'
-                }`}
+                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${formData.selectionMode === 'BY_SCORE'
+                  ? 'text-blue-600 border-blue-600 font-extrabold'
+                  : 'text-slate-500 border-transparent hover:text-slate-800'
+                  }`}
               >
                 Theo Thang điểm
               </button>
@@ -562,17 +553,16 @@ export function ExamPaperMatrixForm({
           <button
             type="submit"
             disabled={creating || currentTotal < 1 || isPublished}
-            className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-2xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
-              isPublished
-                ? 'bg-slate-300 text-slate-500 border border-slate-300'
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-2xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${isPublished
+              ? 'bg-slate-300 text-slate-500 border border-slate-300'
+              : 'bg-blue-600 hover:bg-blue-700'
+              }`}
           >
             {creating
               ? 'Đang sinh đề...'
               : isPublished
-              ? 'Đã Có Đề Công Bố'
-              : 'Tạo đề chung'}
+                ? 'Đã Có Đề Công Bố'
+                : 'Tạo đề chung'}
           </button>
         </div>
       </div>
