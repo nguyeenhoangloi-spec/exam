@@ -519,7 +519,7 @@ export class EligibilityCheckerService {
   /**
    * Kết hợp ngày thi với chuỗi giờ "HH:mm" thành một DateTime hoàn chỉnh
    */
-  private buildExamDateTime(examDate: Date, timeString: string): Date {
+  buildExamDateTime(examDate: Date, timeString: string): Date {
     const [hours, minutes] = timeString.split(':').map(Number);
     const dt = new Date(examDate);
     dt.setHours(hours, minutes, 0, 0);

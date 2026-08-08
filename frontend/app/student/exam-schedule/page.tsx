@@ -304,22 +304,22 @@ export default function StudentExamSchedulePage() {
                 <div className="space-y-3.5">
                   {/* Card top badges */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-md">
                       {item.subjectCode}
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-medium text-slate-500 truncate max-w-[140px] sm:max-w-[180px]" title={item.periodName}>
+                        {item.periodName}
+                      </span>
                       {item.mode === 'MOCK' ? (
-                        <span className="text-[10.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                        <span className="text-[10.5px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0">
                           Thi thử
                         </span>
                       ) : (
-                        <span className="text-[10.5px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
+                        <span className="text-[10.5px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md shrink-0">
                           Chính thức
                         </span>
                       )}
-                      <span className="text-[10.5px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
-                        {item.periodName}
-                      </span>
                     </div>
                   </div>
 

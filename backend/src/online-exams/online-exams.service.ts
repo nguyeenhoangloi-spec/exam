@@ -196,6 +196,7 @@ export class OnlineExamsService {
 
     const eligData = eligResult.data!;
     const student = eligData.student;
+    const schedule = eligData.schedule;
     let config = eligData.config;
 
     // Xử lý phiên thi đang hoạt động (khôi phục sau mất kết nối)
@@ -313,7 +314,36 @@ export class OnlineExamsService {
     });
 
     const now = new Date();
-    const expectedEndTime = new Date(now.getTime() + paper.durationMinutes * 60 * 1000);
+    let expectedEndTime = new Date(now.getTime() + paper.durationMinutes * 60 * 1000);
+
+    // QUY TẮC NGHIỆP VỤ KHẢO THÍ:
+    // Sinh viên vào muộn thì thời gian làm bài bị trừ tương ứng, tính từ giờ bắt đầu chính thức của ca thi.
+    if (schedule && schedule.mode === 'OFFICIAL' && schedule.examDate && schedule.startTime) {
+      const examStartTime = this.eligibilityChecker.buildExamDateTime(schedule.examDate, schedule.startTime);
+      const scheduleEndTime = schedule.endTime
+        ? this.eligibilityChecker.buildExamDateTime(schedule.examDate, schedule.endTime)
+        : new Date(examStartTime.getTime() + paper.durationMinutes * 60 * 1000);
+
+      const officialDeadline = new Date(
+        Math.min(
+          scheduleEndTime.getTime(),
+          examStartTime.getTime() + paper.durationMinutes * 60 * 1000,
+        ),
+      );
+
+      // Nếu sinh viên vào muộn sau giờ bắt đầu ca thi, thời gian kết thúc cố định theo hạn chót ca thi
+      if (now > examStartTime) {
+        expectedEndTime = officialDeadline;
+      } else {
+        // Nếu sinh viên vào đúng giờ hoặc sớm hơn, hạn chót không được vượt quá deadline của ca thi
+        expectedEndTime = new Date(Math.min(expectedEndTime.getTime(), officialDeadline.getTime()));
+      }
+
+      if (expectedEndTime.getTime() <= now.getTime()) {
+        throw new BadRequestException('Ca thi đã kết thúc thời gian làm bài.');
+      }
+    }
+
     const attemptToken = crypto.randomUUID();
 
     // Tạo Attempt và ExamSnapshot trong DB Transaction

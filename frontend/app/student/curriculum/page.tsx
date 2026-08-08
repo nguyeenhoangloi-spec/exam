@@ -874,7 +874,7 @@ export default function StudentCurriculumPage() {
                       {/* Semester */}
                       {visibleColumns.semester !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                          <span className="text-xs font-extrabold text-slate-800">
                             Học kỳ {item.recommendedSemester}
                           </span>
                         </td>
@@ -928,7 +928,7 @@ export default function StudentCurriculumPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition shadow-2xs cursor-pointer active:scale-95"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition cursor-pointer active:scale-95"
                             title="Xem chi tiết môn học"
                           >
                             <Eye className="h-3.5 w-3.5" />

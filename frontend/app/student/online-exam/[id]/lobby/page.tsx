@@ -263,21 +263,27 @@ export default function StudentExamLobbyPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                 <div className="space-y-1">
                   <span className="text-slate-500 font-bold block text-[11px]">Họ và tên thí sinh</span>
-                  <span className="font-black text-slate-900 text-sm">{fullName}</span>
+                  <span className="font-black text-slate-900 text-sm block truncate">{fullName}</span>
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-slate-500 font-bold block text-[11px]">Mã sinh viên</span>
-                  <span className="font-mono font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 inline-block">
+                  <span className="font-mono font-black text-slate-900 text-sm block">
                     {studentCode}
                   </span>
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-slate-500 font-bold block text-[11px]">SBD / Số ghế</span>
-                  <span className="font-mono font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200 inline-block">
-                    {examNumber} {seatNumber !== '-' && `• Ghế ${seatNumber}`}
-                  </span>
+                  {examNumber && examNumber !== 'Chưa cấp' && examNumber !== '---' ? (
+                    <span className="font-black text-slate-900 text-sm block">
+                      {examNumber} {seatNumber !== '-' && `• Ghế ${seatNumber}`}
+                    </span>
+                  ) : (
+                    <span className="text-slate-400 font-semibold text-xs italic block pt-0.5">
+                      Chưa cấp số báo danh
+                    </span>
+                  )}
                 </div>
 
                 <div className="space-y-1">
