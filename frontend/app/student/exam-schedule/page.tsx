@@ -231,20 +231,20 @@ export default function StudentExamSchedulePage() {
           ))}
         </div>
 
-        {/* Mode & Status Tabs Bar */}
-        <TabBar
-          tabs={[
-            { key: 'ALL', label: 'Tất cả ca thi', count: modeCounts.all },
-            { key: 'OFFICIAL', label: 'Thi chính thức', count: modeCounts.official },
-            { key: 'MOCK', label: 'Thi thử', count: modeCounts.mock },
-          ]}
-          active={modeFilter}
-          onChange={setModeFilter}
-        />
+        {/* Combined 1-Row Toolbar: TabBar bên trái, Bộ lọc & Tìm kiếm bên phải */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200/80 pb-1">
+          <TabBar
+            tabs={[
+              { key: 'ALL', label: 'Tất cả ca thi', count: modeCounts.all },
+              { key: 'OFFICIAL', label: 'Thi chính thức', count: modeCounts.official },
+              { key: 'MOCK', label: 'Thi thử', count: modeCounts.mock },
+            ]}
+            active={modeFilter}
+            onChange={setModeFilter}
+            className="border-b-0 w-auto pt-0"
+          />
 
-        {/* Status Dropdown & Search Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-          <div className="flex items-center gap-2 w-full max-w-lg">
+          <div className="flex items-center gap-2.5 w-full lg:w-auto shrink-0 pb-1 lg:pb-0">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -255,7 +255,7 @@ export default function StudentExamSchedulePage() {
               <option value="COMPLETED">Đã kết thúc</option>
             </select>
 
-            <div className="relative flex-1">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
               <input
                 type="text"

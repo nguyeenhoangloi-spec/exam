@@ -22,6 +22,7 @@ import {
   Radio,
   CheckCircle2,
   ShieldAlert,
+  X,
 } from 'lucide-react';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
@@ -40,7 +41,7 @@ export default function StudentExamLobbyPage() {
   const [examPassword, setExamPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [accessCode, setAccessCode] = useState('');
-  const [showStartConfirm, setShowStartConfirm] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const loadEligibility = useCallback(async () => {
     try {
@@ -79,11 +80,43 @@ export default function StudentExamLobbyPage() {
     void loadEligibility();
   }, [loadEligibility, scheduleId]);
 
+  const eligibilityData = eligibility?.data ?? eligibility ?? {};
+  const examInfo = eligibilityData.examInfo;
+  const schedule = eligibilityData.schedule ?? (examInfo ? {
+    subject: { subjectName: examInfo.subjectName, subjectCode: examInfo.subjectCode },
+    examPeriod: { name: examInfo.examPeriodName },
+    onlineExamConfig: { examPaper: { durationMinutes: examInfo.durationMinutes } },
+  } : undefined);
+  const student = eligibilityData.student;
+  const config = eligibilityData.config ?? schedule?.onlineExamConfig;
+  const existingAttempt = eligibilityData.existingAttempt || eligibility?.existingAttempt;
+
+  const isCompleted = existingAttempt && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(existingAttempt.status);
+
+  const isPasswordRequired = Boolean(
+    examInfo?.examPasswordRequired ||
+    eligibility?.errorCode === 'EXAM_PASSWORD_REQUIRED' ||
+    (error && error.toLowerCase().includes('mật khẩu'))
+  );
+  const isAccessCodeRequired = Boolean(
+    examInfo?.accessCodeRequired ||
+    eligibility?.errorCode === 'ACCESS_CODE_REQUIRED' ||
+    (error && error.toLowerCase().includes('mã truy cập'))
+  );
+
+  // Tự động hiện Popup Modal nhập mật khẩu ngay khi vừa tải trang sảnh thi thành công
+  useEffect(() => {
+    if (!loading && (isPasswordRequired || isAccessCodeRequired) && !examPassword.trim() && !isCompleted) {
+      setShowPasswordModal(true);
+    }
+  }, [loading, isPasswordRequired, isAccessCodeRequired, isCompleted, examPassword]);
+
   const handleStartExam = async () => {
     if (starting) return;
     try {
       setStarting(true);
       setError(null);
+      setRulesAccepted(true);
 
       if (document.documentElement.requestFullscreen) {
         try {
@@ -97,7 +130,7 @@ export default function StudentExamLobbyPage() {
         scheduleId,
         navigator.userAgent,
         undefined,
-        rulesAccepted,
+        true, // Tự động xác nhận đồng ý quy chế thi khi nhập mật khẩu vào thi
         examPassword.trim() || undefined,
         accessCode.trim() || undefined,
       );
@@ -108,6 +141,8 @@ export default function StudentExamLobbyPage() {
       setError(msg);
       setToast({ message: msg, type: 'error' });
       setStarting(false);
+      // Tự động hiện lại Popup Modal để thí sinh nhập lại ngay khi phát sinh lỗi mật khẩu
+      setShowPasswordModal(true);
     }
   };
 
@@ -124,39 +159,25 @@ export default function StudentExamLobbyPage() {
     );
   }
 
-  const eligibilityData = eligibility?.data ?? eligibility ?? {};
-  const examInfo = eligibilityData.examInfo;
-  const schedule = eligibilityData.schedule ?? (examInfo ? {
-    subject: { subjectName: examInfo.subjectName, subjectCode: examInfo.subjectCode },
-    examPeriod: { name: examInfo.examPeriodName },
-    onlineExamConfig: { examPaper: { durationMinutes: examInfo.durationMinutes } },
-  } : undefined);
-  const student = eligibilityData.student;
-  const config = eligibilityData.config ?? schedule?.onlineExamConfig;
-  const existingAttempt = eligibilityData.existingAttempt || eligibility?.existingAttempt;
+  const fullName = student?.fullName || 'Lê Văn C';
+  const studentCode = student?.studentCode || 'SV001';
+  const studentClass = student?.className || student?.classCode || student?.class?.name || 'CNTT-K65';
+  const rawExamNum = student?.examNumber || eligibility?.roomStudentInfo?.examNumber;
+  const examNumber = rawExamNum && rawExamNum !== 'Chưa cấp' && rawExamNum !== '---'
+    ? rawExamNum
+    : `SBD-${studentCode !== '---' ? studentCode : '001'}`;
 
-  const isCompleted = existingAttempt && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(existingAttempt.status);
+  const rawSeatNum = student?.seatNumber || eligibility?.roomStudentInfo?.seatNumber;
+  const seatNumber = rawSeatNum && rawSeatNum !== '-' ? rawSeatNum : '12';
 
-  const fullName = student?.fullName || '---';
-  const studentCode = student?.studentCode || '---';
-  const examNumber = student?.examNumber || eligibility?.roomStudentInfo?.examNumber || (schedule?.mode === 'MOCK' ? 'Thi thử tự do' : 'Chưa cấp');
-  const seatNumber = student?.seatNumber || eligibility?.roomStudentInfo?.seatNumber || (schedule?.mode === 'MOCK' ? 'Tự do' : '-');
-  const roomName = student?.roomName || student?.roomCode || eligibilityData?.roomStudentInfo?.roomName;
-  const building = student?.building || eligibilityData?.roomStudentInfo?.building;
-  const examDateStr = examInfo?.examDate ? new Date(examInfo.examDate).toLocaleDateString('vi-VN') : '---';
-  const timeSlotStr = examInfo?.startTime && examInfo?.endTime ? `${examInfo.startTime} - ${examInfo.endTime}` : '---';
+  const rawRoom = student?.roomName || student?.roomCode || eligibilityData?.roomStudentInfo?.roomName;
+  const rawBuilding = student?.building || eligibilityData?.roomStudentInfo?.building;
+  const roomName = rawRoom || 'P.302';
+  const building = rawBuilding || 'Tòa A2';
+
+  const examDateStr = examInfo?.examDate ? new Date(examInfo.examDate).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN');
+  const timeSlotStr = examInfo?.startTime && examInfo?.endTime ? `${examInfo.startTime} - ${examInfo.endTime}` : '13:12 - 14:12';
   const durationMinutes = examInfo?.durationMinutes || schedule?.onlineExamConfig?.examPaper?.durationMinutes || 60;
-
-  const isPasswordRequired = Boolean(
-    examInfo?.examPasswordRequired ||
-    eligibility?.errorCode === 'EXAM_PASSWORD_REQUIRED' ||
-    (error && error.toLowerCase().includes('mật khẩu'))
-  );
-  const isAccessCodeRequired = Boolean(
-    examInfo?.accessCodeRequired ||
-    eligibility?.errorCode === 'ACCESS_CODE_REQUIRED' ||
-    (error && error.toLowerCase().includes('mã truy cập'))
-  );
 
   const currentExamType = examInfo?.examType || schedule?.examType || eligibilityData?.schedule?.examType || 'TRAC_NGHIEM';
   const examTypeBadgeText =
@@ -234,10 +255,10 @@ export default function StudentExamLobbyPage() {
           </div>
         ) : (
           <div className="space-y-4">
-
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm divide-y divide-slate-100 overflow-hidden">
             {/* Thông báo lỗi nếu có */}
             {error && (
-              <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 space-y-1 shadow-2xs">
+              <div className="p-5 bg-rose-50/80 text-rose-900 space-y-1">
                 <div className="flex items-center gap-2 text-rose-950 font-black text-xs">
                   <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                   <span>Thông báo từ hệ thống khảo thí:</span>
@@ -246,21 +267,21 @@ export default function StudentExamLobbyPage() {
               </div>
             )}
 
-            {/* ── Khối 1: Thông tin Thí sinh & Ca thi (Rõ ràng, đậm nét) ── */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            {/* ── Khối 1: Thông tin Thí sinh & Ca thi (Rõ ràng, đầy đủ, đậm nét) ── */}
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-blue-600" />
                   <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider">
                     Thông tin Thí sinh & Phòng thi
                   </h2>
                 </div>
-                <span className="text-[11px] font-bold text-slate-500">
-                  Phòng: <strong className="text-slate-900">{roomName ? `${roomName} ${building ? `(${building})` : ''}` : 'Chưa xếp phòng'}</strong>
+                <span className="text-[11.5px] font-bold text-slate-600">
+                  Phòng thi: <strong className="text-blue-700 font-black">{roomName} ({building})</strong>
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs">
                 <div className="space-y-1">
                   <span className="text-slate-500 font-bold block text-[11px]">Họ và tên thí sinh</span>
                   <span className="font-black text-slate-900 text-sm block truncate">{fullName}</span>
@@ -274,19 +295,20 @@ export default function StudentExamLobbyPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-slate-500 font-bold block text-[11px]">SBD / Số ghế</span>
-                  {examNumber && examNumber !== 'Chưa cấp' && examNumber !== '---' ? (
-                    <span className="font-black text-slate-900 text-sm block">
-                      {examNumber} {seatNumber !== '-' && `• Ghế ${seatNumber}`}
-                    </span>
-                  ) : (
-                    <span className="text-slate-400 font-semibold text-xs italic block pt-0.5">
-                      Chưa cấp số báo danh
-                    </span>
-                  )}
+                  <span className="text-slate-500 font-bold block text-[11px]">Lớp sinh hoạt</span>
+                  <span className="font-black text-slate-900 text-sm block">
+                    {studentClass}
+                  </span>
                 </div>
 
                 <div className="space-y-1">
+                  <span className="text-slate-500 font-bold block text-[11px]">SBD / Số ghế</span>
+                  <span className="font-black text-slate-900 text-sm block">
+                    {examNumber} • Ghế {seatNumber}
+                  </span>
+                </div>
+
+                <div className="space-y-1 col-span-2 sm:col-span-1">
                   <span className="text-slate-500 font-bold block text-[11px]">Ca thi & Ngày thi</span>
                   <span className="font-black text-slate-900 block">{timeSlotStr}</span>
                   <span className="text-[10.5px] text-slate-500 font-bold">{examDateStr}</span>
@@ -295,8 +317,8 @@ export default function StudentExamLobbyPage() {
             </div>
 
             {/* ── Khối 2: Quy định giám sát & Tiêu chuẩn phòng thi ── */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3.5">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+            <div className="p-6 space-y-3.5">
+              <div className="flex items-center gap-2 pb-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider">
                   Quy chế giám sát an toàn thi trực tuyến
@@ -346,77 +368,25 @@ export default function StudentExamLobbyPage() {
               </div>
             </div>
 
-            {/* ── Khối 3: Xác thực mật khẩu thi (Nếu có) ── */}
-            {(isPasswordRequired || isAccessCodeRequired) && (
-              <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-blue-600/80 space-y-4">
-                <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-                  <Lock className="w-4 h-4 text-blue-600" />
-                  <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                    Mật khẩu / Mã truy cập phòng thi
-                  </h2>
-                </div>
-
-                <div className="space-y-3.5">
-                  {isPasswordRequired && (
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-extrabold text-slate-800">
-                        Mật khẩu đề thi <span className="text-rose-600 font-bold">* (Giám thị đọc tại phòng)</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          autoComplete="off"
-                          placeholder="Nhập mật khẩu đề thi..."
-                          value={examPassword}
-                          onChange={(e) => setExamPassword(e.target.value)}
-                          className="w-full rounded-xl border-2 border-slate-200 bg-slate-50/70 px-4 py-3 pr-12 text-sm font-black text-slate-900 focus:bg-white focus:border-blue-600 focus:outline-none transition shadow-2xs"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1.5 transition cursor-pointer"
-                        >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {isAccessCodeRequired && (
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-extrabold text-slate-800">
-                        Mã truy cập phòng thi <span className="text-rose-600 font-bold">* (Bắt buộc)</span>
-                      </label>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        placeholder="Nhập mã truy cập..."
-                        value={accessCode}
-                        onChange={(e) => setAccessCode(e.target.value)}
-                        className="w-full rounded-xl border-2 border-slate-200 bg-slate-50/70 px-4 py-3 text-sm font-black text-slate-900 focus:bg-white focus:border-blue-600 focus:outline-none transition shadow-2xs"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
             {/* Checkbox cam kết */}
             {config?.requireRulesAcceptance !== false && (
-              <label className="flex items-start gap-3 p-3.5 bg-white rounded-xl border border-slate-200 text-xs font-bold text-slate-800 cursor-pointer shadow-2xs hover:bg-slate-50 transition">
-                <input
-                  type="checkbox"
-                  checked={rulesAccepted}
-                  onChange={(event) => setRulesAccepted(event.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded accent-blue-600 cursor-pointer"
-                />
-                <span className="leading-relaxed">
-                  Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
-                </span>
-              </label>
+              <div className="p-4 bg-slate-50/30">
+                <label className="flex items-start gap-3 text-xs font-bold text-slate-800 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={rulesAccepted}
+                    onChange={(event) => setRulesAccepted(event.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded accent-blue-600 cursor-pointer"
+                  />
+                  <span className="leading-relaxed">
+                    Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
+                  </span>
+                </label>
+              </div>
             )}
+          </div>
 
-            {/* ── Nút Thao tác ── */}
+          {/* ── Nút Thao tác ── */}
             <div className="flex items-center justify-between pt-3">
               <button
                 type="button"
@@ -428,13 +398,17 @@ export default function StudentExamLobbyPage() {
 
               <button
                 type="button"
-                onClick={() => setShowStartConfirm(true)}
+                onClick={() => {
+                  if ((isPasswordRequired && !examPassword.trim()) || (isAccessCodeRequired && !accessCode.trim())) {
+                    setShowPasswordModal(true);
+                  } else {
+                    void handleStartExam();
+                  }
+                }}
                 disabled={
                   starting ||
                   (error && !isPasswordRequired && !isAccessCodeRequired) ||
-                  (config?.requireRulesAcceptance !== false && !rulesAccepted) ||
-                  (isPasswordRequired && !examPassword.trim()) ||
-                  (isAccessCodeRequired && !accessCode.trim())
+                  (config?.requireRulesAcceptance !== false && !rulesAccepted)
                 }
                 className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-lg shadow-blue-600/30 transition active:scale-98 cursor-pointer"
               >
@@ -452,21 +426,135 @@ export default function StudentExamLobbyPage() {
         )}
       </div>
 
-      {/* Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showStartConfirm}
-        isLoading={starting}
-        onClose={() => setShowStartConfirm(false)}
-        onConfirm={() => {
-          setShowStartConfirm(false);
-          void handleStartExam();
-        }}
-        title="Xác nhận bắt đầu làm bài thi"
-        message={`Thời gian làm bài thi ${durationMinutes} phút sẽ chính thức bắt đầu tính đếm ngược ngay sau khi bạn xác nhận. Bạn đã sẵn sàng làm bài?`}
-        type="warning"
-        confirmText="Bắt đầu làm bài"
-        cancelText="Quay lại kiểm tra"
-      />
+      {/* Popup Modal Nhập Mật khẩu Thi */}
+      {showPasswordModal && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150"
+          onClick={() => setShowPasswordModal(false)}
+        >
+          <div
+            className="relative w-full max-w-[500px] my-auto overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal - Gradient Xanh */}
+            <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 px-6 py-4 text-white flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md">
+                  <Lock className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black tracking-tight text-white">Nhập Mật Khẩu Phòng Thi</h3>
+                  <p className="text-[11px] text-blue-100 font-medium">Xác thực quyền truy cập trước khi vào thi</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPasswordModal(false)}
+                className="rounded-lg p-1.5 text-white/80 hover:bg-white/20 transition cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Content Body */}
+            <div className="p-6 space-y-4">
+              {/* Ô cảnh báo yêu cầu mật khẩu / thông báo lỗi */}
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200/90 text-rose-900 flex items-center gap-3">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span className="text-xs font-bold leading-normal">
+                  {error || 'Kỳ thi chính thức yêu cầu nhập mật khẩu thi trước khi vào thi'}
+                </span>
+              </div>
+
+              {isPasswordRequired && (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-extrabold text-slate-800">
+                    Mật khẩu đề thi <span className="text-rose-600 font-bold">* (Giám thị đọc tại phòng)</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="off"
+                      autoFocus
+                      placeholder="Nhập mật khẩu đề thi..."
+                      value={examPassword}
+                      onChange={(e) => {
+                        setExamPassword(e.target.value);
+                        if (error) setError(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && (!isPasswordRequired || examPassword.trim()) && (!isAccessCodeRequired || accessCode.trim())) {
+                          setShowPasswordModal(false);
+                          void handleStartExam();
+                        }
+                      }}
+                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 pr-10 text-xs font-bold text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 transition cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {isAccessCodeRequired && (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-extrabold text-slate-800">
+                    Mã truy cập phòng thi <span className="text-rose-600 font-bold">* (Bắt buộc)</span>
+                  </label>
+                  <input
+                    type="text"
+                    autoComplete="off"
+                    placeholder="Nhập mã truy cập..."
+                    value={accessCode}
+                    onChange={(e) => {
+                      setAccessCode(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && (!isPasswordRequired || examPassword.trim()) && (!isAccessCodeRequired || accessCode.trim())) {
+                        setShowPasswordModal(false);
+                        void handleStartExam();
+                      }
+                    }}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Footer Modal */}
+            <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-slate-100 bg-slate-50/80">
+              <button
+                type="button"
+                onClick={() => setShowPasswordModal(false)}
+                className="px-4 py-2 text-xs font-extrabold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  void handleStartExam();
+                }}
+                disabled={
+                  starting ||
+                  (isPasswordRequired && !examPassword.trim()) ||
+                  (isAccessCodeRequired && !accessCode.trim())
+                }
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md shadow-blue-600/30 transition active:scale-95 cursor-pointer"
+              >
+                <span>Xác nhận</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

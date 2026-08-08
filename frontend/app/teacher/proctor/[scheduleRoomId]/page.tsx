@@ -32,6 +32,8 @@ import {
 } from 'lucide-react';
 
 import { usePageTitle } from '@/components/PageTitleContext';
+import { ConfirmModal } from '@/components/ConfirmModal';
+import { Toast } from '@/components/Toast';
 
 /* ─── helpers ─── */
 function statusMeta(att: any) {
@@ -117,8 +119,18 @@ export default function ProctorDashboardPage() {
   const [showReopenEntryModal, setShowReopenEntryModal] = useState(false);
   const [lateWindowMinutes, setLateWindowMinutes] = useState(30);
   const [reopenEntryProcessing, setReopenEntryProcessing] = useState(false);
-  const [reopenEntrySuccessMsg, setReopenEntrySuccessMsg] = useState<string | null>(null);
   const [reopenEntryError, setReopenEntryError] = useState<string | null>(null);
+
+  // General Confirm & Toast state
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'danger' | 'success' | 'warning' | 'info';
+    onConfirm: () => void;
+  }>({ isOpen: false, title: '', message: '', type: 'info', onConfirm: () => {} });
+
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const loadDashboardRef = useRef<((isBackground?: boolean) => Promise<void>) | null>(null);
 
@@ -141,21 +153,34 @@ export default function ProctorDashboardPage() {
     }
   };
 
-  const handleReopenEntry = async () => {
+  const handleReopenEntryConfirm = () => {
     if (!data?.scheduleId) return;
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xác nhận Mở Giờ Vào Thi Muộn',
+      message: `Bạn có chắc chắn muốn gia hạn thời gian cho sinh viên vào thi muộn thêm ${lateWindowMinutes} phút nữa (tính từ thời điểm hiện tại)?`,
+      type: 'info',
+      onConfirm: () => executeReopenEntry(),
+    });
+  };
+
+  const executeReopenEntry = async () => {
+    if (!data?.scheduleId) return;
+    setConfirmModal((prev) => ({ ...prev, isOpen: false }));
     try {
       setReopenEntryProcessing(true);
       setReopenEntryError(null);
-      setReopenEntrySuccessMsg(null);
       const res = await onlineExamService.reopenEntry(data.scheduleId, lateWindowMinutes);
-      setReopenEntrySuccessMsg(res.message || `Đã gia hạn thời gian cho phép vào thi thêm ${lateWindowMinutes} phút.`);
-      setTimeout(() => {
-        setShowReopenEntryModal(false);
-        setReopenEntrySuccessMsg(null);
-        void loadDashboard(true);
-      }, 1500);
+      setShowReopenEntryModal(false);
+      setToast({
+        message: res.message || `Đã mở lại thời gian cho phép vào thi thêm ${lateWindowMinutes} phút thành công!`,
+        type: 'success',
+      });
+      void loadDashboard(true);
     } catch (e: any) {
-      setReopenEntryError(e?.response?.data?.message || e?.message || 'Không thể gia hạn giờ vào thi');
+      const errText = e?.response?.data?.message || e?.message || 'Không thể gia hạn giờ vào thi';
+      setReopenEntryError(errText);
+      setToast({ message: errText, type: 'error' });
     } finally {
       setReopenEntryProcessing(false);
     }
@@ -418,10 +443,10 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => loadDashboard(false)}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
+            className="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-2xs transition active:scale-95 cursor-pointer"
+            title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-4 w-4 text-slate-500" />
-            <span>Làm mới</span>
+            <RefreshCw className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -1445,13 +1470,6 @@ export default function ProctorDashboardPage() {
                 </div>
               )}
 
-              {reopenEntrySuccessMsg && (
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>{reopenEntrySuccessMsg}</span>
-                </div>
-              )}
-
               <div>
                 <label className="block text-slate-700 font-bold mb-1.5">Số phút cho phép vào thi kể từ bây giờ:</label>
                 <div className="flex gap-2">
@@ -1478,13 +1496,13 @@ export default function ProctorDashboardPage() {
                 type="button"
                 onClick={() => setShowReopenEntryModal(false)}
                 disabled={reopenEntryProcessing}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                className="px-4 py-2 text-xs font-extrabold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer"
               >
                 Hủy
               </button>
               <button
                 type="button"
-                onClick={handleReopenEntry}
+                onClick={handleReopenEntryConfirm}
                 disabled={reopenEntryProcessing}
                 className="rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-2 text-xs font-black text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
               >
@@ -1494,6 +1512,19 @@ export default function ProctorDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Confirm Popup Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+      />
+
+      {/* Toast Notification */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </main>
   );
 }

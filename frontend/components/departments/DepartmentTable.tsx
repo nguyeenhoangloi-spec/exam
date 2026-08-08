@@ -285,22 +285,19 @@ export function DepartmentTable({
 
                 {visibleColumns.subjectsCount !== false && (
                   <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{subjectsCount}</span>
-                    <span className="font-medium text-slate-500 ml-1">môn</span>
+                    <span className="font-extrabold text-slate-900">{subjectsCount} môn</span>
                   </td>
                 )}
 
                 {visibleColumns.classesCount !== false && (
                   <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{classesCount}</span>
-                    <span className="font-medium text-slate-500 ml-1">lớp</span>
+                    <span className="font-extrabold text-slate-900">{classesCount} lớp</span>
                   </td>
                 )}
 
                 {visibleColumns.teachersCount !== false && (
                   <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{teachersCount}</span>
-                    <span className="font-medium text-slate-500 ml-1">giảng viên</span>
+                    <span className="font-extrabold text-slate-900">{teachersCount} giảng viên</span>
                   </td>
                 )}
 

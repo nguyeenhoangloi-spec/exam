@@ -223,8 +223,7 @@ export function ExamRoomTable({
 
                 {visibleColumns.capacity !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center text-xs">
-                    <span className="font-extrabold text-slate-900">{r.capacity}</span>
-                    <span className="font-medium text-slate-500 ml-1">chỗ</span>
+                    <span className="font-extrabold text-slate-900">{r.capacity} chỗ</span>
                   </td>
                 )}
 

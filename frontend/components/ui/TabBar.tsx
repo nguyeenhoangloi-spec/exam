@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { startTransition } from 'react';
 
 export interface TabItem<T extends string = string> {
   key: T;
@@ -29,7 +29,11 @@ export function TabBar<T extends string = string>({
           <button
             key={tab.key}
             type="button"
-            onClick={() => onChange(tab.key)}
+            onClick={() => {
+              startTransition(() => {
+                onChange(tab.key);
+              });
+            }}
             className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap shrink-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none ${
               isActive ? 'text-blue-600 font-black' : 'text-slate-500 hover:text-slate-900'
             }`}

@@ -361,13 +361,13 @@ export default function TeacherAssignmentsPage() {
                       </span>
                       <div className="flex items-center gap-1.5">
                         <span
-                          className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${isExpired
-                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                          className={`text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-md ${isExpired
+                            ? 'bg-rose-50 text-rose-700'
                             : item.status === 'CONFIRMED'
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              ? 'bg-emerald-50 text-emerald-700'
                               : item.status === 'CHANGE_REQUESTED'
-                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                                : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                ? 'bg-amber-50 text-amber-700'
+                                : 'bg-slate-100 text-slate-700'
                             }`}
                         >
                           {isExpired
@@ -379,9 +379,9 @@ export default function TeacherAssignmentsPage() {
                                 : 'Chờ xác nhận'}
                         </span>
                         <span
-                          className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full ${item.role === 'SUPERVISOR_1'
-                            ? 'bg-blue-50 text-blue-800 border border-blue-200'
-                            : 'bg-slate-100 text-slate-700 border border-slate-200'
+                          className={`text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-md ${item.role === 'SUPERVISOR_1'
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'bg-slate-100 text-slate-700'
                             }`}
                         >
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
@@ -431,25 +431,33 @@ export default function TeacherAssignmentsPage() {
                   {/* Actions Area */}
                   <div className="pt-4 mt-3 border-t border-slate-100 space-y-2.5">
                     {/* Confirmation buttons */}
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2.5">
                       <button
                         type="button"
                         disabled={busyId === item.id || isLocked}
                         onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+                        className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-extrabold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                          item.status === 'CONFIRMED'
+                            ? 'bg-emerald-600 text-white shadow-xs hover:bg-emerald-700'
+                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs active:scale-95'
+                        }`}
                       >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        {item.status === 'CONFIRMED' ? 'Đã khóa ca' : 'Xác nhận ca'}
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                        <span>{item.status === 'CONFIRMED' ? 'Đã khóa ca' : 'Xác nhận ca'}</span>
                       </button>
 
                       <button
                         type="button"
                         disabled={busyId === item.id || isLocked}
                         onClick={() => handleUpdateStatus(item.id, 'CHANGE_REQUESTED')}
-                        className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+                        className={`inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-extrabold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                          item.status === 'CHANGE_REQUESTED'
+                            ? 'text-amber-700 bg-amber-50 hover:bg-amber-100/60'
+                            : 'text-amber-700 hover:text-amber-800 hover:bg-amber-50/80 active:scale-95'
+                        }`}
                       >
-                        <RefreshCw className="w-3.5 h-3.5" />
-                        Xin đổi ca
+                        <RefreshCw className="w-3.5 h-3.5 shrink-0" />
+                        <span>{item.status === 'CHANGE_REQUESTED' ? 'Đã xin đổi' : 'Xin đổi ca'}</span>
                       </button>
                     </div>
 
@@ -490,7 +498,7 @@ export default function TeacherAssignmentsPage() {
         avatarText="GT"
         badge={{
           label: drawerDuty?.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
-          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-slate-100 text-slate-700 border-slate-200',
+          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 font-extrabold rounded-md' : 'bg-slate-100 text-slate-700 font-extrabold rounded-md',
         }}
         details={[
           { label: 'Môn thi', value: drawerDuty?.subjectName, icon: BookOpen },

@@ -221,8 +221,15 @@ export default function ExamSchedulesPage() {
     const defaultStart = getCurrentTimeFormatted();
     const duration = 60;
     setSelectedDuration(duration);
+
+    // Tự động chọn Kỳ thi đang lọc trên trang, hoặc kỳ thi đang diễn ra/sắp tới làm mặc định
+    const defaultPeriodId =
+      (filterValues.examPeriodId && String(filterValues.examPeriodId) !== '' ? String(filterValues.examPeriodId) : null) ||
+      (periods.find((p: any) => p.status === 'ACTIVE' || p.status === 'UPCOMING')?.id ? String(periods.find((p: any) => p.status === 'ACTIVE' || p.status === 'UPCOMING').id) : null) ||
+      (periods[0]?.id ? String(periods[0].id) : '');
+
     setFormData({
-      examPeriodId: periods[0]?.id ? String(periods[0].id) : '',
+      examPeriodId: defaultPeriodId,
       subjectId: subjects[0]?.id ? String(subjects[0].id) : '',
       shiftName: computeShiftName(defaultStart),
       examDate: new Date().toISOString().split('T')[0],
@@ -563,11 +570,19 @@ export default function ExamSchedulesPage() {
                 {periods.length === 0 ? (
                   <option value="">-- Chưa có kỳ thi nào --</option>
                 ) : (
-                  periods.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.semester} - {p.schoolYear})
-                    </option>
-                  ))
+                  periods.map((p) => {
+                    const hasSemester = p.semester && p.name.includes(p.semester);
+                    const hasYear = p.schoolYear && p.name.includes(p.schoolYear);
+                    const isRedundant = hasSemester && hasYear;
+                    const label = isRedundant
+                      ? p.name
+                      : `${p.name} (${[p.semester, p.schoolYear].filter(Boolean).join(' - ')})`;
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {label}
+                      </option>
+                    );
+                  })
                 )}
               </select>
             </div>

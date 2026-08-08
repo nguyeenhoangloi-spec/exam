@@ -125,14 +125,17 @@ export default function ExamArrangementPage() {
     }
   }, []);
 
-  const fetchExistingResults = useCallback(async (scheduleId: string) => {
+  const fetchExistingResults = useCallback(async (scheduleId: string, customScheduleList?: any[]) => {
     if (!scheduleId) { setResult(null); return; }
     try {
       const res = await api.get(`/exam-arrangement/result?examScheduleId=${scheduleId}`);
       if (res.data && res.data.length > 0) {
         const details: any[] = [];
         let totalCount = 0;
-        const currentSched = schedules.find((s) => s.id.toString() === scheduleId);
+        const currentList = customScheduleList || schedules;
+        const currentSched = currentList.find((s: any) => s.id.toString() === scheduleId);
+        const fallbackSched = res.data[0]?.examSchedule || {};
+
         res.data.forEach((sr: any) => {
           sr.examRoomStudents?.forEach((ers: any) => {
             totalCount += 1;
@@ -156,16 +159,22 @@ export default function ExamArrangementPage() {
           });
         });
         if (details.length > 0) {
+          const subjCode = currentSched?.subject?.subjectCode || fallbackSched?.subject?.subjectCode || '---';
+          const subjName = currentSched?.subject?.subjectName || fallbackSched?.subject?.subjectName || '---';
+          const exDate = currentSched?.examDate || fallbackSched?.examDate;
+          const sTime = currentSched?.startTime || fallbackSched?.startTime || '';
+          const eTime = currentSched?.endTime || fallbackSched?.endTime || '';
+
           setResult({
             message: 'Dữ liệu xếp phòng hiện tại từ hệ thống',
             preview: false,
             summary: {
               totalStudents: totalCount,
               totalRoomsAssigned: res.data.length,
-              subjectCode: currentSched?.subject?.subjectCode || '---',
-              subjectName: currentSched?.subject?.subjectName || '---',
-              examDate: currentSched?.examDate ? new Date(currentSched.examDate).toLocaleDateString('vi-VN') : '---',
-              timeSlot: `${currentSched?.startTime || ''} - ${currentSched?.endTime || ''}`,
+              subjectCode: subjCode,
+              subjectName: subjName,
+              examDate: exDate ? new Date(exDate).toLocaleDateString('vi-VN') : '---',
+              timeSlot: `${sTime} - ${eTime}`,
             },
             details,
           });
@@ -178,18 +187,34 @@ export default function ExamArrangementPage() {
     } catch {
       setResult(null);
     }
-  }, [schedules]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchSchedules = useCallback(async (periodId: string) => {
     try {
       const url = periodId ? `/exam-schedules?examPeriodId=${periodId}` : '/exam-schedules';
       const res = await api.get(url);
-      setSchedules(res.data);
-      if (res.data.length > 0) {
-        const firstSchedId = res.data[0].id.toString();
-        setSelectedScheduleId(firstSchedId);
-        await fetchRoomAvailability(firstSchedId);
-        await fetchExistingResults(firstSchedId);
+
+      // Sắp xếp ca thi mới nhất lên đầu tiên (Ngày thi mới nhất hoặc ID tạo mới nhất giảm dần)
+      const sortedSchedules = [...(res.data || [])].sort((a: any, b: any) => {
+        const dateA = new Date(a.examDate || a.createdAt || 0).getTime();
+        const dateB = new Date(b.examDate || b.createdAt || 0).getTime();
+        if (dateB !== dateA) return dateB - dateA;
+        return b.id - a.id;
+      });
+
+      setSchedules(sortedSchedules);
+      if (sortedSchedules.length > 0) {
+        // Tự động ưu tiên gợi ý ca thi đã có kết quả xếp phòng, nếu chưa có thì lấy ca mới nhất
+        const targetSched =
+          sortedSchedules.find((s: any) => s.examScheduleRooms && s.examScheduleRooms.length > 0) ||
+          sortedSchedules.find((s: any) => s.status !== 'COMPLETED' && s.status !== 'CANCELLED') ||
+          sortedSchedules[0];
+
+        const targetSchedId = targetSched.id.toString();
+        setSelectedScheduleId(targetSchedId);
+        await fetchRoomAvailability(targetSchedId);
+        await fetchExistingResults(targetSchedId, sortedSchedules);
       } else {
         setSelectedScheduleId('');
         setRooms([]);
@@ -229,7 +254,7 @@ export default function ExamArrangementPage() {
     setSelectedScheduleId(scheduleId);
     setResult(null);
     await fetchRoomAvailability(scheduleId);
-    await fetchExistingResults(scheduleId);
+    await fetchExistingResults(scheduleId, schedules);
   };
 
   const handleToggleRoom = (r: RoomAvailability) => {
@@ -589,16 +614,14 @@ export default function ExamArrangementPage() {
 
         {activeTab === 'arrange' ? (
           /* Main Arrangement Form & Matrix Workspace */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
             {/* Left Column: Parameter Selection & Room Availability */}
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5">
-              <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800">
-                Tham số Thuật toán
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5 lg:sticky lg:top-5 self-start">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">
+                THAM SỐ THUẬT TOÁN
               </h3>
 
               <form onSubmit={runPreview} className="space-y-4">
-
-
                 <div>
                   <label className="block text-xs font-bold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
 
@@ -607,9 +630,9 @@ export default function ExamArrangementPage() {
                     type="button"
                     onClick={() => setShowSchedulePicker(true)}
                     disabled={schedules.length === 0}
-                    className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-left hover:bg-white hover:border-blue-300 transition cursor-pointer disabled:opacity-60"
+                    className="w-full flex items-center justify-between gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-xs font-extrabold text-left text-slate-800 hover:bg-white hover:border-blue-400 transition cursor-pointer disabled:opacity-60 shadow-2xs"
                   >
-                    <span className={selectedScheduleId ? 'text-slate-800 truncate' : 'text-slate-400'}>
+                    <span className={selectedScheduleId ? 'text-slate-800 truncate font-extrabold' : 'text-slate-400 font-medium'}>
                       {selectedScheduleId
                         ? (() => { const s = schedules.find((x) => x.id.toString() === selectedScheduleId); return s ? `[${s.subject?.subjectCode}] ${s.subject?.subjectName} \u00b7 ${s.startTime}\u2013${s.endTime}` : '-- Chọn ca thi --'; })()
                         : schedules.length === 0 ? '(Chưa có ca thi nào)' : '-- Chọn ca thi --'}
@@ -820,33 +843,43 @@ export default function ExamArrangementPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-bold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
-                    <button type="button" onClick={selectAvailableOnly} className="text-[11px] font-bold text-blue-600 hover:underline cursor-pointer">
+                    <button type="button" onClick={selectAvailableOnly} className="text-[11px] font-extrabold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
                       Chọn phòng trống ({availableCount})
                     </button>
                   </div>
 
-                  <div className="max-h-56 overflow-y-auto space-y-2 rounded-xl border border-slate-200 p-2.5 bg-slate-50/60">
-                    {rooms.map((r) => {
+                  <div className="max-h-[380px] overflow-y-auto space-y-1.5 pr-1 no-scrollbar">
+                    {rooms.map((r: any) => {
                       const isSelected = selectedRoomIds.includes(r.id);
                       return (
                         <div
                           key={r.id}
-                          onClick={() => handleToggleRoom(r)}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${!r.isAvailable
-                            ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
-                            : isSelected
-                              ? 'border-blue-500 bg-blue-50 text-blue-900 font-bold shadow-2xs cursor-pointer'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 cursor-pointer'
-                            }`}
+                          onClick={() => {
+                            if (r.isAvailable) handleToggleRoom(r);
+                          }}
+                          className={`flex items-center justify-between p-3 rounded-xl border transition text-xs select-none ${
+                            !r.isAvailable
+                              ? 'border-slate-200/60 bg-slate-50 text-slate-400 cursor-not-allowed opacity-75'
+                              : isSelected
+                                ? 'border-blue-500 bg-blue-50/90 text-blue-950 font-extrabold shadow-2xs cursor-pointer'
+                                : 'border-slate-200/90 bg-white hover:border-slate-300 text-slate-800 font-extrabold cursor-pointer'
+                          }`}
+                          title={!r.isAvailable ? (r.busyReason || 'Phòng không khả dụng') : undefined}
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-rose-500' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
-                            <span className="truncate">{r.roomName || r.roomCode}</span>
+                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-slate-300' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
+                            <span className="truncate font-extrabold">{r.roomName || r.roomCode}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[11px] font-semibold text-slate-500">{r.capacity} chỗ</span>
-                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${r.isAvailable ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'}`}>
-                              {r.isAvailable ? 'TRỐNG' : r.busyReason || 'BẬN'}
+                            <span className="text-[11px] font-bold text-slate-500">{r.capacity} chỗ</span>
+                            <span className={`px-2 py-0.5 text-[10.5px] font-black rounded-md ${
+                              !r.isAvailable
+                                ? 'bg-rose-50 text-rose-600'
+                                : r.isAssignedToCurrent
+                                  ? 'bg-blue-50 text-blue-600'
+                                  : 'bg-emerald-50 text-emerald-600'
+                            }`}>
+                              {!r.isAvailable ? (r.busyReason || 'BẬN') : r.isAssignedToCurrent ? 'ĐÃ GÁN' : 'TRỐNG'}
                             </span>
                           </div>
                         </div>
@@ -859,7 +892,7 @@ export default function ExamArrangementPage() {
                   <button
                     type="submit"
                     disabled={arranging || selectedRoomIds.length === 0}
-                    className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition disabled:opacity-50 active:scale-98 cursor-pointer ${result ? 'col-span-1' : 'col-span-2'
+                    className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 px-4 rounded-xl text-xs transition shadow-sm active:scale-98 cursor-pointer ${result ? 'col-span-1' : 'col-span-2'
                       }`}
                   >
                     {arranging ? 'Đang xử lý...' : 'Xem sắp xếp'}
@@ -869,7 +902,7 @@ export default function ExamArrangementPage() {
                     <button
                       type="button"
                       onClick={handleResetArrangement}
-                      className="col-span-1 flex items-center justify-center bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 font-bold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer"
+                      className="col-span-1 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-slate-100 font-extrabold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer"
                     >
                       Hủy phương án
                     </button>
@@ -1001,7 +1034,7 @@ export default function ExamArrangementPage() {
 
                       {/* View Mode 1: Seat Grid Matrix */}
                       {viewMode === 'matrix' && (
-                        <div className="space-y-6">
+                        <div className="space-y-6 max-h-[580px] overflow-y-auto pr-1.5 no-scrollbar">
                           {roomSummaries
                             .filter((rm) => filterRoomCode === 'ALL' || rm.roomCode === filterRoomCode)
                             .map((room) => {
@@ -1053,7 +1086,7 @@ export default function ExamArrangementPage() {
 
                       {/* View Mode 2: Detailed Table */}
                       {viewMode === 'table' && (
-                        <div className="overflow-x-auto rounded-xl border border-slate-200">
+                        <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[580px] overflow-y-auto">
                           <table className="w-full text-left text-xs text-slate-700 border-collapse">
                             <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                               <tr>
@@ -1099,17 +1132,19 @@ export default function ExamArrangementPage() {
           <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                  <History className="h-5 w-5 text-blue-600" /> Nhật ký thao tác & Lịch sử Xếp phòng thi
+                <h3 className="text-base font-black text-slate-900">
+                  Nhật ký thao tác & Lịch sử Xếp phòng thi
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi</p>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                  Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi
+                </p>
               </div>
               <button
                 type="button"
                 onClick={fetchHistory}
-                className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                className="text-xs font-extrabold text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
               >
-                <RotateCcw className="h-3.5 w-3.5" /> Tải lại Nhật ký
+                Tải lại Nhật ký
               </button>
             </div>
 
@@ -1129,25 +1164,43 @@ export default function ExamArrangementPage() {
                       <td colSpan={4} className="p-12 text-center text-slate-400 font-semibold">Chưa có lịch sử thao tác xếp phòng.</td>
                     </tr>
                   ) : (
-                    historyLogs.map((log, lIdx) => (
-                      <tr key={log.id ? `log-${log.id}-${lIdx}` : `log-${lIdx}`} className="hover:bg-blue-50/40 transition">
-                        <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
-                          {new Date(log.createdAt).toLocaleString('vi-VN')}
-                        </td>
-                        <td className="p-3.5 font-bold text-slate-800 whitespace-nowrap">
-                          {log.actor?.username || 'Quản trị viên'} ({log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role || 'Hệ thống'})
-                        </td>
-                        <td className="p-3.5 whitespace-nowrap">
-                          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${log.action === 'ARRANGE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : log.action === 'RESET_ARRANGEMENT' ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                              : 'bg-blue-50 text-blue-700 border border-blue-200'
-                            }`}>
-                            {log.action}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-slate-700 font-medium">{log.description}</td>
-                      </tr>
-                    ))
+                    historyLogs.map((log: any, lIdx: number) => {
+                      const actInfo = (() => {
+                        const act = log.action || '';
+                        if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls: 'bg-emerald-50 text-emerald-700 font-black' };
+                        if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls: 'bg-rose-50 text-rose-700 font-black' };
+                        if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls: 'bg-rose-50 text-rose-700 font-black' };
+                        if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls: 'bg-blue-50 text-blue-700 font-black' };
+                        if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls: 'bg-blue-50 text-blue-700 font-black' };
+                        if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls: 'bg-blue-50 text-blue-700 font-black' };
+                        if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls: 'bg-emerald-50 text-emerald-700 font-black' };
+                        if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls: 'bg-amber-50 text-amber-700 font-black' };
+                        if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls: 'bg-slate-100 text-slate-700 font-bold' };
+
+                        const formatted = act.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
+                        return { label: formatted, cls: 'bg-slate-100 text-slate-700 font-bold' };
+                      })();
+
+                      const roleLabel = log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role === 'TEACHER' ? 'Giảng viên' : log.actor?.role === 'STUDENT' ? 'Sinh viên' : (log.actor?.role || 'Quản trị viên');
+                      const username = log.actor?.username || log.actor?.fullName || 'admin';
+
+                      return (
+                        <tr key={log.id ? `log-${log.id}-${lIdx}` : `log-${lIdx}`} className="hover:bg-blue-50/40 transition">
+                          <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
+                            {new Date(log.createdAt).toLocaleString('vi-VN')}
+                          </td>
+                          <td className="p-3.5 font-bold text-slate-800 whitespace-nowrap">
+                            {username} <span className="text-slate-400 font-semibold text-[11px]">({roleLabel})</span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className={`px-2.5 py-0.5 text-[10.5px] rounded-md ${actInfo.cls}`}>
+                              {actInfo.label}
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-slate-700 font-medium leading-relaxed">{log.description}</td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

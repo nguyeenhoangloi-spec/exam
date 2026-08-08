@@ -261,11 +261,44 @@ export default function ExamPapersPage() {
         api.get<ExamSchedule[]>('/exam-schedules').catch(() => ({ data: [] })),
         api.get<ExamPaper[]>('/exam-papers').catch(() => ({ data: [] })),
       ]);
-      setSchedules(scheduleResponse.data || []);
-      setPapers(paperResponse.data || []);
+      const allSchedules = scheduleResponse.data || [];
+      const allPapers = paperResponse.data || [];
+      setSchedules(allSchedules);
+      setPapers(allPapers);
+
+      // Phân loại ca thi chưa có đề và chưa quá hạn
+      const isScheduleExpired = (s: any) => {
+        if (['COMPLETED', 'CANCELLED', 'LOCKED'].includes(s?.status)) return true;
+        if (!s?.examDate) return false;
+        try {
+          const scheduleEnd = new Date(s.examDate);
+          if (s.endTime) {
+            const [h, m] = s.endTime.split(':').map(Number);
+            scheduleEnd.setHours(h || 23, m || 59, 0, 0);
+          } else {
+            scheduleEnd.setHours(23, 59, 59, 999);
+          }
+          return scheduleEnd.getTime() < Date.now();
+        } catch {
+          return false;
+        }
+      };
+
+      const hasPaper = (s: any) => {
+        if (s?.hasPublishedPaper) return true;
+        if (typeof s?.paperCount === 'number' && s.paperCount > 0) return true;
+        if (Array.isArray(s?.examPapers) && s.examPapers.length > 0) return true;
+        return false;
+      };
+
+      // Sắp xếp giảm dần theo ID để lấy ca thi mới tạo nhất lên đầu
+      const sortedSchedules = [...allSchedules].sort((a: any, b: any) => (Number(b.id) || 0) - (Number(a.id) || 0));
+      const newestPending = sortedSchedules.find((s: any) => !hasPaper(s) && !isScheduleExpired(s));
+      const defaultSchedule = newestPending || sortedSchedules[0];
+
       setFormData((previous) => ({
         ...previous,
-        examScheduleId: previous.examScheduleId || String(scheduleResponse.data[0]?.id || ''),
+        examScheduleId: previous.examScheduleId || String(defaultSchedule?.id || ''),
       }));
     } catch (error: any) {
       setToast({ message: error.message || 'Không tải được dữ liệu đề thi.', type: 'error' });
@@ -525,6 +558,14 @@ export default function ExamPapersPage() {
 
     try {
       await api.post(`/exam-papers/${paper.id}/publish`, payload);
+      setConfirmModal({
+        isOpen: true,
+        title: 'Phát hành Đề thi Thành công!',
+        message: `Đã phát hành Đề thi mã số [${paper.paperCode}] thành công. Lịch thi tương ứng đã được KHOÁ CHỈNH SỬA chính thức và sinh viên đã có thể tham gia thi.`,
+        type: 'success',
+        confirmText: 'Đóng',
+        onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+      });
       setToast({
         message: `Đã phát hành đề ${paper.paperCode}. Lịch thi đã khóa chỉnh sửa.`,
         type: 'success',
@@ -532,7 +573,8 @@ export default function ExamPapersPage() {
       if (selectedPaper?.id === paper.id) setSelectedPaper(null);
       await fetchData();
     } catch (error: any) {
-      setToast({ message: error.message || 'Lỗi khi phát hành đề thi.', type: 'error' });
+      const apiMsg = error?.response?.data?.message || error?.message || 'Lỗi khi phát hành đề thi.';
+      setToast({ message: Array.isArray(apiMsg) ? apiMsg.join(', ') : apiMsg, type: 'error' });
     }
   };
 
@@ -762,13 +804,13 @@ export default function ExamPapersPage() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700 border border-blue-200">
+                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700">
                   {(selectedPaper as any).questionCount ?? selectedPaper.questions?.length ?? (selectedPaper as any).details?.length ?? 0} câu hỏi
                 </span>
-                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700 border border-blue-200">
+                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700">
                   {selectedPaper.totalScore} điểm
                 </span>
-                <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-black text-slate-700 border border-slate-200">
+                <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-700">
                   {selectedPaper.durationMinutes} phút
                 </span>
               </div>
@@ -777,10 +819,10 @@ export default function ExamPapersPage() {
                 <button
                   type="button"
                   onClick={() => setShowAnswers(!showAnswers)}
-                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition cursor-pointer border ${
+                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition cursor-pointer ${
                     showAnswers
-                      ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
-                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                      ? 'bg-amber-500 text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
                   <KeyRound className="h-3.5 w-3.5" />
@@ -790,7 +832,7 @@ export default function ExamPapersPage() {
                 <button
                   type="button"
                   onClick={() => exportExamPaperToWord(formatPaperForExport(selectedPaper), showAnswers)}
-                  className="flex items-center gap-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 text-xs font-extrabold border border-blue-200 transition cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 text-xs font-extrabold transition cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5" />
                   <span>Tải Word (.doc)</span>
@@ -815,7 +857,7 @@ export default function ExamPapersPage() {
                           <button
                             type="button"
                             onClick={() => openSwapModal(index, q)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 text-[10.5px] font-black border border-blue-200 transition cursor-pointer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 text-[10.5px] font-black rounded-lg transition cursor-pointer"
                             title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
                           >
                             <RotateCcw className="w-3 h-3 text-blue-600" /> Đổi câu hỏi
@@ -888,14 +930,16 @@ export default function ExamPapersPage() {
             {/* Footer Action Bar inside Detail Modal */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
               <div className="flex items-center gap-2">
-                <span className={`rounded-lg px-2.5 py-1 text-xs font-bold ${
-                  selectedPaper.status === 'PUBLISHED'
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : selectedPaper.status === 'ARCHIVED'
-                    ? 'bg-slate-100 text-slate-600 border border-slate-200'
-                    : 'bg-amber-50 text-amber-700 border border-amber-200'
-                }`}>
-                  Trạng thái: {selectedPaper.status === 'PUBLISHED' ? 'Đã phát hành' : selectedPaper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
+                <span className="text-xs font-semibold text-slate-500">
+                  Trạng thái: <strong className={
+                    selectedPaper.status === 'PUBLISHED'
+                      ? 'text-emerald-700 font-extrabold'
+                      : selectedPaper.status === 'ARCHIVED'
+                      ? 'text-slate-600 font-extrabold'
+                      : 'text-amber-800 font-extrabold'
+                  }>
+                    {selectedPaper.status === 'PUBLISHED' ? 'Đã phát hành' : selectedPaper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
+                  </strong>
                 </span>
               </div>
 
@@ -909,9 +953,9 @@ export default function ExamPapersPage() {
                         setSelectedPaper(null);
                         runAction(p, 'delete');
                       }}
-                      className="flex items-center gap-1.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 px-3.5 py-2 text-xs font-bold border border-rose-200 transition cursor-pointer"
+                      className="flex items-center gap-1.5 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-slate-100 px-3 py-2 text-xs font-bold transition cursor-pointer"
                     >
-                      <Trash2 className="w-3.5 h-3.5 text-rose-600" /> Xóa đề thi nháp
+                      <Trash2 className="w-3.5 h-3.5 text-rose-500" /> Xóa đề thi nháp
                     </button>
 
                     <button
@@ -936,7 +980,7 @@ export default function ExamPapersPage() {
                       setSelectedPaper(null);
                       runAction(p, 'archive');
                     }}
-                    className="flex items-center gap-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 px-3.5 py-2 text-xs font-bold border border-slate-200 transition cursor-pointer"
+                    className="flex items-center gap-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-3 py-2 text-xs font-bold transition cursor-pointer"
                   >
                     <Archive className="w-3.5 h-3.5 text-slate-500" /> Lưu trữ Đề thi
                   </button>
@@ -950,7 +994,7 @@ export default function ExamPapersPage() {
                       setSelectedPaper(null);
                       runAction(p, 'restore');
                     }}
-                    className="flex items-center gap-1.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 px-3.5 py-2 text-xs font-bold border border-amber-200 transition cursor-pointer"
+                    className="flex items-center gap-1.5 rounded-xl text-amber-600 hover:text-amber-700 hover:bg-amber-50 px-3 py-2 text-xs font-bold transition cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5 text-amber-600" /> Khôi phục về nháp
                   </button>

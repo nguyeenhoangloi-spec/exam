@@ -329,7 +329,7 @@ export class ExamArrangementService {
   async getRoomAvailability(examScheduleId: number) {
     const schedule = await this.prisma.examSchedule.findFirst({
       where: { id: examScheduleId, deletedAt: null },
-      include: { subject: true },
+      include: { subject: true, examScheduleRooms: { include: { examRoomStudents: true } } },
     });
     if (!schedule) throw new NotFoundException('Không tìm thấy ca thi.');
 
@@ -337,13 +337,18 @@ export class ExamArrangementService {
       orderBy: { roomCode: 'asc' },
     });
 
+    const startOfDay = new Date(schedule.examDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(schedule.examDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
     const overlappingScheduleRooms = await this.prisma.examScheduleRoom.findMany({
       where: {
         examScheduleId: { not: examScheduleId },
         examSchedule: {
           status: { not: 'CANCELLED' },
           deletedAt: null,
-          examDate: schedule.examDate,
+          examDate: { gte: startOfDay, lte: endOfDay },
           AND: [
             { startTime: { lt: schedule.endTime } },
             { endTime: { gt: schedule.startTime } },
@@ -355,17 +360,30 @@ export class ExamArrangementService {
 
     const busyMap = new Map<number, string>();
     overlappingScheduleRooms.forEach((osr) => {
-      busyMap.set(osr.roomId, osr.examSchedule.subject.subjectCode);
+      const subjCode = osr.examSchedule.subject?.subjectCode || '---';
+      busyMap.set(osr.roomId, subjCode);
     });
 
+    // Các phòng đã được gán sẵn cho ca thi hiện tại
+    const currentScheduleRoomIds = new Set(schedule.examScheduleRooms.map((sr) => sr.roomId));
+
     return allRooms.map((room) => {
-      const isBusy = busyMap.has(room.id) || room.status !== 'AVAILABLE';
+      const isConflicting = busyMap.has(room.id);
+      const isMaintenance = room.status !== 'AVAILABLE';
+      const isBusy = isConflicting || isMaintenance;
       const conflictingSubject = busyMap.get(room.id);
+      const isAssignedToCurrent = currentScheduleRoomIds.has(room.id);
+
+      let busyReason = null;
+      if (isMaintenance) busyReason = 'Bảo trì';
+      else if (isConflicting) busyReason = `Trùng ca môn ${conflictingSubject}`;
+
       return {
         ...room,
         isAvailable: !isBusy,
+        isAssignedToCurrent,
         conflictingSubject: conflictingSubject || null,
-        busyReason: room.status !== 'AVAILABLE' ? 'Bảo trì' : conflictingSubject ? `Trùng ca môn ${conflictingSubject}` : null,
+        busyReason,
       };
     });
   }

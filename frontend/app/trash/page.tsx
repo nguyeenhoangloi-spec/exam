@@ -266,11 +266,11 @@ function TrashPageContent() {
           </button>
           <button
             type="button"
-            onClick={() => { fetchStats(); fetchItems(); }}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
+            onClick={fetchTrashData}
+            className="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-2xs transition active:scale-95 cursor-pointer"
+            title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-4 w-4 text-slate-500" />
-            <span>Làm mới</span>
+            <RefreshCw className="h-4 w-4" />
           </button>
         </div>
       </div>

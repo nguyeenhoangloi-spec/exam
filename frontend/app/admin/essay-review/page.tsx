@@ -766,7 +766,7 @@ export default function AdminEssayReviewPage() {
                           onChange={(e) => setExtraMinutes(Number(e.target.value))}
                           className="w-12 text-xs font-black text-center text-slate-900 focus:outline-none"
                         />
-                        <span className="text-[11px] font-semibold text-slate-500 ml-1">phút</span>
+                        <span className="text-[11px] font-bold text-slate-800 ml-1">phút</span>
                       </div>
                     </div>
                     <button
@@ -791,7 +791,7 @@ export default function AdminEssayReviewPage() {
                           onChange={(e) => setPenaltyInput(Number(e.target.value))}
                           className="w-12 text-xs font-black text-center text-slate-900 focus:outline-none"
                         />
-                        <span className="text-[11px] font-semibold text-slate-500 ml-1">điểm</span>
+                        <span className="text-[11px] font-bold text-slate-800 ml-1">điểm</span>
                       </div>
                     </div>
                     <button

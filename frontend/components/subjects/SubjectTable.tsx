@@ -260,8 +260,7 @@ export function SubjectTable({
 
                 {visibleColumns.credits !== false && (
                   <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{s.credits}</span>
-                    <span className="font-medium text-slate-500 ml-1">tín chỉ</span>
+                    <span className="font-extrabold text-slate-900">{s.credits} tín chỉ</span>
                   </td>
                 )}
 

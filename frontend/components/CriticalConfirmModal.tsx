@@ -141,7 +141,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-rose-100 flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col max-h-[90vh]">
         {/* Header Alert Banner */}
         <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-amber-600 px-6 py-4 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -149,14 +149,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               <ShieldAlert className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-base font-bold tracking-tight">{title}</h3>
+              <h3 className="text-base font-black tracking-tight">{title}</h3>
               <p className="text-xs text-rose-100 font-medium">Xác thực an toàn nhiều lớp (Local Security)</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-white/80 hover:bg-white/20 transition"
+            className="rounded-lg p-1.5 text-white/80 hover:bg-white/20 transition cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -164,16 +164,16 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
         {/* Warning Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
-          <div className="rounded-xl bg-rose-50/80 border border-rose-200/80 p-3.5 flex items-start gap-3">
+          <div className="rounded-xl bg-rose-50/90 p-4 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
             <div className="text-xs text-rose-900 space-y-1">
-              <p className="font-bold">CẢNH BÁO HẬU QUẢ:</p>
-              <p className="leading-relaxed">{warningMessage}</p>
+              <p className="font-extrabold uppercase">CẢNH BÁO HẬU QUẢ:</p>
+              <p className="leading-relaxed font-medium">{warningMessage}</p>
             </div>
           </div>
 
           {errorMsg && (
-            <div className="rounded-xl bg-red-100 border border-red-200 p-3 text-xs font-semibold text-red-700 animate-shake">
+            <div className="rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-700 animate-shake">
               {errorMsg}
             </div>
           )}
@@ -186,7 +186,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <select
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-rose-500 focus:outline-none bg-slate-50/50"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold focus:border-blue-500 focus:bg-white focus:outline-none bg-slate-50/50 cursor-pointer transition"
             >
               {reasons.map((r) => (
                 <option key={r} value={r}>
@@ -201,7 +201,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 required
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:border-rose-500 focus:outline-none"
+                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-blue-500 focus:outline-none transition"
               />
             )}
           </div>
@@ -216,7 +216,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:border-rose-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-blue-500 focus:outline-none transition"
             />
           </div>
 
@@ -227,13 +227,13 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 3. Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
               </label>
               <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                <span className="text-[11px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">
                   {targetPhrase}
                 </span>
                 <button
                   type="button"
                   onClick={handleQuickFillPhrase}
-                  className="text-[10px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-md border border-blue-200 transition cursor-pointer"
+                  className="text-[10px] font-black text-blue-600 hover:bg-blue-50 px-2 py-0.5 rounded-md transition cursor-pointer"
                   title="Tự động điền cụm từ xác nhận"
                 >
                   Điền nhanh
@@ -249,11 +249,11 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               onChange={(e) => setInputPhrase(e.target.value)}
               className={`w-full rounded-xl border px-3.5 py-2 text-xs font-bold focus:outline-none transition ${isPhraseMatched
                 ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900'
-                : 'border-slate-200 focus:border-rose-500'
+                : 'border-slate-200 focus:border-blue-500'
                 }`}
             />
             {isPhraseMatched && (
-              <p className="mt-1 text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+              <p className="mt-1 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
                 Cụm từ xác nhận hợp lệ
               </p>
             )}
@@ -273,14 +273,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder="Mật khẩu tài khoản (tùy chọn)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs focus:border-rose-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-medium focus:border-blue-500 focus:outline-none transition"
             />
           </div>
 
           {/* Step 5: Exam Password (only for publishing official exam paper) */}
           {examPasswordRequired && (
-            <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-4">
-              <label className="block text-xs font-bold uppercase text-blue-700 mb-1 flex items-center gap-1">
+            <div className="rounded-2xl border border-slate-200/90 bg-slate-50/60 p-4 space-y-2">
+              <label className="block text-xs font-bold uppercase text-slate-800 flex items-center gap-1">
                 <Lock className="w-3.5 h-3.5 text-blue-600" />
                 5. Mật khẩu thi chính thức <span className="text-rose-500">*</span>
               </label>
@@ -291,9 +291,9 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
                 value={examPassword}
                 onChange={(e) => setExamPassword(e.target.value)}
-                className="w-full rounded-xl border border-blue-200 px-3.5 py-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold bg-white focus:border-blue-500 focus:outline-none shadow-2xs transition"
               />
-              <p className="mt-1.5 text-[11px] font-medium text-blue-700/80 leading-relaxed">
+              <p className="text-[11px] font-semibold text-slate-500 leading-relaxed">
                 Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.
                 Hệ thống lưu dạng bảo mật (bcrypt) và không ai xem lại được sau khi lưu.
               </p>
@@ -301,25 +301,25 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           )}
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 text-xs font-semibold transition"
+              className="px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-extrabold transition cursor-pointer"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`px-5 py-2 rounded-xl text-white font-bold text-xs transition shadow-md flex items-center gap-2 cursor-pointer ${
+              className={`px-5 py-2.5 rounded-xl text-white font-extrabold text-xs transition shadow-sm flex items-center gap-2 cursor-pointer ${
                 loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700 active:scale-95'
               }`}
             >
               {loading ? (
                 <>
                   <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Đang xác thực Backend...</span>
+                  <span>Đang xác thực...</span>
                 </>
               ) : (
                 <>

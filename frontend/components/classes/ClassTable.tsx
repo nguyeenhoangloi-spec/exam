@@ -269,8 +269,7 @@ export function ClassTable({
 
                 {visibleColumns.studentCount !== false && (
                   <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{studentCount}</span>
-                    <span className="font-medium text-slate-500 ml-1">sinh viên</span>
+                    <span className="font-extrabold text-slate-900">{studentCount} sinh viên</span>
                   </td>
                 )}
 

@@ -3,7 +3,7 @@
 import React, { FormEvent, useState } from 'react';
 import {
   Sparkles, Calendar, AlertTriangle, CheckCircle2,
-  FileText, CheckSquare, ChevronDown, X,
+  FileText, CheckSquare, ChevronDown, X, ArrowLeftRight,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 
@@ -91,9 +91,12 @@ export function ExamPaperMatrixForm({
     return false;
   };
 
-  const pending = schedules.filter((s: any) => !hasPaper(s) && !isScheduleExpired(s));
-  const created = schedules.filter((s: any) => hasPaper(s));
-  const expired = schedules.filter((s: any) => !hasPaper(s) && isScheduleExpired(s));
+  const sortByNewest = (list: any[]) =>
+    [...list].sort((a: any, b: any) => (Number(b.id) || 0) - (Number(a.id) || 0));
+
+  const pending = sortByNewest(schedules.filter((s: any) => !hasPaper(s) && !isScheduleExpired(s)));
+  const created = sortByNewest(schedules.filter((s: any) => hasPaper(s)));
+  const expired = sortByNewest(schedules.filter((s: any) => !hasPaper(s) && isScheduleExpired(s)));
 
   const label = (s: any) => ({
     subCode: s.subjectCode || s.subject?.subjectCode || 'MH',
@@ -278,8 +281,9 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setShowPanel(!showPanel)}
-                className="inline-flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition cursor-pointer shadow-2xs shrink-0 active:scale-95"
+                className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-2 rounded-xl transition cursor-pointer shadow-2xs shrink-0 active:scale-95"
               >
+                <ArrowLeftRight className="h-3.5 w-3.5" />
                 Đổi ca thi
               </button>
             </div>

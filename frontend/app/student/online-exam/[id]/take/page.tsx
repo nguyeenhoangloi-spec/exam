@@ -488,54 +488,57 @@ export default function StudentExamTakePage() {
         </div>
 
         {/* Header Right Actions */}
-        <div className="flex items-center space-x-4 sm:space-x-6">
-          {/* Sync Status Badge */}
-          <div className="hidden sm:flex items-center space-x-2 text-xs">
+        <div className="flex items-center space-x-4 sm:space-x-5">
+          {/* Sync Status Badge - Chỉ hiển thị Icon + Chữ, không dùng khung viền dư thừa */}
+          <div className="hidden sm:flex items-center text-xs font-extrabold">
             {syncState === 'SAVED' && (
-              <span className="text-emerald-200 flex items-center bg-white/10 px-3 py-1 rounded-full border border-emerald-400/30 font-bold">
-                <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-300" /> Đã tự động lưu
+              <span className="text-emerald-300 flex items-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Đã tự động lưu
               </span>
             )}
             {syncState === 'SAVING' && (
-              <span className="text-amber-200 flex items-center bg-white/10 px-3 py-1 rounded-full border border-amber-400/30 font-bold animate-pulse">
-                <Wifi className="w-3.5 h-3.5 mr-1.5 text-amber-300" /> Đang đồng bộ...
+              <span className="text-amber-300 flex items-center gap-1.5 animate-pulse">
+                <Wifi className="w-3.5 h-3.5 text-amber-400" /> Đang đồng bộ...
               </span>
             )}
             {syncState === 'OFFLINE' && (
-              <span className="text-rose-200 flex items-center bg-rose-500/20 px-3 py-1 rounded-full border border-rose-400/30 font-bold">
-                <WifiOff className="w-3.5 h-3.5 mr-1.5 text-rose-300" /> Mất kết nối
+              <span className="text-rose-300 flex items-center gap-1.5">
+                <WifiOff className="w-3.5 h-3.5 text-rose-400" /> Mất kết nối
               </span>
             )}
           </div>
 
-          {/* Countdown Clock Box */}
+          {/* Countdown Clock Box - Ô đếm ngược thời gian tinh tế */}
           <div
-            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border font-mono text-sm sm:text-base font-black shadow-inner transition-all ${remainingSeconds < 300
-              ? 'bg-rose-600 border-rose-400 text-white animate-pulse shadow-rose-900/40'
-              : 'bg-white/10 backdrop-blur-md border-white/20 text-white'
-              }`}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl font-mono text-sm sm:text-base font-black transition-all ${
+              remainingSeconds < 300
+                ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-950/40'
+                : 'bg-white/15 text-white backdrop-blur-xs'
+            }`}
           >
             <Clock className="w-4 h-4 text-amber-300" />
             <span>{formatTime(remainingSeconds)}</span>
           </div>
 
-          {/* Button Báo cáo sự cố */}
+          {/* Button Báo cáo sự cố - Nút Ghost phụ không dùng viền khung */}
           <button
             type="button"
             onClick={() => setShowIncidentModal(true)}
-            className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 font-bold text-xs rounded-xl flex items-center shadow-xs transition active:scale-95 cursor-pointer"
+            className="px-3 py-1.5 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 font-extrabold text-xs rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
             title="Gửi báo cáo sự cố kỹ thuật cho Giám thị"
           >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1 text-amber-300" /> Báo sự cố
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+            <span>Báo sự cố</span>
           </button>
 
           {/* Submit Exam Button */}
           <button
             type="button"
             onClick={() => setShowSubmitModal(true)}
-            className="px-4 sm:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl flex items-center shadow-md shadow-emerald-900/30 transition active:scale-95 cursor-pointer"
+            className="px-4 sm:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-emerald-950/30 transition active:scale-95 cursor-pointer"
           >
-            <Send className="w-3.5 h-3.5 mr-1.5" /> Nộp Bài
+            <Send className="w-3.5 h-3.5" />
+            <span>Nộp Bài</span>
           </button>
         </div>
       </header>
