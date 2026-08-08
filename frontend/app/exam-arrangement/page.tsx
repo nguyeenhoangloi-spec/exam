@@ -871,13 +871,13 @@ export default function ExamArrangementPage() {
                             <span className="truncate font-extrabold">{r.roomName || r.roomCode}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[11px] font-bold text-slate-500">{r.capacity} chỗ</span>
-                            <span className={`px-2 py-0.5 text-[10.5px] font-black rounded-md ${
+                            <span className="text-xs font-extrabold text-slate-900">{r.capacity} chỗ</span>
+                            <span className={`text-xs font-extrabold ${
                               !r.isAvailable
-                                ? 'bg-rose-50 text-rose-600'
+                                ? 'text-rose-600'
                                 : r.isAssignedToCurrent
-                                  ? 'bg-blue-50 text-blue-600'
-                                  : 'bg-emerald-50 text-emerald-600'
+                                  ? 'text-blue-600'
+                                  : 'text-emerald-600'
                             }`}>
                               {!r.isAvailable ? (r.busyReason || 'BẬN') : r.isAssignedToCurrent ? 'ĐÃ GÁN' : 'TRỐNG'}
                             </span>
