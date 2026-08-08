@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { StartExamDto } from './dto/start-exam.dto';
 import { SaveAnswersBatchDto } from './dto/save-answer.dto';
@@ -17,6 +17,8 @@ import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class OnlineExamsService {
+  private readonly logger = new Logger(OnlineExamsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly eligibilityChecker: EligibilityCheckerService,
@@ -770,7 +772,9 @@ export class OnlineExamsService {
 
     // Tính điểm tự động dựa trên Snapshot & AttemptAnswers
     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
-    const hasEssay = snapshotQuestions.some((q) => q.type === 'ESSAY');
+    const hasEssay = snapshotQuestions.some(
+      (q) => q.type === 'ESSAY' || q.questionType === 'ESSAY' || String(q.type || '').toUpperCase() === 'ESSAY',
+    );
     let calculatedScore = 0;
 
     const fillBlankUpdates: Array<{ questionId: string; score: number; result: any[] }> = [];
@@ -832,9 +836,13 @@ export class OnlineExamsService {
         },
       });
     });
-    // 🤖 Trigger AI auto-grade ngay sau khi SV nộp bài có câu tự luận (fire-and-forget)
+    // 🤖 Tự động kích hoạt AI chấm bài ngay lập tức khi sinh viên nộp bài thi tự luận
     if (hasEssay) {
-      this.essayService.autoGradeAttempt(updated.id).catch(() => void 0);
+      try {
+        await this.essayService.autoGradeAttempt(updated.id);
+      } catch (err: any) {
+        this.logger.error(`[AutoGrade] AI chấm bài thi ${updated.id} gặp lỗi: ${err?.message || err}`);
+      }
     }
 
     return {

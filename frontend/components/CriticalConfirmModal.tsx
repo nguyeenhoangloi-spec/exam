@@ -41,7 +41,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   warningMessage,
   confirmPhrase,
   reasons = DEFAULT_REASONS,
-  actionButtonText = 'Xác Nhận & Thực Hiện',
+  actionButtonText = 'Xác nhận',
   examPasswordRequired = false,
   onConfirm,
 }) => {

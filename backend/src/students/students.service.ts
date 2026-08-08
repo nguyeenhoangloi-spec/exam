@@ -213,6 +213,15 @@ export class StudentsService {
               include: {
                 subject: true,
                 examPeriod: true,
+                onlineExamConfig: {
+                  include: {
+                    attempts: {
+                      where: { studentId: student.id },
+                      orderBy: { createdAt: 'desc' },
+                      take: 1,
+                    },
+                  },
+                },
               },
             },
           },
@@ -227,26 +236,40 @@ export class StudentsService {
       },
     });
 
-    const officialSchedules = roomStudents.map((rs) => ({
-      id: rs.id,
-      scheduleId: rs.examScheduleRoom.examSchedule.id,
-      examScheduleId: rs.examScheduleRoom.examSchedule.id,
-      examNumber: rs.examNumber,
-      seatNumber: rs.seatNumber,
-      status: rs.status,
-      mode: rs.examScheduleRoom.examSchedule.mode || 'OFFICIAL',
-      subjectCode: rs.examScheduleRoom.examSchedule.subject.subjectCode,
-      subjectName: rs.examScheduleRoom.examSchedule.subject.subjectName,
-      credits: rs.examScheduleRoom.examSchedule.subject.credits,
-      examDate: rs.examScheduleRoom.examSchedule.examDate,
-      startTime: rs.examScheduleRoom.examSchedule.startTime,
-      endTime: rs.examScheduleRoom.examSchedule.endTime,
-      examType: rs.examScheduleRoom.examSchedule.examType,
-      roomCode: rs.examScheduleRoom.room.roomCode,
-      roomName: rs.examScheduleRoom.room.roomName,
-      building: rs.examScheduleRoom.room.building,
-      periodName: rs.examScheduleRoom.examSchedule.examPeriod.name,
-    }));
+    const officialSchedules = roomStudents.map((rs) => {
+      const config = rs.examScheduleRoom.examSchedule.onlineExamConfig;
+      const attempt = config?.attempts?.[0];
+      return {
+        id: rs.id,
+        scheduleId: rs.examScheduleRoom.examSchedule.id,
+        examScheduleId: rs.examScheduleRoom.examSchedule.id,
+        examNumber: rs.examNumber,
+        seatNumber: rs.seatNumber,
+        status: rs.status,
+        mode: rs.examScheduleRoom.examSchedule.mode || 'OFFICIAL',
+        subjectCode: rs.examScheduleRoom.examSchedule.subject.subjectCode,
+        subjectName: rs.examScheduleRoom.examSchedule.subject.subjectName,
+        credits: rs.examScheduleRoom.examSchedule.subject.credits,
+        examDate: rs.examScheduleRoom.examSchedule.examDate,
+        startTime: rs.examScheduleRoom.examSchedule.startTime,
+        endTime: rs.examScheduleRoom.examSchedule.endTime,
+        examType: rs.examScheduleRoom.examSchedule.examType,
+        roomCode: rs.examScheduleRoom.room.roomCode,
+        roomName: rs.examScheduleRoom.room.roomName,
+        building: rs.examScheduleRoom.room.building,
+        periodName: rs.examScheduleRoom.examSchedule.examPeriod.name,
+        attempt: attempt
+          ? {
+              id: attempt.id,
+              totalScore: attempt.totalScore,
+              gradingStatus: attempt.gradingStatus,
+              status: attempt.status,
+              publishedAt: attempt.publishedAt,
+              penaltyReason: attempt.penaltyReason,
+            }
+          : null,
+      };
+    });
 
     // 2. Lấy danh sách các đợt THI THỬ (MOCK) do Trường/Bộ môn mở tự do (Không bắt buộc xếp phòng/SBD)
     const mockSchedules = await this.prisma.examSchedule.findMany({

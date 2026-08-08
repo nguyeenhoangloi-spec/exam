@@ -164,6 +164,11 @@ export default function StudentExamSchedulePage() {
       }
 
       return true;
+    }).sort((a, b) => {
+      const timeA = new Date(a.examDate || 0).getTime();
+      const timeB = new Date(b.examDate || 0).getTime();
+      if (timeB !== timeA) return timeB - timeA;
+      return (b.startTime || '').localeCompare(a.startTime || '');
     });
   }, [schedules, modeFilter, statusFilter, searchQuery]);
 
@@ -371,24 +376,50 @@ export default function StudentExamSchedulePage() {
                         Ghế #{item.seatNumber || 'Chưa xếp'}
                       </span>
                     </div>
+                    {item.attempt?.gradingStatus === 'PUBLISHED' && (
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                        <span className="flex items-center gap-2 text-slate-500 font-bold">
+                          <Award className="w-3.5 h-3.5 text-emerald-600" />
+                          Điểm công bố:
+                        </span>
+                        <span className={`font-mono font-black text-xs px-2.5 py-0.5 rounded-lg border ${
+                          item.attempt.totalScore === 0 
+                            ? 'bg-rose-50 text-rose-700 border-rose-200' 
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        }`}>
+                          {item.attempt.totalScore}đ {item.attempt.penaltyReason ? `(${item.attempt.penaltyReason})` : ''}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Footer actions */}
                 <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                    className={[
-                      'inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl shadow-xs transition cursor-pointer active:scale-95',
-                      item.mode === 'MOCK'
-                        ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20'
-                        : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
-                    ].join(' ')}
-                  >
-                    <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi Online'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  {item.attempt?.gradingStatus === 'PUBLISHED' ? (
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/student/online-exam/${item.attempt.id}/result`)}
+                      className="inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-xs shadow-emerald-600/20 transition cursor-pointer active:scale-95"
+                    >
+                      <Award className="w-3.5 h-3.5" />
+                      <span>Xem Kết Quả & Điểm Thi</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
+                      className={[
+                        'inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl shadow-xs transition cursor-pointer active:scale-95',
+                        item.mode === 'MOCK'
+                          ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20'
+                          : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
+                      ].join(' ')}
+                    >
+                      <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi Online'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
 
                   <button
                     type="button"

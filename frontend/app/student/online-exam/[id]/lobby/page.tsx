@@ -458,9 +458,9 @@ export default function StudentExamLobbyPage() {
 
             {/* Content Body */}
             <div className="p-6 space-y-4">
-              {/* Ô cảnh báo yêu cầu mật khẩu / thông báo lỗi */}
-              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200/90 text-rose-900 flex items-center gap-3">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              {/* Thông báo yêu cầu mật khẩu / lỗi (Dạng chữ phẳng, không khung) */}
+              <div className="flex items-center gap-2 py-1 text-rose-600">
+                <AlertCircle className="w-4 h-4 shrink-0" />
                 <span className="text-xs font-bold leading-normal">
                   {error || 'Kỳ thi chính thức yêu cầu nhập mật khẩu thi trước khi vào thi'}
                 </span>

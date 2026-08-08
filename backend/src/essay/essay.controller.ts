@@ -1,4 +1,4 @@
-﻿import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -22,6 +22,12 @@ export class EssayController {
   @Roles('ADMIN', 'TEACHER')
   saveRubric(@Request() req: any, @Param('questionId', ParseUUIDPipe) questionId: string, @Body() dto: RubricDto) {
     return this.essay.saveRubric(req.user, questionId, dto);
+  }
+
+  @Post('grading/auto-zero-missed')
+  @Roles('ADMIN', 'TEACHER')
+  autoZeroMissed() {
+    return this.essay.autoMarkZeroForExpiredExams();
   }
 
   @Get('grading/assignments')

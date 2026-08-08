@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { Suspense, useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -9,15 +9,18 @@ import { RubricDialog } from '../../../components/question-bank/RubricDialog';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
-import { Search, X, RotateCcw, Sparkles, Sliders, Save, CheckCircle2, FileText, User, AlertCircle } from 'lucide-react';
+import { Search, X, RotateCcw, Sparkles, Sliders, Save, CheckCircle2, FileText, User, AlertCircle, ChevronLeft, ChevronRight, Download, Loader2 } from 'lucide-react';
 
-export default function TeacherEssayGradingPage() {
+function TeacherEssayGradingContent() {
   usePageTitle('Chấm Bài Thi Tự Luận');
   const searchParams = useSearchParams();
   const attemptIdParam = searchParams.get('attemptId');
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [rows, setRows] = useState<any[]>([]);
+  const rowsRef = useRef<any[]>([]);
+  rowsRef.current = rows;
+
   const [selected, setSelected] = useState<any>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
@@ -27,8 +30,10 @@ export default function TeacherEssayGradingPage() {
   const [message, setMessage] = useState('');
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'GRADING' | 'WAITING_APPROVAL' | 'PUBLISHED'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'NOT_SUBMITTED' | 'GRADING' | 'WAITING_APPROVAL' | 'PUBLISHED'>('ALL');
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
+  const [dateFilter, setDateFilter] = useState<string>('ALL');
+  const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -43,6 +48,18 @@ export default function TeacherEssayGradingPage() {
   const [rubricQuestion, setRubricQuestion] = useState<any>(null);
 
   const openAttempt = useCallback(async (id: string) => {
+    if (!id || id.startsWith('virtual-')) {
+      const vRow = rowsRef.current.find((r) => r.id === id);
+      if (vRow) {
+        setSelected(vRow);
+        setScores({});
+        setComments({});
+        setTeacherComments({});
+        setMessage('');
+        return;
+      }
+    }
+
     try {
       const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
       const attemptData = res.data;
@@ -52,6 +69,7 @@ export default function TeacherEssayGradingPage() {
       const initScores: Record<string, number> = {};
       const initComments: Record<string, string> = {};
       const initTeacherComments: Record<string, string> = {};
+      const answersToAiSuggest: any[] = [];
 
       (attemptData.attemptAnswers || []).forEach((ans: any) => {
         if (ans.teacherComment) initTeacherComments[ans.questionId] = ans.teacherComment;
@@ -59,14 +77,70 @@ export default function TeacherEssayGradingPage() {
           initScores[grade.criterionId] = grade.score;
           if (grade.comment) initComments[grade.criterionId] = grade.comment;
         });
+
+        // Nếu chưa có điểm Rubric -> Xếp hàng để tự động gọi AI suggest
+        if (!ans.essayGrades || ans.essayGrades.length === 0) {
+          const q = (attemptData.questions || []).find((item: any) => item.questionId === ans.questionId);
+          if (q && q.type === 'ESSAY') {
+            answersToAiSuggest.push({ answer: ans, question: q });
+          }
+        }
+      });
+
+      // Mặc định tự động gán 0 điểm cho bất kỳ câu hỏi tự luận nào chưa có điểm hoặc sinh viên không làm
+      const essayQuestions = (attemptData.questions || []).filter((item: any) => item.type === 'ESSAY');
+      essayQuestions.forEach((q: any) => {
+        const ans = (attemptData.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+        const isBlank = !ans || !ans.textAnswer || !ans.textAnswer.trim() || ans.textAnswer.includes('không nhập');
+
+        (q.rubric || []).forEach((r: any) => {
+          if (initScores[r.id] === undefined) {
+            initScores[r.id] = 0;
+            if (isBlank && !initComments[r.id]) {
+              initComments[r.id] = 'Sinh viên bỏ trống câu hỏi (0đ)';
+            }
+          }
+        });
+
+        if (isBlank && !initTeacherComments[q.questionId]) {
+          initTeacherComments[q.questionId] = 'Sinh viên bỏ trống câu hỏi (0đ)';
+        }
       });
 
       setScores(initScores);
       setComments(initComments);
       setTeacherComments(initTeacherComments);
+
+      // Tự động gọi AI gợi ý chấm cho các câu tự luận chưa có điểm và cập nhật lên UI
+      if (answersToAiSuggest.length > 0) {
+        for (const item of answersToAiSuggest) {
+          try {
+            const aiRes = await api.post(`/essay-grading/answers/${item.answer.id}/ai-suggest`);
+            const aiData = aiRes.data;
+            if (aiData && Array.isArray(aiData.criteria)) {
+              aiData.criteria.forEach((c: any) => {
+                initScores[c.criterionId] = c.score;
+                if (c.comment) initComments[c.criterionId] = c.comment;
+              });
+            }
+            if (aiData.overallComment && !initTeacherComments[item.question.questionId]) {
+              initTeacherComments[item.question.questionId] = aiData.overallComment;
+            }
+          } catch (aiErr) {
+            // Background AI fallback
+          }
+        }
+        setScores({ ...initScores });
+        setComments({ ...initComments });
+        setTeacherComments({ ...initTeacherComments });
+      }
     } catch (e: any) {
       setMessage(e?.response?.data?.message || 'Không thể tải chi tiết bài làm.');
     }
+  }, []);
+
+  const isNotSubmitted = useCallback((r: any) => {
+    return r.status === 'NOT_STARTED' || r.status === 'IN_PROGRESS' || r.gradingStatus === 'NOT_STARTED' || r.gradingStatus === 'IN_PROGRESS' || !r.submittedAt;
   }, []);
 
   const loadAssignments = useCallback(async () => {
@@ -170,6 +244,101 @@ export default function TeacherEssayGradingPage() {
     }
   };
 
+  const [batchAiLoading, setBatchAiLoading] = useState(false);
+
+  const saveAllQuestionGrades = async (options: { showPopup?: boolean } = { showPopup: true }) => {
+    if (!selected || !selected.id || String(selected.id).startsWith('virtual-')) {
+      setMessage('Bài thi chưa được nộp hoặc là dữ liệu vắng thi.');
+      return false;
+    }
+    const essayQuestions = (selected.questions || []).filter((q: any) => q.type === 'ESSAY');
+    if (!essayQuestions.length) return true;
+
+    setSaving(true);
+    try {
+      let savedCount = 0;
+      for (const q of essayQuestions) {
+        let ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+        if (!ans) continue;
+
+        let rubric = q.rubric || [];
+        if (!rubric.length) {
+          const rubRes = await api.get(`/essay/questions/${q.questionId}/rubric`).catch(() => null);
+          rubric = rubRes?.data || [];
+        }
+        if (!rubric.length) continue;
+
+        const criteria = rubric.map((r: any) => {
+          const rawScore = Number(scores[r.id]);
+          const validScore = isNaN(rawScore) ? 0 : Math.min(Math.max(rawScore, 0), Number(r.maxScore || 10));
+          return {
+            criterionId: r.id,
+            score: validScore,
+            comment: comments[r.id] || '',
+          };
+        });
+
+        await api.patch(`/essay/grading/answers/${ans.id}`, {
+          criteria,
+          teacherComment: teacherComments[q.questionId] || '',
+        });
+        savedCount++;
+      }
+
+      if (savedCount > 0 && options.showPopup) {
+        showResultPopup('Lưu Điểm Thành Công', `Đã lưu thành công toàn bộ điểm cho ${savedCount} câu hỏi tự luận!`, 'success');
+      }
+      return true;
+    } catch (e: any) {
+      const errText = e?.response?.data?.message || 'Không thể lưu điểm bài thi.';
+      setMessage(errText);
+      showResultPopup('Lỗi Lưu Điểm', errText, 'danger');
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveAllClick = async () => {
+    const ok = await saveAllQuestionGrades({ showPopup: true });
+    if (ok && selected?.id) {
+      await openAttempt(selected.id);
+    }
+  };
+
+  const handleBatchAiGradeAll = async () => {
+    if (!rows.length) return;
+    setBatchAiLoading(true);
+    setMessage('Đang tiến hành AI chấm bài hàng loạt cho các bài thi đã nộp...');
+    try {
+      let count = 0;
+      for (const row of rows) {
+        // CHỈ CHẤM CÁC BÀI ĐÃ NỘP BÀI THẬT SỰ (bỏ qua sinh viên chưa làm hoặc chưa nộp)
+        if (row.id && !row.id.startsWith('virtual-') && !isNotSubmitted(row) && row.submittedAt) {
+          try {
+            await api.get(`/essay/grading/attempts/${row.id}`, { params: { noCache: true } });
+            count++;
+          } catch (e) {
+            // Ignore single attempt AI errors
+          }
+        }
+      }
+      const msg = count > 0
+        ? `Hoàn tất AI chấm tự động hàng loạt cho ${count} bài thi đã nộp!`
+        : 'Không có bài thi mới nào đã nộp cần AI chấm điểm.';
+      setMessage(msg);
+      showResultPopup('AI Chấm Hàng Loạt', msg, count > 0 ? 'success' : 'info');
+      await loadAssignments();
+      if (selected?.id) {
+        await openAttempt(selected.id);
+      }
+    } catch (e: any) {
+      setMessage('Không thể chấm bài hàng loạt.');
+    } finally {
+      setBatchAiLoading(false);
+    }
+  };
+
   const showResultPopup = (title: string, message: string, type: 'success' | 'danger' | 'warning' | 'info' = 'success') => {
     setConfirmModal({
       isOpen: true,
@@ -185,47 +354,37 @@ export default function TeacherEssayGradingPage() {
   const handleCompleteGrading = () => {
     if (!selected) return;
 
-    const essayQuestions = (selected.questions || []).filter((q: any) => q.type === 'ESSAY');
-    for (const q of essayQuestions) {
-      const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
-      if (!ans || ans.finalScore === null || ans.finalScore === undefined) {
-        showResultPopup(
-          'Chưa Thể Hoàn Tất',
-          `Câu hỏi "${q.code || q.content}" chưa được chấm điểm. Vui lòng chấm đủ các câu trước khi hoàn tất.`,
-          'warning',
-        );
-        return;
-      }
-    }
-
     const isAdmin = currentUser?.role === 'ADMIN';
 
     setConfirmModal({
       isOpen: true,
-      title: isAdmin ? 'Hoàn tất chấm & Duyệt luôn' : 'Hoàn tất chấm bài thi',
+      title: isAdmin ? 'Duyệt bài thi tự luận' : 'Hoàn tất & Gửi duyệt',
       message: isAdmin
-        ? `Xác nhận hoàn tất chấm và duyệt điểm bài thi của thí sinh ${selected.student?.fullName}? Vì bạn là Admin, điểm sẽ được duyệt luôn không qua bước chờ.`
-        : 'Bạn có chắc chắn muốn HOÀN TẤT CHẤM BÀI thi này? Bài thi sẽ được gửi tới ADMIN để duyệt và công bố chính thức.',
+        ? `Hệ thống sẽ tự động lưu điểm và thực hiện duyệt bài thi cho thí sinh ${selected.student?.fullName}. Bạn có chắc chắn?`
+        : `Hệ thống sẽ tự động lưu toàn bộ điểm và gửi bài thi của thí sinh ${selected.student?.fullName} tới ADMIN duyệt. Bạn có chắc chắn?`,
       type: 'success',
-      confirmText: isAdmin ? 'Hoàn tất & Duyệt luôn' : 'Hoàn tất & Gửi duyệt',
+      confirmText: isAdmin ? 'Tự động lưu & Duyệt bài' : 'Tự động lưu & Gửi duyệt',
       cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
+          const ok = await saveAllQuestionGrades({ showPopup: false });
+          if (!ok) return;
+
           await api.post(`/essay/grading/attempts/${selected.id}/submit`);
           if (isAdmin) {
             await api.post(`/essay/grading/attempts/${selected.id}/approve`);
-            const msg = 'Đã hoàn tất chấm và duyệt điểm bài thi thành công!';
+            const msg = `Đã lưu toàn bộ điểm và duyệt bài thi thành công cho thí sinh ${selected.student?.fullName}!`;
             setMessage(msg);
-            await loadAssignments();
-            await openAttempt(selected.id);
             showResultPopup('Duyệt Bài Thành Công', msg, 'success');
           } else {
-            const msg = 'Đã hoàn tất chấm bài thi! Bài thi hiện đang chờ ADMIN duyệt.';
+            const msg = `Đã lưu toàn bộ điểm và gửi bài thi của thí sinh ${selected.student?.fullName} tới ADMIN duyệt thành công!`;
             setMessage(msg);
-            await loadAssignments();
+            showResultPopup('Gửi Duyệt Thành Công', msg, 'success');
+          }
+          await loadAssignments();
+          if (selected?.id) {
             await openAttempt(selected.id);
-            showResultPopup('Hoàn Tất Chấm Bài', msg, 'success');
           }
         } catch (e: any) {
           const errMsg = e?.response?.data?.message || 'Không thể hoàn tất chấm bài.';
@@ -236,8 +395,7 @@ export default function TeacherEssayGradingPage() {
     });
   };
 
-  const [dateFilter, setDateFilter] = useState<string>('ALL');
-  const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
+
 
   const availableDates = useMemo(() => {
     const set = new Set<string>();
@@ -298,21 +456,23 @@ export default function TeacherEssayGradingPage() {
   }, [rows, dateFilter, subjectFilter]);
 
   const counts = useMemo(() => {
-    let all = 0, grading = 0, waiting = 0, published = 0;
+    let all = 0, notSubmitted = 0, grading = 0, waiting = 0, published = 0;
     rows.forEach((r) => {
       all++;
       if (r.gradingStatus === 'PUBLISHED') published++;
       else if (r.gradingStatus === 'WAITING_APPROVAL') waiting++;
+      else if (isNotSubmitted(r)) notSubmitted++;
       else grading++;
     });
-    return { all, grading, waiting, published };
-  }, [rows]);
+    return { all, notSubmitted, grading, waiting, published };
+  }, [rows, isNotSubmitted]);
 
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
       // 1. Status Filter
       if (statusFilter !== 'ALL') {
-        if (statusFilter === 'GRADING' && r.gradingStatus && r.gradingStatus !== 'GRADING' && r.gradingStatus !== 'IN_PROGRESS') return false;
+        if (statusFilter === 'NOT_SUBMITTED' && !isNotSubmitted(r)) return false;
+        if (statusFilter === 'GRADING' && (isNotSubmitted(r) || r.gradingStatus === 'PUBLISHED' || r.gradingStatus === 'WAITING_APPROVAL')) return false;
         if (statusFilter === 'WAITING_APPROVAL' && r.gradingStatus !== 'WAITING_APPROVAL') return false;
         if (statusFilter === 'PUBLISHED' && r.gradingStatus !== 'PUBLISHED') return false;
       }
@@ -347,7 +507,40 @@ export default function TeacherEssayGradingPage() {
       }
       return true;
     });
-  }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery]);
+  }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery, isNotSubmitted]);
+
+  const currentIndex = useMemo(() => {
+    if (!selected) return -1;
+    return filteredRows.findIndex((r) => r.id === selected.id);
+  }, [filteredRows, selected]);
+
+  const handlePrevStudent = () => {
+    if (currentIndex > 0) openAttempt(filteredRows[currentIndex - 1].id);
+  };
+
+  const handleNextStudent = () => {
+    if (currentIndex < filteredRows.length - 1) openAttempt(filteredRows[currentIndex + 1].id);
+  };
+
+  const [autoZeroLoading, setAutoZeroLoading] = useState(false);
+
+  const handleAutoZeroMissed = async () => {
+    setAutoZeroLoading(true);
+    try {
+      const res = await api.post('/essay/grading/auto-zero-missed');
+      const count = res.data?.updatedCount || 0;
+      const msg = count > 0
+        ? `Đã công bố thẳng 0 điểm cho ${count} sinh viên vắng thi / quá hạn làm bài!`
+        : 'Hiện không có sinh viên vắng thi nào quá thời hạn ca thi.';
+      setMessage(msg);
+      showResultPopup('Công Bố 0đ Vắng Thi', msg, count > 0 ? 'success' : 'info');
+      await loadAssignments();
+    } catch (e: any) {
+      setMessage('Không thể xử lý công bố 0đ vắng thi.');
+    } finally {
+      setAutoZeroLoading(false);
+    }
+  };
 
   return (
     <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
@@ -362,7 +555,17 @@ export default function TeacherEssayGradingPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+            <button
+              type="button"
+              onClick={handleBatchAiGradeAll}
+              disabled={batchAiLoading || loading}
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
+            >
+              {batchAiLoading && <Loader2 className="h-3.5 w-3.5 text-white animate-spin" />}
+              <span>{batchAiLoading ? 'Đang AI chấm tất cả...' : 'AI Chấm Tất Cả Bài'}</span>
+            </button>
+
             <button
               type="button"
               onClick={loadAssignments}
@@ -370,7 +573,7 @@ export default function TeacherEssayGradingPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
             >
               <RotateCcw className={`h-3.5 w-3.5 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
-              <span>Làm mới danh sách</span>
+              <span>Làm mới</span>
             </button>
           </div>
         </div>
@@ -414,6 +617,7 @@ export default function TeacherEssayGradingPage() {
               <TabBar
                 tabs={[
                   { key: 'ALL', label: 'Tất cả', count: counts.all },
+                  { key: 'NOT_SUBMITTED', label: 'Chưa làm', count: counts.notSubmitted },
                   { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
                   { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
                   { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
@@ -554,197 +758,277 @@ export default function TeacherEssayGradingPage() {
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-slate-200/90 p-5 space-y-5 shadow-2xs">
-                {/* Header Information */}
-                <div className="flex justify-between items-start border-b border-slate-100 pb-4 flex-wrap gap-2">
-                  <div>
-                    <h2 className="text-base font-bold text-slate-900">{selected.student?.fullName}</h2>
-                    <p className="text-xs text-slate-500 font-mono mt-0.5">
-                      Mã sinh viên: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Trạng thái: <span className="font-semibold text-slate-800">{selected.gradingStatus}</span>
+                {/* Header Information & Fast Student Navigation */}
+                <div className="flex justify-between items-center border-b border-slate-100 pb-4 flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+                      {selected.student?.fullName?.charAt(0) || 'S'}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-bold text-slate-900">{selected.student?.fullName}</h2>
+                        <StatusBadge status={selected.gradingStatus} />
+                      </div>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">
+                        Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <span className="text-xl font-mono font-black text-slate-900">
+                        {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
+                      </span>
+                      {selected.penaltyPoints > 0 && (
+                        <p className="text-xs font-semibold text-rose-600 mt-0.5">
+                          Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Quick Prev / Next Student */}
+                    <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
+                      <button
+                        type="button"
+                        onClick={handlePrevStudent}
+                        disabled={currentIndex <= 0}
+                        className="p-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer select-none"
+                        title="Sinh viên trước đó"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <span className="text-[11px] font-bold font-mono text-slate-500 px-1">
+                        {currentIndex >= 0 ? `${currentIndex + 1}/${filteredRows.length}` : ''}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleNextStudent}
+                        disabled={currentIndex < 0 || currentIndex >= filteredRows.length - 1}
+                        className="p-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer select-none"
+                        title="Sinh viên tiếp theo"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Essay Questions List or Unsubmitted Banner */}
+                {isNotSubmitted(selected) || selected.isVirtual || !(selected.questions || []).filter((q: any) => q.type === 'ESSAY').length ? (
+                  <div className="py-12 px-6 rounded-2xl border border-amber-200/80 bg-amber-50/50 text-center space-y-3 shadow-2xs my-4">
+                    <div className="w-12 h-12 rounded-full bg-amber-100 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+                      <AlertCircle className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-800">Thí sinh chưa làm hoặc chưa nộp bài thi</h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                      Sinh viên <strong className="text-slate-800">{selected.student?.fullName}</strong> (Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong>) chưa bắt đầu làm bài hoặc chưa gửi bài thi tự luận. Không có bài làm để chấm điểm.
                     </p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-xl font-mono font-black text-slate-900">
-                      {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10} điểm</span>
-                    </span>
-                    {selected.penaltyPoints > 0 && (
-                      <p className="text-xs font-semibold text-rose-600 mt-0.5">
-                        Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
-                      </p>
-                    )}
-                  </div>
-                </div>
+                ) : (
+                  <div className="space-y-5 max-h-[62vh] overflow-y-auto pr-1">
+                    {(selected.questions || []).filter((q: any) => q.type === 'ESSAY').map((q: any, idx: number) => {
+                      const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
 
-                {/* Essay Questions List */}
-                <div className="space-y-5 max-h-[62vh] overflow-y-auto pr-1">
-                  {(selected.questions || []).filter((q: any) => q.type === 'ESSAY').map((q: any, idx: number) => {
-                    const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
-
-                    return (
-                      <div key={q.questionId || idx} className="rounded-xl border border-slate-200/90 p-4 bg-slate-50/50 space-y-4">
-                        {/* Question Title & Actions */}
-                        <div className="flex justify-between items-start font-bold text-xs text-slate-900 border-b border-slate-200/60 pb-2">
-                          <div className="pr-4">
-                            <span className="text-slate-700 font-bold">Câu {idx + 1} (Tự luận):</span> {q.content}
+                      return (
+                        <div key={q.questionId || idx} className="rounded-xl border border-slate-200/90 p-4 bg-slate-50/50 space-y-4">
+                          {/* Question Title & Actions */}
+                          <div className="flex justify-between items-start font-bold text-xs text-slate-900 border-b border-slate-200/60 pb-2">
+                            <div className="pr-4">
+                              <span className="text-slate-700 font-bold">Câu {idx + 1} (Tự luận):</span> {q.content}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: q.rubric || [] })}
+                                className="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
+                              >
+                                <Sliders className="h-3 w-3 text-slate-500" />
+                                <span>Sửa Rubric</span>
+                              </button>
+                              <span className="text-slate-900 font-mono text-sm font-black">
+                                {ans?.finalScore !== undefined && ans?.finalScore !== null
+                                  ? ans.finalScore
+                                  : (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] || 0), 0)} / {q.score}đ
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: q.rubric || [] })}
-                              className="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
-                            >
-                              <Sliders className="h-3 w-3 text-slate-500" />
-                              <span>Sửa Rubric</span>
-                            </button>
-                            <span className="text-slate-900 font-mono text-sm font-black">
-                              {ans?.finalScore ?? '--'} / {q.score}đ
-                            </span>
-                          </div>
-                        </div>
 
-                        {/* Student Answer */}
-                        <div className="space-y-1">
-                          <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Bài làm của sinh viên:</div>
-                          <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed shadow-2xs">
-                            {ans?.textAnswer || <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>}
-                          </div>
-                        </div>
-
-                        {/* Files */}
-                        {ans?.submissionFiles?.length > 0 && (
+                          {/* Student Answer */}
                           <div className="space-y-1">
-                            <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">File đính kèm ({ans.submissionFiles.length}):</div>
-                            <div className="flex gap-2 flex-wrap">
-                              {ans.submissionFiles.map((f: any) => (
-                                <a
-                                  key={f.id}
-                                  href={f.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-blue-700 text-xs font-semibold hover:bg-blue-50 transition shadow-2xs"
-                                >
-                                  <span>Tải file: {f.fileName} ({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
-                                </a>
-                              ))}
+                            <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Bài làm của sinh viên:</div>
+                            <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed shadow-2xs">
+                              {ans?.textAnswer || <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>}
                             </div>
                           </div>
-                        )}
 
-                        {/* AI Suggest Button */}
-                        {ans && (
-                          <div className="flex justify-end">
-                            <button
-                              type="button"
-                              onClick={() => handleAiSuggest(ans, q)}
-                              disabled={Boolean(aiLoading)}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-2xs transition disabled:opacity-50 cursor-pointer active:scale-95"
-                            >
-                              <Sparkles className="h-3.5 w-3.5 text-blue-100" />
-                              <span>{aiLoading === ans.id ? 'Đang phân tích...' : 'AI Gợi Ý Chấm'}</span>
-                            </button>
-                          </div>
-                        )}
+                          {/* Files */}
+                          {ans?.submissionFiles?.length > 0 && (
+                            <div className="space-y-1">
+                              <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">File đính kèm ({ans.submissionFiles.length}):</div>
+                              <div className="flex gap-2 flex-wrap">
+                                {ans.submissionFiles.map((f: any) => (
+                                  <a
+                                    key={f.id}
+                                    href={f.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-blue-700 text-xs font-semibold hover:bg-blue-50 transition shadow-2xs"
+                                  >
+                                    <Download className="h-3.5 w-3.5 text-blue-500" />
+                                    <span>Tải file: {f.fileName} ({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
-                        {/* Rubric Criteria Table */}
-                        {q.rubric?.length > 0 ? (
-                          <div className="space-y-2 pt-1">
-                            <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Tiêu chí chấm Rubric:</div>
-                            <div className="space-y-2">
-                              {q.rubric.map((r: any) => (
-                                <div key={r.id} className="bg-white p-3 rounded-xl border border-slate-200/90 space-y-2 shadow-2xs">
-                                  <div className="flex justify-between items-start text-xs">
-                                    <div>
-                                      <span className="font-bold text-slate-900">{r.label}</span>
-                                      {r.description && <p className="text-[11px] text-slate-500 mt-0.5">{r.description}</p>}
+                          {/* AI Suggest Button */}
+                          {ans && (
+                            <div className="flex justify-end">
+                              <button
+                                type="button"
+                                onClick={() => handleAiSuggest(ans, q)}
+                                disabled={Boolean(aiLoading)}
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-2xs transition disabled:opacity-50 cursor-pointer active:scale-95"
+                              >
+                                <Sparkles className="h-3.5 w-3.5 text-blue-100" />
+                                <span>{aiLoading === ans.id ? 'Đang phân tích...' : 'AI Gợi Ý Chấm'}</span>
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Rubric Criteria Table */}
+                          {q.rubric?.length > 0 ? (
+                            <div className="space-y-2 pt-1">
+                              <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Tiêu chí chấm Rubric:</div>
+                              <div className="space-y-2">
+                                {q.rubric.map((r: any) => (
+                                  <div key={r.id} className="bg-white p-3.5 rounded-xl border border-slate-200/90 space-y-2.5 shadow-2xs">
+                                    <div className="flex justify-between items-start text-xs">
+                                      <div>
+                                        <span className="font-bold text-slate-900">{r.label}</span>
+                                        {r.description && <p className="text-[11px] text-slate-500 mt-0.5">{r.description}</p>}
+                                      </div>
+                                      <span className="font-mono text-xs font-bold text-slate-600 shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
                                     </div>
-                                    <span className="font-mono text-xs font-bold text-slate-600 shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
-                                  </div>
 
-                                  <div className="flex gap-2 items-center">
-                                    <input
-                                      type="number"
-                                      step={0.25}
-                                      min={0}
-                                      max={r.maxScore}
-                                      placeholder="Điểm"
-                                      value={scores[r.id] ?? ''}
-                                      onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
-                                      className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-bold font-mono text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
-                                    />
-                                    <input
-                                      type="text"
-                                      placeholder="Nhận xét tiêu chí..."
-                                      value={comments[r.id] || ''}
-                                      onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
-                                      className="flex-1 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none"
-                                    />
+                                    <div className="flex gap-2 items-center flex-wrap">
+                                      <input
+                                        type="number"
+                                        step={0.25}
+                                        min={0}
+                                        max={r.maxScore}
+                                        placeholder="Điểm"
+                                        value={scores[r.id] ?? 0}
+                                        onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
+                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-bold font-mono text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
+                                      />
+
+                                      {/* Quick Score Chips */}
+                                      <div className="flex gap-1 items-center">
+                                        {[0, Number((r.maxScore * 0.5).toFixed(2)), Number((r.maxScore * 0.75).toFixed(2)), r.maxScore].map((presetVal) => (
+                                          <button
+                                            key={presetVal}
+                                            type="button"
+                                            onClick={() => handleScoreChange(r.id, String(presetVal), r.maxScore)}
+                                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold border transition cursor-pointer ${
+                                              scores[r.id] === presetVal
+                                                ? 'bg-blue-600 text-white border-blue-600'
+                                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                          >
+                                            {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
+                                          </button>
+                                        ))}
+                                      </div>
+
+                                      <input
+                                        type="text"
+                                        placeholder="Nhận xét tiêu chí..."
+                                        value={comments[r.id] || ''}
+                                        onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
+                                        className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none"
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="p-3 bg-amber-50/80 border border-amber-200/90 rounded-xl text-xs font-medium text-amber-900 flex justify-between items-center">
-                            <span>Câu hỏi này chưa được cài đặt tiêu chí Rubric.</span>
-                            <button
-                              type="button"
-                              onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: [] })}
-                              className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition cursor-pointer shadow-2xs"
-                            >
-                              Cấu hình Rubric ngay
-                            </button>
-                          </div>
-                        )}
+                          ) : (
+                            <div className="p-3 bg-amber-50/80 border border-amber-200/90 rounded-xl text-xs font-medium text-amber-900 flex justify-between items-center">
+                              <span>Câu hỏi này chưa được cài đặt tiêu chí Rubric.</span>
+                              <button
+                                type="button"
+                                onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: [] })}
+                                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition cursor-pointer shadow-2xs"
+                              >
+                                Cấu hình Rubric ngay
+                              </button>
+                            </div>
+                          )}
 
-                        {/* Overall Teacher Comment */}
-                        <div className="space-y-1 pt-1">
-                          <label className="text-[10px] font-bold uppercase text-slate-500">Nhận xét tổng quát câu hỏi:</label>
-                          <input
-                            type="text"
-                            placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."
-                            value={teacherComments[q.questionId] || ''}
-                            onChange={(e) => setTeacherComments((prev) => ({ ...prev, [q.questionId]: e.target.value }))}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:border-blue-500 focus:outline-none shadow-2xs"
-                          />
+                          {/* Overall Teacher Comment */}
+                          <div className="space-y-1 pt-1">
+                            <label className="text-[10px] font-bold uppercase text-slate-500">Nhận xét tổng quát câu hỏi:</label>
+                            <input
+                              type="text"
+                              placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."
+                              value={teacherComments[q.questionId] || ''}
+                              onChange={(e) => setTeacherComments((prev) => ({ ...prev, [q.questionId]: e.target.value }))}
+                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:border-blue-500 focus:outline-none shadow-2xs"
+                            />
+                          </div>
                         </div>
-
-                        {/* Save Question Grade */}
-                        {ans && (
-                          <div className="flex justify-end pt-1">
-                            <button
-                              type="button"
-                              onClick={() => gradeQuestionAnswer(ans, q)}
-                              disabled={saving}
-                              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer disabled:opacity-50 shadow-2xs"
-                            >
-                              <Save className="h-3.5 w-3.5 text-slate-300" />
-                              <span>Lưu điểm câu hỏi</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {/* Bottom Action Footer */}
-                <div className="border-t border-slate-100 pt-4 flex justify-between items-center flex-wrap gap-3">
-                  <div className="text-xs text-slate-500 font-medium">
-                    {currentUser?.role === 'ADMIN'
-                      ? 'Admin có thể duyệt điểm luôn sau khi chấm xong, không cần qua bước chờ.'
-                      : 'Sau khi hoàn tất chấm tất cả các câu, bấm nút bên phải để gửi bài thi lên ADMIN duyệt.'}
+                <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-slate-200/90 p-4 -mx-5 -mb-5 rounded-b-2xl z-20 flex justify-between items-center flex-wrap gap-3 shadow-xs">
+                  <div className="text-xs text-slate-500 font-medium flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>
+                      {isNotSubmitted(selected) || selected.isVirtual
+                        ? 'Sinh viên chưa nộp bài thi. Nút duyệt bài sẽ tự động mở khi sinh viên nộp bài.'
+                        : currentUser?.role === 'ADMIN'
+                        ? 'Bấm nút "Duyệt bài" để hoàn tất và duyệt điểm tự luận.'
+                        : 'Bấm "Gửi duyệt" sau khi kiểm tra xong các câu tự luận.'}
+                    </span>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveAllClick}
+                      disabled={saving || isNotSubmitted(selected) || selected.isVirtual}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer disabled:opacity-40 shadow-2xs active:scale-95"
+                    >
+                      <Save className="h-3.5 w-3.5 text-slate-300" />
+                      <span>{saving ? 'Đang lưu...' : 'Lưu tất cả điểm'}</span>
+                    </button>
+                    {currentIndex >= 0 && currentIndex < filteredRows.length - 1 && (
+                      <button
+                        type="button"
+                        onClick={handleNextStudent}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition cursor-pointer active:scale-95 shadow-2xs"
+                      >
+                        <span>Bài tiếp theo</span>
+                        <ChevronRight className="h-3.5 w-3.5 text-slate-500" />
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={handleCompleteGrading}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs hover:shadow-xs active:scale-95 transition cursor-pointer"
+                      disabled={isNotSubmitted(selected) || selected.isVirtual}
+                      className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs hover:shadow-xs active:scale-95 transition cursor-pointer disabled:opacity-40"
                     >
                       <CheckCircle2 className="h-4 w-4 text-blue-100" />
                       <span>
                         {currentUser?.role === 'ADMIN'
-                          ? 'Hoàn tất chấm & Duyệt luôn'
-                          : 'Hoàn tất chấm & Gửi ADMIN duyệt'}
+                          ? 'Duyệt bài'
+                          : 'Gửi duyệt'}
                       </span>
                     </button>
                   </div>
@@ -777,5 +1061,13 @@ export default function TeacherEssayGradingPage() {
         />
       )}
     </main>
+  );
+}
+
+export default function TeacherEssayGradingPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[400px] text-xs font-bold text-slate-500">Đang tải trang chấm bài tự luận...</div>}>
+      <TeacherEssayGradingContent />
+    </Suspense>
   );
 }

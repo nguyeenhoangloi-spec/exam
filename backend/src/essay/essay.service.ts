@@ -139,16 +139,129 @@ export class EssayService {
     return result.sort((a, b) => a.sortOrder - b.sortOrder);
   }
 
+  async autoMarkZeroForExpiredExams(): Promise<{ success: boolean; updatedCount: number }> {
+    const now = new Date();
+    const onlineConfigs = await this.prisma.onlineExamConfig.findMany({
+      include: {
+        examSchedule: {
+          include: {
+            examScheduleRooms: {
+              include: {
+                examRoomStudents: { include: { student: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    let updatedCount = 0;
+
+    for (const config of onlineConfigs) {
+      const sched = config.examSchedule;
+      if (!sched || !sched.examDate) continue;
+
+      const examDate = new Date(sched.examDate);
+      let endHour = 23, endMinute = 59;
+
+      if (sched.endTime && sched.endTime.includes(':')) {
+        const parts = sched.endTime.split(':').map((p) => parseInt(p, 10));
+        if (!isNaN(parts[0])) endHour = parts[0];
+        if (!isNaN(parts[1])) endMinute = parts[1];
+      }
+
+      const examEnd = new Date(
+        examDate.getFullYear(),
+        examDate.getMonth(),
+        examDate.getDate(),
+        endHour,
+        endMinute,
+        59,
+      );
+
+      // Nếu chưa hết giờ ca thi -> Chưa tự động chấm 0đ vắng thi
+      if (now <= examEnd) continue;
+
+      const rooms = sched.examScheduleRooms || [];
+      for (const room of rooms) {
+        for (const ers of room.examRoomStudents || []) {
+          if (!ers.studentId) continue;
+
+          const attempt = await this.prisma.examAttempt.findFirst({
+            where: {
+              studentId: ers.studentId,
+              onlineExamConfigId: config.id,
+            },
+          });
+
+          if (!attempt) {
+            // Trường hợp 1: Thí sinh vắng thi không vào thi -> Tạo điểm 0đ PUBLISHED
+            await this.prisma.examAttempt.create({
+              data: {
+                student: { connect: { id: ers.studentId } },
+                onlineExamConfig: { connect: { id: config.id } },
+                attemptToken: randomUUID(),
+                status: AttemptStatus.AUTO_SUBMITTED,
+                gradingStatus: EssayAttemptGradingStatus.PUBLISHED,
+                totalScore: 0,
+                penaltyPoints: 0,
+                penaltyReason: 'Vắng thi / Hết giờ không tham gia thi',
+                submittedAt: examEnd,
+                publishedAt: now,
+              },
+            });
+            updatedCount++;
+          } else if (attempt.gradingStatus !== EssayAttemptGradingStatus.PUBLISHED) {
+            // Trường hợp 2: Thí sinh đã tham gia thi nhưng chưa nộp hoặc chưa công bố điểm khi hết giờ ca thi
+            // 1. Tự động chấm bài AI các câu tự luận dở dang
+            try {
+              await this.autoGradeAttempt(attempt.id);
+            } catch (e) {
+              // Background AI fallback
+            }
+
+            // 2. Tính tổng điểm thực tế từ các câu đã trả lời
+            const answers = await this.prisma.attemptAnswer.findMany({ where: { attemptId: attempt.id } });
+            const rawScore = answers.reduce((s, a) => s + (a.finalScore || 0), 0);
+            const penalty = attempt.penaltyPoints || 0;
+            const finalScore = Math.max(0, Number((rawScore - penalty).toFixed(2)));
+
+            // 3. Chuyển trạng thái sang AUTO_SUBMITTED và công bố điểm PUBLISHED
+            await this.prisma.examAttempt.update({
+              where: { id: attempt.id },
+              data: {
+                status: AttemptStatus.AUTO_SUBMITTED,
+                gradingStatus: EssayAttemptGradingStatus.PUBLISHED,
+                totalScore: finalScore,
+                submittedAt: attempt.submittedAt || examEnd,
+                publishedAt: now,
+              },
+            });
+            updatedCount++;
+          }
+        }
+      }
+    }
+
+    return { success: true, updatedCount };
+  }
+
   async assignments(actor: any, status?: string) {
+    try {
+      await this.autoMarkZeroForExpiredExams();
+    } catch (e) {
+      this.logger.warn(`autoMarkZeroForExpiredExams failed: ${e?.message}`);
+    }
+
     const where: Prisma.ExamAttemptWhereInput = {
       onlineExamConfig: {
         examSchedule: actor.role === 'ADMIN' ? {} : { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: actor.id } } } } } },
       },
       status: status
         ? (status as AttemptStatus)
-        : { in: [AttemptStatus.SUBMITTED, AttemptStatus.AUTO_SUBMITTED, AttemptStatus.UNDER_REVIEW] },
+        : { in: [AttemptStatus.SUBMITTED, AttemptStatus.AUTO_SUBMITTED, AttemptStatus.UNDER_REVIEW, AttemptStatus.IN_PROGRESS, AttemptStatus.NOT_STARTED] },
     };
-    return this.prisma.examAttempt.findMany({
+    const attempts = await this.prisma.examAttempt.findMany({
       where,
       orderBy: { submittedAt: 'asc' },
       include: {
@@ -161,6 +274,75 @@ export class EssayService {
         incidents: true,
       },
     });
+
+    try {
+      const scheduleWhere = actor.role === 'ADMIN'
+        ? {}
+        : { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: actor.id } } } } } };
+
+      const onlineConfigs = await this.prisma.onlineExamConfig.findMany({
+        where: {
+          examSchedule: scheduleWhere,
+        },
+        include: {
+          examSchedule: {
+            include: {
+              subject: true,
+              examPeriod: true,
+              examScheduleRooms: {
+                include: {
+                  examRoomStudents: {
+                    include: { student: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const existingStudentAttemptKeys = new Set(
+        attempts.map((a) => `${a.studentId}-${a.onlineExamConfigId}`),
+      );
+
+      const virtualAttempts: any[] = [];
+      for (const config of onlineConfigs) {
+        const rooms = config.examSchedule?.examScheduleRooms || [];
+        for (const room of rooms) {
+          const roomStudents = room.examRoomStudents || [];
+          for (const ers of roomStudents) {
+            const key = `${ers.studentId}-${config.id}`;
+            if (!existingStudentAttemptKeys.has(key) && ers.student) {
+              existingStudentAttemptKeys.add(key);
+              virtualAttempts.push({
+                id: `virtual-${ers.studentId}-${config.id}`,
+                studentId: ers.studentId,
+                onlineExamConfigId: config.id,
+                student: ers.student,
+                onlineExamConfig: {
+                  id: config.id,
+                  examScheduleId: config.examScheduleId,
+                  examPaperId: config.examPaperId,
+                  mode: config.mode,
+                  examSchedule: config.examSchedule,
+                },
+                status: 'NOT_STARTED',
+                gradingStatus: 'NOT_STARTED',
+                submittedAt: null,
+                createdAt: new Date(),
+                totalScore: 0,
+                attemptAnswers: [],
+                isVirtual: true,
+              });
+            }
+          }
+        }
+      }
+
+      return [...attempts, ...virtualAttempts];
+    } catch (e) {
+      return attempts;
+    }
   }
 
   private async getAttempt(actor: any, attemptId: string) {
@@ -202,9 +384,22 @@ export class EssayService {
   }
 
   async detail(actor: any, attemptId: string) {
-    const attempt = await this.getAttempt(actor, attemptId);
+    let attempt = await this.getAttempt(actor, attemptId);
     const snapshot = (attempt.snapshot?.snapshotData as any[]) || [];
-    const questionIds = snapshot.filter((q) => q.type === 'ESSAY').map((q) => q.questionId);
+    const essayQuestions = snapshot.filter((q) => q.type === 'ESSAY');
+
+    // Nếu có câu tự luận chưa được chấm điểm/AI gợi ý -> Tự động kích hoạt AI chấm ngay lập tức
+    const hasUngradedEssay = essayQuestions.some((q) => {
+      const ans = attempt.attemptAnswers.find((a) => a.questionId === q.questionId);
+      return !ans || !ans.essayGrades || ans.essayGrades.length === 0;
+    });
+
+    if (hasUngradedEssay) {
+      await this.autoGradeAttempt(attemptId);
+      attempt = await this.getAttempt(actor, attemptId);
+    }
+
+    const questionIds = essayQuestions.map((q) => q.questionId);
     const rubrics = questionIds.length
       ? await this.prisma.essayRubricCriterion.findMany({
           where: { questionId: { in: questionIds } },
@@ -429,6 +624,21 @@ export class EssayService {
         } as any,
       ];
     }
+    const rawText = ((answer.textAnswer as string) || '').trim();
+    if (!rawText || rawText === '(Sinh viên không nhập nội dung văn bản)') {
+      const emptyCriteria = rubric.map((r) => ({
+        criterionId: r.id,
+        score: 0,
+        comment: 'Sinh viên bỏ trống / chưa làm câu hỏi này (0đ).',
+      }));
+      return {
+        criteria: emptyCriteria,
+        overallComment: 'Sinh viên bỏ trống / chưa làm câu hỏi này (0đ).',
+        confidence: 1.0,
+        warning: 'Thí sinh không nhập nội dung trả lời.',
+        requiresTeacherConfirmation: true,
+      };
+    }
 
     const prompt = `Bạn là trợ lý AI chấm thi. Nhiệm vụ của bạn là phân tích bài làm của sinh viên và đề xuất điểm số theo đúng Rubric. Bạn CHỈ ĐỀ XUẤT, không tự quyết định điểm số chính thức.
 
@@ -600,6 +810,10 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
 
     const snapshot = (attempt.snapshot?.snapshotData as any[]) || [];
     const essayQuestions = snapshot.filter((q) => q.type === 'ESSAY');
+
+    // Đảm bảo tất cả các câu hỏi tự luận (kể cả câu sinh viên không làm) đều tự động được chấm điểm
+    await this.autoGradeAttempt(attemptId);
+
     const answers = await this.prisma.attemptAnswer.findMany({
       where: { attemptId },
       include: { essayGrades: true },
@@ -935,72 +1149,121 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
 
       const answers = await this.prisma.attemptAnswer.findMany({
         where: { attemptId, questionId: { in: essayQuestions.map((q) => q.questionId) } },
+        include: { essayGrades: true },
       });
 
       // System actor for AI grading
       const systemActor = { id: 0, role: 'SYSTEM' };
 
       for (const qs of essayQuestions) {
-        const answer = answers.find((a) => a.questionId === qs.questionId);
+        let answer: any = answers.find((a) => a.questionId === qs.questionId);
+        if (!answer) {
+          try {
+            answer = await this.prisma.attemptAnswer.create({
+              data: {
+                attempt: { connect: { id: attemptId } },
+                questionId: qs.questionId,
+                textAnswer: '(Sinh viên không nhập nội dung văn bản)',
+                gradingStatus: 'GRADED',
+                finalScore: 0,
+                clientTimestamp: new Date(),
+              },
+              include: { essayGrades: true },
+            });
+          } catch (e) {
+            answer = await this.prisma.attemptAnswer.findFirst({
+              where: { attemptId, questionId: qs.questionId },
+              include: { essayGrades: true },
+            });
+          }
+        }
         if (!answer) continue;
 
-        // Skip if already graded
-        if (answer.gradingStatus === 'GRADED') continue;
+        // Skip if already graded with essayGrades
+        if (answer.gradingStatus === 'GRADED' && answer.essayGrades && answer.essayGrades.length > 0) continue;
 
         const rubric = await this.prisma.essayRubricCriterion.findMany({
           where: { questionId: qs.questionId },
           orderBy: { sortOrder: 'asc' },
         });
 
-        // Build default rubric if none defined
-        const effectiveRubric = rubric.length
-          ? rubric
-          : [{ id: `auto-${qs.questionId}`, label: 'Nội dung tổng quát', maxScore: qs.maxScore ?? 10, description: '', sortOrder: 1, questionId: qs.questionId, createdAt: new Date(), updatedAt: new Date() }];
+        // Khởi tạo default rubric trong DB nếu câu hỏi chưa được cài đặt Rubric
+        let effectiveRubric = rubric;
+        if (!effectiveRubric.length) {
+          try {
+            const defaultCriterion = await this.prisma.essayRubricCriterion.create({
+              data: {
+                questionId: qs.questionId,
+                label: 'Nội dung & Đánh giá tổng thể',
+                description: 'Đánh giá mức độ hoàn thành bài tự luận theo yêu cầu đề bài',
+                maxScore: Number(qs.score || 1),
+                sortOrder: 1,
+              },
+            });
+            effectiveRubric = [defaultCriterion];
+          } catch (e) {
+            effectiveRubric = await this.prisma.essayRubricCriterion.findMany({
+              where: { questionId: qs.questionId },
+              orderBy: { sortOrder: 'asc' },
+            });
+          }
+        }
 
         let criteria: { criterionId: string; score: number; comment: string }[] = [];
         let overallComment = '';
 
-        try {
-          const aiRes = await this.aiService.gradeEssay({
-            questionText: qs.content,
-            sampleAnswer: qs.explanation || '',
-            answerText: (answer.textAnswer as string) || '(Sinh viên không nhập nội dung)',
-            criteria: effectiveRubric.map((r) => ({ criterionId: r.id, label: r.label, maxScore: r.maxScore, description: r.description })),
-          });
+        const rawAns = ((answer?.textAnswer as string) || '').trim();
 
-          if (aiRes && Array.isArray(aiRes.criteriaGrades) && aiRes.criteriaGrades.length) {
-            const byId = new Map(effectiveRubric.map((r) => [r.id, r]));
-            const parsed = aiRes.criteriaGrades
-              .map((item: any) => {
-                const r = byId.get(String(item.criterionId));
-                if (!r) return null;
-                return { criterionId: r.id, score: Math.min(Math.max(Number(item.score) || 0, 0), r.maxScore), comment: String(item.comment || '').trim() };
-              })
-              .filter(Boolean) as { criterionId: string; score: number; comment: string }[];
-            if (parsed.length) {
-              criteria = parsed;
-              overallComment = String(aiRes.generalFeedback || '').trim();
-            }
-          }
-        } catch (aiErr: any) {
-          this.logger.warn(`[AutoGrade] AI failed for answer ${answer.id}: ${aiErr?.message}. Using heuristic.`);
-        }
-
-        // Heuristic fallback
-        if (!criteria.length) {
-          const rawAns = ((answer.textAnswer as string) || '').trim();
-          const refText = (qs.content + ' ' + (qs.explanation || '')).toLowerCase();
-          const words = rawAns.toLowerCase().split(/\s+/).filter((w) => w.length > 2);
-          const matched = words.filter((w) => refText.includes(w));
-          const ratio = words.length > 0 ? matched.length / words.length : 0;
-          const factor = rawAns.length < 10 ? 0 : ratio > 0.25 || rawAns.length > 80 ? 0.75 : ratio > 0.1 ? 0.5 : 0.25;
-
+        // NGUYÊN TẮC QUẢN LÝ KHẢO THÍ: Nếu sinh viên không trả lời câu hỏi này (nội dung rỗng/chưa làm) -> Mặc định 0đ
+        if (!rawAns || rawAns === '(Sinh viên không nhập nội dung)' || rawAns === '(Sinh viên không nhập nội dung văn bản)') {
           criteria = effectiveRubric.map((r) => ({
             criterionId: r.id,
-            score: Number((r.maxScore * factor).toFixed(2)),
-            comment: factor === 0 ? 'AI: Bài làm chưa có nội dung hợp lệ.' : 'AI: Chấm tự động dựa trên phân tích nội dung.',
+            score: 0,
+            comment: 'Sinh viên bỏ trống / chưa làm câu hỏi này (0đ).',
           }));
-          overallComment = 'Chấm tự động bằng AI heuristic (chờ GV xem xét).';
+          overallComment = 'Sinh viên bỏ trống / chưa làm câu hỏi này (0đ).';
+        } else {
+          try {
+            const aiRes = await this.aiService.gradeEssay({
+              questionText: qs.content,
+              sampleAnswer: qs.explanation || '',
+              answerText: rawAns,
+              criteria: effectiveRubric.map((r) => ({ criterionId: r.id, label: r.label, maxScore: r.maxScore, description: r.description })),
+            });
+
+            if (aiRes && Array.isArray(aiRes.criteriaGrades) && aiRes.criteriaGrades.length) {
+              const byId = new Map(effectiveRubric.map((r) => [r.id, r]));
+              const parsed = aiRes.criteriaGrades
+                .map((item: any) => {
+                  const r = byId.get(String(item.criterionId));
+                  if (!r) return null;
+                  return { criterionId: r.id, score: Math.min(Math.max(Number(item.score) || 0, 0), r.maxScore), comment: String(item.comment || '').trim() };
+                })
+                .filter(Boolean) as { criterionId: string; score: number; comment: string }[];
+              if (parsed.length) {
+                criteria = parsed;
+                overallComment = String(aiRes.generalFeedback || '').trim();
+              }
+            }
+          } catch (aiErr: any) {
+            this.logger.warn(`[AutoGrade] AI failed for answer ${answer.id}: ${aiErr?.message}. Using heuristic.`);
+          }
+
+          // Heuristic fallback
+          if (!criteria.length) {
+            const refText = (qs.content + ' ' + (qs.explanation || '')).toLowerCase();
+            const words = rawAns.toLowerCase().split(/\s+/).filter((w) => w.length > 2);
+            const matched = words.filter((w) => refText.includes(w));
+            const ratio = words.length > 0 ? matched.length / words.length : 0;
+            const factor = rawAns.length < 10 ? 0 : ratio > 0.25 || rawAns.length > 80 ? 0.75 : ratio > 0.1 ? 0.5 : 0.25;
+
+            criteria = effectiveRubric.map((r) => ({
+              criterionId: r.id,
+              score: Number((r.maxScore * factor).toFixed(2)),
+              comment: factor === 0 ? 'AI: Bài làm chưa có nội dung hợp lệ.' : 'AI: Chấm tự động dựa trên phân tích nội dung.',
+            }));
+            overallComment = 'Chấm tự động bằng AI heuristic (chờ GV xem xét).';
+          }
         }
 
         const totalScore = Number(criteria.reduce((s, c) => s + c.score, 0).toFixed(2));

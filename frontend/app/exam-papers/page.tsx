@@ -237,6 +237,7 @@ export default function ExamPapersPage() {
     title: string;
     message: string;
     type: 'danger' | 'warning' | 'info' | 'success';
+    confirmText?: string;
     onConfirm: () => void;
   }>({
     isOpen: false,
@@ -847,17 +848,24 @@ export default function ExamPapersPage() {
                 const answerText = q.correctAnswer || q.sampleAnswer || q.explanation || q.answer || q.solution || '';
 
                 return (
-                  <div key={detail.id || index} className="py-4 space-y-3 border-b border-slate-100 last:border-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="text-xs font-black text-slate-900 leading-snug">
-                        Câu {index + 1}: {q.content}
+                  <div key={detail.id || index} className="py-4 space-y-2 border-b border-slate-100 last:border-0">
+                    {/* Hàng 1: Nội dung câu hỏi chiếm trọn 100% bề ngang */}
+                    <div className="text-xs font-black text-slate-900 leading-relaxed break-words">
+                      Câu {index + 1}: {q.content}
+                    </div>
+
+                    {/* Hàng 2: Thanh phụ chứa loại câu hỏi & nút bấm hành động */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                      <span className="text-[11px] font-extrabold text-blue-600">
+                        {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'FILL_BLANK' ? 'ĐIỀN KHUYẾT' : q.type === 'TRUE_FALSE' ? 'ĐÚNG/SAI' : 'TRẮC NGHIỆM'} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
                       </span>
-                      <div className="flex items-center gap-2 shrink-0">
+
+                      <div className="flex items-center gap-3">
                         {selectedPaper.status === 'DRAFT' && (
                           <button
                             type="button"
                             onClick={() => openSwapModal(index, q)}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 text-xs font-black rounded-lg transition cursor-pointer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-xs font-bold transition cursor-pointer"
                             title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
                           >
                             <RotateCcw className="w-3.5 h-3.5 text-blue-600" /> Đổi câu hỏi
@@ -873,9 +881,6 @@ export default function ExamPapersPage() {
                             <Award className="w-3.5 h-3.5 text-blue-600" /> Cấu hình Rubric
                           </button>
                         )}
-                        <span className="text-xs font-extrabold text-blue-600">
-                          {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'FILL_BLANK' ? 'ĐIỀN KHUYẾT' : q.type === 'TRUE_FALSE' ? 'ĐÚNG/SAI' : 'TRẮC NGHIỆM'} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
-                        </span>
                       </div>
                     </div>
 
