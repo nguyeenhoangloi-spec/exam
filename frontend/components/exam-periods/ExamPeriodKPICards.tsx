@@ -58,7 +58,7 @@ export function ExamPeriodKPICards({
         return (
           <div
             key={item.title}
-            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer space-y-3"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer space-y-3"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">

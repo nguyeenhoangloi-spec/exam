@@ -185,7 +185,7 @@ export default function StudentCurriculumPage() {
           {KPI.map(({ label, value, icon: Icon, iconBg }) => (
             <div
               key={label}
-              className="group flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+              className="group flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
             >
               <div className="space-y-1">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
