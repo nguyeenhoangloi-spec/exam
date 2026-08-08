@@ -352,28 +352,28 @@ export default function ExamSupervisorsPage() {
               value: totalAssignments,
               subtext: `Lịch thi: ${(selectedSchedule?.examScheduleRooms || []).length} phòng`,
               icon: ShieldCheck,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-slate-100 text-slate-500 border-slate-200',
             },
             {
               title: 'Yêu cầu đổi ca',
               value: changeRequestedCount,
               subtext: changeRequestedCount > 0 ? 'Cần quản trị viên phê duyệt' : 'Không có yêu cầu mới',
               icon: RefreshCw,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-slate-100 text-slate-500 border-slate-200',
             },
             {
               title: 'Đã xác nhận ca',
               value: `${confirmedCount}/${totalAssignments}`,
               subtext: 'Sẵn sàng gác thi',
               icon: CheckCircle2,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-slate-100 text-slate-500 border-slate-200',
             },
             {
               title: 'Hoàn thành gác thi',
               value: `${completedCount}/${totalAssignments}`,
               subtext: 'Theo báo cáo phòng thi',
               icon: UserCheck,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-slate-100 text-slate-500 border-slate-200',
             },
           ].map((item) => {
             const IconComponent = item.icon;
@@ -647,16 +647,28 @@ export default function ExamSupervisorsPage() {
             </div>
 
             {selectedSchedule && (
-              <div className={`rounded-xl border p-3 text-xs space-y-1 ${selectedSchedule.mode === 'MOCK' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-sky-50/70 border-sky-100 text-sky-900'}`}>
+              <div className={`rounded-xl border p-3.5 text-xs space-y-1.5 ${
+                selectedSchedule.mode === 'MOCK'
+                  ? 'bg-amber-50/90 border-amber-200 text-amber-950'
+                  : 'bg-slate-50 border-slate-200 text-slate-800'
+              }`}>
                 {selectedSchedule.mode === 'MOCK' && (
-                  <span className="inline-block mb-1 font-bold text-[11px] bg-amber-100 border border-amber-300 text-amber-900 px-2 py-0.5 rounded-full">
+                  <span className="inline-block mb-1 font-extrabold text-[11px] bg-amber-100 border border-amber-300 text-amber-900 px-2.5 py-0.5 rounded-full">
                     Ca Thi Thử (Tự Do) - Không bắt buộc phân công Giám thị
                   </span>
                 )}
-                <p className="font-bold">Môn: {selectedSchedule.subject?.subjectName}</p>
-                <p>Mã môn: {selectedSchedule.subject?.subjectCode}</p>
-                <p>Ngày thi: {selectedSchedule.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'}</p>
-                <p>Giờ thi: {selectedSchedule.startTime} - {selectedSchedule.endTime}</p>
+                <p className="font-bold text-slate-700">
+                  Môn: <strong className="font-black text-slate-900">{selectedSchedule.subject?.subjectName}</strong>
+                </p>
+                <p className="font-medium text-slate-600">
+                  Mã môn: <span className="font-mono font-black text-slate-900">{selectedSchedule.subject?.subjectCode}</span>
+                </p>
+                <p className="font-medium text-slate-600">
+                  Ngày thi: <span className="font-bold text-slate-900">{selectedSchedule.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'}</span>
+                </p>
+                <p className="font-medium text-slate-600">
+                  Giờ thi: <span className="font-bold text-slate-900">{selectedSchedule.startTime} - {selectedSchedule.endTime}</span>
+                </p>
               </div>
             )}
 
@@ -860,7 +872,7 @@ export default function ExamSupervisorsPage() {
                                     <button
                                       type="button"
                                       onClick={() => void handleUpdateStatus(sup.id, 'COMPLETED', 'đánh dấu Hoàn thành ca thi')}
-                                      className="px-3 py-1.5 text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl transition cursor-pointer"
+                                      className="px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition cursor-pointer"
                                     >
                                       Hoàn thành
                                     </button>
@@ -912,7 +924,7 @@ export default function ExamSupervisorsPage() {
         title={drawerSupervisor?.teacher?.fullName || ''}
         subtitle={`Mã cán bộ coi thi: ${drawerSupervisor?.teacher?.teacherCode}`}
         avatarText={drawerSupervisor?.teacher?.fullName ? drawerSupervisor.teacher.fullName.slice(-1) : 'GT'}
-        badge={{ label: drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2', className: 'bg-sky-50 text-sky-700 border-sky-200' }}
+        badge={{ label: drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2', className: 'bg-blue-50 text-blue-700 border-blue-200' }}
         details={[
           { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName },
           { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode },

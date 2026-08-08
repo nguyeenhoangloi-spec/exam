@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical, Calendar } from 'lucide-react';
+import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical, Calendar, KeyRound } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { StatusBadge } from '../common/StatusBadge';
 import { ExamPaper } from '../../types';
@@ -22,6 +22,7 @@ interface ExamPaperTableProps {
   onDetail: (id: number) => void;
   onExportWord: (paper: ExamPaper) => void;
   onAction: (paper: ExamPaper, action: 'publish' | 'archive' | 'restore' | 'delete') => void;
+  onChangePassword?: (paper: ExamPaper) => void;
   busyId: number | null;
   isAdmin: boolean;
 }
@@ -43,6 +44,7 @@ export function ExamPaperTable({
   onDetail,
   onExportWord,
   onAction,
+  onChangePassword,
   busyId,
   isAdmin,
 }: ExamPaperTableProps) {
@@ -66,9 +68,8 @@ export function ExamPaperTable({
           return (
             <div
               key={p.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -110,7 +111,7 @@ export function ExamPaperTable({
                       {periodName}
                     </p>
                   )}
-                  
+
                   <div className="mt-2 space-y-0.5 text-[11px] font-semibold text-slate-600">
                     <span className="flex items-center gap-1 text-slate-700">
                       <Clock className="h-3.5 w-3.5 text-blue-600 shrink-0" />
@@ -124,11 +125,11 @@ export function ExamPaperTable({
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <HelpCircle className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+                    <HelpCircle className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                     <span>{qCount} câu hỏi</span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Award className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <Award className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                     <span>{p.totalScore} điểm</span>
                   </div>
                 </div>
@@ -289,9 +290,8 @@ export function ExamPaperTable({
             return (
               <tr
                 key={p.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
-                }`}
+                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                  }`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input
@@ -431,6 +431,20 @@ export function ExamPaperTable({
                             <Download className="h-3.5 w-3.5 text-slate-500" />
                             <span>Xuất Word (.doc)</span>
                           </button>
+
+                          {onChangePassword && (p.examScheduleId || p.examSchedule?.id || sched.id) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                onChangePassword(p);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700 cursor-pointer"
+                            >
+                              <KeyRound className="h-3.5 w-3.5 text-blue-600" />
+                              <span>Đổi mật khẩu ca thi</span>
+                            </button>
+                          )}
 
                           {isAdmin && (
                             <>

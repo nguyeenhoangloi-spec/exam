@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import api from '../../lib/api';
@@ -146,7 +146,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
               Thiết Lập Rubric Chấm Điểm Tự Luận
             </h2>
             <p className="text-xs text-slate-300 font-mono mt-0.5">
-              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-sky-200 font-black">{expectedScore}đ</strong>
+              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-blue-200 font-black">{expectedScore}đ</strong>
             </p>
           </div>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition">

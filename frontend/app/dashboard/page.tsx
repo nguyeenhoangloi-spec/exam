@@ -188,7 +188,6 @@ export default function DashboardPage() {
           isRefreshing={isRefreshing}
           selectedPeriod={selectedPeriod}
           onPeriodChange={setSelectedPeriod}
-          onExportPDF={handleExportPDF}
         />
 
         {loading ? (
@@ -205,6 +204,7 @@ export default function DashboardPage() {
               username={user?.username || 'Admin'}
               examCount={overview.today?.examCount ?? 0}
               pendingQuestionCount={overview.today?.pendingQuestionCount ?? 0}
+              onExportPDF={handleExportPDF}
             />
 
             {/* Section 3: 6 KPI Statistic Cards Grid */}

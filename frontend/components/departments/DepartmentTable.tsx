@@ -79,9 +79,9 @@ export function DepartmentTable({
                   <button
                     type="button"
                     onClick={() => onOpenCurriculum(d)}
-                    className="flex items-center gap-1 rounded-lg bg-sky-50 px-2 py-1 text-[11px] font-bold text-sky-700 hover:bg-sky-100 transition border border-sky-200 cursor-pointer"
+                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition border border-blue-200 cursor-pointer"
                   >
-                    <Sparkles className="h-3 w-3 text-sky-600" />
+                    <Sparkles className="h-3 w-3 text-blue-600" />
                     <span>Khung CTDT</span>
                   </button>
                 </div>
@@ -337,9 +337,9 @@ export function DepartmentTable({
                               closeMenu();
                               onOpenCurriculum(d);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-sky-50 text-sky-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700"
                           >
-                            <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+                            <Sparkles className="h-3.5 w-3.5 text-blue-600" />
                             <span>Khung CTDT</span>
                           </button>
 

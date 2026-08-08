@@ -18,10 +18,10 @@ interface KPICardsProps {
 
 const colorMap = {
   sky: {
-    bg: 'bg-sky-50',
-    text: 'text-sky-600',
-    border: 'border-sky-100',
-    iconBg: 'bg-sky-500',
+    bg: 'bg-blue-50',
+    text: 'text-blue-600',
+    border: 'border-blue-100',
+    iconBg: 'bg-blue-500',
   },
   blue: {
     bg: 'bg-blue-50',
@@ -42,10 +42,10 @@ const colorMap = {
     iconBg: 'bg-amber-500',
   },
   skyDeep: {
-    bg: 'bg-sky-50',
-    text: 'text-sky-700',
-    border: 'border-sky-200',
-    iconBg: 'bg-sky-600',
+    bg: 'bg-blue-50',
+    text: 'text-blue-700',
+    border: 'border-blue-200',
+    iconBg: 'bg-blue-600',
   },
   rose: {
     bg: 'bg-rose-50',

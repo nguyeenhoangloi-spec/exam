@@ -545,7 +545,7 @@ export default function ExamRoomsPage() {
         avatarText={drawerRoom?.building?.slice(-2) || 'RM'}
         badge={{
           label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy' : 'Phòng Lý thuyết',
-          className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
           { label: 'Tên phòng thi', value: drawerRoom?.roomName || drawerRoom?.name, icon: DoorOpen },

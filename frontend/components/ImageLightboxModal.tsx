@@ -99,7 +99,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
 
       {/* Caption Badge Top Left */}
       <div className="absolute top-4 left-4 z-10 hidden sm:flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/90 px-3 py-1.5 text-xs font-semibold text-slate-200 backdrop-blur-md">
-        <Maximize2 className="h-4 w-4 text-sky-400" />
+        <Maximize2 className="h-4 w-4 text-blue-400" />
         <span>{altText || 'Chi tiết hình ảnh'}</span>
         <span className="ml-2 rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
           {Math.round(zoom * 100)}%

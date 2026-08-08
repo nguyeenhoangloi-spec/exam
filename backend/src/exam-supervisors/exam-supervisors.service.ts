@@ -15,7 +15,6 @@ export class ExamSupervisorsService {
     });
     if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
     if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(schedule.status)) throw new BadRequestException('Không thể đề xuất giám thị cho lịch đã hủy, hoàn thành hoặc đã khóa.');
-    if (schedule.examPapers.some((paper) => paper.status === 'PUBLISHED')) throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi phân công.');
     const teachers = await this.prisma.teacher.findMany({
       where: { user: { status: 'ACTIVE' } },
       include: { user: { select: { status: true } } },
@@ -73,7 +72,6 @@ export class ExamSupervisorsService {
           const teacher = await tx.teacher.findUnique({ where: { id: proposal.teacherId }, include: { user: { select: { status: true } } } });
           if (!room || !teacher) throw new NotFoundException('Phòng thi hoặc giảng viên trong phương án không còn tồn tại.');
           if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(room.examSchedule.status)) throw new BadRequestException('Không thể lưu phân công cho lịch đã hủy, hoàn thành hoặc đã khóa.');
-          if (room.examSchedule.examPapers.some((paper) => paper.status === 'PUBLISHED')) throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi phân công.');
           if (teacher.user.status !== 'ACTIVE' || room.supervisors.length >= 2 || room.supervisors.some((item) => item.role === proposal.role || item.teacherId === proposal.teacherId)) {
             throw new ConflictException(`Phương án phân công phòng ${room.room.roomCode} không còn hợp lệ.`);
           }
@@ -122,9 +120,6 @@ export class ExamSupervisorsService {
       throw new BadRequestException('Không thể phân công giám thị cho lịch thi đã hủy hoặc hoàn thành.');
     }
     if (scheduleRoom.examSchedule.deletedAt) throw new NotFoundException('Lịch thi đã nằm trong thùng rác.');
-    if (scheduleRoom.examSchedule.examPapers.some((paper) => paper.status === 'PUBLISHED')) {
-      throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi phân công.');
-    }
 
     // 3. Kiểm tra không phân công trùng giảng viên trong cùng một phòng
     const alreadyInRoom = scheduleRoom.supervisors.some((s) => s.teacherId === data.teacherId);
@@ -206,8 +201,8 @@ export class ExamSupervisorsService {
       include: { teacher: true, examScheduleRoom: { include: { room: true, examSchedule: { include: { examPapers: { where: { deletedAt: null }, select: { status: true } } } } } } },
     });
     if (!supervisor) throw new NotFoundException('Không tìm thấy bản ghi phân công giám thị.');
-    if (['LOCKED', 'COMPLETED'].includes(supervisor.examScheduleRoom.examSchedule.status) || supervisor.examScheduleRoom.examSchedule.examPapers.some((paper) => paper.status === 'PUBLISHED')) {
-      throw new BadRequestException('Không thể hủy phân công của lịch đã khóa, hoàn thành hoặc đã công bố đề.');
+    if (['LOCKED', 'COMPLETED'].includes(supervisor.examScheduleRoom.examSchedule.status)) {
+      throw new BadRequestException('Không thể hủy phân công của lịch đã khóa hoặc hoàn thành.');
     }
 
     return this.prisma.$transaction(async (tx) => {

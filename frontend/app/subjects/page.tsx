@@ -89,7 +89,7 @@ export default function SubjectsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -171,8 +171,8 @@ export default function SubjectsPage() {
         const matchCredits = filterCredits ? String(s.credits) === filterCredits : true;
         const matchStudents =
           filterHasStudents === 'yes' ? (s._count?.studentSubjects || 0) > 0
-          : filterHasStudents === 'no' ? (s._count?.studentSubjects || 0) === 0
-          : true;
+            : filterHasStudents === 'no' ? (s._count?.studentSubjects || 0) === 0
+              : true;
         return matchSearch && matchDept && matchCredits && matchStudents;
       })
       .sort((a, b) => {
@@ -404,7 +404,7 @@ export default function SubjectsPage() {
               <select value={filterCredits} onChange={(e) => { setFilterCredits(e.target.value); setPage(1); }}
                 className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
                 <option value="">Tất cả</option>
-                {[1,2,3,4,5,6].map((c) => <option key={c} value={String(c)}>{c} TC</option>)}
+                {[1, 2, 3, 4, 5, 6].map((c) => <option key={c} value={String(c)}>{c} TC</option>)}
               </select>
               <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             </div>
@@ -584,12 +584,12 @@ export default function SubjectsPage() {
                       <p className="text-[10px] font-bold text-slate-500">Tổng SV lớp</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-lg font-black text-emerald-600">{enrollClassPreview.newStudents}</p>
-                      <p className="text-[10px] font-bold text-emerald-600">Sẽ được thêm mới</p>
+                      <p className="text-lg font-black text-blue-600">{enrollClassPreview.newStudents}</p>
+                      <p className="text-[10px] font-bold text-blue-600">Sẽ được thêm mới</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-lg font-black text-amber-500">{enrollClassPreview.alreadyEnrolled}</p>
-                      <p className="text-[10px] font-bold text-amber-500">Đã đăng ký rồi</p>
+                      <p className="text-lg font-black text-slate-500">{enrollClassPreview.alreadyEnrolled}</p>
+                      <p className="text-[10px] font-bold text-slate-500">Đã đăng ký rồi</p>
                     </div>
                   </div>
                 </div>
@@ -616,7 +616,7 @@ export default function SubjectsPage() {
           <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
           <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
             {/* Drawer Header */}
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 px-6 py-5 text-white flex items-start justify-between gap-4 shrink-0">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 px-6 py-5 text-white flex items-start justify-between gap-4 shrink-0">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-black bg-white/20 rounded-lg px-2 py-0.5">{drawerSubject.subjectCode}</span>
@@ -707,7 +707,7 @@ export default function SubjectsPage() {
                   </div>
 
                   {drawerLoading ? (
-                    <div className="space-y-2">{[1,2,3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
+                    <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
                   ) : drawerClassSummary.length === 0 ? (
                     <div className="py-12 text-center">
                       <BookMarked className="h-8 w-8 text-slate-300 mx-auto mb-2" />
@@ -772,7 +772,7 @@ export default function SubjectsPage() {
                   </div>
 
                   {drawerLoading ? (
-                    <div className="space-y-2">{[1,2,3,4,5].map((i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}</div>
+                    <div className="space-y-2">{[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}</div>
                   ) : drawerEnrollments.length === 0 ? (
                     <div className="py-12 text-center">
                       <Users className="h-8 w-8 text-slate-300 mx-auto mb-2" />

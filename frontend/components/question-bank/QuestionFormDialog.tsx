@@ -288,7 +288,7 @@ export function QuestionFormDialog({
                 <input
                   {...register(`options.${i}.isCorrect`)}
                   type={type === 'MULTIPLE_CHOICE' ? 'checkbox' : 'radio'}
-                  className="h-4 w-4 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
                 <input
                   {...register(`options.${i}.label`)}
@@ -325,7 +325,7 @@ export function QuestionFormDialog({
                   order: fields.length,
                 })
               }
-              className="text-xs font-bold text-sky-600 hover:underline"
+              className="text-xs font-bold text-blue-600 hover:underline"
             >
               + Thêm lựa chọn đáp án
             </button>
@@ -334,7 +334,7 @@ export function QuestionFormDialog({
 
         {type === 'FILL_BLANK' && (
           <div className="space-y-3 border-t border-slate-100 pt-3">
-            <div className="rounded-xl bg-sky-50 p-3 text-xs leading-5 text-sky-800">
+            <div className="rounded-xl bg-blue-50 p-3 text-xs leading-5 text-blue-800">
               Đặt chỗ trống trong nội dung theo mẫu <b>{'{{blank_1}}'}</b>, <b>{'{{blank_2}}'}</b>. Tổng điểm các ô phải bằng điểm của câu hỏi.
             </div>
             {fillBlankFields.fields.map((field, index) => (
@@ -352,7 +352,7 @@ export function QuestionFormDialog({
               fillBlankFields.append({ blankIndex: index, answer: '', acceptedAnswersText: '', score: index === 1 ? currentScore : 0, ignoreWhitespace: true, caseSensitive: false, ignoreVietnameseTone: false });
               const raw = watch('contentRich')?.html || watch('content') || '';
               if (!raw.includes(`{{blank_${index}}}`)) setValue('contentRich', { html: `${raw}${raw ? ' ' : ''}{{blank_${index}}}` });
-            }} className="text-xs font-bold text-sky-600 hover:underline">+ Thêm chỗ trống</button>
+            }} className="text-xs font-bold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
           </div>
         )}
 

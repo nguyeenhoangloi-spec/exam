@@ -46,7 +46,7 @@ export default function ClassesPage() {
   };
 
   const [selected, setSelected] = useState<number[]>([]);
-  
+
   // Drawer State
   const [drawerClass, setDrawerClass] = useState<ClassItem | null>(null);
   const [drawerTab, setDrawerTab] = useState<'info' | 'students' | 'enrollments'>('info');
@@ -76,7 +76,7 @@ export default function ClassesPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -118,7 +118,7 @@ export default function ClassesPage() {
   useEffect(() => {
     const fetchDrawerData = async () => {
       if (!drawerClass?.id) return;
-      
+
       if (drawerTab === 'students' && !drawerDetail) {
         setIsLoadingDrawer(true);
         try {
@@ -505,14 +505,14 @@ export default function ClassesPage() {
       {/* Custom Profile Drawer */}
       {drawerClass && (
         <div className="fixed inset-0 z-[100] flex justify-end">
-          <div 
-            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" 
-            onClick={() => setDrawerClass(null)} 
+          <div
+            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity"
+            onClick={() => setDrawerClass(null)}
           />
-          
+
           <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
-            <div className="bg-gradient-to-br from-teal-600 to-emerald-700 p-6 text-white shrink-0">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 text-white shrink-0">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-4">
                   <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/30 font-black text-xl shadow-inner">
@@ -520,10 +520,10 @@ export default function ClassesPage() {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold leading-tight line-clamp-2">{drawerClass.name}</h2>
-                    <p className="text-teal-50 font-medium mt-1">Mã lớp: {drawerClass.code}</p>
+                    <p className="text-blue-50 font-medium mt-1">Mã lớp: {drawerClass.code}</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setDrawerClass(null)}
                   className="rounded-full p-2 bg-white/10 hover:bg-white/20 transition-colors text-white cursor-pointer"
                 >
@@ -536,31 +536,28 @@ export default function ClassesPage() {
             <div className="flex border-b border-slate-200 px-4 pt-2 bg-slate-50 shrink-0">
               <button
                 onClick={() => setDrawerTab('info')}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
-                  drawerTab === 'info'
-                    ? 'border-emerald-600 text-emerald-700'
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${drawerTab === 'info'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
-                }`}
+                  }`}
               >
                 Thông tin
               </button>
               <button
                 onClick={() => setDrawerTab('students')}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
-                  drawerTab === 'students'
-                    ? 'border-emerald-600 text-emerald-700'
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${drawerTab === 'students'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
-                }`}
+                  }`}
               >
                 Sinh viên
               </button>
               <button
                 onClick={() => setDrawerTab('enrollments')}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
-                  drawerTab === 'enrollments'
-                    ? 'border-emerald-600 text-emerald-700'
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${drawerTab === 'enrollments'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
-                }`}
+                  }`}
               >
                 Môn đăng ký
               </button>
@@ -579,9 +576,9 @@ export default function ClassesPage() {
                       <p className="text-sm font-bold text-slate-900">{drawerClass.name}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <div className="h-10 w-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                    <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
                       <Building2 className="h-5 w-5" />
                     </div>
                     <div>
@@ -591,7 +588,7 @@ export default function ClassesPage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                    <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
                       <Users className="h-5 w-5" />
                     </div>
                     <div>
@@ -624,13 +621,13 @@ export default function ClassesPage() {
                   ) : (
                     <div className="flex-1 overflow-y-auto space-y-3 pb-4">
                       {drawerDetail?.students
-                        ?.filter((sv: any) => 
-                          (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) || 
+                        ?.filter((sv: any) =>
+                          (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) ||
                           (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
                         )
                         .map((sv: any) => (
-                          <div key={sv.id} className="p-3 rounded-xl border border-slate-100 hover:border-emerald-200 bg-slate-50 hover:bg-emerald-50/30 transition-colors flex gap-3">
-                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold shrink-0">
+                          <div key={sv.id} className="p-3 rounded-xl border border-slate-100 hover:border-blue-200 bg-slate-50 hover:bg-blue-50/30 transition-colors flex gap-3">
+                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0">
                               {sv.fullName?.charAt(0) || 'U'}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -657,16 +654,16 @@ export default function ClassesPage() {
                             Không có sinh viên nào.
                           </div>
                         )}
-                        
-                        {drawerDetail?.students?.length > 0 && 
-                         drawerDetail?.students?.filter((sv: any) => 
-                           (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) || 
-                           (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
-                         ).length === 0 && (
-                           <div className="text-center text-sm text-slate-500 mt-10">
-                             Không tìm thấy kết quả phù hợp.
-                           </div>
-                         )}
+
+                      {drawerDetail?.students?.length > 0 &&
+                        drawerDetail?.students?.filter((sv: any) =>
+                          (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) ||
+                          (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
+                        ).length === 0 && (
+                          <div className="text-center text-sm text-slate-500 mt-10">
+                            Không tìm thấy kết quả phù hợp.
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
@@ -676,7 +673,7 @@ export default function ClassesPage() {
                 <div className="space-y-4 animate-in fade-in duration-300">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 className="text-sm font-bold text-slate-900">Danh sách môn học đã đăng ký</h3>
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
+                    <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
                       {drawerEnrollments?.length || 0} môn
                     </span>
                   </div>
@@ -693,12 +690,12 @@ export default function ClassesPage() {
                         <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs hover:border-emerald-300 transition-all">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-3">
-                              <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 font-black text-xs shrink-0 border border-teal-100">
+                              <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs shrink-0 border border-blue-100">
                                 <BookOpen className="h-5 w-5" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs font-black text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+                                  <span className="text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
                                     {sub.subjectCode}
                                   </span>
                                   <span className="text-xs font-bold text-slate-500">{sub.credits} tín chỉ</span>
@@ -714,7 +711,7 @@ export default function ClassesPage() {
                                 {sub.semester} ({sub.schoolYear})
                               </span>
                               <p className="text-xs text-slate-500 font-medium mt-1">
-                                <span className="font-bold text-emerald-600">{sub.studentCount}</span> SV học
+                                <span className="font-bold text-blue-600">{sub.studentCount}</span> SV học
                               </p>
                             </div>
                           </div>

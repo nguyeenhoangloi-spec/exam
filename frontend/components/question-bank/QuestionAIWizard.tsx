@@ -53,8 +53,7 @@ export function QuestionAIWizard({
         setSourceImages(res.data?.images || []);
         setDocumentData(res.data?.documentData);
         setUploadStatus(
-          `Đã trích xuất xong tệp "${file.name}" (${res.data.text?.length || 0} ký tự${
-            res.data?.images?.length ? `, kèm ${res.data.images.length} hình ảnh` : ''
+          `Đã trích xuất xong tệp "${file.name}" (${res.data.text?.length || 0} ký tự${res.data?.images?.length ? `, kèm ${res.data.images.length} hình ảnh` : ''
           }).`
         );
       }
@@ -359,16 +358,14 @@ export function QuestionAIWizard({
                         {q.options.map((opt: any, optIdx: number) => (
                           <div
                             key={optIdx}
-                            className={`flex items-center gap-2 rounded-lg border p-2 text-xs font-medium transition ${
-                              opt.isCorrect
+                            className={`flex items-center gap-2 rounded-lg border p-2 text-xs font-medium transition ${opt.isCorrect
                                 ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
                                 : 'border-slate-200 bg-slate-50 text-slate-700'
-                            }`}
+                              }`}
                           >
                             <span
-                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10.5px] font-bold ${
-                                opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
-                              }`}
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10.5px] font-bold ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                                }`}
                             >
                               {opt.label}
                             </span>
@@ -385,8 +382,8 @@ export function QuestionAIWizard({
                   )}
 
                   {q.explanation && (
-                    <div className="rounded-lg bg-amber-50/70 border border-amber-200 p-2 text-xs text-amber-900 font-medium">
-                      <strong className="font-bold text-amber-950">Giải thích chi tiết:</strong> {q.explanation}
+                    <div className="rounded-lg bg-blue-50/70 border border-blue-200 p-2 text-xs text-blue-900 font-medium">
+                      <strong className="font-bold text-blue-950">Giải thích chi tiết:</strong> {q.explanation}
                     </div>
                   )}
                 </div>

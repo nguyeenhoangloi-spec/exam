@@ -95,7 +95,7 @@ export default function PracticePage() {
     <>
       <div className="mx-auto max-w-5xl space-y-6 p-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900"><BookOpen className="text-sky-600" /> Luyện tập tự do</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900"><BookOpen className="text-blue-600" /> Luyện tập tự do</h1>
           <p className="mt-1 text-sm text-slate-500">Tạo bài luyện tập theo môn học, làm bài và nhận kết quả ngay.</p>
         </div>
 
@@ -113,7 +113,7 @@ export default function PracticePage() {
                 </select>
               </label>
             </div>
-            <button onClick={startPractice} disabled={working || loading || !subjects.length} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white hover:bg-sky-700 disabled:opacity-50">
+            <button onClick={startPractice} disabled={working || loading || !subjects.length} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
               {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />} Bắt đầu luyện tập
             </button>
           </div>
@@ -134,7 +134,7 @@ export default function PracticePage() {
           </div>
         )}
 
-        {result && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" /><h2 className="mt-3 text-2xl font-bold text-slate-900">Hoàn thành bài luyện tập</h2><p className="mt-2 text-slate-700">Điểm: <strong>{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}</p><button onClick={() => setResult(null)} className="mt-5 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white">Tạo bài mới</button></div>}
+        {result && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" /><h2 className="mt-3 text-2xl font-bold text-slate-900">Hoàn thành bài luyện tập</h2><p className="mt-2 text-slate-700">Điểm: <strong>{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}</p><button onClick={() => setResult(null)} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white">Tạo bài mới</button></div>}
       </div>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <ConfirmModal

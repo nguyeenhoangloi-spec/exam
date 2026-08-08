@@ -109,7 +109,7 @@ export default function StudentCurriculumPage() {
     { label: 'Tổng môn trong khung', value: `${stats?.totalSubjects ?? 0} môn`, icon: BookOpen, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
     { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC`, icon: Layers, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
     { label: 'Môn bắt buộc', value: `${stats?.totalMandatoryCredits ?? 0} TC`, icon: Award, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
   ];
 
   return (
@@ -120,14 +120,14 @@ export default function StudentCurriculumPage() {
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
           {/* BG decorations */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-sky-400/15 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute -right-16 -top-16 w-64 h-64 bg-blue-400/15 rounded-full blur-[80px] pointer-events-none" />
           <div className="absolute -left-8 bottom-0 w-48 h-48 bg-blue-600/20 rounded-full blur-[70px] pointer-events-none" />
           <GraduationCap className="absolute -bottom-8 -right-8 w-48 h-48 text-white/[0.05] rotate-12 pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             {/* Info */}
             <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-sky-200 text-[10.5px] font-bold tracking-wide">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-blue-200 text-[10.5px] font-bold tracking-wide">
                 <Sparkles className="w-3 h-3" />
                 Chương Trình Đào Tạo Chuẩn
               </div>
@@ -136,15 +136,15 @@ export default function StudentCurriculumPage() {
               </h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-100/80 font-medium">
                 <span className="flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-sky-300" />
+                  <User className="w-3.5 h-3.5 text-blue-300" />
                   {studentInfo?.fullName || '---'} ({studentInfo?.studentCode || '---'})
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <School className="w-3.5 h-3.5 text-sky-300" />
+                  <School className="w-3.5 h-3.5 text-blue-300" />
                   Lớp: {studentInfo?.className || studentInfo?.classCode || '---'}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-sky-300" />
+                  <Building2 className="w-3.5 h-3.5 text-blue-300" />
                   Mã Khoa: {studentInfo?.departmentCode || '---'}
                 </span>
               </div>
@@ -154,11 +154,11 @@ export default function StudentCurriculumPage() {
             <div className="w-full lg:w-72 shrink-0 bg-white/10 border border-white/20 backdrop-blur-sm rounded-2xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white/80">Tiến độ tích lũy tín chỉ</span>
-                <span className="text-lg font-black text-emerald-300">{completionPercentage}%</span>
+                <span className="text-lg font-black text-blue-100">{completionPercentage}%</span>
               </div>
               <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-emerald-400 to-sky-400 h-full rounded-full transition-all duration-700"
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 h-full rounded-full transition-all duration-700"
                   style={{ width: `${completionPercentage}%` }}
                 />
               </div>
@@ -286,7 +286,7 @@ export default function StudentCurriculumPage() {
                     {/* Semester header */}
                     <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-5 py-3.5 border-b border-slate-100">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-sky-500 text-white flex items-center justify-center font-black text-sm shadow-sm">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-500 text-white flex items-center justify-center font-black text-sm shadow-sm">
                           {semester}
                         </div>
                         <div>
@@ -302,7 +302,7 @@ export default function StudentCurriculumPage() {
                         <div className="flex items-center gap-1.5">
                           <div className="w-24 bg-slate-200 h-1.5 rounded-full overflow-hidden">
                             <div
-                              className="bg-gradient-to-r from-blue-500 to-emerald-500 h-full rounded-full transition-all duration-500"
+                              className="bg-gradient-to-r from-blue-500 to-blue-400 h-full rounded-full transition-all duration-500"
                               style={{ width: `${semPct}%` }}
                             />
                           </div>
@@ -366,7 +366,7 @@ export default function StudentCurriculumPage() {
                                     Bắt buộc
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                                     Tự chọn
                                   </span>
                                 )}

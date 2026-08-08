@@ -1,19 +1,21 @@
 'use client';
 
 import React from 'react';
-import { Calendar, CheckCircle } from 'lucide-react';
+import { Calendar, Printer } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type WelcomeBannerProps = {
   username: string;
   examCount: number;
   pendingQuestionCount: number;
+  onExportPDF?: () => void;
 };
 
 export function DashboardWelcome({
   username,
   examCount,
   pendingQuestionCount,
+  onExportPDF,
 }: WelcomeBannerProps) {
   const router = useRouter();
 
@@ -21,9 +23,9 @@ export function DashboardWelcome({
   const displayPendingCount = pendingQuestionCount ?? 0;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-[#0047BA] p-6 text-white shadow-md min-h-[140px] flex flex-col justify-between">
-      {/* 3D Isometric Vector Illustration Matching Exact Reference Screenshot */}
-      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-90">
+    <div className="relative overflow-hidden rounded-2xl bg-[#0047BA] p-6 text-white shadow-md min-h-[120px] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 3D Isometric Vector Illustration */}
+      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-30">
         <svg viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           {/* Isometric Diamond Base Shadow */}
           <path d="M160 30L300 90L160 150L20 90L160 30Z" fill="#003494" fillOpacity="0.6" />
@@ -60,31 +62,32 @@ export function DashboardWelcome({
         <h2 className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">
           Xin chào, <span className="text-[#7DD3FC]">{username}</span>! 👋
         </h2>
-        <p className="text-xs font-semibold text-sky-100/90 leading-relaxed pt-0.5">
+        <p className="text-xs font-semibold text-blue-100/90 leading-relaxed pt-0.5">
           Hôm nay có <strong className="text-white font-extrabold">{displayExamCount} kỳ thi</strong> sắp diễn ra và{' '}
           <strong className="text-white font-extrabold">{displayPendingCount} câu hỏi</strong> đang chờ bạn phê duyệt vào ngân hàng câu hỏi.
         </p>
       </div>
 
-      {/* Action Pills */}
-      <div className="relative z-10 pt-4 flex flex-wrap items-center gap-3">
+      {/* Action Pills - Nằm bên phải theo đúng chuẩn Hero Banner */}
+      <div className="relative z-10 flex flex-wrap items-center sm:justify-end gap-2.5 shrink-0">
         <button
           type="button"
           onClick={() => router.push('/exam-schedules')}
-          className="flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 px-4 py-1.5 text-xs font-bold text-white border border-white/25 transition active:scale-95 cursor-pointer shadow-2xs"
+          className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-[#003896] px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
         >
-          <Calendar className="h-4 w-4 text-sky-300" />
+          <Calendar className="h-4 w-4 text-[#003896]" />
           <span>Xem lịch thi</span>
         </button>
 
-        {displayPendingCount > 0 && (
+        {onExportPDF && (
           <button
             type="button"
-            onClick={() => router.push('/question-bank?status=PENDING')}
-            className="flex items-center gap-2 rounded-full bg-white text-blue-900 hover:bg-sky-50 px-4 py-1.5 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer"
+            onClick={onExportPDF}
+            className="flex items-center gap-2 rounded-xl bg-[#001E5C] hover:bg-[#001748] text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer shadow-xs border border-blue-400/20"
+            title="Xuất Báo cáo tổng quan Dashboard ra file PDF A4"
           >
-            <CheckCircle className="h-4 w-4 text-blue-600" />
-            <span>Duyệt câu hỏi ({displayPendingCount})</span>
+            <Printer className="h-4 w-4 text-white" />
+            <span>Xuất Báo cáo PDF</span>
           </button>
         )}
       </div>

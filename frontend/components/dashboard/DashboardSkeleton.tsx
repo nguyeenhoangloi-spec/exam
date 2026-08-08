@@ -23,7 +23,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Task attention */}
-      <div className="rounded-2xl border border-warning-200/80 bg-gradient-to-r from-warning-50/40 via-white to-orange-50/30 p-5">
+      <div className="rounded-2xl border border-warning-200/80 bg-gradient-to-r from-warning-50/40 via-white to-blue-50/30 p-5">
         <div className="mb-3 flex items-center gap-2">
           <Skeleton className="h-7 w-7 rounded-lg" />
           <Skeleton className="h-4 w-40" />

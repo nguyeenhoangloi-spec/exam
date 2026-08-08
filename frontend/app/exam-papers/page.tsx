@@ -20,6 +20,7 @@ import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICard
 import { ExamPaperMatrixForm } from '../../components/exam-papers/ExamPaperMatrixForm';
 import { ExamPaperTableToolbar } from '../../components/exam-papers/ExamPaperTableToolbar';
 import { ExamPaperTable } from '../../components/exam-papers/ExamPaperTable';
+import { ChangeExamPasswordModal } from '../../components/exam-papers/ChangeExamPasswordModal';
 import { TabBar } from '../../components/ui/TabBar';
 import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
 
@@ -130,6 +131,18 @@ export default function ExamPapersPage() {
 
   const [selected, setSelected] = useState<number[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Change Exam Password Modal State
+  const [changePasswordModal, setChangePasswordModal] = useState<{
+    isOpen: boolean;
+    paper: ExamPaper | null;
+  }>({ isOpen: false, paper: null });
+
+  const handleChangePasswordSubmit = async (paperId: number, newPassword: string, reason?: string) => {
+    await api.patch(`/exam-papers/${paperId}/password`, { newPassword, reason });
+    setToast({ message: 'Đã cập nhật mật khẩu ca thi thành công!', type: 'success' });
+    fetchData();
+  };
 
   // Question Swap Modal State
   const [swapModal, setSwapModal] = useState<{
@@ -681,6 +694,7 @@ export default function ExamPapersPage() {
             onDetail={openDetail}
             onExportWord={exportPaper}
             onAction={runAction}
+            onChangePassword={(paper) => setChangePasswordModal({ isOpen: true, paper })}
             busyId={busyId}
             isAdmin={currentUser?.role === 'ADMIN'}
           />
@@ -711,7 +725,7 @@ export default function ExamPapersPage() {
                 <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700 border border-blue-200">
                   {(selectedPaper as any).questionCount ?? selectedPaper.questions?.length ?? (selectedPaper as any).details?.length ?? 0} câu hỏi
                 </span>
-                <span className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700 border border-emerald-200">
+                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700 border border-blue-200">
                   {selectedPaper.totalScore} điểm
                 </span>
                 <span className="rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-black text-slate-700 border border-slate-200">
@@ -761,10 +775,10 @@ export default function ExamPapersPage() {
                           <button
                             type="button"
                             onClick={() => openSwapModal(index, q)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 px-2 py-1 text-[10.5px] font-black border border-purple-200 transition cursor-pointer"
+                            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 text-[10.5px] font-black border border-blue-200 transition cursor-pointer"
                             title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
                           >
-                            <RotateCcw className="w-3 h-3 text-purple-600" /> Đổi câu hỏi
+                            <RotateCcw className="w-3 h-3 text-blue-600" /> Đổi câu hỏi
                           </button>
                         )}
                         <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700">
@@ -833,19 +847,19 @@ export default function ExamPapersPage() {
           title={`Đổi Câu Hỏi #${(swapModal.questionIndex ?? 0) + 1} - Danh sách gợi ý thay thế`}
         >
           <div className="space-y-4">
-            <div className="rounded-xl bg-purple-50 p-3 border border-purple-200 text-xs text-purple-900">
+            <div className="rounded-xl bg-blue-50 p-3 border border-blue-200 text-xs text-blue-900">
               <p className="font-bold">Câu hỏi hiện tại đang bị thay thế:</p>
-              <p className="mt-1 font-semibold text-slate-700 italic border-l-2 border-purple-400 pl-2">
+              <p className="mt-1 font-semibold text-slate-700 italic border-l-2 border-blue-400 pl-2">
                 &quot;{swapModal.targetQuestion?.content}&quot;
               </p>
-              <p className="mt-1 text-[11px] text-purple-700 font-bold">
+              <p className="mt-1 text-[11px] text-blue-700 font-bold">
                 Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'Trắc nghiệm'}) & độ khó tương đương từ Ngân hàng đề.
               </p>
             </div>
 
             {swapModal.loading ? (
               <div className="py-8 text-center text-xs text-slate-400 font-semibold flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4 animate-spin text-purple-600" />
+                <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
                 <span>Đang tải câu hỏi tương đương từ Ngân hàng đề...</span>
               </div>
             ) : swapModal.alternatives.length === 0 ? (
@@ -855,7 +869,7 @@ export default function ExamPapersPage() {
             ) : (
               <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-1">
                 {swapModal.alternatives.map((altQ: any) => (
-                  <div key={altQ.id} className="rounded-2xl border border-slate-200 bg-white p-3.5 space-y-2 hover:border-purple-300 transition shadow-2xs">
+                  <div key={altQ.id} className="rounded-2xl border border-slate-200 bg-white p-3.5 space-y-2 hover:border-blue-300 transition shadow-2xs">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-xs font-extrabold text-slate-900 leading-snug">
                         {altQ.content}
@@ -863,7 +877,7 @@ export default function ExamPapersPage() {
                       <button
                         type="button"
                         onClick={() => handleSelectSwapQuestion(altQ)}
-                        className="shrink-0 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-3 py-1.5 shadow-2xs transition cursor-pointer"
+                        className="shrink-0 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-3 py-1.5 shadow-2xs transition cursor-pointer"
                       >
                         Chọn câu này
                       </button>
@@ -910,6 +924,13 @@ export default function ExamPapersPage() {
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
+      />
+
+      <ChangeExamPasswordModal
+        isOpen={changePasswordModal.isOpen}
+        paper={changePasswordModal.paper}
+        onClose={() => setChangePasswordModal({ isOpen: false, paper: null })}
+        onSubmit={handleChangePasswordSubmit}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

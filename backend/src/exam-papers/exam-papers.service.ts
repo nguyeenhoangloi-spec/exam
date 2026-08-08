@@ -9,7 +9,7 @@ import { ExamPaperStatus, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRandomExamPaperDto } from './dto/exam-paper.dto';
+import { CreateRandomExamPaperDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
 
 type Actor = { id: number; role: string };
 
@@ -347,15 +347,31 @@ export class ExamPapersService {
       ...(examScheduleId && { examScheduleId }),
       ...(actor.role === 'TEACHER' && { OR: [{ createdById: actor.id }, { status: ExamPaperStatus.PUBLISHED }] }),
     };
-    return this.prisma.examPaper.findMany({
+    const papers = await this.prisma.examPaper.findMany({
       where,
       include: {
-        examSchedule: { include: { subject: true, examPeriod: true } },
+        examSchedule: {
+          include: {
+            subject: true,
+            examPeriod: true,
+            onlineExamConfig: {
+              select: {
+                id: true,
+                examPasswordHash: true,
+              },
+            },
+          },
+        },
         createdBy: { select: { id: true, username: true, role: true } },
         _count: { select: { questions: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    return papers.map((paper: any) => ({
+      ...paper,
+      hasExamPassword: Boolean(paper.examSchedule?.onlineExamConfig?.examPasswordHash),
+    }));
   }
 
   async findOne(actor: Actor, id: number) {
@@ -522,4 +538,57 @@ export class ExamPapersService {
       return removed;
     });
   }
+
+  async updatePassword(actor: Actor, id: number, dto: UpdateExamPasswordDto) {
+    const paper = await this.current(id);
+    this.assertOwner(actor, paper);
+
+    if (!paper.examScheduleId) {
+      throw new BadRequestException('Đề thi chưa được gán vào lịch thi.');
+    }
+
+    if (!dto.newPassword || dto.newPassword.trim().length < 4) {
+      throw new BadRequestException('Mật khẩu ca thi mới phải có tối thiểu 4 ký tự.');
+    }
+
+    const examPasswordHash = await bcrypt.hash(dto.newPassword.trim(), 10);
+    const hasEssayQuestions = paper.questions.some((item: any) => item.question?.type === 'ESSAY');
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.onlineExamConfig.upsert({
+        where: { examScheduleId: paper.examScheduleId },
+        update: {
+          examPaperId: id,
+          examPasswordHash,
+        },
+        create: {
+          examScheduleId: paper.examScheduleId,
+          examPaperId: id,
+          requireFullscreen: true,
+          preventTabSwitch: true,
+          preventCopyPaste: true,
+          shuffleQuestions: true,
+          shuffleOptions: true,
+          essayEnabled: hasEssayQuestions,
+          examPasswordHash,
+        },
+      });
+
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'UPDATE_EXAM_PASSWORD',
+        entityType: 'EXAM_PAPER',
+        entityId: id,
+        description: `Đã đổi mật khẩu ca thi cho đề thi ${paper.paperCode}.${dto.reason ? ` Lý do: ${dto.reason}` : ''}`,
+        metadata: { paperCode: paper.paperCode, examScheduleId: paper.examScheduleId, reason: dto.reason },
+      }, tx);
+
+      return {
+        message: 'Đổi mật khẩu ca thi thành công.',
+        paperId: id,
+        hasExamPassword: true,
+      };
+    });
+  }
 }
+

@@ -50,9 +50,8 @@ export function StudentTable({
           return (
             <div
               key={s.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -178,7 +177,7 @@ export function StudentTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 font-bold text-sky-700 font-mono whitespace-nowrap">{s.studentCode}</td>
+                  <td className="p-2 font-bold text-slate-700 font-mono whitespace-nowrap">{s.studentCode}</td>
                   <td className="p-2 min-w-[160px]">
                     <span
                       onClick={() => onDetail(s)}

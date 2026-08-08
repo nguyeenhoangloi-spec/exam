@@ -51,9 +51,8 @@ export function SubjectTable({
           return (
             <div
               key={s.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -73,8 +72,8 @@ export function SubjectTable({
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700">
-                    <Award className="h-3 w-3 text-emerald-600" /> {s.credits} Tín chỉ
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500">
+                    <Award className="h-3 w-3 text-slate-400" /> {s.credits} Tín chỉ
                   </span>
                 </div>
 
@@ -97,7 +96,7 @@ export function SubjectTable({
                 <button
                   type="button"
                   onClick={() => onEnroll(s)}
-                  className="flex items-center gap-1 text-sky-600 hover:text-sky-700 cursor-pointer"
+                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 cursor-pointer"
                 >
                   <UserPlus className="h-3.5 w-3.5" />
                   <span>Gán sinh viên</span>
@@ -178,7 +177,7 @@ export function SubjectTable({
                       {s.subjectName}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-emerald-600">{s.credits} TC</td>
+                  <td className="p-2 whitespace-nowrap font-bold text-slate-700">{s.credits} TC</td>
                   <td className="p-2 min-w-[180px] font-semibold text-slate-700">{deptName}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
@@ -224,9 +223,8 @@ export function SubjectTable({
             return (
               <tr
                 key={s.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
-                }`}
+                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                  }`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input
@@ -304,9 +302,9 @@ export function SubjectTable({
                               closeMenu();
                               onEnroll(s);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-sky-50 text-sky-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700"
                           >
-                            <UserPlus className="h-3.5 w-3.5 text-sky-600" />
+                            <UserPlus className="h-3.5 w-3.5 text-blue-600" />
                             <span>Gán Sinh viên</span>
                           </button>
 

@@ -49,7 +49,7 @@ export default function StudentsPage() {
   };
 
   const [selected, setSelected] = useState<number[]>([]);
-  
+
   // Custom Drawer State
   const [drawerStudent, setDrawerStudent] = useState<Student | null>(null);
   const [drawerTab, setDrawerTab] = useState<'info' | 'subjects' | 'schedule'>('info');
@@ -136,7 +136,7 @@ export default function StudentsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -454,7 +454,7 @@ export default function StudentsPage() {
               required
               value={formData.studentCode}
               onChange={(e) => setFormData({ ...formData, studentCode: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -465,7 +465,7 @@ export default function StudentsPage() {
               required
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -475,7 +475,7 @@ export default function StudentsPage() {
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
               >
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
@@ -487,7 +487,7 @@ export default function StudentsPage() {
                 required
                 value={formData.classId}
                 onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
               >
                 <option value="">-- Chọn lớp học --</option>
                 {classes.map((cls) => (
@@ -505,7 +505,7 @@ export default function StudentsPage() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -514,7 +514,7 @@ export default function StudentsPage() {
                 type="text"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -529,7 +529,7 @@ export default function StudentsPage() {
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm cursor-pointer"
+              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-semibold transition shadow-sm cursor-pointer"
             >
               Lưu Sinh viên
             </button>
@@ -557,9 +557,9 @@ export default function StudentsPage() {
             onClick={closeDrawer}
           />
           <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
-            
-            {/* Header (gradient from-blue-600 to-indigo-700) */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white shrink-0">
+
+            {/* Header (gradient from-blue-600 to-blue-700) */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white shrink-0">
               <div className="flex items-start justify-between">
                 <div className="flex gap-4 items-center">
                   <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-black shadow-inner">
@@ -595,11 +595,10 @@ export default function StudentsPage() {
                   <button
                     key={t.id}
                     onClick={() => handleTabChange(t.id as any)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all border-b-2 ${
-                      isActive
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all border-b-2 ${isActive
                         ? 'border-blue-600 text-blue-600'
                         : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
                     <Icon className="h-4 w-4" />
                     {t.label}
@@ -668,10 +667,10 @@ export default function StudentsPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* KPI Metrics in Info tab */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-blue-100 p-4">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl border border-blue-100 p-4">
                       <div className="flex items-center gap-2 text-blue-600 mb-2">
                         <BookOpen className="h-4 w-4" />
                         <span className="text-xs font-bold uppercase">Môn đăng ký</span>
@@ -680,12 +679,12 @@ export default function StudentsPage() {
                         {drawerSubjects ? drawerSubjects.length : '--'}
                       </p>
                     </div>
-                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-4">
-                      <div className="flex items-center gap-2 text-amber-600 mb-2">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-100 p-4">
+                      <div className="flex items-center gap-2 text-blue-600 mb-2">
                         <Clock className="h-4 w-4" />
                         <span className="text-xs font-bold uppercase">Lịch thi</span>
                       </div>
-                      <p className="text-2xl font-black text-amber-900">
+                      <p className="text-2xl font-black text-blue-900">
                         {drawerSchedule ? drawerSchedule.length : '--'}
                       </p>
                     </div>
@@ -728,7 +727,7 @@ export default function StudentsPage() {
                                 )}
                               </div>
                               <div className="text-right">
-                                <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold">
+                                <span className="inline-block px-2.5 py-1 bg-slate-50 text-slate-600 border border-slate-200 rounded-lg text-xs font-bold">
                                   {sub.credits} TC
                                 </span>
                                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">{item.semester} • {item.schoolYear || item.year || ''}</p>
@@ -756,15 +755,15 @@ export default function StudentsPage() {
                   ) : (
                     <div className="space-y-4">
                       {drawerSchedule.map((sched: any, idx: number) => (
-                        <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden hover:border-indigo-300 transition-colors">
+                        <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden hover:border-blue-300 transition-colors">
                           <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-indigo-600" />
+                              <Calendar className="h-4 w-4 text-blue-600" />
                               <span className="text-xs font-bold text-slate-700">
                                 {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
                               </span>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-amber-100 text-amber-800 border border-amber-200">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-100">
                               {sched.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : sched.examType === 'TU_LUAN' ? 'Tự luận' : sched.examType || 'Thi'}
                             </span>
                           </div>
@@ -784,7 +783,7 @@ export default function StudentsPage() {
                               </div>
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>Số ghế: <span className="font-bold text-emerald-600">{sched.seatNumber || '--'}</span></span>
+                                <span>Số ghế: <span className="font-bold text-blue-600">{sched.seatNumber || '--'}</span></span>
                               </div>
                               {sched.periodName && (
                                 <div className="flex items-center gap-1.5 text-slate-600">

@@ -96,7 +96,7 @@ export default function TeachersPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -395,8 +395,8 @@ export default function TeachersPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {!editingTeacher && (
-            <div className="p-3 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-700 font-medium flex items-start gap-2">
-              <Info className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-700 font-medium flex items-start gap-2">
+              <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
               <span><strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định được khởi tạo là <strong>Mã giảng viên</strong> (Ví dụ: GV001).</span>
             </div>
           )}
@@ -409,7 +409,7 @@ export default function TeachersPage() {
                 required
                 value={formData.teacherCode}
                 onChange={(e) => setFormData({ ...formData, teacherCode: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -417,7 +417,7 @@ export default function TeachersPage() {
               <select
                 value={formData.degree}
                 onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
               >
                 {DEGREE_OPTIONS.map((d) => (
                   <option key={d} value={d}>{d}</option>
@@ -433,7 +433,7 @@ export default function TeachersPage() {
               required
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -443,7 +443,7 @@ export default function TeachersPage() {
               required
               value={formData.departmentId}
               onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none cursor-pointer"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
             >
               <option value="">-- Chọn Khoa --</option>
               {departments.map((d) => (
@@ -460,7 +460,7 @@ export default function TeachersPage() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -469,7 +469,7 @@ export default function TeachersPage() {
                 type="text"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -484,7 +484,7 @@ export default function TeachersPage() {
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-sky-600 hover:bg-sky-700 text-sm font-semibold transition shadow-sm cursor-pointer"
+              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-semibold transition shadow-sm cursor-pointer"
             >
               Lưu Giảng viên
             </button>
@@ -508,31 +508,31 @@ export default function TeachersPage() {
       {drawerTeacher && (
         <div className="fixed inset-0 z-[100] flex justify-end">
           {/* Overlay */}
-          <div 
+          <div
             className="absolute inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity"
             onClick={() => setDrawerTeacher(null)}
           />
           {/* Drawer Panel */}
           <div className="relative w-full max-w-md bg-slate-50 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
             {/* Header */}
-            <div className="relative pt-8 pb-6 px-6 bg-gradient-to-br from-amber-600 to-orange-700 text-white shrink-0">
-              <button 
+            <div className="relative pt-8 pb-6 px-6 bg-gradient-to-br from-blue-600 to-blue-800 text-white shrink-0">
+              <button
                 onClick={() => setDrawerTeacher(null)}
                 className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 transition-colors text-white/90 hover:text-white cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
-              
+
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-bold backdrop-blur-sm border border-white/30 shadow-inner">
                   {drawerTeacher.fullName.slice(-1)}
                 </div>
                 <div>
                   <h2 className="text-xl font-bold leading-tight">{drawerTeacher.fullName}</h2>
-                  <p className="text-amber-100 text-sm mt-1 font-medium">Mã cán bộ: {drawerTeacher.teacherCode}</p>
+                  <p className="text-blue-100 text-sm mt-1 font-medium">Mã cán bộ: {drawerTeacher.teacherCode}</p>
                 </div>
               </div>
-              
+
               <div className="mt-6 flex bg-white/10 p-1 rounded-xl backdrop-blur-md">
                 {[
                   { id: 'info', label: 'Thông tin' },
@@ -542,11 +542,10 @@ export default function TeachersPage() {
                   <button
                     key={tab.id}
                     onClick={() => setDrawerTab(tab.id as any)}
-                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-                      drawerTab === tab.id 
-                        ? 'bg-white text-orange-700 shadow-sm' 
-                        : 'text-amber-100 hover:text-white hover:bg-white/10'
-                    }`}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${drawerTab === tab.id
+                        ? 'bg-white text-blue-700 shadow-sm'
+                        : 'text-blue-100 hover:text-white hover:bg-white/10'
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -569,7 +568,7 @@ export default function TeachersPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                         <GraduationCap className="w-5 h-5" />
                       </div>
                       <div>
@@ -578,7 +577,7 @@ export default function TeachersPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div>
@@ -587,7 +586,7 @@ export default function TeachersPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                         <Mail className="w-5 h-5" />
                       </div>
                       <div>
@@ -596,7 +595,7 @@ export default function TeachersPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                         <Phone className="w-5 h-5" />
                       </div>
                       <div>
@@ -612,7 +611,7 @@ export default function TeachersPage() {
                 <div className="space-y-4">
                   {loadingAssignments ? (
                     <div className="flex justify-center p-8">
-                      <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   ) : drawerAssignments.length === 0 ? (
                     <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm text-center">
@@ -628,7 +627,7 @@ export default function TeachersPage() {
                         const room = assignment.examScheduleRoom?.room;
                         const subject = sched?.subject;
                         return (
-                          <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:border-orange-200 transition-colors space-y-2">
+                          <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:border-blue-200 transition-colors space-y-2">
                             <div className="flex justify-between items-start">
                               <div>
                                 <h4 className="font-bold text-slate-800 text-sm">
@@ -638,9 +637,8 @@ export default function TeachersPage() {
                                   <span className="text-xs font-semibold text-slate-500">Mã môn: {subject.subjectCode}</span>
                                 )}
                               </div>
-                              <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase shrink-0 ${
-                                assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
-                              }`}>
+                              <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
+                                }`}>
                                 {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                               </span>
                             </div>
@@ -676,7 +674,7 @@ export default function TeachersPage() {
 
               {drawerTab === 'department' && (
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
-                  <div className="w-16 h-16 mx-auto bg-amber-50 rounded-full flex items-center justify-center text-amber-600 mb-4">
+                  <div className="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-4">
                     <Building2 className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-800 mb-1">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>

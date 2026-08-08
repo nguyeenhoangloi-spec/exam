@@ -134,7 +134,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               {cancelText}
             </Button>
           )}
-          <Button variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'secondary'} size="sm" onClick={handleConfirm} disabled={isLoading} isLoading={isLoading}>
+          <Button variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'warning'} size="sm" onClick={handleConfirm} disabled={isLoading} isLoading={isLoading}>
             {confirmText}
           </Button>
         </div>

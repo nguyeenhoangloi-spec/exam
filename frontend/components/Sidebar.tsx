@@ -199,11 +199,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-[#0f1b33] text-slate-100 border-r border-slate-800 shadow-2xl transition-all duration-200 ease-in-out ${
-        collapsed ? 'w-[76px]' : 'w-64'
-      } ${
-        mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
-      }`}
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-[#0f1b33] text-slate-100 border-r border-slate-800 shadow-2xl transition-all duration-200 ease-in-out ${collapsed ? 'w-[76px]' : 'w-64'
+        } ${mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
+        }`}
     >
       {/* Header Section with Toggle Button */}
       {collapsed ? (
@@ -211,11 +209,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-sky-200 transition active:scale-95 cursor-pointer border border-white/15 shadow-xs"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-blue-200 transition active:scale-95 cursor-pointer border border-white/15 shadow-xs"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
-            <PanelLeftOpen className="h-5 w-5 text-sky-200" />
+            <PanelLeftOpen className="h-5 w-5 text-blue-200" />
           </button>
         </div>
       ) : (
@@ -228,7 +226,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <h1 className="truncate text-xs font-black tracking-wider text-white uppercase leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[10px] font-extrabold tracking-tight text-sky-300 uppercase leading-tight mt-0.5">
+              <h2 className="truncate text-[10px] font-extrabold tracking-tight text-blue-300 uppercase leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
@@ -258,9 +256,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-extrabold tracking-wider text-slate-400 uppercase hover:text-slate-200 transition cursor-pointer select-none ${
-                    collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
-                  }`}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-extrabold tracking-wider text-slate-400 uppercase hover:text-slate-200 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                    }`}
                 >
                   <span className="truncate">{group.group}</span>
                   {isExpanded ? (
@@ -286,14 +283,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-xs font-bold transition-all duration-200 overflow-hidden cursor-pointer ${
-                              isActive
+                            className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-xs font-bold transition-all duration-200 overflow-hidden cursor-pointer ${isActive
                                 ? 'bg-blue-600 text-white shadow-md font-black border border-blue-500'
                                 : 'text-blue-100/90 hover:bg-white/10 hover:text-white'
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-sky-300/90 group-hover:text-white'}`} />
+                              <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-blue-300/90 group-hover:text-white'}`} />
                               <span className={`whitespace-nowrap transition-all duration-200 truncate ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100'}`}>
                                 {item.name}
                               </span>
@@ -337,18 +333,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onMouseEnter={() => router.prefetch(item.href)}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-xs font-bold transition-all duration-150 overflow-hidden ${
-                          isActive
+                        className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-xs font-bold transition-all duration-150 overflow-hidden ${isActive
                             ? 'bg-blue-600 text-white shadow-md font-black border border-blue-500'
                             : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                        }`}
+                          }`}
                       >
                         <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
 
                         <span
-                          className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${
-                            collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
-                          }`}
+                          className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
+                            }`}
                         >
                           {item.name}
                         </span>
@@ -380,9 +374,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           type="button"
           onClick={() => setShowUserMenu((prev) => !prev)}
           aria-expanded={showUserMenu}
-          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-white/5 hover:bg-white/10 p-2.5 border border-white/10 shadow-md backdrop-blur-md transition cursor-pointer text-left ${
-            collapsed ? 'justify-center p-2' : ''
-          }`}
+          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-white/5 hover:bg-white/10 p-2.5 border border-white/10 shadow-md backdrop-blur-md transition cursor-pointer text-left ${collapsed ? 'justify-center p-2' : ''
+            }`}
           title={collapsed ? displayName : undefined}
         >
           <div className="flex items-center gap-2.5 min-w-0">
@@ -391,7 +384,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="h-9 w-9 shrink-0 rounded-full object-cover shadow-sm border border-sky-400/40"
+                className="h-9 w-9 shrink-0 rounded-full object-cover shadow-sm border border-blue-400/40"
               />
             ) : (
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-black text-sm shadow-sm">
@@ -404,7 +397,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span className="block truncate text-xs font-black text-white leading-tight">
                   {displayName}
                 </span>
-                <span className="block truncate text-[11px] font-semibold text-sky-200 leading-tight mt-0.5">
+                <span className="block truncate text-[11px] font-semibold text-blue-200 leading-tight mt-0.5">
                   {role === 'ADMIN' ? 'Quản trị hệ thống' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                 </span>
               </div>
@@ -413,9 +406,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {!collapsed && (
             <ChevronDown
-              className={`h-3.5 w-3.5 shrink-0 text-sky-200 transition-transform duration-200 ${
-                showUserMenu ? 'rotate-180 text-white' : ''
-              }`}
+              className={`h-3.5 w-3.5 shrink-0 text-blue-200 transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-white' : ''
+                }`}
             />
           )}
         </button>
@@ -423,19 +415,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Popover User Menu Card (Positioned ABOVE trigger matching Screenshot 3 or SIDEWAYS when collapsed) */}
         {showUserMenu && (
           <div
-            className={`absolute ${
-              collapsed
+            className={`absolute ${collapsed
                 ? 'left-[calc(100%+12px)] bottom-1 w-64'
                 : 'bottom-[calc(100%+10px)] left-3 right-3 w-auto'
-            } rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-2xl z-[9999] text-xs animate-in fade-in zoom-in-95 duration-150`}
+              } rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-2xl z-[9999] text-xs animate-in fade-in zoom-in-95 duration-150`}
           >
             {/* Little pointer triangle arrow pointing to trigger card */}
             <div
-              className={`absolute ${
-                collapsed
+              className={`absolute ${collapsed
                   ? '-left-1.5 bottom-4 h-3 w-3 rotate-45 border-l border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
                   : '-bottom-1.5 left-8 h-3 w-3 rotate-45 border-r border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
-              }`}
+                }`}
             />
 
             {/* Top User Info Header Item */}

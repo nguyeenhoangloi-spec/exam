@@ -293,7 +293,7 @@ export default function TeacherAssignmentsPage() {
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-sky-200 text-[10.5px] font-bold tracking-wide">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-blue-200 text-[10.5px] font-bold tracking-wide">
                 <Sparkles className="w-3 h-3" />
                 Lịch Phân Công Coi Thi
               </div>
@@ -449,10 +449,10 @@ export default function TeacherAssignmentsPage() {
 
                       <div className="flex items-center justify-between">
                         <span className="flex items-center gap-2 text-slate-500">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
                           Phòng thi:
                         </span>
-                        <strong className="text-emerald-700 font-bold">
+                        <strong className="text-slate-700 font-bold">
                           {item.roomName || item.roomCode} {item.building ? `(${item.building})` : ''}
                         </strong>
                       </div>

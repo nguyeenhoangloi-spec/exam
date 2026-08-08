@@ -53,7 +53,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onChangeRoom}
-            className="flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-1.5 hover:bg-slate-700 transition cursor-pointer text-emerald-300"
+            className="flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-1.5 hover:bg-slate-700 transition cursor-pointer text-blue-300"
           >
             <DoorOpen className="h-3.5 w-3.5" />
             <span>Đổi phòng</span>
@@ -64,7 +64,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onChangeShift}
-            className="flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-1.5 hover:bg-slate-700 transition cursor-pointer text-amber-300"
+            className="flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-1.5 hover:bg-slate-700 transition cursor-pointer text-blue-300"
           >
             <Clock className="h-3.5 w-3.5" />
             <span>Đổi ca</span>

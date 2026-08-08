@@ -53,7 +53,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
     }
   };
 
-  const fieldClass = 'w-full rounded-xl border border-slate-200 bg-slate-50 p-3 pr-11 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-100';
+  const fieldClass = 'w-full rounded-xl border border-slate-200 bg-slate-50 p-3 pr-11 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100';
 
   return (
     <Modal isOpen={isOpen} onClose={close} title="Đổi mật khẩu tài khoản">
@@ -87,7 +87,7 @@ function PasswordField({ label, value, onChange, visible, onToggle, placeholder 
     <div>
       <label className="mb-1 block text-sm font-semibold text-slate-700">{label}</label>
       <div className="relative">
-        <input type={visible ? 'text' : 'password'} value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 pr-11 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-100" placeholder={placeholder} autoComplete="new-password" />
+        <input type={visible ? 'text' : 'password'} value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 pr-11 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100" placeholder={placeholder} autoComplete="new-password" />
         <button type="button" onClick={onToggle} className="absolute right-3 top-3 text-slate-400 hover:text-slate-700" aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}>{visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
       </div>
     </div>

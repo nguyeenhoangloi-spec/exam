@@ -22,7 +22,7 @@ export interface CandidateReport {
 const statusBadgeMap: Record<string, { label: string; className: string }> = {
   GRADED: { label: 'Đã chấm điểm', className: 'bg-emerald-50 text-emerald-700' },
   SUBMITTED: { label: 'Đã nộp bài', className: 'bg-emerald-50 text-emerald-700' },
-  AUTO_SUBMITTED: { label: 'Tự động nộp (Hết giờ)', className: 'bg-sky-50 text-sky-700' },
+  AUTO_SUBMITTED: { label: 'Tự động nộp (Hết giờ)', className: 'bg-blue-50 text-blue-700' },
   UNDER_REVIEW: { label: 'Tạm khóa (Vi phạm)', className: 'bg-amber-50 text-amber-700' },
   IN_PROGRESS: { label: 'Đang làm bài', className: 'bg-blue-50 text-blue-700' },
   ABSENT: { label: 'Chưa thi / Vắng thi', className: 'bg-rose-50 text-rose-700' },

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'icon';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,17 +18,19 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/25',
+    'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/25 font-bold',
   secondary:
     'bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 border border-slate-200/80 focus:ring-2 focus:ring-slate-400/20',
   outline:
-    'bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 border border-slate-300 focus:ring-2 focus:ring-blue-500/20',
+    'bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 border border-slate-300 focus:ring-2 focus:ring-blue-500/20 font-bold',
   ghost:
     'bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200 border border-transparent focus:ring-2 focus:ring-slate-400/20',
   danger:
-    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/25',
+    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/25 font-bold',
   success:
-    'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-emerald-500/25',
+    'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-emerald-500/25 font-bold',
+  warning:
+    'bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-amber-500/25 font-bold',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

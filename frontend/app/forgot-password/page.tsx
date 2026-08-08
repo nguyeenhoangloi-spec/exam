@@ -143,38 +143,38 @@ export default function ForgotPasswordPage() {
       <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-br from-[#0f1c4d] via-[#1a3a8f] to-[#1d4ed8] relative overflow-hidden">
         {/* Texture */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
-        <div className="absolute -top-24 -right-24 w-80 h-80 bg-sky-400/15 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-blue-400/15 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 -left-16 w-72 h-72 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
         <GraduationCap className="absolute -bottom-12 -right-12 w-72 h-72 text-white/[0.04] rotate-12 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full p-8 xl:p-10">
           {/* Logo */}
           <div className="flex items-center gap-3.5 shrink-0">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 shadow-lg shadow-blue-900/50 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 shadow-lg shadow-blue-900/50 flex items-center justify-center shrink-0">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div>
-              <p className="text-[9.5px] font-bold tracking-[0.25em] text-sky-300 uppercase">Exam System</p>
+              <p className="text-[9.5px] font-bold tracking-[0.25em] text-blue-300 uppercase">Exam System</p>
               <p className="text-[13px] font-black text-white leading-tight tracking-tight">HỆ THỐNG QUẢN LÝ KHẢO THÍ</p>
             </div>
           </div>
 
           {/* Divider */}
           <div className="my-5 flex items-center gap-2.5 shrink-0">
-            <div className="flex-1 h-px bg-gradient-to-r from-sky-400/40 to-transparent" />
-            <ScrollText className="w-3 h-3 text-sky-400/70" />
-            <div className="flex-1 h-px bg-gradient-to-l from-sky-400/40 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-blue-400/40 to-transparent" />
+            <ScrollText className="w-3 h-3 text-blue-400/70" />
+            <div className="flex-1 h-px bg-gradient-to-l from-blue-400/40 to-transparent" />
           </div>
 
           {/* Headline */}
           <div className="shrink-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-sky-200 text-[9.5px] font-bold tracking-[0.14em] uppercase">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-blue-200 text-[9.5px] font-bold tracking-[0.14em] uppercase">
               <ShieldCheck className="w-2.5 h-2.5" />
               Khôi phục mật khẩu &nbsp;•&nbsp; Bảo mật 2 lớp
             </div>
             <h2 className="mt-3.5 text-[26px] xl:text-[30px] font-black text-white leading-[1.2] tracking-tight">
               Khôi phục mật khẩu
-              <span className="block text-sky-300">Nhanh chóng – An toàn – Nhanh gọn</span>
+              <span className="block text-blue-300">Nhanh chóng – An toàn – Nhanh gọn</span>
             </h2>
             <p className="mt-2.5 text-[12px] leading-relaxed text-blue-100/70 font-medium max-w-xs">
               Hệ thống tự động cấp lại mật khẩu an toàn qua mã OTP xác thực email hoặc thông qua Quản trị viên.
@@ -190,8 +190,8 @@ export default function ForgotPasswordPage() {
               { icon: MonitorCheck, label: 'Mã hóa an toàn', desc: 'Công nghệ mã hóa JWT 256-bit' },
             ].map(({ icon: Icon, label, desc }) => (
               <div key={label} className="p-3 rounded-xl bg-white/[0.07] border border-white/10 flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-sky-400/20 border border-sky-300/20 flex items-center justify-center shrink-0">
-                  <Icon className="w-3.5 h-3.5 text-sky-200" />
+                <div className="w-7 h-7 rounded-lg bg-blue-400/20 border border-blue-300/20 flex items-center justify-center shrink-0">
+                  <Icon className="w-3.5 h-3.5 text-blue-200" />
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-white leading-snug">{label}</p>
@@ -211,7 +211,7 @@ export default function ForgotPasswordPage() {
               ].map(({ icon: Icon, value, label }, i) => (
                 <div key={label} className={['py-3', i < 2 ? 'border-r border-white/12 pr-3' : 'pl-3'].join(' ')}>
                   <div className="flex items-center gap-1">
-                    <Icon className="w-3 h-3 text-sky-300" />
+                    <Icon className="w-3 h-3 text-blue-300" />
                     <span className="text-lg font-black text-white">{value}</span>
                   </div>
                   <p className="text-[10px] text-blue-100/50 mt-0.5 font-medium">{label}</p>
@@ -220,7 +220,7 @@ export default function ForgotPasswordPage() {
             </div>
             <div className="mt-3 flex items-center justify-between text-[10px] text-blue-100/45 font-medium">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-2.5 h-2.5 text-sky-400/60" />
+                <CheckCircle2 className="w-2.5 h-2.5 text-blue-400/60" />
                 Hệ thống Quản lý Khảo thí Sinh viên
               </span>
               <span>© 2026 Exam System. All rights reserved.</span>
@@ -233,7 +233,7 @@ export default function ForgotPasswordPage() {
       <main
         className={[
           'flex-1 h-full flex flex-col overflow-hidden relative',
-          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-slate-50 via-sky-50/30 to-blue-50/30',
+          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-blue-50/30',
         ].join(' ')}
       >
         {/* Dot pattern */}
@@ -276,11 +276,11 @@ export default function ForgotPasswordPage() {
           >
             <div className="p-7">
               {/* Accent bar */}
-              <div className="w-12 h-1 rounded-full bg-gradient-to-r from-blue-500 to-sky-400 mb-5" />
+              <div className="w-12 h-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 mb-5" />
 
               {/* Mobile logo */}
               <div className="flex lg:hidden items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
                   <GraduationCap className="w-5 h-5 text-white" />
                 </div>
                 <div>

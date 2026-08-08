@@ -442,7 +442,7 @@ export default function ContactSupportPage() {
           </div>
 
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold">
               <Building2 className="h-5 w-5" />
             </div>
             <h3 className="text-sm font-black text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
@@ -753,8 +753,8 @@ export default function ContactSupportPage() {
                 </div>
                 <div>
                   <h4 className="text-xs font-black">Hỗ trợ Khảo thí Nhanh</h4>
-                  <p className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <p className="text-[10px] text-blue-300 font-semibold flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                     Trực tuyến
                   </p>
                 </div>

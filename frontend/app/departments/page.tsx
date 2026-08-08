@@ -62,7 +62,7 @@ export default function DepartmentsPage() {
   };
 
   const [selected, setSelected] = useState<number[]>([]);
-  
+
   // Custom Drawer State
   const [drawerDepartment, setDrawerDepartment] = useState<Department | null>(null);
   const [drawerTab, setDrawerTab] = useState<'info' | 'subjects' | 'classes' | 'teachers' | 'students'>('info');
@@ -101,7 +101,7 @@ export default function DepartmentsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -617,11 +617,11 @@ export default function DepartmentsPage() {
                         <td className="p-3 text-center font-semibold text-slate-700">{item.subject?.credits} TC</td>
                         <td className="p-3 text-center">
                           {item.type === 'MANDATORY' ? (
-                            <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-extrabold text-rose-600 border border-rose-200">
+                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-700 border border-blue-200">
                               Bắt buộc
                             </span>
                           ) : (
-                            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-extrabold text-emerald-600 border border-emerald-200">
+                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold text-slate-600 border border-slate-200">
                               Tự chọn
                             </span>
                           )}
@@ -671,7 +671,7 @@ export default function DepartmentsPage() {
                     <h2 className="text-base font-extrabold leading-snug text-white break-words">
                       {drawerDepartment.name}
                     </h2>
-                    <p className="text-xs font-semibold text-sky-200 mt-1 font-mono">
+                    <p className="text-xs font-semibold text-blue-200 mt-1 font-mono">
                       Mã Khoa: {drawerDepartment.code}
                     </p>
                   </div>
@@ -700,11 +700,10 @@ export default function DepartmentsPage() {
                 <button
                   key={t.id}
                   onClick={() => setDrawerTab(t.id as any)}
-                  className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-xs font-extrabold transition cursor-pointer ${
-                    drawerTab === t.id
+                  className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-xs font-extrabold transition cursor-pointer ${drawerTab === t.id
                       ? 'border-blue-600 text-blue-600'
                       : 'border-transparent text-slate-500 hover:text-slate-800'
-                  }`}
+                    }`}
                 >
                   {t.label} {t.id === 'subjects' ? `(${drawerDetail?.subjects?.length || 0})` : t.id === 'classes' ? `(${drawerDetail?.classes?.length || 0})` : t.id === 'teachers' ? `(${drawerDetail?.teachers?.length || 0})` : t.id === 'students' ? `(${drawerDetail?.students?.length || 0})` : ''}
                 </button>
@@ -748,8 +747,8 @@ export default function DepartmentsPage() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shrink-0">
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50/60 border border-blue-100">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shrink-0">
                               <Users className="h-5 w-5" />
                             </div>
                             <div>
@@ -758,8 +757,8 @@ export default function DepartmentsPage() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50/60 border border-amber-100">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600 shrink-0">
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50/60 border border-blue-100">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shrink-0">
                               <GraduationCap className="h-5 w-5" />
                             </div>
                             <div>
@@ -778,8 +777,8 @@ export default function DepartmentsPage() {
                         drawerDetail.subjects.map((sub: any) => (
                           <div key={sub.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
                             <div className="flex justify-between items-start">
-                                <span className="text-sm font-bold text-slate-900">{sub.subjectName}</span>
-                                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600 shrink-0">{sub.credits} TC</span>
+                              <span className="text-sm font-bold text-slate-900">{sub.subjectName}</span>
+                              <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600 shrink-0">{sub.credits} TC</span>
                             </div>
                             <span className="text-xs font-medium text-slate-500">Mã môn: {sub.subjectCode}</span>
                           </div>
@@ -796,8 +795,8 @@ export default function DepartmentsPage() {
                         drawerDetail.classes.map((cls: any) => (
                           <div key={cls.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
                             <div className="flex justify-between items-start">
-                                <span className="text-sm font-bold text-slate-900">{cls.name || cls.className}</span>
-                                <span className="rounded bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 text-xs font-bold shrink-0">{cls._count?.students ?? 0} SV</span>
+                              <span className="text-sm font-bold text-slate-900">{cls.name || cls.className}</span>
+                              <span className="rounded bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 text-xs font-bold shrink-0">{cls._count?.students ?? 0} SV</span>
                             </div>
                             <span className="text-xs font-medium text-slate-500">Mã lớp: {cls.code || cls.classCode}</span>
                           </div>
@@ -814,10 +813,10 @@ export default function DepartmentsPage() {
                         drawerDetail.teachers.map((teacher: any) => (
                           <div key={teacher.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
                             <div className="flex justify-between items-start">
-                                <span className="text-sm font-bold text-slate-900">{teacher.fullName}</span>
-                                {(teacher.degree || teacher.academicTitle) && (
-                                    <span className="rounded bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 text-xs font-bold shrink-0">{teacher.degree || teacher.academicTitle}</span>
-                                )}
+                              <span className="text-sm font-bold text-slate-900">{teacher.fullName}</span>
+                              {(teacher.degree || teacher.academicTitle) && (
+                                <span className="rounded bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-xs font-bold shrink-0">{teacher.degree || teacher.academicTitle}</span>
+                              )}
                             </div>
                             <span className="text-xs font-medium text-slate-500">Mã GV: {teacher.teacherCode}</span>
                             <span className="text-xs font-medium text-slate-500">Email: {teacher.email}</span>
@@ -838,7 +837,7 @@ export default function DepartmentsPage() {
                           placeholder="Tìm sinh viên trong Khoa..."
                           value={drawerStudentSearch}
                           onChange={(e) => setDrawerStudentSearch(e.target.value)}
-                          className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-xs font-semibold focus:border-violet-500 focus:outline-none"
+                          className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none"
                         />
                       </div>
 
@@ -850,10 +849,10 @@ export default function DepartmentsPage() {
                             (sv.classCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
                           )
                           .map((sv: any) => (
-                            <div key={sv.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs hover:border-violet-200 transition-colors">
+                            <div key={sv.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs hover:border-blue-200 transition-colors">
                               <div>
                                 <p className="text-xs font-black text-slate-900">{sv.fullName}</p>
-                                <p className="text-[10px] font-bold text-slate-400 mt-0.5">{sv.studentCode} • Lớp: <span className="font-extrabold text-violet-600">{sv.classCode || sv.className}</span></p>
+                                <p className="text-[10px] font-bold text-slate-400 mt-0.5">{sv.studentCode} • Lớp: <span className="font-extrabold text-blue-600">{sv.classCode || sv.className}</span></p>
                               </div>
                               <div className="text-right">
                                 <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{sv.email}</span>

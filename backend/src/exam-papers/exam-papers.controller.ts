@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   Request,
@@ -14,7 +15,7 @@ import {
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { CreateRandomExamPaperDto, ExamPaperQueryDto } from './dto/exam-paper.dto';
+import { CreateRandomExamPaperDto, ExamPaperQueryDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
 import { ExamPapersService } from './exam-papers.service';
 
 @Controller('exam-papers')
@@ -50,6 +51,16 @@ export class ExamPapersController {
     return this.examPapersService.publish(req.user, id, body);
   }
 
+  @Roles('ADMIN', 'TEACHER')
+  @Patch(':id/password')
+  updatePassword(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateExamPasswordDto,
+  ) {
+    return this.examPapersService.updatePassword(req.user, id, body);
+  }
+
   @Roles('ADMIN')
   @Post(':id/archive')
   archive(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
@@ -67,3 +78,4 @@ export class ExamPapersController {
     return this.examPapersService.remove(req.user, id);
   }
 }
+

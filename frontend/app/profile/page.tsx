@@ -281,7 +281,7 @@ export default function ProfilePage() {
                   <BadgeCheck className="h-3.5 w-3.5" />
                   <span>{roleName}</span>
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-bold text-sky-100 border border-white/20">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-bold text-blue-100 border border-white/20">
                   <CheckCircle2 className="h-3 w-3 text-emerald-300" />
                   <span>Đã xác thực</span>
                 </span>
@@ -295,7 +295,7 @@ export default function ProfilePage() {
                   Mã số: <strong className="font-bold text-white">{userCode}</strong>
                 </span>
                 <span className="flex items-center gap-1">
-                  <Building2 className="h-3.5 w-3.5 text-sky-300" />
+                  <Building2 className="h-3.5 w-3.5 text-blue-300" />
                   {deptOrClass}
                 </span>
               </div>
@@ -425,7 +425,7 @@ export default function ProfilePage() {
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
               <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                <Activity className="h-4 w-4 text-emerald-600" />
+                <Activity className="h-4 w-4 text-blue-600" />
                 <span>Phiên đăng nhập gần đây</span>
               </span>
               <p className="text-xs font-medium text-slate-600">Trình duyệt web • IP 127.0.0.1 • Đã xác thực JWT token thành công</p>

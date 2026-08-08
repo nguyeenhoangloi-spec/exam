@@ -80,3 +80,15 @@ export class ExamPaperQueryDto {
   @Min(1)
   examScheduleId?: number;
 }
+
+export class UpdateExamPasswordDto {
+  @IsString({ message: 'Mật khẩu mới phải là chuỗi ký tự.' })
+  @MaxLength(50, { message: 'Mật khẩu không vượt quá 50 ký tự.' })
+  newPassword: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255, { message: 'Lý do không vượt quá 255 ký tự.' })
+  reason?: string;
+}
+

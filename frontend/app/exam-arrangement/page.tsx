@@ -811,7 +811,7 @@ export default function ExamArrangementPage() {
                       <button
                         type="button"
                         onClick={() => router.push('/exam-schedules?action=create')}
-                        className="mt-2 text-[11px] font-bold text-sky-700 hover:text-sky-900 underline"
+                        className="mt-2 text-[11px] font-bold text-blue-700 hover:text-blue-900 underline"
                       >
                         + Chuyển đến Quản lý Lịch thi để tạo ca thi
                       </button>
@@ -838,7 +838,7 @@ export default function ExamArrangementPage() {
                             !r.isAvailable
                               ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
                               : isSelected
-                              ? 'border-sky-500 bg-sky-50 text-sky-900 font-bold shadow-2xs cursor-pointer'
+                              ? 'border-blue-500 bg-blue-50 text-blue-900 font-bold shadow-2xs cursor-pointer'
                               : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 cursor-pointer'
                           }`}
                         >
@@ -888,7 +888,7 @@ export default function ExamArrangementPage() {
                 <div>
                   <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
                     <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-emerald-600" /> Kết quả & Ma trận Chỗ ngồi
+                      <CheckCircle className="h-4 w-4 text-blue-600" /> Kết quả & Ma trận Chỗ ngồi
                     </h3>
 
                     {result && (
@@ -917,7 +917,7 @@ export default function ExamArrangementPage() {
                           onClick={printDoorList}
                           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
                         >
-                          <Printer className="h-3.5 w-3.5 text-sky-600" /> In dán cửa (A4)
+                          <Printer className="h-3.5 w-3.5 text-blue-600" /> In dán cửa (A4)
                         </button>
                       </div>
                     )}
@@ -948,7 +948,7 @@ export default function ExamArrangementPage() {
                           <button
                             type="button"
                             onClick={handleShuffleSeats}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-extrabold text-xs px-3 py-2 border border-purple-200 transition cursor-pointer shadow-2xs"
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-xs px-3 py-2 border border-blue-200 transition cursor-pointer shadow-2xs"
                             title="Trộn ngẫu nhiên thí sinh các lớp ngồi xen kẽ chống nhìn bài"
                           >
                             <Shuffle className="h-3.5 w-3.5" /> Trộn ghế ngẫu nhiên
@@ -1020,7 +1020,7 @@ export default function ExamArrangementPage() {
                                         PHÒNG {room.roomName || room.roomCode} ({room.building})
                                       </h4>
                                     </div>
-                                    <span className="text-xs font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+                                    <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full">
                                       {studentsInRoom.length} / {roomObj?.capacity || 40} Ghế đã xếp
                                     </span>
                                   </div>
@@ -1032,7 +1032,7 @@ export default function ExamArrangementPage() {
                                         className="rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs hover:border-blue-300 transition text-left space-y-1"
                                       >
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <span className="font-extrabold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded-md">
+                                          <span className="font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
                                             Ghế #{st.seatNumber}
                                           </span>
                                           <span className="font-medium text-slate-400">{st.className}</span>
@@ -1073,7 +1073,7 @@ export default function ExamArrangementPage() {
                               {filteredDetails.map((st, dIdx) => (
                                 <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50 transition">
                                   <td className="p-3.5 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
-                                  <td className="p-3.5 text-center font-extrabold text-sky-700">Ghế #{st.seatNumber}</td>
+                                  <td className="p-3.5 text-center font-extrabold text-blue-700">Ghế #{st.seatNumber}</td>
                                   <td className="p-3.5 font-mono font-semibold text-slate-800">{st.studentCode}</td>
                                   <td className="p-3.5 font-bold text-slate-900">{st.fullName}</td>
                                   <td className="p-3.5 font-semibold text-slate-700">
@@ -1141,7 +1141,7 @@ export default function ExamArrangementPage() {
                           <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
                             log.action === 'ARRANGE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : log.action === 'RESET_ARRANGEMENT' ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : 'bg-sky-50 text-sky-700 border border-sky-200'
+                            : 'bg-blue-50 text-blue-700 border border-blue-200'
                           }`}>
                             {log.action}
                           </span>

@@ -42,11 +42,11 @@ export function QuestionCard({
             type="checkbox"
             checked={selected}
             onChange={(e) => onSelect(e.target.checked)}
-            className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
           />
           <b className="text-blue-600 font-mono text-sm">{q.code}</b>
           {q.subject?.subjectName && (
-            <span className="rounded-[8px] bg-sky-50 border border-sky-200 px-2.5 py-0.5 text-[11px] font-bold text-sky-800 h-6 inline-flex items-center">
+            <span className="rounded-[8px] bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-bold text-blue-800 h-6 inline-flex items-center">
               {q.subject.subjectName}
             </span>
           )}
@@ -67,7 +67,7 @@ export function QuestionCard({
             <button
               title="Gửi duyệt"
               onClick={() => onAction('submit')}
-              className="p-2 text-sky-600 hover:bg-sky-50 rounded-lg transition font-semibold"
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition font-semibold"
             >
               <Send className="h-4 w-4" />
             </button>
@@ -162,11 +162,32 @@ export function QuestionCard({
           )}
         </div>
 
-        {/* Media / Image Attachments */}
+        {/* Media / Image / Video / Audio Attachments */}
         {q.media && q.media.length > 0 && (
           <div className="flex flex-wrap items-center gap-3 pt-1">
             {q.media.map((mediaItem, idx) => {
               const fullUrl = getImageUrl(mediaItem.url);
+              const mime: string = (mediaItem as any).mimeType || (mediaItem.url?.match(/\.(mp4|webm|mov)$/i) ? 'video/mp4' : mediaItem.url?.match(/\.(mp3|wav|ogg)$/i) ? 'audio/mp3' : 'image/png');
+
+              if (mime.startsWith('video/')) {
+                return (
+                  <div key={mediaItem.id || idx} className="rounded-xl border border-slate-200 overflow-hidden bg-black shadow-2xs">
+                    <video src={fullUrl} controls className="h-24 w-44 object-cover rounded-xl" />
+                  </div>
+                );
+              }
+
+              if (mime.startsWith('audio/')) {
+                return (
+                  <div key={mediaItem.id || idx} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 shadow-2xs">
+                    <span className="text-[10px] font-semibold text-slate-600 max-w-[140px] truncate">
+                      {mediaItem.fileName || `Audio ${idx + 1}`}
+                    </span>
+                    <audio src={fullUrl} controls className="h-8 w-44" />
+                  </div>
+                );
+              }
+
               return (
                 <div
                   key={mediaItem.id || idx}
@@ -174,7 +195,7 @@ export function QuestionCard({
                     e.stopPropagation();
                     setLightboxUrl(mediaItem.url);
                   }}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-sky-400 hover:shadow-md"
+                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
                   title="Bấm vào để xem ảnh phóng to"
                 >
                   <div className="relative flex items-center justify-center">
@@ -183,18 +204,17 @@ export function QuestionCard({
                       alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
                       className="h-20 w-32 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
                       onError={(e) => {
-                        // Fallback if image load fails
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
                       <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-xs">
-                        <Maximize2 className="h-3.5 w-3.5 text-sky-400" /> Xem rõ ảnh
+                        <Maximize2 className="h-3.5 w-3.5 text-blue-400" /> Xem rõ ảnh
                       </span>
                     </div>
                   </div>
                   <div className="mt-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-600">
-                    <ImageIcon className="h-3 w-3 text-sky-600" />
+                    <ImageIcon className="h-3 w-3 text-blue-600" />
                     <span className="truncate max-w-[110px]">{mediaItem.fileName || `Hình ${idx + 1}`}</span>
                   </div>
                 </div>
@@ -250,10 +270,10 @@ export function QuestionCard({
 
       {/* Explanation if present */}
       {q.explanation && showOptions && (
-        <div className="rounded-xl bg-amber-50/70 border border-amber-200/80 p-3 text-xs text-amber-900 flex items-start gap-2">
-          <HelpCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+        <div className="rounded-xl bg-blue-50/70 border border-blue-200/80 p-3 text-xs text-blue-900 flex items-start gap-2">
+          <HelpCircle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
           <div>
-            <strong className="font-bold text-amber-950">Giải thích: </strong>
+            <strong className="font-bold text-blue-950">Giải thích: </strong>
             <span>{q.explanation}</span>
           </div>
         </div>

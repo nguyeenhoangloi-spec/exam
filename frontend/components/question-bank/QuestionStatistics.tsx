@@ -11,7 +11,7 @@ export function QuestionStatistics({
   onSelectStatus?: (status: string) => void;
 }) {
   const items = [
-    { key: '', label: 'Tổng câu hỏi', count: counts.total || 0, icon: FileQuestion, color: 'text-sky-600 bg-sky-50 border-sky-200' },
+    { key: '', label: 'Tổng câu hỏi', count: counts.total || 0, icon: FileQuestion, color: 'text-blue-600 bg-blue-50 border-blue-200' },
     { key: 'PENDING', label: 'Chờ duyệt', count: counts.PENDING || 0, icon: Clock3, color: 'text-amber-600 bg-amber-50 border-amber-200' },
     { key: 'APPROVED', label: 'Đã duyệt', count: counts.APPROVED || 0, icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
     { key: 'REJECTED', label: 'Từ chối', count: counts.REJECTED || 0, icon: XCircle, color: 'text-rose-600 bg-rose-50 border-rose-200' },
@@ -29,7 +29,7 @@ export function QuestionStatistics({
             onClick={() => onSelectStatus && onSelectStatus(item.key)}
             className={`rounded-2xl border p-4 shadow-2xs cursor-pointer transition duration-150 ${
               isActive
-                ? 'border-blue-500 bg-sky-50/80 ring-2 ring-blue-500/20 scale-[1.01]'
+                ? 'border-blue-500 bg-blue-50/80 ring-2 ring-blue-500/20 scale-[1.01]'
                 : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-xs'
             }`}
           >

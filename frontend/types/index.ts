@@ -198,7 +198,9 @@ export interface ExamPaper {
   updatedAt: string;
   createdById: number;
   createdBy?: Pick<User, 'id' | 'username' | 'role'>;
+  examScheduleId?: number;
   examSchedule?: ExamSchedule;
+  hasExamPassword?: boolean;
   questions?: ExamPaperQuestion[];
   _count?: {
     questions?: number;

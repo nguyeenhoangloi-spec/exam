@@ -115,15 +115,13 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
               {question.options?.map((o) => (
                 <div
                   key={o.id || o.order}
-                  className={`rounded-xl border p-3.5 transition flex items-start gap-3 ${
-                    o.isCorrect
+                  className={`rounded-xl border p-3.5 transition flex items-start gap-3 ${o.isCorrect
                       ? 'border-emerald-300 bg-emerald-50/90 text-emerald-950 font-bold'
                       : 'border-slate-200 bg-slate-50 text-slate-800'
-                  }`}
+                    }`}
                 >
-                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-black ${
-                    o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
-                  }`}>
+                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-black ${o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                    }`}>
                     {o.label}
                   </div>
                   <div className="flex-1 min-w-0 pt-0.5 text-xs leading-normal">
@@ -141,8 +139,8 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
           {/* Explanation */}
           {question.explanation && (
-            <div className="rounded-2xl bg-amber-50/80 border border-amber-200 p-4 text-xs text-amber-900">
-              <h5 className="font-extrabold text-amber-950 mb-1">Giải thích đáp án:</h5>
+            <div className="rounded-2xl bg-blue-50/80 border border-blue-200 p-4 text-xs text-blue-900">
+              <h5 className="font-extrabold text-blue-950 mb-1">Giải thích đáp án:</h5>
               <p className="font-medium leading-relaxed">{question.explanation}</p>
             </div>
           )}
@@ -209,3 +207,4 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
     </>
   );
 }
+
