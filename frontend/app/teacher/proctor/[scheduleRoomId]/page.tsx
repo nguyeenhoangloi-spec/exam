@@ -21,6 +21,14 @@ import {
   PlusCircle,
   FileText,
   Search,
+  SlidersHorizontal,
+  List,
+  LayoutGrid,
+  Layers,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
 } from 'lucide-react';
 
 import { usePageTitle } from '@/components/PageTitleContext';
@@ -49,6 +57,7 @@ const FILTER_LABELS: Record<string, string> = {
   IN_PROGRESS: 'Đang làm bài',
   FLAGGED: 'Có cảnh báo',
   SUBMITTED: 'Đã nộp bài',
+  DISCONNECTED: 'Mất kết nối',
 };
 
 export default function ProctorDashboardPage() {
@@ -60,11 +69,32 @@ export default function ProctorDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
-  const [filter, setFilter] = useState<'ALL' | 'IN_PROGRESS' | 'FLAGGED' | 'SUBMITTED'>('ALL');
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('seat_asc');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+  // Filters & Search
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<'ALL' | 'IN_PROGRESS' | 'FLAGGED' | 'SUBMITTED' | 'DISCONNECTED'>('ALL');
+  const [riskFilter, setRiskFilter] = useState<'ALL' | 'HIGH' | 'MEDIUM' | 'LOW'>('ALL');
+
+  // Toolbar & View state
+  const [sortOrder, setSortOrder] = useState('seat_asc');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [openColumnMenu, setOpenColumnMenu] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    seat: true,
+    name: true,
+    code: true,
+    status: true,
+    risk: true,
+    actions: true,
+  });
+
+  // Selection & Pagination
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+
+  // Action modal states
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [actionType, setActionType] = useState<'EXTEND' | 'REOPEN' | 'FLAG' | 'RESOLVE' | null>(null);
   const [extraMinutes, setExtraMinutes] = useState(10);
@@ -75,7 +105,7 @@ export default function ProctorDashboardPage() {
   const [processing, setProcessing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  // States cho Bù giờ toàn phòng thi khẩn cấp
+  // Bulk Modal
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [bulkMinutes, setBulkMinutes] = useState(15);
   const [bulkReason, setBulkReason] = useState('Sự cố kỹ thuật mạng / hệ thống diện rộng');
@@ -83,7 +113,7 @@ export default function ProctorDashboardPage() {
   const [bulkError, setBulkError] = useState<string | null>(null);
   const [bulkSuccessMsg, setBulkSuccessMsg] = useState<string | null>(null);
 
-  // States cho Mở thời gian vào thi cho sinh viên vào trễ
+  // Reopen Entry Modal
   const [showReopenEntryModal, setShowReopenEntryModal] = useState(false);
   const [lateWindowMinutes, setLateWindowMinutes] = useState(30);
   const [reopenEntryProcessing, setReopenEntryProcessing] = useState(false);
@@ -131,13 +161,6 @@ export default function ProctorDashboardPage() {
     }
   };
 
-  useEffect(() => {
-    if (!scheduleRoomId) return;
-    void loadDashboardRef.current?.();
-    const interval = setInterval(() => { void loadDashboardRef.current?.(true); }, 3000);
-    return () => clearInterval(interval);
-  }, [scheduleRoomId]);
-
   const loadDashboard = useCallback(async (isBackground = false) => {
     try {
       if (!isBackground) setLoading(true);
@@ -152,6 +175,13 @@ export default function ProctorDashboardPage() {
     }
   }, [scheduleRoomId]);
   loadDashboardRef.current = loadDashboard;
+
+  useEffect(() => {
+    if (!scheduleRoomId) return;
+    void loadDashboardRef.current?.();
+    const interval = setInterval(() => { void loadDashboardRef.current?.(true); }, 3000);
+    return () => clearInterval(interval);
+  }, [scheduleRoomId]);
 
   const handleAction = async () => {
     if (!selectedStudent?.attempt?.id) return;
@@ -174,6 +204,8 @@ export default function ProctorDashboardPage() {
   };
 
   const students = data?.students || [];
+
+  // Filtered & Sorted student list
   const filteredStudents = useMemo(() => {
     let result = students.filter((s: any) => {
       const matchSearch =
@@ -183,28 +215,96 @@ export default function ProctorDashboardPage() {
         String(s.examNumber || '').toLowerCase().includes(search.toLowerCase()) ||
         String(s.seatNumber || '').toLowerCase().includes(search.toLowerCase());
 
-      const matchFilter =
+      const matchStatus =
         filter === 'ALL' ||
         (filter === 'IN_PROGRESS' && s.attempt?.status === 'IN_PROGRESS') ||
         (filter === 'FLAGGED' && s.attempt?.isFlagged) ||
-        (filter === 'SUBMITTED' && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status));
+        (filter === 'SUBMITTED' && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)) ||
+        (filter === 'DISCONNECTED' && s.attempt?.status === 'DISCONNECTED');
 
-      return matchSearch && matchFilter;
+      const riskScore = s.attempt?.riskScore || 0;
+      const matchRisk =
+        riskFilter === 'ALL' ||
+        (riskFilter === 'HIGH' && riskScore >= 40) ||
+        (riskFilter === 'MEDIUM' && riskScore >= 15 && riskScore < 40) ||
+        (riskFilter === 'LOW' && riskScore < 15);
+
+      return matchSearch && matchStatus && matchRisk;
     });
 
     result = [...result].sort((a: any, b: any) => {
       if (sortOrder === 'seat_asc') return (a.seatNumber || 0) - (b.seatNumber || 0);
       if (sortOrder === 'seat_desc') return (b.seatNumber || 0) - (a.seatNumber || 0);
       if (sortOrder === 'name_asc') return (a.student?.fullName || '').localeCompare(b.student?.fullName || '', 'vi');
+      if (sortOrder === 'name_desc') return (b.student?.fullName || '').localeCompare(a.student?.fullName || '', 'vi');
       if (sortOrder === 'risk_desc') return (b.attempt?.riskScore || 0) - (a.attempt?.riskScore || 0);
       if (sortOrder === 'code_asc') return (a.student?.studentCode || '').localeCompare(b.student?.studentCode || '');
       return 0;
     });
 
     return result;
-  }, [students, search, filter, sortOrder]);
+  }, [students, search, filter, riskFilter, sortOrder]);
 
   const stats = data?.stats || {};
+
+  // Pagination calculation
+  const totalItems = filteredStudents.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+  const currentStudents = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredStudents.slice(start, start + limit);
+  }, [filteredStudents, page, limit]);
+
+  const allSelected = currentStudents.length > 0 && currentStudents.every((s: any) => selectedIds.includes(s.student.id));
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const pageIds = currentStudents.map((s: any) => s.student.id);
+      setSelectedIds((prev) => Array.from(new Set([...prev, ...pageIds])));
+    } else {
+      const pageIds = new Set(currentStudents.map((s: any) => s.student.id));
+      setSelectedIds((prev) => prev.filter((id) => !pageIds.has(id)));
+    }
+  };
+
+  const handleSelectOne = (id: number, checked: boolean) => {
+    if (checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
+  const columnsList = [
+    { key: 'seat', label: 'SBD & Số ghế' },
+    { key: 'name', label: 'Họ và tên thí sinh' },
+    { key: 'code', label: 'Mã sinh viên' },
+    { key: 'status', label: 'Trạng thái thi' },
+    { key: 'risk', label: 'Mức cảnh báo' },
+    { key: 'actions', label: 'Thao tác' },
+  ];
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const startItem = totalItems > 0 ? (page - 1) * limit + 1 : 0;
+  const endItem = Math.min(page * limit, totalItems);
+
+  const paginationPages: (number | string)[] = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) paginationPages.push(i);
+  } else {
+    paginationPages.push(1);
+    if (page > 3) paginationPages.push('...');
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+    for (let i = start; i <= end; i++) {
+      if (!paginationPages.includes(i)) paginationPages.push(i);
+    }
+    if (page < totalPages - 2) paginationPages.push('...');
+    if (!paginationPages.includes(totalPages)) paginationPages.push(totalPages);
+  }
 
   /* ── Loading ── */
   if (loading) {
@@ -257,43 +357,41 @@ export default function ProctorDashboardPage() {
   return (
     <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
 
-      {/* ── Standard Page Header ── */}
+      {/* ── 1. Standard Page Header ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 transition cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              Quay lại
-            </button>
-            <span className="w-px h-3.5 bg-slate-300" />
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-extrabold tracking-wide">
-              <Activity className="w-3.5 h-3.5" />
-              Bảng Giám Thị Trực Tiếp
-            </div>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
-              <span className="relative flex w-2 h-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              Đang cập nhật • 3s
-            </span>
-          </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-600 shadow-2xs transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
+            title="Quay lại danh sách phân công"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
 
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            Phòng: <span className="text-blue-600">{data.roomName}</span> &nbsp;•&nbsp; Môn: {data.subjectName}
-          </h1>
-          <p className="text-xs font-semibold text-slate-500">
-            Ngày thi: <strong className="text-slate-800 font-bold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong> &nbsp;•&nbsp; Ca thi: <strong className="text-slate-800 font-bold">{data.startTime} – {data.endTime}</strong>
-            {lastUpdated && (
-              <span className="ml-2 text-slate-400">
-                (Cập nhật lúc {lastUpdated.toLocaleTimeString('vi-VN')})
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Giám Thị Phòng: <span className="text-blue-600">{data.roomName}</span>
+              </h1>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-extrabold tracking-wide">
+                <span className="relative flex w-2 h-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                Trực tiếp
               </span>
-            )}
-          </p>
+            </div>
+
+            <p className="text-xs font-semibold text-slate-500">
+              Môn thi: <strong className="text-slate-800 font-extrabold">{data.subjectName}</strong> &nbsp;•&nbsp; Ngày thi: <strong className="text-slate-800 font-bold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong> &nbsp;•&nbsp; Ca thi: <strong className="text-slate-800 font-bold">{data.startTime} – {data.endTime}</strong>
+              {lastUpdated && (
+                <span className="ml-2 text-slate-400 font-normal">
+                  (Cập nhật lúc {lastUpdated.toLocaleTimeString('vi-VN')})
+                </span>
+              )}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -356,7 +454,7 @@ export default function ProctorDashboardPage() {
         </div>
       )}
 
-      {/* ── Standard KPI Cards ── */}
+      {/* ── 2. Standard KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {KPI_CARDS.map(({ label, value, subtext, icon: Icon, iconBg }) => (
           <div
@@ -385,17 +483,20 @@ export default function ProctorDashboardPage() {
         ))}
       </div>
 
-      {/* ── Filter / Search Toolbar ── */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-4 space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* ── 3. Standard Filter Card Toolbar (Grid Inputs & TabBar) ── */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {/* Search Box */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Tìm theo tên thí sinh, mã sinh viên, SBD, số ghế..."
+              placeholder="Tìm theo tên, mã SV, SBD, ghế..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
             {search && (
@@ -409,32 +510,73 @@ export default function ProctorDashboardPage() {
             )}
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="relative shrink-0">
+          {/* Status Select */}
+          <div className="relative">
+            <select
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value as any);
+                setPage(1);
+              }}
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+            >
+              <option value="ALL">Tất cả trạng thái thi</option>
+              <option value="IN_PROGRESS">Đang làm bài trực tuyến</option>
+              <option value="FLAGGED">Có cảnh báo vi phạm</option>
+              <option value="SUBMITTED">Đã hoàn thành nộp bài</option>
+              <option value="DISCONNECTED">Mất kết nối đường truyền</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          </div>
+
+          {/* Risk Level Select */}
+          <div className="relative">
+            <select
+              value={riskFilter}
+              onChange={(e) => {
+                setRiskFilter(e.target.value as any);
+                setPage(1);
+              }}
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+            >
+              <option value="ALL">Tất cả mức rủi ro</option>
+              <option value="HIGH">Rủi ro cao (≥ 40 điểm)</option>
+              <option value="MEDIUM">Rủi ro trung bình (15 - 39 điểm)</option>
+              <option value="LOW">Rủi ro thấp (&lt; 15 điểm)</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          </div>
+
+          {/* Quick Sort Filter */}
+          <div className="relative">
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
             >
-              <option value="seat_asc">Sắp xếp: Số ghế tăng dần</option>
-              <option value="seat_desc">Sắp xếp: Số ghế giảm dần</option>
+              <option value="seat_asc">Số ghế: Tăng dần (1 - 50)</option>
+              <option value="seat_desc">Số ghế: Giảm dần</option>
               <option value="name_asc">Tên thí sinh: A - Z</option>
-              <option value="risk_desc">Mức cảnh báo rủi ro cao nhất</option>
+              <option value="name_desc">Tên thí sinh: Z - A</option>
+              <option value="risk_desc">Mức rủi ro: Cao nhất trước</option>
               <option value="code_asc">Mã sinh viên: Tăng dần</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           </div>
         </div>
 
-        {/* Tab Filters */}
+        {/* TabBar Filter Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-bold text-slate-500 mr-1">Trạng thái:</span>
-            {(['ALL', 'IN_PROGRESS', 'FLAGGED', 'SUBMITTED'] as const).map((f) => (
+            <span className="text-xs font-bold text-slate-500 mr-1">Bộ lọc:</span>
+            {(['ALL', 'IN_PROGRESS', 'FLAGGED', 'SUBMITTED', 'DISCONNECTED'] as const).map((f) => (
               <button
                 key={f}
                 type="button"
-                onClick={() => setFilter(f)}
+                onClick={() => {
+                  setFilter(f);
+                  setPage(1);
+                }}
                 className={[
                   'px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs',
                   filter === f
@@ -448,70 +590,411 @@ export default function ProctorDashboardPage() {
                   {f === 'IN_PROGRESS' && students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length}
                   {f === 'FLAGGED' && students.filter((s: any) => s.attempt?.isFlagged).length}
                   {f === 'SUBMITTED' && students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length}
+                  {f === 'DISCONNECTED' && students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length}
                 </span>
               </button>
             ))}
           </div>
 
           <span className="text-xs font-bold text-slate-600">
-            Hiển thị <strong className="text-slate-900 font-extrabold">{filteredStudents.length}</strong> / {students.length} thí sinh
+            Hiển thị <strong className="text-slate-900 font-extrabold">{totalItems}</strong> / {students.length} thí sinh
           </span>
         </div>
       </div>
 
-      {/* ── Main Table ── */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* ── 4. Standard Table Toolbar (Item Count, Sort Dropdown, Column Chooser, ViewMode, Refresh) ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+        <span className="text-xs font-bold text-slate-700">
+          <span className="font-black text-slate-900">{totalItems}</span> thí sinh trong phòng thi
+        </span>
+
+        <div className="flex items-center gap-2">
+          {/* Sort */}
+          <div className="relative">
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            >
+              <option value="seat_asc">Sắp xếp: Số ghế tăng dần</option>
+              <option value="seat_desc">Sắp xếp: Số ghế giảm dần</option>
+              <option value="name_asc">Tên thí sinh: A - Z</option>
+              <option value="risk_desc">Mức cảnh báo cao nhất</option>
+              <option value="code_asc">Mã SV tăng dần</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          </div>
+
+          {/* Column Selector */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setOpenColumnMenu(!openColumnMenu)}
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+              <span>Chọn cột</span>
+              <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {openColumnMenu && (
+              <div
+                className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+                onMouseLeave={() => setOpenColumnMenu(false)}
+              >
+                <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                  <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
+                  <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
+                </div>
+
+                <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                  {columnsList.map((col) => {
+                    const isVisible = visibleColumns[col.key] !== false;
+                    return (
+                      <label
+                        key={col.key}
+                        className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 select-none transition"
+                      >
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={isVisible}
+                            onChange={() => handleColumnToggle(col.key)}
+                            className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          />
+                          <span className={isVisible ? 'text-slate-900' : 'text-slate-400 line-through'}>
+                            {col.label}
+                          </span>
+                        </span>
+                        {isVisible && <Check className="h-3.5 w-3.5 text-blue-600" />}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* View Mode Group */}
+          <div className="flex items-center rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`rounded-lg p-1.5 transition cursor-pointer ${
+                viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+              }`}
+              title="Dạng Danh sách chuẩn"
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`rounded-lg p-1.5 transition cursor-pointer ${
+                viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+              }`}
+              title="Dạng Lưới card"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('compact')}
+              className={`rounded-lg p-1.5 transition cursor-pointer ${
+                viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+              }`}
+              title="Dạng Thu gọn"
+            >
+              <Layers className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Refresh */}
+          <button
+            type="button"
+            onClick={() => loadDashboard(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer active:scale-95"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className="h-3.5 w-3.5 text-slate-500" />
+          </button>
+        </div>
+      </div>
+
+      {/* ── 5. Main Content (List / Grid / Compact) ── */}
+      {totalItems === 0 ? (
+        <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+            <Users className="w-7 h-7 text-slate-400" />
+          </div>
+          <h3 className="text-base font-black text-slate-800">Không tìm thấy thí sinh nào</h3>
+          <p className="text-xs font-medium text-slate-500 max-w-sm">
+            Không có thí sinh nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
+          </p>
+        </div>
+      ) : viewMode === 'grid' ? (
+        /* ── 5.1 Grid View Mode ── */
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {currentStudents.map((s: any) => {
+            const att = s.attempt;
+            const riskScore = att?.riskScore || 0;
+            const { label: statusLabel, cls: statusCls } = statusMeta(att);
+            const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
+            const hasFlagged = att?.isFlagged;
+            const isChecked = selectedIds.includes(s.student.id);
+
+            return (
+              <div
+                key={s.student.id}
+                className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
+                  isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
+                        className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <span className="font-mono font-black text-slate-900 text-xs">
+                        {s.examNumber}
+                      </span>
+                    </div>
+
+                    <span className="font-bold text-xs text-slate-500">
+                      Ghế: <strong className="text-slate-900 font-black">{s.seatNumber}</strong>
+                    </span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-sm font-extrabold text-slate-900 leading-snug truncate">
+                        {s.student.fullName}
+                      </h4>
+                      {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
+                    </div>
+
+                    <span className="font-mono font-black text-[11px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 inline-block mt-1">
+                      {s.student.studentCode}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs text-slate-600 font-medium pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">Trạng thái:</span>
+                      <span className={`inline-flex items-center gap-1 text-xs font-bold ${statusCls}`}>
+                        {att?.status === 'IN_PROGRESS' && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        )}
+                        {statusLabel}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">Mức rủi ro:</span>
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[11px] font-mono font-bold ${riskCls}`}>
+                        {riskScore}đ ({riskLevel})
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 text-xs">
+                  {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
+                    <button
+                      type="button"
+                      onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
+                      className="px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-bold hover:bg-blue-100 transition cursor-pointer"
+                    >
+                      Gia hạn
+                    </button>
+                  )}
+                  {att && (
+                    <button
+                      type="button"
+                      onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
+                      className="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition cursor-pointer"
+                    >
+                      Biên bản
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : viewMode === 'compact' ? (
+        /* ── 5.2 Compact View Mode ── */
+        <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
           <table className="w-full text-left text-xs text-slate-700 border-collapse">
             <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
               <tr>
-                <th className="p-3.5 pl-4 whitespace-nowrap">SBD / Ghế</th>
-                <th className="p-3.5 min-w-[200px]">Họ và tên thí sinh</th>
-                <th className="p-3.5 whitespace-nowrap">Mã SV</th>
-                <th className="p-3.5 whitespace-nowrap">Trạng thái thi</th>
-                <th className="p-3.5 text-center whitespace-nowrap">Mức cảnh báo</th>
-                <th className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác giám thị</th>
+                <th scope="col" className="p-2 pl-3 text-center w-8">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                </th>
+                <th scope="col" className="p-2 whitespace-nowrap">SBD / Ghế</th>
+                <th scope="col" className="p-2 min-w-[180px]">Họ tên thí sinh</th>
+                <th scope="col" className="p-2 whitespace-nowrap">Mã SV</th>
+                <th scope="col" className="p-2 whitespace-nowrap">Trạng thái thi</th>
+                <th scope="col" className="p-2 text-center whitespace-nowrap">Cảnh báo</th>
+                <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {filteredStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-12 text-center text-xs font-semibold text-slate-400">
-                    Không có thí sinh nào trong bộ lọc này
-                  </td>
-                </tr>
-              ) : (
-                filteredStudents.map((s: any) => {
-                  const att = s.attempt;
-                  const riskScore = att?.riskScore || 0;
-                  const { label: statusLabel, cls: statusCls } = statusMeta(att);
-                  const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
-                  const hasFlagged = att?.isFlagged;
+              {currentStudents.map((s: any) => {
+                const att = s.attempt;
+                const riskScore = att?.riskScore || 0;
+                const { label: statusLabel, cls: statusCls } = statusMeta(att);
+                const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
+                const hasFlagged = att?.isFlagged;
+                const isChecked = selectedIds.includes(s.student.id);
 
-                  return (
-                    <tr key={s.student.id} className="hover:bg-blue-50/40 transition">
-                      {/* SBD / Seat */}
-                      <td className="p-3.5 pl-4 whitespace-nowrap">
+                return (
+                  <tr key={s.student.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                    <td className="p-2 pl-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
+                        className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </td>
+                    <td className="p-2 whitespace-nowrap">
+                      <span className="font-mono font-black text-slate-900 text-xs">{s.examNumber}</span>
+                      <span className="ml-1 text-slate-500 font-bold text-xs">G:{s.seatNumber}</span>
+                    </td>
+                    <td className="p-2 min-w-[180px]">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-extrabold text-slate-900 text-xs truncate">{s.student.fullName}</span>
+                        {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
+                      </div>
+                    </td>
+                    <td className="p-2 whitespace-nowrap">
+                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                        {s.student.studentCode}
+                      </span>
+                    </td>
+                    <td className="p-2 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 text-xs select-none ${statusCls}`}>
+                        {att?.status === 'IN_PROGRESS' && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        )}
+                        {statusLabel}
+                      </span>
+                    </td>
+                    <td className="p-2 text-center whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] font-mono font-bold ${riskCls}`}>
+                        {riskScore}đ
+                      </span>
+                    </td>
+                    <td className="p-2 pr-3 text-right whitespace-nowrap">
+                      {att && (
+                        <div className="inline-flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
+                            className="p-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                            title="Gia hạn"
+                          >
+                            <Clock className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
+                            className="p-1 text-rose-600 hover:text-rose-700 cursor-pointer"
+                            title="Biên bản sự cố"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* ── 5.3 Standard List View Mode (Default Table) ── */
+        <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+          <table className="w-full text-left text-xs text-slate-700 border-collapse">
+            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+              <tr>
+                <th scope="col" className="p-3.5 pl-4 text-center w-10">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                </th>
+                {visibleColumns.seat !== false && <th scope="col" className="p-3.5 whitespace-nowrap">SBD / Ghế</th>}
+                {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[200px]">Họ và tên thí sinh</th>}
+                {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã SV</th>}
+                {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái thi</th>}
+                {visibleColumns.risk !== false && <th scope="col" className="p-3.5 text-center whitespace-nowrap">Mức cảnh báo</th>}
+                {visibleColumns.actions !== false && <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác giám thị</th>}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium">
+              {currentStudents.map((s: any) => {
+                const att = s.attempt;
+                const riskScore = att?.riskScore || 0;
+                const { label: statusLabel, cls: statusCls } = statusMeta(att);
+                const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
+                const hasFlagged = att?.isFlagged;
+                const isChecked = selectedIds.includes(s.student.id);
+
+                return (
+                  <tr key={s.student.id} className={`hover:bg-blue-50/40 transition ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                    {/* Checkbox */}
+                    <td className="p-3.5 pl-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
+                        className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </td>
+
+                    {/* SBD / Seat */}
+                    {visibleColumns.seat !== false && (
+                      <td className="p-3.5 whitespace-nowrap">
                         <span className="font-mono font-black text-slate-900 text-xs">{s.examNumber}</span>
                         <span className="ml-1.5 text-slate-500 font-bold text-xs">G:{s.seatNumber}</span>
                       </td>
+                    )}
 
-                      {/* Name */}
+                    {/* Name */}
+                    {visibleColumns.name !== false && (
                       <td className="p-3.5 min-w-[200px]">
                         <div className="flex items-center gap-2">
                           <p className="font-extrabold text-slate-900 text-xs truncate">{s.student.fullName}</p>
                           {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
                         </div>
                       </td>
+                    )}
 
-                      {/* Student code */}
+                    {/* Student code */}
+                    {visibleColumns.code !== false && (
                       <td className="p-3.5 whitespace-nowrap">
                         <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
                           {s.student.studentCode}
                         </span>
                       </td>
+                    )}
 
-                      {/* Status */}
+                    {/* Status */}
+                    {visibleColumns.status !== false && (
                       <td className="p-3.5 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1 text-xs select-none ${statusCls}`}>
                           {att?.status === 'IN_PROGRESS' && (
@@ -523,15 +1006,19 @@ export default function ProctorDashboardPage() {
                           )}
                         </span>
                       </td>
+                    )}
 
-                      {/* Risk */}
+                    {/* Risk */}
+                    {visibleColumns.risk !== false && (
                       <td className="p-3.5 text-center whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[11px] font-mono font-bold ${riskCls}`}>
                           {riskScore}đ ({riskLevel})
                         </span>
                       </td>
+                    )}
 
-                      {/* Actions */}
+                    {/* Actions */}
+                    {visibleColumns.actions !== false && (
                       <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                         {att && (
                           <div className="inline-flex items-center gap-1.5">
@@ -579,14 +1066,94 @@ export default function ProctorDashboardPage() {
                           </div>
                         )}
                       </td>
-                    </tr>
-                  );
-                })
-              )}
+                    )}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-      </div>
+      )}
+
+      {/* ── 6. Standard Pagination Bar ── */}
+      {totalItems > 0 && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
+          <p className="text-xs font-semibold text-slate-500">
+            Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
+            <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
+            <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Thí sinh
+          </p>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+                className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                title="Trang trước"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
+              {paginationPages.map((p, idx) => {
+                if (p === '...') {
+                  return (
+                    <span key={`dots-${idx}`} className="px-1 text-xs font-bold text-slate-400">
+                      ...
+                    </span>
+                  );
+                }
+
+                const pNum = Number(p);
+                const isCurrent = pNum === page;
+
+                return (
+                  <button
+                    key={pNum}
+                    type="button"
+                    onClick={() => setPage(pNum)}
+                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-xs font-extrabold transition cursor-pointer shadow-2xs ${
+                      isCurrent
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {pNum}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                disabled={page >= totalPages}
+                onClick={() => setPage(page + 1)}
+                className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                title="Trang sau"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Rows Per Page Dropdown */}
+            <div className="relative">
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              >
+                <option value={10}>10 / trang</option>
+                <option value={20}>20 / trang</option>
+                <option value={50}>50 / trang</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ═══════ ACTION MODAL ═══════ */}
       {actionType && selectedStudent && (() => {
@@ -623,160 +1190,141 @@ export default function ProctorDashboardPage() {
                 </span>
               </div>
 
-              <div className="p-6 space-y-4 text-xs">
-                {/* Extra minutes (EXTEND) */}
+              {/* Modal body */}
+              <div className="p-6 space-y-4 text-xs font-semibold">
+                {actionError && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                    <span>{actionError}</span>
+                  </div>
+                )}
+
                 {actionType === 'EXTEND' && (
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Số phút cộng thêm
-                    </label>
-                    <input
-                      type="number"
-                      value={extraMinutes}
-                      onChange={(e) => setExtraMinutes(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500 transition"
-                      min={1}
-                      max={60}
-                    />
-                  </div>
-                )}
-
-                {/* Reopen Penalty (REOPEN) */}
-                {actionType === 'REOPEN' && (
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Điểm trừ vi phạm quy chế (Penalty Points)
-                    </label>
-                    <input
-                      type="number"
-                      step={0.25}
-                      min={0}
-                      max={10}
-                      value={penaltyPoints}
-                      onChange={(e) => setPenaltyPoints(Number(e.target.value))}
-                      placeholder="Số điểm trừ (Ví dụ: 0.5, 1.0...)"
-                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-amber-500 transition"
-                    />
-                    <p className="mt-1 text-[11px] text-amber-700 font-semibold">
-                      * Điểm phạt sẽ tự động trừ trực tiếp vào tổng điểm thi cuối cùng.
-                    </p>
-                  </div>
-                )}
-
-                {/* Incident decision (FLAG) */}
-                {actionType === 'FLAG' && (
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Quyết định xử lý
-                    </label>
-                    <div className="relative">
-                      <select
-                        value={incidentDecision}
-                        onChange={(e) => setIncidentDecision(e.target.value)}
-                        className="w-full appearance-none border border-slate-200 rounded-xl px-3.5 py-2 pr-9 text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500 transition cursor-pointer"
-                      >
-                        <option value="UNDER_REVIEW">Yêu cầu xem xét (UNDER_REVIEW)</option>
-                        <option value="TERMINATED">Đình chỉ ngay lập tức (TERMINATED)</option>
-                        <option value="WARNING">Cảnh báo (WARNING)</option>
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <label className="block text-slate-700 font-bold mb-1.5">Số phút cộng thêm vào bài thi:</label>
+                    <div className="flex gap-2">
+                      {[5, 10, 15, 20, 30].map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setExtraMinutes(m)}
+                          className={`flex-1 py-2 rounded-xl border text-xs font-black transition cursor-pointer ${
+                            extraMinutes === m
+                              ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
+                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          +{m}p
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {/* Resolution (RESOLVE) */}
                 {actionType === 'RESOLVE' && (
-                  <div className="space-y-3 p-3.5 rounded-xl border border-amber-200 bg-amber-50">
-                    <p className="text-xs font-bold text-amber-700">Sinh viên đã gửi giải trình. Chọn cách xử lý:</p>
-                    <div className="relative">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1.5">Quyết định xử lý sự cố:</label>
                       <select
                         value={resolutionDecision}
-                        onChange={(e) => setResolutionDecision(e.target.value as 'REOPEN' | 'PENALTY' | 'TERMINATE')}
-                        className="w-full appearance-none border border-amber-200 bg-white rounded-xl px-3.5 py-2 pr-9 text-xs font-semibold text-slate-800 focus:outline-none focus:border-amber-400 transition cursor-pointer"
+                        onChange={(e) => setResolutionDecision(e.target.value as any)}
+                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
                       >
-                        <option value="REOPEN">Chấp nhận giải trình, mở lại bài</option>
-                        <option value="PENALTY">Giữ kết quả và trừ điểm</option>
-                        <option value="TERMINATE">Đình chỉ bài thi</option>
+                        <option value="REOPEN">Cho phép mở lại phiên thi để làm tiếp</option>
+                        <option value="PENALTY">Giữ nguyên bài thi & Áp dụng trừ điểm</option>
+                        <option value="TERMINATE">Đình chỉ thi & Hủy kết quả bài làm</option>
                       </select>
-                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     </div>
+
                     {resolutionDecision === 'PENALTY' && (
-                      <input
-                        type="number"
-                        min={0}
-                        max={10}
-                        value={penaltyPoints}
-                        onChange={(e) => setPenaltyPoints(Number(e.target.value))}
-                        placeholder="Số điểm trừ"
-                        className="w-full border border-amber-200 bg-white rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-amber-400 transition"
-                      />
+                      <div>
+                        <label className="block text-slate-700 font-bold mb-1.5">Số điểm trừ trực tiếp (thang 10):</label>
+                        <input
+                          type="number"
+                          min="0.5"
+                          max="10"
+                          step="0.5"
+                          value={penaltyPoints}
+                          onChange={(e) => setPenaltyPoints(Number(e.target.value))}
+                          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
                     )}
                   </div>
                 )}
 
-                {/* Reason */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                    Lý do thao tác <span className="text-rose-500">*</span>
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    placeholder="Nhập nguyên nhân cụ thể..."
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium text-slate-800 placeholder-slate-400 resize-none focus:outline-none focus:border-blue-500 transition"
-                  />
-                </div>
-
-                {actionError && (
-                  <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-medium text-rose-700">
-                    {actionError}
+                {actionType === 'FLAG' && (
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1.5">Phân loại sự cố ghi nhận:</label>
+                    <select
+                      value={incidentDecision}
+                      onChange={(e) => setIncidentDecision(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
+                    >
+                      <option value="UNDER_REVIEW">Tạm giữ để hội đồng thi kiểm tra lại</option>
+                      <option value="CONFIRMED_VIOLATION">Xác nhận có hành vi vi phạm quy chế</option>
+                      <option value="DISMISSED">Bỏ qua (Sự cố khách quan ngoài ý muốn)</option>
+                    </select>
                   </div>
                 )}
 
-                {/* Footer buttons */}
-                <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
-                  <button
-                    type="button"
-                    onClick={() => setActionType(null)}
-                    className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition cursor-pointer"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    type="button"
-                    disabled={processing}
-                    onClick={handleAction}
-                    className={[
-                      'px-5 py-2 rounded-xl text-white text-xs font-black transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-xs',
-                      actionType === 'EXTEND' ? 'bg-blue-600 hover:bg-blue-700' :
-                        actionType === 'REOPEN' ? 'bg-amber-600 hover:bg-amber-700' :
-                          actionType === 'FLAG' ? 'bg-rose-600 hover:bg-rose-700' :
-                            'bg-blue-600 hover:bg-blue-700',
-                    ].join(' ')}
-                  >
-                    {processing ? 'Đang xử lý...' : 'Xác nhận'}
-                  </button>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1.5">
+                    {actionType === 'FLAG' ? 'Lý do / Mô tả chi tiết vi phạm:' : 'Lý do thực hiện:'}
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Nhập lý do hoặc ghi chú cho hội đồng thi..."
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 p-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500"
+                  />
                 </div>
+              </div>
+
+              {/* Modal footer */}
+              <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+                <button
+                  type="button"
+                  onClick={() => setActionType(null)}
+                  disabled={processing}
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAction}
+                  disabled={processing}
+                  className={`rounded-xl px-5 py-2 text-xs font-black text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50 ${
+                    actionType === 'FLAG'
+                      ? 'bg-rose-600 hover:bg-rose-700'
+                      : actionType === 'RESOLVE'
+                      ? 'bg-emerald-600 hover:bg-emerald-700'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  {processing ? 'Đang xử lý...' : 'Xác nhận'}
+                </button>
               </div>
             </div>
           </div>
         );
       })()}
 
-      {/* Modal Bù giờ toàn phòng thi khẩn cấp */}
+      {/* ═══════ BULK EXTEND MODAL ═══════ */}
       {showBulkModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-amber-200 dark:border-slate-700">
-            {/* Modal header */}
-            <div className="flex items-center justify-between border-b border-amber-100 bg-amber-50/80 px-6 py-4">
+          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white shadow-xl border border-slate-200/90">
+            <div className="flex items-center justify-between border-b border-slate-100 bg-amber-50/60 px-6 py-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border bg-amber-50 border-amber-200 shadow-2xs shrink-0">
-                  <Clock className="h-4.5 w-4.5 text-amber-600" />
+                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-amber-200 bg-amber-100/70 text-amber-700 shadow-2xs shrink-0">
+                  <Clock className="h-4.5 w-4.5" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 tracking-tight leading-none">
-                  Cộng Bù Giờ Toàn Phòng Thi
-                </h3>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 leading-none">Bù Giờ Toàn Phòng Thi Khẩn Cấp</h3>
+                  <p className="mt-1 text-[11px] text-slate-500 font-semibold leading-none">Cộng bù thời gian làm bài cho tất cả sinh viên</p>
+                </div>
               </div>
               <button
                 type="button"
@@ -787,100 +1335,87 @@ export default function ProctorDashboardPage() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 text-xs">
-              <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-amber-900 leading-relaxed font-semibold">
-                Thao tác này sẽ tự động <strong>cộng thêm thời gian làm bài</strong> cho tất cả sinh viên đang làm bài (`IN_PROGRESS`) hoặc vừa bị ngắt kết nối (`DISCONNECTED`) trong phòng thi này.
-              </div>
+            <div className="p-6 space-y-4 text-xs font-semibold">
+              {bulkError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>{bulkError}</span>
+                </div>
+              )}
+
+              {bulkSuccessMsg && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{bulkSuccessMsg}</span>
+                </div>
+              )}
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  Số phút bù giờ <span className="text-rose-500">*</span>
-                </label>
-                <div className="grid grid-cols-4 gap-2 mb-2">
-                  {[5, 10, 15, 30].map((mins) => (
+                <label className="block text-slate-700 font-bold mb-1.5">Chọn số phút cộng bù hàng loạt:</label>
+                <div className="flex gap-2">
+                  {[5, 10, 15, 20, 30].map((m) => (
                     <button
-                      key={mins}
+                      key={m}
                       type="button"
-                      onClick={() => setBulkMinutes(mins)}
-                      className={`py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${bulkMinutes === mins
-                          ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                        }`}
+                      onClick={() => setBulkMinutes(m)}
+                      className={`flex-1 py-2 rounded-xl border text-xs font-black transition cursor-pointer ${
+                        bulkMinutes === m
+                          ? 'bg-amber-600 border-amber-600 text-white shadow-xs'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
                     >
-                      +{mins} phút
+                      +{m}p
                     </button>
                   ))}
                 </div>
-                <input
-                  type="number"
-                  min={1}
-                  max={60}
-                  value={bulkMinutes}
-                  onChange={(e) => setBulkMinutes(Math.max(1, Number(e.target.value)))}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-amber-500 focus:outline-none transition"
-                />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  Lý do bù giờ khẩn cấp <span className="text-rose-500">*</span>
-                </label>
+                <label className="block text-slate-700 font-bold mb-1.5">Lý do bù giờ (Ghi rõ để lưu biên bản thanh tra):</label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={bulkReason}
                   onChange={(e) => setBulkReason(e.target.value)}
-                  placeholder="Nhập nguyên nhân gián đoạn..."
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-medium text-slate-800 focus:border-amber-500 focus:outline-none transition resize-none"
+                  className="w-full rounded-xl border border-slate-200 p-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
+            </div>
 
-              {bulkSuccessMsg && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold text-center">
-                  {bulkSuccessMsg}
-                </div>
-              )}
-
-              {bulkError && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 font-bold">
-                  {bulkError}
-                </div>
-              )}
-
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowBulkModal(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 transition cursor-pointer text-xs"
-                >
-                  Hủy bỏ
-                </button>
-                <button
-                  type="button"
-                  disabled={bulkProcessing}
-                  onClick={() => void handleBulkExtend()}
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black shadow-xs transition cursor-pointer text-xs disabled:opacity-50"
-                >
-                  {bulkProcessing ? 'Đang áp dụng...' : `Xác nhận bù giờ +${bulkMinutes} phút`}
-                </button>
-              </div>
+            <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+              <button
+                type="button"
+                onClick={() => setShowBulkModal(false)}
+                disabled={bulkProcessing}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleBulkExtend}
+                disabled={bulkProcessing}
+                className="rounded-xl bg-amber-600 hover:bg-amber-700 px-5 py-2 text-xs font-black text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+              >
+                {bulkProcessing ? 'Đang thực hiện...' : 'Bù Giờ Ngay'}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal Mở thời gian vào thi cho thí sinh đến trễ */}
+      {/* ═══════ REOPEN ENTRY MODAL ═══════ */}
       {showReopenEntryModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-blue-200 dark:border-slate-700">
-            {/* Modal header */}
-            <div className="flex items-center justify-between border-b border-blue-100 bg-blue-50/80 px-6 py-4">
+          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white shadow-xl border border-slate-200/90">
+            <div className="flex items-center justify-between border-b border-slate-100 bg-blue-50/60 px-6 py-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border bg-blue-50 border-blue-200 shadow-2xs shrink-0">
-                  <PlusCircle className="h-4.5 w-4.5 text-blue-600" />
+                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-blue-200 bg-blue-100/70 text-blue-700 shadow-2xs shrink-0">
+                  <PlusCircle className="h-4.5 w-4.5" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 tracking-tight leading-none">
-                  Gia Hạn Giờ Vào Thi (Thí Sinh Đến Trễ)
-                </h3>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 leading-none">Mở Giờ Cho Vào Thi Muộn</h3>
+                  <p className="mt-1 text-[11px] text-slate-500 font-semibold leading-none">Gia hạn thời gian cho phép sinh viên bắt đầu làm bài</p>
+                </div>
               </div>
               <button
                 type="button"
@@ -891,69 +1426,59 @@ export default function ProctorDashboardPage() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 text-xs">
-              <div className="bg-blue-50 border border-blue-200 p-3.5 rounded-xl text-blue-900 leading-relaxed font-semibold">
-                Khi sinh viên tới trễ quá thời gian cho phép ban đầu, Giám thị có thể gia hạn khung giờ vào thi để hệ thống cho phép sinh viên xác thực và bắt đầu làm bài.
-              </div>
+            <div className="p-6 space-y-4 text-xs font-semibold">
+              {reopenEntryError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>{reopenEntryError}</span>
+                </div>
+              )}
+
+              {reopenEntrySuccessMsg && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{reopenEntrySuccessMsg}</span>
+                </div>
+              )}
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  Mở rộng khung giờ vào thi thêm <span className="text-rose-500">*</span>
-                </label>
-                <div className="grid grid-cols-3 gap-2 mb-2">
-                  {[15, 30, 60].map((mins) => (
+                <label className="block text-slate-700 font-bold mb-1.5">Số phút cho phép vào thi kể từ bây giờ:</label>
+                <div className="flex gap-2">
+                  {[15, 30, 45, 60].map((m) => (
                     <button
-                      key={mins}
+                      key={m}
                       type="button"
-                      onClick={() => setLateWindowMinutes(mins)}
-                      className={`py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${lateWindowMinutes === mins
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                        }`}
+                      onClick={() => setLateWindowMinutes(m)}
+                      className={`flex-1 py-2 rounded-xl border text-xs font-black transition cursor-pointer ${
+                        lateWindowMinutes === m
+                          ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
                     >
-                      +{mins} phút
+                      +{m}p
                     </button>
                   ))}
                 </div>
-                <input
-                  type="number"
-                  min={5}
-                  max={120}
-                  value={lateWindowMinutes}
-                  onChange={(e) => setLateWindowMinutes(Math.max(5, Number(e.target.value)))}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition"
-                />
               </div>
+            </div>
 
-              {reopenEntrySuccessMsg && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold text-center">
-                  {reopenEntrySuccessMsg}
-                </div>
-              )}
-
-              {reopenEntryError && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 font-bold">
-                  {reopenEntryError}
-                </div>
-              )}
-
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowReopenEntryModal(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 transition cursor-pointer text-xs"
-                >
-                  Hủy bỏ
-                </button>
-                <button
-                  type="button"
-                  disabled={reopenEntryProcessing}
-                  onClick={() => void handleReopenEntry()}
-                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black shadow-xs transition cursor-pointer text-xs disabled:opacity-50"
-                >
-                  {reopenEntryProcessing ? 'Đang mở...' : `Xác nhận gia hạn +${lateWindowMinutes} phút`}
-                </button>
-              </div>
+            <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+              <button
+                type="button"
+                onClick={() => setShowReopenEntryModal(false)}
+                disabled={reopenEntryProcessing}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleReopenEntry}
+                disabled={reopenEntryProcessing}
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-2 text-xs font-black text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+              >
+                {reopenEntryProcessing ? 'Đang mở...' : 'Mở Giờ Vào Thi'}
+              </button>
             </div>
           </div>
         </div>
