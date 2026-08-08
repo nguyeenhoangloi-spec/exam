@@ -1054,7 +1054,7 @@ export default function ExamArrangementPage() {
                       {/* View Mode 2: Detailed Table */}
                       {viewMode === 'table' && (
                         <div className="overflow-x-auto rounded-xl border border-slate-200">
-                          <table className="w-full text-left text-xs">
+                          <table className="w-full text-left text-xs text-slate-700 border-collapse">
                             <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                               <tr>
                                 <th className="p-3.5">Phòng</th>
@@ -1065,13 +1065,17 @@ export default function ExamArrangementPage() {
                                 <th className="p-3.5">Khung Đào tạo Ngành</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 bg-white">
+                            <tbody className="divide-y divide-slate-100 font-medium">
                               {filteredDetails.map((st, dIdx) => (
-                                <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50 transition">
+                                <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-blue-50/40 transition">
                                   <td className="p-3.5 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
                                   <td className="p-3.5 text-center font-extrabold text-blue-700">Ghế #{st.seatNumber}</td>
-                                  <td className="p-3.5 font-mono font-semibold text-slate-800">{st.studentCode}</td>
-                                  <td className="p-3.5 font-bold text-slate-900">{st.fullName}</td>
+                                  <td className="p-3.5">
+                                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                                      {st.studentCode}
+                                    </span>
+                                  </td>
+                                  <td className="p-3.5 font-extrabold text-slate-900">{st.fullName}</td>
                                   <td className="p-3.5 font-semibold text-slate-700">
                                     {st.className && st.className !== '---' ? st.className : 'CNTT-K65'}
                                   </td>
@@ -1110,7 +1114,7 @@ export default function ExamArrangementPage() {
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-xs text-slate-700 border-collapse">
                 <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                   <tr>
                     <th className="p-3.5">Thời gian</th>
@@ -1119,14 +1123,14 @@ export default function ExamArrangementPage() {
                     <th className="p-3.5">Mô tả chi tiết</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
+                <tbody className="divide-y divide-slate-100 font-medium">
                   {!historyLogs.length ? (
                     <tr>
                       <td colSpan={4} className="p-12 text-center text-slate-400 font-semibold">Chưa có lịch sử thao tác xếp phòng.</td>
                     </tr>
                   ) : (
                     historyLogs.map((log, lIdx) => (
-                      <tr key={log.id ? `log-${log.id}-${lIdx}` : `log-${lIdx}`} className="hover:bg-slate-50 transition">
+                      <tr key={log.id ? `log-${log.id}-${lIdx}` : `log-${lIdx}`} className="hover:bg-blue-50/40 transition">
                         <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
                           {new Date(log.createdAt).toLocaleString('vi-VN')}
                         </td>

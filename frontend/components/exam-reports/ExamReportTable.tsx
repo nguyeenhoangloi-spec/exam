@@ -183,7 +183,11 @@ export function ExamReportTable({
                         className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </td>
-                    <td className="p-2 whitespace-nowrap font-bold text-blue-600">{c.studentCode}</td>
+                    <td className="p-2 whitespace-nowrap">
+                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                        {c.studentCode}
+                      </span>
+                    </td>
                     <td className="p-2 min-w-[180px]">
                       <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(c)}>
                         {c.fullName}
@@ -278,7 +282,7 @@ export function ExamReportTable({
 
                   {visibleColumns.studentCode !== false && (
                     <td className="p-3.5 whitespace-nowrap">
-                      <span className="font-mono font-black text-slate-900">
+                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
                         {c.studentCode}
                       </span>
                     </td>

@@ -204,7 +204,9 @@ export function ExamRoomTable({
 
                 {visibleColumns.code !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-slate-900">{codeText}</span>
+                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      {codeText}
+                    </span>
                   </td>
                 )}
 

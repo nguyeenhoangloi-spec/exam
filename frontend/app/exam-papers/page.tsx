@@ -866,7 +866,7 @@ export default function ExamPapersPage() {
                           </div>
                         ) : (
                           <p className="text-[11px] italic font-semibold text-slate-400">
-                             (Bấm "Hiện Đáp án" để xem đáp án gợi ý &amp; thang điểm)
+                             (Bấm &quot;Hiện Đáp án&quot; để xem đáp án gợi ý &amp; thang điểm)
                            </p>
                         )}
                         <div className="flex justify-end pt-1">

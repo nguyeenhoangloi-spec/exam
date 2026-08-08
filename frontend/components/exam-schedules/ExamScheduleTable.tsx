@@ -312,8 +312,12 @@ export function ExamScheduleTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">
-                    <button type="button" onClick={() => onDetail(s)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
+                  <td className="p-2 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={() => onDetail(s)}
+                      className="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                    >
                       {codeText}
                     </button>
                   </td>
@@ -401,7 +405,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
                     >
                       {codeText}
                     </button>

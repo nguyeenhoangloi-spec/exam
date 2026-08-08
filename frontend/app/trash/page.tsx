@@ -254,21 +254,23 @@ function TrashPageContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
+            type="button"
             onClick={handleAutoClean}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-black transition shadow-2xs cursor-pointer"
+            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
             title="Quét và xóa vĩnh viễn toàn bộ bản ghi trong Thùng rác đã quá 30 ngày"
           >
-            <Trash2 className="w-4 h-4 text-rose-600" />
-            Dọn dẹp bản ghi &gt; 30 ngày
+            <Trash2 className="h-4 w-4 text-slate-500" />
+            <span>Dọn dẹp tự động (&gt; 30 ngày)</span>
           </button>
           <button
+            type="button"
             onClick={() => { fetchStats(); fetchItems(); }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs cursor-pointer"
+            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
           >
-            <RefreshCw className="w-4 h-4 text-slate-500" />
-            Làm mới
+            <RefreshCw className="h-4 w-4 text-slate-500" />
+            <span>Làm mới</span>
           </button>
         </div>
       </div>
@@ -586,15 +588,15 @@ function TrashPageContent() {
           /* CHẾ ĐỘ XEM TABLE (LIST / COMPACT) */
           <div className="bg-white border border-slate-200/80 rounded-2xl shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-blue-100 bg-blue-50 text-[10.5px] font-black uppercase text-blue-700 tracking-wider">
+              <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+                  <tr>
                     <th className={`px-5 w-10 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>
                       <input
                         type="checkbox"
                         checked={selectedIds.length === sortedItems.length && sortedItems.length > 0}
                         onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
                     <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Nội dung / Dữ liệu đã xóa</th>
@@ -604,7 +606,7 @@ function TrashPageContent() {
                     {visibleColumns.actions && <th className={`px-5 text-right ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Thao tác</th>}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
+                <tbody className="divide-y divide-slate-100 font-medium">
                   {sortedItems.map((item) => {
                     const remainingDays = getRemainingDays(item.deletedAt);
                     const isSelected = selectedIds.includes(item.id);
@@ -612,7 +614,7 @@ function TrashPageContent() {
                     return (
                       <tr
                         key={`${item.type}-${item.id}`}
-                        className={`hover:bg-slate-50/70 transition ${isSelected ? 'bg-blue-50/30' : ''}`}
+                        className={`transition hover:bg-blue-50/40 ${isSelected ? 'bg-blue-50/60' : ''}`}
                       >
                         <td className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
                           <input

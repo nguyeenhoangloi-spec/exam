@@ -829,8 +829,10 @@ export default function ExamSupervisorsPage() {
                         const rName = roomObj?.roomName || roomObj?.roomCode || '---';
                         return (
                           <tr key={sup.id} className="hover:bg-blue-50/40 transition">
-                            <td className="p-3.5 pl-4 font-mono font-black text-slate-900 whitespace-nowrap">
-                              {sup.teacher?.teacherCode}
+                            <td className="p-3.5 pl-4 whitespace-nowrap">
+                              <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                                {sup.teacher?.teacherCode}
+                              </span>
                             </td>
                             <td className="p-3.5 min-w-[160px]">
                               <div className="font-extrabold text-slate-900 text-xs">{sup.teacher?.fullName}</div>

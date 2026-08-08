@@ -72,8 +72,8 @@ export function PendingQuestionList({
       {/* Table Container */}
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-          <table className="w-full text-left text-xs min-w-[760px]">
-            <thead className="bg-blue-50 text-blue-700 font-extrabold text-[11px] border-b border-blue-100">
+          <table className="w-full text-left text-xs min-w-[760px] text-slate-700 border-collapse">
+            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
               <tr>
                 <th className="py-3 px-3 whitespace-nowrap">Mã câu hỏi</th>
                 <th className="py-3 px-3">Nội dung câu hỏi</th>
@@ -85,18 +85,20 @@ export function PendingQuestionList({
                 <th className="py-3 px-3 text-center whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white font-semibold text-slate-800 text-xs">
+            <tbody className="divide-y divide-slate-100 font-medium text-xs">
               {list.map((q) => {
                 const difficultyInfo = difficultyBadge[q.difficulty as keyof typeof difficultyBadge] || difficultyBadge['MEDIUM'];
                 return (
-                  <tr key={q.id} className="hover:bg-blue-50/20 transition">
-                    <td className="py-3 px-3 font-black text-blue-600 whitespace-nowrap">
-                      {q.code}
+                  <tr key={q.id} className="hover:bg-blue-50/40 transition">
+                    <td className="py-3 px-3 whitespace-nowrap">
+                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                        {q.code}
+                      </span>
                     </td>
-                    <td className="py-3 px-3 font-medium text-slate-800 max-w-xs truncate">
+                    <td className="py-3 px-3 font-semibold text-slate-900 max-w-xs truncate">
                       {q.content}
                     </td>
-                    <td className="py-3 px-3 font-bold text-slate-900 whitespace-nowrap">
+                    <td className="py-3 px-3 font-extrabold text-slate-900 whitespace-nowrap">
                       {q.subjectName}
                     </td>
                     <td className="py-3 px-3 text-slate-600 font-medium whitespace-nowrap">

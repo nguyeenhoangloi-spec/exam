@@ -15,7 +15,7 @@ import { usePageTitleValue } from './PageTitleContext';
  * Full-screen routes that must render without the sidebar/header shell
  * (online exam taking, proctor live dashboard, login, etc.).
  */
-const FULLSCREEN_PREFIXES = ['/login', '/student/online-exam', '/teacher/proctor', '/contact', '/forgot-password'];
+const FULLSCREEN_PREFIXES = ['/login', '/student/online-exam', '/contact', '/forgot-password'];
 
 const isFullscreenRoute = (pathname: string) =>
     FULLSCREEN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));

@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
-import { TabBar } from '../../../components/ui/TabBar';
+import { Modal } from '../../../components/Modal';
+import { exportToFormattedExcel } from '../../../lib/export-excel';
+import { printReport } from '../../../lib/export-print';
 import {
   BookOpen,
   CheckCircle2,
@@ -21,7 +23,18 @@ import {
   User,
   X,
   ChevronDown,
-  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
+  List,
+  LayoutGrid,
+  RefreshCw,
+  Printer,
+  Download,
+  Eye,
+  Check,
+  BookMarked,
+  Info,
 } from 'lucide-react';
 
 /* ─── Types ─── */
@@ -57,25 +70,43 @@ interface StatsInfo {
 }
 
 export default function StudentCurriculumPage() {
-  usePageTitle('Khung Chương Trình Đào Tạo Cá Nhân');
+  usePageTitle('Khung chương trình đào tạo');
   const router = useRouter();
 
   const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
   const [stats, setStats] = useState<StatsInfo | null>(null);
   const [curriculumList, setCurriculumList] = useState<CurriculumItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Filters & Search
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('ALL');
   const [filterSemester, setFilterSemester] = useState('ALL');
+  const [filterStatus, setFilterStatus] = useState('ALL');
+
+  // Toolbar & View state
+  const [sortOrder, setSortOrder] = useState('semester_asc');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [openColumnMenu, setOpenColumnMenu] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    code: true,
+    name: true,
+    semester: true,
+    credits: true,
+    type: true,
+    status: true,
+  });
+
+  // Selection & Pagination
+  const [selected, setSelected] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+
+  // Detail Modal
+  const [detailItem, setDetailItem] = useState<CurriculumItem | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) { router.push('/login'); return; }
-    fetchData();
-  }, [router]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await api.get('/students/my-curriculum');
@@ -83,318 +114,980 @@ export default function StudentCurriculumPage() {
       setStats(res.data.stats);
       setCurriculumList(res.data.curriculum || []);
     } catch (err: any) {
-      setToast({ message: err?.response?.data?.message || err.message || 'Lỗi tải khung chương trình đào tạo', type: 'error' });
+      setToast({
+        message: err?.response?.data?.message || err.message || 'Lỗi tải khung chương trình đào tạo',
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      router.push('/login');
+      return;
+    }
+    fetchData();
+  }, [router, fetchData]);
 
   const semesters = useMemo(
     () => Array.from(new Set(curriculumList.map((i) => i.recommendedSemester))).sort((a, b) => a - b),
     [curriculumList]
   );
 
-  const filteredList = useMemo(() => curriculumList.filter((item) => {
-    const matchSearch = item.subjectCode.toLowerCase().includes(search.toLowerCase()) || item.subjectName.toLowerCase().includes(search.toLowerCase());
-    const matchType = filterType === 'ALL' || item.type === filterType;
-    const matchSemester = filterSemester === 'ALL' || String(item.recommendedSemester) === filterSemester;
-    return matchSearch && matchType && matchSemester;
-  }), [curriculumList, search, filterType, filterSemester]);
+  // Filtered & Sorted list
+  const filteredList = useMemo(() => {
+    let result = curriculumList.filter((item) => {
+      const matchSearch =
+        item.subjectCode.toLowerCase().includes(search.toLowerCase()) ||
+        item.subjectName.toLowerCase().includes(search.toLowerCase()) ||
+        (item.note || '').toLowerCase().includes(search.toLowerCase());
+      const matchType = filterType === 'ALL' || item.type === filterType;
+      const matchSemester = filterSemester === 'ALL' || String(item.recommendedSemester) === filterSemester;
+      const matchStatus =
+        filterStatus === 'ALL' ||
+        (filterStatus === 'COMPLETED' && item.isCompleted) ||
+        (filterStatus === 'INCOMPLETE' && !item.isCompleted);
+      return matchSearch && matchType && matchSemester && matchStatus;
+    });
+
+    // Sorting
+    result = [...result].sort((a, b) => {
+      if (sortOrder === 'semester_asc') return a.recommendedSemester - b.recommendedSemester;
+      if (sortOrder === 'semester_desc') return b.recommendedSemester - a.recommendedSemester;
+      if (sortOrder === 'name_asc') return a.subjectName.localeCompare(b.subjectName, 'vi');
+      if (sortOrder === 'name_desc') return b.subjectName.localeCompare(a.subjectName, 'vi');
+      if (sortOrder === 'credits_desc') return b.credits - a.credits;
+      if (sortOrder === 'credits_asc') return a.credits - b.credits;
+      return a.id - b.id;
+    });
+
+    return result;
+  }, [curriculumList, search, filterType, filterSemester, filterStatus, sortOrder]);
+
+  // Pagination calculations
+  const totalItems = filteredList.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+  const currentItems = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredList.slice(start, start + limit);
+  }, [filteredList, page, limit]);
+
+  const allSelected = currentItems.length > 0 && currentItems.every((i) => selected.includes(i.id));
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const pageIds = currentItems.map((i) => i.id);
+      setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
+    } else {
+      const pageIds = new Set(currentItems.map((i) => i.id));
+      setSelected((prev) => prev.filter((id) => !pageIds.has(id)));
+    }
+  };
+
+  const handleSelectOne = (id: number, checked: boolean) => {
+    if (checked) {
+      setSelected((prev) => [...prev, id]);
+    } else {
+      setSelected((prev) => prev.filter((item) => item !== id));
+    }
+  };
 
   const completionPercentage = stats?.totalCredits
     ? Math.min(100, Math.round(((stats.completedCredits || 0) / stats.totalCredits) * 100))
     : 0;
 
-  const KPI = [
-    { label: 'Tổng môn trong khung', value: `${stats?.totalSubjects ?? 0} môn`, icon: BookOpen, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC`, icon: Layers, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { label: 'Môn bắt buộc', value: `${stats?.totalMandatoryCredits ?? 0} TC`, icon: Award, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { label: 'Môn tự chọn', value: `${stats?.totalElectiveCredits ?? 0} TC`, icon: GraduationCap, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+  const KPI_CARDS = [
+    {
+      title: 'Tổng số Môn học',
+      value: stats?.totalSubjects ?? 0,
+      subtext: `${stats?.completedSubjects ?? 0} môn đã hoàn thành`,
+      icon: BookOpen,
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      unit: ' môn',
+    },
+    {
+      title: 'Tổng số Tín chỉ',
+      value: stats?.totalCredits ?? 0,
+      subtext: `${stats?.completedCredits ?? 0} TC đã tích lũy (${completionPercentage}%)`,
+      icon: Layers,
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      unit: ' TC',
+    },
+    {
+      title: 'Môn Bắt buộc',
+      value: stats?.totalMandatoryCredits ?? 0,
+      subtext: 'Khối kiến thức cốt lõi',
+      icon: Award,
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      unit: ' TC',
+    },
+    {
+      title: 'Môn Tự chọn',
+      value: stats?.totalElectiveCredits ?? 0,
+      subtext: 'Chuyên ngành tự chọn',
+      icon: GraduationCap,
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      unit: ' TC',
+    },
+    {
+      title: 'Tiến độ Đào tạo',
+      value: completionPercentage,
+      subtext: `${(stats?.totalSubjects ?? 0) - (stats?.completedSubjects ?? 0)} môn chưa tích lũy`,
+      icon: CheckCircle2,
+      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+      unit: '%',
+    },
   ];
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
+      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) - Lớp: ${studentInfo?.className || ''} - Khoa: ${studentInfo?.departmentName || ''}`,
+      metaInfo: [
+        { label: 'Tổng số môn học', value: `${stats?.totalSubjects ?? 0} môn` },
+        { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC` },
+        { label: 'Đã hoàn thành', value: `${stats?.completedCredits ?? 0} TC (${completionPercentage}%)` },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Học kỳ', width: '70px', align: 'center' },
+        { header: 'Mã môn', width: '80px', align: 'center' },
+        { header: 'Tên môn học', width: '220px' },
+        { header: 'Số TC', width: '60px', align: 'center' },
+        { header: 'Loại môn', width: '90px', align: 'center' },
+        { header: 'Trạng thái', width: '100px', align: 'center' },
+      ],
+      rows: filteredList.map((item, idx) => [
+        idx + 1,
+        `HK ${item.recommendedSemester}`,
+        item.subjectCode,
+        item.subjectName,
+        `${item.credits} TC`,
+        item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn',
+        item.isCompleted ? 'Đã học' : 'Chưa tích lũy',
+      ]),
+      signers: [
+        { title: 'SINH VIÊN', subtitle: '(Ký và ghi rõ họ tên)' },
+        { title: 'PHÒNG ĐÀO TẠO & KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
+      ],
+    });
+  };
+
+  const handleExportExcel = () => {
+    exportToFormattedExcel({
+      filename: `Khung_chuong_trinh_${studentInfo?.studentCode || 'sinh_vien'}`,
+      title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
+      subtitle: `Sinh viên: ${studentInfo?.fullName} (${studentInfo?.studentCode}) · Lớp: ${studentInfo?.className} · Khoa: ${studentInfo?.departmentName}`,
+      columns: [
+        { header: 'STT', width: 8, align: 'center' },
+        { header: 'Học kỳ', width: 14, align: 'center' },
+        { header: 'Mã môn học', width: 14, align: 'center' },
+        { header: 'Tên môn học', width: 35, align: 'left' },
+        { header: 'Số tín chỉ', width: 12, align: 'center' },
+        { header: 'Loại môn', width: 16, align: 'center' },
+        { header: 'Trạng thái', width: 16, align: 'center' },
+        { header: 'Ghi chú', width: 25, align: 'left' },
+      ],
+      rows: filteredList.map((item, idx) => [
+        idx + 1,
+        `Học kỳ ${item.recommendedSemester}`,
+        item.subjectCode,
+        item.subjectName,
+        `${item.credits} TC`,
+        item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn',
+        item.isCompleted ? 'Đã học' : 'Chưa tích lũy',
+        item.note || '',
+      ]),
+    });
+  };
+
+  const columnsList = [
+    { key: 'code', label: 'Mã môn học' },
+    { key: 'name', label: 'Tên môn học' },
+    { key: 'semester', label: 'Học kỳ đào tạo' },
+    { key: 'credits', label: 'Số tín chỉ' },
+    { key: 'type', label: 'Loại môn' },
+    { key: 'status', label: 'Trạng thái' },
+  ];
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const startItem = totalItems > 0 ? (page - 1) * limit + 1 : 0;
+  const endItem = Math.min(page * limit, totalItems);
+
+  const paginationPages: (number | string)[] = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) paginationPages.push(i);
+  } else {
+    paginationPages.push(1);
+    if (page > 3) paginationPages.push('...');
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+    for (let i = start; i <= end; i++) {
+      if (!paginationPages.includes(i)) paginationPages.push(i);
+    }
+    if (page < totalPages - 2) paginationPages.push('...');
+    if (!paginationPages.includes(totalPages)) paginationPages.push(totalPages);
+  }
 
   return (
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
 
-        {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden rounded-2xl bg-[#1E40AF] border border-white/10 p-6 text-white shadow-xl">
-          {/* BG decorations */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-blue-400/15 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute -left-8 bottom-0 w-48 h-48 bg-blue-600/20 rounded-full blur-[70px] pointer-events-none" />
-          <GraduationCap className="absolute -bottom-8 -right-8 w-48 h-48 text-white/[0.05] rotate-12 pointer-events-none" />
+        {/* ── 1. Standard Page Header ── */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              Khung Chương Trình Đào Tạo
+            </h1>
+            <p className="text-xs font-semibold text-slate-500">
+              Sinh viên: <strong className="text-slate-800 font-extrabold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-slate-800 font-bold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
+            </p>
+          </div>
 
-          <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            {/* Info */}
-            <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-blue-200 text-[10.5px] font-bold tracking-wide">
-                <Sparkles className="w-3 h-3" />
-                Chương Trình Đào Tạo Chuẩn
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            >
+              <Download className="h-4 w-4 text-slate-500" />
+              <span>Xuất Excel</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrintReport}
+              className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            >
+              <Printer className="h-4 w-4 text-slate-500" />
+              <span>In Khung Đào Tạo</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ── 2. Standard 5 KPI Cards Row ── */}
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
+          {KPI_CARDS.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <div
+                key={item.title}
+                className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      {item.title}
+                    </span>
+                    <p className="text-2xl font-black text-slate-900 leading-tight">
+                      {item.value.toLocaleString('vi-VN')}
+                      {item.unit || ''}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-transform group-hover:scale-110`}
+                  >
+                    <IconComponent className="h-5 w-5" />
+                  </div>
+                </div>
+
+                <span className="text-[10.5px] font-semibold text-slate-400 mt-2">
+                  {item.subtext}
+                </span>
               </div>
-              <h1 className="text-2xl font-black text-white tracking-tight leading-tight">
-                {studentInfo?.departmentName || 'Khoa / Ngành đào tạo'}
-              </h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-100/80 font-medium">
-                <span className="flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-blue-300" />
-                  {studentInfo?.fullName || '---'} ({studentInfo?.studentCode || '---'})
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <School className="w-3.5 h-3.5 text-blue-300" />
-                  Lớp: {studentInfo?.className || studentInfo?.classCode || '---'}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-blue-300" />
-                  Mã Khoa: {studentInfo?.departmentCode || '---'}
-                </span>
-              </div>
+            );
+          })}
+        </div>
+
+        {/* ── 3. Standard Filter Card Toolbar ── */}
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Tìm theo mã môn, tên môn học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
-            {/* Progress card */}
-            <div className="w-full lg:w-72 shrink-0 bg-white/10 border border-white/20 backdrop-blur-sm rounded-2xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white/80">Tiến độ tích lũy tín chỉ</span>
-                <span className="text-lg font-black text-blue-100">{completionPercentage}%</span>
-              </div>
-              <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-blue-500 to-blue-400 h-full rounded-full transition-all duration-700"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-[11px] text-white/60 font-semibold">
-                <span><span className="text-white/90 font-black">{stats?.completedCredits ?? 0}</span> TC hoàn thành</span>
-                <span>/ <span className="text-white/90 font-black">{stats?.totalCredits ?? 0}</span> TC tổng khung</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/15">
-                <div className="text-center">
-                  <p className="text-lg font-black text-white">{stats?.completedSubjects ?? 0}</p>
-                  <p className="text-[10px] text-white/55 font-semibold">Môn đã hoàn thành</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-lg font-black text-white">{(stats?.totalSubjects ?? 0) - (stats?.completedSubjects ?? 0)}</p>
-                  <p className="text-[10px] text-white/55 font-semibold">Môn chưa học</p>
-                </div>
-              </div>
+            {/* Semester Filter */}
+            <div className="relative">
+              <select
+                value={filterSemester}
+                onChange={(e) => {
+                  setFilterSemester(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              >
+                <option value="ALL">Tất cả học kỳ đào tạo</option>
+                {semesters.map((sem) => (
+                  <option key={sem} value={String(sem)}>
+                    Học kỳ {sem}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            </div>
+
+            {/* Type Filter */}
+            <div className="relative">
+              <select
+                value={filterType}
+                onChange={(e) => {
+                  setFilterType(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              >
+                <option value="ALL">Tất cả loại môn học</option>
+                <option value="MANDATORY">Môn bắt buộc</option>
+                <option value="ELECTIVE">Môn tự chọn</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            </div>
+
+            {/* Status Filter */}
+            <div className="relative">
+              <select
+                value={filterStatus}
+                onChange={(e) => {
+                  setFilterStatus(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              >
+                <option value="ALL">Tất cả trạng thái tích lũy</option>
+                <option value="COMPLETED">Đã hoàn thành (Đã học)</option>
+                <option value="INCOMPLETE">Chưa tích lũy tín chỉ</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             </div>
           </div>
         </div>
 
-        {/* ── KPI Cards Standardized White Flat ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {KPI.map(({ label, value, icon: Icon, iconBg }) => (
-            <div
-              key={label}
-              className="group flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
-            >
-              <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  {label}
-                </span>
-                <p className="text-2xl font-black text-slate-900 leading-tight">
-                  {value}
-                </p>
-              </div>
-
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-transform group-hover:scale-110`}>
-                <Icon className="h-5 w-5" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Filter / Search Toolbar ── */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-4 flex flex-wrap items-center gap-3">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[220px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã môn hoặc tên môn học..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:outline-none transition"
-            />
-            {search && (
-              <button type="button" onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Type filter tabs */}
-          <TabBar
-            tabs={[
-              { key: 'ALL', label: 'Tất cả loại môn' },
-              { key: 'MANDATORY', label: 'Môn bắt buộc' },
-              { key: 'ELECTIVE', label: 'Môn tự chọn' },
-            ]}
-            active={filterType}
-            onChange={setFilterType}
-          />
-
-          {/* Semester filter */}
-          <div className="relative">
-            <select
-              value={filterSemester}
-              onChange={(e) => setFilterSemester(e.target.value)}
-              className="appearance-none pl-3.5 pr-8 py-2 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
-            >
-              <option value="ALL">Tất cả học kỳ</option>
-              {semesters.map((sem) => (
-                <option key={sem} value={String(sem)}>Học kỳ {sem}</option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-          </div>
-
-          <span className="ml-auto text-[10.5px] font-bold text-slate-400 shrink-0">
-            {filteredList.length} môn học
+        {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+          <span className="text-xs font-bold text-slate-700">
+            <span className="font-black text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
           </span>
+
+          <div className="flex items-center gap-2">
+            {/* Sort */}
+            <div className="relative">
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              >
+                <option value="semester_asc">Học kỳ: Tăng dần</option>
+                <option value="semester_desc">Học kỳ: Giảm dần</option>
+                <option value="name_asc">Tên Môn: A - Z</option>
+                <option value="name_desc">Tên Môn: Z - A</option>
+                <option value="credits_desc">Số tín chỉ: Cao nhất</option>
+                <option value="credits_asc">Số tín chỉ: Thấp nhất</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            </div>
+
+            {/* Column Selector */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setOpenColumnMenu(!openColumnMenu)}
+                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+                <span>Chọn cột</span>
+                <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+              </button>
+
+              {openColumnMenu && (
+                <div
+                  className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+                  onMouseLeave={() => setOpenColumnMenu(false)}
+                >
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                    <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
+                    <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
+                  </div>
+
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                    {columnsList.map((col) => {
+                      const isVisible = visibleColumns[col.key] !== false;
+                      return (
+                        <label
+                          key={col.key}
+                          className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 select-none transition"
+                        >
+                          <span className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={isVisible}
+                              onChange={() => handleColumnToggle(col.key)}
+                              className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            />
+                            <span className={isVisible ? 'text-slate-900' : 'text-slate-400 line-through'}>
+                              {col.label}
+                            </span>
+                          </span>
+                          {isVisible && <Check className="h-3.5 w-3.5 text-blue-600" />}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* View Mode Group */}
+            <div className="flex items-center rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`rounded-lg p-1.5 transition cursor-pointer ${
+                  viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+                }`}
+                title="Dạng Danh sách chuẩn"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`rounded-lg p-1.5 transition cursor-pointer ${
+                  viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+                }`}
+                title="Dạng Lưới card"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('compact')}
+                className={`rounded-lg p-1.5 transition cursor-pointer ${
+                  viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+                }`}
+                title="Dạng Thu gọn"
+              >
+                <Layers className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Refresh */}
+            <button
+              type="button"
+              onClick={fetchData}
+              className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer active:scale-95"
+              title="Làm mới dữ liệu"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+            </button>
+          </div>
         </div>
 
-        {/* ── Content ── */}
+        {/* ── 5. Standard Content (List / Grid / Compact) ── */}
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <p className="text-sm font-semibold text-slate-500">Đang tải Khung chương trình đào tạo...</p>
+            <p className="text-xs font-semibold text-slate-500">Đang tải Khung chương trình đào tạo...</p>
           </div>
-        ) : curriculumList.length === 0 ? (
+        ) : totalItems === 0 ? (
           <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
               <BookOpen className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-black text-slate-800">Chưa có dữ liệu khung chương trình</h3>
+            <h3 className="text-base font-black text-slate-800">Không tìm thấy môn học nào</h3>
             <p className="text-xs font-medium text-slate-500 max-w-sm">
-              Khoa / Ngành của bạn hiện chưa được nhà trường cập nhật danh sách môn học vào khung đào tạo.
+              Không có môn học nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
-        ) : (
-          <div className="space-y-5">
-            {semesters
-              .filter((sem) => filterSemester === 'ALL' || String(sem) === filterSemester)
-              .map((semester) => {
-                const semItems = filteredList.filter((item) => item.recommendedSemester === semester);
-                if (semItems.length === 0 && search) return null;
-
-                const semCredits = semItems.reduce((s, i) => s + i.credits, 0);
-                const semCompleted = semItems.filter((i) => i.isCompleted).length;
-                const semPct = semItems.length > 0 ? Math.round((semCompleted / semItems.length) * 100) : 0;
-
-                return (
-                  <div key={semester} className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
-                    {/* Semester header */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-5 py-3.5 border-b border-slate-100">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-500 text-white flex items-center justify-center font-black text-sm shadow-sm">
-                          {semester}
-                        </div>
-                        <div>
-                          <h2 className="text-sm font-black text-slate-800 leading-tight">Học Kỳ {semester}</h2>
-                          <p className="text-[10.5px] font-semibold text-slate-500">
-                            {semItems.length} môn học &nbsp;•&nbsp; {semCredits} tín chỉ
-                          </p>
-                        </div>
+        ) : viewMode === 'grid' ? (
+          /* ── 5.1 Grid View Mode ── */
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            {currentItems.map((item) => {
+              const isChecked = selected.includes(item.id);
+              return (
+                <div
+                  key={item.id}
+                  className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
+                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                  }`}
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                          className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setDetailItem(item)}
+                          className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                        >
+                          {item.subjectCode}
+                        </button>
                       </div>
 
-                      {/* Semester mini progress */}
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-24 bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                            <div
-                              className="bg-gradient-to-r from-blue-500 to-blue-400 h-full rounded-full transition-all duration-500"
-                              style={{ width: `${semPct}%` }}
-                            />
-                          </div>
-                          <span className="text-[10.5px] font-black text-slate-600">{semPct}%</span>
-                        </div>
-                        <span className="px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-600 text-[10.5px] font-bold">
-                          {semCompleted}/{semItems.length} hoàn thành
-                        </span>
-                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-[8px] bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-700 border border-slate-200">
+                        HK {item.recommendedSemester}
+                      </span>
                     </div>
 
-                    {/* Table */}
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left">
-                        <thead className="border-b border-blue-100">
-                          <tr className="bg-blue-50">
-                            {['#', 'Mã môn', 'Tên môn học', 'Số TC', 'Loại môn', 'Trạng thái'].map((h, i) => (
-                              <th
-                                key={h}
-                                className={[
-                                  'py-2.5 px-5 text-[10px] font-extrabold text-blue-700 uppercase tracking-wide',
-                                  i === 0 || i === 3 ? 'text-center' : i === 4 || i === 5 ? 'text-center' : 'text-left',
-                                ].join(' ')}
-                              >
-                                {h}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {semItems.map((item, idx) => (
-                            <tr key={item.id} className={['hover:bg-slate-50/60 transition duration-100', item.isCompleted ? 'opacity-80' : ''].join(' ')}>
-                              {/* # */}
-                              <td className="py-3.5 px-5 text-center text-[10.5px] font-bold text-slate-400">{idx + 1}</td>
+                    <div>
+                      <h4
+                        onClick={() => setDetailItem(item)}
+                        className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                      >
+                        {item.subjectName}
+                      </h4>
+                      {item.note && <p className="text-xs text-slate-400 font-normal mt-0.5 italic truncate">{item.note}</p>}
+                    </div>
 
-                              {/* Code */}
-                              <td className="py-3.5 px-5">
-                                <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
-                                  {item.subjectCode}
-                                </span>
-                              </td>
-
-                              {/* Name */}
-                              <td className="py-3.5 px-5">
-                                <p className="text-xs font-bold text-slate-800">{item.subjectName}</p>
-                                {item.note && (
-                                  <p className="text-[10.5px] text-slate-400 italic mt-0.5">{item.note}</p>
-                                )}
-                              </td>
-
-                              {/* Credits */}
-                              <td className="py-3.5 px-5 text-center">
-                                <span className="text-xs font-black text-slate-700">{item.credits}</span>
-                                <span className="text-[10px] text-slate-400 font-semibold ml-0.5">TC</span>
-                              </td>
-
-                              {/* Type */}
-                              <td className="py-3.5 px-5 text-center">
-                                {item.type === 'MANDATORY' ? (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                    Bắt buộc
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                    Tự chọn
-                                  </span>
-                                )}
-                              </td>
-
-                              {/* Status */}
-                              <td className="py-3.5 px-5 text-center">
-                                {item.isCompleted ? (
-                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    <CheckCircle2 className="w-3 h-3" />
-                                    Đã học
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-semibold bg-slate-100 text-slate-500">
-                                    <Clock className="w-3 h-3" />
-                                    Chưa tích lũy
-                                  </span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="space-y-1 text-xs text-slate-600 font-medium pt-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Số tín chỉ:</span>
+                        <strong className="font-extrabold text-slate-900">{item.credits} TC</strong>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400">Loại môn:</span>
+                        {item.type === 'MANDATORY' ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700">
+                            <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-violet-700">
+                            <GraduationCap className="h-3.5 w-3.5 text-violet-500" /> Tự chọn
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+                    {item.isCompleted ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
+                        <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
+                      </span>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => setDetailItem(item)}
+                      className="flex items-center gap-1 font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+                    >
+                      <Eye className="h-3.5 w-3.5" /> Chi tiết
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        ) : viewMode === 'compact' ? (
+          /* ── 5.2 Compact View Mode ── */
+          <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+            <table className="w-full text-left text-xs text-slate-700 border-collapse">
+              <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+                <tr>
+                  <th scope="col" className="p-2 pl-3 text-center w-8">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
+                  <th scope="col" className="p-2 whitespace-nowrap">Mã môn</th>
+                  <th scope="col" className="p-2 min-w-[200px]">Tên môn học</th>
+                  <th scope="col" className="p-2 whitespace-nowrap text-center">Học kỳ</th>
+                  <th scope="col" className="p-2 whitespace-nowrap text-center">Số TC</th>
+                  <th scope="col" className="p-2 whitespace-nowrap">Loại môn</th>
+                  <th scope="col" className="p-2 whitespace-nowrap">Trạng thái</th>
+                  <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium">
+                {currentItems.map((item) => {
+                  const isChecked = selected.includes(item.id);
+                  return (
+                    <tr key={item.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                      <td className="p-2 pl-3 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                          className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                          {item.subjectCode}
+                        </span>
+                      </td>
+                      <td className="p-2 min-w-[200px]">
+                        <p
+                          className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600"
+                          onClick={() => setDetailItem(item)}
+                        >
+                          {item.subjectName}
+                        </p>
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center font-bold text-slate-700">HK {item.recommendedSemester}</td>
+                      <td className="p-2 whitespace-nowrap text-center font-black text-slate-900">{item.credits} TC</td>
+                      <td className="p-2 whitespace-nowrap">
+                        {item.type === 'MANDATORY' ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
+                            <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
+                            <GraduationCap className="h-3.5 w-3.5 text-violet-500" /> Tự chọn
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        {item.isCompleted ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
+                            <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-2 pr-3 text-right whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={() => setDetailItem(item)}
+                          className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer"
+                          title="Xem chi tiết"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          /* ── 5.3 Standard List View Mode (Default Table) ── */
+          <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+            <table className="w-full text-left text-xs text-slate-700 border-collapse">
+              <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+                <tr>
+                  <th scope="col" className="p-3.5 pl-4 text-center w-10">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
+                  {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã môn</th>}
+                  {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[240px]">Tên môn học & Mô tả</th>}
+                  {visibleColumns.semester !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Học kỳ đào tạo</th>}
+                  {visibleColumns.credits !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Số tín chỉ</th>}
+                  {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại môn</th>}
+                  {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái tích lũy</th>}
+                  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium">
+                {currentItems.map((item) => {
+                  const isChecked = selected.includes(item.id);
+                  return (
+                    <tr
+                      key={item.id}
+                      className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}
+                    >
+                      {/* Checkbox */}
+                      <td className="p-3.5 pl-4 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                          className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                      </td>
+
+                      {/* Code */}
+                      {visibleColumns.code !== false && (
+                        <td className="p-3.5 whitespace-nowrap">
+                          <button
+                            type="button"
+                            onClick={() => setDetailItem(item)}
+                            className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                          >
+                            {item.subjectCode}
+                          </button>
+                        </td>
+                      )}
+
+                      {/* Name */}
+                      {visibleColumns.name !== false && (
+                        <td className="p-3.5 min-w-[240px]">
+                          <p
+                            onClick={() => setDetailItem(item)}
+                            className="font-extrabold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
+                          >
+                            {item.subjectName}
+                          </p>
+                          {item.note && (
+                            <p className="text-xs text-slate-400 font-normal mt-0.5 italic">{item.note}</p>
+                          )}
+                        </td>
+                      )}
+
+                      {/* Semester */}
+                      {visibleColumns.semester !== false && (
+                        <td className="p-3.5 whitespace-nowrap text-center">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                            Học kỳ {item.recommendedSemester}
+                          </span>
+                        </td>
+                      )}
+
+                      {/* Credits */}
+                      {visibleColumns.credits !== false && (
+                        <td className="p-3.5 whitespace-nowrap text-center">
+                          <span className="font-black text-slate-900 text-xs">{item.credits}</span>
+                          <span className="text-slate-500 font-medium ml-1 text-xs">TC</span>
+                        </td>
+                      )}
+
+                      {/* Type */}
+                      {visibleColumns.type !== false && (
+                        <td className="p-3.5 whitespace-nowrap">
+                          {item.type === 'MANDATORY' ? (
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                              <Award className="h-4 w-4 shrink-0 text-blue-600" />
+                              Bắt buộc
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                              <GraduationCap className="h-4 w-4 shrink-0 text-violet-500" />
+                              Tự chọn
+                            </span>
+                          )}
+                        </td>
+                      )}
+
+                      {/* Status */}
+                      {visibleColumns.status !== false && (
+                        <td className="p-3.5 whitespace-nowrap">
+                          {item.isCompleted ? (
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                              Đã học
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-500 font-semibold">
+                              <Clock className="h-4 w-4 shrink-0 text-slate-400" />
+                              Chưa tích lũy
+                            </span>
+                          )}
+                        </td>
+                      )}
+
+                      {/* Actions */}
+                      <td className="p-3.5 pr-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setDetailItem(item)}
+                            className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition shadow-2xs cursor-pointer active:scale-95"
+                            title="Xem chi tiết môn học"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            <span>Chi tiết</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* ── 6. Standard Pagination Bar (Hiển thị 1 - X trong Y Môn học, Page Buttons, Rows Per Page) ── */}
+        {totalItems > 0 && (
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
+            <p className="text-xs font-semibold text-slate-500">
+              Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
+              <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
+              <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Môn học
+            </p>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => setPage(page - 1)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                  title="Trang trước"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+
+                {paginationPages.map((p, idx) => {
+                  if (p === '...') {
+                    return (
+                      <span key={`dots-${idx}`} className="px-1 text-xs font-bold text-slate-400">
+                        ...
+                      </span>
+                    );
+                  }
+
+                  const pNum = Number(p);
+                  const isCurrent = pNum === page;
+
+                  return (
+                    <button
+                      key={pNum}
+                      type="button"
+                      onClick={() => setPage(pNum)}
+                      className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-xs font-extrabold transition cursor-pointer shadow-2xs ${
+                        isCurrent
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      {pNum}
+                    </button>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                  title="Trang sau"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Rows Per Page Dropdown */}
+              <div className="relative">
+                <select
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                >
+                  <option value={8}>8 / trang</option>
+                  <option value={15}>15 / trang</option>
+                  <option value={30}>30 / trang</option>
+                  <option value={50}>50 / trang</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── 7. Detail Course Modal ── */}
+        {detailItem && (
+          <Modal
+            isOpen={Boolean(detailItem)}
+            onClose={() => setDetailItem(null)}
+            title={`Chi tiết môn học: ${detailItem.subjectName}`}
+          >
+            <div className="space-y-4 text-xs">
+              <div className="rounded-xl bg-blue-50/70 border border-blue-100 p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                    {detailItem.subjectCode}
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-white text-slate-700 font-bold text-xs border border-slate-200">
+                    Học kỳ {detailItem.recommendedSemester}
+                  </span>
+                </div>
+                <h3 className="text-base font-black text-slate-900">{detailItem.subjectName}</h3>
+                {detailItem.note && (
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{detailItem.note}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
+                  <span className="text-slate-500 font-bold block text-[11px]">Số tín chỉ</span>
+                  <strong className="text-slate-900 font-black text-sm">{detailItem.credits} Tín chỉ</strong>
+                </div>
+
+                <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
+                  <span className="text-slate-500 font-bold block text-[11px]">Phân loại môn</span>
+                  <strong className="text-slate-900 font-black text-sm">
+                    {detailItem.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn'}
+                  </strong>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
+                <span className="text-slate-500 font-bold block text-[11px] mb-1">Trạng thái tích lũy</span>
+                {detailItem.isCompleted ? (
+                  <div className="flex items-center gap-2 text-emerald-700 font-extrabold text-xs">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <span>Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-slate-600 font-bold text-xs">
+                    <Clock className="h-4 w-4 text-slate-400" />
+                    <span>Môn học chưa tích lũy (Cần đăng ký học theo đúng kế hoạch đào tạo)</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDetailItem(null)}
+                  className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </Modal>
         )}
 
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

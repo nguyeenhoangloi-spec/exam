@@ -11,7 +11,7 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Department, Subject } from '../../types';
-import { Building2, Search, X, Plus, Trash2, BookOpen, GraduationCap, Users } from 'lucide-react';
+import { Building2, Search, X, Plus, Trash2, BookOpen, GraduationCap, Award, Users } from 'lucide-react';
 
 import { DepartmentHeader } from '../../components/departments/DepartmentHeader';
 import { DepartmentKPICards } from '../../components/departments/DepartmentKPICards';
@@ -599,7 +599,7 @@ export default function DepartmentsPage() {
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
                 <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                  <thead className="bg-blue-50 text-[11px] font-extrabold uppercase text-blue-700 border-b border-blue-100">
+                  <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                     <tr>
                       <th className="p-3">Mã môn</th>
                       <th className="p-3">Tên môn học</th>
@@ -611,17 +611,26 @@ export default function DepartmentsPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {curriculumList.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-50/50">
-                        <td className="p-3 font-bold text-blue-600">{item.subject?.subjectCode}</td>
-                        <td className="p-3 font-bold text-slate-900">{item.subject?.subjectName}</td>
-                        <td className="p-3 text-center font-semibold text-slate-700">{item.subject?.credits} TC</td>
+                      <tr key={item.id} className="transition hover:bg-blue-50/40">
+                        <td className="p-3">
+                          <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                            {item.subject?.subjectCode}
+                          </span>
+                        </td>
+                        <td className="p-3 font-extrabold text-slate-900">{item.subject?.subjectName}</td>
+                        <td className="p-3 text-center font-semibold text-slate-700">
+                          <span className="font-black text-slate-800">{item.subject?.credits}</span>
+                          <span className="text-slate-400 font-semibold ml-0.5">TC</span>
+                        </td>
                         <td className="p-3 text-center">
                           {item.type === 'MANDATORY' ? (
-                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-700 border border-blue-200">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                              <Award className="h-4 w-4 shrink-0 text-blue-600" />
                               Bắt buộc
                             </span>
                           ) : (
-                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold text-slate-600 border border-slate-200">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                              <GraduationCap className="h-4 w-4 shrink-0 text-violet-500" />
                               Tự chọn
                             </span>
                           )}

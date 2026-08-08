@@ -220,7 +220,9 @@ export function ExamPaperTable({
                     />
                   </td>
                   <td className="p-2 whitespace-nowrap">
-                    <span className="font-mono font-black text-slate-900">{p.paperCode}</span>
+                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      {p.paperCode}
+                    </span>
                   </td>
                   <td className="p-2 min-w-[180px]">
                     <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(p.id)}>

@@ -45,8 +45,8 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
       {/* Table Container */}
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-          <table className="w-full min-w-[620px] text-left text-xs">
-            <thead className="bg-blue-50 text-blue-700 font-extrabold text-[11px] border-b border-blue-100">
+          <table className="w-full min-w-[620px] text-left text-xs text-slate-700 border-collapse">
+            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
               <tr>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Mã môn</th>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Tên môn thi</th>
@@ -58,10 +58,14 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
                 <th className="py-2.5 px-1.5 text-center whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white font-semibold text-slate-800 text-xs">
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-800 text-xs">
               {list.map((exam) => (
-                <tr key={exam.id} className="hover:bg-blue-50/30 transition">
-                  <td className="py-2.5 px-2.5 whitespace-nowrap font-bold text-slate-700">{exam.code}</td>
+                <tr key={exam.id} className="hover:bg-blue-50/40 transition">
+                  <td className="py-2.5 px-2.5 whitespace-nowrap">
+                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      {exam.code}
+                    </span>
+                  </td>
                   <td className="py-2.5 px-2.5 font-black text-slate-900 whitespace-nowrap">{exam.name}</td>
                   <td className="py-2.5 px-2 text-center whitespace-nowrap font-medium text-slate-600">{exam.date}</td>
                   <td className="py-2.5 px-2 text-center whitespace-nowrap font-medium text-slate-600">{exam.time}</td>

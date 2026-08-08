@@ -93,49 +93,121 @@ export default function PracticePage() {
 
   return (
     <>
-      <div className="mx-auto max-w-5xl space-y-6 p-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900"><BookOpen className="text-blue-600" /> Luyện tập tự do</h1>
-          <p className="mt-1 text-sm text-slate-500">Tạo bài luyện tập theo môn học, làm bài và nhận kết quả ngay.</p>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-extrabold tracking-wide">
+              <BookOpen className="w-3.5 h-3.5" />
+              Luyện Tập Kiến Thức
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              Luyện tập tự do
+            </h1>
+            <p className="text-xs font-semibold text-slate-500">
+              Tạo bài luyện tập theo môn học, tự làm bài trắc nghiệm và nhận kết quả chấm điểm ngay.
+            </p>
+          </div>
         </div>
 
         {!session && !result && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-5 max-w-3xl">
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Cấu hình bài luyện tập</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="text-sm font-semibold text-slate-700">Môn học
-                <select value={subjectId} onChange={(event) => setSubjectId(event.target.value)} disabled={loading} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 font-normal">
-                  {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.subjectName}{subject.subjectCode ? ` (${subject.subjectCode})` : ''}</option>)}
+              <label className="text-xs font-bold text-slate-700 space-y-1.5 block">
+                <span>Chọn Môn học</span>
+                <select
+                  value={subjectId}
+                  onChange={(event) => setSubjectId(event.target.value)}
+                  disabled={loading}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition cursor-pointer"
+                >
+                  {subjects.map((subject) => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.subjectName}{subject.subjectCode ? ` (${subject.subjectCode})` : ''}
+                    </option>
+                  ))}
                 </select>
               </label>
-              <label className="text-sm font-semibold text-slate-700">Số câu hỏi
-                <select value={questionCount} onChange={(event) => setQuestionCount(Number(event.target.value))} className="mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 font-normal">
-                  {[10, 20, 30, 40].map((count) => <option key={count} value={count}>{count} câu</option>)}
+              <label className="text-xs font-bold text-slate-700 space-y-1.5 block">
+                <span>Số lượng câu hỏi</span>
+                <select
+                  value={questionCount}
+                  onChange={(event) => setQuestionCount(Number(event.target.value))}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition cursor-pointer"
+                >
+                  {[10, 20, 30, 40].map((count) => (
+                    <option key={count} value={count}>{count} câu</option>
+                  ))}
                 </select>
               </label>
             </div>
-            <button onClick={startPractice} disabled={working || loading || !subjects.length} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
+            <button
+              type="button"
+              onClick={startPractice}
+              disabled={working || loading || !subjects.length}
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-xs font-bold shadow-2xs active:scale-95 transition cursor-pointer disabled:opacity-50"
+            >
               {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />} Bắt đầu luyện tập
             </button>
           </div>
         )}
 
         {session && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-3xl">
             {session.questions.map((question, index) => {
               const single = question.type !== 'MULTIPLE_CHOICE';
-              return <div key={question.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p className="font-semibold text-slate-900">Câu {index + 1}. {question.content}</p>
-                <div className="mt-3 space-y-2">{(question.options || []).map((option) => <label key={option.id} className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-100 p-3 text-sm hover:bg-slate-50">
-                  <input type={single ? 'radio' : 'checkbox'} name={`question-${question.id}`} checked={(answers[question.id] || []).includes(option.id)} onChange={() => toggleAnswer(question.id, option.id, single)} /> {option.content}
-                </label>)}</div>
-              </div>;
+              return (
+                <div key={question.id} className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3">
+                  <p className="font-extrabold text-sm text-slate-900 leading-snug">Câu {index + 1}. {question.content}</p>
+                  <div className="space-y-2">
+                    {(question.options || []).map((option) => (
+                      <label
+                        key={option.id}
+                        className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-slate-200/70 p-3 text-xs font-medium text-slate-800 hover:bg-blue-50/40 hover:border-blue-200 transition"
+                      >
+                        <input
+                          type={single ? 'radio' : 'checkbox'}
+                          name={`question-${question.id}`}
+                          checked={(answers[question.id] || []).includes(option.id)}
+                          onChange={() => toggleAnswer(question.id, option.id, single)}
+                          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <span>{option.content}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              );
             })}
-            <button onClick={() => setShowSubmitConfirm(true)} disabled={working} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"><Send className="h-4 w-4" /> Nộp bài luyện tập</button>
+            <button
+              type="button"
+              onClick={() => setShowSubmitConfirm(true)}
+              disabled={working}
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 text-xs font-bold shadow-2xs active:scale-95 transition cursor-pointer disabled:opacity-50"
+            >
+              <Send className="h-4 w-4" /> Nộp bài luyện tập
+            </button>
           </div>
         )}
 
-        {result && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" /><h2 className="mt-3 text-2xl font-bold text-slate-900">Hoàn thành bài luyện tập</h2><p className="mt-2 text-slate-700">Điểm: <strong>{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}</p><button onClick={() => setResult(null)} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white">Tạo bài mới</button></div>}
-      </div>
+        {result && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-8 text-center max-w-xl mx-auto shadow-2xs space-y-3">
+            <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" />
+            <h2 className="text-xl font-black text-slate-900">Hoàn thành bài luyện tập</h2>
+            <p className="text-sm font-semibold text-slate-700">
+              Điểm số: <strong className="text-emerald-700 font-black text-lg">{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}
+            </p>
+            <button
+              type="button"
+              onClick={() => setResult(null)}
+              className="mt-3 inline-flex items-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-xs font-bold shadow-2xs active:scale-95 transition cursor-pointer"
+            >
+              Tạo bài mới
+            </button>
+          </div>
+        )}
+      </main>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <ConfirmModal
         isOpen={showSubmitConfirm}

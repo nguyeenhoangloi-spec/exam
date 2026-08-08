@@ -248,7 +248,13 @@ export function StudentTable({
 
                 {visibleColumns.studentCode !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-slate-900">{s.studentCode}</span>
+                    <button
+                      type="button"
+                      onClick={() => onDetail(s)}
+                      className="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                    >
+                      {s.studentCode}
+                    </button>
                   </td>
                 )}
 
