@@ -78,9 +78,8 @@ export function QuestionBankTable({
           return (
             <div
               key={q.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 {/* Header Row: Checkbox, Code Pill, Badges */}
@@ -230,7 +229,7 @@ export function QuestionBankTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -292,272 +291,271 @@ export function QuestionBankTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <>
-    <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
-          <tr>
-            <th scope="col" className="p-3.5 pl-4 text-center w-10">
-              <input
-                type="checkbox"
-                checked={allSelected}
-                onChange={(e) => onSelectAll(e.target.checked)}
-                className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-              />
-            </th>
-            {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã câu hỏi</th>}
-            {visibleColumns.content !== false && <th scope="col" className="p-3.5 min-w-[280px]">Nội dung & Các đáp án</th>}
-            {visibleColumns.subject !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Môn học</th>}
-            {visibleColumns.difficulty !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Độ khó</th>}
-            {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại</th>}
-            <th scope="col" className="p-3.5 whitespace-nowrap">Điểm</th>
-            {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
-            {visibleColumns.creator !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Người tạo</th>}
-            {visibleColumns.createdAt !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày tạo</th>}
-            <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-100 font-medium">
-          {questions.map((q, index) => {
-            const isChecked = selected.includes(q.id);
-            const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
-            const subjectName = q.subject?.subjectName || 'Chưa gán môn';
-            const creatorName = q.createdByName || (q.createdBy as any)?.teacher?.fullName || q.createdBy?.fullName || q.createdBy?.username || (q.createdById ? `User #${q.createdById}` : 'Hệ thống');
-            const isLastRow = index >= Math.floor(questions.length / 2);
+      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+        <table className="w-full text-left text-xs text-slate-700 border-collapse">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+            <tr>
+              <th scope="col" className="p-3.5 pl-4 text-center w-10">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={(e) => onSelectAll(e.target.checked)}
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                />
+              </th>
+              {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã câu hỏi</th>}
+              {visibleColumns.content !== false && <th scope="col" className="p-3.5 min-w-[280px]">Nội dung & Các đáp án</th>}
+              {visibleColumns.subject !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Môn học</th>}
+              {visibleColumns.difficulty !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Độ khó</th>}
+              {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại</th>}
+              <th scope="col" className="p-3.5 whitespace-nowrap">Điểm</th>
+              {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
+              {visibleColumns.creator !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Người tạo</th>}
+              {visibleColumns.createdAt !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày tạo</th>}
+              <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 font-medium">
+            {questions.map((q, index) => {
+              const isChecked = selected.includes(q.id);
+              const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
+              const subjectName = q.subject?.subjectName || 'Chưa gán môn';
+              const creatorName = q.createdByName || (q.createdBy as any)?.teacher?.fullName || q.createdBy?.fullName || q.createdBy?.username || (q.createdById ? `User #${q.createdById}` : 'Hệ thống');
+              const isLastRow = index >= Math.floor(questions.length / 2);
 
-            // Options list (A, B, C, D)
-            const optionsList = q.options && q.options.length > 0 ? q.options : [];
+              // Options list (A, B, C, D)
+              const optionsList = q.options && q.options.length > 0 ? q.options : [];
 
-            return (
-              <tr
-                key={q.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
-                }`}
-              >
-                {/* Checkbox */}
-                <td className="p-3.5 pl-4 text-center align-top pt-4">
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={(e) => onSelect(q.id, e.target.checked)}
-                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                </td>
-
-                {/* Mã câu hỏi */}
-                {visibleColumns.code !== false && (
-                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(q)}
-                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
-                    >
-                      {codeText}
-                    </button>
+              return (
+                <tr
+                  key={q.id}
+                  className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                    }`}
+                >
+                  {/* Checkbox */}
+                  <td className="p-3.5 pl-4 text-center align-top pt-4">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => onSelect(q.id, e.target.checked)}
+                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
                   </td>
-                )}
 
-                {/* Nội dung câu hỏi & Các đáp án */}
-                {visibleColumns.content !== false && (
-                  <td className="p-3.5 min-w-[280px] align-top">
-                    <div className="space-y-2">
-                      <p
-                        className="text-xs font-bold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                  {/* Mã câu hỏi */}
+                  {visibleColumns.code !== false && (
+                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                      <button
+                        type="button"
                         onClick={() => onDetail(q)}
-                        title={q.content}
+                        className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                       >
-                        {q.content}
-                      </p>
+                        {codeText}
+                      </button>
+                    </td>
+                  )}
 
-                      {q.type === 'ESSAY' ? (
-                        <div className="pt-1">
-                          <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-blue-50 text-blue-900 border border-blue-200/80">
-                            <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> <span className="font-extrabold">Câu tự luận:</span> {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
-                          </span>
-                        </div>
-                      ) : optionsList.length > 0 ? (
-                        <div className="flex flex-wrap gap-1.5 pt-1">
-                          {optionsList.map((opt) => (
-                            <span
-                              key={opt.label + opt.content}
-                              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition"
-                            >
-                              <span className="font-extrabold">{opt.label}.</span>
-                              <span className="truncate max-w-[160px]">{opt.content}</span>
+                  {/* Nội dung câu hỏi & Các đáp án */}
+                  {visibleColumns.content !== false && (
+                    <td className="p-3.5 min-w-[280px] align-top">
+                      <div className="space-y-2">
+                        <p
+                          className="text-xs font-bold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                          onClick={() => onDetail(q)}
+                          title={q.content}
+                        >
+                          {q.content}
+                        </p>
+
+                        {q.type === 'ESSAY' ? (
+                          <div className="pt-1">
+                            <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-blue-50 text-blue-900 border border-blue-200/80">
+                              <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> <span className="font-extrabold">Câu tự luận:</span> {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
                             </span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  </td>
-                )}
-
-                {/* Môn học */}
-                {visibleColumns.subject !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700 align-top pt-4">
-                    {subjectName}
-                  </td>
-                )}
-
-                {/* Độ khó */}
-                {visibleColumns.difficulty !== false && (
-                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <QuestionDifficultyBadge difficulty={q.difficulty || 'MEDIUM'} />
-                  </td>
-                )}
-
-                {/* Loại */}
-                {visibleColumns.type !== false && (
-                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <QuestionTypeBadge type={q.type || 'SINGLE_CHOICE'} />
-                  </td>
-                )}
-
-                {/* Điểm số */}
-                <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                  <span className="text-xs font-extrabold text-slate-800">
-                    {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
-                  </span>
-                </td>
-
-                {/* Trạng thái */}
-                {visibleColumns.status !== false && (
-                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <QuestionStatusBadge status={q.status || 'APPROVED'} />
-                  </td>
-                )}
-
-                {/* Người tạo */}
-                {visibleColumns.creator !== false && (
-                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                      <div className="h-5 w-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] border border-slate-200">
-                        {creatorName.charAt(0).toUpperCase()}
+                          </div>
+                        ) : optionsList.length > 0 ? (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {optionsList.map((opt) => (
+                              <span
+                                key={opt.label + opt.content}
+                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition"
+                              >
+                                <span className="font-extrabold">{opt.label}.</span>
+                                <span className="truncate max-w-[160px]">{opt.content}</span>
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
-                      <span>{creatorName}</span>
+                    </td>
+                  )}
+
+                  {/* Môn học */}
+                  {visibleColumns.subject !== false && (
+                    <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700 align-top pt-4">
+                      {subjectName}
+                    </td>
+                  )}
+
+                  {/* Độ khó */}
+                  {visibleColumns.difficulty !== false && (
+                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                      <QuestionDifficultyBadge difficulty={q.difficulty || 'MEDIUM'} />
+                    </td>
+                  )}
+
+                  {/* Loại */}
+                  {visibleColumns.type !== false && (
+                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                      <QuestionTypeBadge type={q.type || 'SINGLE_CHOICE'} />
+                    </td>
+                  )}
+
+                  {/* Điểm số */}
+                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <span className="text-xs font-extrabold text-slate-800">
+                      {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
+                    </span>
+                  </td>
+
+                  {/* Trạng thái */}
+                  {visibleColumns.status !== false && (
+                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                      <QuestionStatusBadge status={q.status || 'APPROVED'} />
+                    </td>
+                  )}
+
+                  {/* Người tạo */}
+                  {visibleColumns.creator !== false && (
+                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                        <div className="h-5 w-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] border border-slate-200">
+                          {creatorName.charAt(0).toUpperCase()}
+                        </div>
+                        <span>{creatorName}</span>
+                      </div>
+                    </td>
+                  )}
+
+                  {/* Ngày tạo */}
+                  {visibleColumns.createdAt !== false && (
+                    <td className="p-3.5 whitespace-nowrap text-[11px] text-slate-500 font-semibold align-top pt-4">
+                      {formatDate(q.createdAt)}
+                    </td>
+                  )}
+
+                  {/* Thao tác */}
+                  <td className="p-3.5 pr-4 text-right whitespace-nowrap relative align-top pt-3.5">
+                    <div className="flex items-center justify-end gap-1">
+                      {/* Detail Eye button */}
+                      <button
+                        type="button"
+                        onClick={() => onDetail(q)}
+                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                        title="Xem chi tiết"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+
+                      <ActionDropdownPortal>
+                        {(closeMenu) => (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                onDetail(q);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
+                            >
+                              <Eye className="h-3.5 w-3.5 text-slate-500" />
+                              <span>Xem chi tiết</span>
+                            </button>
+
+                            {q.type === 'ESSAY' && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  closeMenu();
+                                  setRubricQuestion(q);
+                                }}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700 font-bold cursor-pointer"
+                              >
+                                <HelpCircle className="h-3.5 w-3.5 text-blue-600" />
+                                <span>Cấu hình Rubric</span>
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                onAction(q, 'edit');
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
+                            >
+                              <Edit className="h-3.5 w-3.5 text-blue-600" />
+                              <span>Chỉnh sửa</span>
+                            </button>
+
+                            {isAdmin && (q.status === 'PENDING' || q.status === 'DRAFT') && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  closeMenu();
+                                  onAction(q, 'approve');
+                                }}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700 cursor-pointer"
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                <span>Phê duyệt</span>
+                              </button>
+                            )}
+
+                            {isAdmin && q.status === 'PENDING' && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  closeMenu();
+                                  onAction(q, 'reject');
+                                }}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-700 cursor-pointer"
+                              >
+                                <XCircle className="h-3.5 w-3.5 text-rose-600" />
+                                <span>Từ chối</span>
+                              </button>
+                            )}
+
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  closeMenu();
+                                  onAction(q, 'delete');
+                                }}
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                <span>Xóa câu hỏi</span>
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </ActionDropdownPortal>
                     </div>
                   </td>
-                )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-                {/* Ngày tạo */}
-                {visibleColumns.createdAt !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[11px] text-slate-500 font-semibold align-top pt-4">
-                    {formatDate(q.createdAt)}
-                  </td>
-                )}
-
-                {/* Thao tác */}
-                <td className="p-3.5 pr-4 text-right whitespace-nowrap relative align-top pt-3.5">
-                  <div className="flex items-center justify-end gap-1">
-                    {/* Detail Eye button */}
-                    <button
-                      type="button"
-                      onClick={() => onDetail(q)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                      title="Xem chi tiết"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-
-                    <ActionDropdownPortal>
-                      {(closeMenu) => (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              closeMenu();
-                              onDetail(q);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
-                          >
-                            <Eye className="h-3.5 w-3.5 text-slate-500" />
-                            <span>Xem chi tiết</span>
-                          </button>
-
-                          {q.type === 'ESSAY' && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                closeMenu();
-                                setRubricQuestion(q);
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700 font-bold cursor-pointer"
-                            >
-                              <HelpCircle className="h-3.5 w-3.5 text-blue-600" />
-                              <span>Cấu hình Rubric</span>
-                            </button>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              closeMenu();
-                              onAction(q, 'edit');
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
-                          >
-                            <Edit className="h-3.5 w-3.5 text-blue-600" />
-                            <span>Chỉnh sửa</span>
-                          </button>
-
-                          {isAdmin && (q.status === 'PENDING' || q.status === 'DRAFT') && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                closeMenu();
-                                onAction(q, 'approve');
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700 cursor-pointer"
-                            >
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                              <span>Phê duyệt</span>
-                            </button>
-                          )}
-
-                          {isAdmin && q.status === 'PENDING' && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                closeMenu();
-                                onAction(q, 'reject');
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-700 cursor-pointer"
-                            >
-                              <XCircle className="h-3.5 w-3.5 text-rose-600" />
-                              <span>Từ chối</span>
-                            </button>
-                          )}
-
-                          {isAdmin && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                closeMenu();
-                                onAction(q, 'delete');
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                              <span>Xóa câu hỏi</span>
-                            </button>
-                          )}
-                        </>
-                      )}
-                    </ActionDropdownPortal>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-
-    <RubricDialog
-      isOpen={Boolean(rubricQuestion)}
-      question={rubricQuestion}
-      onClose={() => setRubricQuestion(null)}
-    />
+      <RubricDialog
+        isOpen={Boolean(rubricQuestion)}
+        question={rubricQuestion}
+        onClose={() => setRubricQuestion(null)}
+      />
     </>
   );
 }

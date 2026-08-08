@@ -599,7 +599,7 @@ export default function DepartmentsPage() {
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
                 <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                  <thead className="bg-slate-50 text-[11px] font-extrabold uppercase text-slate-500 border-b border-slate-200">
+                  <thead className="bg-blue-50 text-[11px] font-extrabold uppercase text-blue-700 border-b border-blue-100">
                     <tr>
                       <th className="p-3">Mã môn</th>
                       <th className="p-3">Tên môn học</th>
@@ -661,7 +661,7 @@ export default function DepartmentsPage() {
           {/* Drawer Content */}
           <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
             {/* Header - Solid Flat Color */}
-            <div className="bg-[#0f1b33] p-5 text-white shrink-0 border-b border-slate-800">
+            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-mono font-black text-base text-white border border-white/15">

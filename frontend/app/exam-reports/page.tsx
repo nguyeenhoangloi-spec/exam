@@ -156,7 +156,7 @@ function getExamFormatBadge(s: any) {
 function getScheduleStatusBadge(s: any) {
   const st = computeScheduleStatus(s);
   if (st === 'ONGOING') {
-    return { label: 'Đang diễn ra', key: 'ONGOING', dotClass: 'bg-emerald-500', textClass: 'text-emerald-700 font-bold' };
+    return { label: 'Đang diễn ra', key: 'ONGOING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-bold' };
   }
   if (st === 'UPCOMING') {
     return { label: 'Sắp diễn ra', key: 'UPCOMING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-bold' };
@@ -683,7 +683,7 @@ export default function ExamReportsPage() {
                                 setModalSubjectFilter('ALL');
                                 setModalStatusFilter('ALL');
                               }}
-                              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer select-none ml-auto"
+                              className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer select-none ml-auto"
                               title="Đặt lại bộ lọc"
                             >
                               <RotateCcw className="h-3.5 w-3.5" />

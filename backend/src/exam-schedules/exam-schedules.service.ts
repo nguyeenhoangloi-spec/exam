@@ -205,7 +205,7 @@ export class ExamSchedulesService {
       include: {
         examPeriod: true,
         subject: true,
-        examPapers: { select: { id: true, paperCode: true, status: true } },
+        examPapers: { where: { deletedAt: null }, select: { id: true, paperCode: true, status: true } },
         examScheduleRooms: { include: { room: true, _count: { select: { examRoomStudents: true, supervisors: true } } } },
       },
       orderBy: { examDate: 'asc' },
@@ -233,7 +233,7 @@ export class ExamSchedulesService {
             examRoomStudents: { include: { student: { include: { class: true } } } },
           },
         },
-        examPapers: true,
+        examPapers: { where: { deletedAt: null } },
       },
     });
     if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
@@ -477,7 +477,9 @@ export class ExamSchedulesService {
   }
 
   async reopenEntry(actor: Actor, id: number, minutes: number) {
-    if (actor.role !== 'ADMIN') throw new ForbiddenException('Chỉ quản trị viên được mở lại thời gian vào thi.');
+    if (actor.role !== 'ADMIN' && actor.role !== 'TEACHER') {
+      throw new ForbiddenException('Chỉ Cán bộ coi thi hoặc Quản trị viên mới được mở lại thời gian vào thi.');
+    }
     if (!Number.isInteger(minutes) || minutes < 1 || minutes > 24 * 60) {
       throw new BadRequestException('Thời gian mở lại phải từ 1 đến 1440 phút.');
     }

@@ -77,12 +77,41 @@ api.interceptors.response.use(
         window.location.href = '/login';
       }
     }
+
+    // ── Chuẩn hóa message lỗi cho người dùng ─────────────────────────────
+    let message: string;
+    const status = error.response?.status;
     const rawMessage = error.response?.data?.message;
-    const message = Array.isArray(rawMessage) ? rawMessage.join(', ') : (rawMessage || 'Đã có lỗi xảy ra');
+
+    if (typeof rawMessage === 'string' && rawMessage.trim()) {
+      message = rawMessage.trim();
+    } else if (Array.isArray(rawMessage) && rawMessage.length) {
+      message = rawMessage.join(', ');
+    } else if (status === 500 || status === 502 || status === 503) {
+      message = 'Hệ thống đang gặp sự cố. Vui lòng thử lại sau.';
+    } else if (status === 404) {
+      message = 'Không tìm thấy dữ liệu yêu cầu.';
+    } else if (status === 403) {
+      message = 'Bạn không có quyền thực hiện thao tác này.';
+    } else if (status === 400) {
+      message = 'Dữ liệu gửi lên không hợp lệ. Vui lòng kiểm tra lại.';
+    } else if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+      message = 'Kết nối bị quá tải. Vui lòng thử lại sau.';
+    } else if (!error.response || error.code === 'ERR_NETWORK' || /network error/i.test(error.message || '')) {
+      message = 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng và thử lại.';
+    } else {
+      message = 'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+    }
+
+    // Cắt message quá dài (toast chỉ hiển thị 4 giây)
+    if (message.length > 200) {
+      message = `${message.slice(0, 200)}...`;
+    }
+
     const normalizedError = new Error(message) as Error & { response?: any; code?: string; status?: number };
     normalizedError.response = error.response;
     normalizedError.code = error.code;
-    normalizedError.status = error.response?.status;
+    normalizedError.status = status;
     return Promise.reject(normalizedError);
   },
 );

@@ -102,8 +102,8 @@ const RoleCard = memo(function RoleCard({
         isSelected
           ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-200/50 scale-[1.02]'
           : isDark
-          ? 'border-slate-700 bg-slate-800/60 hover:border-slate-600'
-          : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40',
+            ? 'border-slate-700 bg-slate-800/60 hover:border-slate-600'
+            : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40',
       ].join(' ')}
     >
       {isSelected && (
@@ -236,12 +236,12 @@ export default function LoginPage() {
     <div
       className={[
         'h-screen w-screen overflow-hidden flex font-sans antialiased',
-        isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#d6dfef] text-slate-900',
+        isDark ? 'bg-slate-950 text-slate-100' : 'bg-blue-50 text-slate-900',
       ].join(' ')}
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       {/* ══════════ LEFT 40% ══════════ */}
-      <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-b from-[#102040] via-[#152b55] to-[#1a3366] relative overflow-hidden">
+      <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800 relative overflow-hidden">
         {/* Texture */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-blue-400/15 rounded-full blur-[100px] pointer-events-none" />
@@ -334,7 +334,7 @@ export default function LoginPage() {
       <main
         className={[
           'flex-1 h-full flex flex-col overflow-hidden relative',
-          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-[#d6dfef] via-[#cdd8ec] to-[#c4d0e8]',
+          isDark ? 'bg-slate-950' : 'bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200',
         ].join(' ')}
       >
         {/* Dot pattern */}

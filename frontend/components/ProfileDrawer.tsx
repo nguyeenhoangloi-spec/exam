@@ -39,7 +39,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] px-6 py-5 text-white">
+          <div className="relative bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 px-6 py-5 text-white">
             <button
               onClick={onClose}
               className="absolute right-4 top-4 z-10 rounded-xl p-1.5 text-white/70 hover:bg-white/10 hover:text-white transition cursor-pointer"

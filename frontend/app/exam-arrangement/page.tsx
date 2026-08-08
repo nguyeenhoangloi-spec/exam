@@ -110,7 +110,7 @@ export default function ExamArrangementPage() {
     title: '',
     message: '',
     type: 'warning',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchRoomAvailability = useCallback(async (scheduleId: string) => {
@@ -326,7 +326,7 @@ export default function ExamArrangementPage() {
     });
 
     setToast({
-      message: '🔀 Đã trộn ghế ngẫu nhiên và đánh lại Số Báo Danh (chống nhìn bài) thành công!',
+      message: 'Đã trộn ghế ngẫu nhiên và đánh lại SBD.',
       type: 'success',
     });
   };
@@ -502,7 +502,7 @@ export default function ExamArrangementPage() {
     });
     const pages = Array.from(roomGroups.entries()).map(([roomCode, students]) => {
       const roomInfo = rooms.find((r) => r.roomCode === roomCode);
-      const rows = students.map((st, i) => `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:center;font-weight:bold;">SBN-${String(i + 1).padStart(3, '0')}</td><td style="font-weight:bold;color:#1e3a8a;">${escapeHtml(st.studentCode)}</td><td style="font-weight:bold;">${escapeHtml(st.fullName)}</td><td>${escapeHtml(st.className)}</td><td style="text-align:center;font-weight:bold;color:#0284c7;">Ghế #${st.seatNumber}</td></tr>`).join('');
+      const rows = students.map((st, i) => `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:center;font-weight:bold;">SBN-${String(i + 1).padStart(3, '0')}</td><td style="font-weight:bold;color:#1e3a8a;">${escapeHtml(st.studentCode)}</td><td style="font-weight:bold;">${escapeHtml(st.fullName)}</td><td>${escapeHtml(st.className)}</td><td style="text-align:center;font-weight:bold;color:#1d4ed8;">Ghế #${st.seatNumber}</td></tr>`).join('');
       return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;"><div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;"><h2 style="margin:0;font-size:18px;text-transform:uppercase;color:#0f172a;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2><h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1><p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(currentSched?.subject?.subjectName)}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(currentSched?.examDate || Date.now()).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p></div><table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6"><thead><tr style="background:#f1f5f9;color:#0f172a;text-align:left;"><th style="width:40px;text-align:center;">STT</th><th style="width:70px;text-align:center;">MÃ SBN</th><th style="width:100px;">MÃ SV</th><th>HỌ VÀ TÊN</th><th style="width:90px;">LỚP SH</th><th style="width:70px;text-align:center;">VỊ TRÍ</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:20px;display:flex;justify-content:space-between;font-size:12px;"><div>Tổng số thí sinh: <strong>${students.length}</strong> / ${roomInfo?.capacity ?? 0} chỗ</div><div>Cán bộ coi thi ký tên: ....................</div></div></div>`;
     }).join('');
     printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Danh sách dán cửa</title><style>body{font-family:Arial,sans-serif;margin:20px;color:#0f172a}@media print{body{margin:0}}</style></head><body>${pages}<script>window.onload=()=>window.print();</script></body></html>`);
@@ -681,9 +681,8 @@ export default function ExamArrangementPage() {
                                           key={s.id}
                                           type="button"
                                           onClick={() => { void handleScheduleChange(s.id.toString()); setShowSchedulePicker(false); }}
-                                          className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${
-                                            isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
-                                          }`}
+                                          className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+                                            }`}
                                         >
                                           <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
                                             {s.mode === 'MOCK' ? '[THI THỬ] ' : '[CHÍNH THỨC] '}
@@ -715,7 +714,7 @@ export default function ExamArrangementPage() {
                                             <p className="text-xs font-extrabold text-slate-600 truncate">
                                               {s.subject?.subjectName}
                                             </p>
-                                            <span className="shrink-0 rounded-md bg-rose-100 text-rose-700 text-[9px] font-black px-1.5 py-0.5">
+                                            <span className="shrink-0 rounded-md bg-amber-100 text-amber-800 text-[9px] font-black px-1.5 py-0.5">
                                               Đã quá hạn
                                             </span>
                                           </div>
@@ -747,9 +746,8 @@ export default function ExamArrangementPage() {
                                           key={s.id}
                                           type="button"
                                           onClick={() => { void handleScheduleChange(s.id.toString()); setShowSchedulePicker(false); }}
-                                          className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${
-                                            isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
-                                          }`}
+                                          className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+                                            }`}
                                         >
                                           <div className="flex items-center gap-2">
                                             <p className={`text-xs font-black truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
@@ -788,9 +786,9 @@ export default function ExamArrangementPage() {
                     const current = schedules.find((s) => s.id.toString() === selectedScheduleId);
                     if ((current as any)?.mode === 'MOCK') {
                       return (
-                        <div className="mt-3 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium space-y-1 shadow-2xs">
-                          <p className="font-bold text-amber-950">Ca Thi Thử (MOCK)</p>
-                          <p className="leading-relaxed text-amber-800">
+                        <div className="mt-3 p-3.5 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 font-medium space-y-1 shadow-2xs">
+                          <p className="font-bold text-blue-950">Ca Thi Thử (MOCK)</p>
+                          <p className="leading-relaxed text-blue-800">
                             Ca thi này áp dụng hình thức thi thử trực tuyến tự do. Sinh viên có thể tham gia thi trực tuyến mà không bắt buộc phải xếp phòng thi máy hay chia số báo danh.
                           </p>
                         </div>
@@ -834,13 +832,12 @@ export default function ExamArrangementPage() {
                         <div
                           key={r.id}
                           onClick={() => handleToggleRoom(r)}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${
-                            !r.isAvailable
-                              ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
-                              : isSelected
+                          className={`flex items-center justify-between p-2.5 rounded-xl border transition text-xs select-none ${!r.isAvailable
+                            ? 'border-rose-200 bg-rose-50/60 text-rose-800 cursor-not-allowed opacity-80'
+                            : isSelected
                               ? 'border-blue-500 bg-blue-50 text-blue-900 font-bold shadow-2xs cursor-pointer'
                               : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 cursor-pointer'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-rose-500' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
@@ -862,9 +859,8 @@ export default function ExamArrangementPage() {
                   <button
                     type="submit"
                     disabled={arranging || selectedRoomIds.length === 0}
-                    className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition disabled:opacity-50 active:scale-98 cursor-pointer ${
-                      result ? 'col-span-1' : 'col-span-2'
-                    }`}
+                    className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition disabled:opacity-50 active:scale-98 cursor-pointer ${result ? 'col-span-1' : 'col-span-2'
+                      }`}
                   >
                     {arranging ? 'Đang xử lý...' : 'Xem sắp xếp'}
                   </button>
@@ -1059,7 +1055,7 @@ export default function ExamArrangementPage() {
                       {viewMode === 'table' && (
                         <div className="overflow-x-auto rounded-xl border border-slate-200">
                           <table className="w-full text-left text-xs">
-                            <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                               <tr>
                                 <th className="p-3.5">Phòng</th>
                                 <th className="p-3.5 text-center">Vị trí</th>
@@ -1115,7 +1111,7 @@ export default function ExamArrangementPage() {
 
             <div className="overflow-x-auto rounded-xl border border-slate-200/80">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                   <tr>
                     <th className="p-3.5">Thời gian</th>
                     <th className="p-3.5">Người thực hiện</th>
@@ -1138,11 +1134,10 @@ export default function ExamArrangementPage() {
                           {log.actor?.username || 'Quản trị viên'} ({log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role || 'Hệ thống'})
                         </td>
                         <td className="p-3.5 whitespace-nowrap">
-                          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                            log.action === 'ARRANGE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${log.action === 'ARRANGE' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : log.action === 'RESET_ARRANGEMENT' ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : 'bg-blue-50 text-blue-700 border border-blue-200'
-                          }`}>
+                              : 'bg-blue-50 text-blue-700 border border-blue-200'
+                            }`}>
                             {log.action}
                           </span>
                         </td>

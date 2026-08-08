@@ -144,17 +144,17 @@ export default function StudentExamLobbyPage() {
     currentExamType === 'DIEN_LO' || currentExamType === 'FILL_BLANK'
       ? 'Thi Điền Khuyết Trực Tuyến'
       : currentExamType === 'TU_LUAN' || currentExamType === 'ESSAY'
-      ? 'Thi Tự Luận Trực Tuyến'
-      : 'Thi Trắc Nghiệm Trực Tuyến';
+        ? 'Thi Tự Luận Trực Tuyến'
+        : 'Thi Trắc Nghiệm Trực Tuyến';
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 p-4 md:p-8 flex flex-col justify-center items-center">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
+
       <div className="w-full max-w-4xl bg-white border border-slate-200/90 rounded-3xl shadow-2xl overflow-hidden transition-all duration-300">
-        
+
         {/* Banner Header Navy Đậm Chất Lượng Cao */}
-        <div className="bg-gradient-to-r from-slate-950 via-[#001E5C] to-slate-900 p-6 md:p-8 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-slate-950 via-blue-800 to-slate-900 p-6 md:p-8 text-white relative overflow-hidden">
           <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2">
@@ -222,7 +222,7 @@ export default function StudentExamLobbyPage() {
 
               {/* Lưới Thông tin Thí sinh & Kiểm tra Yêu cầu */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
+
                 {/* Thẻ Thí sinh */}
                 <div className="bg-slate-50 border border-slate-200/90 p-5 rounded-2xl space-y-3.5 shadow-2xs">
                   <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
@@ -282,6 +282,56 @@ export default function StudentExamLobbyPage() {
                       <span>Trình duyệt sẵn sàng</span>
                     </li>
                   </ul>
+                </div>
+              </div>
+
+              {/* Bảng Quy định thi & Thang xử lý vi phạm quy chế thi */}
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 space-y-3.5 shadow-2xs">
+                <h3 className="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center gap-2 border-b border-amber-200/80 pb-2.5">
+                  <ShieldAlert className="w-4 h-4 text-amber-600" />
+                  Quy định chấm điểm & Thang xử lý vi phạm quy chế thi
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1.5">
+                    <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span>Chuyển tab / Mở ứng dụng khác</span>
+                    </p>
+                    <p className="text-[11px] text-slate-600 font-semibold leading-relaxed">
+                      Mỗi lần chuyển tab hoặc mở ứng dụng khác: <strong>Cảnh báo vi phạm trực tiếp & Ghi log giám thị</strong>.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1.5">
+                    <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                      <span>Thoát chế độ Toàn màn hình</span>
+                    </p>
+                    <p className="text-[11px] text-slate-600 font-semibold leading-relaxed">
+                      Mỗi lần thoát Fullscreen: <strong>Cảnh báo vi phạm nghiêm trọng</strong>.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1.5">
+                    <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                      <span>Sao chép / Dán bài làm (Copy-Paste)</span>
+                    </p>
+                    <p className="text-[11px] text-slate-600 font-semibold leading-relaxed">
+                      Cấm hoàn toàn thao tác copy/paste. Mỗi lần vi phạm: <strong>Cảnh báo & Ghi nhận vi phạm</strong>.
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1.5">
+                    <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-700"></span>
+                      <span>Vượt quá {config?.maxAllowedViolations || 5} lần vi phạm</span>
+                    </p>
+                    <p className="text-[11px] text-rose-700 font-extrabold leading-relaxed">
+                      Hệ thống sẽ TỰ ĐỘNG KHÓA VÀ NỘP BÀI THI NGAY LẬP TỨC!
+                    </p>
+                  </div>
                 </div>
               </div>
 

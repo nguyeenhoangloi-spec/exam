@@ -104,6 +104,7 @@ export class ProctorService {
 
     return {
       scheduleRoomId,
+      scheduleId: scheduleRoom.examSchedule.id,
       roomName: scheduleRoom.room.roomName,
       subjectName: scheduleRoom.examSchedule.subject.subjectName,
       examDate: scheduleRoom.examSchedule.examDate,
@@ -162,6 +163,78 @@ export class ProctorService {
       success: true,
       message: `Đã gia hạn thêm ${extraMinutes} phút thành công`,
       newExpectedEndTime: updated.expectedEndTime,
+    };
+  }
+
+  /**
+   * Gia hạn bù giờ hàng loạt cho toàn bộ sinh viên trong phòng thi khi gặp sự cố
+   */
+  async bulkExtendTime(teacherUserId: number, scheduleRoomId: number, extraMinutes: number, reason: string) {
+    if (!reason?.trim()) {
+      throw new BadRequestException('Vui lòng nhập lý do gia hạn bù giờ toàn phòng thi');
+    }
+    if (!Number.isInteger(extraMinutes) || extraMinutes < 1 || extraMinutes > 60) {
+      throw new BadRequestException('Số phút gia hạn phải là số nguyên từ 1 đến 60');
+    }
+
+    const scheduleRoom = await this.prisma.examScheduleRoom.findUnique({
+      where: { id: scheduleRoomId },
+      include: {
+        examSchedule: { include: { onlineExamConfig: true } },
+        examRoomStudents: { select: { studentId: true } },
+      },
+    });
+
+    if (!scheduleRoom) {
+      throw new NotFoundException('Không tìm thấy phòng thi');
+    }
+
+    const configId = scheduleRoom.examSchedule.onlineExamConfig?.id;
+    const studentIds = scheduleRoom.examRoomStudents.map((ers) => ers.studentId);
+
+    const attempts = configId && studentIds.length
+      ? await this.prisma.examAttempt.findMany({
+          where: {
+            onlineExamConfigId: configId,
+            studentId: { in: studentIds },
+            status: { in: ['IN_PROGRESS', 'DISCONNECTED'] },
+          },
+        })
+      : [];
+
+    if (!attempts.length) {
+      throw new BadRequestException('Không có bài thi nào đang làm hoặc bị ngắt kết nối trong phòng để bù giờ.');
+    }
+
+    const now = new Date();
+
+    for (const attempt of attempts) {
+      const currentExpected = attempt.expectedEndTime && attempt.expectedEndTime > now ? attempt.expectedEndTime : now;
+      const newExpected = new Date(currentExpected.getTime() + extraMinutes * 60 * 1000);
+
+      await this.prisma.examAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          expectedEndTime: newExpected,
+          extraMinutes: attempt.extraMinutes + extraMinutes,
+          extraTimeReason: reason,
+        },
+      });
+    }
+
+    await this.prisma.auditLog.create({
+      data: {
+        action: 'BULK_EXTEND_EXAM_TIME',
+        entityType: 'ExamScheduleRoom',
+        entityId: String(scheduleRoomId),
+        description: `Giám thị cộng bù giờ hàng loạt +${extraMinutes} phút cho ${attempts.length} sinh viên phòng thi. Lý do: ${reason}`,
+      },
+    });
+
+    return {
+      success: true,
+      count: attempts.length,
+      message: `Đã bù giờ +${extraMinutes} phút thành công cho ${attempts.length} sinh viên trong phòng thi`,
     };
   }
 

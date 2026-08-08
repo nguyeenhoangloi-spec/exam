@@ -7,22 +7,24 @@ import {
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 
+export interface ExamPaperMatrixFormData {
+  examScheduleId: string;
+  paperCode: string;
+  durationMinutes: string;
+  easyCount: string;
+  mediumCount: string;
+  hardCount: string;
+  variantCount: string;
+  examType?: string;
+  selectionMode?: string;
+  easyScore?: string;
+  mediumScore?: string;
+  hardScore?: string;
+}
+
 interface ExamPaperMatrixFormProps {
   schedules: ExamSchedule[];
-  formData: {
-    examScheduleId: string;
-    paperCode: string;
-    durationMinutes: string;
-    easyCount: string;
-    mediumCount: string;
-    hardCount: string;
-    variantCount: string;
-    examType?: string;
-    selectionMode?: string;
-    easyScore?: string;
-    mediumScore?: string;
-    hardScore?: string;
-  };
+  formData: ExamPaperMatrixFormData;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
   handleDurationChange: (duration: string) => void;
   onSubmit: (e: FormEvent) => void;

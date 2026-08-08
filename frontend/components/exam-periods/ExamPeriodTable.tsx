@@ -97,9 +97,8 @@ export function ExamPeriodTable({
           return (
             <div
               key={p.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -189,7 +188,7 @@ export function ExamPeriodTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -248,7 +247,7 @@ export function ExamPeriodTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -274,9 +273,8 @@ export function ExamPeriodTable({
             return (
               <tr
                 key={p.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
-                }`}
+                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                  }`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input

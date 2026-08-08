@@ -229,7 +229,7 @@ export default function ExamSupervisorsPage() {
           setToast({ message: 'Đã hủy phân công giám thị thành công!', type: 'success' });
           await selectSchedule(selectedSchedule.id);
         } catch (err: any) {
-          setToast({ message: err.message, type: 'error' });
+          setToast({ message: err.message || 'Hủy phân công giám thị thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -649,11 +649,11 @@ export default function ExamSupervisorsPage() {
             {selectedSchedule && (
               <div className={`rounded-xl border p-3.5 text-xs space-y-1.5 ${
                 selectedSchedule.mode === 'MOCK'
-                  ? 'bg-amber-50/90 border-amber-200 text-amber-950'
+                  ? 'bg-blue-50/90 border-blue-200 text-blue-950'
                   : 'bg-slate-50 border-slate-200 text-slate-800'
               }`}>
                 {selectedSchedule.mode === 'MOCK' && (
-                  <span className="inline-block mb-1 font-extrabold text-[11px] bg-amber-100 border border-amber-300 text-amber-900 px-2.5 py-0.5 rounded-full">
+                  <span className="inline-block mb-1 font-extrabold text-[11px] bg-blue-100 border border-blue-300 text-blue-900 px-2.5 py-0.5 rounded-full">
                     Ca Thi Thử (Tự Do) - Không bắt buộc phân công Giám thị
                   </span>
                 )}
@@ -739,7 +739,7 @@ export default function ExamSupervisorsPage() {
                       })}
                     </div>
                     {autoProposal.unassigned?.length > 0 && (
-                      <p className="mt-2 text-rose-700">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>
+                      <p className="mt-2 text-amber-700">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>
                     )}
                     <button
                       type="button"
@@ -810,7 +810,7 @@ export default function ExamSupervisorsPage() {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                    <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+                    <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
                       <tr>
                         <th className="p-3.5 pl-4 whitespace-nowrap">Mã GV</th>
                         <th className="p-3.5 min-w-[160px]">Họ và tên Giám thị</th>

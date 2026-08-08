@@ -140,7 +140,7 @@ export default function ForgotPasswordPage() {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* ══════════ LEFT 40% SAAS BRANDING PANEL ══════════ */}
-      <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-br from-[#0f1c4d] via-[#1a3a8f] to-[#1d4ed8] relative overflow-hidden">
+      <aside className="hidden lg:flex lg:w-[40%] flex-col bg-gradient-to-br from-blue-950 via-blue-800 to-blue-700 relative overflow-hidden">
         {/* Texture */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-blue-400/15 rounded-full blur-[100px] pointer-events-none" />

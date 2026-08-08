@@ -4,12 +4,13 @@ import React from 'react';
 
 export type BadgeTone = 'slate' | 'blue' | 'emerald' | 'amber' | 'rose';
 
-const toneClasses: Record<BadgeTone, string> = {
-  slate: 'text-slate-600 dark:text-slate-400 font-bold',
-  blue: 'text-blue-600 dark:text-blue-400 font-bold',
-  emerald: 'text-emerald-600 dark:text-emerald-400 font-bold',
-  amber: 'text-amber-600 dark:text-amber-400 font-bold',
-  rose: 'text-rose-600 dark:text-rose-400 font-bold',
+/** Màu trạng thái chỉ đặt trên icon; chữ luôn giữ màu trung tính. */
+const toneIconClasses: Record<BadgeTone, string> = {
+  slate: 'text-slate-400 dark:text-slate-500',
+  blue: 'text-blue-600 dark:text-blue-400',
+  emerald: 'text-emerald-600 dark:text-emerald-400',
+  amber: 'text-amber-600 dark:text-amber-400',
+  rose: 'text-rose-600 dark:text-rose-400',
 };
 
 type BadgeProps = {
@@ -26,11 +27,11 @@ export function Badge({ children, tone = 'slate', size, className = '', leftIcon
     <span
       className={[
         'inline-flex items-center gap-1.5 text-xs font-bold whitespace-nowrap select-none',
-        toneClasses[tone],
+        'text-slate-700 dark:text-slate-200',
         className,
       ].join(' ')}
     >
-      {leftIcon && <span className="shrink-0 text-current">{leftIcon}</span>}
+      {leftIcon && <span className={`shrink-0 ${toneIconClasses[tone]}`}>{leftIcon}</span>}
       {children}
     </span>
   );

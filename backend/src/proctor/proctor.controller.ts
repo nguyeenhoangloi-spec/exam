@@ -41,6 +41,20 @@ export class ProctorController {
     );
   }
 
+  @Post('room/:scheduleRoomId/bulk-extend-time')
+  bulkExtendTime(
+    @Request() req: any,
+    @Param('scheduleRoomId', ParseIntPipe) scheduleRoomId: number,
+    @Body() body: { extraMinutes: number; reason: string },
+  ) {
+    return this.proctorService.bulkExtendTime(
+      req.user.id,
+      scheduleRoomId,
+      body.extraMinutes,
+      body.reason || 'Sự cố kỹ thuật hệ thống / mạng diện rộng',
+    );
+  }
+
   @Post('attempt/:attemptId/reopen')
   reopenAttempt(
     @Request() req: any,

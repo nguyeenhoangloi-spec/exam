@@ -414,7 +414,7 @@ export default function AdminEssayReviewPage() {
                     setScheduleFilter('ALL');
                     setSearchQuery('');
                   }}
-                  className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer select-none"
+                  className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer select-none"
                   title="Đặt lại bộ lọc"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
@@ -531,8 +531,8 @@ export default function AdminEssayReviewPage() {
                       type="button"
                       onClick={() => openAttempt(row.id)}
                       className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${isSel
-                          ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
-                          : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
+                        ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
+                        : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
                         }`}
                     >
                       <div className="flex justify-between items-center gap-2">

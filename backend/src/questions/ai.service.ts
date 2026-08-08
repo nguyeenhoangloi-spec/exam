@@ -1,4 +1,4 @@
-import { BadGatewayException, BadRequestException, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import * as mammoth from 'mammoth';
 const pdfParse = require('pdf-parse');
 import { PrismaService } from '../prisma/prisma.service';
@@ -155,7 +155,7 @@ function extractValidQuestionsFromTruncatedJson(raw: string): any[] {
     if (arr && arr.length > 0) {
       return arr.filter((x: any) => x && typeof x === 'object' && x.content && typeof x.content === 'string');
     }
-  } catch {}
+  } catch { }
 
   // 2. Bracket balance scanner
   let depth = 0;
@@ -196,7 +196,7 @@ function extractValidQuestionsFromTruncatedJson(raw: string): any[] {
                 list.push(parsedObj);
               }
             }
-          } catch {}
+          } catch { }
           startIdx = -1;
         }
       }
@@ -217,14 +217,14 @@ function repairAndParseJson(raw: string): any {
   // Try direct parse first!
   try {
     return JSON.parse(cleaned);
-  } catch {}
+  } catch { }
 
   const qMatch = cleaned.match(/["']?questions["']?\s*:\s*(\[[\s\S]*)/i);
   if (qMatch) {
     try {
       const fixed = '{"questions":' + qMatch[1] + (qMatch[1].endsWith('}') ? '' : '}');
       return JSON.parse(fixed);
-    } catch {}
+    } catch { }
   }
 
   // Find outermost valid JSON structure ([...] or {...})
@@ -299,7 +299,7 @@ function repairAndParseJson(raw: string): any {
             return JSON.parse(sliceFix);
           } catch {
             const sliceFix2 = truncatedSlice + ']';
-            try { return JSON.parse(sliceFix2); } catch {}
+            try { return JSON.parse(sliceFix2); } catch { }
           }
         }
       }
@@ -317,7 +317,8 @@ function repairAndParseJson(raw: string): any {
 
 @Injectable()
 export class AiQuestionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(AiQuestionsService.name);
+  constructor(private readonly prisma: PrismaService) { }
 
   async generate(input: GenerateAiQuestionsDto) {
     const apiKey = process.env.GEMINI_API_KEY?.trim();
@@ -337,29 +338,29 @@ export class AiQuestionsService {
     const isExtraction = Boolean(input.isExtractionOnly || (input.prompt && input.prompt.length > 20));
     const prompt = isExtraction
       ? [
-          `Nhiệm vụ: Trích xuất TOÀN BỘ các câu hỏi từ tài liệu văn bản dưới đây.`,
-          `Môn học: ${subject.subjectName}; ${chapter ? `Chương: ${chapter.name}.` : 'Không phân chương.'}`,
-          `Loại mặc định: ${input.type}; Độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
-          `YÊU CẦU BẮT BUỘC:`,
-          `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (tối đa ${input.count || 100} câu hỏi, không tự ý bỏ bớt).`,
-          input.type === 'ESSAY'
-            ? `2. Đây là dạng TỰ LUẬN. Đặt options: [] (không tạo lựa chọn A, B, C, D). Nếu trong tài liệu có sẵn Đáp án/Hướng dẫn trả lời thì trích xuất đầy đủ vào "explanation". NẾU TRONG TÀI LIỆU KHÔNG CÓ SẴN ĐÁP ÁN, BẠN PHẢI TỰ ĐỘNG BIÊN SOẠN HƯỚNG DẪN ĐÁP ÁN / GỢI Ý CHẤM MẪU CHUẨN XÁC VÀ ĐƯA VÀO "explanation" (Tuyệt đối không được để explanation bị rỗng).`
-            : input.type === 'FILL_BLANK'
+        `Nhiệm vụ: Trích xuất TOÀN BỘ các câu hỏi từ tài liệu văn bản dưới đây.`,
+        `Môn học: ${subject.subjectName}; ${chapter ? `Chương: ${chapter.name}.` : 'Không phân chương.'}`,
+        `Loại mặc định: ${input.type}; Độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
+        `YÊU CẦU BẮT BUỘC:`,
+        `1. Đọc và trích xuất TOÀN BỘ các câu hỏi có trong tài liệu (tối đa ${input.count || 100} câu hỏi, không tự ý bỏ bớt).`,
+        input.type === 'ESSAY'
+          ? `2. Đây là dạng TỰ LUẬN. Đặt options: [] (không tạo lựa chọn A, B, C, D). Nếu trong tài liệu có sẵn Đáp án/Hướng dẫn trả lời thì trích xuất đầy đủ vào "explanation". NẾU TRONG TÀI LIỆU KHÔNG CÓ SẴN ĐÁP ÁN, BẠN PHẢI TỰ ĐỘNG BIÊN SOẠN HƯỚNG DẪN ĐÁP ÁN / GỢI Ý CHẤM MẪU CHUẨN XÁC VÀ ĐƯA VÀO "explanation" (Tuyệt đối không được để explanation bị rỗng).`
+          : input.type === 'FILL_BLANK'
             ? `2. Đây là dạng ĐIỀN VÀO CHỖ TRỐNG (FILL_BLANK). Vị trí chỗ trống trong "content" BẮT BUỘC phải dùng thẻ {{blank_1}}, {{blank_2}}... (ví dụ: "Ngôn ngữ HTML dùng để {{blank_1}} trang web."). Đặt options: []. Bắt buộc trả về danh sách đáp án tương ứng trong "fillBlankAnswers": [{"blankIndex": 1, "answer": "đáp_án_đúng", "acceptedAnswers": ["đáp_án_chấp_nhận_khác"], "score": 0.25}]. Nếu tài liệu là bài giảng/lý thuyết, hãy chọn ra các từ khóa/thuật ngữ cốt lõi để tạo thành chỗ trống {{blank_1}} và cung cấp đáp án chính xác.`
             : `2. Trích xuất nội dung từng câu hỏi và danh sách đáp án A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng. Trích xuất lời giải (nếu có) hoặc tự tạo giải thích vào "explanation".`,
-          `3. Không tự tạo thêm câu hỏi ngoài tài liệu.`,
-          `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
-          `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.`,
-          `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
-        ].join('\n')
+        `3. Không tự tạo thêm câu hỏi ngoài tài liệu.`,
+        `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
+        `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.`,
+        `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
+      ].join('\n')
       : [
-          `Tạo đúng ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
-          `Môn: ${subject.subjectName}; ${chapter ? `chương: ${chapter.name}.` : 'không phân chương.'}`,
-          `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
-          'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
-          'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
-          input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
-        ].filter(Boolean).join('\n');
+        `Tạo đúng ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
+        `Môn: ${subject.subjectName}; ${chapter ? `chương: ${chapter.name}.` : 'không phân chương.'}`,
+        `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
+        'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
+        'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
+        input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
+      ].filter(Boolean).join('\n');
     let rawQuestions: any[] = [];
     try {
       const parts: Array<Record<string, unknown>> = [{ text: prompt }];
@@ -370,112 +371,112 @@ export class AiQuestionsService {
       if (input.documentData?.mimeType === 'application/pdf' && input.documentData.data) {
         parts.push({ inlineData: { mimeType: 'application/pdf', data: input.documentData.data } });
       }
-    let raw = '';
-    try {
-      const candidateModels = Array.from(new Set([model, 'gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.5-flash']));
-      let response: Response | null = null;
-      let lastErrText = '';
-
-      for (const candidateModel of candidateModels) {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(candidateModel)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
-          body: JSON.stringify({
-            contents: [{ parts }],
-            generationConfig: { responseMimeType: 'application/json', temperature: 0.3, maxOutputTokens: 8192 },
-          }),
-        });
-
-        if (res.ok) {
-          response = res;
-          break;
-        }
-
-        const errText = await res.text().catch(() => '');
-        lastErrText = errText;
-        if (res.status >= 400) {
-          // API Key error, Quota exceeded, or Forbidden - break early to try DeepSeek / fallback
-          break;
-        }
-      }
-
-      if (response && response.ok) {
-        const payload: any = await response.json();
-        raw = payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      } else {
-        throw new Error(lastErrText || 'Gemini unavailable');
-      }
-    } catch (geminiError: any) {
-      // Fallback sang DeepSeek Provider nếu Gemini bị hết Quota (HTTP 429) hoặc lỗi server
+      let raw = '';
       try {
-        const deepseekKey = process.env.DEEPSEEK_API_KEY?.trim();
-        if (!deepseekKey) throw geminiError;
-        const baseUrl = (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, '');
-        const dsModel = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
-        const endpoint = baseUrl.endsWith('/v1') ? `${baseUrl}/chat/completions` : `${baseUrl}/v1/chat/completions`;
+        const candidateModels = Array.from(new Set([model, 'gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-2.5-flash']));
+        let response: Response | null = null;
+        let lastErrText = '';
 
-        const dsRes = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${deepseekKey}`,
-          },
-          signal: controller.signal,
-          body: JSON.stringify({
-            model: dsModel,
-            messages: [
-              { role: 'system', content: 'Bạn là chuyên gia khảo thí. Hãy chỉ xuất kết quả duy nhất ở dạng chuỗi JSON chuẩn.' },
-              { role: 'user', content: prompt },
-            ],
-            response_format: { type: 'json_object' },
-            temperature: 0.3,
-            max_tokens: 8192,
-          }),
-        });
+        for (const candidateModel of candidateModels) {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(candidateModel)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: [{ parts }],
+              generationConfig: { responseMimeType: 'application/json', temperature: 0.3, maxOutputTokens: 8192 },
+            }),
+          });
 
-        if (!dsRes.ok) {
-          const dsErr = await dsRes.text().catch(() => '');
-          throw new BadGatewayException(`DeepSeek AI trả lỗi HTTP ${dsRes.status}: ${dsErr.slice(0, 100)}`);
+          if (res.ok) {
+            response = res;
+            break;
+          }
+
+          const errText = await res.text().catch(() => '');
+          lastErrText = errText;
+          if (res.status >= 400) {
+            // API Key error, Quota exceeded, or Forbidden - break early to try DeepSeek / fallback
+            break;
+          }
         }
 
-        const dsData: any = await dsRes.json();
-        raw = dsData?.choices?.[0]?.message?.content || '';
-      } catch (dsErr: any) {
-        const gMsg = geminiError?.message || 'Gemini error';
-        const dMsg = dsErr?.message || 'DeepSeek error';
-        // Nếu gọi API AI thất bại (do Hết Quota/Key bận), chuyển sang chế độ Tự động bóc tách cục bộ từ văn bản tài liệu
-        rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
-        if (!rawQuestions || rawQuestions.length === 0) {
-          throw new BadGatewayException(`Hệ thống AI tạm thời bận (Gemini: ${gMsg.slice(0, 80)}, DeepSeek: ${dMsg.slice(0, 80)})`);
+        if (response && response.ok) {
+          const payload: any = await response.json();
+          raw = payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        } else {
+          throw new Error(lastErrText || 'Gemini unavailable');
         }
-      }
-    }
-
-    if (!rawQuestions || rawQuestions.length === 0) {
-      if (!raw || raw.trim().length === 0) {
-        rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
-      } else {
+      } catch (geminiError: any) {
+        // Fallback sang DeepSeek Provider nếu Gemini bị hết Quota (HTTP 429) hoặc lỗi server
         try {
-          const parsed = repairAndParseJson(raw);
-          rawQuestions = Array.isArray(parsed)
-            ? parsed
-            : Array.isArray(parsed?.questions)
-            ? parsed.questions
-            : [];
-        } catch {
-          // Fallthrough to fallback parsers
-        }
+          const deepseekKey = process.env.DEEPSEEK_API_KEY?.trim();
+          if (!deepseekKey) throw geminiError;
+          const baseUrl = (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, '');
+          const dsModel = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
+          const endpoint = baseUrl.endsWith('/v1') ? `${baseUrl}/chat/completions` : `${baseUrl}/v1/chat/completions`;
 
-        if (!rawQuestions || rawQuestions.length === 0) {
-          rawQuestions = extractValidQuestionsFromTruncatedJson(raw);
-        }
+          const dsRes = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${deepseekKey}`,
+            },
+            signal: controller.signal,
+            body: JSON.stringify({
+              model: dsModel,
+              messages: [
+                { role: 'system', content: 'Bạn là chuyên gia khảo thí. Hãy chỉ xuất kết quả duy nhất ở dạng chuỗi JSON chuẩn.' },
+                { role: 'user', content: prompt },
+              ],
+              response_format: { type: 'json_object' },
+              temperature: 0.3,
+              max_tokens: 8192,
+            }),
+          });
 
-        if (!rawQuestions || rawQuestions.length === 0) {
-          rawQuestions = parsePlainTextQuestions(raw || input.prompt || '', input.type);
+          if (!dsRes.ok) {
+            const dsErr = await dsRes.text().catch(() => '');
+            this.logger.warn(`DeepSeek AI trả lỗi HTTP ${dsRes.status}: ${dsErr.slice(0, 200)}`);
+            throw new BadGatewayException('Dịch vụ AI đang tạm thời gặp sự cố. Vui lòng thử lại sau.');
+          }
+
+          const dsData: any = await dsRes.json();
+          raw = dsData?.choices?.[0]?.message?.content || '';
+        } catch (dsErr: any) {
+          // Nếu gọi API AI thất bại (do Hết Quota/Key bận), chuyển sang chế độ Tự động bóc tách cục bộ từ văn bản tài liệu
+          this.logger.warn(`AI providers đều thất bại. Gemini: ${geminiError?.message}, DeepSeek: ${dsErr?.message}`);
+          rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
+          if (!rawQuestions || rawQuestions.length === 0) {
+            throw new BadGatewayException('Hệ thống AI đang tạm thời bận. Vui lòng thử lại sau.');
+          }
         }
       }
-    }
+
+      if (!rawQuestions || rawQuestions.length === 0) {
+        if (!raw || raw.trim().length === 0) {
+          rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
+        } else {
+          try {
+            const parsed = repairAndParseJson(raw);
+            rawQuestions = Array.isArray(parsed)
+              ? parsed
+              : Array.isArray(parsed?.questions)
+                ? parsed.questions
+                : [];
+          } catch {
+            // Fallthrough to fallback parsers
+          }
+
+          if (!rawQuestions || rawQuestions.length === 0) {
+            rawQuestions = extractValidQuestionsFromTruncatedJson(raw);
+          }
+
+          if (!rawQuestions || rawQuestions.length === 0) {
+            rawQuestions = parsePlainTextQuestions(raw || input.prompt || '', input.type);
+          }
+        }
+      }
 
       // Unpack rawQuestions neu gap chuoi JSON bi dong goi thanh 1 phan tu duy nhat
       let unpacked: any[] = [];
@@ -503,11 +504,11 @@ export class AiQuestionsService {
         const isFillBlank = input.type === 'FILL_BLANK';
         const options: QuestionOptionDto[] = (Array.isArray(item.options) && !isEssay && !isFillBlank)
           ? item.options.map((option: any, order: number) => ({
-              label: String(option.label || String.fromCharCode(65 + order)),
-              content: String(option.content || ''),
-              isCorrect: Boolean(option.isCorrect),
-              order,
-            }))
+            label: String(option.label || String.fromCharCode(65 + order)),
+            content: String(option.content || ''),
+            isCorrect: Boolean(option.isCorrect),
+            order,
+          }))
           : [];
         try {
           validateQuestionOptions(input.type, options);
@@ -527,7 +528,7 @@ export class AiQuestionsService {
           }
           const optMatch = rawContentText.match(/","options"\s*:\s*(\[[^\]]+\])/i);
           if (optMatch && (!item.options || !Array.isArray(item.options) || item.options.length === 0)) {
-            try { item.options = JSON.parse(optMatch[1]); } catch {}
+            try { item.options = JSON.parse(optMatch[1]); } catch { }
           }
           rawContentText = rawContentText.replace(/","(score|explanation|keywords|options|fillBlankAnswers|imageIndexes)":[\s\S]*/gi, '');
         }
@@ -597,9 +598,13 @@ export class AiQuestionsService {
       }));
     } catch (error: any) {
       if (error instanceof BadGatewayException) throw error;
-      if (error?.name === 'AbortError') throw new BadGatewayException(`Gemini hết thời gian chờ sau ${timeout}ms.`);
-      if (error instanceof SyntaxError) throw new BadGatewayException('Gemini trả JSON không hợp lệ.');
-      throw new BadGatewayException(error?.message || 'Không thể kết nối Gemini.');
+      if (error?.name === 'AbortError') {
+        this.logger.warn(`Gemini phản hồi quá chậm (timeout ${timeout}ms)`);
+        throw new BadGatewayException('Dịch vụ AI phản hồi quá chậm. Vui lòng thử lại sau.');
+      }
+      if (error instanceof SyntaxError) throw new BadGatewayException('Dữ liệu trả về từ AI không hợp lệ. Vui lòng thử lại.');
+      this.logger.error(`Lỗi không xác định khi gọi Gemini: ${error?.message}`);
+      throw new BadGatewayException('Không thể kết nối dịch vụ AI. Vui lòng thử lại sau.');
     } finally {
       clearTimeout(timer);
     }

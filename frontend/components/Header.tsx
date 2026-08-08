@@ -403,7 +403,7 @@ export const Header: React.FC<HeaderProps> = ({
                     className="h-9 w-9 shrink-0 rounded-full object-cover shadow-2xs border border-blue-600/30"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#003896] font-black text-white shadow-2xs text-sm tracking-tight">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 font-black text-white shadow-2xs text-sm tracking-tight">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -411,7 +411,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-none">
                   <span className="block text-xs font-black text-slate-900 dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[9.5px] font-extrabold text-[#0047BA] uppercase tracking-wider mt-1">
+                  <span className="block text-[9.5px] font-extrabold text-blue-600 uppercase tracking-wider mt-1">
                     {displayRoleLabel}
                   </span>
                 </div>

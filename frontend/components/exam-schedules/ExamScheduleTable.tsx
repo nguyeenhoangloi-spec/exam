@@ -275,7 +275,7 @@ export function ExamScheduleTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
-          <thead className="bg-slate-50/90 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-300 border-b border-slate-200/80 dark:border-slate-700">
+          <thead className="bg-blue-50 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-slate-300 border-b border-blue-100 dark:border-slate-700">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -344,7 +344,7 @@ export function ExamScheduleTable({
   return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
-        <thead className="bg-slate-50/90 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-300 border-b border-slate-200/80 dark:border-slate-700">
+        <thead className="bg-blue-50 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-slate-300 border-b border-blue-100 dark:border-slate-700">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input

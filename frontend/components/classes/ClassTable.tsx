@@ -135,7 +135,7 @@ export function ClassTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -198,7 +198,7 @@ export function ClassTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input

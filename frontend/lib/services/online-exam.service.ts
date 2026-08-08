@@ -134,4 +134,17 @@ export const onlineExamService = {
     const res = await api.post(`/proctor/attempt/${attemptId}/resolve-incident`, { decision, penaltyPoints, note });
     return res.data;
   },
+
+  async bulkExtendTime(scheduleRoomId: number, extraMinutes: number, reason: string) {
+    const res = await api.post(`/proctor/room/${scheduleRoomId}/bulk-extend-time`, {
+      extraMinutes,
+      reason,
+    });
+    return res.data;
+  },
+
+  async reopenEntry(scheduleId: number, minutes: number) {
+    const res = await api.post(`/exam-schedules/${scheduleId}/reopen-entry`, { minutes });
+    return res.data;
+  },
 };

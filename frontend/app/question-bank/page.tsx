@@ -98,7 +98,7 @@ export default function QuestionBankPage() {
     isOpen: false,
     title: '',
     message: '',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function QuestionBankPage() {
     if (questionId) {
       api.get(`/questions/${questionId}`)
         .then(response => setDetail(response.data))
-        .catch(err => setToast({ message: err.message, type: 'error' }));
+        .catch(err => setToast({ message: err.message || 'Không thể tải chi tiết câu hỏi.', type: 'error' }));
     }
 
     Promise.all([api.get('/questions/filter-options'), api.get('/questions/statistics')])
@@ -139,7 +139,7 @@ export default function QuestionBankPage() {
         setSubjects(options.data.subjects);
         setCounts(stats.data);
       })
-      .catch(e => setError(e.message));
+      .catch(e => setError(e.message || 'Không tải được dữ liệu lọc câu hỏi.'));
   }, [router]);
 
   const load = useCallback(async () => {
@@ -190,7 +190,7 @@ export default function QuestionBankPage() {
         setEditing((await api.get(`/questions/${q.id}`)).data);
         setFormOpen(true);
       } catch (e: any) {
-        setToast({ message: e.message, type: 'error' });
+        setToast({ message: e.message || 'Không thể tải câu hỏi để chỉnh sửa.', type: 'error' });
       }
       return;
     }
@@ -263,7 +263,7 @@ export default function QuestionBankPage() {
             setToast({ message: `Đã duyệt câu hỏi thành công.`, type: 'success' });
             load();
           } catch (e: any) {
-            setToast({ message: e.message, type: 'error' });
+            setToast({ message: e.message || 'Không thể duyệt câu hỏi.', type: 'error' });
           }
         },
       });
@@ -286,7 +286,7 @@ export default function QuestionBankPage() {
             setToast({ message: `Đã từ chối câu hỏi.`, type: 'success' });
             load();
           } catch (e: any) {
-            setToast({ message: e.message, type: 'error' });
+            setToast({ message: e.message || 'Không thể từ chối câu hỏi.', type: 'error' });
           }
         },
       });
@@ -307,7 +307,7 @@ export default function QuestionBankPage() {
             setToast({ message: `Đã xóa câu hỏi.`, type: 'success' });
             load();
           } catch (e: any) {
-            setToast({ message: e.message, type: 'error' });
+            setToast({ message: e.message || 'Không thể xóa câu hỏi.', type: 'error' });
           }
         },
       });
@@ -348,7 +348,7 @@ export default function QuestionBankPage() {
           });
           load();
         } catch (e: any) {
-          setToast({ message: e.message, type: 'error' });
+          setToast({ message: e.message || 'Thao tác hàng loạt thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });

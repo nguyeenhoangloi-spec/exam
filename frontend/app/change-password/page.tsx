@@ -105,7 +105,7 @@ export default function ChangePasswordPage() {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* Hero Banner Enterprise SaaS Style */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
@@ -131,7 +131,7 @@ export default function ChangePasswordPage() {
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Độ dài tối thiểu</span>
-          <div className="text-lg font-black text-[#003896]">Tối thiểu 6 ký tự</div>
+          <div className="text-lg font-black text-blue-600">Tối thiểu 6 ký tự</div>
           <span className="text-[10.5px] font-medium text-slate-500">Bao gồm chữ & số</span>
         </div>
 
@@ -250,7 +250,7 @@ export default function ChangePasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 rounded-xl bg-[#003896] hover:bg-[#002d78] text-white px-6 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer disabled:opacity-50"
             >
               <KeyRound className="h-4 w-4 text-white" />
               <span>{loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}</span>
@@ -260,7 +260,7 @@ export default function ChangePasswordPage() {
 
         {/* Right Info Box: 5 cols */}
         <div className="md:col-span-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 space-y-4">
-          <h3 className="text-xs font-black text-[#003896] flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
+          <h3 className="text-xs font-black text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
             <ShieldCheck className="h-4 w-4 text-blue-600" />
             <span>Quy tắc bảo mật mật khẩu</span>
           </h3>

@@ -171,7 +171,7 @@ export default function StudentExamSchedulePage() {
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Hero Banner matching Admin Dashboard style */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
           {/* 3D Isometric Vector Illustration Overlay */}
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-85">
             <svg viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
@@ -184,7 +184,7 @@ export default function StudentExamSchedulePage() {
               <rect x="235" y="46" width="25" height="3" rx="1.5" fill="#93C5FD" transform="rotate(-20 235 46)" />
               <circle cx="90" cy="50" r="14" fill="#34D399" fillOpacity="0.9" />
               <path d="M84 50L88 54L96 46" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <rect x="240" y="80" width="28" height="28" rx="6" fill="#F59E0B" fillOpacity="0.9" />
+              <rect x="240" y="80" width="28" height="28" rx="6" fill="#3B82F6" fillOpacity="0.9" />
               <rect x="244" y="84" width="20" height="4" rx="1" fill="white" />
               <circle cx="248" cy="94" r="1.5" fill="white" />
               <circle cx="254" cy="94" r="1.5" fill="white" />
@@ -216,15 +216,15 @@ export default function StudentExamSchedulePage() {
               <button
                 type="button"
                 onClick={handlePrintReport}
-                className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-[#003896] px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
               >
-                <Printer className="w-4 h-4 text-[#003896]" />
+                <Printer className="w-4 h-4 text-blue-700" />
                 <span>In Lịch thi A4</span>
               </button>
               <button
                 type="button"
                 onClick={exportCsv}
-                className="flex items-center gap-2 rounded-xl bg-[#001E5C] hover:bg-[#001748] text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer shadow-xs border border-blue-400/20"
+                className="flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer shadow-xs border border-blue-400/20"
               >
                 <Download className="w-4 h-4 text-white" />
                 <span>Tải .CSV</span>

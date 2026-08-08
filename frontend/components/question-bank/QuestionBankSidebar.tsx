@@ -39,7 +39,7 @@ export function QuestionBankSidebar({
   // Type distribution donut data
   const typeData = [
     { name: 'Trắc nghiệm', value: 2180, color: '#2563eb', percent: '81,9%' },
-    { name: 'Tự luận', value: 484, color: '#06b6d4', percent: '18,1%' },
+    { name: 'Tự luận', value: 484, color: '#3b82f6', percent: '18,1%' },
   ];
 
   return (

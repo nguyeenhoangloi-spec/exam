@@ -117,7 +117,7 @@ export function StudentTable({
                     <button
                       type="button"
                       onClick={() => onEdit(s)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-500 hover:bg-amber-50 hover:text-amber-600 transition cursor-pointer"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
                       title="Chỉnh sửa"
                     >
                       <Edit className="h-3.5 w-3.5" />
@@ -145,7 +145,7 @@ export function StudentTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
             <tr>
               <th className="p-2 pl-3 text-center w-8">
                 <input
@@ -208,7 +208,7 @@ export function StudentTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
           <tr>
             <th className="p-3.5 pl-4 text-center w-10">
               <input
@@ -322,9 +322,9 @@ export function StudentTable({
                             <button
                               type="button"
                               onClick={() => { closeMenu(); onEdit(s); }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-amber-50 text-amber-700"
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700"
                             >
-                              <Edit className="h-3.5 w-3.5 text-amber-500" />
+                              <Edit className="h-3.5 w-3.5 text-blue-600" />
                               <span>Chỉnh sửa</span>
                             </button>
                             <button

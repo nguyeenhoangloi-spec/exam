@@ -28,6 +28,59 @@ export default function StudentExamTakePage() {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
+  // States báo cáo sự cố khẩn cấp
+  const [showIncidentModal, setShowIncidentModal] = useState(false);
+  const [incidentText, setIncidentText] = useState('');
+  const [sendingIncident, setSendingIncident] = useState(false);
+  const [incidentMsg, setIncidentMsg] = useState<string | null>(null);
+
+  // States cảnh báo vi phạm quy chế thi trực quan cho sinh viên
+  const [violationModal, setViolationModal] = useState<{
+    isOpen: boolean;
+    reason: string;
+    eventType: string;
+    violationCount: number;
+    maxAllowed: number;
+  }>({
+    isOpen: false,
+    reason: '',
+    eventType: '',
+    violationCount: 0,
+    maxAllowed: 5,
+  });
+
+  const [violationSubmittedModal, setViolationSubmittedModal] = useState<{
+    isOpen: boolean;
+    reason: string;
+    violationCount: number;
+    maxAllowed: number;
+    attemptId: string;
+  }>({
+    isOpen: false,
+    reason: '',
+    violationCount: 0,
+    maxAllowed: 5,
+    attemptId: '',
+  });
+
+  const handleSendIncident = async () => {
+    if (!incidentText.trim()) return;
+    try {
+      setSendingIncident(true);
+      await onlineExamService.submitAppeal(attemptData?.attemptId || tokenFromUrl, incidentText.trim());
+      setIncidentMsg('Đã gửi báo cáo sự cố thành công cho Giám thị.');
+      setTimeout(() => {
+        setShowIncidentModal(false);
+        setIncidentText('');
+        setIncidentMsg(null);
+      }, 1500);
+    } catch (e: any) {
+      setToast({ message: e?.response?.data?.message || 'Không thể gửi báo cáo sự cố', type: 'error' });
+    } finally {
+      setSendingIncident(false);
+    }
+  };
+
   const eventQueue = useRef<ProctoringEventItem[]>([]);
   const pendingAnswersToSave = useRef<Record<string, AnswerItem>>({});
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -205,53 +258,90 @@ export default function StudentExamTakePage() {
     }
   };
 
+  const reportViolation = useCallback(async (eventType: string, reasonText: string, severity: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM') => {
+    const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
+    if (!token || !attemptData?.config) return;
+
+    const eventItem: ProctoringEventItem = {
+      eventType,
+      severity,
+      metadata: { timestamp: new Date().toISOString(), pageUrl: window.location.href, reason: reasonText },
+    };
+
+    try {
+      const proctoringResult = await onlineExamService.recordEvents(token, [eventItem]);
+      const count = proctoringResult?.violationCount || ((attemptData as any).violationCount || 0) + 1;
+      const maxAllowed = proctoringResult?.maxAllowedViolations || attemptData?.config?.maxAllowedViolations || 5;
+
+      if (proctoringResult?.autoSubmitted) {
+        setViolationSubmittedModal({
+          isOpen: true,
+          reason: reasonText,
+          violationCount: count,
+          maxAllowed,
+          attemptId: attemptData.attemptId,
+        });
+      } else {
+        setViolationModal({
+          isOpen: true,
+          reason: reasonText,
+          eventType,
+          violationCount: count,
+          maxAllowed,
+        });
+      }
+    } catch (err) {
+      console.warn('Failed to record violation event:', err);
+    }
+  }, [attemptData, tokenFromUrl]);
+
   useEffect(() => {
     const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
     if (!token || !attemptData?.config) return;
 
-    const pushEvent = (eventType: string, severity: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM') => {
-      eventQueue.current.push({
-        eventType,
-        severity,
-        metadata: { timestamp: new Date().toISOString(), pageUrl: window.location.href },
-      });
+    let lastEventTime = 0;
+    const triggerViolation = (type: string, reason: string, severity: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM') => {
+      const now = Date.now();
+      if (now - lastEventTime < 2500) return; // Chống spam 2.5s
+      lastEventTime = now;
+      reportViolation(type, reason, severity);
     };
 
     const handleVisibilityChange = () => {
       if (document.hidden && attemptData.config.preventTabSwitch) {
-        pushEvent('TAB_HIDDEN', 'HIGH');
+        triggerViolation('TAB_HIDDEN', 'Bạn vừa chuyển sang tab khác hoặc ẩn cửa sổ làm bài thi!', 'HIGH');
       }
     };
 
     const handleBlur = () => {
-      if (attemptData.config.preventTabSwitch) {
-        pushEvent('WINDOW_BLUR', 'MEDIUM');
+      if (attemptData.config.preventTabSwitch && !document.hidden) {
+        triggerViolation('WINDOW_BLUR', 'Bạn vừa click mở ứng dụng khác ngoài giao diện bài thi!', 'MEDIUM');
       }
     };
 
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement && attemptData.config.requireFullscreen) {
-        pushEvent('FULLSCREEN_EXIT', 'HIGH');
+        triggerViolation('FULLSCREEN_EXIT', 'Bạn vừa thoát khỏi chế độ Toàn màn hình (Fullscreen)!', 'HIGH');
       }
     };
 
     const handleCopy = (e: ClipboardEvent) => {
       if (attemptData.config.preventCopyPaste) {
         e.preventDefault();
-        pushEvent('COPY_ATTEMPT', 'MEDIUM');
+        triggerViolation('COPY_ATTEMPT', 'Hệ thống phát hiện thao tác Sao chép nội dung bài làm!', 'MEDIUM');
       }
     };
 
     const handlePaste = (e: ClipboardEvent) => {
       if (attemptData.config.preventCopyPaste) {
         e.preventDefault();
-        pushEvent('PASTE_ATTEMPT', 'MEDIUM');
+        triggerViolation('PASTE_ATTEMPT', 'Hệ thống phát hiện thao tác Dán nội dung vào bài thi!', 'MEDIUM');
       }
     };
 
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      pushEvent('CONTEXT_MENU_ATTEMPT', 'LOW');
+      triggerViolation('CONTEXT_MENU_ATTEMPT', 'Hệ thống chặn thao tác click chuột phải (Context Menu)!', 'LOW');
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -261,22 +351,6 @@ export default function StudentExamTakePage() {
     document.addEventListener('paste', handlePaste);
     document.addEventListener('contextmenu', handleContextMenu);
 
-    const eventInterval = setInterval(async () => {
-      if (eventQueue.current.length > 0) {
-        const batch = [...eventQueue.current];
-        eventQueue.current = [];
-        try {
-          const proctoringResult = await onlineExamService.recordEvents(token, batch);
-          if (proctoringResult.autoSubmitted && attemptData?.attemptId) {
-            sessionStorage.removeItem('attemptToken');
-            router.push(`/student/online-exam/${attemptData.attemptId}/result`);
-          }
-        } catch (e) {
-          console.warn('Failed to send proctoring events', e);
-        }
-      }
-    }, 5000);
-
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('blur', handleBlur);
@@ -284,9 +358,8 @@ export default function StudentExamTakePage() {
       document.removeEventListener('copy', handleCopy);
       document.removeEventListener('paste', handlePaste);
       document.removeEventListener('contextmenu', handleContextMenu);
-      clearInterval(eventInterval);
     };
-  }, [tokenFromUrl, attemptData, router]);
+  }, [tokenFromUrl, attemptData, reportViolation]);
 
   const handleSelectOption = (questionId: string, optionId: string, isMultipleChoice: boolean) => {
     const current = answers[questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false, version: 0 };
@@ -351,8 +424,8 @@ export default function StudentExamTakePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col items-center justify-center space-y-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-[#003896] to-[#0047BA] shadow-lg shadow-blue-500/20 text-white animate-pulse">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col items-center justify-center space-y-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg shadow-blue-500/20 text-white animate-pulse">
           <Clock className="h-7 w-7" />
         </div>
         <div className="text-center space-y-1">
@@ -365,7 +438,7 @@ export default function StudentExamTakePage() {
 
   if (error || !attemptData) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center p-6">
         <div className="bg-white border border-slate-200/90 p-8 rounded-2xl max-w-md w-full text-center shadow-xl space-y-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 mx-auto shadow-2xs">
             <AlertTriangle className="w-8 h-8" />
@@ -377,7 +450,7 @@ export default function StudentExamTakePage() {
           <button
             type="button"
             onClick={() => router.push('/student/exam-schedule')}
-            className="w-full py-2.5 bg-[#003896] hover:bg-[#002d78] text-white text-xs font-black rounded-xl shadow-sm transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl shadow-sm transition active:scale-95 cursor-pointer"
           >
             Quay Về Lịch Thi
           </button>
@@ -395,9 +468,9 @@ export default function StudentExamTakePage() {
   const flaggedCount = Object.values(answers).filter((a) => a.isFlagged).length;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col select-none">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col select-none">
       {/* Enterprise Dark Navy Header */}
-      <header className="bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] text-white px-4 sm:px-6 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md">
+      <header className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 text-white px-4 sm:px-6 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md">
         <div className="flex items-center space-x-3.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-black text-white text-base shadow-sm">
             {attemptData.paperTitle ? attemptData.paperTitle.charAt(0).toUpperCase() : 'T'}
@@ -437,15 +510,24 @@ export default function StudentExamTakePage() {
 
           {/* Countdown Clock Box */}
           <div
-            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border font-mono text-sm sm:text-base font-black shadow-inner transition-all ${
-              remainingSeconds < 300
-                ? 'bg-rose-600 border-rose-400 text-white animate-pulse shadow-rose-900/40'
-                : 'bg-white/10 backdrop-blur-md border-white/20 text-white'
-            }`}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border font-mono text-sm sm:text-base font-black shadow-inner transition-all ${remainingSeconds < 300
+              ? 'bg-rose-600 border-rose-400 text-white animate-pulse shadow-rose-900/40'
+              : 'bg-white/10 backdrop-blur-md border-white/20 text-white'
+              }`}
           >
             <Clock className="w-4 h-4 text-amber-300" />
             <span>{formatTime(remainingSeconds)}</span>
           </div>
+
+          {/* Button Báo cáo sự cố */}
+          <button
+            type="button"
+            onClick={() => setShowIncidentModal(true)}
+            className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 font-bold text-xs rounded-xl flex items-center shadow-xs transition active:scale-95 cursor-pointer"
+            title="Gửi báo cáo sự cố kỹ thuật cho Giám thị"
+          >
+            <AlertTriangle className="w-3.5 h-3.5 mr-1 text-amber-300" /> Báo sự cố
+          </button>
 
           {/* Submit Exam Button */}
           <button
@@ -467,13 +549,13 @@ export default function StudentExamTakePage() {
               {/* Question Header Status */}
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center space-x-3">
-                  <span className="w-9 h-9 rounded-xl bg-[#003896] text-white flex items-center justify-center font-black text-sm shadow-xs">
+                  <span className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
                     {currentIdx + 1}
                   </span>
                   <span className="text-xs font-bold font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/80">
                     Mã: {currentQ.code}
                   </span>
-                  <span className="px-2.5 py-1 bg-blue-50 text-[#003896] font-bold text-xs rounded-lg border border-blue-100">
+                  <span className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold text-xs rounded-lg border border-blue-100">
                     {currentQ.score} điểm
                   </span>
                 </div>
@@ -481,11 +563,10 @@ export default function StudentExamTakePage() {
                 <button
                   type="button"
                   onClick={() => handleToggleFlag(currentQ.questionId)}
-                  className={`flex items-center space-x-1.5 text-xs font-black px-3.5 py-2 rounded-xl border transition cursor-pointer active:scale-95 ${
-                    currentAns.isFlagged
-                      ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                  className={`flex items-center space-x-1.5 text-xs font-black px-3.5 py-2 rounded-xl border transition cursor-pointer active:scale-95 ${currentAns.isFlagged
+                    ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
                 >
                   <Flag className={`w-3.5 h-3.5 ${currentAns.isFlagged ? 'fill-white' : ''}`} />
                   <span>{currentAns.isFlagged ? 'Đã đánh dấu xem lại' : 'Đánh dấu xem lại'}</span>
@@ -590,35 +671,33 @@ export default function StudentExamTakePage() {
                   <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
                 </div>
               ) : (
-              <div className="space-y-3 pt-2">
-                {currentQ.options?.map((opt: any) => {
-                  const isSelected = currentAns.selectedOptionIds?.includes(opt.id);
-                  const isMulti = currentQ.type === 'MULTIPLE_CHOICE';
+                <div className="space-y-3 pt-2">
+                  {currentQ.options?.map((opt: any) => {
+                    const isSelected = currentAns.selectedOptionIds?.includes(opt.id);
+                    const isMulti = currentQ.type === 'MULTIPLE_CHOICE';
 
-                  return (
-                    <div
-                      key={opt.id}
-                      onClick={() => handleSelectOption(currentQ.questionId, opt.id, isMulti)}
-                      className={`p-4 rounded-xl border cursor-pointer transition flex items-start space-x-3.5 ${
-                        isSelected
-                          ? 'bg-blue-50/80 border-[#003896] text-[#003896] shadow-2xs font-bold ring-2 ring-blue-500/20'
-                          : 'bg-slate-50/60 border-slate-200/90 text-slate-700 hover:bg-slate-100/90 hover:border-slate-300'
-                      }`}
-                    >
+                    return (
                       <div
-                        className={`w-7 h-7 rounded-${isMulti ? 'lg' : 'full'} border flex items-center justify-center shrink-0 mt-0.5 transition ${
-                          isSelected
-                            ? 'bg-[#003896] border-[#003896] text-white font-black shadow-2xs'
-                            : 'border-slate-300 bg-white text-slate-700 font-bold'
-                        }`}
+                        key={opt.id}
+                        onClick={() => handleSelectOption(currentQ.questionId, opt.id, isMulti)}
+                        className={`p-4 rounded-xl border cursor-pointer transition flex items-start space-x-3.5 ${isSelected
+                          ? 'bg-blue-50/80 border-blue-600 text-blue-700 shadow-2xs font-bold ring-2 ring-blue-500/20'
+                          : 'bg-slate-50/60 border-slate-200/90 text-slate-700 hover:bg-slate-100/90 hover:border-slate-300'
+                          }`}
                       >
-                        <span className="text-xs">{opt.label}</span>
+                        <div
+                          className={`w-7 h-7 rounded-${isMulti ? 'lg' : 'full'} border flex items-center justify-center shrink-0 mt-0.5 transition ${isSelected
+                            ? 'bg-blue-600 border-blue-600 text-white font-black shadow-2xs'
+                            : 'border-slate-300 bg-white text-slate-700 font-bold'
+                            }`}
+                        >
+                          <span className="text-xs">{opt.label}</span>
+                        </div>
+                        <div className="text-xs sm:text-sm leading-relaxed pt-0.5 font-semibold text-slate-800">{opt.content}</div>
                       </div>
-                      <div className="text-xs sm:text-sm leading-relaxed pt-0.5 font-semibold text-slate-800">{opt.content}</div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
               )}
 
               {/* Pagination Controls */}
@@ -638,7 +717,7 @@ export default function StudentExamTakePage() {
                   type="button"
                   disabled={currentIdx === totalCount - 1}
                   onClick={() => setCurrentIdx((prev) => prev + 1)}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#003896] hover:bg-[#002d78] text-white text-xs font-black disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
                 >
                   Câu tiếp <ChevronRight className="h-4 w-4" />
                 </button>
@@ -657,7 +736,7 @@ export default function StudentExamTakePage() {
           {/* Legend Badges */}
           <div className="flex flex-wrap items-center justify-between text-[11px] font-bold text-slate-600 gap-1.5 pb-2">
             <span className="flex items-center">
-              <span className="w-2.5 h-2.5 rounded bg-[#003896] mr-1.5"></span> Đã làm ({answeredCount})
+              <span className="w-2.5 h-2.5 rounded bg-blue-600 mr-1.5"></span> Đã làm ({answeredCount})
             </span>
             <span className="flex items-center">
               <span className="w-2.5 h-2.5 rounded bg-amber-500 mr-1.5"></span> Xem lại ({flaggedCount})
@@ -683,7 +762,7 @@ export default function StudentExamTakePage() {
               if (isFlagged) {
                 btnStyle = 'bg-amber-500 text-white font-black border-amber-500 shadow-2xs hover:bg-amber-600';
               } else if (isAnswered) {
-                btnStyle = 'bg-[#003896] text-white font-black border-[#003896] shadow-2xs hover:bg-[#00286b]';
+                btnStyle = 'bg-blue-600 text-white font-black border-blue-600 shadow-2xs hover:bg-blue-700';
               }
 
               if (isCurrent) {
@@ -757,6 +836,181 @@ export default function StudentExamTakePage() {
           </div>
         </div>
       )}
+      {/* Modal Báo cáo Sự cố Kỹ thuật Khẩn cấp */}
+      {showIncidentModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/65 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white rounded-2xl border border-amber-200 shadow-2xl p-6 space-y-4">
+            <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-slate-900 tracking-tight">Báo Cáo Sự Cố Kỹ Thuật Khi Thi</h3>
+                <p className="text-slate-500 text-xs font-medium">Gửi thông tin gián đoạn tới Giám thị phòng thi</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Chọn nhanh loại sự cố:</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Sự cố mất mạng / gián đoạn Wifi', 'Màn hình bị đơ / không phản hồi', 'Không hiển thị ảnh / media', 'Sự cố thiết bị cá nhân'].map((quickMsg) => (
+                    <button
+                      key={quickMsg}
+                      type="button"
+                      onClick={() => setIncidentText(quickMsg)}
+                      className="p-2 rounded-xl text-left text-[11px] font-semibold border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-slate-800 transition cursor-pointer"
+                    >
+                      {quickMsg}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Mô tả chi tiết sự cố:</label>
+                <textarea
+                  rows={3}
+                  value={incidentText}
+                  onChange={(e) => setIncidentText(e.target.value)}
+                  placeholder="Mô tả sự cố bạn đang gặp phải..."
+                  className="w-full rounded-xl border border-slate-200 p-3 text-xs font-medium text-slate-900 focus:border-amber-500 focus:outline-none transition resize-none"
+                />
+              </div>
+
+              {incidentMsg && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold text-center">
+                  {incidentMsg}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end space-x-2.5 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                disabled={sendingIncident}
+                onClick={() => setShowIncidentModal(false)}
+                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition cursor-pointer"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                disabled={sendingIncident || !incidentText.trim()}
+                onClick={handleSendIncident}
+                className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black rounded-xl shadow-xs transition cursor-pointer disabled:opacity-50"
+              >
+                {sendingIncident ? 'Đang gửi...' : 'Gửi Báo Cáo Cho Giám Thị'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 1: CẢNH BÁO VI PHẠM NỘI QUY THI ── */}
+      {violationModal.isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-amber-200 dark:border-amber-900 shadow-2xl overflow-hidden p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="h-6 w-6 animate-pulse" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">
+                  Cảnh báo vi phạm quy chế thi!
+                </h3>
+                <p className="text-xs font-bold text-amber-700 dark:text-amber-400 mt-0.5">
+                  Hệ thống giám sát thi trực tuyến
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 p-4 border border-amber-200/80 dark:border-amber-800/50 space-y-2 text-xs">
+              <p className="font-extrabold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
+                <span>⚠️ Hành vi vi phạm vừa phát hiện:</span>
+              </p>
+              <p className="font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed">
+                {violationModal.reason}
+              </p>
+              <div className="flex items-center justify-between pt-1">
+                <span className="font-bold text-slate-600 dark:text-slate-300">Lần vi phạm:</span>
+                <span className="rounded-md bg-amber-200 dark:bg-amber-800 px-2.5 py-0.5 font-black text-amber-900 dark:text-amber-100">
+                  {violationModal.violationCount} / {violationModal.maxAllowed} lần
+                </span>
+              </div>
+            </div>
+
+            <p className="text-[11.5px] font-semibold text-rose-600 dark:text-rose-400 leading-relaxed bg-rose-50 dark:bg-rose-950/30 p-2.5 rounded-xl border border-rose-200">
+              🚨 <strong>CẢNH BÁO HẬU QUẢ:</strong> Nếu tiếp tục tái phạm thêm {Math.max(0, violationModal.maxAllowed - violationModal.violationCount)} lần nữa, hệ thống sẽ <strong>TỰ ĐỘNG KHÓA VÀ NỘP BÀI THI</strong> của bạn ngay lập tức!
+            </p>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setViolationModal((prev) => ({ ...prev, isOpen: false }));
+                  if (attemptData?.config?.requireFullscreen && !document.fullscreenElement) {
+                    try {
+                      document.documentElement.requestFullscreen();
+                    } catch {}
+                  }
+                }}
+                className="w-full rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs py-3 shadow-md transition cursor-pointer active:scale-95 text-center"
+              >
+                Tôi đã hiểu & Cam kết không tái phạm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 2: TỰ ĐỘNG KHÓA & NỘP BÀI THI DO VI PHẠM ── */}
+      {violationSubmittedModal.isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-rose-200 dark:border-rose-900 shadow-2xl overflow-hidden p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400">
+                <AlertTriangle className="h-6 w-6 animate-bounce" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-rose-900 dark:text-rose-200 uppercase tracking-tight">
+                  Bài thi đã bị khóa & Nộp tự động!
+                </h3>
+                <p className="text-xs font-bold text-rose-700 dark:text-rose-400 mt-0.5">
+                  Vi phạm quy chế thi vượt quá giới hạn
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-rose-50 dark:bg-rose-950/30 p-4 border border-rose-200 dark:border-rose-800 space-y-2 text-xs text-rose-900 dark:text-rose-100">
+              <p className="font-extrabold flex items-center gap-1.5">
+                🛑 Lý do ngắt bài thi:
+              </p>
+              <p className="font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-rose-200 leading-relaxed">
+                Bạn đã vi phạm quy chế thi vượt quá {violationSubmittedModal.maxAllowed} lần cho phép ({violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed} lần).
+              </p>
+              <p className="font-semibold text-slate-600 dark:text-slate-300 text-[11px]">
+                Hệ thống đã ghi lại toàn bộ nhật ký vi phạm và gửi bài làm về cho Giám thị phòng thi.
+              </p>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  sessionStorage.removeItem('attemptToken');
+                  router.push(`/student/online-exam/${violationSubmittedModal.attemptId || attemptData?.attemptId}/result`);
+                }}
+                className="w-full rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs py-3 shadow-md transition cursor-pointer active:scale-95 text-center flex items-center justify-center gap-2"
+              >
+                <span>Xem kết quả bài thi</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );

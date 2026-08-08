@@ -78,22 +78,68 @@ export class ExamPapersService {
 
   private selectQuestionsByScore(pool: any[], targetScore: number, defaultScore: number) {
     if (targetScore <= 0 || pool.length === 0) return [];
-    const shuffled = this.shuffle([...pool]);
+
+    const questions = this.shuffle([...pool]).map((q) => ({
+      ...q,
+      effectiveScore: q.score && Number(q.score) > 0 ? Number(q.score) : defaultScore,
+    }));
+
+    let bestSubset: any[] = [];
+    let bestDiff = Infinity;
+
+    const candidates = questions.slice(0, 35);
+    const n = candidates.length;
+
+    const findExact = (index: number, currentSet: any[], currentSum: number) => {
+      const diff = Math.abs(currentSum - targetScore);
+      if (diff < 0.001) {
+        bestSubset = [...currentSet];
+        bestDiff = 0;
+        return true;
+      }
+      if (currentSum <= targetScore + 0.001 && Math.abs(targetScore - currentSum) < bestDiff) {
+        bestSubset = [...currentSet];
+        bestDiff = Math.abs(targetScore - currentSum);
+      }
+
+      if (index >= n || currentSum > targetScore + 1.5) return false;
+
+      for (let i = index; i < n; i++) {
+        currentSet.push(candidates[i]);
+        const found = findExact(i + 1, currentSet, currentSum + candidates[i].effectiveScore);
+        currentSet.pop();
+        if (found) return true;
+      }
+      return false;
+    };
+
+    findExact(0, [], 0);
+
+    if (bestSubset.length > 0) {
+      return bestSubset;
+    }
+
+    // Fallback: chọn dồn đến khi vừa đủ targetScore (không lố)
     const selected: any[] = [];
     let currentScore = 0;
-    for (const q of shuffled) {
-      if (currentScore >= targetScore) break;
-      const score = q.score && q.score > 0 ? q.score : defaultScore;
-      selected.push(q);
-      currentScore += score;
+    for (const q of questions) {
+      if (currentScore + q.effectiveScore <= targetScore + 0.001) {
+        selected.push(q);
+        currentScore += q.effectiveScore;
+      }
+      if (Math.abs(currentScore - targetScore) < 0.001) break;
     }
-    return selected;
+    return selected.length > 0 ? selected : [questions[0]];
   }
 
   async createRandom(actor: Actor, data: CreateRandomExamPaperDto, persist = true) {
-    const requestedCount = data.easyCount + data.mediumCount + data.hardCount;
-    if (requestedCount < 1) {
+    const isByScore = data.selectionMode === 'BY_SCORE';
+    const requestedCount = isByScore ? 1 : ((data.easyCount || 0) + (data.mediumCount || 0) + (data.hardCount || 0));
+    if (!isByScore && requestedCount < 1) {
       throw new BadRequestException('Đề thi phải có ít nhất một câu hỏi.');
+    }
+    if (isByScore && ((data.easyScore || 0) + (data.mediumScore || 0) + (data.hardScore || 0)) <= 0) {
+      throw new BadRequestException('Tổng thang điểm ma trận phải lớn hơn 0.');
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -132,23 +178,51 @@ export class ExamPapersService {
       if (actor.role === 'TEACHER' && (schedule.examScheduleRooms || []).length === 0) {
         throw new ForbiddenException('Bạn chỉ được tạo đề cho lịch thi mà mình được phân công.');
       }
-      const [startHour, startMinute] = schedule.startTime.split(':').map(Number);
-      const [endHour, endMinute] = schedule.endTime.split(':').map(Number);
-      const scheduleDuration = ((endHour * 60) + endMinute) - ((startHour * 60) + startMinute);
+      const startTimeStr = schedule.startTime || '07:00';
+      const endTimeStr = schedule.endTime || '22:00';
+      const startParts = startTimeStr.split(':').map(Number);
+      const endParts = endTimeStr.split(':').map(Number);
+      const startMins = (startParts[0] || 0) * 60 + (startParts[1] || 0);
+      const endMins = (endParts[0] || 0) * 60 + (endParts[1] || 0);
+      const scheduleDuration = endMins - startMins;
       if (!Number.isFinite(scheduleDuration) || scheduleDuration < 1 || data.durationMinutes > scheduleDuration) {
         throw new BadRequestException('Thời lượng đề thi không được vượt quá thời gian của lịch thi.');
       }
 
-      const duplicateCode = await tx.examPaper.findFirst({
-        where: {
-          examScheduleId: data.examScheduleId,
-          paperCode: data.paperCode.trim(),
-          deletedAt: null,
-        },
-        select: { id: true },
-      });
-      if (duplicateCode) {
-        throw new ConflictException(`Mã đề ${data.paperCode} đã tồn tại trong lịch thi này.`);
+      if (persist) {
+        // Gỡ giải phóng tất cả các đề đã bị xóa (deletedAt != null) đang vô tình chiếm giữ paperCode trong DB
+        const deadPapers = await tx.examPaper.findMany({
+          where: {
+            examScheduleId: data.examScheduleId,
+            deletedAt: { not: null },
+          },
+        });
+        for (const deadPaper of deadPapers) {
+          if (!deadPaper.paperCode.includes('_del_')) {
+            await tx.examPaper.update({
+              where: { id: deadPaper.id },
+              data: { paperCode: `${deadPaper.paperCode}_del_${deadPaper.id}` },
+            });
+          }
+        }
+
+        let baseCode = data.paperCode.trim();
+        let candidateCode = baseCode;
+        let suffix = 1;
+
+        while (await tx.examPaper.findFirst({
+          where: {
+            examScheduleId: data.examScheduleId,
+            paperCode: candidateCode,
+            deletedAt: null,
+            status: { not: ExamPaperStatus.ARCHIVED },
+          },
+          select: { id: true },
+        })) {
+          candidateCode = isNaN(Number(baseCode)) ? `${baseCode}-${suffix}` : String(Number(baseCode) + suffix);
+          suffix++;
+        }
+        data.paperCode = candidateCode;
       }
 
       const approvedQuestions = await tx.question.findMany({
@@ -162,9 +236,9 @@ export class ExamPapersService {
       });
 
       const isCompatibleType = (question: { type: string }) => {
-        if (schedule.examType === 'TU_LUAN') return question.type === 'ESSAY';
-        if (schedule.examType === 'DIEN_LO' || schedule.examType === 'FILL_BLANK') return question.type === 'FILL_BLANK';
-        if (schedule.examType === 'TRAC_NGHIEM') return question.type !== 'ESSAY' && question.type !== 'FILL_BLANK';
+        if (targetType === 'TU_LUAN') return question.type === 'ESSAY' || question.type === 'TU_LUAN';
+        if (targetType === 'DIEN_LO' || targetType === 'FILL_BLANK') return question.type === 'FILL_BLANK';
+        if (targetType === 'TRAC_NGHIEM') return question.type !== 'ESSAY' && question.type !== 'FILL_BLANK';
         return true;
       };
       const byDifficulty = {
@@ -190,14 +264,15 @@ export class ExamPapersService {
         const medSel = this.selectQuestionsByScore(byDifficulty.MEDIUM, medTarget, 1.5);
         const hardSel = this.selectQuestionsByScore(byDifficulty.HARD, hardTarget, 2.0);
 
-        if (easyTarget > 0 && easySel.length === 0 && byDifficulty.EASY.length === 0) {
-          throw new BadRequestException('Ngân hàng chưa có câu hỏi Dễ đã duyệt.');
+        const typeName = targetType === 'TU_LUAN' ? 'Tự luận' : targetType === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm';
+        if (easyTarget > 0 && easySel.length === 0) {
+          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Dễ loại ${typeName} đã duyệt (hiện có ${byDifficulty.EASY.length} câu).`);
         }
-        if (medTarget > 0 && medSel.length === 0 && byDifficulty.MEDIUM.length === 0) {
-          throw new BadRequestException('Ngân hàng chưa có câu hỏi Trung bình đã duyệt.');
+        if (medTarget > 0 && medSel.length === 0) {
+          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Trung bình loại ${typeName} đã duyệt (hiện có ${byDifficulty.MEDIUM.length} câu).`);
         }
-        if (hardTarget > 0 && hardSel.length === 0 && byDifficulty.HARD.length === 0) {
-          throw new BadRequestException('Ngân hàng chưa có câu hỏi Khó đã duyệt.');
+        if (hardTarget > 0 && hardSel.length === 0) {
+          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Khó loại ${typeName} đã duyệt (hiện có ${byDifficulty.HARD.length} câu).`);
         }
 
         rawSelected = [...easySel, ...medSel, ...hardSel];
@@ -207,19 +282,20 @@ export class ExamPapersService {
       } else {
         const shortage = requirements.find((item) => item.available < item.requested);
         if (shortage) {
+          const typeName = targetType === 'TU_LUAN' ? 'Tự luận' : targetType === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm';
           if (!persist) {
             return {
               preview: true,
               isValid: false,
-              message: `Không đủ câu ${shortage.label} theo ma trận.`,
-              errors: [`Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`],
+              message: `Không đủ câu ${shortage.label} loại ${typeName} theo ma trận đã chọn.`,
+              errors: [`Yêu cầu ${shortage.requested} câu ${shortage.label}, hiện Ngân hàng đề môn này có: ${byDifficulty.EASY.length} câu Dễ, ${byDifficulty.MEDIUM.length} câu Trung bình, ${byDifficulty.HARD.length} câu Khó loại ${typeName} khả dụng.`],
               warnings: [],
-              alternatives: [{ rationale: `Giảm số câu ${shortage.label} xuống ${shortage.available} hoặc bổ sung câu đã duyệt.` }],
-              paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount, totalScore: requestedCount * 0.25 },
+              alternatives: [{ rationale: `Giảm số câu ${shortage.label} xuống ${shortage.available} câu hoặc duyệt thêm câu hỏi ${typeName} trong Ngân hàng đề.` }],
+              paper: { paperCode: data.paperCode.trim(), questionCount: requestedCount, totalScore: 10.0 },
             };
           }
           throw new BadRequestException(
-            `Không đủ câu ${shortage.label} đã duyệt. Yêu cầu ${shortage.requested}, hiện có ${shortage.available}.`,
+            `Không đủ ${shortage.requested} câu hỏi ${shortage.label} loại ${typeName} đã duyệt (hiện chỉ có ${shortage.available} câu khả dụng).`,
           );
         }
 
@@ -230,40 +306,51 @@ export class ExamPapersService {
         ]);
       }
 
+      let selectedQuestions: any[] = [];
+      let totalScore = 10.0;
 
-      // Thuật toán chuẩn hóa phân bổ điểm sao cho tổng bộ đề luôn luôn bằng đúng 10.0 điểm
-      const targetTotalScore = 10.0;
-      const numQuestions = rawSelected.length;
-      let currentSum = 0;
-      const selectedQuestions = rawSelected.map((q, idx) => {
-        let assignedScore = 0.25;
-        if (schedule.examType === 'TU_LUAN') {
-          // Tính điểm dựa trên độ khó / điểm gốc sao cho tổng = 10.0
-          const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
-          const qWeight = q.score && q.score > 0 ? q.score : (weightMap[q.difficulty] || 1.5);
-          const totalWeight = rawSelected.reduce((sum, item) => sum + (item.score && item.score > 0 ? item.score : (weightMap[item.difficulty] || 1.5)), 0);
-
-          if (idx === numQuestions - 1) {
-            assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
+      if (isByScore) {
+        // CHẾ ĐỘ 1: Theo Thang điểm -> Lấy NGUYÊN BẢN 100% điểm gốc từng câu từ Ngân hàng câu hỏi
+        selectedQuestions = rawSelected.map((q) => {
+          let assignedScore = 0.25;
+          if (q.score && Number(q.score) > 0) {
+            assignedScore = Number(q.score);
+          } else if (schedule.examType === 'TU_LUAN') {
+            const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
+            assignedScore = weightMap[q.difficulty] || 1.5;
           } else {
-            const calculated = Math.round(((qWeight / totalWeight) * targetTotalScore) * 4) / 4;
-            assignedScore = Math.max(0.25, calculated);
-            currentSum += assignedScore;
+            assignedScore = 0.25;
           }
-        } else {
-          // Trắc nghiệm: Chia đều 10.0 cho tổng số câu
+          return { ...q, assignedScore };
+        });
+        totalScore = Math.round(selectedQuestions.reduce((sum, item) => sum + item.assignedScore, 0) * 100) / 100;
+      } else {
+        // CHẾ ĐỘ 2: Theo Số câu -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
+        const targetTotalScore = 10.0;
+        const numQuestions = rawSelected.length;
+
+        const rawWeights = rawSelected.map((q) => {
+          if (q.score && Number(q.score) > 0) return Number(q.score);
+          const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
+          return weightMap[q.difficulty] || 1.5;
+        });
+        const totalRawWeight = rawWeights.reduce((sum, w) => sum + w, 0) || 1.0;
+
+        let currentSum = 0;
+        selectedQuestions = rawSelected.map((q, idx) => {
+          let assignedScore = 0.25;
           if (idx === numQuestions - 1) {
             assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
           } else {
-            const calculated = Math.round((targetTotalScore / numQuestions) * 100) / 100;
+            const w = rawWeights[idx];
+            const calculated = Math.round(((w / totalRawWeight) * targetTotalScore) * 100) / 100;
             assignedScore = Math.max(0.05, calculated);
             currentSum += assignedScore;
           }
-        }
-        return { ...q, assignedScore };
-      });
-
-      const totalScore = targetTotalScore;
+          return { ...q, assignedScore };
+        });
+        totalScore = targetTotalScore;
+      }
       const paperCode = data.paperCode.trim();
       const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;
 
@@ -284,14 +371,24 @@ export class ExamPapersService {
       const createdPapers: any[] = [];
 
       for (let v = 1; v <= count; v++) {
-        const vCode = count > 1 ? `${paperCode}-${100 + v}` : paperCode;
+        const baseVCode = count > 1 ? `${paperCode}-${100 + v}` : paperCode;
+        let finalVCode = baseVCode;
+        let vSuffix = 1;
+        while (await tx.examPaper.findFirst({
+          where: { examScheduleId: data.examScheduleId, paperCode: finalVCode },
+          select: { id: true },
+        })) {
+          finalVCode = `${baseVCode}_${vSuffix}`;
+          vSuffix++;
+        }
+
         const vTitle = count > 1 ? `${title} (Mã đề ${100 + v})` : title;
         const shuffledQuestions = count > 1 ? [...selectedQuestions].sort(() => Math.random() - 0.5) : selectedQuestions;
 
         const examPaper = await tx.examPaper.create({
           data: {
             examScheduleId: data.examScheduleId,
-            paperCode: vCode,
+            paperCode: finalVCode,
             title: vTitle,
             durationMinutes: data.durationMinutes,
             totalScore,
@@ -393,26 +490,48 @@ export class ExamPapersService {
     const isOfficial = paper.examSchedule?.mode === 'OFFICIAL';
     const hasEssayQuestions = paper.questions.some((item: any) => item.question?.type === 'ESSAY');
 
-    // Kiểm tra Rubric bắt buộc cho câu hỏi tự luận trước khi phát hành đề
-    const essayQuestions = paper.questions
-      .map((item: any) => item.question)
-      .filter((q: any) => q && q.type === 'ESSAY');
+    // Kiểm tra & Tự động đồng bộ / khởi tạo Rubric cho câu hỏi tự luận khi phát hành đề
+    for (const item of paper.questions) {
+      const q = item.question;
+      if (!q || q.type !== 'ESSAY') continue;
 
-    for (const q of essayQuestions) {
-      const rubrics = await this.prisma.essayRubricCriterion.findMany({
+      const expectedScore = Number(item.score) > 0 ? Number(item.score) : Number((q as any).score) || 10;
+      let rubrics = await this.prisma.essayRubricCriterion.findMany({
         where: { questionId: q.id },
       });
+
+      // Nếu chưa có Rubric trong Ngân hàng câu hỏi -> Tự động sinh 1 Rubric chuẩn 100% khớp điểm câu hỏi trong đề
       if (!rubrics || rubrics.length === 0) {
-        throw new BadRequestException(
-          `Câu hỏi tự luận "${q.content || q.code || q.id}" chưa được tạo Rubric chấm điểm. Vui lòng tạo Rubric trước khi phát hành.`,
-        );
-      }
-      const totalRubricScore = rubrics.reduce((sum, r) => sum + r.maxScore, 0);
-      const expectedScore = q.score || 0;
-      if (Math.abs(totalRubricScore - expectedScore) > 0.001) {
-        throw new BadRequestException(
-          `Tổng điểm Rubric (${Number(totalRubricScore.toFixed(2))}đ) không khớp với điểm số của câu hỏi tự luận "${q.content || q.code}" (${expectedScore}đ).`,
-        );
+        const defaultRubric = await this.prisma.essayRubricCriterion.create({
+          data: {
+            questionId: q.id,
+            label: 'Nội dung câu trả lời tự luận hoàn chỉnh',
+            description: 'Đánh giá độ chính xác, đầy đủ và lập luận logic của câu trả lời',
+            maxScore: expectedScore,
+            sortOrder: 1,
+          },
+        });
+        rubrics = [defaultRubric];
+      } else if (rubrics.length === 1) {
+        // Nếu chỉ có 1 tiêu chí Rubric nhưng maxScore chưa trùng điểm phân bổ trong đề -> Tự động cập nhật maxScore
+        if (Math.abs(rubrics[0].maxScore - expectedScore) > 0.001) {
+          await this.prisma.essayRubricCriterion.update({
+            where: { id: rubrics[0].id },
+            data: { maxScore: expectedScore },
+          });
+        }
+      } else {
+        // Nếu có nhiều tiêu chí Rubric, tự động cân bằng tiêu chí cuối để tổng điểm khớp 100% với đề thi
+        const totalRubricScore = rubrics.reduce((sum, r) => sum + Number(r.maxScore), 0);
+        if (Math.abs(totalRubricScore - expectedScore) > 0.001) {
+          const diff = expectedScore - totalRubricScore;
+          const lastCriterion = rubrics[rubrics.length - 1];
+          const newMaxScore = Math.max(0.1, Number((lastCriterion.maxScore + diff).toFixed(2)));
+          await this.prisma.essayRubricCriterion.update({
+            where: { id: lastCriterion.id },
+            data: { maxScore: newMaxScore },
+          });
+        }
       }
     }
     for (const q of paper.questions.map((item: any) => item.question).filter((question: any) => question?.type === 'FILL_BLANK')) {
@@ -526,6 +645,9 @@ export class ExamPapersService {
       const removed = await tx.examPaper.update({
         where: { id },
         data: { deletedAt: new Date(), status: ExamPaperStatus.ARCHIVED, archivedAt: new Date() },
+      });
+      await tx.onlineExamConfig.deleteMany({
+        where: { examPaperId: id },
       });
       await this.audit.write({
         actorId: actor.id,

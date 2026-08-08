@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
 
 const difficultyBadge = {
-  EASY: ['Dễ', 'bg-emerald-50 text-emerald-700 border-emerald-200'],
-  MEDIUM: ['Trung bình', 'bg-amber-50 text-amber-800 border-amber-200'],
-  HARD: ['Khó', 'bg-rose-50 text-rose-700 border-rose-200'],
+  EASY: ['Dễ', 'bg-slate-100 text-slate-600 border-slate-200'],
+  MEDIUM: ['Trung bình', 'bg-slate-100 text-slate-600 border-slate-200'],
+  HARD: ['Khó', 'bg-slate-100 text-slate-600 border-slate-200'],
 };
 
 export function PendingQuestionList({
@@ -73,7 +73,7 @@ export function PendingQuestionList({
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
           <table className="w-full text-left text-xs min-w-[760px]">
-            <thead className="bg-slate-50/90 text-slate-600 font-extrabold text-[11px] border-b border-slate-200/80">
+            <thead className="bg-blue-50 text-blue-700 font-extrabold text-[11px] border-b border-blue-100">
               <tr>
                 <th className="py-3 px-3 whitespace-nowrap">Mã câu hỏi</th>
                 <th className="py-3 px-3">Nội dung câu hỏi</th>

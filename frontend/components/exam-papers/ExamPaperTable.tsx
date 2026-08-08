@@ -7,7 +7,7 @@ import { StatusBadge } from '../common/StatusBadge';
 import { ExamPaper } from '../../types';
 
 const statusStyle: Record<string, { label: string; className: string }> = {
-  DRAFT: { label: 'Bản nháp', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+  DRAFT: { label: 'Bản nháp', className: 'bg-slate-100 text-slate-600 border-slate-200' },
   PUBLISHED: { label: 'Đã phát hành', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   ARCHIVED: { label: 'Đã lưu trữ', className: 'bg-slate-100 text-slate-600 border-slate-200' },
 };
@@ -180,7 +180,7 @@ export function ExamPaperTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -256,7 +256,7 @@ export function ExamPaperTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input

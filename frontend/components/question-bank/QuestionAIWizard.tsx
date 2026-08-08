@@ -359,8 +359,8 @@ export function QuestionAIWizard({
                           <div
                             key={optIdx}
                             className={`flex items-center gap-2 rounded-lg border p-2 text-xs font-medium transition ${opt.isCorrect
-                                ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
-                                : 'border-slate-200 bg-slate-50 text-slate-700'
+                              ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
+                              : 'border-slate-200 bg-slate-50 text-slate-700'
                               }`}
                           >
                             <span

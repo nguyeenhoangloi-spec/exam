@@ -54,9 +54,8 @@ export function DepartmentTable({
           return (
             <div
               key={d.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -154,7 +153,7 @@ export function DepartmentTable({
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -220,7 +219,7 @@ export function DepartmentTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200/80">
+        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -241,17 +240,16 @@ export function DepartmentTable({
         <tbody className="divide-y divide-slate-100 font-medium">
           {departments.map((d, index) => {
             const isChecked = selected.includes(d.id);
-          const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
-          const classesCount = (d as any).classesCount ?? (d as any)._count?.classes ?? ((d as any).classes?.length || 0);
-          const teachersCount = (d as any).teachersCount ?? (d as any)._count?.teachers ?? ((d as any).teachers?.length || 0);
-          const isLastRow = index >= Math.floor(departments.length / 2);
+            const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
+            const classesCount = (d as any).classesCount ?? (d as any)._count?.classes ?? ((d as any).classes?.length || 0);
+            const teachersCount = (d as any).teachersCount ?? (d as any)._count?.teachers ?? ((d as any).teachers?.length || 0);
+            const isLastRow = index >= Math.floor(departments.length / 2);
 
             return (
               <tr
                 key={d.id}
-                className={`transition hover:bg-blue-50/40 ${
-                  isChecked ? 'bg-blue-50/60' : ''
-                }`}
+                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                  }`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input

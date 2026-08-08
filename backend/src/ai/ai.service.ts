@@ -32,9 +32,7 @@ export class AiService {
         this.logger.error(
           `Both Gemini and DeepSeek providers failed. Gemini: ${geminiErr?.message}, DeepSeek: ${deepseekErr?.message}`,
         );
-        throw new ServiceUnavailableException(
-          `Hệ thống AI không phản hồi (Gemini: ${geminiErr?.message || 'Error'}, DeepSeek: ${deepseekErr?.message || 'Error'})`,
-        );
+        throw new ServiceUnavailableException('Hệ thống AI đang tạm thời bận. Vui lòng thử lại sau.');
       }
     }
   }

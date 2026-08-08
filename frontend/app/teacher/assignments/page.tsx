@@ -257,14 +257,14 @@ export default function TeacherAssignmentsPage() {
     { label: 'Tổng ca coi thi', value: `${assignments.length} ca`, subtext: 'Học kỳ hiện tại', icon: Calendar, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
     { label: 'Giám thị 1 (Chính)', value: `${sup1Count} ca`, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
     { label: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length} ca`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-    { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, iconBg: 'bg-amber-50 text-amber-600 border-amber-100' },
+    { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
   ];
 
   return (
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Hero Banner matching Admin Dashboard style */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
           {/* 3D Isometric Vector Illustration Overlay */}
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 hidden md:block w-72 h-32 opacity-85">
             <svg viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
@@ -277,7 +277,7 @@ export default function TeacherAssignmentsPage() {
               <rect x="235" y="46" width="25" height="3" rx="1.5" fill="#93C5FD" transform="rotate(-20 235 46)" />
               <circle cx="90" cy="50" r="14" fill="#34D399" fillOpacity="0.9" />
               <path d="M84 50L88 54L96 46" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <rect x="240" y="80" width="28" height="28" rx="6" fill="#F59E0B" fillOpacity="0.9" />
+              <rect x="240" y="80" width="28" height="28" rx="6" fill="#3B82F6" fillOpacity="0.9" />
               <rect x="244" y="84" width="20" height="4" rx="1" fill="white" />
               <circle cx="248" cy="94" r="1.5" fill="white" />
               <circle cx="254" cy="94" r="1.5" fill="white" />
@@ -309,15 +309,15 @@ export default function TeacherAssignmentsPage() {
               <button
                 type="button"
                 onClick={handlePrintReport}
-                className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-[#003896] px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
               >
-                <Printer className="w-4 h-4 text-[#003896]" />
+                <Printer className="w-4 h-4 text-blue-700" />
                 <span>In Lịch coi thi</span>
               </button>
               <button
                 type="button"
                 onClick={exportCsv}
-                className="flex items-center gap-2 rounded-xl bg-[#001E5C] hover:bg-[#001748] text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer shadow-xs border border-blue-400/20"
+                className="flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer shadow-xs border border-blue-400/20"
               >
                 <Download className="w-4 h-4 text-white" />
                 <span>Xuất CSV</span>

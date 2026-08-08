@@ -402,7 +402,7 @@ export default function TeacherEssayGradingPage() {
                       setScheduleFilter('ALL');
                       setSearchQuery('');
                     }}
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer select-none"
+                    className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer select-none"
                     title="Đặt lại bộ lọc"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />

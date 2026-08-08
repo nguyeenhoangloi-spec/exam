@@ -104,7 +104,7 @@ export function QuestionCard({
             <button
               title="Chỉnh sửa câu hỏi"
               onClick={() => onAction('edit')}
-              className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition"
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
             >
               <Pencil className="h-4 w-4" />
             </button>

@@ -46,7 +46,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
           <table className="w-full min-w-[620px] text-left text-xs">
-            <thead className="bg-slate-50/90 text-slate-600 font-extrabold text-[11px] border-b border-slate-200/80">
+            <thead className="bg-blue-50 text-blue-700 font-extrabold text-[11px] border-b border-blue-100">
               <tr>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Mã môn</th>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Tên môn thi</th>

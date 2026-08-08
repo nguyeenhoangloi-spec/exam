@@ -243,7 +243,7 @@ export default function StudentsPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
+      setToast({ message: err.message || 'Lưu thông tin sinh viên thất bại. Vui lòng thử lại.', type: 'error' });
     }
   };
 
@@ -261,7 +261,7 @@ export default function StudentsPage() {
           setToast({ message: 'Đã xóa sinh viên thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
-          setToast({ message: err.message, type: 'error' });
+          setToast({ message: err.message || 'Xóa sinh viên thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });

@@ -112,7 +112,7 @@ export default function SettingsPage() {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* Hero Banner Enterprise SaaS Style */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
@@ -136,7 +136,7 @@ export default function SettingsPage() {
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
           <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Kênh thông báo</span>
-          <div className="text-lg font-black text-[#003896] dark:text-blue-400">Email & Hệ thống</div>
+          <div className="text-lg font-black text-slate-900 dark:text-blue-400">Email & Hệ thống</div>
           <span className="text-[10.5px] font-bold text-emerald-600 flex items-center gap-1">
             <CheckCircle2 className="h-3 w-3" /> Đã bật nhắc lịch thi
           </span>
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={emailNotify}
                   onChange={(e) => setEmailNotify(e.target.checked)}
-                  className="h-4.5 w-4.5 rounded border-slate-300 text-[#003896] focus:ring-blue-500 cursor-pointer"
+                  className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </label>
 
@@ -199,7 +199,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={examReminder}
                   onChange={(e) => setExamReminder(e.target.checked)}
-                  className="h-4.5 w-4.5 rounded border-slate-300 text-[#003896] focus:ring-blue-500 cursor-pointer"
+                  className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </label>
 
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={soundAlert}
                   onChange={(e) => setSoundAlert(e.target.checked)}
-                  className="h-4.5 w-4.5 rounded border-slate-300 text-[#003896] focus:ring-blue-500 cursor-pointer"
+                  className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </label>
             </div>
@@ -240,7 +240,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => toggleDarkMode(!isDarkMode)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isDarkMode ? 'bg-[#003896]' : 'bg-slate-300'
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isDarkMode ? 'bg-blue-600' : 'bg-slate-300'
                     }`}
                 >
                   <span
@@ -303,7 +303,7 @@ export default function SettingsPage() {
         <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end">
           <button
             type="submit"
-            className="flex items-center gap-2 rounded-xl bg-[#003896] hover:bg-[#002d78] text-white px-6 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
           >
             <Save className="h-4 w-4 text-white" />
             <span>Lưu thiết lập cài đặt</span>

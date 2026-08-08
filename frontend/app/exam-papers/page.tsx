@@ -13,14 +13,15 @@ import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { ExamPaper, ExamSchedule, User } from '../../types';
-import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award, RotateCcw, RefreshCw } from 'lucide-react';
+import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award, RotateCcw, RefreshCw, Trash2, Send, Archive } from 'lucide-react';
 
 import { ExamPaperHeader } from '../../components/exam-papers/ExamPaperHeader';
 import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICards';
-import { ExamPaperMatrixForm } from '../../components/exam-papers/ExamPaperMatrixForm';
+import { ExamPaperMatrixForm, ExamPaperMatrixFormData } from '../../components/exam-papers/ExamPaperMatrixForm';
 import { ExamPaperTableToolbar } from '../../components/exam-papers/ExamPaperTableToolbar';
 import { ExamPaperTable } from '../../components/exam-papers/ExamPaperTable';
 import { ChangeExamPasswordModal } from '../../components/exam-papers/ChangeExamPasswordModal';
+import { RubricDialog } from '../../components/question-bank/RubricDialog';
 import { TabBar } from '../../components/ui/TabBar';
 import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
 
@@ -84,7 +85,7 @@ function questionChoices(q: any) {
   ].filter((option) => option.text);
 }
 
-const initialForm = {
+const initialForm: ExamPaperMatrixFormData = {
   examScheduleId: '',
   paperCode: '101',
   durationMinutes: '60',
@@ -93,6 +94,10 @@ const initialForm = {
   hardCount: '8',
   variantCount: '1',
   examType: 'TRAC_NGHIEM',
+  selectionMode: 'BY_COUNT',
+  easyScore: '3',
+  mediumScore: '4',
+  hardScore: '3',
 };
 
 export default function ExamPapersPage() {
@@ -102,7 +107,7 @@ export default function ExamPapersPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [papers, setPapers] = useState<ExamPaper[]>([]);
-  const [formData, setFormData] = useState(initialForm);
+  const [formData, setFormData] = useState<ExamPaperMatrixFormData>(initialForm);
   const [selectedPaper, setSelectedPaper] = useState<ExamPaper | null>(null);
   const [showAnswers, setShowAnswers] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -144,7 +149,8 @@ export default function ExamPapersPage() {
     fetchData();
   };
 
-  // Question Swap Modal State
+  // Rubric Modal State
+  const [rubricQuestion, setRubricQuestion] = useState<{ id: number; code?: string; content?: string; score?: number } | null>(null);
   const [swapModal, setSwapModal] = useState<{
     isOpen: boolean;
     questionIndex: number | null;
@@ -195,26 +201,36 @@ export default function ExamPapersPage() {
 
   const handleSelectSwapQuestion = (newQ: any) => {
     if (swapModal.questionIndex === null || !selectedPaper) return;
+    const qIndex = swapModal.questionIndex;
 
-    const updatedPaper = { ...selectedPaper };
-    const details = [...((updatedPaper as any).details || updatedPaper.questions || [])];
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xác nhận đổi câu hỏi',
+      message: `Bạn có chắc chắn muốn thay thế Câu #${qIndex + 1} bằng câu hỏi mới chọn từ Ngân hàng đề không?`,
+      type: 'info',
+      onConfirm: () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        const updatedPaper = { ...selectedPaper };
+        const details = [...((updatedPaper as any).details || updatedPaper.questions || [])];
 
-    if (details[swapModal.questionIndex]) {
-      if (details[swapModal.questionIndex].question) {
-        details[swapModal.questionIndex] = {
-          ...details[swapModal.questionIndex],
-          question: newQ,
-          questionId: newQ.id,
-        };
-      } else {
-        details[swapModal.questionIndex] = newQ;
-      }
-    }
+        if (details[qIndex]) {
+          if (details[qIndex].question) {
+            details[qIndex] = {
+              ...details[qIndex],
+              question: newQ,
+              questionId: newQ.id,
+            };
+          } else {
+            details[qIndex] = newQ;
+          }
+        }
 
-    (updatedPaper as any).details = details;
-    setSelectedPaper(updatedPaper);
-    setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false });
-    setToast({ message: `🎉 Đã đổi thành công Câu #${swapModal.questionIndex + 1} bằng câu hỏi mới!`, type: 'success' });
+        (updatedPaper as any).details = details;
+        setSelectedPaper(updatedPaper);
+        setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false });
+        setToast({ message: `Đã thay câu #${qIndex + 1} bằng câu hỏi mới.`, type: 'success' });
+      },
+    });
   };
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -293,11 +309,25 @@ export default function ExamPapersPage() {
 
   useEffect(() => {
     const scheduleType = selectedSchedule?.examType;
-    if (!scheduleType) return;
-    setFormData((previous) => scheduleType === 'TU_LUAN'
-      ? { ...previous, examType: scheduleType, easyCount: '3', mediumCount: '2', hardCount: '0' }
-      : { ...previous, examType: scheduleType, easyCount: '16', mediumCount: '16', hardCount: '8' });
-  }, [selectedSchedule?.examType, selectedSchedule?.id]);
+    if (!selectedSchedule?.id) return;
+
+    // Tự động tìm mã đề khả dụng tiếp theo (101, 102, 103...) cho lịch thi được chọn
+    const existingCodes = papers
+      .filter((p) => String(p.examScheduleId || (p.examSchedule as any)?.id) === String(selectedSchedule.id))
+      .map((p) => p.paperCode);
+
+    let nextCodeNum = 101;
+    while (existingCodes.includes(String(nextCodeNum))) {
+      nextCodeNum += 1;
+    }
+
+    setFormData((previous) => {
+      const nextType = scheduleType || previous.examType;
+      return nextType === 'TU_LUAN'
+        ? { ...previous, paperCode: String(nextCodeNum), examType: nextType, easyCount: '3', mediumCount: '2', hardCount: '0' }
+        : { ...previous, paperCode: String(nextCodeNum), examType: nextType, easyCount: '16', mediumCount: '16', hardCount: '8' };
+    });
+  }, [selectedSchedule?.examType, selectedSchedule?.id, papers]);
 
   const scheduleDuration = selectedSchedule
     ? (() => {
@@ -341,10 +371,13 @@ export default function ExamPapersPage() {
   const requiredTotal = isEssay ? 0 : Number(formData.durationMinutes) === 60 ? 40 : Number(formData.durationMinutes) === 90 ? 60 : 0;
   const isValidTotal = currentTotal >= 1;
 
+  const isByScoreMode = formData.selectionMode === 'BY_SCORE';
+  const currentTotalScore = (Number(formData.easyScore) || 0) + (Number(formData.mediumScore) || 0) + (Number(formData.hardScore) || 0);
+
   const createPaper = async (event: FormEvent) => {
     event.preventDefault();
-    if (!formData.examScheduleId || currentTotal < 1) {
-      setToast({ message: 'Hãy chọn lịch thi và ít nhất một câu hỏi.', type: 'error' });
+    if (!formData.examScheduleId || (!isByScoreMode && currentTotal < 1) || (isByScoreMode && currentTotalScore <= 0)) {
+      setToast({ message: 'Hãy chọn lịch thi và nhập ma trận phân bổ phù hợp.', type: 'error' });
       return;
     }
 
@@ -356,11 +389,15 @@ export default function ExamPapersPage() {
         examScheduleId: Number(formData.examScheduleId),
         paperCode: formData.paperCode.trim(),
         durationMinutes: Number(formData.durationMinutes),
-        easyCount: Number(formData.easyCount),
-        mediumCount: Number(formData.mediumCount),
-        hardCount: Number(formData.hardCount),
+        easyCount: Number(formData.easyCount) || 0,
+        mediumCount: Number(formData.mediumCount) || 0,
+        hardCount: Number(formData.hardCount) || 0,
         variantCount,
         examType: formData.examType || 'TRAC_NGHIEM',
+        selectionMode: formData.selectionMode || 'BY_COUNT',
+        easyScore: Number(formData.easyScore) || 0,
+        mediumScore: Number(formData.mediumScore) || 0,
+        hardScore: Number(formData.hardScore) || 0,
       };
 
       const preview = await api.post<any>('/exam-papers/preview-random', payload);
@@ -391,7 +428,7 @@ export default function ExamPapersPage() {
             setSelectedPaper(createdPaper);
             setShowAnswers(false);
             setToast({
-              message: variantCount > 1 ? `🎉 Đã tạo thành công ${variantCount} mã đề thi đảo câu!` : `Đã tạo đề ${createdPaper.paperCode} ở trạng thái bản nháp.`,
+              message: variantCount > 1 ? `Đã tạo ${variantCount} mã đề đảo câu.` : `Đã tạo đề ${createdPaper.paperCode} (bản nháp).`,
               type: 'success',
             });
 
@@ -401,14 +438,16 @@ export default function ExamPapersPage() {
             }));
             await fetchData();
           } catch (error: any) {
-            setToast({ message: error.message, type: 'error' });
+            const apiMsg = error?.response?.data?.message || error?.message || 'Không thể tạo đề thi.';
+            setToast({ message: Array.isArray(apiMsg) ? apiMsg.join(', ') : apiMsg, type: 'error' });
           } finally {
             setCreating(false);
           }
         },
       });
     } catch (error: any) {
-      setToast({ message: error.message, type: 'error' });
+      const apiMsg = error?.response?.data?.message || error?.message || 'Không thể xem trước tạo đề thi.';
+      setToast({ message: Array.isArray(apiMsg) ? apiMsg.join(', ') : apiMsg, type: 'error' });
     } finally {
       setCreating(false);
     }
@@ -421,7 +460,7 @@ export default function ExamPapersPage() {
       setSelectedPaper(response.data);
       setShowAnswers(false);
     } catch (error: any) {
-      setToast({ message: error.message, type: 'error' });
+      setToast({ message: error.message || 'Không thể tải chi tiết đề thi.', type: 'error' });
     } finally {
       setBusyId(null);
     }
@@ -472,7 +511,8 @@ export default function ExamPapersPage() {
           if (selectedPaper?.id === paper.id) setSelectedPaper(null);
           await fetchData();
         } catch (error: any) {
-          setToast({ message: error.message, type: 'error' });
+          const apiMsg = error?.response?.data?.message || error?.message || 'Thao tác thất bại.';
+          setToast({ message: Array.isArray(apiMsg) ? apiMsg.join(', ') : apiMsg, type: 'error' });
         }
       },
     });
@@ -486,7 +526,7 @@ export default function ExamPapersPage() {
     try {
       await api.post(`/exam-papers/${paper.id}/publish`, payload);
       setToast({
-        message: `Đề thi ${paper.paperCode} đã phát hành chính thức! Lịch thi đã được KHÓA CHỈNH SỬA.`,
+        message: `Đã phát hành đề ${paper.paperCode}. Lịch thi đã khóa chỉnh sửa.`,
         type: 'success',
       });
       if (selectedPaper?.id === paper.id) setSelectedPaper(null);
@@ -814,7 +854,7 @@ export default function ExamPapersPage() {
                       </div>
                     ) : (
                       /* Dạng Tự Luận hoặc Không Có Trắc Nghiệm */
-                      <div className="text-xs pt-1">
+                      <div className="text-xs pt-1 space-y-2">
                         {showAnswers ? (
                           <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
                             <p className="font-black text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
@@ -829,11 +869,93 @@ export default function ExamPapersPage() {
                             (Nội dung câu hỏi tự luận - Bấm nút &quot;Hiện Đáp án&quot; ở góc trên để xem đáp án gợi ý & thang điểm)
                           </p>
                         )}
+                        <div className="flex justify-end pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setRubricQuestion({ id: q.id || detail.questionId || detail.id, code: q.code || `Câu ${index + 1}`, content: q.content, score: detail.score || 1 })}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold transition cursor-pointer"
+                          >
+                            <Award className="w-3.5 h-3.5 text-blue-600" /> Cấu hình Rubric chấm điểm
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
                 );
               })}
+            </div>
+
+            {/* Footer Action Bar inside Detail Modal */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className={`rounded-lg px-2.5 py-1 text-xs font-bold ${
+                  selectedPaper.status === 'PUBLISHED'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : selectedPaper.status === 'ARCHIVED'
+                    ? 'bg-slate-100 text-slate-600 border border-slate-200'
+                    : 'bg-amber-50 text-amber-700 border border-amber-200'
+                }`}>
+                  Trạng thái: {selectedPaper.status === 'PUBLISHED' ? 'Đã phát hành' : selectedPaper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {selectedPaper.status === 'DRAFT' && (currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER') && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const p = selectedPaper;
+                        setSelectedPaper(null);
+                        runAction(p, 'delete');
+                      }}
+                      className="flex items-center gap-1.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 px-3.5 py-2 text-xs font-bold border border-rose-200 transition cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600" /> Xóa đề thi nháp
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const p = selectedPaper;
+                        setSelectedPaper(null);
+                        runAction(p, 'publish');
+                      }}
+                      className="flex items-center gap-1.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 text-xs font-black shadow-2xs transition cursor-pointer"
+                    >
+                      <Send className="w-3.5 h-3.5 text-white" /> Phát hành Đề thi
+                    </button>
+                  </>
+                )}
+
+                {selectedPaper.status === 'PUBLISHED' && currentUser?.role === 'ADMIN' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const p = selectedPaper;
+                      setSelectedPaper(null);
+                      runAction(p, 'archive');
+                    }}
+                    className="flex items-center gap-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 px-3.5 py-2 text-xs font-bold border border-slate-200 transition cursor-pointer"
+                  >
+                    <Archive className="w-3.5 h-3.5 text-slate-500" /> Lưu trữ Đề thi
+                  </button>
+                )}
+
+                {selectedPaper.status === 'ARCHIVED' && currentUser?.role === 'ADMIN' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const p = selectedPaper;
+                      setSelectedPaper(null);
+                      runAction(p, 'restore');
+                    }}
+                    className="flex items-center gap-1.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 px-3.5 py-2 text-xs font-bold border border-amber-200 transition cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-amber-600" /> Khôi phục về nháp
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </Modal>
@@ -924,6 +1046,17 @@ export default function ExamPapersPage() {
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
+      />
+
+      <RubricDialog
+        isOpen={Boolean(rubricQuestion)}
+        question={rubricQuestion}
+        onClose={() => setRubricQuestion(null)}
+        onSuccess={() => {
+          setRubricQuestion(null);
+          setToast({ message: 'Đã cập nhật Rubric. Đề thi đủ điều kiện phát hành.', type: 'success' });
+          fetchData();
+        }}
       />
 
       <ChangeExamPasswordModal

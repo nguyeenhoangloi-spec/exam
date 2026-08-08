@@ -278,7 +278,7 @@ export default function SubjectsPage() {
         semester: enrollClassData.semester,
         schoolYear: enrollClassData.schoolYear,
       });
-      setToast({ message: `Đã gán ${r.data.successCount} sinh viên lớp ${r.data.className} vào môn ${enrollClassSubject.subjectName}!`, type: 'success' });
+      setToast({ message: `Đã gán ${r.data.successCount} sinh viên lớp ${r.data.className} vào môn ${enrollClassSubject.subjectName}.`, type: 'success' });
       setEnrollClassSubject(null);
       fetchData();
     } catch (err: any) {
@@ -429,7 +429,7 @@ export default function SubjectsPage() {
             <button
               type="button"
               onClick={() => { setSearch(''); setSelectedDeptId(''); setFilterCredits(''); setFilterHasStudents(''); setPage(1); }}
-              className="text-xs font-bold text-slate-500 hover:text-red-500 transition flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-500 hover:text-blue-600 transition flex items-center gap-1 cursor-pointer"
             >
               <X className="h-3.5 w-3.5" /> Xoá bộ lọc
             </button>

@@ -301,7 +301,7 @@ export default function ContactSupportPage() {
         {/* Search Hero Section */}
         <div className="text-center space-y-6 max-w-3xl mx-auto pt-4">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-3.5 py-1.5 text-xs font-extrabold text-blue-700 dark:text-blue-300 shadow-2xs">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            <Sparkles className="h-3.5 w-3.5 text-blue-600" />
             <span>Hệ thống giải đáp sự cố thi tự động 24/7</span>
           </div>
 

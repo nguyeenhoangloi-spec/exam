@@ -161,7 +161,7 @@ export function ExamRoomTable({
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="w-full text-left text-xs border-collapse">
-        <thead className="bg-slate-50/90 text-slate-600 font-extrabold text-[11px] uppercase tracking-wider border-b border-slate-200/90">
+        <thead className="bg-blue-50 text-blue-700 font-extrabold text-[11px] uppercase tracking-wider border-b border-blue-100">
           <tr>
             <th className="p-3.5 pl-4 text-center whitespace-nowrap w-10">
               <input

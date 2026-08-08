@@ -117,7 +117,7 @@ export default function StudentCurriculumPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
 
         {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#003896] via-[#0047BA] to-[#003082] p-6 text-white shadow-md">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
           {/* BG decorations */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]" />
           <div className="absolute -right-16 -top-16 w-64 h-64 bg-blue-400/15 rounded-full blur-[80px] pointer-events-none" />
@@ -317,13 +317,13 @@ export default function StudentCurriculumPage() {
                     {/* Table */}
                     <div className="overflow-x-auto">
                       <table className="w-full text-left">
-                        <thead className="border-b border-slate-100">
-                          <tr className="bg-slate-50/30">
+                        <thead className="border-b border-blue-100">
+                          <tr className="bg-blue-50">
                             {['#', 'Mã môn', 'Tên môn học', 'Số TC', 'Loại môn', 'Trạng thái'].map((h, i) => (
                               <th
                                 key={h}
                                 className={[
-                                  'py-2.5 px-5 text-[10px] font-extrabold text-slate-500 uppercase tracking-wide',
+                                  'py-2.5 px-5 text-[10px] font-extrabold text-blue-700 uppercase tracking-wide',
                                   i === 0 || i === 3 ? 'text-center' : i === 4 || i === 5 ? 'text-center' : 'text-left',
                                 ].join(' ')}
                               >

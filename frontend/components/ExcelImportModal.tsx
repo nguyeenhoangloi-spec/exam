@@ -50,7 +50,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
     const reader = new FileReader();
     reader.onload = () => {
       try { setPreviewData(parseCsv(String(reader.result || ''))); }
-      catch (error: any) { setPreviewData([]); setErrorMsg(error.message); }
+      catch (error: any) { setPreviewData([]); setErrorMsg(error.message || 'Tệp không đúng định dạng dữ liệu. Vui lòng kiểm tra lại.'); }
     };
     reader.onerror = () => setErrorMsg('Không thể đọc tệp đã chọn.');
     reader.readAsText(selected, 'UTF-8');
@@ -100,38 +100,38 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
 
   return (
     <>
-    <Modal isOpen={isOpen} onClose={onClose} title={title}>
-      <div className="space-y-5">
-        <div className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/70 p-4">
-          <div className="flex items-center gap-3"><FileSpreadsheet className="h-5 w-5 text-blue-600" /><div><h4 className="text-sm font-bold text-slate-800">Tải tệp CSV mẫu</h4><p className="text-xs text-slate-500">Dùng đúng tên cột để hệ thống kiểm tra dữ liệu.</p></div></div>
-          <button type="button" onClick={downloadTemplate} className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700"><Download className="h-4 w-4" /> Tải mẫu</button>
+      <Modal isOpen={isOpen} onClose={onClose} title={title}>
+        <div className="space-y-5">
+          <div className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/70 p-4">
+            <div className="flex items-center gap-3"><FileSpreadsheet className="h-5 w-5 text-blue-600" /><div><h4 className="text-sm font-bold text-slate-800">Tải tệp CSV mẫu</h4><p className="text-xs text-slate-500">Dùng đúng tên cột để hệ thống kiểm tra dữ liệu.</p></div></div>
+            <button type="button" onClick={downloadTemplate} className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700"><Download className="h-4 w-4" /> Tải mẫu</button>
+          </div>
+          <div className="relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center">
+            <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+            <Upload className="mx-auto h-8 w-8 text-blue-600" />
+            <p className="mt-2 text-sm font-semibold text-slate-800">{file ? file.name : 'Chọn tệp CSV để xem trước'}</p>
+            <p className="text-xs text-slate-400">Tối đa 5 MB. Dữ liệu chỉ được lưu sau khi xác nhận.</p>
+          </div>
+          {previewData.length > 0 && <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" /> Đã đọc {previewData.length} dòng từ tệp.</div>}
+          {errorMsg && <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700"><AlertCircle className="h-4 w-4" /> {errorMsg}</div>}
+          {previewData.length > 0 && <div className="max-h-48 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-left text-xs"><thead className="sticky top-0 bg-blue-50 text-blue-700"><tr>{Object.keys(previewData[0]).map((key) => <th key={key} className="px-3 py-2 font-semibold">{key}</th>)}</tr></thead><tbody>{previewData.slice(0, 20).map((row, index) => <tr key={index} className="border-t border-slate-100">{Object.keys(previewData[0]).map((key) => <td key={key} className="px-3 py-2">{row[key]}</td>)}</tr>)}</tbody></table></div>}
+          <div className="flex justify-end gap-3 border-t border-slate-100 pt-4"><button type="button" onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-slate-600">Hủy</button><button type="button" disabled={loading || previewData.length === 0} onClick={() => setShowConfirm(true)} className="rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Đang lưu...' : 'Xác nhận nhập'}</button></div>
         </div>
-        <div className="relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center">
-          <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
-          <Upload className="mx-auto h-8 w-8 text-blue-600" />
-          <p className="mt-2 text-sm font-semibold text-slate-800">{file ? file.name : 'Chọn tệp CSV để xem trước'}</p>
-          <p className="text-xs text-slate-400">Tối đa 5 MB. Dữ liệu chỉ được lưu sau khi xác nhận.</p>
-        </div>
-        {previewData.length > 0 && <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" /> Đã đọc {previewData.length} dòng từ tệp.</div>}
-        {errorMsg && <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700"><AlertCircle className="h-4 w-4" /> {errorMsg}</div>}
-        {previewData.length > 0 && <div className="max-h-48 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-left text-xs"><thead className="sticky top-0 bg-slate-50"><tr>{Object.keys(previewData[0]).map((key) => <th key={key} className="px-3 py-2 font-semibold">{key}</th>)}</tr></thead><tbody>{previewData.slice(0, 20).map((row, index) => <tr key={index} className="border-t border-slate-100">{Object.keys(previewData[0]).map((key) => <td key={key} className="px-3 py-2">{row[key]}</td>)}</tr>)}</tbody></table></div>}
-        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4"><button type="button" onClick={onClose} className="rounded-xl px-4 py-2 text-sm text-slate-600">Hủy</button><button type="button" disabled={loading || previewData.length === 0} onClick={() => setShowConfirm(true)} className="rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Đang lưu...' : 'Xác nhận nhập'}</button></div>
-      </div>
-    </Modal>
-    <ConfirmModal
-      isOpen={showConfirm}
-      isLoading={loading}
-      onClose={() => setShowConfirm(false)}
-      onConfirm={() => {
-        setShowConfirm(false);
-        void handleConfirmImport();
-      }}
-      title="Xác nhận nhập dữ liệu"
-      message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
-      type="warning"
-      confirmText="Nhập dữ liệu"
-      cancelText="Quay lại kiểm tra"
-    />
+      </Modal>
+      <ConfirmModal
+        isOpen={showConfirm}
+        isLoading={loading}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => {
+          setShowConfirm(false);
+          void handleConfirmImport();
+        }}
+        title="Xác nhận nhập dữ liệu"
+        message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
+        type="warning"
+        confirmText="Nhập dữ liệu"
+        cancelText="Quay lại kiểm tra"
+      />
     </>
   );
 };

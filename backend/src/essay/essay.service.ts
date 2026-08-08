@@ -580,7 +580,8 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
       };
     } catch (error: any) {
       if (error instanceof BadRequestException) throw error;
-      throw new BadRequestException(error?.message || 'Không thể kết nối dịch vụ AI chấm bài.');
+      this.logger.error(`Lỗi AI chấm bài: ${error?.message}`);
+      throw new BadRequestException('Không thể kết nối dịch vụ AI chấm bài. Vui lòng thử lại sau.');
     }
   }
 

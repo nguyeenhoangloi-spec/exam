@@ -68,7 +68,62 @@ export default function ProctorDashboardPage() {
   const [penaltyPoints, setPenaltyPoints] = useState(1);
   const [processing, setProcessing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  // States cho Bù giờ toàn phòng thi khẩn cấp
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [bulkMinutes, setBulkMinutes] = useState(15);
+  const [bulkReason, setBulkReason] = useState('Sự cố kỹ thuật mạng / hệ thống diện rộng');
+  const [bulkProcessing, setBulkProcessing] = useState(false);
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  const [bulkSuccessMsg, setBulkSuccessMsg] = useState<string | null>(null);
+
+  // States cho Mở thời gian vào thi cho sinh viên vào trễ
+  const [showReopenEntryModal, setShowReopenEntryModal] = useState(false);
+  const [lateWindowMinutes, setLateWindowMinutes] = useState(30);
+  const [reopenEntryProcessing, setReopenEntryProcessing] = useState(false);
+  const [reopenEntrySuccessMsg, setReopenEntrySuccessMsg] = useState<string | null>(null);
+  const [reopenEntryError, setReopenEntryError] = useState<string | null>(null);
+
   const loadDashboardRef = useRef<((isBackground?: boolean) => Promise<void>) | null>(null);
+
+  const handleBulkExtend = async () => {
+    try {
+      setBulkError(null);
+      setBulkSuccessMsg(null);
+      setBulkProcessing(true);
+      const res = await onlineExamService.bulkExtendTime(scheduleRoomId, bulkMinutes, bulkReason);
+      setBulkSuccessMsg(res.message || `Đã bù giờ +${bulkMinutes} phút cho tất cả thí sinh thành công!`);
+      setTimeout(() => {
+        setShowBulkModal(false);
+        setBulkSuccessMsg(null);
+        void loadDashboard(true);
+      }, 1500);
+    } catch (err: any) {
+      setBulkError(err?.response?.data?.message || err?.message || 'Không thể bù giờ toàn phòng.');
+    } finally {
+      setBulkProcessing(false);
+    }
+  };
+
+  const handleReopenEntry = async () => {
+    if (!data?.scheduleId) return;
+    try {
+      setReopenEntryProcessing(true);
+      setReopenEntryError(null);
+      setReopenEntrySuccessMsg(null);
+      const res = await onlineExamService.reopenEntry(data.scheduleId, lateWindowMinutes);
+      setReopenEntrySuccessMsg(res.message || `Đã gia hạn thời gian cho phép vào thi thêm ${lateWindowMinutes} phút.`);
+      setTimeout(() => {
+        setShowReopenEntryModal(false);
+        setReopenEntrySuccessMsg(null);
+        void loadDashboard(true);
+      }, 1500);
+    } catch (e: any) {
+      setReopenEntryError(e?.response?.data?.message || e?.message || 'Không thể gia hạn giờ vào thi');
+    } finally {
+      setReopenEntryProcessing(false);
+    }
+  };
 
   useEffect(() => {
     if (!scheduleRoomId) return;
@@ -156,9 +211,9 @@ export default function ProctorDashboardPage() {
 
   const KPI_CARDS = [
     { label: 'Tổng thí sinh', value: stats.total ?? 0, icon: Users, color: 'text-slate-700', bg: 'bg-slate-50', border: 'border-slate-200' },
-    { label: 'Đang làm bài', value: stats.inProgress ?? 0, icon: Activity, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+    { label: 'Đang làm bài', value: stats.inProgress ?? 0, icon: Activity, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
     { label: 'Mất kết nối', value: stats.disconnected ?? 0, icon: WifiOff, color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
-    { label: 'Đã nộp bài', value: stats.submitted ?? 0, icon: CheckCircle2, color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
+    { label: 'Đã nộp bài', value: stats.submitted ?? 0, icon: CheckCircle2, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
     { label: 'Có cảnh báo', value: stats.flagged ?? 0, icon: ShieldAlert, color: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' },
   ];
 
@@ -217,16 +272,64 @@ export default function ProctorDashboardPage() {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => loadDashboard(false)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition shadow-2xs cursor-pointer shrink-0"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              Làm mới
-            </button>
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowReopenEntryModal(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-md transition cursor-pointer"
+                title="Mở thêm thời gian cho sinh viên tới thi muộn"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                Cho vào trễ (+30ph)
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowBulkModal(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shadow-md transition cursor-pointer"
+                title="Cộng bù giờ hàng loạt cho tất cả sinh viên đang làm bài trong phòng"
+              >
+                <Clock className="w-3.5 h-3.5" />
+                Bù giờ toàn phòng (+15ph)
+              </button>
+              <button
+                type="button"
+                onClick={() => loadDashboard(false)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition shadow-2xs cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Làm mới
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* ── Banner Cảnh Báo Sự Cố Ngắt Kết Nối Hàng Loạt ── */}
+        {(stats.disconnected ?? 0) > 0 && (
+          <div className="rounded-2xl border-2 border-rose-300 bg-rose-50/90 p-4 text-xs font-bold text-rose-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md animate-in fade-in duration-200">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-rose-600 text-white shadow-xs">
+                <AlertTriangle className="w-5 h-5 shrink-0" />
+              </div>
+              <div>
+                <span className="text-sm font-black text-rose-950 block">🚨 CẢNH BÁO SỰ CỐ KHẨN CẤP</span>
+                <span className="text-rose-800 font-semibold text-xs">
+                  Hiện có <strong>{stats.disconnected}</strong> sinh viên bị ngắt kết nối trong phòng thi. Hãy kiểm tra lại kết nối mạng hệ thống.
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setBulkMinutes(15);
+                setBulkReason('Sự cố gián đoạn kỹ thuật / mạng toàn phòng thi');
+                setShowBulkModal(true);
+              }}
+              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl shadow-md transition cursor-pointer shrink-0"
+            >
+              Bù giờ khẩn cấp cho toàn phòng (+15 phút)
+            </button>
+          </div>
+        )}
 
         {/* ── KPI Cards ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -283,7 +386,7 @@ export default function ProctorDashboardPage() {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-slate-100">
+              <thead className="bg-blue-50 border-b border-blue-100 text-blue-700">
                 <tr>
                   {['SBD / Ghế', 'Họ và tên', 'Mã SV', 'Trạng thái', 'Mức cảnh báo', 'Thao tác'].map((h, i) => (
                     <th
@@ -425,9 +528,8 @@ export default function ProctorDashboardPage() {
             <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl">
               {/* Modal header */}
               <div className="flex items-start gap-3.5 p-6 border-b border-slate-100">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  actionType === 'EXTEND' ? 'bg-blue-50' : actionType === 'REOPEN' ? 'bg-amber-50' : actionType === 'FLAG' ? 'bg-rose-50' : 'bg-blue-50'
-                }`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${actionType === 'EXTEND' ? 'bg-blue-50' : actionType === 'REOPEN' ? 'bg-amber-50' : actionType === 'FLAG' ? 'bg-rose-50' : 'bg-blue-50'
+                  }`}>
                   <MetaIcon className={`w-5 h-5 ${meta.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -576,9 +678,9 @@ export default function ProctorDashboardPage() {
                     className={[
                       'px-5 py-2 rounded-xl text-white text-xs font-black transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
                       actionType === 'EXTEND' ? 'bg-blue-600 hover:bg-blue-700' :
-                      actionType === 'REOPEN' ? 'bg-amber-500 hover:bg-amber-600' :
-                      actionType === 'FLAG' ? 'bg-rose-600 hover:bg-rose-700' :
-                      'bg-blue-600 hover:bg-blue-700',
+                        actionType === 'REOPEN' ? 'bg-amber-500 hover:bg-amber-600' :
+                          actionType === 'FLAG' ? 'bg-rose-600 hover:bg-rose-700' :
+                            'bg-blue-600 hover:bg-blue-700',
                     ].join(' ')}
                   >
                     {processing ? (
@@ -594,6 +696,199 @@ export default function ProctorDashboardPage() {
           </div>
         );
       })()}
+
+      {/* Modal Bù giờ toàn phòng thi khẩn cấp */}
+      {showBulkModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-lg rounded-2xl bg-white border border-amber-200 shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-orange-700 p-4 text-white flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="p-2 rounded-xl bg-white/15 border border-white/20 shrink-0">
+                  <Clock className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-sm font-black uppercase tracking-wide text-white truncate">
+                  Cộng Bù Giờ Hàng Loạt Toàn Phòng Thi
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowBulkModal(false)}
+                className="rounded-xl p-1.5 hover:bg-white/20 text-white transition cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4.5 text-xs">
+              <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-amber-900 leading-relaxed font-semibold">
+                Thao tác này sẽ tự động <strong>cộng thêm thời gian làm bài</strong> cho tất cả sinh viên đang làm bài (`IN_PROGRESS`) hoặc vừa bị ngắt kết nối (`DISCONNECTED`) trong phòng thi này.
+              </div>
+
+              <div>
+                <label className="block font-black text-slate-800 uppercase mb-1">
+                  Số phút bù giờ <span className="text-rose-500">*</span>
+                </label>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {[5, 10, 15, 30].map((mins) => (
+                    <button
+                      key={mins}
+                      type="button"
+                      onClick={() => setBulkMinutes(mins)}
+                      className={`py-2.5 rounded-xl text-xs font-black border transition cursor-pointer ${bulkMinutes === mins
+                          ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                    >
+                      +{mins} phút
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="number"
+                  min={1}
+                  max={60}
+                  value={bulkMinutes}
+                  onChange={(e) => setBulkMinutes(Math.max(1, Number(e.target.value)))}
+                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-black text-slate-800 uppercase mb-1">
+                  Lý do bù giờ khẩn cấp <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  rows={2}
+                  value={bulkReason}
+                  onChange={(e) => setBulkReason(e.target.value)}
+                  placeholder="Nhập nguyên nhân gián đoạn..."
+                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              {bulkSuccessMsg && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold text-center">
+                  {bulkSuccessMsg}
+                </div>
+              )}
+
+              {bulkError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 font-bold">
+                  {bulkError}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowBulkModal(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 transition cursor-pointer text-xs"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="button"
+                  disabled={bulkProcessing}
+                  onClick={() => void handleBulkExtend()}
+                  className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black shadow-md transition cursor-pointer text-xs disabled:opacity-50"
+                >
+                  {bulkProcessing ? 'Đang áp dụng...' : `Xác nhận bù giờ +${bulkMinutes} phút`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Mở thời gian vào thi cho thí sinh đến trễ */}
+      {showReopenEntryModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-lg rounded-2xl bg-white border border-blue-200 shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-4 text-white flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="p-2 rounded-xl bg-white/15 border border-white/20 shrink-0">
+                  <PlusCircle className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-sm font-black uppercase tracking-wide text-white truncate">
+                  Gia Hạn Giờ Vào Thi (Cho Sinh Viên Đến Trễ)
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowReopenEntryModal(false)}
+                className="rounded-xl p-1.5 hover:bg-white/20 text-white transition cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4.5 text-xs">
+              <div className="bg-blue-50 border border-blue-200 p-3.5 rounded-xl text-blue-900 leading-relaxed font-semibold">
+                Khi sinh viên tới trễ quá thời gian cho phép ban đầu, Giám thị có thể gia hạn khung giờ vào thi để hệ thống cho phép sinh viên xác thực và bắt đầu làm bài.
+              </div>
+
+              <div>
+                <label className="block font-black text-slate-800 uppercase mb-1">
+                  Mở rộng khung giờ vào thi thêm <span className="text-rose-500">*</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {[15, 30, 60].map((mins) => (
+                    <button
+                      key={mins}
+                      type="button"
+                      onClick={() => setLateWindowMinutes(mins)}
+                      className={`py-2.5 rounded-xl text-xs font-black border transition cursor-pointer ${lateWindowMinutes === mins
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                    >
+                      +{mins} phút
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="number"
+                  min={5}
+                  max={120}
+                  value={lateWindowMinutes}
+                  onChange={(e) => setLateWindowMinutes(Math.max(5, Number(e.target.value)))}
+                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {reopenEntrySuccessMsg && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold text-center">
+                  {reopenEntrySuccessMsg}
+                </div>
+              )}
+
+              {reopenEntryError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 font-bold">
+                  {reopenEntryError}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowReopenEntryModal(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 transition cursor-pointer text-xs"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="button"
+                  disabled={reopenEntryProcessing}
+                  onClick={() => void handleReopenEntry()}
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black shadow-md transition cursor-pointer text-xs disabled:opacity-50"
+                >
+                  {reopenEntryProcessing ? 'Đang mở...' : `Xác nhận gia hạn +${lateWindowMinutes} phút`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

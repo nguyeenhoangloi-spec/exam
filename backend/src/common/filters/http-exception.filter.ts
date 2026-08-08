@@ -25,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const exceptionResponse =
       exception instanceof HttpException
         ? exception.getResponse()
-        : 'Internal server error';
+        : { statusCode: 500, message: exception instanceof Error ? exception.message : 'Hệ thống đã xảy ra lỗi không xác định.' };
 
     const errorMessage =
       typeof exceptionResponse === 'object' && exceptionResponse !== null
@@ -45,11 +45,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
       typeof exceptionResponse === 'object'
         ? exceptionResponse
         : {
-            statusCode: status,
-            timestamp: new Date().toISOString(),
-            path: request.url,
-            message: exceptionResponse,
-          },
+          statusCode: status,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+          message: exceptionResponse,
+        },
     );
   }
 }

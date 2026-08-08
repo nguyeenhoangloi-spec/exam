@@ -200,7 +200,7 @@ export default function TeachersPage() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      setToast({ message: err.message, type: 'error' });
+      setToast({ message: err.message || 'Lưu thông tin giảng viên thất bại. Vui lòng thử lại.', type: 'error' });
     }
   };
 
@@ -218,7 +218,7 @@ export default function TeachersPage() {
           setToast({ message: 'Đã xóa giảng viên thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
-          setToast({ message: err.message, type: 'error' });
+          setToast({ message: err.message || 'Xóa giảng viên thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -543,8 +543,8 @@ export default function TeachersPage() {
                     key={tab.id}
                     onClick={() => setDrawerTab(tab.id as any)}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${drawerTab === tab.id
-                        ? 'bg-white text-blue-700 shadow-sm'
-                        : 'text-blue-100 hover:text-white hover:bg-white/10'
+                      ? 'bg-white text-blue-700 shadow-sm'
+                      : 'text-blue-100 hover:text-white hover:bg-white/10'
                       }`}
                   >
                     {tab.label}
@@ -661,7 +661,18 @@ export default function TeachersPage() {
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-slate-400">Trạng thái:</span>
-                                <span className="font-bold text-emerald-600">{assignment.status || 'Đã phân công'}</span>
+                                <span className={`font-bold ${assignment.status === 'CONFIRMED'
+                                  ? 'text-emerald-600'
+                                  : assignment.status === 'CHANGE_REQUESTED'
+                                    ? 'text-amber-600'
+                                    : 'text-slate-700'
+                                  }`}>
+                                  {assignment.status === 'CONFIRMED'
+                                    ? 'Đã xác nhận'
+                                    : assignment.status === 'CHANGE_REQUESTED'
+                                      ? 'Đề nghị thay đổi'
+                                      : assignment.status || 'Đã phân công'}
+                                </span>
                               </div>
                             </div>
                           </div>

@@ -78,7 +78,7 @@ export class ExamSchedulesController {
   }
 
   @Post(':id/reopen-entry')
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'TEACHER')
   reopenEntry(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: ReopenEntryDto) {
     return this.examSchedulesService.reopenEntry(req.user, id, body.minutes ?? 60);
   }

@@ -52,160 +52,52 @@ export type StatusType =
 
 interface StatusConfig {
   label: string;
-  className: string;
+  /** Màu trạng thái chỉ đặt trên icon; chữ luôn giữ màu trung tính. */
+  iconClass: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
+/** Màu chữ trung tính dùng chung cho toàn bộ nhãn trạng thái. */
+const LABEL_CLASS = 'text-slate-700 dark:text-slate-200 font-bold';
+
 const statusConfigs: Record<string, StatusConfig> = {
-  // 1. Nhóm Xanh Lá (Emerald / Success)
-  PUBLISHED: {
-    label: 'Đã công bố',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckCircle2,
-  },
-  APPROVED: {
-    label: 'Đã duyệt',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckCircle2,
-  },
-  CONFIRMED: {
-    label: 'Đã xác nhận',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckCircle2,
-  },
-  COMPLETED: {
-    label: 'Đã hoàn thành',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckCircle2,
-  },
-  READY: {
-    label: 'Sẵn sàng',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckCircle2,
-  },
-  GRADED: {
-    label: 'Đã chấm điểm',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckSquare,
-  },
-  SUBMITTED: {
-    label: 'Đã nộp bài',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: CheckCircle2,
-  },
-  ROOM_COMPUTER: {
-    label: 'Phòng Máy tính',
-    className: 'text-emerald-600 dark:text-emerald-400 font-bold',
-    icon: Monitor,
-  },
+  // 1. Nhóm Xanh Lá (Emerald / Success) — Đã hoàn thành, đã duyệt...
+  PUBLISHED: { label: 'Đã công bố', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckCircle2 },
+  APPROVED: { label: 'Đã duyệt', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckCircle2 },
+  CONFIRMED: { label: 'Đã xác nhận', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckCircle2 },
+  COMPLETED: { label: 'Đã hoàn thành', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckCircle2 },
+  READY: { label: 'Sẵn sàng', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckCircle2 },
+  GRADED: { label: 'Đã chấm điểm', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckSquare },
+  SUBMITTED: { label: 'Đã nộp bài', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: CheckCircle2 },
+  ROOM_COMPUTER: { label: 'Phòng Máy tính', iconClass: 'text-emerald-600 dark:text-emerald-400', icon: Monitor },
 
-  // 2. Nhóm Xanh Dương (Blue / Info)
-  DRAFT: {
-    label: 'Bản nháp',
-    className: 'text-slate-500 dark:text-slate-400 font-semibold',
-    icon: FileEdit,
-  },
-  SCHEDULED: {
-    label: 'Đã xếp lịch',
-    className: 'text-blue-600 dark:text-blue-400 font-bold',
-    icon: Clock,
-  },
-  UPCOMING: {
-    label: 'Sắp diễn ra',
-    className: 'text-blue-600 dark:text-blue-400 font-bold',
-    icon: Clock,
-  },
-  IN_PROGRESS: {
-    label: 'Đang diễn ra',
-    className: 'text-blue-600 dark:text-blue-400 font-bold',
-    icon: PlayCircle,
-  },
-  ONGOING: {
-    label: 'Đang diễn ra',
-    className: 'text-blue-600 dark:text-blue-400 font-bold',
-    icon: PlayCircle,
-  },
-  ROOM_THEORY: {
-    label: 'Phòng Lý thuyết',
-    className: 'text-blue-600 dark:text-blue-400 font-bold',
-    icon: BookOpen,
-  },
+  // 2. Nhóm Xanh Dương (Blue / Brand) — trạng thái đang diễn ra, thông tin
+  DRAFT: { label: 'Bản nháp', iconClass: 'text-slate-400 dark:text-slate-500', icon: FileEdit },
+  SCHEDULED: { label: 'Đã xếp lịch', iconClass: 'text-blue-600 dark:text-blue-400', icon: Clock },
+  UPCOMING: { label: 'Sắp diễn ra', iconClass: 'text-blue-600 dark:text-blue-400', icon: Clock },
+  IN_PROGRESS: { label: 'Đang diễn ra', iconClass: 'text-blue-600 dark:text-blue-400', icon: PlayCircle },
+  ONGOING: { label: 'Đang diễn ra', iconClass: 'text-blue-600 dark:text-blue-400', icon: PlayCircle },
+  ROOM_THEORY: { label: 'Phòng Lý thuyết', iconClass: 'text-blue-600 dark:text-blue-400', icon: BookOpen },
 
-  // 3. Nhóm Cam/Vàng (Amber / Warning)
-  WAITING_APPROVAL: {
-    label: 'Chờ phê duyệt',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: Clock,
-  },
-  PENDING: {
-    label: 'Chờ duyệt',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: Clock,
-  },
-  CHANGE_REQUESTED: {
-    label: 'Yêu cầu sửa',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: AlertCircle,
-  },
-  GRADING: {
-    label: 'Đang chấm thi',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: Clock,
-  },
-  UNDER_REVIEW: {
-    label: 'Đang xem xét',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: Eye,
-  },
-  MAINTENANCE: {
-    label: 'Bảo trì',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: AlertTriangle,
-  },
-  BUSY: {
-    label: 'Bận',
-    className: 'text-amber-600 dark:text-amber-400 font-bold',
-    icon: Clock,
-  },
+  // 3. Nhóm Cam/Vàng (Amber / Warning) — Chờ xử lý
+  WAITING_APPROVAL: { label: 'Chờ phê duyệt', iconClass: 'text-amber-600 dark:text-amber-400', icon: Clock },
+  PENDING: { label: 'Chờ duyệt', iconClass: 'text-amber-600 dark:text-amber-400', icon: Clock },
+  CHANGE_REQUESTED: { label: 'Yêu cầu sửa', iconClass: 'text-amber-600 dark:text-amber-400', icon: AlertCircle },
+  GRADING: { label: 'Đang chấm thi', iconClass: 'text-amber-600 dark:text-amber-400', icon: Clock },
+  UNDER_REVIEW: { label: 'Đang xem xét', iconClass: 'text-amber-600 dark:text-amber-400', icon: Eye },
+  MAINTENANCE: { label: 'Bảo trì', iconClass: 'text-amber-600 dark:text-amber-400', icon: AlertTriangle },
+  BUSY: { label: 'Bận', iconClass: 'text-amber-600 dark:text-amber-400', icon: Clock },
 
-  // 4. Nhóm Đỏ (Rose / Danger)
-  CANCELLED: {
-    label: 'Đã hủy',
-    className: 'text-rose-600 dark:text-rose-400 font-bold',
-    icon: XCircle,
-  },
-  REJECTED: {
-    label: 'Từ chối',
-    className: 'text-rose-600 dark:text-rose-400 font-bold',
-    icon: XCircle,
-  },
-  ABSENT: {
-    label: 'Vắng thi',
-    className: 'text-rose-600 dark:text-rose-400 font-bold',
-    icon: XCircle,
-  },
+  // 4. Nhóm Đỏ (Rose / Danger) — Đã hủy / Lỗi
+  CANCELLED: { label: 'Đã hủy', iconClass: 'text-rose-600 dark:text-rose-400', icon: XCircle },
+  REJECTED: { label: 'Từ chối', iconClass: 'text-rose-600 dark:text-rose-400', icon: XCircle },
+  ABSENT: { label: 'Vắng thi', iconClass: 'text-rose-600 dark:text-rose-400', icon: XCircle },
 
   // 5. Nhóm Xám (Slate / Neutral)
-  ARCHIVED: {
-    label: 'Lưu trữ',
-    className: 'text-slate-500 dark:text-slate-400 font-medium',
-    icon: Archive,
-  },
-  LOCKED: {
-    label: 'Đã khóa',
-    className: 'text-slate-500 dark:text-slate-400 font-medium',
-    icon: Lock,
-  },
-  NOT_STARTED: {
-    label: 'Chưa bắt đầu',
-    className: 'text-slate-500 dark:text-slate-400 font-medium',
-    icon: Clock,
-  },
-  IN_USE: {
-    label: 'Đang sử dụng',
-    className: 'text-blue-600 dark:text-blue-400 font-bold',
-    icon: UserCheck,
-  },
+  ARCHIVED: { label: 'Lưu trữ', iconClass: 'text-slate-400 dark:text-slate-500', icon: Archive },
+  LOCKED: { label: 'Đã khóa', iconClass: 'text-slate-400 dark:text-slate-500', icon: Lock },
+  NOT_STARTED: { label: 'Chưa bắt đầu', iconClass: 'text-slate-400 dark:text-slate-500', icon: Clock },
+  IN_USE: { label: 'Đang sử dụng', iconClass: 'text-blue-600 dark:text-blue-400', icon: UserCheck },
 };
 
 interface StatusBadgeProps {
@@ -215,14 +107,15 @@ interface StatusBadgeProps {
 }
 
 /**
- * Frameless Status Badge Component matching user request:
- * - No border, no pill background, no shadow
- * - Displays Icon + Text in matching status colors
+ * Frameless Status Badge — Icon + Text:
+ * - Màu trạng thái (xanh lá / cam / đỏ / xanh dương) chỉ đặt trên ICON.
+ * - Phần chữ luôn giữ màu trung tính (#334155 / slate-700) để không phá
+ *   bảng màu 4 tầng chung của toàn hệ thống.
  */
 export function StatusBadge({ status, customLabel, className = '' }: StatusBadgeProps) {
   const config = statusConfigs[status] || {
     label: customLabel || status,
-    className: 'text-slate-600 dark:text-slate-400 font-bold',
+    iconClass: 'text-slate-400 dark:text-slate-500',
     icon: HelpCircle,
   };
 
@@ -232,12 +125,12 @@ export function StatusBadge({ status, customLabel, className = '' }: StatusBadge
   return (
     <span
       className={[
-        'inline-flex items-center gap-1.5 text-xs font-bold whitespace-nowrap select-none',
-        config.className,
+        'inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none',
+        LABEL_CLASS,
         className,
       ].join(' ')}
     >
-      <IconComponent className="h-4 w-4 shrink-0" />
+      <IconComponent className={`h-4 w-4 shrink-0 ${config.iconClass}`} />
       <span>{labelText}</span>
     </span>
   );

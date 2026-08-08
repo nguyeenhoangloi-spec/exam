@@ -58,10 +58,10 @@ export function QuestionBankTopCharts({
 
   const allTypesData = [
     { name: 'Trắc nghiệm', value: singleChoice, color: '#2563eb', percent: calcPct(singleChoice) },
-    { name: 'Nhiều đáp án', value: multipleChoice, color: '#6366f1', percent: calcPct(multipleChoice) },
-    { name: 'Đúng / Sai', value: trueFalse, color: '#8b5cf6', percent: calcPct(trueFalse) },
-    { name: 'Điền khuyết', value: fillBlank, color: '#06b6d4', percent: calcPct(fillBlank) },
-    { name: 'Tự luận', value: essay, color: '#10b981', percent: calcPct(essay) },
+    { name: 'Nhiều đáp án', value: multipleChoice, color: '#3b82f6', percent: calcPct(multipleChoice) },
+    { name: 'Đúng / Sai', value: trueFalse, color: '#60a5fa', percent: calcPct(trueFalse) },
+    { name: 'Điền khuyết', value: fillBlank, color: '#93c5fd', percent: calcPct(fillBlank) },
+    { name: 'Tự luận', value: essay, color: '#1d4ed8', percent: calcPct(essay) },
   ];
 
   const typeData = total > 0 ? (allTypesData.filter((item) => item.value > 0).length > 0 ? allTypesData.filter((item) => item.value > 0) : allTypesData) : allTypesData;
