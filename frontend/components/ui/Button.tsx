@@ -18,19 +18,19 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/25 font-bold',
+    'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 border border-transparent shadow-md shadow-blue-600/20 focus:ring-2 focus:ring-blue-500/25 font-extrabold cursor-pointer',
   secondary:
-    'bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 border border-slate-200/80 focus:ring-2 focus:ring-slate-400/20',
+    'bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 border border-slate-200/80 focus:ring-2 focus:ring-slate-400/20 font-bold cursor-pointer',
   outline:
-    'bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 border border-slate-300 focus:ring-2 focus:ring-blue-500/20 font-bold',
+    'bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 border border-slate-300 focus:ring-2 focus:ring-blue-500/20 font-bold cursor-pointer',
   ghost:
-    'bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200 border border-transparent focus:ring-2 focus:ring-slate-400/20',
+    'bg-transparent text-slate-700 hover:bg-slate-100 active:bg-slate-200 border border-transparent focus:ring-2 focus:ring-slate-400/20 font-bold cursor-pointer',
   danger:
-    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/25 font-bold',
+    'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 border border-transparent shadow-md shadow-rose-600/20 focus:ring-2 focus:ring-rose-500/25 font-extrabold cursor-pointer',
   success:
-    'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-emerald-500/25 font-bold',
+    'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 border border-transparent shadow-md shadow-emerald-600/20 focus:ring-2 focus:ring-emerald-500/25 font-extrabold cursor-pointer',
   warning:
-    'bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-amber-500/25 font-bold',
+    'bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-800 border border-transparent shadow-md shadow-amber-600/20 focus:ring-2 focus:ring-amber-500/25 font-extrabold cursor-pointer',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

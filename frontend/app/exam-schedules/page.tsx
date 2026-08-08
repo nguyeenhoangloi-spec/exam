@@ -558,6 +558,7 @@ export default function ExamSchedulesPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingSchedule ? 'Chỉnh sửa Lịch thi' : 'Tạo Lịch thi Mới'}
+        size="2xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -625,8 +626,8 @@ export default function ExamSchedulesPage() {
                 onChange={(e) => setFormData({ ...formData, mode: e.target.value as 'OFFICIAL' | 'MOCK' })}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none bg-white font-extrabold text-blue-700 shadow-2xs"
               >
-                <option value="OFFICIAL">Thi chính thức (Bắt buộc xếp SBD & Phòng thi)</option>
-                <option value="MOCK">Thi thử (Tự do tham gia trực tuyến)</option>
+                <option value="OFFICIAL">Thi chính thức (Xếp SBD & Phòng thi)</option>
+                <option value="MOCK">Thi thử (Dự thi tự do online)</option>
               </select>
             </div>
 
@@ -731,18 +732,18 @@ export default function ExamSchedulesPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition cursor-pointer"
+              className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={isPastTime}
-              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-xs font-extrabold transition shadow-md shadow-blue-600/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Lưu Lịch Thi
             </button>

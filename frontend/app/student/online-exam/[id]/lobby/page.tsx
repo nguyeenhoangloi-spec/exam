@@ -433,7 +433,7 @@ export default function StudentExamLobbyPage() {
           onClick={() => setShowPasswordModal(false)}
         >
           <div
-            className="relative w-full max-w-[500px] my-auto overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-200"
+            className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Modal - Gradient Xanh */}

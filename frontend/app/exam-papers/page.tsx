@@ -857,14 +857,24 @@ export default function ExamPapersPage() {
                           <button
                             type="button"
                             onClick={() => openSwapModal(index, q)}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 text-[10.5px] font-black rounded-lg transition cursor-pointer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 text-xs font-black rounded-lg transition cursor-pointer"
                             title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
                           >
-                            <RotateCcw className="w-3 h-3 text-blue-600" /> Đổi câu hỏi
+                            <RotateCcw className="w-3.5 h-3.5 text-blue-600" /> Đổi câu hỏi
                           </button>
                         )}
-                        <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700">
-                          {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'MULTIPLE_CHOICE' ? 'TRẮC NGHIỆM' : (q.type || 'CÂU HỎI')} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
+                        {q.type === 'ESSAY' && (
+                          <button
+                            type="button"
+                            onClick={() => setRubricQuestion({ id: q.id || detail.questionId || detail.id, code: q.code || `Câu ${index + 1}`, content: q.content, score: detail.score || 1 })}
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-xs font-bold transition cursor-pointer"
+                            title="Cấu hình thang điểm chi tiết (Rubric) cho câu tự luận"
+                          >
+                            <Award className="w-3.5 h-3.5 text-blue-600" /> Cấu hình Rubric
+                          </button>
+                        )}
+                        <span className="text-xs font-extrabold text-blue-600">
+                          {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'FILL_BLANK' ? 'ĐIỀN KHUYẾT' : q.type === 'TRUE_FALSE' ? 'ĐÚNG/SAI' : 'TRẮC NGHIỆM'} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
                         </span>
                       </div>
                     </div>
@@ -894,8 +904,34 @@ export default function ExamPapersPage() {
                           );
                         })}
                       </div>
+                    ) : q.type === 'FILL_BLANK' ? (
+                      /* Dạng Điền vào chỗ trống */
+                      <div className="text-xs pt-1 space-y-2">
+                        {showAnswers ? (
+                          <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
+                            <p className="font-black text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Đáp án chính xác cho các chỗ trống:
+                            </p>
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              {(q.fillBlankAnswers || (q as any).answers || []).length > 0 ? (
+                                (q.fillBlankAnswers || (q as any).answers).map((ans: any, idx: number) => (
+                                  <span key={idx} className="rounded-lg bg-emerald-100/90 px-2.5 py-1 text-xs font-bold text-emerald-900 border border-emerald-300">
+                                    Ô #{ans.blankIndex || idx + 1}: {ans.answer || ans.text || 'đáp án đúng'} {ans.score ? `(${ans.score}đ)` : ''}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-xs font-semibold text-slate-600 italic">Dữ liệu đáp án điền khuyết theo cú pháp {'{{blank_1}}'} trong câu hỏi.</span>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-[11px] italic font-semibold text-slate-400">
+                            (Bấm &quot;Hiện Đáp án&quot; để xem đáp án các ô điền khuyết)
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      /* Dạng Tự Luận hoặc Không Có Trắc Nghiệm */
+                      /* Dạng Tự Luận hoặc Khác */
                       <div className="text-xs pt-1 space-y-2">
                         {showAnswers ? (
                           <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
@@ -911,15 +947,6 @@ export default function ExamPapersPage() {
                              (Bấm &quot;Hiện Đáp án&quot; để xem đáp án gợi ý &amp; thang điểm)
                            </p>
                         )}
-                        <div className="flex justify-end pt-1">
-                          <button
-                            type="button"
-                            onClick={() => setRubricQuestion({ id: q.id || detail.questionId || detail.id, code: q.code || `Câu ${index + 1}`, content: q.content, score: detail.score || 1 })}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold transition cursor-pointer"
-                          >
-                            <Award className="w-3.5 h-3.5 text-blue-600" /> Cấu hình Rubric chấm điểm
-                          </button>
-                        </div>
                       </div>
                     )}
                   </div>

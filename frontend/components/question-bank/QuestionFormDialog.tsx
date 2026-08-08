@@ -180,63 +180,104 @@ export function QuestionFormDialog({
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'}>
+    <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'} size="2xl">
       <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        {/* Thuộc tính cơ bản câu hỏi */}
         <div className="grid gap-3 md:grid-cols-2">
           {/* Môn */}
-          <select {...register('subjectId', { valueAsNumber: true })} className={controlClassName}>
-            {subjects.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.subjectName}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+              Môn học / Học phần <span className="text-rose-500">*</span>
+            </label>
+            <select {...register('subjectId', { valueAsNumber: true })} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              {subjects.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.subjectName}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Loại câu hỏi */}
-          <select {...register('type')} className={controlClassName}>
-            {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+              Loại câu hỏi <span className="text-rose-500">*</span>
+            </label>
+            <select {...register('type')} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Độ khó */}
-          <select {...register('difficulty')} className={controlClassName}>
-            {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+              Mức độ khó <span className="text-rose-500">*</span>
+            </label>
+            <select {...register('difficulty')} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Mức độ Bloom */}
-          <select {...register('bloomLevel')} className={controlClassName}>
-            {Object.entries(BLOOM_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+              Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
+            </label>
+            <select {...register('bloomLevel')} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              {Object.entries(BLOOM_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Điểm số */}
-          <input
-            type="number"
-            step="0.25"
-            {...register('score', { valueAsNumber: true })}
-            placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-            className={controlClassName}
+          <div className="md:col-span-2">
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+              Điểm số mặc định câu hỏi <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="number"
+              step="0.25"
+              {...register('score', { valueAsNumber: true })}
+              placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-extrabold text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+            />
+          </div>
+        </div>
+
+        {/* Nội dung câu hỏi */}
+        <div>
+          <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+            Nội dung câu hỏi <span className="text-rose-500">*</span>
+          </label>
+          <input type="hidden" {...register('content')} />
+          <RichQuestionEditor
+            value={watch('contentRich')}
+            fallback={watch('content')}
+            onFiles={(files) => addMediaFiles(files)}
+            onChange={(html) => {
+              setValue('contentRich', { html }, { shouldDirty: true });
+              setValue('content', html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), { shouldValidate: true });
+            }}
+            placeholder="Nhập nội dung câu hỏi..."
           />
         </div>
 
-        <input type="hidden" {...register('content')} />
-        <RichQuestionEditor value={watch('contentRich')} fallback={watch('content')} onFiles={(files) => addMediaFiles(files)} onChange={(html) => { setValue('contentRich', { html }, { shouldDirty: true }); setValue('content', html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), { shouldValidate: true }); }} placeholder="Nội dung câu hỏi..." />
-
         {/* Media Upload Section */}
-        <div className="space-y-2">
+        <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700">Đính kèm media (Tùy chọn)</span>
-            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition">
+            <span className="text-xs font-bold uppercase text-slate-500">Đính kèm media (Tùy chọn)</span>
+            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
               <input
                 type="file"
                 multiple
@@ -247,14 +288,14 @@ export function QuestionFormDialog({
                   e.target.value = '';
                 }}
               />
-              Thêm ảnh / video / audio
+              + Thêm ảnh / video / audio
             </label>
           </div>
 
           {mediaFiles.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pt-1">
               {mediaFiles.map((file, idx) => (
-                <div key={idx} className="relative group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
+                <div key={idx} className="relative group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden shadow-2xs">
                   {file.type.startsWith('image/') && (
                     <img src={mediaUrls[idx]} alt={file.name} className="h-20 w-28 object-cover" />
                   )}
@@ -270,7 +311,7 @@ export function QuestionFormDialog({
                   <button
                     type="button"
                     onClick={() => removeMediaFile(idx)}
-                    className="absolute top-1 right-1 rounded-full bg-slate-900/60 text-white w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-600 transition opacity-0 group-hover:opacity-100"
+                    className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-extrabold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
                   >
                     ×
                   </button>
@@ -280,41 +321,53 @@ export function QuestionFormDialog({
           )}
         </div>
 
+        {/* Danh sách đáp án */}
         {!['FILL_BLANK', 'ESSAY'].includes(type) && (
-          <div className="space-y-2.5 border-t border-slate-100 pt-3">
-            <span className="text-xs font-bold text-slate-700">Danh sách đáp án:</span>
-            {fields.map((field, i) => (
-              <div key={field.id} className="flex items-center gap-2">
-                <input
-                  {...register(`options.${i}.isCorrect`)}
-                  type={type === 'MULTIPLE_CHOICE' ? 'checkbox' : 'radio'}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                />
-                <input
-                  {...register(`options.${i}.label`)}
-                  className="w-12 rounded-lg border p-2 text-center text-xs font-bold"
-                />
-                <input
-                  {...register(`options.${i}.content`)}
-                  className="flex-1 rounded-lg border p-2 text-sm"
-                  placeholder={`Nội dung đáp án ${field.label}...`}
-                />
-                <button
-                  type="button"
-                  onClick={() => i && move(i, i - 1)}
-                  className="px-1.5 text-slate-400 hover:text-slate-600 font-bold"
-                >
-                  ↑
-                </button>
-                <button
-                  type="button"
-                  onClick={() => remove(i)}
-                  className="px-1.5 text-rose-500 hover:text-rose-700 font-bold text-base"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+          <div className="space-y-3 border-t border-slate-100 pt-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase text-slate-700 tracking-tight">Danh sách đáp án</span>
+              <span className="text-[11px] font-bold text-slate-400">Tích chọn để đánh dấu đáp án ĐÚNG</span>
+            </div>
+            
+            <div className="space-y-2">
+              {fields.map((field, i) => (
+                <div key={field.id} className="flex items-center gap-2.5 bg-slate-50/80 p-2 rounded-xl border border-slate-200/90 hover:border-slate-300 transition">
+                  <input
+                    {...register(`options.${i}.isCorrect`)}
+                    type={type === 'MULTIPLE_CHOICE' ? 'checkbox' : 'radio'}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0 ml-1"
+                    title="Đánh dấu đáp án đúng"
+                  />
+                  <input
+                    {...register(`options.${i}.label`)}
+                    className="w-10 rounded-lg border border-slate-200 bg-white p-2 text-center text-xs font-black text-slate-900 shrink-0"
+                  />
+                  <input
+                    {...register(`options.${i}.content`)}
+                    className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none"
+                    placeholder={`Nội dung đáp án ${field.label}...`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => i > 0 && move(i, i - 1)}
+                    disabled={i === 0}
+                    className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 font-extrabold cursor-pointer rounded-lg hover:bg-slate-200/60"
+                    title="Di chuyển lên"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => remove(i)}
+                    className="p-1.5 text-rose-500 hover:text-rose-700 font-extrabold cursor-pointer rounded-lg hover:bg-rose-50"
+                    title="Xóa đáp án"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+
             <button
               type="button"
               onClick={() =>
@@ -325,7 +378,7 @@ export function QuestionFormDialog({
                   order: fields.length,
                 })
               }
-              className="text-xs font-bold text-blue-600 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-extrabold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer pt-1"
             >
               + Thêm lựa chọn đáp án
             </button>
@@ -333,16 +386,16 @@ export function QuestionFormDialog({
         )}
 
         {type === 'FILL_BLANK' && (
-          <div className="space-y-3 border-t border-slate-100 pt-3">
-            <div className="rounded-xl bg-blue-50 p-3 text-xs leading-5 text-blue-800">
+          <div className="space-y-3 border-t border-slate-100 pt-4">
+            <div className="rounded-xl bg-blue-50/80 p-3 text-xs leading-5 text-blue-900 font-bold border border-blue-100">
               Đặt chỗ trống trong nội dung theo mẫu <b>{'{{blank_1}}'}</b>, <b>{'{{blank_2}}'}</b>. Tổng điểm các ô phải bằng điểm của câu hỏi.
             </div>
             {fillBlankFields.fields.map((field, index) => (
               <div key={field.id} className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[70px_1fr_100px_auto]">
-                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-lg border bg-slate-50 p-2 text-sm" />
-                <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-lg border p-2 text-sm" />
-                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-lg border p-2 text-sm" />
-                <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600">×</button>
+                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-lg border bg-slate-50 p-2 text-xs font-bold text-center" />
+                <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-lg border p-2 text-xs font-semibold" />
+                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-lg border p-2 text-xs font-bold" />
+                <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600 font-bold">×</button>
                 <input {...register(`fillBlankAnswers.${index}.acceptedAnswersText`)} placeholder="Đáp án chấp nhận thêm, ngăn cách bằng dấu phẩy" className="md:col-span-4 rounded-lg border p-2 text-xs" />
               </div>
             ))}
@@ -352,31 +405,44 @@ export function QuestionFormDialog({
               fillBlankFields.append({ blankIndex: index, answer: '', acceptedAnswersText: '', score: index === 1 ? currentScore : 0, ignoreWhitespace: true, caseSensitive: false, ignoreVietnameseTone: false });
               const raw = watch('contentRich')?.html || watch('content') || '';
               if (!raw.includes(`{{blank_${index}}}`)) setValue('contentRich', { html: `${raw}${raw ? ' ' : ''}{{blank_${index}}}` });
-            }} className="text-xs font-bold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
+            }} className="text-xs font-extrabold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
           </div>
         )}
 
-        <input
-          {...register('keywords')}
-          placeholder="Từ khóa tìm kiếm (ngăn cách bởi dấu phẩy)..."
-          className={controlClassName}
-        />
-        <textarea
-          {...register('explanation')}
-          rows={2}
-          placeholder="Giải thích lý do đáp án đúng..."
-          className={controlClassName}
-        />
+        <div className="grid gap-3 md:grid-cols-2 pt-3 border-t border-slate-100">
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
+            <input
+              {...register('keywords')}
+              placeholder="Ví dụ: RSA, ma hoa, security..."
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
+            <textarea
+              {...register('explanation')}
+              rows={2}
+              placeholder="Giải thích lý do đáp án đúng..."
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+            />
+          </div>
+        </div>
 
         {Object.keys(errors).length > 0 && (
-          <p className="text-xs font-semibold text-rose-600">
+          <p className="text-xs font-bold text-rose-600">
             Vui lòng kiểm tra lại các trường thông tin bắt buộc và danh sách đáp án.
           </p>
         )}
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
-          <Button type="button" variant="outline" onClick={onClose}>Hủy</Button>
-          <Button type="submit" isLoading={isSubmitting}>Lưu câu hỏi</Button>
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Hủy
+          </Button>
+          <Button type="submit" isLoading={isSubmitting} variant="primary">
+            Lưu câu hỏi
+          </Button>
         </div>
       </form>
     </Modal>

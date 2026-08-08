@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import api from '../../lib/api';
 import { HelpCircle, Plus, Trash2, Save, X, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 interface RubricCriterion {
   id?: string;
@@ -139,17 +140,17 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white flex justify-between items-center shrink-0">
+        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
           <div>
-            <h2 className="text-base font-bold flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-blue-400" />
+            <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-blue-600" />
               Thiết Lập Rubric Chấm Điểm Tự Luận
             </h2>
-            <p className="text-xs text-slate-300 font-mono mt-0.5">
-              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-blue-200 font-black">{expectedScore}đ</strong>
+            <p className="text-xs text-slate-500 font-mono mt-0.5">
+              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-blue-700 font-extrabold">{expectedScore}đ</strong>
             </p>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-slate-200/80 text-slate-400 hover:text-slate-700 transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -267,21 +268,18 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
 
         {/* Footer */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-100 transition"
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             Hủy
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="primary"
             onClick={handleSave}
             disabled={saving || !isMatched}
-            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold transition shadow-2xs disabled:opacity-50"
+            isLoading={saving}
           >
-            <Save className="w-4 h-4" /> {saving ? 'Đang lưu...' : 'Lưu Rubric'}
-          </button>
+            Lưu Rubric
+          </Button>
         </div>
       </div>
     </div>
