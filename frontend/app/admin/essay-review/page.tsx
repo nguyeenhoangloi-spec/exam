@@ -684,17 +684,11 @@ export default function AdminEssayReviewPage() {
                     <h3 className="text-xs font-black uppercase text-slate-700 tracking-wider">Thao tác Quản trị Admin</h3>
                   </div>
                   {selected.gradingStatus === 'PUBLISHED' ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Điểm số đã công bố chính thức
-                    </span>
+                    <StatusBadge status="PUBLISHED" customLabel="Điểm số đã công bố chính thức" />
                   ) : selected.gradingStatus === 'WAITING_APPROVAL' ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs">
-                      <Clock className="w-3.5 h-3.5" /> Bài thi đang chờ duyệt
-                    </span>
+                    <StatusBadge status="WAITING_APPROVAL" customLabel="Bài thi đang chờ duyệt" />
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs">
-                      <FileText className="w-3.5 h-3.5" /> Đang chấm thi
-                    </span>
+                    <StatusBadge status="GRADING" customLabel="Đang chấm thi" />
                   )}
                 </div>
 

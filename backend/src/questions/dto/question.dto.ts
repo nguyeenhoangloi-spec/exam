@@ -140,7 +140,7 @@ export class CreateQuestionDto {
   chapterId?: string;
 
   @IsString()
-  @MinLength(5)
+  @MinLength(1)
   @MaxLength(10000)
   content: string;
 

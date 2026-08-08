@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { RubricDialog } from './RubricDialog';
 import { Question } from '../../types';
@@ -10,6 +10,8 @@ import {
   QuestionStatusBadge,
   QuestionTypeBadge,
 } from './QuestionBadges';
+import { getImageUrl } from '../../lib/media-utils';
+import { ImageLightboxModal } from '../ImageLightboxModal';
 
 interface QuestionBankTableProps {
   questions: Question[];
@@ -45,6 +47,7 @@ export function QuestionBankTable({
 }: QuestionBankTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [rubricQuestion, setRubricQuestion] = useState<Question | null>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const allSelected = questions.length > 0 && selected.length === questions.length;
 
   const formatDate = (dateStr?: string) => {
@@ -386,6 +389,39 @@ export function QuestionBankTable({
                             ))}
                           </div>
                         ) : null}
+
+                        {/* Thumbnail ảnh đính kèm */}
+                        {q.media && q.media.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 pt-1.5">
+                            {q.media.map((m, idx) => {
+                              const mime = m.mimeType || '';
+                              if (mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url))) {
+                                return (
+                                  <button
+                                    key={m.id || idx}
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
+                                    className="group relative overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-0.5 hover:border-blue-400 hover:shadow-md transition cursor-zoom-in"
+                                    title="Bấm để xem ảnh"
+                                  >
+                                    <img
+                                      src={getImageUrl(m.url)}
+                                      alt={m.altText || m.fileName || 'Hình ảnh'}
+                                      className="h-12 w-16 rounded object-cover transition group-hover:scale-105"
+                                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                                    />
+                                  </button>
+                                );
+                              }
+                              return (
+                                <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600">
+                                  <ImageIcon className="h-3 w-3 text-blue-500" />
+                                  {m.fileName || 'Media'}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </td>
                   )}
@@ -556,6 +592,13 @@ export function QuestionBankTable({
         question={rubricQuestion}
         onClose={() => setRubricQuestion(null)}
       />
+      {lightboxUrl && (
+        <ImageLightboxModal
+          imageUrl={lightboxUrl}
+          altText="Hình ảnh câu hỏi"
+          onClose={() => setLightboxUrl(null)}
+        />
+      )}
     </>
   );
 }

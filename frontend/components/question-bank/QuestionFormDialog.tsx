@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../lib/api';
-import { Question, Subject } from '../../types';
+import { Question, QuestionMedia, Subject } from '../../types';
 import { Modal } from '../Modal';
 import { RichQuestionEditor } from './RichQuestionEditor';
 import { Button, controlClassName } from '../ui';
@@ -13,6 +13,8 @@ import {
   DIFFICULTY_LABELS,
   BLOOM_LABELS,
 } from '../../lib/enum-labels';
+import { getImageUrl } from '../../lib/media-utils';
+import { ImageIcon, Trash2, Video } from 'lucide-react';
 
 const option = z.object({
   label: z.string().min(1),
@@ -32,13 +34,13 @@ const fillBlankAnswer = z.object({
 });
 
 const schema = z.object({
-  subjectId: z.number().min(1),
-  content: z.string().min(5),
+  subjectId: z.number({ required_error: 'Vui lòng chọn môn học' }).min(1, 'Vui lòng chọn môn học'),
+  content: z.string().min(1, 'Nội dung câu hỏi không được để trống'),
   contentRich: z.object({ html: z.string() }).optional(),
   type: z.enum(['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY']),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
   bloomLevel: z.enum(['REMEMBER', 'UNDERSTAND', 'APPLY', 'ANALYZE']),
-  score: z.number().positive(),
+  score: z.number().positive('Điểm số phải lớn hơn 0'),
   explanation: z.string().optional(),
   keywords: z.string().optional(),
   options: z.array(option),
@@ -82,6 +84,9 @@ export function QuestionFormDialog({
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const mediaUrlsRef = React.useRef<string[]>([]);
+  // Media đã tồn tại trên server (khi edit)
+  const [existingMedia, setExistingMedia] = useState<QuestionMedia[]>([]);
+  const [removedMediaIds, setRemovedMediaIds] = useState<string[]>([]);
 
   const addMediaFiles = (incoming: File[]) => {
     const urls = incoming.map((f) => URL.createObjectURL(f));
@@ -93,6 +98,11 @@ export function QuestionFormDialog({
     URL.revokeObjectURL(mediaUrlsRef.current[idx]);
     setMediaFiles((cur) => cur.filter((_, i) => i !== idx));
     setMediaUrls((cur) => { const next = cur.filter((_, i) => i !== idx); mediaUrlsRef.current = next; return next; });
+  };
+
+  const removeExistingMedia = (mediaId: string) => {
+    setExistingMedia((cur) => cur.filter((m) => m.id !== mediaId));
+    setRemovedMediaIds((cur) => [...cur, mediaId]);
   };
   const {
     register,
@@ -123,6 +133,9 @@ export function QuestionFormDialog({
     mediaUrlsRef.current = [];
     setMediaFiles([]);
     setMediaUrls([]);
+    setRemovedMediaIds([]);
+    // Load media đã tồn tại từ câu hỏi khi edit
+    setExistingMedia(question?.media || []);
     reset(
       question
         ? {
@@ -169,6 +182,11 @@ export function QuestionFormDialog({
     };
     const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
     const savedId = question?.id || response.data?.id;
+    // Xóa các media đã đánh dấu xóa
+    if (removedMediaIds.length) {
+      await Promise.all(removedMediaIds.map((id) => api.delete(`/questions/media/${id}`).catch(() => {})));
+    }
+    // Upload media mới
     if (savedId && mediaFiles.length) {
       const form = new FormData();
       form.append('questionId', savedId);
@@ -267,7 +285,9 @@ export function QuestionFormDialog({
             onFiles={(files) => addMediaFiles(files)}
             onChange={(html) => {
               setValue('contentRich', { html }, { shouldDirty: true });
-              setValue('content', html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), { shouldValidate: true });
+              const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+              const hasMedia = html.includes('<img') || html.includes('<video') || html.includes('<audio') || mediaFiles.length > 0;
+              setValue('content', plain || (hasMedia ? '[Hình ảnh / Media]' : ''), { shouldValidate: true });
             }}
             placeholder="Nhập nội dung câu hỏi..."
           />
@@ -292,6 +312,52 @@ export function QuestionFormDialog({
             </label>
           </div>
 
+          {/* Ảnh/media cũ đã tồn tại (khi edit) */}
+          {existingMedia.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {existingMedia.map((media) => {
+                const fullUrl = getImageUrl(media.url);
+                const mime = media.mimeType || '';
+                return (
+                  <div key={media.id} className="relative group rounded-xl border border-blue-200 bg-blue-50/50 overflow-hidden shadow-2xs" title={media.fileName || 'Ảnh đã tải lên'}>
+                    {mime.startsWith('image/') && (
+                      <img src={fullUrl} alt={media.altText || media.fileName} className="h-20 w-28 object-cover" />
+                    )}
+                    {mime.startsWith('video/') && (
+                      <div className="flex flex-col items-center justify-center h-20 w-28 bg-slate-800 gap-1">
+                        <Video className="h-6 w-6 text-slate-300" />
+                        <span className="text-[10px] text-slate-300 truncate max-w-[100px]">{media.fileName}</span>
+                      </div>
+                    )}
+                    {mime.startsWith('audio/') && (
+                      <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
+                        <span className="text-[10px] font-semibold text-slate-600 max-w-[120px] truncate">{media.fileName}</span>
+                        <audio src={fullUrl} controls className="h-8 w-36" />
+                      </div>
+                    )}
+                    {!mime.startsWith('image/') && !mime.startsWith('video/') && !mime.startsWith('audio/') && (
+                      <div className="flex flex-col items-center justify-center h-20 w-28 gap-1">
+                        <ImageIcon className="h-6 w-6 text-slate-400" />
+                        <span className="text-[10px] text-slate-500 truncate max-w-[100px]">{media.fileName}</span>
+                      </div>
+                    )}
+                    {/* Badge 'đã lưu' */}
+                    <span className="absolute bottom-1 left-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold text-white">Đã lưu</span>
+                    <button
+                      type="button"
+                      onClick={() => media.id && removeExistingMedia(media.id)}
+                      className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-extrabold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                      title="Xóa ảnh này"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* File media mới upload */}
           {mediaFiles.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
               {mediaFiles.map((file, idx) => (
@@ -333,8 +399,18 @@ export function QuestionFormDialog({
               {fields.map((field, i) => (
                 <div key={field.id} className="flex items-center gap-2.5 bg-slate-50/80 p-2 rounded-xl border border-slate-200/90 hover:border-slate-300 transition">
                   <input
-                    {...register(`options.${i}.isCorrect`)}
                     type={type === 'MULTIPLE_CHOICE' ? 'checkbox' : 'radio'}
+                    name={type === 'MULTIPLE_CHOICE' ? `options.${i}.isCorrect` : 'options-isCorrect-radio'}
+                    checked={Boolean(watch(`options.${i}.isCorrect`))}
+                    onChange={(e) => {
+                      if (type === 'MULTIPLE_CHOICE') {
+                        // Checkbox: toggle boolean
+                        setValue(`options.${i}.isCorrect`, e.target.checked, { shouldValidate: true });
+                      } else {
+                        // Radio: chỉ một đáp án đúng — set tất cả false, riêng cái này true
+                        fields.forEach((_, fi) => setValue(`options.${fi}.isCorrect`, fi === i, { shouldValidate: fi === i }));
+                      }
+                    }}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0 ml-1"
                     title="Đánh dấu đáp án đúng"
                   />
@@ -431,9 +507,18 @@ export function QuestionFormDialog({
         </div>
 
         {Object.keys(errors).length > 0 && (
-          <p className="text-xs font-bold text-rose-600">
-            Vui lòng kiểm tra lại các trường thông tin bắt buộc và danh sách đáp án.
-          </p>
+          <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 space-y-1">
+            <p className="text-xs font-bold text-rose-700">
+              Vui lòng kiểm tra các thông tin sau trước khi lưu câu hỏi:
+            </p>
+            <ul className="list-disc list-inside text-xs font-medium text-rose-600 space-y-0.5">
+              {errors.subjectId && <li>Vui lòng chọn Môn học / Học phần.</li>}
+              {errors.content && <li>Nội dung câu hỏi không được để trống.</li>}
+              {errors.score && <li>Điểm số câu hỏi phải hợp lệ (lớn hơn 0).</li>}
+              {errors.options && <li>Vui lòng kiểm tra và điền nội dung cho danh sách các đáp án.</li>}
+              {errors.fillBlankAnswers && <li>Vui lòng kiểm tra thông tin đáp án cho các ô điền khuyết.</li>}
+            </ul>
+          </div>
         )}
 
         <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

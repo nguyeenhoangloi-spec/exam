@@ -79,55 +79,50 @@ export class ExamPapersService {
   private selectQuestionsByScore(pool: any[], targetScore: number, defaultScore: number) {
     if (targetScore <= 0 || pool.length === 0) return [];
 
-    const questions = this.shuffle([...pool]).map((q) => ({
-      ...q,
-      effectiveScore: q.score && Number(q.score) > 0 ? Number(q.score) : defaultScore,
-    }));
+    const targetCents = Math.round(targetScore * 100);
+    const questions = this.shuffle([...pool]).map((q) => {
+      const score = q.score && Number(q.score) > 0 ? Number(q.score) : defaultScore;
+      return {
+        ...q,
+        effectiveScore: score,
+        cents: Math.round(score * 100),
+      };
+    });
 
-    let bestSubset: any[] = [];
-    let bestDiff = Infinity;
+    const dp = new Array<number[] | null>(targetCents + 1).fill(null);
+    dp[0] = [];
 
-    const candidates = questions.slice(0, 35);
-    const n = candidates.length;
+    for (let i = 0; i < questions.length; i++) {
+      const cents = questions[i].cents;
+      if (cents <= 0) continue;
 
-    const findExact = (index: number, currentSet: any[], currentSum: number) => {
-      const diff = Math.abs(currentSum - targetScore);
-      if (diff < 0.001) {
-        bestSubset = [...currentSet];
-        bestDiff = 0;
-        return true;
+      for (let w = targetCents; w >= cents; w--) {
+        if (dp[w - cents] !== null && dp[w] === null) {
+          dp[w] = [...dp[w - cents]!, i];
+          if (w === targetCents) break;
+        }
       }
-      if (currentSum <= targetScore + 0.001 && Math.abs(targetScore - currentSum) < bestDiff) {
-        bestSubset = [...currentSet];
-        bestDiff = Math.abs(targetScore - currentSum);
-      }
-
-      if (index >= n || currentSum > targetScore + 1.5) return false;
-
-      for (let i = index; i < n; i++) {
-        currentSet.push(candidates[i]);
-        const found = findExact(i + 1, currentSet, currentSum + candidates[i].effectiveScore);
-        currentSet.pop();
-        if (found) return true;
-      }
-      return false;
-    };
-
-    findExact(0, [], 0);
-
-    if (bestSubset.length > 0) {
-      return bestSubset;
+      if (dp[targetCents] !== null) break;
     }
 
-    // Fallback: chọn dồn đến khi vừa đủ targetScore (không lố)
-    const selected: any[] = [];
-    let currentScore = 0;
-    for (const q of questions) {
-      if (currentScore + q.effectiveScore <= targetScore + 0.001) {
-        selected.push(q);
-        currentScore += q.effectiveScore;
+    if (dp[targetCents] !== null) {
+      return dp[targetCents]!.map((idx) => questions[idx]);
+    }
+
+    for (let w = targetCents - 1; w > 0; w--) {
+      if (dp[w] !== null) {
+        return dp[w]!.map((idx) => questions[idx]);
       }
-      if (Math.abs(currentScore - targetScore) < 0.001) break;
+    }
+
+    const selected: any[] = [];
+    let currentCents = 0;
+    for (const q of questions) {
+      if (currentCents + q.cents <= targetCents) {
+        selected.push(q);
+        currentCents += q.cents;
+      }
+      if (currentCents === targetCents) break;
     }
     return selected.length > 0 ? selected : [questions[0]];
   }
@@ -167,8 +162,8 @@ export class ExamPapersService {
         schedule.examType = targetType;
       }
 
-      if (targetType !== 'TU_LUAN' && data.durationMinutes === 60 && requestedCount !== 40) throw new BadRequestException(`Đề thi trắc nghiệm 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
-      if (targetType !== 'TU_LUAN' && data.durationMinutes === 90 && requestedCount !== 60) throw new BadRequestException(`Đề thi trắc nghiệm 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
+      if (!isByScore && targetType !== 'TU_LUAN' && data.durationMinutes === 60 && requestedCount !== 40) throw new BadRequestException(`Đề thi trắc nghiệm 60 phút phải có đúng 40 câu hỏi (hiện tại có ${requestedCount} câu).`);
+      if (!isByScore && targetType !== 'TU_LUAN' && data.durationMinutes === 90 && requestedCount !== 60) throw new BadRequestException(`Đề thi trắc nghiệm 90 phút phải có đúng 60 câu hỏi (hiện tại có ${requestedCount} câu).`);
       if (['CANCELLED', 'COMPLETED', 'LOCKED'].includes(schedule.status)) {
         throw new BadRequestException('Không thể tạo đề cho lịch thi đã hủy hoặc hoàn thành.');
       }
@@ -253,26 +248,33 @@ export class ExamPapersService {
       ];
 
       let rawSelected: any[] = [];
-      const isByScore = data.selectionMode === 'BY_SCORE';
 
       if (isByScore) {
         const easyTarget = Number(data.easyScore) || 0;
         const medTarget = Number(data.mediumScore) || 0;
         const hardTarget = Number(data.hardScore) || 0;
 
-        const easySel = this.selectQuestionsByScore(byDifficulty.EASY, easyTarget, 1.0);
-        const medSel = this.selectQuestionsByScore(byDifficulty.MEDIUM, medTarget, 1.5);
-        const hardSel = this.selectQuestionsByScore(byDifficulty.HARD, hardTarget, 2.0);
+        const defaultEasyScore = targetType === 'TU_LUAN' ? 1.0 : 0.25;
+        const defaultMedScore = targetType === 'TU_LUAN' ? 1.5 : 0.25;
+        const defaultHardScore = targetType === 'TU_LUAN' ? 2.0 : 0.25;
+
+        const easySel = this.selectQuestionsByScore(byDifficulty.EASY, easyTarget, defaultEasyScore);
+        const medSel = this.selectQuestionsByScore(byDifficulty.MEDIUM, medTarget, defaultMedScore);
+        const hardSel = this.selectQuestionsByScore(byDifficulty.HARD, hardTarget, defaultHardScore);
 
         const typeName = targetType === 'TU_LUAN' ? 'Tự luận' : targetType === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm';
-        if (easyTarget > 0 && easySel.length === 0) {
-          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Dễ loại ${typeName} đã duyệt (hiện có ${byDifficulty.EASY.length} câu).`);
+        const achievedEasy = Math.round(easySel.reduce((sum, q) => sum + (q.effectiveScore || defaultEasyScore), 0) * 100) / 100;
+        const achievedMed = Math.round(medSel.reduce((sum, q) => sum + (q.effectiveScore || defaultMedScore), 0) * 100) / 100;
+        const achievedHard = Math.round(hardSel.reduce((sum, q) => sum + (q.effectiveScore || defaultHardScore), 0) * 100) / 100;
+
+        if (easyTarget > 0 && Math.abs(achievedEasy - easyTarget) > 0.01) {
+          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Dễ loại ${typeName} đã duyệt để đạt mục tiêu ${easyTarget}đ (hiện chỉ có ${easySel.length} câu = ${achievedEasy}đ).`);
         }
-        if (medTarget > 0 && medSel.length === 0) {
-          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Trung bình loại ${typeName} đã duyệt (hiện có ${byDifficulty.MEDIUM.length} câu).`);
+        if (medTarget > 0 && Math.abs(achievedMed - medTarget) > 0.01) {
+          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Trung bình loại ${typeName} đã duyệt để đạt mục tiêu ${medTarget}đ (hiện chỉ có ${medSel.length} câu = ${achievedMed}đ).`);
         }
-        if (hardTarget > 0 && hardSel.length === 0) {
-          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Khó loại ${typeName} đã duyệt (hiện có ${byDifficulty.HARD.length} câu).`);
+        if (hardTarget > 0 && Math.abs(achievedHard - hardTarget) > 0.01) {
+          throw new BadRequestException(`Ngân hàng đề chưa đủ câu hỏi Khó loại ${typeName} đã duyệt để đạt mục tiêu ${hardTarget}đ (hiện chỉ có ${hardSel.length} câu = ${achievedHard}đ).`);
         }
 
         rawSelected = [...easySel, ...medSel, ...hardSel];
@@ -309,13 +311,15 @@ export class ExamPapersService {
       let selectedQuestions: any[] = [];
       let totalScore = 10.0;
 
-      if (isByScore) {
-        // CHẾ ĐỘ 1: Theo Thang điểm -> Lấy NGUYÊN BẢN 100% điểm gốc từng câu từ Ngân hàng câu hỏi
+      const isEssay = targetType === 'TU_LUAN' || schedule.examType === 'TU_LUAN';
+
+      if (isByScore || isEssay) {
+        // CHẾ ĐỘ 1: Theo Thang điểm hoặc Tự luận -> Lấy NGUYÊN BẢN 100% điểm gốc từng câu từ Ngân hàng câu hỏi
         selectedQuestions = rawSelected.map((q) => {
-          let assignedScore = 0.25;
+          let assignedScore = 1.0;
           if (q.score && Number(q.score) > 0) {
             assignedScore = Number(q.score);
-          } else if (schedule.examType === 'TU_LUAN') {
+          } else if (isEssay) {
             const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
             assignedScore = weightMap[q.difficulty] || 1.5;
           } else {
@@ -325,7 +329,7 @@ export class ExamPapersService {
         });
         totalScore = Math.round(selectedQuestions.reduce((sum, item) => sum + item.assignedScore, 0) * 100) / 100;
       } else {
-        // CHẾ ĐỘ 2: Theo Số câu -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
+        // CHẾ ĐỘ 2: Trắc nghiệm Theo Số câu -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
         const targetTotalScore = 10.0;
         const numQuestions = rawSelected.length;
 

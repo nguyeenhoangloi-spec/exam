@@ -821,21 +821,86 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
 
     const answerByQuestion = new Map(answers.map((a) => [a.questionId, a]));
 
-    // Kiểm tra tất cả câu hỏi tự luận và tất cả các tiêu chí Rubric đều đã được chấm đầy đủ
+    // Kiểm tra tất cả câu hỏi tự luận và tự động gán 0đ cho tiêu chí Rubric chưa chấm
     for (const q of essayQuestions) {
-      const ans = answerByQuestion.get(q.questionId);
-      if (!ans || ans.gradingStatus !== 'GRADED' || ans.finalScore === null || ans.finalScore === undefined) {
-        throw new BadRequestException(`Câu hỏi tự luận "${q.content || q.code || q.questionId}" chưa được chấm điểm.`);
+      let ans = answerByQuestion.get(q.questionId);
+      if (!ans) {
+        try {
+          ans = await this.prisma.attemptAnswer.create({
+            data: {
+              attempt: { connect: { id: attemptId } },
+              questionId: q.questionId,
+              textAnswer: '(Sinh viên không nhập nội dung văn bản)',
+              gradingStatus: 'GRADED',
+              finalScore: 0,
+              clientTimestamp: new Date(),
+            },
+            include: { essayGrades: true },
+          });
+          answerByQuestion.set(q.questionId, ans);
+        } catch (e) {
+          ans = await this.prisma.attemptAnswer.findFirst({
+            where: { attemptId, questionId: q.questionId },
+            include: { essayGrades: true },
+          }) as any;
+        }
       }
 
-      const rubrics = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: q.questionId } });
+      if (!ans) continue;
+
+      let rubrics = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: q.questionId } });
+      if (!rubrics.length) {
+        try {
+          const defaultCriterion = await this.prisma.essayRubricCriterion.create({
+            data: {
+              questionId: q.questionId,
+              label: 'Nội dung & Đánh giá tổng thể',
+              description: 'Đánh giá mức độ hoàn thành bài tự luận theo yêu cầu đề bài',
+              maxScore: Number(q.score || 1),
+              sortOrder: 1,
+            },
+          });
+          rubrics = [defaultCriterion];
+        } catch (e) {
+          rubrics = await this.prisma.essayRubricCriterion.findMany({ where: { questionId: q.questionId } });
+        }
+      }
+
       if (rubrics.length > 0) {
-        const gradedCriterionIds = new Set(ans.essayGrades.map((g) => g.criterionId));
+        const gradedCriterionIds = new Set((ans.essayGrades || []).map((g) => g.criterionId));
         const missing = rubrics.filter((r) => !gradedCriterionIds.has(r.id));
         if (missing.length > 0) {
-          throw new BadRequestException(
-            `Câu hỏi tự luận "${q.content || q.code}" vẫn còn ${missing.length} tiêu chí Rubric chưa chấm điểm.`,
-          );
+          for (const mRubric of missing) {
+            await this.prisma.essayGrade.upsert({
+              where: {
+                attemptAnswerId_criterionId: { attemptAnswerId: ans.id, criterionId: mRubric.id },
+              },
+              create: {
+                attemptAnswerId: ans.id,
+                criterionId: mRubric.id,
+                score: 0,
+                comment: 'Tự động 0đ tiêu chí chưa chấm',
+                gradedById: actor.id,
+              },
+              update: {
+                score: 0,
+                comment: 'Tự động 0đ tiêu chí chưa chấm',
+                gradedById: actor.id,
+              },
+            });
+          }
+          const updatedAns = await this.prisma.attemptAnswer.findUnique({
+            where: { id: ans.id },
+            include: { essayGrades: true },
+          });
+          if (updatedAns) {
+            const sumScore = Number(updatedAns.essayGrades.reduce((s, g) => s + (g.score || 0), 0).toFixed(2));
+            await this.prisma.attemptAnswer.update({
+              where: { id: ans.id },
+              data: { finalScore: sumScore, gradingStatus: 'GRADED' },
+            });
+            answerByQuestion.set(q.questionId, { ...updatedAns, finalScore: sumScore, gradingStatus: 'GRADED' });
+          }
         }
       }
     }

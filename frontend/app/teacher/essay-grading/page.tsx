@@ -883,21 +883,6 @@ function TeacherEssayGradingContent() {
                             </div>
                           )}
 
-                          {/* AI Suggest Button */}
-                          {ans && (
-                            <div className="flex justify-end">
-                              <button
-                                type="button"
-                                onClick={() => handleAiSuggest(ans, q)}
-                                disabled={Boolean(aiLoading)}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-2xs transition disabled:opacity-50 cursor-pointer active:scale-95"
-                              >
-                                <Sparkles className="h-3.5 w-3.5 text-blue-100" />
-                                <span>{aiLoading === ans.id ? 'Đang phân tích...' : 'AI Gợi Ý Chấm'}</span>
-                              </button>
-                            </div>
-                          )}
-
                           {/* Rubric Criteria Table */}
                           {q.rubric?.length > 0 ? (
                             <div className="space-y-2 pt-1">

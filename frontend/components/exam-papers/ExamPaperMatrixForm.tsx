@@ -62,6 +62,10 @@ export function ExamPaperMatrixForm({
   const isEssay = examType === 'TU_LUAN';
   const scheduleType = selectedSchedule?.examType === 'TU_LUAN' ? 'TU_LUAN' : selectedSchedule?.examType === 'TRAC_NGHIEM' ? 'TRAC_NGHIEM' : undefined;
 
+  const isByScoreMode = formData.selectionMode === 'BY_SCORE';
+  const currentTotalScore = (Number(formData.easyScore) || 0) + (Number(formData.mediumScore) || 0) + (Number(formData.hardScore) || 0);
+  const isValidMatrix = isByScoreMode ? currentTotalScore > 0 : currentTotal >= 1;
+
   const isPublished = Boolean(
     selectedSchedule?.hasPublishedPaper ||
     selectedSchedule?.examPapers?.some((p: any) => p.status === 'PUBLISHED')
@@ -542,10 +546,10 @@ export function ExamPaperMatrixForm({
               <AlertTriangle className="h-4 w-4 shrink-0 text-rose-500" />
               Lịch thi này đã có đề công bố. Không thể sinh thêm đề tự động.
             </p>
-          ) : currentTotal < 1 ? (
+          ) : !isValidMatrix ? (
             <p className="text-xs font-bold text-red-600 flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
-              Cần ít nhất 1 câu hỏi
+              {isByScoreMode ? 'Cần nhập tổng điểm phân bổ > 0' : 'Cần ít nhất 1 câu hỏi'}
             </p>
           ) : (
             <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
@@ -556,7 +560,7 @@ export function ExamPaperMatrixForm({
 
           <button
             type="submit"
-            disabled={creating || currentTotal < 1 || isPublished}
+            disabled={creating || !isValidMatrix || isPublished}
             className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-2xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${isPublished
               ? 'bg-slate-300 text-slate-500 border border-slate-300'
               : 'bg-blue-600 hover:bg-blue-700'

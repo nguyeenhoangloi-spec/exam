@@ -59,9 +59,9 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
 
   const startsQuestion = (line: string) =>
     /^(?:câu\s*(?:hỏi\s*)?\d+|cÃ¢u\s*(?:há» i\s*)?\d+|bài\s*\d+|question\s*\d+|q\d+|\d+)\s*[:.)-]\s*/iu.test(line);
-  const isOptionLine = (line: string) => /^[A-D]\s*[.)-]\s*/i.test(line);
+  const isOptionLine = (line: string) => /^[A-Z]\s*[.)-]\s*/i.test(line);
   const isAnswerLine = (line: string) =>
-    /^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|lời\s*giải|giải\s*thích|explanation|answer)\s*[:.)-]?\s*/iu.test(line);
+    /^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|lời\s*giải|giải\s*thích|hướng\s*dẫn|explanation|answer)\s*[:.)-]?\s*/iu.test(line);
 
   const blocks: string[][] = [];
   let block: string[] = [];
@@ -72,8 +72,6 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
       block = [line];
     } else if (block.length > 0) {
       block.push(line);
-    } else if (line.length >= 8 && !isOptionLine(line) && !isAnswerLine(line)) {
-      block = [line];
     }
   }
   if (block.length > 0) blocks.push(block);
@@ -83,7 +81,7 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
     let content = linesInQuestion[0]
       .replace(/^(?:câu\s*(?:hỏi\s*)?\d+|cÃ¢u\s*(?:há» i\s*)?\d+|bài\s*\d+|question\s*\d+|q\d+|\d+)\s*[:.)-]?\s*/iu, '')
       .trim();
-    if (content.length < 3) continue;
+    if (content.length < 2) continue;
 
     const options: any[] = [];
     let answerLabel = '';
@@ -91,17 +89,17 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
 
     for (let i = 1; i < linesInQuestion.length; i++) {
       const line = linesInQuestion[i];
-      const answer = line.match(/^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|cÃ¡p\sÃ¡n|answer|lời\s*giải\s*đúng)\s*[:.)-]?\s*([A-D])/iu);
+      const answer = line.match(/^(?:đáp\s*án(?:\s*đúng)?|dap\s*an|cÃ¡p\sÃ¡n|answer|lời\s*giải\s*đúng)\s*[:.)-]?\s*([A-Z])/iu);
       if (answer) {
         answerLabel = answer[1].toUpperCase();
         continue;
       }
-      const explanationMatch = line.match(/^(?:giải thích|giáº£i thÃ­ch|hướng\s*dẫn|explanation|lời\s*giải)\s*[:.)-]?\s*(.*)$/iu);
+      const explanationMatch = line.match(/^(?:giải\s*thích|giáº£i\s*thÃ­ch|hướng\s*dẫn(?:\s*đáp\s*án)?|gợi\s*ý\s*chấm|explanation|lời\s*giải)\s*[:.)-]?\s*(.*)$/iu);
       if (explanationMatch) {
         explanation = explanationMatch[1].trim();
         continue;
       }
-      const option = line.match(/^([A-D])\s*[.)-]\s*(.*)$/i);
+      const option = line.match(/^([A-Z])\s*[.)-]\s*(.*)$/i);
       if (option) {
         let optText = option[2].replace(/[★✓✔*]\s*$/u, '').trim();
         let isCorrect = line.includes('*') || line.includes('★') || line.includes('✓') || line.includes('✔');
@@ -112,9 +110,9 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
           order: options.length,
         });
       } else if (options.length > 0) {
-        options[options.length - 1].content += ` ${line}`;
+        options[options.length - 1].content += `\n${line}`;
       } else {
-        content += ` ${line}`;
+        content += `\n${line}`;
       }
     }
 
@@ -453,9 +451,11 @@ export class AiQuestionsService {
         }
       }
 
+      const localParsed = parsePlainTextQuestions(input.prompt || '', input.type);
+
       if (!rawQuestions || rawQuestions.length === 0) {
         if (!raw || raw.trim().length === 0) {
-          rawQuestions = parsePlainTextQuestions(input.prompt || '', input.type);
+          rawQuestions = localParsed;
         } else {
           try {
             const parsed = repairAndParseJson(raw);
@@ -473,9 +473,14 @@ export class AiQuestionsService {
           }
 
           if (!rawQuestions || rawQuestions.length === 0) {
-            rawQuestions = parsePlainTextQuestions(raw || input.prompt || '', input.type);
+            rawQuestions = localParsed;
           }
         }
+      }
+
+      // Nếu bóc tách bằng local parser cho ra số lượng câu hỏi đầy đủ hơn AI (do giới hạn maxOutputTokens của LLM)
+      if (localParsed && localParsed.length > (rawQuestions ? rawQuestions.length : 0)) {
+        rawQuestions = localParsed;
       }
 
       // Unpack rawQuestions neu gap chuoi JSON bi dong goi thanh 1 phan tu duy nhat
