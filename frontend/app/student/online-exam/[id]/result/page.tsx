@@ -211,9 +211,9 @@ export default function StudentExamResultPage() {
               <button
                 type="button"
                 onClick={() => setShowReview(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 px-4 py-2 text-xs font-bold transition cursor-pointer shadow-2xs active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 px-4 py-2 text-xs font-bold transition cursor-pointer shadow-2xs active:scale-95"
               >
-                <Eye className="w-3.5 h-3.5" /> Xem lại bài làm
+                <Eye className="w-3.5 h-3.5 text-slate-500" /> Xem lại bài làm
               </button>
             )}
           </div>

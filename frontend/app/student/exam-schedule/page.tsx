@@ -243,12 +243,12 @@ export default function StudentExamSchedulePage() {
         />
 
         {/* Status Dropdown & Search Row */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-1">
-          <div className="flex items-center gap-2 w-full max-w-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+          <div className="flex items-center gap-2 w-full max-w-lg">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 shadow-2xs"
+              className="h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 transition shadow-2xs"
             >
               <option value="ALL">Tất cả thời gian</option>
               <option value="UPCOMING">Sắp diễn ra</option>
@@ -256,19 +256,20 @@ export default function StudentExamSchedulePage() {
             </select>
 
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Tìm môn thi, kỳ thi, phòng..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-8 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white hover:bg-slate-50/50 pl-9 pr-8 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs placeholder:text-slate-400"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>

@@ -47,9 +47,9 @@ function statusMeta(att: any) {
 }
 
 function riskMeta(score: number) {
-  if (score >= 40) return { cls: 'text-rose-700 bg-rose-50 border-rose-200', level: 'Cao' };
-  if (score >= 15) return { cls: 'text-amber-700 bg-amber-50 border-amber-200', level: 'Trung bình' };
-  return { cls: 'text-slate-600 bg-slate-50 border-slate-200', level: 'Thấp' };
+  if (score >= 40) return { cls: 'text-rose-600 font-bold', level: 'Cao' };
+  if (score >= 15) return { cls: 'text-amber-600 font-bold', level: 'Trung bình' };
+  return { cls: 'text-slate-600 font-semibold', level: 'Thấp' };
 }
 
 const FILTER_LABELS: Record<string, string> = {
@@ -374,7 +374,7 @@ export default function ProctorDashboardPage() {
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Giám Thị Phòng: <span className="text-blue-600">{data.roomName}</span>
               </h1>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-extrabold tracking-wide">
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600">
                 <span className="relative flex w-2 h-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -568,32 +568,40 @@ export default function ProctorDashboardPage() {
         {/* TabBar Filter Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-bold text-slate-500 mr-1">Bộ lọc:</span>
-            {(['ALL', 'IN_PROGRESS', 'FLAGGED', 'SUBMITTED', 'DISCONNECTED'] as const).map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => {
-                  setFilter(f);
-                  setPage(1);
-                }}
-                className={[
-                  'px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs',
-                  filter === f
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50',
-                ].join(' ')}
-              >
-                {FILTER_LABELS[f]}
-                <span className={['ml-1.5 text-[10.5px] font-black', filter === f ? 'text-blue-100' : 'text-slate-400'].join(' ')}>
-                  {f === 'ALL' && students.length}
-                  {f === 'IN_PROGRESS' && students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length}
-                  {f === 'FLAGGED' && students.filter((s: any) => s.attempt?.isFlagged).length}
-                  {f === 'SUBMITTED' && students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length}
-                  {f === 'DISCONNECTED' && students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length}
-                </span>
-              </button>
-            ))}
+            <span className="text-xs font-bold text-slate-500 mr-1">Trạng thái:</span>
+            {(['ALL', 'IN_PROGRESS', 'FLAGGED', 'SUBMITTED', 'DISCONNECTED'] as const).map((f) => {
+              const isActive = filter === f;
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => {
+                    setFilter(f);
+                    setPage(1);
+                  }}
+                  className={[
+                    'px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs',
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-white text-slate-700 border border-slate-200/90 hover:bg-slate-50',
+                  ].join(' ')}
+                >
+                  {FILTER_LABELS[f]}
+                  <span
+                    className={[
+                      'ml-1.5 text-[10.5px] font-black',
+                      isActive ? 'text-blue-100' : 'text-slate-400',
+                    ].join(' ')}
+                  >
+                    {f === 'ALL' && students.length}
+                    {f === 'IN_PROGRESS' && students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length}
+                    {f === 'FLAGGED' && students.filter((s: any) => s.attempt?.isFlagged).length}
+                    {f === 'SUBMITTED' && students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length}
+                    {f === 'DISCONNECTED' && students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           <span className="text-xs font-bold text-slate-600">
@@ -793,9 +801,9 @@ export default function ProctorDashboardPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="text-slate-400">Mức rủi ro:</span>
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[11px] font-mono font-bold ${riskCls}`}>
+                      <span className={riskCls}>
                         {riskScore}đ ({riskLevel})
                       </span>
                     </div>
@@ -807,18 +815,20 @@ export default function ProctorDashboardPage() {
                     <button
                       type="button"
                       onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
-                      className="px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-bold hover:bg-blue-100 transition cursor-pointer"
+                      className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
                     >
-                      Gia hạn
+                      <Clock className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-blue-600 transition-colors" />
+                      <span>Gia hạn</span>
                     </button>
                   )}
                   {att && (
                     <button
                       type="button"
                       onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
-                      className="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition cursor-pointer"
+                      className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
                     >
-                      Biên bản
+                      <FileText className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-rose-600 transition-colors" />
+                      <span>Biên bản</span>
                     </button>
                   )}
                 </div>
@@ -891,7 +901,7 @@ export default function ProctorDashboardPage() {
                       </span>
                     </td>
                     <td className="p-2 text-center whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] font-mono font-bold ${riskCls}`}>
+                      <span className={`text-xs ${riskCls}`}>
                         {riskScore}đ
                       </span>
                     </td>
@@ -901,7 +911,7 @@ export default function ProctorDashboardPage() {
                           <button
                             type="button"
                             onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
-                            className="p-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                            className="p-1.5 rounded-xl border border-slate-200/90 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 transition cursor-pointer active:scale-95 shadow-2xs"
                             title="Gia hạn"
                           >
                             <Clock className="w-3.5 h-3.5" />
@@ -909,7 +919,7 @@ export default function ProctorDashboardPage() {
                           <button
                             type="button"
                             onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
-                            className="p-1 text-rose-600 hover:text-rose-700 cursor-pointer"
+                            className="p-1.5 rounded-xl border border-slate-200/90 bg-white text-slate-500 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer active:scale-95 shadow-2xs"
                             title="Biên bản sự cố"
                           >
                             <FileText className="w-3.5 h-3.5" />
@@ -1011,7 +1021,7 @@ export default function ProctorDashboardPage() {
                     {/* Risk */}
                     {visibleColumns.risk !== false && (
                       <td className="p-3.5 text-center whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[11px] font-mono font-bold ${riskCls}`}>
+                        <span className={`text-xs ${riskCls}`}>
                           {riskScore}đ ({riskLevel})
                         </span>
                       </td>
@@ -1027,10 +1037,10 @@ export default function ProctorDashboardPage() {
                                 type="button"
                                 onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
                                 title="Gia hạn thời gian làm bài"
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-bold hover:bg-blue-100 transition cursor-pointer"
+                                className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
                               >
-                                <Clock className="w-3 h-3" />
-                                Gia hạn
+                                <Clock className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-blue-600 transition-colors" />
+                                <span>Gia hạn</span>
                               </button>
                             )}
                             {['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
@@ -1038,30 +1048,31 @@ export default function ProctorDashboardPage() {
                                 type="button"
                                 onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('REOPEN'); }}
                                 title="Mở lại phiên thi khi có sự cố"
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 text-xs font-bold hover:bg-amber-100 transition cursor-pointer"
+                                className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-amber-300 hover:bg-amber-50 text-slate-700 hover:text-amber-700 px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
                               >
-                                <RotateCcw className="w-3 h-3" />
-                                Mở lại
+                                <RotateCcw className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-amber-600 transition-colors" />
+                                <span>Mở lại</span>
                               </button>
                             )}
                             {att.isFlagged && (
                               <button
                                 type="button"
                                 onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('RESOLVE'); }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition cursor-pointer"
+                                title="Xử lý biên bản vi phạm"
+                                className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-emerald-300 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
                               >
-                                <CheckCircle2 className="w-3 h-3" />
-                                Xử lý
+                                <CheckCircle2 className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-emerald-600 transition-colors" />
+                                <span>Xử lý</span>
                               </button>
                             )}
                             <button
                               type="button"
                               onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
                               title="Lập biên bản sự cố"
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition cursor-pointer"
+                              className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
                             >
-                              <FileText className="w-3 h-3" />
-                              Biên bản
+                              <FileText className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-rose-600 transition-colors" />
+                              <span>Biên bản</span>
                             </button>
                           </div>
                         )}
