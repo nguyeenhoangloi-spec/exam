@@ -137,7 +137,7 @@ export default function StudentExamResultPage() {
             <div className="bg-slate-50/70 border border-slate-100 p-5 rounded-xl space-y-2.5">
               <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-xs">
                 <span className="text-slate-500 font-medium">Trạng thái bài thi:</span>
-                <span className="font-bold text-blue-700">
+                <span className="inline-flex items-center rounded-[6px] bg-[#EFF6FF] px-2 py-1 text-[13px] font-semibold text-[#2563EB]">
                   {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}
                 </span>
               </div>

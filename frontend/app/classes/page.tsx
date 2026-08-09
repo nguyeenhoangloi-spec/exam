@@ -444,36 +444,36 @@ export default function ClassesPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Lớp</label>
+            <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Mã Lớp</label>
             <input
               type="text"
               required
               placeholder="VD: CNTT-K65A"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tên Lớp học</label>
+            <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Tên Lớp học</label>
             <input
               type="text"
               required
               placeholder="VD: Công nghệ thông tin 1 - K65"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Khoa trực thuộc</label>
+            <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Khoa trực thuộc</label>
             <select
               required
               value={formData.departmentId}
               onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none"
             >
               <option value="">-- Chọn Khoa --</option>
               {departments.map((d) => (
@@ -488,13 +488,13 @@ export default function ClassesPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition cursor-pointer"
+              className="px-4 py-2 rounded-xl text-[#334155] hover:bg-slate-100 text-[15px] font-medium transition cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 text-sm font-black transition shadow-xs cursor-pointer"
+              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-[15px] font-medium transition shadow-xs cursor-pointer"
             >
               Lưu Lớp Học
             </button>
@@ -519,8 +519,8 @@ export default function ClassesPage() {
                     {drawerClass.code.slice(0, 3)}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold leading-tight line-clamp-2">{drawerClass.name}</h2>
-                    <p className="text-blue-50 font-medium mt-1">Mã lớp: {drawerClass.code}</p>
+                    <h2 className="text-[20px] font-semibold leading-tight line-clamp-2">{drawerClass.name}</h2>
+                    <p className="text-[15px] font-normal text-blue-50 mt-1">Mã lớp: {drawerClass.code}</p>
                   </div>
                 </div>
                 <button
@@ -536,8 +536,8 @@ export default function ClassesPage() {
             <div className="flex border-b border-slate-200 px-4 pt-2 bg-slate-50 shrink-0">
               <button
                 onClick={() => setDrawerTab('info')}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${drawerTab === 'info'
-                    ? 'border-blue-600 text-blue-600'
+                className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'info'
+                    ? 'border-blue-600 text-blue-600 font-semibold'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
                   }`}
               >
@@ -545,8 +545,8 @@ export default function ClassesPage() {
               </button>
               <button
                 onClick={() => setDrawerTab('students')}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${drawerTab === 'students'
-                    ? 'border-blue-600 text-blue-600'
+                className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'students'
+                    ? 'border-blue-600 text-blue-600 font-semibold'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
                   }`}
               >
@@ -554,8 +554,8 @@ export default function ClassesPage() {
               </button>
               <button
                 onClick={() => setDrawerTab('enrollments')}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${drawerTab === 'enrollments'
-                    ? 'border-blue-600 text-blue-600'
+                className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'enrollments'
+                    ? 'border-blue-600 text-blue-600 font-semibold'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
                   }`}
               >
@@ -572,8 +572,8 @@ export default function ClassesPage() {
                       <GraduationCap className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase text-slate-500">Tên lớp học</p>
-                      <p className="text-sm font-bold text-slate-900">{drawerClass.name}</p>
+                      <p className="text-[13px] font-semibold text-[#64748B] uppercase">Tên lớp học</p>
+                      <p className="text-[15px] font-semibold text-[#0F172A]">{drawerClass.name}</p>
                     </div>
                   </div>
 
@@ -582,8 +582,8 @@ export default function ClassesPage() {
                       <Building2 className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase text-slate-500">Khoa trực thuộc</p>
-                      <p className="text-sm font-bold text-slate-900">{drawerClass.department?.name || (drawerClass as any).departmentName || 'Chưa gán Khoa'}</p>
+                      <p className="text-[13px] font-semibold text-[#64748B] uppercase">Khoa trực thuộc</p>
+                      <p className="text-[15px] font-semibold text-[#0F172A]">{drawerClass.department?.name || (drawerClass as any).departmentName || 'Chưa gán Khoa'}</p>
                     </div>
                   </div>
 
@@ -592,8 +592,8 @@ export default function ClassesPage() {
                       <Users className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase text-slate-500">Sĩ số Sinh viên</p>
-                      <p className="text-sm font-bold text-slate-900">{(drawerClass as any)._count?.students ?? (drawerClass as any).studentsCount ?? (drawerClass as any).students?.length ?? 0} sinh viên</p>
+                      <p className="text-[13px] font-semibold text-[#64748B] uppercase">Sĩ số Sinh viên</p>
+                      <p className="text-[15px] font-semibold text-[#0F172A]">{(drawerClass as any)._count?.students ?? (drawerClass as any).studentsCount ?? (drawerClass as any).students?.length ?? 0} sinh viên</p>
                     </div>
                   </div>
                 </div>
@@ -602,13 +602,13 @@ export default function ClassesPage() {
               {drawerTab === 'students' && (
                 <div className="space-y-4 flex flex-col h-full animate-in fade-in duration-300">
                   <div className="relative shrink-0">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#64748B]" />
                     <input
                       type="text"
                       placeholder="Tìm sinh viên..."
                       value={drawerStudentSearch}
                       onChange={(e) => setDrawerStudentSearch(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-sm focus:bg-white focus:border-emerald-500 focus:outline-none transition"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none transition"
                     />
                   </div>
 
@@ -631,18 +631,18 @@ export default function ClassesPage() {
                               {sv.fullName?.charAt(0) || 'U'}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-slate-900 truncate">{sv.fullName}</p>
-                              <p className="text-xs text-slate-500">{sv.studentCode}</p>
-                              <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-600">
+                              <p className="text-[15px] font-semibold text-[#0F172A] truncate">{sv.fullName}</p>
+                              <p className="text-[13px] font-normal text-[#64748B]">{sv.studentCode}</p>
+                              <div className="flex items-center gap-3 mt-1.5 text-[13px] font-normal text-[#64748B]">
                                 {sv.email && (
                                   <span className="flex items-center gap-1">
-                                    <Mail className="h-3 w-3" />
+                                    <Mail className="h-3.5 w-3.5" />
                                     <span className="truncate max-w-[100px]">{sv.email}</span>
                                   </span>
                                 )}
                                 {sv.phone && (
                                   <span className="flex items-center gap-1">
-                                    <Phone className="h-3 w-3" />
+                                    <Phone className="h-3.5 w-3.5" />
                                     {sv.phone}
                                   </span>
                                 )}
@@ -650,7 +650,7 @@ export default function ClassesPage() {
                             </div>
                           </div>
                         )) || (
-                          <div className="text-center text-sm text-slate-500 mt-10">
+                          <div className="text-center text-[15px] font-normal text-[#64748B] mt-10">
                             Không có sinh viên nào.
                           </div>
                         )}
@@ -660,7 +660,7 @@ export default function ClassesPage() {
                           (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) ||
                           (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
                         ).length === 0 && (
-                          <div className="text-center text-sm text-slate-500 mt-10">
+                          <div className="text-center text-[15px] font-normal text-[#64748B] mt-10">
                             Không tìm thấy kết quả phù hợp.
                           </div>
                         )}
@@ -672,8 +672,8 @@ export default function ClassesPage() {
               {drawerTab === 'enrollments' && (
                 <div className="space-y-4 animate-in fade-in duration-300">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h3 className="text-sm font-bold text-slate-900">Danh sách môn học đã đăng ký</h3>
-                    <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+                    <h3 className="text-[16px] font-semibold text-[#0F172A]">Danh sách môn học đã đăng ký</h3>
+                    <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
                       {drawerEnrollments?.length || 0} môn
                     </span>
                   </div>
@@ -695,23 +695,23 @@ export default function ClassesPage() {
                               </div>
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                                  <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
                                     {sub.subjectCode}
                                   </span>
-                                  <span className="text-xs font-bold text-slate-500">{sub.credits} tín chỉ</span>
+                                  <span className="text-[13px] font-normal text-[#64748B]">{sub.credits} tín chỉ</span>
                                 </div>
-                                <p className="text-sm font-bold text-slate-900">{sub.subjectName}</p>
+                                <p className="text-[15px] font-semibold text-[#0F172A]">{sub.subjectName}</p>
                                 {sub.departmentName && (
-                                  <p className="text-xs text-slate-500 font-medium mt-0.5">{sub.departmentName}</p>
+                                  <p className="text-[13px] font-normal text-[#64748B] mt-0.5">{sub.departmentName}</p>
                                 )}
                               </div>
                             </div>
                             <div className="text-right shrink-0">
-                              <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
+                              <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
                                 {sub.semester} ({sub.schoolYear})
                               </span>
-                              <p className="text-xs text-slate-500 font-medium mt-1">
-                                <span className="font-bold text-blue-600">{sub.studentCount}</span> SV học
+                              <p className="text-[13px] font-normal text-[#64748B] mt-1">
+                                <span className="font-semibold text-blue-600">{sub.studentCount}</span> SV học
                               </p>
                             </div>
                           </div>
@@ -721,11 +721,11 @@ export default function ClassesPage() {
                   ) : (
                     <div className="py-12 text-center text-slate-400">
                       <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-2" />
-                      <p className="text-sm font-bold text-slate-600">Lớp chưa có sinh viên nào đăng ký môn.</p>
-                      <p className="text-xs text-slate-400 mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý Môn học.</p>
+                      <p className="text-[15px] font-semibold text-[#0F172A]">Lớp chưa có sinh viên nào đăng ký môn.</p>
+                      <p className="text-[13px] font-normal text-[#64748B] mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý Môn học.</p>
                       <button
                         onClick={() => router.push('/subjects')}
-                        className="mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition cursor-pointer"
+                        className="mt-4 px-4 py-2 rounded-xl bg-[#2563EB] text-white text-[15px] font-medium hover:bg-blue-700 transition cursor-pointer"
                       >
                         Đến trang Quản lý Môn học
                       </button>

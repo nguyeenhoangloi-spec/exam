@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { X, User, Mail, Phone, Calendar, BookOpen, GraduationCap, Building2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { StatusBadge } from './common/StatusBadge';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 <div className="flex items-center gap-2 flex-wrap">
                   <h2 className="truncate text-base font-bold text-white max-w-[200px]" title={title}>{title}</h2>
                   {badge && (
-                    <span className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider ${badge.className}`}>
+                    <span className={`shrink-0 whitespace-nowrap rounded-[6px] px-2 py-1 text-[13px] font-semibold ${badge.className}`}>
                       {badge.label}
                     </span>
                   )}
@@ -77,7 +78,11 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                         {Icon && <Icon className="h-4 w-4 text-slate-400" />}
                         {item.label}:
                       </span>
-                      <span className="font-semibold text-slate-900 text-right break-words">{item.value || '---'}</span>
+                      <span className="font-semibold text-slate-900 text-right break-words">
+                        {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
+                          ? <StatusBadge status={item.value} />
+                          : item.value || '---'}
+                      </span>
                     </div>
                   );
                 })}

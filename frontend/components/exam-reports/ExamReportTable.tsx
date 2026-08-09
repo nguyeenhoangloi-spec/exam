@@ -195,9 +195,7 @@ export function ExamReportTable({
                     </td>
                     <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{c.className}</td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[13px] font-medium ${badge.className}`}>
-                        {badge.label}
-                      </span>
+                      <StatusBadge status={c.status} />
                     </td>
                     <td className={`p-2 whitespace-nowrap text-center font-bold ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {c.status === 'ABSENT' ? 'Vắng' : c.totalScore}

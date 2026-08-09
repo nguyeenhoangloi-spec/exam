@@ -34,6 +34,7 @@ import {
 import { usePageTitle } from '@/components/PageTitleContext';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
+import { StatusBadge } from '@/components/common/StatusBadge';
 
 /* ─── helpers ─── */
 function statusMeta(att: any) {
@@ -818,12 +819,7 @@ export default function ProctorDashboardPage() {
                   <div className="space-y-1.5 text-xs text-slate-600 font-medium pt-1">
                     <div className="flex items-center justify-between">
                       <span className="text-slate-400">Trạng thái:</span>
-                      <span className={`inline-flex items-center gap-1 text-xs font-bold ${statusCls}`}>
-                        {att?.status === 'IN_PROGRESS' && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                        )}
-                        {statusLabel}
-                      </span>
+                      <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
                     </div>
 
                     <div className="flex items-center justify-between text-xs">
@@ -918,12 +914,7 @@ export default function ProctorDashboardPage() {
                       </span>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1 text-xs select-none ${statusCls}`}>
-                        {att?.status === 'IN_PROGRESS' && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                        )}
-                        {statusLabel}
-                      </span>
+                      <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
                     </td>
                     <td className="p-2 text-center whitespace-nowrap">
                       <span className={`text-xs ${riskCls}`}>
@@ -1031,15 +1022,10 @@ export default function ProctorDashboardPage() {
                     {/* Status */}
                     {visibleColumns.status !== false && (
                       <td className="p-3.5 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1 text-xs select-none ${statusCls}`}>
-                          {att?.status === 'IN_PROGRESS' && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                          )}
-                          {statusLabel}
-                          {att?.extraMinutes > 0 && (
-                            <span className="ml-1 text-[10px] font-black text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded-md">+{att.extraMinutes}p</span>
-                          )}
-                        </span>
+                        <StatusBadge
+                          status={att?.status || 'NOT_STARTED'}
+                          customLabel={`${statusLabel}${att?.extraMinutes > 0 ? ` (+${att.extraMinutes}p)` : ''}`}
+                        />
                       </td>
                     )}
 
