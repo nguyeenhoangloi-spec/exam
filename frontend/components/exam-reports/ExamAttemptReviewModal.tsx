@@ -205,10 +205,10 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
       <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-slate-100 shrink-0">
           <div>
-            <h2 className="text-base font-bold text-slate-900 leading-tight">Xem Lai Chi Tiet Bai Thi</h2>
+            <h2 className="text-[20px] font-semibold leading-[28px] text-[#0F172A]">Xem Lại Chi Tiết Bài Thi</h2>
             {data && (
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                {data.student?.fullName} ({data.student?.studentCode}) - {data.paper?.subjectName} - Ma de: {data.paper?.paperCode}
+              <p className="text-[13px] font-medium text-[#64748B] mt-0.5">
+                {data.student?.fullName} ({data.student?.studentCode}) - {data.paper?.subjectName} - Mã đề: {data.paper?.paperCode}
               </p>
             )}
           </div>

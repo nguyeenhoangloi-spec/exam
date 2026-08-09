@@ -514,93 +514,102 @@ export default function TeachersPage() {
           />
           {/* Drawer Panel */}
           <div className="relative w-full max-w-md bg-slate-50 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-            {/* Header */}
-            <div className="relative pt-8 pb-6 px-6 bg-gradient-to-br from-blue-600 to-blue-800 text-white shrink-0">
-              <button
-                onClick={() => setDrawerTeacher(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 transition-colors text-white/90 hover:text-white cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-bold backdrop-blur-sm border border-white/30 shadow-inner">
-                  {drawerTeacher.fullName.slice(-1)}
+            {/* Header - Solid Flat Color matching Department Drawer */}
+            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                    {drawerTeacher.fullName.slice(-1)}
+                  </div>
+                  <div className="min-w-0 flex-1 pr-2">
+                    <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+                      {drawerTeacher.fullName}
+                    </h2>
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                      Mã cán bộ: {drawerTeacher.teacherCode}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold leading-tight">{drawerTeacher.fullName}</h2>
-                  <p className="text-blue-100 text-sm mt-1 font-medium">Mã cán bộ: {drawerTeacher.teacherCode}</p>
-                </div>
-              </div>
 
-              <div className="mt-6 flex bg-white/10 p-1 rounded-xl backdrop-blur-md">
-                {[
-                  { id: 'info', label: 'Thông tin' },
-                  { id: 'assignments', label: 'Lịch coi thi' },
-                  { id: 'department', label: 'Khoa' },
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setDrawerTab(tab.id as any)}
-                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${drawerTab === tab.id
-                      ? 'bg-white text-blue-700 shadow-sm'
-                      : 'text-blue-100 hover:text-white hover:bg-white/10'
-                      }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  onClick={() => setDrawerTeacher(null)}
+                  className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+                  title="Đóng"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
             </div>
 
+            {/* Tabs */}
+            <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
+              {[
+                { id: 'info', label: 'Thông tin' },
+                { id: 'assignments', label: 'Lịch coi thi' },
+                { id: 'department', label: 'Khoa' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setDrawerTab(tab.id as any)}
+                  className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === tab.id
+                      ? 'border-blue-600 text-blue-600 font-semibold'
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
               {drawerTab === 'info' && (
                 <div className="space-y-4">
-                  <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
+                  <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                         <UserIcon className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Mã giảng viên</p>
-                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.teacherCode}</p>
+                        <p className="text-[13px] font-semibold text-[#64748B]">Mã giảng viên</p>
+                        <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.teacherCode}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                         <GraduationCap className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Học vị / Học hàm</p>
-                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.degree || 'TS'}</p>
+                        <p className="text-[13px] font-semibold text-[#64748B]">Học vị / Học hàm</p>
+                        <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.degree || 'Thạc sĩ / Tiến sĩ'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Khoa trực thuộc</p>
-                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.department?.name || '---'}</p>
+                        <p className="text-[13px] font-semibold text-[#64748B]">Khoa trực thuộc</p>
+                        <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.department?.name || '---'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                         <Mail className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Email công vụ</p>
-                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.email}</p>
+                        <p className="text-[13px] font-semibold text-[#64748B]">Email công vụ</p>
+                        <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.email}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                         <Phone className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Số điện thoại</p>
-                        <p className="text-sm font-semibold text-slate-800">{drawerTeacher.phone || '---'}</p>
+                        <p className="text-[13px] font-semibold text-[#64748B]">Số điện thoại</p>
+                        <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.phone || '---'}</p>
                       </div>
                     </div>
                   </div>
@@ -614,11 +623,11 @@ export default function TeachersPage() {
                       <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   ) : drawerAssignments.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm text-center">
-                      <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                        <Info className="w-8 h-8 text-slate-300" />
+                    <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-2xs text-center">
+                      <div className="w-16 h-16 mx-auto bg-slate-50 rounded-2xl flex items-center justify-center mb-3">
+                        <Info className="w-8 h-8 text-slate-400" />
                       </div>
-                      <p className="text-slate-500 font-medium">Không có lịch coi thi</p>
+                      <p className="text-[#64748B] font-medium text-[15px]">Không có lịch coi thi</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -627,45 +636,45 @@ export default function TeachersPage() {
                         const room = assignment.examScheduleRoom?.room;
                         const subject = sched?.subject;
                         return (
-                          <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:border-blue-200 transition-colors space-y-2">
+                          <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs hover:border-blue-200 transition-colors space-y-2">
                             <div className="flex justify-between items-start">
                               <div>
-                                <h4 className="font-bold text-slate-800 text-sm">
+                                <h4 className="font-semibold text-[#0F172A] text-[15px]">
                                   {subject?.subjectName || 'Môn thi'}
                                 </h4>
                                 {subject?.subjectCode && (
-                                  <span className="text-xs font-semibold text-slate-500">Mã môn: {subject.subjectCode}</span>
+                                  <span className="text-[13px] font-medium text-[#64748B]">Mã môn: {subject.subjectCode}</span>
                                 )}
                               </div>
-                              <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
+                              <span className={`px-2.5 py-1 rounded-lg text-[13px] font-semibold shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-slate-100 text-slate-700'
                                 }`}>
                                 {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                               </span>
                             </div>
-                            <div className="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-2">
+                            <div className="space-y-1.5 text-[13px] text-[#475569] border-t border-slate-100 pt-2 font-medium">
                               <div className="flex justify-between">
-                                <span className="text-slate-400">Phòng thi:</span>
-                                <span className="font-bold text-slate-800">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
+                                <span className="text-[#64748B]">Phòng thi:</span>
+                                <span className="font-semibold text-[#0F172A]">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-slate-400">Ngày thi:</span>
-                                <span className="font-bold text-slate-800">
+                                <span className="text-[#64748B]">Ngày thi:</span>
+                                <span className="font-semibold text-[#0F172A]">
                                   {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'}
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-slate-400">Thời gian:</span>
-                                <span className="font-bold text-slate-800">
+                                <span className="text-[#64748B]">Thời gian:</span>
+                                <span className="font-semibold text-[#0F172A]">
                                   {sched?.startTime && sched?.endTime ? `${sched.startTime} - ${sched.endTime}` : '---'}
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-slate-400">Trạng thái:</span>
-                                <span className={`font-bold ${assignment.status === 'CONFIRMED'
+                                <span className="text-[#64748B]">Trạng thái:</span>
+                                <span className={`font-semibold ${assignment.status === 'CONFIRMED'
                                   ? 'text-emerald-600'
                                   : assignment.status === 'CHANGE_REQUESTED'
                                     ? 'text-amber-600'
-                                    : 'text-slate-700'
+                                    : 'text-[#0F172A]'
                                   }`}>
                                   {assignment.status === 'CONFIRMED'
                                     ? 'Đã xác nhận'
@@ -684,12 +693,12 @@ export default function TeachersPage() {
               )}
 
               {drawerTab === 'department' && (
-                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
-                  <div className="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-4">
+                <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs text-center space-y-2">
+                  <div className="w-16 h-16 mx-auto bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-center text-blue-600 mb-2">
                     <Building2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-800 mb-1">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
-                  <p className="text-sm font-medium text-slate-500 uppercase">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
+                  <h3 className="text-[20px] font-semibold text-[#0F172A]">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
+                  <p className="text-[13px] font-semibold text-blue-600 font-mono">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
                 </div>
               )}
             </div>

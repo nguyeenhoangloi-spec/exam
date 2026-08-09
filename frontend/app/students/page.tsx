@@ -558,24 +558,28 @@ export default function StudentsPage() {
           />
           <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
 
-            {/* Header (gradient from-blue-600 to-blue-700) */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white shrink-0">
-              <div className="flex items-start justify-between">
-                <div className="flex gap-4 items-center">
-                  <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-black shadow-inner">
+            {/* Header - Solid Flat Color matching Department/Teacher Drawer */}
+            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
                     {drawerStudent.fullName.charAt(0)}
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold leading-tight">{drawerStudent.fullName}</h2>
-                    <p className="text-blue-100 text-sm mt-1">{drawerStudent.studentCode}</p>
-                    <span className="inline-block mt-2 px-2.5 py-0.5 rounded-md bg-white/20 text-white text-xs font-semibold backdrop-blur-md">
-                      {drawerStudent.class?.name || 'Chưa xếp lớp'}
-                    </span>
+                  <div className="min-w-0 flex-1 pr-2">
+                    <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+                      {drawerStudent.fullName}
+                    </h2>
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                      MSSV: {drawerStudent.studentCode} • Lớp: {drawerStudent.class?.name || 'Chưa xếp lớp'}
+                    </p>
                   </div>
                 </div>
+
                 <button
+                  type="button"
                   onClick={closeDrawer}
-                  className="p-2 rounded-xl hover:bg-white/10 transition-colors text-blue-100 hover:text-white"
+                  className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+                  title="Đóng"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -583,7 +587,7 @@ export default function StudentsPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-200 shrink-0">
+            <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
               {[
                 { id: 'info', label: 'Thông tin', icon: FileText },
                 { id: 'subjects', label: 'Môn đăng ký', icon: BookOpen },
@@ -595,9 +599,9 @@ export default function StudentsPage() {
                   <button
                     key={t.id}
                     onClick={() => handleTabChange(t.id as any)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all border-b-2 ${isActive
-                        ? 'border-blue-600 text-blue-600'
-                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                    className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${isActive
+                        ? 'border-blue-600 text-blue-600 font-semibold'
+                        : 'border-transparent text-slate-500 hover:text-slate-800'
                       }`}
                   >
                     <Icon className="h-4 w-4" />

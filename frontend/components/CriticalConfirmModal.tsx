@@ -149,8 +149,8 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               <ShieldAlert className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-base font-black tracking-tight">{title}</h3>
-              <p className="text-xs text-rose-100 font-medium">Xác thực an toàn nhiều lớp (Local Security)</p>
+              <h3 className="text-[20px] font-semibold text-white tracking-tight leading-none">{title}</h3>
+              <p className="text-[13px] font-semibold text-rose-100 mt-1">Xác thực an toàn nhiều lớp (Local Security)</p>
             </div>
           </div>
           <button

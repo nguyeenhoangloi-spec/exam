@@ -183,7 +183,12 @@ export class AuthService {
    * Generates Google OAuth redirect URL
    */
   getGoogleAuthUrl(): string {
-    const clientId = process.env.GOOGLE_CLIENT_ID || '';
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      throw new BadRequestException(
+        'Tính năng Đăng nhập Google chưa được kích hoạt: Chưa cấu hình GOOGLE_CLIENT_ID trong backend/.env.',
+      );
+    }
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
     const scope = encodeURIComponent('email profile');
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&prompt=select_account`;
@@ -258,8 +263,11 @@ export class AuthService {
       throw new BadRequestException('Mã xác thực Google không hợp lệ.');
     }
 
-    const clientId = process.env.GOOGLE_CLIENT_ID || '';
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      throw new BadRequestException('Chưa cấu hình GOOGLE_CLIENT_ID hoặc GOOGLE_CLIENT_SECRET trong backend/.env.');
+    }
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
 
     try {

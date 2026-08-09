@@ -16,8 +16,14 @@ export class AuthController {
 
   @Get('google')
   googleAuth(@Res() res: Response) {
-    const url = this.authService.getGoogleAuthUrl();
-    return res.redirect(url);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    try {
+      const url = this.authService.getGoogleAuthUrl();
+      return res.redirect(url);
+    } catch (err: any) {
+      const errorMsg = encodeURIComponent(err.message || 'Chưa cấu hình Google Client ID.');
+      return res.redirect(`${frontendUrl}/login?google_error=${errorMsg}`);
+    }
   }
 
   @Get('google/callback')

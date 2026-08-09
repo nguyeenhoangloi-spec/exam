@@ -1191,8 +1191,8 @@ export default function ProctorDashboardPage() {
                     <MetaIcon className={`h-4.5 w-4.5 ${meta.color}`} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-none">{meta.title}</h3>
-                    <p className="mt-1 text-[11px] text-slate-500 font-medium leading-none">{meta.desc}</p>
+                    <h3 className="text-[20px] font-semibold text-[#0F172A] dark:text-slate-100 tracking-tight leading-none">{meta.title}</h3>
+                    <p className="mt-1 text-[13px] text-[#64748B] font-semibold leading-none">{meta.desc}</p>
                   </div>
                 </div>
                 <button
@@ -1344,8 +1344,8 @@ export default function ProctorDashboardPage() {
                   <Clock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-900 leading-none">Bù Giờ Toàn Phòng Thi Khẩn Cấp</h3>
-                  <p className="mt-1 text-[11px] text-slate-500 font-semibold leading-none">Cộng bù thời gian làm bài cho tất cả sinh viên</p>
+                  <h3 className="text-[20px] font-semibold text-[#0F172A] leading-none">Bù Giờ Toàn Phòng Thi Khẩn Cấp</h3>
+                  <p className="mt-1 text-[13px] text-[#64748B] font-semibold leading-none">Cộng bù thời gian làm bài cho tất cả sinh viên</p>
                 </div>
               </div>
               <button
@@ -1435,8 +1435,8 @@ export default function ProctorDashboardPage() {
                   <PlusCircle className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-900 leading-none">Mở Giờ Cho Vào Thi Muộn</h3>
-                  <p className="mt-1 text-[11px] text-slate-500 font-semibold leading-none">Gia hạn thời gian cho phép sinh viên bắt đầu làm bài</p>
+                  <h3 className="text-[20px] font-semibold text-[#0F172A] leading-none">Mở Giờ Cho Vào Thi Muộn</h3>
+                  <p className="mt-1 text-[13px] text-[#64748B] font-semibold leading-none">Gia hạn thời gian cho phép sinh viên bắt đầu làm bài</p>
                 </div>
               </div>
               <button

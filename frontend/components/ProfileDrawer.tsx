@@ -39,50 +39,51 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
-          {/* Header */}
-          <div className="relative bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 px-6 py-4 text-white">
-            <button
-              onClick={onClose}
-              className="absolute right-4 top-4 z-10 rounded-xl p-1.5 text-white/70 hover:bg-white/10 hover:text-white transition cursor-pointer"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <div className="flex items-center gap-3.5 pr-8">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 border border-white/20 text-sm font-black text-white shadow-xs tracking-wider">
-                {shortAvatar}
-              </div>
-              <div className="min-w-0 flex-1 space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="truncate text-base font-bold text-white max-w-[200px]" title={title}>{title}</h2>
-                  {badge && (
-                    <span className={`shrink-0 whitespace-nowrap rounded-[6px] px-2 py-1 text-[13px] font-semibold ${badge.className}`}>
-                      {badge.label}
-                    </span>
-                  )}
+          {/* Header - Solid Flat Color matching All Drawers */}
+          <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                  {shortAvatar}
                 </div>
-                {subtitle && <p className="truncate text-xs font-medium text-blue-100">{subtitle}</p>}
+                <div className="min-w-0 flex-1 pr-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white max-w-[220px]" title={title}>{title}</h2>
+                    {badge && (
+                      <span className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 text-[13px] font-semibold ${badge.className}`}>
+                        {badge.label}
+                      </span>
+                    )}
+                  </div>
+                  {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 font-mono">{subtitle}</p>}
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+                title="Đóng"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
           </div>
 
           {/* Details Body */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 space-y-3.5">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Thông tin chi tiết</h3>
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
+              <h3 className="text-[15px] font-semibold text-[#0F172A]">Thông tin chi tiết</h3>
               <div className="grid gap-3">
                 {details.map((item, idx) => {
                   const Icon = item.icon;
                   return (
-                    <div key={idx} className="flex items-start justify-between gap-3 text-sm">
-                      <span className="flex items-center gap-2 text-slate-500 font-medium shrink-0">
-                        {Icon && <Icon className="h-4 w-4 text-slate-400" />}
+                    <div key={idx} className="flex items-start justify-between gap-3 text-[15px]">
+                      <span className="flex items-center gap-2 text-[#64748B] text-[13px] font-semibold shrink-0">
+                        {Icon && <Icon className="h-4 w-4 text-[#64748B]" />}
                         {item.label}:
                       </span>
-                      <span className="font-semibold text-slate-900 text-right break-words">
-                        {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
-                          ? <StatusBadge status={item.value} />
-                          : item.value || '---'}
-                      </span>
+                      <span className="font-semibold text-[#0F172A] text-right text-[15px]">{item.value || '---'}</span>
                     </div>
                   );
                 })}

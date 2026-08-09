@@ -919,10 +919,10 @@ export default function StudentExamTakePage() {
                 <AlertTriangle className="h-6 w-6 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-base font-black text-amber-900 dark:text-amber-200 uppercase tracking-tight">
+                <h3 className="text-[20px] font-semibold text-amber-900 dark:text-amber-200 uppercase tracking-tight">
                   Cảnh báo vi phạm quy chế thi!
                 </h3>
-                <p className="text-xs font-bold text-amber-700 dark:text-amber-400 mt-0.5">
+                <p className="text-[13px] font-semibold text-amber-700 dark:text-amber-400 mt-0.5">
                   Hệ thống giám sát thi trực tuyến
                 </p>
               </div>
@@ -976,10 +976,10 @@ export default function StudentExamTakePage() {
                 <AlertTriangle className="h-6 w-6 animate-bounce" />
               </div>
               <div>
-                <h3 className="text-base font-black text-rose-900 dark:text-rose-200 uppercase tracking-tight">
+                <h3 className="text-[20px] font-semibold text-rose-900 dark:text-rose-200 uppercase tracking-tight">
                   Bài thi đã bị khóa & Nộp tự động!
                 </h3>
-                <p className="text-xs font-bold text-rose-700 dark:text-rose-400 mt-0.5">
+                <p className="text-[13px] font-semibold text-rose-700 dark:text-rose-400 mt-0.5">
                   Vi phạm quy chế thi vượt quá giới hạn
                 </p>
               </div>

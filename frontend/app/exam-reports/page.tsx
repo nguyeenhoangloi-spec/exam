@@ -587,8 +587,8 @@ export default function ExamReportsPage() {
                       {/* Header */}
                       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50/70">
                         <div>
-                          <p className="text-sm font-black text-slate-900">Chọn Lịch thi để xem Báo cáo</p>
-                          <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                          <p className="text-[20px] font-semibold text-[#0F172A] tracking-tight leading-none">Chọn Lịch thi để xem Báo cáo</p>
+                          <p className="text-[13px] text-[#64748B] font-semibold mt-1">
                             Phân loại theo dạng lịch thi, môn học & trạng thái
                           </p>
                         </div>

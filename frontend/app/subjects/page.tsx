@@ -615,23 +615,36 @@ export default function SubjectsPage() {
         <div className="fixed inset-0 z-[100] flex justify-end">
           <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
           <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
-            {/* Drawer Header */}
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 px-6 py-5 text-white flex items-start justify-between gap-4 shrink-0">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-black bg-white/20 rounded-lg px-2 py-0.5">{drawerSubject.subjectCode}</span>
-                  <span className="text-xs font-bold bg-white/15 rounded-lg px-2 py-0.5">{drawerSubject.credits} TC</span>
+            {/* Header - Solid Flat Color matching Department/Teacher/Student Drawer */}
+            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                    {drawerSubject.subjectCode.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1 pr-2">
+                    <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+                      {drawerSubject.subjectName}
+                    </h2>
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                      Mã môn: {drawerSubject.subjectCode} • {drawerSubject.credits} Tín chỉ
+                    </p>
+                  </div>
                 </div>
-                <h2 className="text-lg font-black leading-snug">{drawerSubject.subjectName}</h2>
-                <p className="text-xs text-white/70 mt-0.5">{(drawerSubject as any).department?.name || 'Chưa gán Khoa'}</p>
+
+                <button
+                  type="button"
+                  onClick={() => setDrawerSubject(null)}
+                  className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+                  title="Đóng"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <button onClick={() => setDrawerSubject(null)} className="text-white/70 hover:text-white transition cursor-pointer shrink-0 mt-0.5">
-                <X className="h-5 w-5" />
-              </button>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-200 bg-white shrink-0">
+            <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
               {[
                 { key: 'info', label: 'Thông tin', icon: BookOpen },
                 { key: 'classes', label: 'Lớp đã gán', icon: GraduationCap },
@@ -640,9 +653,12 @@ export default function SubjectsPage() {
                 <button
                   key={tab.key}
                   onClick={() => setDrawerTab(tab.key as any)}
-                  className={`flex-1 py-3 text-xs font-black flex items-center justify-center gap-1.5 border-b-2 transition cursor-pointer ${drawerTab === tab.key ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                  className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${drawerTab === tab.key
+                      ? 'border-blue-600 text-blue-600 font-semibold'
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
+                    }`}
                 >
-                  <tab.icon className="h-3.5 w-3.5" />
+                  <tab.icon className="h-4 w-4" />
                   {tab.label}
                 </button>
               ))}

@@ -142,11 +142,11 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
         {/* Header */}
         <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
           <div>
-            <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h2 className="text-[20px] font-semibold leading-[28px] text-[#0F172A] flex items-center gap-2">
               <HelpCircle className="w-5 h-5 text-blue-600" />
               Thiết Lập Rubric Chấm Điểm Tự Luận
             </h2>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">
+            <p className="text-[13px] font-medium text-[#64748B] font-mono mt-0.5">
               Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-blue-700 font-extrabold">{expectedScore}đ</strong>
             </p>
           </div>

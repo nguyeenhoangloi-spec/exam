@@ -58,10 +58,10 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           onClose={() => setVideoLightbox(null)}
         />
 
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-slate-200/90 px-6 py-4 bg-slate-50/80">
+        {/* Drawer Header - Solid Flat Color matching All Drawers */}
+        <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[14px] font-bold text-[#2563EB] border border-blue-200 font-mono">
+            <span className="rounded-xl bg-white/10 px-3 py-1 text-[15px] font-semibold text-white border border-white/15 font-mono">
               {codeText}
             </span>
             <QuestionStatusBadge status={question.status || 'APPROVED'} />
@@ -70,9 +70,10 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#64748B] hover:bg-slate-200 hover:text-[#0F172A] transition cursor-pointer"
+            className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+            title="Đóng"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 

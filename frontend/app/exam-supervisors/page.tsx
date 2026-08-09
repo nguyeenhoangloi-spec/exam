@@ -446,8 +446,8 @@ export default function ExamSupervisorsPage() {
                       {/* Header */}
                       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
                         <div>
-                          <p className="text-sm font-black text-slate-900">Chọn Ca thi</p>
-                          <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                          <p className="text-[20px] font-semibold text-[#0F172A] tracking-tight leading-none">Chọn Ca thi</p>
+                          <p className="text-[13px] text-[#64748B] font-semibold mt-1">
                             {schedules.filter((s: any) => !s.examSupervisors?.length && !s.supervisorCount).length} ca chưa phân công
                             · {schedules.filter((s: any) => s.examSupervisors?.length || s.supervisorCount).length} ca đã có giám thị
                           </p>

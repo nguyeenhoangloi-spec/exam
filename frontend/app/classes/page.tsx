@@ -511,21 +511,28 @@ export default function ClassesPage() {
           />
 
           <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
-            {/* Drawer Header */}
-            <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 text-white shrink-0">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/30 font-black text-xl shadow-inner">
-                    {drawerClass.code.slice(0, 3)}
+            {/* Header - Solid Flat Color matching Department/Teacher/Student/Subject Drawer */}
+            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                    {drawerClass.code.substring(0, 3).toUpperCase()}
                   </div>
-                  <div>
-                    <h2 className="text-[20px] font-semibold leading-tight line-clamp-2">{drawerClass.name}</h2>
-                    <p className="text-[15px] font-normal text-blue-50 mt-1">Mã lớp: {drawerClass.code}</p>
+                  <div className="min-w-0 flex-1 pr-2">
+                    <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+                      {drawerClass.name}
+                    </h2>
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                      Mã lớp: {drawerClass.code}
+                    </p>
                   </div>
                 </div>
+
                 <button
+                  type="button"
                   onClick={() => setDrawerClass(null)}
-                  className="rounded-full p-2 bg-white/10 hover:bg-white/20 transition-colors text-white cursor-pointer"
+                  className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+                  title="Đóng"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -533,30 +540,30 @@ export default function ClassesPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-200 px-4 pt-2 bg-slate-50 shrink-0">
+            <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
               <button
                 onClick={() => setDrawerTab('info')}
-                className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'info'
+                className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'info'
                   ? 'border-blue-600 text-blue-600 font-semibold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
                   }`}
               >
                 Thông tin
               </button>
               <button
                 onClick={() => setDrawerTab('students')}
-                className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'students'
+                className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'students'
                   ? 'border-blue-600 text-blue-600 font-semibold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
                   }`}
               >
                 Sinh viên
               </button>
               <button
                 onClick={() => setDrawerTab('enrollments')}
-                className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'enrollments'
+                className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'enrollments'
                   ? 'border-blue-600 text-blue-600 font-semibold'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
                   }`}
               >
                 Môn đăng ký
