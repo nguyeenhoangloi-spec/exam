@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Download, Sparkles, Printer } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 interface ExamPaperHeaderProps {
   onExportAll?: () => void;
@@ -30,27 +31,32 @@ export function ExamPaperHeader({
 
       <div className="flex flex-wrap items-center gap-2.5">
         {onExportAll && (
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
             onClick={onExportAll}
-            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 px-4 py-2 text-[15px] font-medium text-white shadow-xs transition active:scale-95 cursor-pointer"
+            leftIcon={<Download className="h-4 w-4" />}
+            className="rounded-xl font-medium"
           >
-            <Download className="h-4 w-4 text-white" />
-            <span>Xuất báo cáo</span>
-          </button>
+            Xuất báo cáo
+          </Button>
         )}
 
         {onPrintAll && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={onPrintAll}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+            className="rounded-xl font-medium"
           >
-            <Printer className="h-4 w-4 text-[#64748B]" />
-            <span>In danh sách đề</span>
-          </button>
+            In danh sách đề
+          </Button>
         )}
       </div>
     </div>
   );
 }
+
