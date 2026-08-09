@@ -162,8 +162,8 @@ export function TeacherTableToolbar({
           <button
             type="button"
             onClick={onRefresh}
-            className="flex h-7 w-7 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-slate-900 transition hover:bg-slate-50 shadow-2xs cursor-pointer"
-            title="Tải lại dữ liệu"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#64748B] hover:bg-slate-100 hover:text-[#0F172A] transition cursor-pointer active:scale-95 select-none"
+            title="Làm mới dữ liệu"
           >
             <RefreshCw className="h-4 w-4" />
           </button>

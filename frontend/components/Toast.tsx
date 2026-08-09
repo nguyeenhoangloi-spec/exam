@@ -23,7 +23,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
       style={{ backgroundColor: type === 'success' ? '#10B981' : '#EF4444' }}
     >
       {type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-white" /> : <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-white" />}
-      <span className="text-xs sm:text-sm font-bold leading-relaxed flex-1 text-white drop-shadow-xs">{message}</span>
+      <span className="text-[15px] font-medium leading-5 flex-1 text-white drop-shadow-xs">{message}</span>
       <button
         type="button"
         aria-label="Đóng thông báo"

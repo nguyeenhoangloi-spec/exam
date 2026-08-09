@@ -563,17 +563,17 @@ function TeacherEssayGradingContent() {
               className="inline-flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
             >
               {batchAiLoading && <Loader2 className="h-4 w-4 text-white animate-spin" />}
-              <span>{batchAiLoading ? 'Đang AI chấm tất cả...' : 'AI Chấm Tất Cả Bài'}</span>
+              <span>{batchAiLoading ? 'Đang AI chấm...' : 'AI chấm bài'}</span>
             </button>
 
             <button
               type="button"
               onClick={loadAssignments}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[15px] font-medium text-[#334155] hover:bg-slate-50 shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
+              title="Làm mới danh sách"
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition cursor-pointer active:scale-95 shrink-0 disabled:opacity-50 select-none"
             >
-              <RotateCcw className={`h-4 w-4 text-[#64748B] ${loading ? 'animate-spin' : ''}`} />
-              <span>Làm mới</span>
+              <RotateCcw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>

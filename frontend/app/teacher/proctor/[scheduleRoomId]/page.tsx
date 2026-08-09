@@ -444,7 +444,7 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => loadDashboard(false)}
-            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#64748B] hover:text-[#0F172A] shadow-2xs transition active:scale-95 cursor-pointer"
+            className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
             title="Làm mới dữ liệu"
           >
             <RefreshCw className="h-4 w-4" />
@@ -747,10 +747,10 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => loadDashboard(false)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition cursor-pointer active:scale-95 select-none"
             title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-3.5 w-3.5 text-slate-500" />
+            <RefreshCw className="h-4 w-4" />
           </button>
         </div>
       </div>

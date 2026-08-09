@@ -267,7 +267,7 @@ function TrashPageContent() {
           <button
             type="button"
             onClick={() => { fetchItems(); fetchStats(); }}
-            className="p-2.5 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-[#64748B] hover:text-[#0F172A] shadow-2xs transition active:scale-95 cursor-pointer"
+            className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
             title="Làm mới dữ liệu"
           >
             <RefreshCw className="h-4 w-4" />
@@ -443,7 +443,7 @@ function TrashPageContent() {
                       />
                     </label>
                     <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-[#334155] rounded-lg">
-                      <span>Tự động hủy vĩnh viễn</span>
+                      <span>Tự động hủy</span>
                       <input
                         type="checkbox"
                         checked={visibleColumns.expiresIn}
@@ -499,7 +499,7 @@ function TrashPageContent() {
             {/* Refresh Button */}
             <button
               onClick={() => fetchItems()}
-              className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#64748B] hover:text-[#0F172A] transition cursor-pointer shadow-2xs"
+              className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
               title="Tải lại dữ liệu"
             >
               <RefreshCw className="w-4 h-4" />
@@ -564,13 +564,13 @@ function TrashPageContent() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-1">
                     <button
                       onClick={() => handleRestore(item)}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-[15px] font-medium transition shadow-2xs cursor-pointer active:scale-95"
+                      title="Khôi phục"
+                      className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95"
                     >
-                      <RotateCcw className="w-4 h-4 text-blue-100" />
-                      Khôi phục
+                      <RotateCcw className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleHardDelete(item)}
@@ -601,7 +601,7 @@ function TrashPageContent() {
                     </th>
                     <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Nội dung / Dữ liệu đã xóa</th>
                     {visibleColumns.deletedAt && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Thời điểm xóa</th>}
-                    {visibleColumns.expiresIn && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Tự động hủy vĩnh viễn</th>}
+                    {visibleColumns.expiresIn && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Tự động hủy</th>}
                     {visibleColumns.deletedBy && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Người xóa</th>}
                     {visibleColumns.actions && <th className={`px-5 text-right ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Thao tác</th>}
                   </tr>
@@ -663,17 +663,17 @@ function TrashPageContent() {
                             <div className="inline-flex items-center gap-2">
                               <button
                                 onClick={() => handleRestore(item)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white text-[14px] font-medium transition shadow-2xs cursor-pointer active:scale-95"
+                                title="Khôi phục dữ liệu"
+                                className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 select-none"
                               >
-                                <RotateCcw className="w-3.5 h-3.5 text-blue-100" />
-                                Khôi phục
+                                <RotateCcw className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleHardDelete(item)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[14px] font-medium transition cursor-pointer shadow-2xs active:scale-95"
+                                title="Xóa vĩnh viễn"
+                                className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 select-none"
                               >
-                                <Trash2 className="w-3.5 h-3.5 text-rose-100" />
-                                Xóa vĩnh viễn
+                                <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </td>

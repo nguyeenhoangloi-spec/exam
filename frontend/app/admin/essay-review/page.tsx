@@ -381,9 +381,11 @@ export default function AdminEssayReviewPage() {
         <button
           type="button"
           onClick={loadAssignments}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-[15px] font-medium text-[#334155] hover:bg-slate-50 hover:text-[#2563EB] transition cursor-pointer shadow-2xs active:scale-95 shrink-0 select-none"
+          disabled={loading}
+          title="Làm mới danh sách"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition cursor-pointer active:scale-95 shrink-0 select-none disabled:opacity-50"
         >
-          <span>Làm mới danh sách</span>
+          <RotateCcw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
 

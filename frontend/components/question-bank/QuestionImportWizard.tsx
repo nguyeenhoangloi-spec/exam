@@ -674,7 +674,7 @@ export function QuestionImportWizard({
             className="fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl border border-white/20 px-4 py-3 text-white shadow-2xl transition-all transform slide-in-from-bottom duration-300"
             style={{ backgroundColor: '#EF4444' }}
           >
-            <span className="text-xs sm:text-sm font-semibold leading-relaxed flex-1">{toast}</span>
+            <span className="text-[15px] font-medium leading-5 flex-1">{toast}</span>
             <button
               type="button"
               onClick={() => setToast('')}

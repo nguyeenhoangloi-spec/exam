@@ -52,7 +52,7 @@ export function ExamPaperHeader({
             leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
             className="rounded-xl font-medium"
           >
-            In danh sách đề
+            In danh sách
           </Button>
         )}
       </div>

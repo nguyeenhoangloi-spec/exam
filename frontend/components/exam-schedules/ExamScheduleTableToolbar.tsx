@@ -167,15 +167,15 @@ export function ExamScheduleTableToolbar({
           </button>
         </div>
 
-        {/* Refresh Button matching Mockup Image 100% */}
+        {/* Refresh Button */}
         {onRefresh && (
           <button
             type="button"
             onClick={onRefresh}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer shadow-2xs"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#64748B] hover:bg-slate-100 hover:text-[#0F172A] transition cursor-pointer active:scale-95 select-none"
             title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
+            <RefreshCw className="h-4 w-4" />
           </button>
         )}
       </div>
