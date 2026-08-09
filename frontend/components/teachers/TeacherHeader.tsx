@@ -22,10 +22,10 @@ export function TeacherHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+        <h1 className="text-[28px] font-bold leading-[36px] tracking-tight text-[#0F172A]">
           Quản lý Giảng viên
         </h1>
-        <p className="text-xs font-medium text-slate-500">
+        <p className="text-[15px] font-normal leading-[24px] text-[#64748B]">
           Quản lý danh mục cán bộ giảng dạy, học vị, khoa trực thuộc và phân công coi thi
         </p>
       </div>

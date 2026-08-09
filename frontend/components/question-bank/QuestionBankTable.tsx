@@ -299,8 +299,8 @@ export function QuestionBankTable({
   return (
     <>
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th scope="col" className="p-3.5 pl-4 text-center w-10">
                 <input
@@ -322,7 +322,7 @@ export function QuestionBankTable({
               <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+          <tbody className="divide-y divide-slate-100 font-normal">
             {questions.map((q, index) => {
               const isChecked = selected.includes(q.id);
               const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
@@ -336,7 +336,7 @@ export function QuestionBankTable({
               return (
                 <tr
                   key={q.id}
-                  className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                  className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''
                     }`}
                 >
                   {/* Checkbox */}
@@ -355,7 +355,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                        className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                       >
                         {codeText}
                       </button>
@@ -368,7 +368,7 @@ export function QuestionBankTable({
                       <div className="space-y-1.5">
                         {/* Câu hỏi */}
                         <p
-                          className="text-xs font-bold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
+                          className="text-[15px] font-medium text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2"
                           onClick={() => onDetail(q)}
                           title={q.content}
                         >

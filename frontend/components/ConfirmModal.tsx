@@ -90,16 +90,16 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <div className={`flex h-8.5 w-8.5 items-center justify-center rounded-lg border ${iconConfig.bg} shadow-2xs shrink-0`}>
+            <div className={`flex h-9 w-9 items-center justify-center rounded-lg border ${iconConfig.bg} shadow-2xs shrink-0`}>
               {iconConfig.icon}
             </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-none">{title}</h3>
+            <h3 className="text-[20px] font-semibold text-[#0F172A] dark:text-slate-100 tracking-tight leading-none">{title}</h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
@@ -107,11 +107,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-6 space-y-3">
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
+          <p className="text-[15px] text-[#64748B] dark:text-slate-300 font-normal leading-relaxed">{message}</p>
 
           {requireReason && (
             <div className="space-y-1.5 pt-1">
-              <label className="block text-xs font-bold text-slate-800 dark:text-slate-200">Lý do thực hiện:</label>
+              <label className="block text-[15px] font-medium text-[#334155] dark:text-slate-200">Lý do thực hiện:</label>
               <textarea
                 rows={3}
                 value={reason}
@@ -120,9 +120,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   if (reasonError) setReasonError('');
                 }}
                 placeholder={reasonPlaceholder}
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-xs font-medium focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
-              {reasonError && <p className="text-xs font-bold text-red-600">{reasonError}</p>}
+              {reasonError && <p className="text-[13px] font-medium text-[#DC2626]">{reasonError}</p>}
             </div>
           )}
         </div>
@@ -130,13 +130,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         {/* Footer Actions: Cancel (Left / Secondary White) - Confirm (Right / Primary or Danger/Warning) */}
         <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-6 py-4">
           {Boolean(cancelText) && (
-            <Button variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
+            <Button variant="outline" size="md" onClick={onClose} disabled={isLoading}>
               {cancelText}
             </Button>
           )}
           <Button
             variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'warning'}
-            size="sm"
+            size="md"
             onClick={handleConfirm}
             disabled={isLoading}
             isLoading={isLoading}

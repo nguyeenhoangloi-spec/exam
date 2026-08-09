@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Search } from 'lucide-react';
 
 export const controlClassName =
-  'w-full h-10 rounded-[10px] border border-slate-200/90 bg-white px-3.5 text-xs text-slate-900 font-medium transition duration-150 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed';
+  'w-full h-10 rounded-[10px] border border-slate-200/90 bg-white px-3.5 text-[15px] text-[#0F172A] font-normal transition duration-150 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -22,15 +22,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`space-y-1.5 w-full ${containerClassName}`}>
         {label && (
-          <label htmlFor={inputId} className="block text-xs font-bold text-slate-700">
+          <label htmlFor={inputId} className="block text-[15px] font-medium text-[#334155]">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-[#DC2626] ml-1">*</span>}
           </label>
         )}
 
         <div className="relative flex items-center w-full">
           {leftIcon && (
-            <div className="absolute left-3.5 text-slate-400 pointer-events-none shrink-0 flex items-center justify-center">
+            <div className="absolute left-3.5 text-[#94A3B8] pointer-events-none shrink-0 flex items-center justify-center">
               {leftIcon}
             </div>
           )}
@@ -39,23 +39,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             type={type}
-            className={`w-full h-10 rounded-[10px] border bg-white px-3.5 text-xs text-slate-900 placeholder:text-slate-400 font-medium transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
+            className={`w-full h-10 rounded-[10px] border bg-white px-3.5 text-[15px] text-[#0F172A] placeholder:text-[#94A3B8] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
               leftIcon ? 'pl-10' : ''
             } ${rightIcon ? 'pr-10' : ''} ${
               error
-                ? 'border-red-500 focus:border-red-600 focus:ring-2 focus:ring-red-500/20'
-                : 'border-slate-200/90 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
+                ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-2 focus:ring-red-500/20'
+                : 'border-slate-200/90 focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
             } ${className}`}
             {...props}
           />
 
-          {rightIcon && <div className="absolute right-3.5 text-slate-400 shrink-0 flex items-center justify-center">{rightIcon}</div>}
+          {rightIcon && <div className="absolute right-3.5 text-[#94A3B8] shrink-0 flex items-center justify-center">{rightIcon}</div>}
         </div>
 
         {error ? (
-          <p className="text-[11px] font-semibold text-red-600 pl-0.5">{error}</p>
+          <p className="text-[13px] font-medium text-[#DC2626] pl-0.5">{error}</p>
         ) : helperText ? (
-          <p className="text-[11px] font-normal text-slate-500 pl-0.5">{helperText}</p>
+          <p className="text-[13px] font-normal text-[#64748B] pl-0.5">{helperText}</p>
         ) : null}
       </div>
     );
@@ -79,7 +79,7 @@ export function PasswordInput({ className = '', ...props }: Omit<InputProps, 'ty
           type="button"
           tabIndex={-1}
           onClick={() => setShowPassword((prev) => !prev)}
-          className="text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+          className="text-[#94A3B8] hover:text-[#334155] cursor-pointer p-1"
         >
           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
@@ -105,19 +105,19 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={`space-y-1.5 w-full ${containerClassName}`}>
         {label && (
-          <label htmlFor={selectId} className="block text-xs font-bold text-slate-700">
+          <label htmlFor={selectId} className="block text-[15px] font-medium text-[#334155]">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-[#DC2626] ml-1">*</span>}
           </label>
         )}
 
         <select
           ref={ref}
           id={selectId}
-          className={`w-full h-10 rounded-[10px] border bg-white px-3.5 text-xs text-slate-900 font-medium transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed cursor-pointer ${
+          className={`w-full h-10 rounded-[10px] border bg-white px-3.5 text-[15px] text-[#0F172A] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed cursor-pointer ${
             error
-              ? 'border-red-500 focus:border-red-600 focus:ring-2 focus:ring-red-500/20'
-              : 'border-slate-200/90 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
+              ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-2 focus:ring-red-500/20'
+              : 'border-slate-200/90 focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
           } ${className}`}
           {...props}
         >
@@ -131,9 +131,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         </select>
 
         {error ? (
-          <p className="text-[11px] font-semibold text-red-600 pl-0.5">{error}</p>
+          <p className="text-[13px] font-medium text-[#DC2626] pl-0.5">{error}</p>
         ) : helperText ? (
-          <p className="text-[11px] font-normal text-slate-500 pl-0.5">{helperText}</p>
+          <p className="text-[13px] font-normal text-[#64748B] pl-0.5">{helperText}</p>
         ) : null}
       </div>
     );
@@ -156,27 +156,27 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={`space-y-1.5 w-full ${containerClassName}`}>
         {label && (
-          <label htmlFor={textareaId} className="block text-xs font-bold text-slate-700">
+          <label htmlFor={textareaId} className="block text-[15px] font-medium text-[#334155]">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-[#DC2626] ml-1">*</span>}
           </label>
         )}
 
         <textarea
           ref={ref}
           id={textareaId}
-          className={`w-full rounded-[10px] border bg-white p-3.5 text-xs text-slate-900 placeholder:text-slate-400 font-medium transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
+          className={`w-full rounded-[10px] border bg-white p-3.5 text-[15px] text-[#0F172A] placeholder:text-[#94A3B8] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
             error
-              ? 'border-red-500 focus:border-red-600 focus:ring-2 focus:ring-red-500/20'
-              : 'border-slate-200/90 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
+              ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-2 focus:ring-red-500/20'
+              : 'border-slate-200/90 focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
           } ${className}`}
           {...props}
         />
 
         {error ? (
-          <p className="text-[11px] font-semibold text-red-600 pl-0.5">{error}</p>
+          <p className="text-[13px] font-medium text-[#DC2626] pl-0.5">{error}</p>
         ) : helperText ? (
-          <p className="text-[11px] font-normal text-slate-500 pl-0.5">{helperText}</p>
+          <p className="text-[13px] font-normal text-[#64748B] pl-0.5">{helperText}</p>
         ) : null}
       </div>
     );

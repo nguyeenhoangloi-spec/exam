@@ -19,10 +19,10 @@ export function QuestionBankHeader({
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Subtitle */}
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+        <h1 className="text-[28px] font-bold leading-[36px] tracking-tight text-[#0F172A]">
           Ngân hàng câu hỏi
         </h1>
-        <p className="text-xs font-medium text-slate-500">
+        <p className="text-[15px] font-normal leading-[24px] text-[#64748B]">
           Quản lý, tạo mới và tổ chức hệ thống câu hỏi cho kỳ thi
         </p>
       </div>

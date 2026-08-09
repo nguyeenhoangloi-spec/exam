@@ -207,8 +207,8 @@ export function StudentTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+      <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+        <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
           <tr>
             <th className="p-3.5 pl-4 text-center w-10">
               <input
@@ -227,7 +227,7 @@ export function StudentTable({
             <th className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 font-medium">
+        <tbody className="divide-y divide-slate-100 font-normal">
           {students.map((s, index) => {
             const isChecked = selected.includes(s.id);
             const isLastRow = index >= Math.floor(students.length / 2);
@@ -235,7 +235,7 @@ export function StudentTable({
             return (
               <tr
                 key={s.id}
-                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}
+                className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''}`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input
@@ -251,7 +251,7 @@ export function StudentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {s.studentCode}
                     </button>
@@ -262,7 +262,7 @@ export function StudentTable({
                   <td className="p-3.5 min-w-[200px]">
                     <span
                       onClick={() => onDetail(s)}
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
+                      className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition leading-tight text-[15px]"
                     >
                       {s.fullName}
                     </span>

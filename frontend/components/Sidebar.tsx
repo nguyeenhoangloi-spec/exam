@@ -256,14 +256,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[10.5px] font-bold tracking-wider text-slate-400 uppercase hover:text-slate-200 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-wider text-[#94A3B8] uppercase hover:text-slate-200 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                     }`}
                 >
                   <span className="truncate">{group.group}</span>
                   {isExpanded ? (
-                    <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    <ChevronDown className="h-3.5 w-3.5 text-[#94A3B8] shrink-0" />
                   ) : (
-                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    <ChevronRight className="h-3.5 w-3.5 text-[#94A3B8] shrink-0" />
                   )}
                 </button>
               )}
@@ -283,8 +283,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-xs font-semibold transition-all duration-200 overflow-hidden cursor-pointer ${isActive
-                                ? 'bg-[#2563EB] text-white shadow-md border border-blue-500'
+                            className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-[15px] font-medium transition-all duration-200 overflow-hidden cursor-pointer ${isActive
+                                ? 'bg-[#2563EB] text-white shadow-md border border-blue-500 font-semibold'
                                 : 'text-[#CBD5E1] hover:bg-white/[0.08] hover:text-white'
                               }`}
                           >
@@ -313,7 +313,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className="block py-1.5 px-3 rounded-lg text-[11.5px] font-medium text-[#CBD5E1] hover:text-white hover:bg-white/[0.08] transition-all"
+                                    className="block py-1.5 px-3 rounded-lg text-[14px] font-medium text-[#CBD5E1] hover:text-white hover:bg-white/[0.08] transition-all"
                                   >
                                     {sub.name}
                                   </Link>
@@ -333,8 +333,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onMouseEnter={() => router.prefetch(item.href)}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-xs font-semibold transition-all duration-150 overflow-hidden ${isActive
-                            ? 'bg-[#2563EB] text-white shadow-md border border-blue-500'
+                        className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden ${isActive
+                            ? 'bg-[#2563EB] text-white shadow-md border border-blue-500 font-semibold'
                             : 'text-[#CBD5E1] hover:bg-white/[0.08] hover:text-white'
                           }`}
                       >

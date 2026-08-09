@@ -218,8 +218,8 @@ export function DepartmentTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+      <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+        <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -237,7 +237,7 @@ export function DepartmentTable({
             <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 font-medium">
+        <tbody className="divide-y divide-slate-100 font-normal">
           {departments.map((d, index) => {
             const isChecked = selected.includes(d.id);
             const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
@@ -248,7 +248,7 @@ export function DepartmentTable({
             return (
               <tr
                 key={d.id}
-                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
+                className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''
                   }`}
               >
                 <td className="p-3.5 pl-4 text-center">
@@ -265,7 +265,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {d.code}
                     </button>
@@ -276,7 +276,7 @@ export function DepartmentTable({
                   <td className="p-3.5 min-w-[220px]">
                     <span
                       onClick={() => onDetail(d)}
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
+                      className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition text-[15px]"
                     >
                       {d.name}
                     </span>
@@ -284,20 +284,20 @@ export function DepartmentTable({
                 )}
 
                 {visibleColumns.subjectsCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{subjectsCount} môn</span>
+                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                    <span className="font-medium text-[#0F172A]">{subjectsCount} môn</span>
                   </td>
                 )}
 
                 {visibleColumns.classesCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{classesCount} lớp</span>
+                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                    <span className="font-medium text-[#0F172A]">{classesCount} lớp</span>
                   </td>
                 )}
 
                 {visibleColumns.teachersCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{teachersCount} giảng viên</span>
+                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                    <span className="font-medium text-[#0F172A]">{teachersCount} giảng viên</span>
                   </td>
                 )}
 
