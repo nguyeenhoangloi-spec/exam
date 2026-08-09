@@ -567,9 +567,9 @@ function TrashPageContent() {
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                     <button
                       onClick={() => handleRestore(item)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
                     >
-                      <RotateCcw className="w-3.5 h-3.5 text-emerald-100" />
+                      <RotateCcw className="w-3.5 h-3.5 text-blue-100" />
                       Khôi phục
                     </button>
                     <button
@@ -663,9 +663,9 @@ function TrashPageContent() {
                             <div className="inline-flex items-center gap-2">
                               <button
                                 onClick={() => handleRestore(item)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
                               >
-                                <RotateCcw className="w-3.5 h-3.5 text-emerald-100" />
+                                <RotateCcw className="w-3.5 h-3.5 text-blue-100" />
                                 Khôi phục
                               </button>
                               <button

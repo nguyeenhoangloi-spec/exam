@@ -178,4 +178,153 @@ export class AuthService {
 
     return this.getProfile(userId);
   }
+
+  /**
+   * Generates Google OAuth redirect URL
+   */
+  getGoogleAuthUrl(): string {
+    const clientId = process.env.GOOGLE_CLIENT_ID || '1050574656376-9r8njqcglsflfm8crdh8136k1o84tigo.apps.googleusercontent.com';
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
+    const scope = encodeURIComponent('email profile');
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&prompt=select_account`;
+  }
+
+  /**
+   * Validates a Google account email against system database users.
+   * Requirement: ONLY emails registered in the database can log in!
+   */
+  async validateGoogleEmail(email: string) {
+    if (!email) {
+      throw new BadRequestException('Không nhận được thông tin email từ Google.');
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Search user by email (case-insensitive)
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: {
+          equals: cleanEmail,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        student: true,
+        teacher: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException(
+        `Email ${cleanEmail} chưa được đăng ký trong hệ thống. Vui lòng liên hệ Quản trị viên.`
+      );
+    }
+
+    if (user.status !== 'ACTIVE') {
+      throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa.');
+    }
+
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const accessToken = this.jwtService.sign(payload);
+
+    if (user.role === 'ADMIN') {
+      await this.audit.write({
+        actorId: user.id,
+        action: 'LOGIN',
+        entityType: 'AUTH',
+        entityId: user.id,
+        description: 'Đã đăng nhập bằng Google (Quản trị viên)',
+      });
+    }
+
+    const { password, ...userWithoutPassword } = user;
+
+    return {
+      accessToken,
+      user: userWithoutPassword,
+    };
+  }
+
+  /**
+   * Handles Google OAuth Callback code exchange
+   */
+  async handleGoogleCallback(code: string) {
+    if (!code) {
+      throw new BadRequestException('Mã xác thực Google không hợp lệ.');
+    }
+
+    const clientId = process.env.GOOGLE_CLIENT_ID || '1050574656376-9r8njqcglsflfm8crdh8136k1o84tigo.apps.googleusercontent.com';
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || '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';
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
+
+    try {
+      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+        }),
+      });
+
+      if (!tokenRes.ok) {
+        const errorData = (await tokenRes.json().catch(() => ({}))) as any;
+        throw new BadRequestException(`Xác thực Google thất bại: ${errorData.error_description || tokenRes.statusText}`);
+      }
+
+      const tokenData = (await tokenRes.json()) as any;
+      const accessToken = tokenData.access_token;
+
+      const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      if (!userRes.ok) {
+        throw new BadRequestException('Không lấy được thông tin tài khoản Google.');
+      }
+
+      const googleUser = (await userRes.json()) as any;
+      return this.validateGoogleEmail(googleUser.email);
+    } catch (err: any) {
+      if (err instanceof UnauthorizedException || err instanceof BadRequestException) {
+        throw err;
+      }
+      throw new BadRequestException(`Lỗi đăng nhập Google: ${err.message || 'Không xác định'}`);
+    }
+  }
+
+  /**
+   * Validates Google ID token sent directly from frontend
+   */
+  async loginWithGoogleToken(idToken: string) {
+    if (!idToken) {
+      throw new BadRequestException('Thiếu Google ID Token.');
+    }
+
+    try {
+      const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+      if (!res.ok) {
+        throw new BadRequestException('Google ID Token không hợp lệ hoặc đã hết hạn.');
+      }
+      const data = (await res.json()) as any;
+      if (!data.email) {
+        throw new BadRequestException('Không tìm thấy thông tin email từ Google ID Token.');
+      }
+      return this.validateGoogleEmail(data.email);
+    } catch (err: any) {
+      if (err instanceof UnauthorizedException || err instanceof BadRequestException) {
+        throw err;
+      }
+      throw new BadRequestException(`Lỗi xác thực Google ID Token: ${err.message || 'Không xác định'}`);
+    }
+  }
 }
+

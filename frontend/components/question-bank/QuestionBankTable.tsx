@@ -528,7 +528,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
                         title="Xem chi tiết"
                       >
                         <Eye className="h-4 w-4" />
@@ -543,10 +543,22 @@ export function QuestionBankTable({
                                 closeMenu();
                                 onDetail(q);
                               }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
                             >
-                              <Eye className="h-3.5 w-3.5 text-slate-500" />
+                              <Eye className="h-4 w-4 text-[#64748B]" />
                               <span>Xem chi tiết</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                onAction(q, 'edit');
+                              }}
+                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+                            >
+                              <Edit className="h-4 w-4 text-[#2563EB]" />
+                              <span>Chỉnh sửa</span>
                             </button>
 
                             {q.type === 'ESSAY' && (
@@ -556,24 +568,12 @@ export function QuestionBankTable({
                                   closeMenu();
                                   setRubricQuestion(q);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700 font-bold cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#2563EB] font-medium cursor-pointer"
                               >
-                                <HelpCircle className="h-3.5 w-3.5 text-blue-600" />
+                                <HelpCircle className="h-4 w-4 text-[#2563EB]" />
                                 <span>Cấu hình Rubric</span>
                               </button>
                             )}
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                closeMenu();
-                                onAction(q, 'edit');
-                              }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
-                            >
-                              <Edit className="h-3.5 w-3.5 text-blue-600" />
-                              <span>Chỉnh sửa</span>
-                            </button>
 
                             {isAdmin && (q.status === 'PENDING' || q.status === 'DRAFT') && (
                               <button
@@ -582,9 +582,9 @@ export function QuestionBankTable({
                                   closeMenu();
                                   onAction(q, 'approve');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-700 cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#F0FDF4] text-[#16A34A] font-medium cursor-pointer"
                               >
-                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
                                 <span>Phê duyệt</span>
                               </button>
                             )}
@@ -596,25 +596,28 @@ export function QuestionBankTable({
                                   closeMenu();
                                   onAction(q, 'reject');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-700 cursor-pointer"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FFFBEB] text-[#D97706] font-medium cursor-pointer"
                               >
-                                <XCircle className="h-3.5 w-3.5 text-rose-600" />
+                                <XCircle className="h-4 w-4 text-[#D97706]" />
                                 <span>Từ chối</span>
                               </button>
                             )}
 
                             {isAdmin && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  closeMenu();
-                                  onAction(q, 'delete');
-                                }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                <span>Xóa câu hỏi</span>
-                              </button>
+                              <>
+                                <div className="my-1 border-t border-[#E2E8F0]" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    closeMenu();
+                                    onAction(q, 'delete');
+                                  }}
+                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
+                                >
+                                  <Trash2 className="h-4 w-4 text-[#DC2626]" />
+                                  <span>Xóa câu hỏi</span>
+                                </button>
+                              </>
                             )}
                           </>
                         )}

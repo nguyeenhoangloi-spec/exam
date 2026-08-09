@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Download, Plus, Printer, FileSpreadsheet } from 'lucide-react';
+import { Button } from '../ui';
 
 interface TeacherHeaderProps {
   onAdd?: () => void;
@@ -24,52 +25,56 @@ export function TeacherHeader({
         <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
           Quản lý Giảng viên
         </h1>
-        <p className="text-xs font-semibold text-slate-500">
+        <p className="text-xs font-medium text-slate-500">
           Quản lý danh mục cán bộ giảng dạy, học vị, khoa trực thuộc và phân công coi thi
         </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2.5">
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="md"
           onClick={onExport}
-          className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+          leftIcon={<Download className="h-4 w-4 text-slate-500" />}
         >
-          <Download className="h-4 w-4 text-slate-500" />
-          <span>Xuất Excel</span>
-        </button>
+          Xuất Excel
+        </Button>
 
         {onPrint && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={onPrint}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
           >
-            <Printer className="h-4 w-4 text-slate-500" />
-            <span>In Báo cáo</span>
-          </button>
+            In Báo cáo
+          </Button>
         )}
 
         {isAdmin && onImport && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={onImport}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500" />}
           >
-            <FileSpreadsheet className="h-4 w-4 text-slate-500" />
-            <span>Nhập Excel</span>
-          </button>
+            Nhập Excel
+          </Button>
         )}
 
         {isAdmin && (
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
             onClick={onAdd}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer"
+            leftIcon={<Plus className="h-4 w-4" />}
           >
-            <Plus className="h-4 w-4" />
-            <span>Thêm Giảng viên</span>
-          </button>
+            Thêm Giảng viên
+          </Button>
         )}
       </div>
     </div>
