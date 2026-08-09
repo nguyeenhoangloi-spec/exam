@@ -450,7 +450,7 @@ export default function StudentExamTakePage() {
           <button
             type="button"
             onClick={() => router.push('/student/exam-schedule')}
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl shadow-sm transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium rounded-xl shadow-sm transition active:scale-95 cursor-pointer"
           >
             Quay Về Lịch Thi
           </button>
@@ -472,16 +472,16 @@ export default function StudentExamTakePage() {
       {/* Enterprise Dark Navy Header */}
       <header className="bg-[#1E40AF] text-white px-4 sm:px-6 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md border-b border-white/10">
         <div className="flex items-center space-x-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-black text-white text-base shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-bold text-white text-base shadow-sm">
             {attemptData.paperTitle ? attemptData.paperTitle.charAt(0).toUpperCase() : 'T'}
           </div>
           <div>
-            <span className="font-black text-white text-sm sm:text-base tracking-tight block truncate max-w-xs sm:max-w-md">
+            <span className="font-bold text-white text-sm sm:text-base tracking-tight block truncate max-w-xs sm:max-w-md">
               {attemptData.paperTitle}
             </span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="inline-flex items-center px-2 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-[10px] font-bold rounded-md">
-                <Shield className="w-3 h-3 mr-1 text-emerald-300" /> Giám Sát Gian Lận Active
+              <span className="inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-[13px] font-semibold rounded-md">
+                <Shield className="w-3.5 h-3.5 mr-1 text-emerald-300" /> Giám Sát Gian Lận Active
               </span>
             </div>
           </div>
@@ -490,10 +490,10 @@ export default function StudentExamTakePage() {
         {/* Header Right Actions */}
         <div className="flex items-center space-x-4 sm:space-x-5">
           {/* Sync Status Badge - Chỉ hiển thị Icon + Chữ, không dùng khung viền dư thừa */}
-          <div className="hidden sm:flex items-center text-xs font-extrabold">
+          <div className="hidden sm:flex items-center text-[15px] font-medium">
             {syncState === 'SAVED' && (
               <span className="text-emerald-300 flex items-center gap-1.5">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Đã tự động lưu
+                <CheckCircle className="w-4 h-4 text-emerald-400" /> Đã tự động lưu
               </span>
             )}
             {syncState === 'SAVING' && (
@@ -709,18 +709,18 @@ export default function StudentExamTakePage() {
                   type="button"
                   disabled={currentIdx === 0}
                   onClick={() => setCurrentIdx((prev) => prev - 1)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-black disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-[#0F172A] text-[15px] font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
                 >
                   <ChevronLeft className="h-4 w-4" /> Câu trước
                 </button>
-                <span className="text-xs font-bold text-slate-500">
-                  Câu <strong className="font-black text-slate-900">{currentIdx + 1}</strong> / {totalCount}
+                <span className="text-[15px] font-medium text-[#64748B]">
+                  Câu <strong className="font-semibold text-[#0F172A]">{currentIdx + 1}</strong> / {totalCount}
                 </span>
                 <button
                   type="button"
                   disabled={currentIdx === totalCount - 1}
                   onClick={() => setCurrentIdx((prev) => prev + 1)}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
                 >
                   Câu tiếp <ChevronRight className="h-4 w-4" />
                 </button>
@@ -732,12 +732,12 @@ export default function StudentExamTakePage() {
         {/* Sidebar Question Navigator */}
         <aside className="w-full lg:w-80 bg-white border-l border-slate-200/90 p-6 flex flex-col shrink-0 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Danh Sách Câu Hỏi</h3>
-            <span className="text-[11px] font-bold text-slate-400">{answeredCount}/{totalCount} Đã xong</span>
+            <h3 className="text-[20px] font-semibold text-[#0F172A]">Danh Sách Câu Hỏi</h3>
+            <span className="text-[13px] font-semibold text-[#64748B]">{answeredCount}/{totalCount} Đã xong</span>
           </div>
 
           {/* Legend Badges */}
-          <div className="flex flex-wrap items-center justify-between text-[11px] font-bold text-slate-600 gap-1.5 pb-2">
+          <div className="flex flex-wrap items-center justify-between text-[13px] font-semibold text-[#64748B] gap-1.5 pb-2">
             <span className="flex items-center">
               <span className="w-2.5 h-2.5 rounded bg-blue-600 mr-1.5"></span> Đã làm ({answeredCount})
             </span>
@@ -797,24 +797,24 @@ export default function StudentExamTakePage() {
                 <Send className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-black text-slate-900 tracking-tight">Xác Nhận Nộp Bài Thi</h3>
-                <p className="text-slate-500 text-xs font-medium">Kết thúc và chuyển sang màn hình kết quả</p>
+                <h3 className="text-[20px] font-semibold text-[#0F172A] tracking-tight">Xác Nhận Nộp Bài Thi</h3>
+                <p className="text-[#64748B] text-[13px] font-normal">Kết thúc và chuyển sang màn hình kết quả</p>
               </div>
             </div>
 
             {/* Statistics Summary */}
-            <div className="bg-slate-50/80 p-4 rounded-xl space-y-2 text-xs font-bold border border-slate-100">
-              <div className="flex justify-between text-slate-600">
+            <div className="bg-slate-50/80 p-4 rounded-xl space-y-2 text-[15px] font-medium border border-slate-100">
+              <div className="flex justify-between text-[#64748B]">
                 <span>Tổng số câu hỏi:</span>
-                <span className="font-black text-slate-900">{totalCount}</span>
+                <span className="font-semibold text-[#0F172A]">{totalCount}</span>
               </div>
               <div className="flex justify-between text-emerald-600">
                 <span>Số câu đã trả lời:</span>
-                <span className="font-black">{answeredCount}</span>
+                <span className="font-semibold">{answeredCount}</span>
               </div>
               <div className="flex justify-between text-amber-600">
                 <span>Số câu chưa trả lời:</span>
-                <span className="font-black">{totalCount - answeredCount}</span>
+                <span className="font-semibold">{totalCount - answeredCount}</span>
               </div>
             </div>
 
@@ -823,7 +823,7 @@ export default function StudentExamTakePage() {
                 type="button"
                 disabled={submitting}
                 onClick={() => setShowSubmitModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-[#0F172A] text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
               >
                 Tiếp tục làm bài
               </button>
@@ -831,7 +831,7 @@ export default function StudentExamTakePage() {
                 type="button"
                 disabled={submitting}
                 onClick={handleSubmitExam}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[15px] font-medium rounded-xl shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
               >
                 {submitting ? 'Đang nộp bài...' : 'Đồng Ý Nộp Bài'}
               </button>
@@ -848,21 +848,21 @@ export default function StudentExamTakePage() {
                 <AlertTriangle className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <h3 className="text-base font-black text-slate-900 tracking-tight">Báo Cáo Sự Cố Kỹ Thuật Khi Thi</h3>
-                <p className="text-slate-500 text-xs font-medium">Gửi thông tin gián đoạn tới Giám thị phòng thi</p>
+                <h3 className="text-[20px] font-semibold text-[#0F172A] tracking-tight">Báo Cáo Sự Cố Kỹ Thuật Khi Thi</h3>
+                <p className="text-[#64748B] text-[13px] font-normal">Gửi thông tin gián đoạn tới Giám thị phòng thi</p>
               </div>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Chọn nhanh loại sự cố:</label>
+                <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Chọn nhanh loại sự cố:</label>
                 <div className="grid grid-cols-2 gap-2">
                   {['Sự cố mất mạng / gián đoạn Wifi', 'Màn hình bị đơ / không phản hồi', 'Không hiển thị ảnh / media', 'Sự cố thiết bị cá nhân'].map((quickMsg) => (
                     <button
                       key={quickMsg}
                       type="button"
                       onClick={() => setIncidentText(quickMsg)}
-                      className="p-2 rounded-xl text-left text-[11px] font-semibold border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-slate-800 transition cursor-pointer"
+                      className="p-2 rounded-xl text-left text-[13px] font-semibold border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-[#0F172A] transition cursor-pointer"
                     >
                       {quickMsg}
                     </button>
@@ -871,18 +871,18 @@ export default function StudentExamTakePage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Mô tả chi tiết sự cố:</label>
+                <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Mô tả chi tiết sự cố:</label>
                 <textarea
                   rows={3}
                   value={incidentText}
                   onChange={(e) => setIncidentText(e.target.value)}
                   placeholder="Mô tả sự cố bạn đang gặp phải..."
-                  className="w-full rounded-xl border border-slate-200 p-3 text-xs font-medium text-slate-900 focus:border-amber-500 focus:outline-none transition resize-none"
+                  className="w-full rounded-xl border border-slate-200 p-3 text-[15px] font-medium text-[#0F172A] focus:border-amber-500 focus:outline-none transition resize-none"
                 />
               </div>
 
               {incidentMsg && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold text-center">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-[15px] font-medium text-center">
                   {incidentMsg}
                 </div>
               )}
@@ -893,7 +893,7 @@ export default function StudentExamTakePage() {
                 type="button"
                 disabled={sendingIncident}
                 onClick={() => setShowIncidentModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-[#0F172A] text-[15px] font-medium shadow-2xs transition cursor-pointer"
               >
                 Hủy bỏ
               </button>

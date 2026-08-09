@@ -461,7 +461,7 @@ export default function AdminEssayReviewPage() {
                 <select
                   value={subjectFilter}
                   onChange={(e) => setSubjectFilter(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                 >
                   <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
                   {availableSubjects.map((s) => (
@@ -476,7 +476,7 @@ export default function AdminEssayReviewPage() {
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                 >
                   <option value="ALL">Tất cả ngày thi</option>
                   {availableDates.map((d) => (
@@ -494,7 +494,7 @@ export default function AdminEssayReviewPage() {
                 <select
                   value={scheduleFilter}
                   onChange={(e) => setScheduleFilter(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                 >
                   <option value="ALL">Tất cả ca thi / lịch thi</option>
                   {availableSchedules.map((s) => (
@@ -507,12 +507,12 @@ export default function AdminEssayReviewPage() {
             )}
 
             {loading ? (
-              <div className="text-center py-10 text-xs font-semibold text-slate-400">
+              <div className="text-center py-10 text-[15px] font-medium text-[#64748B]">
                 <RotateCcw className="h-4 w-4 animate-spin mx-auto mb-2 text-blue-600" />
                 Đang tải danh sách bài làm...
               </div>
             ) : filteredRows.length === 0 ? (
-              <div className="text-center py-10 text-xs font-medium text-slate-400">
+              <div className="text-center py-10 text-[15px] font-normal text-[#64748B]">
                 Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
               </div>
             ) : (
@@ -536,19 +536,19 @@ export default function AdminEssayReviewPage() {
                         }`}
                     >
                       <div className="flex justify-between items-center gap-2">
-                        <span className="font-bold text-xs text-slate-900">{row.student?.fullName}</span>
+                        <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
                         <StatusBadge status={row.gradingStatus} />
                       </div>
-                      <p className="text-[11px] text-slate-500 font-mono">
-                        Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-slate-900">{row.totalScore ?? 'Chưa chấm'}</strong>
+                      <p className="text-[13px] text-[#64748B] font-mono font-normal">
+                        Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
                       </p>
-                      <div className="flex items-center justify-between gap-1 text-[10px] text-slate-500 font-medium border-t border-slate-100 pt-1.5 mt-0.5">
-                        <span className="truncate flex-1 font-semibold text-slate-700">
+                      <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
+                        <span className="truncate flex-1 font-medium text-[#334155]">
                           {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
                           {schedCode ? ` (${schedCode})` : ''}
                         </span>
                         {dateStr && (
-                          <span className="shrink-0 text-[9.5px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md">
+                          <span className="shrink-0 text-[13px] font-semibold text-[#0F172A] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
                             {dateStr}
                           </span>
                         )}
@@ -676,12 +676,12 @@ export default function AdminEssayReviewPage() {
               </div>
 
               {/* Admin Actions Panel - Premium UI/UX Pro Max */}
-              <div className="border-t border-slate-200/80 pt-5 space-y-4">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 {/* Header & Status Indicator */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-1">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                    <h3 className="text-xs font-black uppercase text-slate-700 tracking-wider">Thao tác Quản trị Admin</h3>
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
+                    <h3 className="text-[20px] font-semibold text-[#0F172A] tracking-tight">Thao tác Quản trị Admin</h3>
                   </div>
                   {selected.gradingStatus === 'PUBLISHED' ? (
                     <StatusBadge status="PUBLISHED" customLabel="Điểm số đã công bố chính thức" />
@@ -694,9 +694,9 @@ export default function AdminEssayReviewPage() {
 
                 {/* Input Reason with Icon & Micro-Interaction */}
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <label className="font-bold text-slate-700">Lý do thao tác</label>
-                    <span className="text-slate-400 font-medium">(Bắt buộc khi Trả lại, Mở lại, Gia hạn, Trừ điểm)</span>
+                  <div className="flex items-center justify-between text-[15px]">
+                    <label className="font-medium text-[#0F172A]">Lý do thao tác</label>
+                    <span className="text-[#64748B] font-normal">(Bắt buộc khi Trả lại, Mở lại, Gia hạn, Trừ điểm)</span>
                   </div>
                   <div className="relative">
                     <input
@@ -704,7 +704,7 @@ export default function AdminEssayReviewPage() {
                       placeholder="Nhập ghi chú hoặc lý do chi tiết..."
                       value={actionReason}
                       onChange={(e) => setActionReason(e.target.value)}
-                      className="w-full bg-slate-50/70 border border-slate-200/90 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-2xs placeholder-slate-400"
+                      className="w-full bg-slate-50/70 border border-slate-200/90 rounded-xl px-3.5 py-2.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-2xs placeholder-slate-400"
                     />
                   </div>
                 </div>
@@ -716,32 +716,32 @@ export default function AdminEssayReviewPage() {
                       <button
                         type="button"
                         onClick={() => handleApprove(true)}
-                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
                       >
-                        <Send className="w-3.5 h-3.5" /> Công bố điểm
+                        <Send className="w-4 h-4" /> Công bố điểm
                       </button>
                       <button
                         type="button"
                         onClick={() => handleApprove(false)}
-                        className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                        className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
                       >
-                        <ShieldCheck className="w-3.5 h-3.5" /> Duyệt điểm
+                        <ShieldCheck className="w-4 h-4" /> Duyệt điểm
                       </button>
                     </>
                   )}
                   <button
                     type="button"
                     onClick={handleReopen}
-                    className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                    className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" /> Mở lại bài thi
+                    <RotateCcw className="w-4 h-4" /> Mở lại bài thi
                   </button>
                   <button
                     type="button"
                     onClick={handleReturn}
-                    className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                    className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
                   >
-                    <XCircle className="w-3.5 h-3.5" /> Trả lại chấm lại
+                    <XCircle className="w-4 h-4" /> Trả lại chấm lại
                   </button>
                 </div>
 
@@ -750,23 +750,23 @@ export default function AdminEssayReviewPage() {
                   {/* Gia hạn làm bài */}
                   <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold text-slate-600">Gia hạn:</span>
-                      <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 shadow-2xs">
+                      <span className="text-[15px] font-medium text-[#0F172A]">Gia hạn:</span>
+                      <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1 shadow-2xs">
                         <input
                           type="number"
                           min={1}
                           max={240}
                           value={extraMinutes}
                           onChange={(e) => setExtraMinutes(Number(e.target.value))}
-                          className="w-12 text-xs font-black text-center text-slate-900 focus:outline-none"
+                          className="w-12 text-[15px] font-medium text-center text-[#0F172A] focus:outline-none"
                         />
-                        <span className="text-[11px] font-bold text-slate-800 ml-1">phút</span>
+                        <span className="text-[13px] font-semibold text-[#64748B] ml-1">phút</span>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={handleExtend}
-                      className="px-3.5 py-1.5 bg-slate-900 hover:bg-black active:bg-slate-950 text-white font-bold text-xs rounded-lg transition-all cursor-pointer shadow-xs select-none"
+                      className="px-3.5 py-1.5 bg-slate-900 hover:bg-black active:bg-slate-950 text-white font-medium text-[15px] rounded-lg transition-all cursor-pointer shadow-xs select-none"
                     >
                       Gia hạn
                     </button>
@@ -775,8 +775,8 @@ export default function AdminEssayReviewPage() {
                   {/* Trừ điểm phạt */}
                   <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold text-slate-600">Điểm phạt:</span>
-                      <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 shadow-2xs">
+                      <span className="text-[15px] font-medium text-[#0F172A]">Điểm phạt:</span>
+                      <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1 shadow-2xs">
                         <input
                           type="number"
                           min={0}

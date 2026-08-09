@@ -563,14 +563,14 @@ export default function ProctorDashboardPage() {
                 setRiskFilter(e.target.value as any);
                 setPage(1);
               }}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
             >
               <option value="ALL">Tất cả mức rủi ro</option>
               <option value="HIGH">Rủi ro cao (≥ 40 điểm)</option>
               <option value="MEDIUM">Rủi ro trung bình (15 - 39 điểm)</option>
               <option value="LOW">Rủi ro thấp (&lt; 15 điểm)</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
           </div>
 
           {/* Quick Sort Filter */}
@@ -578,7 +578,7 @@ export default function ProctorDashboardPage() {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
             >
               <option value="seat_asc">Số ghế: Tăng dần (1 - 50)</option>
               <option value="seat_desc">Số ghế: Giảm dần</option>
@@ -587,14 +587,14 @@ export default function ProctorDashboardPage() {
               <option value="risk_desc">Mức rủi ro: Cao nhất trước</option>
               <option value="code_asc">Mã sinh viên: Tăng dần</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
           </div>
         </div>
 
         {/* TabBar Filter Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-bold text-slate-500 mr-1">Trạng thái:</span>
+            <span className="text-[15px] font-medium text-[#64748B] mr-1">Trạng thái:</span>
             {(['ALL', 'IN_PROGRESS', 'FLAGGED', 'SUBMITTED', 'DISCONNECTED'] as const).map((f) => {
               const isActive = filter === f;
               return (
@@ -606,17 +606,17 @@ export default function ProctorDashboardPage() {
                     setPage(1);
                   }}
                   className={[
-                    'px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs',
+                    'px-3.5 py-1.5 rounded-xl text-[15px] font-medium transition cursor-pointer shadow-2xs',
                     isActive
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'bg-white text-slate-700 border border-slate-200/90 hover:bg-slate-50',
+                      ? 'bg-blue-600 text-white shadow-xs font-semibold'
+                      : 'bg-white text-[#0F172A] border border-slate-200/90 hover:bg-slate-50',
                   ].join(' ')}
                 >
                   {FILTER_LABELS[f]}
                   <span
                     className={[
-                      'ml-1.5 text-[10.5px] font-black',
-                      isActive ? 'text-blue-100' : 'text-slate-400',
+                      'ml-1.5 text-[13px] font-semibold',
+                      isActive ? 'text-blue-100' : 'text-[#64748B]',
                     ].join(' ')}
                   >
                     {f === 'ALL' && students.length}
@@ -630,16 +630,16 @@ export default function ProctorDashboardPage() {
             })}
           </div>
 
-          <span className="text-xs font-bold text-slate-600">
-            Hiển thị <strong className="text-slate-900 font-extrabold">{totalItems}</strong> / {students.length} thí sinh
+          <span className="text-[15px] font-medium text-[#64748B]">
+            Hiển thị <strong className="text-[#0F172A] font-semibold">{totalItems}</strong> / {students.length} thí sinh
           </span>
         </div>
       </div>
 
       {/* ── 4. Standard Table Toolbar (Item Count, Sort Dropdown, Column Chooser, ViewMode, Refresh) ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-        <span className="text-xs font-bold text-slate-700">
-          <span className="font-black text-slate-900">{totalItems}</span> thí sinh trong phòng thi
+        <span className="text-[15px] font-medium text-[#334155]">
+          <span className="font-semibold text-[#0F172A]">{totalItems}</span> thí sinh trong phòng thi
         </span>
 
         <div className="flex items-center gap-2">
@@ -648,7 +648,7 @@ export default function ProctorDashboardPage() {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              className="appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
             >
               <option value="seat_asc">Sắp xếp: Số ghế tăng dần</option>
               <option value="seat_desc">Sắp xếp: Số ghế giảm dần</option>
@@ -656,7 +656,7 @@ export default function ProctorDashboardPage() {
               <option value="risk_desc">Mức cảnh báo cao nhất</option>
               <option value="code_asc">Mã SV tăng dần</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
           </div>
 
           {/* Column Selector */}
@@ -664,21 +664,21 @@ export default function ProctorDashboardPage() {
             <button
               type="button"
               onClick={() => setOpenColumnMenu(!openColumnMenu)}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[15px] font-medium text-[#0F172A] transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+              <SlidersHorizontal className="h-4 w-4 text-blue-600" />
               <span>Chọn cột</span>
-              <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`h-4 w-4 text-[#64748B] transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
             </button>
 
             {openColumnMenu && (
               <div
-                className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+                className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-xl text-[15px] space-y-2"
                 onMouseLeave={() => setOpenColumnMenu(false)}
               >
-                <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                  <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
-                  <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="font-semibold text-[#0F172A]">Hiển thị cột</span>
+                  <span className="text-[13px] text-[#64748B] font-normal">Click để ẩn/hiện</span>
                 </div>
 
                 <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">

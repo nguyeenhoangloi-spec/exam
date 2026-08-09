@@ -201,33 +201,33 @@ export default function StudentExamLobbyPage() {
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-blue-200 hover:text-white transition cursor-pointer"
+                  className="inline-flex items-center gap-1 text-[15px] font-medium text-blue-200 hover:text-white transition cursor-pointer"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" /> Lịch thi
+                  <ArrowLeft className="w-4 h-4" /> Lịch thi
                 </button>
                 <span className="text-blue-300/60">•</span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-white/15 text-blue-100 text-[11px] font-black tracking-wide uppercase">
-                  <Sparkles className="w-3 h-3 text-blue-300" />
+                <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-md bg-white/15 text-blue-100 text-[13px] font-semibold tracking-wide uppercase">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-300" />
                   {examTypeBadgeText}
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
                 {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}
               </h1>
 
-              <div className="flex items-center gap-2 text-xs font-semibold text-blue-100/90 flex-wrap">
-                <span>Mã môn: <strong className="text-white font-black">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</strong></span>
+              <div className="flex items-center gap-2 text-[15px] font-medium text-blue-100/90 flex-wrap">
+                <span>Mã môn: <strong className="text-white font-semibold">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</strong></span>
                 <span>•</span>
-                <span>Kỳ thi: <strong className="text-white font-black">{schedule?.examPeriod?.name || examInfo?.examPeriodName || '---'}</strong></span>
+                <span>Kỳ thi: <strong className="text-white font-semibold">{schedule?.examPeriod?.name || examInfo?.examPeriodName || '---'}</strong></span>
               </div>
             </div>
 
             <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/20 shrink-0 self-start sm:self-center">
               <Clock className="w-6 h-6 text-blue-200" />
               <div>
-                <span className="text-[10px] font-bold text-blue-200 uppercase tracking-wider block">Thời gian làm bài</span>
-                <span className="text-xl font-black text-white">{durationMinutes} phút</span>
+                <span className="text-[13px] font-semibold text-blue-200 uppercase tracking-wider block">Thời gian làm bài</span>
+                <span className="text-xl font-bold text-white">{durationMinutes} phút</span>
               </div>
             </div>
           </div>
@@ -239,15 +239,15 @@ export default function StudentExamLobbyPage() {
             <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-600">
               <Trophy className="w-7 h-7" />
             </div>
-            <h2 className="text-xl font-black text-slate-900">Bạn Đã Hoàn Thành Bài Thi Này</h2>
-            <p className="text-xs text-slate-600 font-medium max-w-md mx-auto leading-relaxed">
+            <h2 className="text-[20px] font-semibold text-[#0F172A]">Bạn Đã Hoàn Thành Bài Thi Này</h2>
+            <p className="text-[15px] text-[#64748B] font-normal max-w-md mx-auto leading-relaxed">
               Bài thi của bạn đã được nộp thành công và lưu trữ an toàn trên hệ thống máy chủ khảo thí.
             </p>
             <div className="pt-2">
               <button
                 type="button"
                 onClick={() => router.push(`/student/online-exam/${existingAttempt.id}/result`)}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-md shadow-emerald-600/20 transition inline-flex items-center gap-2 cursor-pointer active:scale-95"
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-[15px] font-medium rounded-xl shadow-md shadow-emerald-600/20 transition inline-flex items-center gap-2 cursor-pointer active:scale-95"
               >
                 <Award className="w-4 h-4" /> Xem Kết Quả & Bảng Điểm
               </button>
@@ -259,11 +259,11 @@ export default function StudentExamLobbyPage() {
             {/* Thông báo lỗi nếu có */}
             {error && (
               <div className="p-5 bg-rose-50/80 text-rose-900 space-y-1">
-                <div className="flex items-center gap-2 text-rose-950 font-black text-xs">
+                <div className="flex items-center gap-2 text-rose-950 font-semibold text-[15px]">
                   <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                   <span>Thông báo từ hệ thống khảo thí:</span>
                 </div>
-                <p className="text-xs font-bold pl-6 text-rose-800 leading-relaxed">{error}</p>
+                <p className="text-[15px] font-medium pl-6 text-rose-800 leading-relaxed">{error}</p>
               </div>
             )}
 
@@ -271,47 +271,47 @@ export default function StudentExamLobbyPage() {
             <div className="p-6 space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-blue-600" />
-                  <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <h2 className="text-[20px] font-semibold text-[#0F172A]">
                     Thông tin Thí sinh & Phòng thi
                   </h2>
                 </div>
-                <span className="text-[11.5px] font-bold text-slate-600">
-                  Phòng thi: <strong className="text-blue-700 font-black">{roomName} ({building})</strong>
+                <span className="text-[15px] font-medium text-[#64748B]">
+                  Phòng thi: <strong className="text-blue-700 font-semibold">{roomName} ({building})</strong>
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-[15px]">
                 <div className="space-y-1">
-                  <span className="text-slate-500 font-bold block text-[11px]">Họ và tên thí sinh</span>
-                  <span className="font-black text-slate-900 text-sm block truncate">{fullName}</span>
+                  <span className="text-[#64748B] font-semibold block text-[13px]">Họ và tên thí sinh</span>
+                  <span className="font-semibold text-[#0F172A] text-[15px] block truncate">{fullName}</span>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-slate-500 font-bold block text-[11px]">Mã sinh viên</span>
-                  <span className="font-mono font-black text-slate-900 text-sm block">
+                  <span className="text-[#64748B] font-semibold block text-[13px]">Mã sinh viên</span>
+                  <span className="font-mono font-semibold text-[#0F172A] text-[15px] block">
                     {studentCode}
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-slate-500 font-bold block text-[11px]">Lớp sinh hoạt</span>
-                  <span className="font-black text-slate-900 text-sm block">
+                  <span className="text-[#64748B] font-semibold block text-[13px]">Lớp sinh hoạt</span>
+                  <span className="font-semibold text-[#0F172A] text-[15px] block">
                     {studentClass}
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-slate-500 font-bold block text-[11px]">SBD / Số ghế</span>
-                  <span className="font-black text-slate-900 text-sm block">
+                  <span className="text-[#64748B] font-semibold block text-[13px]">SBD / Số ghế</span>
+                  <span className="font-semibold text-[#0F172A] text-[15px] block">
                     {examNumber} • Ghế {seatNumber}
                   </span>
                 </div>
 
                 <div className="space-y-1 col-span-2 sm:col-span-1">
-                  <span className="text-slate-500 font-bold block text-[11px]">Ca thi & Ngày thi</span>
-                  <span className="font-black text-slate-900 block">{timeSlotStr}</span>
-                  <span className="text-[10.5px] text-slate-500 font-bold">{examDateStr}</span>
+                  <span className="text-[#64748B] font-semibold block text-[13px]">Ca thi & Ngày thi</span>
+                  <span className="font-semibold text-[#0F172A] block text-[15px]">{timeSlotStr}</span>
+                  <span className="text-[13px] text-[#64748B] font-normal">{examDateStr}</span>
                 </div>
               </div>
             </div>
@@ -319,18 +319,18 @@ export default function StudentExamLobbyPage() {
             {/* ── Khối 2: Quy định giám sát & Tiêu chuẩn phòng thi ── */}
             <div className="p-6 space-y-3.5">
               <div className="flex items-center gap-2 pb-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                <h2 className="text-[20px] font-semibold text-[#0F172A]">
                   Quy chế giám sát an toàn thi trực tuyến
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[15px]">
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-blue-50/70 border border-blue-100">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
                   <div>
-                    <strong className="text-blue-950 font-bold block">Tự động lưu câu trả lời</strong>
-                    <span className="text-blue-900/80 text-[11px] font-semibold leading-relaxed">
+                    <strong className="text-blue-950 font-semibold block">Tự động lưu câu trả lời</strong>
+                    <span className="text-blue-900/80 text-[13px] font-normal leading-relaxed">
                       Mỗi đáp án bạn chọn sẽ được lưu ngay lập tức về máy chủ thi.
                     </span>
                   </div>
@@ -339,8 +339,8 @@ export default function StudentExamLobbyPage() {
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
                   <div>
-                    <strong className="text-emerald-950 font-bold block">Chế độ toàn màn hình</strong>
-                    <span className="text-emerald-900/80 text-[11px] font-semibold leading-relaxed">
+                    <strong className="text-emerald-950 font-semibold block">Chế độ toàn màn hình</strong>
+                    <span className="text-emerald-900/80 text-[13px] font-normal leading-relaxed">
                       Trình duyệt sẽ tự động chuyển sang chế độ Fullscreen khi bắt đầu làm bài.
                     </span>
                   </div>
@@ -349,8 +349,8 @@ export default function StudentExamLobbyPage() {
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/70 border border-amber-100">
                   <ShieldAlert className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
                   <div>
-                    <strong className="text-amber-950 font-bold block">Cảnh báo rời bài thi</strong>
-                    <span className="text-amber-900/80 text-[11px] font-semibold leading-relaxed">
+                    <strong className="text-amber-950 font-semibold block">Cảnh báo rời bài thi</strong>
+                    <span className="text-amber-900/80 text-[13px] font-normal leading-relaxed">
                       Chuyển tab hoặc mở ứng dụng khác sẽ bị ghi nhật ký giám thị.
                     </span>
                   </div>
@@ -359,8 +359,8 @@ export default function StudentExamLobbyPage() {
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-50/70 border border-rose-100">
                   <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
                   <div>
-                    <strong className="text-rose-950 font-bold block">Khóa bài khi vi phạm</strong>
-                    <span className="text-rose-900/80 text-[11px] font-semibold leading-relaxed">
+                    <strong className="text-rose-950 font-semibold block">Khóa bài khi vi phạm</strong>
+                    <span className="text-rose-900/80 text-[13px] font-normal leading-relaxed">
                       Vi phạm quá {config?.maxAllowedViolations || 5} lần sẽ tự động khóa và thu bài.
                     </span>
                   </div>
@@ -371,12 +371,12 @@ export default function StudentExamLobbyPage() {
             {/* Checkbox cam kết */}
             {config?.requireRulesAcceptance !== false && (
               <div className="p-4 bg-slate-50/30">
-                <label className="flex items-start gap-3 text-xs font-bold text-slate-800 cursor-pointer">
+                <label className="flex items-start gap-3 text-[15px] font-medium text-[#0F172A] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={rulesAccepted}
                     onChange={(event) => setRulesAccepted(event.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded accent-blue-600 cursor-pointer"
+                    className="mt-0.5 h-4.5 w-4.5 rounded accent-blue-600 cursor-pointer"
                   />
                   <span className="leading-relaxed">
                     Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
@@ -391,7 +391,7 @@ export default function StudentExamLobbyPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition cursor-pointer shadow-2xs active:scale-95"
+                className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#0F172A] text-[15px] font-medium transition cursor-pointer shadow-2xs active:scale-95"
               >
                 Quay lại
               </button>
@@ -410,7 +410,7 @@ export default function StudentExamLobbyPage() {
                   (error && !isPasswordRequired && !isAccessCodeRequired) ||
                   (config?.requireRulesAcceptance !== false && !rulesAccepted)
                 }
-                className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-lg shadow-blue-600/30 transition active:scale-98 cursor-pointer"
+                className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-[15px] font-medium flex items-center gap-2 shadow-lg shadow-blue-600/30 transition active:scale-98 cursor-pointer"
               >
                 {starting ? (
                   <span>Đang khởi tạo bài thi...</span>
@@ -443,8 +443,8 @@ export default function StudentExamLobbyPage() {
                   <Lock className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black tracking-tight text-white">Nhập Mật Khẩu Phòng Thi</h3>
-                  <p className="text-[11px] text-blue-100 font-medium">Xác thực quyền truy cập trước khi vào thi</p>
+                  <h3 className="text-[20px] font-semibold tracking-tight text-white">Nhập Mật Khẩu Phòng Thi</h3>
+                  <p className="text-[13px] text-blue-100 font-normal">Xác thực quyền truy cập trước khi vào thi</p>
                 </div>
               </div>
               <button
@@ -461,15 +461,15 @@ export default function StudentExamLobbyPage() {
               {/* Thông báo yêu cầu mật khẩu / lỗi (Dạng chữ phẳng, không khung) */}
               <div className="flex items-center gap-2 py-1 text-rose-600">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                <span className="text-xs font-bold leading-normal">
+                <span className="text-[15px] font-medium leading-normal">
                   {error || 'Kỳ thi chính thức yêu cầu nhập mật khẩu thi trước khi vào thi'}
                 </span>
               </div>
 
               {isPasswordRequired && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-800">
-                    Mật khẩu đề thi <span className="text-rose-600 font-bold">* (Giám thị đọc tại phòng)</span>
+                  <label className="block text-[15px] font-medium text-[#0F172A]">
+                    Mật khẩu đề thi <span className="text-rose-600 font-semibold">* (Giám thị đọc tại phòng)</span>
                   </label>
                   <div className="relative">
                     <input
@@ -488,7 +488,7 @@ export default function StudentExamLobbyPage() {
                           void handleStartExam();
                         }
                       }}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 pr-10 text-xs font-bold text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 pr-10 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
                     <button
                       type="button"
@@ -503,8 +503,8 @@ export default function StudentExamLobbyPage() {
 
               {isAccessCodeRequired && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold text-slate-800">
-                    Mã truy cập phòng thi <span className="text-rose-600 font-bold">* (Bắt buộc)</span>
+                  <label className="block text-[15px] font-medium text-[#0F172A]">
+                    Mã truy cập phòng thi <span className="text-rose-600 font-semibold">* (Bắt buộc)</span>
                   </label>
                   <input
                     type="text"
@@ -521,7 +521,7 @@ export default function StudentExamLobbyPage() {
                         void handleStartExam();
                       }
                     }}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition shadow-2xs"
                   />
                 </div>
               )}
@@ -532,7 +532,7 @@ export default function StudentExamLobbyPage() {
               <button
                 type="button"
                 onClick={() => setShowPasswordModal(false)}
-                className="px-4 py-2 text-xs font-extrabold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-[15px] font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 rounded-xl transition cursor-pointer"
               >
                 Hủy
               </button>
@@ -547,7 +547,7 @@ export default function StudentExamLobbyPage() {
                   (isPasswordRequired && !examPassword.trim()) ||
                   (isAccessCodeRequired && !accessCode.trim())
                 }
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-extrabold text-xs rounded-xl shadow-md shadow-blue-600/30 transition active:scale-95 cursor-pointer"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium text-[15px] rounded-xl shadow-md shadow-blue-600/30 transition active:scale-95 cursor-pointer"
               >
                 <span>Xác nhận</span>
               </button>

@@ -652,7 +652,7 @@ function TeacherEssayGradingContent() {
                 <select
                   value={subjectFilter}
                   onChange={(e) => setSubjectFilter(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                 >
                   <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
                   {availableSubjects.map((s) => (
@@ -665,7 +665,7 @@ function TeacherEssayGradingContent() {
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                 >
                   <option value="ALL">Tất cả ngày thi ({availableDates.length})</option>
                   {availableDates.map((d) => (
@@ -682,7 +682,7 @@ function TeacherEssayGradingContent() {
                   <select
                     value={scheduleFilter}
                     onChange={(e) => setScheduleFilter(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
                   >
                     <option value="ALL">Tất cả ca thi / lịch thi</option>
                     {availableSchedules.map((s) => (
@@ -695,12 +695,12 @@ function TeacherEssayGradingContent() {
               )}
 
               {loading ? (
-                <div className="text-center py-10 text-xs font-semibold text-slate-400">
+                <div className="text-center py-10 text-[15px] font-medium text-[#64748B]">
                   <RotateCcw className="h-4 w-4 animate-spin mx-auto mb-2 text-blue-600" />
                   Đang tải danh sách bài làm...
                 </div>
               ) : filteredRows.length === 0 ? (
-                <div className="text-center py-10 text-xs font-medium text-slate-400">
+                <div className="text-center py-10 text-[15px] font-normal text-[#64748B]">
                   Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
                 </div>
               ) : (
@@ -725,19 +725,19 @@ function TeacherEssayGradingContent() {
                         }`}
                       >
                         <div className="flex justify-between items-center gap-2">
-                          <span className="font-bold text-xs text-slate-900">{row.student?.fullName}</span>
+                          <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
                           <StatusBadge status={row.gradingStatus} />
                         </div>
-                        <p className="text-[11px] text-slate-500 font-mono">
-                          Mã SV: <strong className="text-slate-800">{row.student?.studentCode}</strong> · Điểm: <strong className="text-slate-900 font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
+                        <p className="text-[13px] text-[#64748B] font-normal font-mono">
+                          Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
                         </p>
-                        <div className="flex items-center justify-between gap-1 text-[10px] text-slate-500 font-medium border-t border-slate-100 pt-1.5 mt-0.5">
-                          <span className="truncate flex-1 font-semibold text-slate-700">
+                        <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
+                          <span className="truncate flex-1 font-medium text-[#334155]">
                             Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
                             {schedCode ? ` (${schedCode})` : ''}
                           </span>
                           {dateStr && (
-                            <span className="shrink-0 text-[9.5px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md">
+                            <span className="shrink-0 text-[13px] font-semibold text-[#0F172A] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
                               {dateStr}
                             </span>
                           )}
@@ -841,12 +841,12 @@ function TeacherEssayGradingContent() {
                               <button
                                 type="button"
                                 onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: q.rubric || [] })}
-                                className="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
+                                className="inline-flex items-center gap-1 text-[15px] font-medium text-[#0F172A] bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
                               >
-                                <Sliders className="h-3 w-3 text-slate-500" />
+                                <Sliders className="h-4 w-4 text-[#64748B]" />
                                 <span>Sửa Rubric</span>
                               </button>
-                              <span className="text-slate-900 font-mono text-sm font-black">
+                              <span className="text-[#0F172A] font-mono text-[18px] font-bold">
                                 {ans?.finalScore !== undefined && ans?.finalScore !== null
                                   ? ans.finalScore
                                   : (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] || 0), 0)} / {q.score}đ
@@ -856,16 +856,16 @@ function TeacherEssayGradingContent() {
 
                           {/* Student Answer */}
                           <div className="space-y-1">
-                            <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Bài làm của sinh viên:</div>
-                            <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed shadow-2xs">
-                              {ans?.textAnswer || <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>}
+                            <div className="text-[13px] font-semibold uppercase text-[#64748B] tracking-wider">Bài làm của sinh viên:</div>
+                            <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-[15px] text-[#0F172A] whitespace-pre-wrap leading-relaxed shadow-2xs font-normal">
+                              {ans?.textAnswer || <span className="italic text-[#64748B]">Sinh viên không nhập nội dung văn bản</span>}
                             </div>
                           </div>
 
                           {/* Files */}
                           {ans?.submissionFiles?.length > 0 && (
                             <div className="space-y-1">
-                              <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">File đính kèm ({ans.submissionFiles.length}):</div>
+                              <div className="text-[13px] font-semibold uppercase text-[#64748B] tracking-wider">File đính kèm ({ans.submissionFiles.length}):</div>
                               <div className="flex gap-2 flex-wrap">
                                 {ans.submissionFiles.map((f: any) => (
                                   <a
@@ -873,9 +873,9 @@ function TeacherEssayGradingContent() {
                                     href={f.url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-blue-700 text-xs font-semibold hover:bg-blue-50 transition shadow-2xs"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-blue-700 text-[15px] font-medium hover:bg-blue-50 transition shadow-2xs"
                                   >
-                                    <Download className="h-3.5 w-3.5 text-blue-500" />
+                                    <Download className="h-4 w-4 text-blue-500" />
                                     <span>Tải file: {f.fileName} ({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
                                   </a>
                                 ))}
@@ -886,16 +886,16 @@ function TeacherEssayGradingContent() {
                           {/* Rubric Criteria Table */}
                           {q.rubric?.length > 0 ? (
                             <div className="space-y-2 pt-1">
-                              <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Tiêu chí chấm Rubric:</div>
+                              <div className="text-[13px] font-semibold uppercase text-[#64748B] tracking-wider">Tiêu chí chấm Rubric:</div>
                               <div className="space-y-2">
                                 {q.rubric.map((r: any) => (
                                   <div key={r.id} className="bg-white p-3.5 rounded-xl border border-slate-200/90 space-y-2.5 shadow-2xs">
-                                    <div className="flex justify-between items-start text-xs">
+                                    <div className="flex justify-between items-start text-[15px]">
                                       <div>
-                                        <span className="font-bold text-slate-900">{r.label}</span>
-                                        {r.description && <p className="text-[11px] text-slate-500 mt-0.5">{r.description}</p>}
+                                        <span className="font-semibold text-[#0F172A]">{r.label}</span>
+                                        {r.description && <p className="text-[13px] text-[#64748B] mt-0.5 font-normal">{r.description}</p>}
                                       </div>
-                                      <span className="font-mono text-xs font-bold text-slate-600 shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
+                                      <span className="font-mono text-[15px] font-semibold text-[#64748B] shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
                                     </div>
 
                                     <div className="flex gap-2 items-center flex-wrap">
@@ -907,7 +907,7 @@ function TeacherEssayGradingContent() {
                                         placeholder="Điểm"
                                         value={scores[r.id] ?? 0}
                                         onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
-                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-bold font-mono text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
+                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium font-mono text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
                                       />
 
                                       {/* Quick Score Chips */}
@@ -917,10 +917,10 @@ function TeacherEssayGradingContent() {
                                             key={presetVal}
                                             type="button"
                                             onClick={() => handleScoreChange(r.id, String(presetVal), r.maxScore)}
-                                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold border transition cursor-pointer ${
+                                            className={`px-2.5 py-1 rounded-md text-[13px] font-semibold border transition cursor-pointer ${
                                               scores[r.id] === presetVal
                                                 ? 'bg-blue-600 text-white border-blue-600'
-                                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                                                : 'bg-slate-50 text-[#334155] border-slate-200 hover:bg-slate-100 hover:text-[#0F172A]'
                                             }`}
                                           >
                                             {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
@@ -933,7 +933,7 @@ function TeacherEssayGradingContent() {
                                         placeholder="Nhận xét tiêu chí..."
                                         value={comments[r.id] || ''}
                                         onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
-                                        className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none"
+                                        className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
                                       />
                                     </div>
                                   </div>

@@ -178,15 +178,15 @@ export default function LoginPage() {
           </div>
 
           <div className="shrink-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-blue-200 text-[9.5px] font-bold tracking-[0.14em] uppercase">
-              <CalendarDays className="w-2.5 h-2.5" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-blue-200 text-[13px] font-semibold tracking-wide uppercase">
+              <CalendarDays className="w-3.5 h-3.5" />
               Năm học 2025 – 2026 &nbsp;•&nbsp; Học kỳ II
             </div>
-            <h2 className="mt-3.5 text-[26px] xl:text-[30px] font-black text-white leading-[1.2] tracking-tight">
+            <h2 className="mt-3.5 text-[28px] xl:text-[32px] font-bold text-white leading-[1.2] tracking-tight">
               Quản lý khảo thí
               <span className="block text-blue-300">Đăng nhập Google tập trung</span>
             </h2>
-            <p className="mt-2.5 text-[12px] leading-relaxed text-blue-100/70 font-medium max-w-xs">
+            <p className="mt-2.5 text-[14px] leading-relaxed text-blue-100/80 font-normal max-w-xs">
               Đăng nhập một chạm an toàn bằng tài khoản Google. Hệ thống tự động xác thực vai trò Admin, Giảng viên hoặc Sinh viên theo email của bạn.
             </p>
           </div>
@@ -200,11 +200,11 @@ export default function LoginPage() {
             ].map(({ icon: Icon, label, desc }) => (
               <div key={label} className="p-3 rounded-xl bg-white/[0.07] border border-white/10 flex items-start gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-blue-400/20 border border-blue-300/20 flex items-center justify-center shrink-0">
-                  <Icon className="w-3.5 h-3.5 text-blue-200" />
+                  <Icon className="w-4 h-4 text-blue-200" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-white leading-snug">{label}</p>
-                  <p className="text-[10px] text-blue-100/50 mt-0.5 leading-snug">{desc}</p>
+                  <p className="text-[13px] font-semibold text-white leading-snug">{label}</p>
+                  <p className="text-[13px] text-blue-100/70 mt-0.5 leading-snug font-normal">{desc}</p>
                 </div>
               </div>
             ))}
@@ -219,16 +219,16 @@ export default function LoginPage() {
               ].map(({ icon: Icon, value, label }, i) => (
                 <div key={label} className={['py-3', i < 2 ? 'border-r border-white/12 pr-3' : 'pl-3'].join(' ')}>
                   <div className="flex items-center gap-1">
-                    <Icon className="w-3 h-3 text-blue-300" />
-                    <span className="text-lg font-black text-white">{value}</span>
+                    <Icon className="w-4 h-4 text-blue-300" />
+                    <span className="text-lg font-bold text-white">{value}</span>
                   </div>
-                  <p className="text-[10px] text-blue-100/50 mt-0.5 font-medium">{label}</p>
+                  <p className="text-[13px] text-blue-100/70 mt-0.5 font-normal">{label}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-3 flex items-center justify-between text-[10px] text-blue-100/45 font-medium">
+            <div className="mt-3 flex items-center justify-between text-[13px] text-blue-100/70 font-normal">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-2.5 h-2.5 text-blue-400/60" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400/80" />
                 Đạt chuẩn quy chế đào tạo tín chỉ
               </span>
               <span>© 2026 Exam System. All rights reserved.</span>
@@ -253,11 +253,11 @@ export default function LoginPage() {
             onClick={toggleDark}
             aria-label="Chuyển chủ đề sáng/tối"
             className={[
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer',
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[15px] font-medium border transition duration-200 cursor-pointer',
               isDark ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50',
             ].join(' ')}
           >
-            {isDark ? <><Sun className="w-3 h-3 text-amber-400" /><span>Sáng</span></> : <><Moon className="w-3 h-3" /><span>Tối</span></>}
+            {isDark ? <><Sun className="w-4 h-4 text-amber-400" /><span>Sáng</span></> : <><Moon className="w-4 h-4" /><span>Tối</span></>}
           </button>
         </div>
 
@@ -278,30 +278,28 @@ export default function LoginPage() {
                   <GraduationCap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-slate-900">EXAM SYSTEM</p>
-                  <p className="text-[9.5px] font-bold tracking-[0.18em] text-blue-600 uppercase">Hệ thống quản lý khảo thí</p>
+                  <p className="text-[18px] font-bold text-slate-900">EXAM SYSTEM</p>
+                  <p className="text-[13px] font-semibold tracking-wider text-blue-600 uppercase">Hệ thống quản lý khảo thí</p>
                 </div>
               </div>
 
               {/* Header */}
               <div className="mb-6">
-                <h2 className={['text-2xl font-black tracking-tight leading-tight', isDark ? 'text-white' : 'text-slate-900'].join(' ')}>
+                <h2 className={['text-[24px] font-semibold tracking-tight leading-tight', isDark ? 'text-white' : 'text-[#0F172A]'].join(' ')}>
                   Đăng nhập hệ thống
                 </h2>
-                <p className={['mt-1.5 text-xs font-medium leading-relaxed', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>
+                <p className={['mt-1.5 text-[15px] font-normal leading-relaxed', isDark ? 'text-slate-400' : 'text-[#64748B]'].join(' ')}>
                   Sử dụng tài khoản Google để truy cập nhanh. Hệ thống tự động xác định vai trò của bạn theo email.
                 </p>
               </div>
 
               {/* Error Alert */}
               {error && (
-                <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-start gap-2.5 animate-shake">
+                <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-[15px] font-medium flex items-start gap-2.5 animate-shake">
                   <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{error}</span>
                 </div>
               )}
-
-
 
               {/* Main Google Login Button */}
               <div className="space-y-4">
@@ -309,7 +307,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-3 rounded-2xl py-3.5 px-5 text-sm font-extrabold transition-all duration-200 cursor-pointer border shadow-md hover:shadow-lg active:scale-[0.99] bg-white border-slate-200 text-slate-800 hover:bg-slate-50 hover:border-slate-300 focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="w-full flex items-center justify-center gap-3 rounded-2xl py-3.5 px-5 text-[15px] font-medium transition-all duration-200 cursor-pointer border shadow-md hover:shadow-lg active:scale-[0.99] bg-white border-slate-200 text-[#0F172A] hover:bg-slate-50 hover:border-slate-300 focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -318,7 +316,7 @@ export default function LoginPage() {
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                   </svg>
                   <span>{loading ? 'Đang kết nối Google...' : 'Đăng nhập bằng Google'}</span>
-                  {!loading && <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 ml-auto" />}
+                  {!loading && <ArrowRight className="w-4 h-4 text-[#64748B] group-hover:text-slate-600 ml-auto" />}
                 </button>
               </div>
 
@@ -327,7 +325,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowManualLogin((prev) => !prev)}
-                  className={['w-full flex items-center justify-between text-xs font-bold transition cursor-pointer', isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700'].join(' ')}
+                  className={['w-full flex items-center justify-between text-[15px] font-medium transition cursor-pointer', isDark ? 'text-slate-400 hover:text-slate-200' : 'text-[#64748B] hover:text-[#0F172A]'].join(' ')}
                 >
                   <span>Hoặc đăng nhập bằng tài khoản nội bộ</span>
                   {showManualLogin ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -337,7 +335,7 @@ export default function LoginPage() {
                   <form onSubmit={handleManualLogin} noValidate className="space-y-3 mt-4 animate-fade-in">
                     <div>
                       <div className="relative">
-                        <UserIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <UserIcon className="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <input
                           type="text"
                           value={username}
@@ -349,7 +347,7 @@ export default function LoginPage() {
                     </div>
                     <div>
                       <div className="relative">
-                        <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <Lock className="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <input
                           type={showPassword ? 'text' : 'password'}
                           value={password}
@@ -365,7 +363,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full rounded-xl py-2.5 text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 transition shadow-2xs disabled:opacity-50 cursor-pointer"
+                      className="w-full rounded-xl py-2.5 text-[15px] font-medium text-white bg-slate-800 hover:bg-slate-900 transition shadow-2xs disabled:opacity-50 cursor-pointer"
                     >
                       Đăng nhập nội bộ
                     </button>
@@ -375,8 +373,8 @@ export default function LoginPage() {
 
               {/* Footer support */}
               <div className={['mt-5 pt-4 border-t text-center', isDark ? 'border-slate-800' : 'border-slate-100'].join(' ')}>
-                <p className={['flex items-center justify-center gap-1.5 text-xs font-medium', isDark ? 'text-slate-400' : 'text-slate-500'].join(' ')}>
-                  <Headphones className="w-3.5 h-3.5" />
+                <p className={['flex items-center justify-center gap-1.5 text-[15px] font-normal', isDark ? 'text-slate-400' : 'text-[#64748B]'].join(' ')}>
+                  <Headphones className="w-4 h-4" />
                   Cần hỗ trợ?{' '}
                   <button type="button" onClick={() => router.push('/contact')} className="text-blue-600 hover:text-blue-700 font-bold transition cursor-pointer">Liên hệ quản trị hệ thống</button>
                 </p>

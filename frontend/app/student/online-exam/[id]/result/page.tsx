@@ -123,10 +123,10 @@ export default function StudentExamResultPage() {
               </div>
             )}
 
-            <h1 className="text-xl font-black text-slate-900 mb-1">
+            <h1 className="text-[28px] font-bold text-[#0F172A] mb-1">
               {isUnderReview ? 'Bài Thi Cần Được Xem Xét' : 'Hoàn Thành Bài Thi Trực Tuyến'}
             </h1>
-            <p className="text-slate-500 text-xs font-medium">
+            <p className="text-[#64748B] text-[15px] font-normal">
               {isUnderReview
                 ? 'Hệ thống nhận thấy có một số sự kiện rủi ro cần cán bộ coi thi phê duyệt.'
                 : 'Bài thi của bạn đã được lưu và gửi về hệ thống thành công.'}
@@ -135,28 +135,28 @@ export default function StudentExamResultPage() {
 
           <div className="space-y-4">
             <div className="bg-slate-50/70 border border-slate-100 p-5 rounded-xl space-y-2.5">
-              <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-xs">
-                <span className="text-slate-500 font-medium">Trạng thái bài thi:</span>
-                <span className="inline-flex items-center rounded-[6px] bg-[#EFF6FF] px-2 py-1 text-[13px] font-semibold text-[#2563EB]">
+              <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-[15px]">
+                <span className="text-[#64748B] font-normal">Trạng thái bài thi:</span>
+                <span className="inline-flex items-center rounded-[6px] bg-[#EFF6FF] px-2.5 py-1 text-[13px] font-semibold text-[#2563EB]">
                   {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}
                 </span>
               </div>
-              <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-xs">
-                <span className="text-slate-500 font-medium">Thời điểm nộp bài:</span>
-                <span className="font-semibold text-slate-700">
+              <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-[15px]">
+                <span className="text-[#64748B] font-normal">Thời điểm nộp bài:</span>
+                <span className="font-semibold text-[#0F172A]">
                   {result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Mới đây'}
                 </span>
               </div>
 
               {result.totalScore !== undefined && result.totalScore !== null ? (
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-sm">
-                  <span className="text-slate-700 font-bold">Điểm số đạt được:</span>
-                  <span className="text-emerald-600 text-xl font-black font-mono">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-[18px]">
+                  <span className="text-[#0F172A] font-semibold">Điểm số đạt được:</span>
+                  <span className="text-emerald-600 text-2xl font-bold font-mono">
                     {result.totalScore} / {result.maxScore || 10} điểm
                   </span>
                 </div>
               ) : (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs font-semibold">
+                <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-[15px] font-medium">
                   <strong>Quy chế công bố điểm thi:</strong> Điểm số chính thức sẽ được công bố sau khi ca thi kết thúc{result.examEndTime ? ` (Dự kiến lúc ${result.examEndTime})` : ''}.
                 </div>
               )}
@@ -165,15 +165,15 @@ export default function StudentExamResultPage() {
 
           {isUnderReview && (
             <div className="bg-amber-50/70 border border-amber-200 p-5 rounded-xl space-y-3">
-              <h3 className="text-xs font-extrabold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
-                <FileText className="w-4 h-4 text-amber-700" /> Gửi Giải Trình Sự Cố
+              <h3 className="text-[18px] font-semibold text-amber-900 flex items-center gap-1.5">
+                <FileText className="w-5 h-5 text-amber-700" /> Gửi Giải Trình Sự Cố
               </h3>
-              <p className="text-xs text-amber-800 font-medium">
+              <p className="text-[15px] text-amber-900 font-normal leading-relaxed">
                 Nếu bài thi bị gián đoạn do rớt mạng, lỗi trình duyệt hoặc lý do khách quan, bạn có thể gửi giải trình bên dưới.
               </p>
 
               {appealSuccess ? (
-                <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold">
+                <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-[15px] font-medium">
                   Đã gửi giải trình thành công. Giám thị sẽ tiến hành xem xét biên bản.
                 </div>
               ) : (
@@ -183,15 +183,15 @@ export default function StudentExamResultPage() {
                     value={appealReason}
                     onChange={(e) => setAppealReason(e.target.value)}
                     placeholder="Nhập chi tiết lý do sự cố xảy ra..."
-                    className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 font-medium"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-3 text-[15px] text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:border-blue-500 font-medium"
                     required
                   />
                   <button
                     type="submit"
                     disabled={submittingAppeal || !appealReason.trim()}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 text-xs font-bold shadow-2xs active:scale-95 transition cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 text-[15px] font-medium shadow-2xs active:scale-95 transition cursor-pointer disabled:opacity-50"
                   >
-                    <Send className="w-3.5 h-3.5" /> Gửi giải trình cho giám thị
+                    <Send className="w-4 h-4" /> Gửi giải trình cho giám thị
                   </button>
                 </form>
               )}
@@ -202,18 +202,18 @@ export default function StudentExamResultPage() {
             <button
               type="button"
               onClick={() => router.push('/student/exam-schedule')}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-blue-600 transition cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-[15px] font-medium text-[#64748B] hover:text-blue-600 transition cursor-pointer"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> Về danh sách lịch thi
+              <ArrowLeft className="w-4 h-4" /> Về danh sách lịch thi
             </button>
 
             {result.allowReview !== false && (
               <button
                 type="button"
                 onClick={() => setShowReview(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 px-4 py-2 text-xs font-bold transition cursor-pointer shadow-2xs active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-[#0F172A] hover:text-blue-600 px-4 py-2 text-[15px] font-medium transition cursor-pointer shadow-2xs active:scale-95"
               >
-                <Eye className="w-3.5 h-3.5 text-slate-500" /> Xem lại bài làm
+                <Eye className="w-4 h-4 text-[#64748B]" /> Xem lại bài làm
               </button>
             )}
           </div>
