@@ -376,18 +376,18 @@ export default function StudentExamSchedulePage() {
                         Ghế #{item.seatNumber || 'Chưa xếp'}
                       </span>
                     </div>
-                    {item.attempt?.gradingStatus === 'PUBLISHED' && (
+                    {(item as any).attempt?.gradingStatus === 'PUBLISHED' && (
                       <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
                         <span className="flex items-center gap-2 text-slate-500 font-bold">
                           <Award className="w-3.5 h-3.5 text-emerald-600" />
                           Điểm công bố:
                         </span>
                         <span className={`font-mono font-black text-xs px-2.5 py-0.5 rounded-lg border ${
-                          item.attempt.totalScore === 0 
+                          (item as any).attempt.totalScore === 0 
                             ? 'bg-rose-50 text-rose-700 border-rose-200' 
                             : 'bg-emerald-50 text-emerald-700 border-emerald-200'
                         }`}>
-                          {item.attempt.totalScore}đ {item.attempt.penaltyReason ? `(${item.attempt.penaltyReason})` : ''}
+                          {(item as any).attempt.totalScore}đ {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
                         </span>
                       </div>
                     )}
@@ -396,10 +396,10 @@ export default function StudentExamSchedulePage() {
 
                 {/* Footer actions */}
                 <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  {item.attempt?.gradingStatus === 'PUBLISHED' ? (
+                  {(item as any).attempt?.gradingStatus === 'PUBLISHED' ? (
                     <button
                       type="button"
-                      onClick={() => router.push(`/student/online-exam/${item.attempt.id}/result`)}
+                      onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
                       className="inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-xs shadow-emerald-600/20 transition cursor-pointer active:scale-95"
                     >
                       <Award className="w-3.5 h-3.5" />

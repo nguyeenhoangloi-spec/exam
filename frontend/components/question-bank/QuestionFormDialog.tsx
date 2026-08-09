@@ -34,7 +34,7 @@ const fillBlankAnswer = z.object({
 });
 
 const schema = z.object({
-  subjectId: z.number({ required_error: 'Vui lòng chọn môn học' }).min(1, 'Vui lòng chọn môn học'),
+  subjectId: z.number({ message: 'Vui lòng chọn môn học' }).min(1, 'Vui lòng chọn môn học'),
   content: z.string().min(1, 'Nội dung câu hỏi không được để trống'),
   contentRich: z.object({ html: z.string() }).optional(),
   type: z.enum(['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY']),

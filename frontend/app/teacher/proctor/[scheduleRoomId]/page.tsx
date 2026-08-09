@@ -1524,7 +1524,7 @@ export default function ProctorDashboardPage() {
       />
 
       {/* Toast Notification */}
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast && <Toast message={toast.message} type={toast.type === 'info' ? 'success' : toast.type} onClose={() => setToast(null)} />}
     </main>
   );
 }

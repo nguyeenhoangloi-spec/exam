@@ -10,8 +10,10 @@ import {
   QuestionStatusBadge,
   QuestionTypeBadge,
 } from './QuestionBadges';
-import { getImageUrl } from '../../lib/media-utils';
+import { getImageUrl, cleanMediaFileName } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
+import { VideoLightboxModal } from '../VideoLightboxModal';
+import { AudioLightboxModal } from '../AudioLightboxModal';
 
 interface QuestionBankTableProps {
   questions: Question[];
@@ -48,6 +50,8 @@ export function QuestionBankTable({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [rubricQuestion, setRubricQuestion] = useState<Question | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
+  const [audioLightbox, setAudioLightbox] = useState<{ url: string; fileName?: string } | null>(null);
   const allSelected = questions.length > 0 && selected.length === questions.length;
 
   const formatDate = (dateStr?: string) => {
@@ -361,67 +365,104 @@ export function QuestionBankTable({
                   {/* Nội dung câu hỏi & Các đáp án */}
                   {visibleColumns.content !== false && (
                     <td className="p-3.5 min-w-[280px] align-top">
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
+                        {/* Câu hỏi */}
                         <p
-                          className="text-xs font-bold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                          className="text-xs font-bold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
                           onClick={() => onDetail(q)}
                           title={q.content}
                         >
                           {q.content}
                         </p>
 
-                        {q.type === 'ESSAY' ? (
-                          <div className="pt-1">
-                            <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-blue-50 text-blue-900 border border-blue-200/80">
-                              <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> <span className="font-extrabold">Câu tự luận:</span> {q.sampleAnswer || q.explanation ? 'Đã có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
+                        {/* Đáp án + Media — gộp chung 1 hàng flex-wrap */}
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {q.type === 'ESSAY' ? (
+                            <span className="inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10.5px] font-semibold bg-blue-50 text-blue-800 border border-blue-200/80">
+                              <FileText className="w-3 h-3 text-blue-600 shrink-0" />
+                              {q.sampleAnswer || q.explanation ? 'Có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
                             </span>
-                          </div>
-                        ) : optionsList.length > 0 ? (
-                          <div className="flex flex-wrap gap-1.5 pt-1">
-                            {optionsList.map((opt) => (
+                          ) : (
+                            optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-700 transition"
+                                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10.5px] font-bold text-slate-700"
                               >
-                                <span className="font-extrabold">{opt.label}.</span>
-                                <span className="truncate max-w-[160px]">{opt.content}</span>
+                                <span className="font-extrabold text-slate-500">{opt.label}.</span>
+                                <span className="truncate max-w-[120px]">{opt.content}</span>
                               </span>
-                            ))}
-                          </div>
-                        ) : null}
+                            ))
+                          )}
 
-                        {/* Thumbnail ảnh đính kèm */}
-                        {q.media && q.media.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 pt-1.5">
-                            {q.media.map((m, idx) => {
-                              const mime = m.mimeType || '';
-                              if (mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url))) {
-                                return (
-                                  <button
-                                    key={m.id || idx}
-                                    type="button"
-                                    onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
-                                    className="group relative overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-0.5 hover:border-blue-400 hover:shadow-md transition cursor-zoom-in"
-                                    title="Bấm để xem ảnh"
-                                  >
-                                    <img
-                                      src={getImageUrl(m.url)}
-                                      alt={m.altText || m.fileName || 'Hình ảnh'}
-                                      className="h-12 w-16 rounded object-cover transition group-hover:scale-105"
-                                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-                                    />
-                                  </button>
-                                );
-                              }
-                              return (
-                                <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-600">
-                                  <ImageIcon className="h-3 w-3 text-blue-500" />
-                                  {m.fileName || 'Media'}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        )}
+                          {/* Media thumbnails inline */}
+                          {q.media && q.media.length > 0 && q.media.map((m, idx) => {
+                            const mime = m.mimeType || '';
+                            const isImg = mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url));
+                            const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(m.url);
+                            const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(m.url);
+
+                            if (isImg) return (
+                              <button
+                                key={m.id || idx}
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
+                                className="group relative h-9 w-12 overflow-hidden rounded-md border border-slate-200 bg-slate-50 hover:border-blue-400 hover:shadow-md transition cursor-zoom-in shrink-0"
+                                title="Bấm để xem ảnh"
+                              >
+                                <img
+                                  src={getImageUrl(m.url)}
+                                  alt={m.altText || m.fileName || 'Ảnh'}
+                                  className="h-full w-full object-cover transition group-hover:scale-110"
+                                  onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/30">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" className="h-3.5 w-3.5"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+                                </div>
+                              </button>
+                            );
+
+                            if (isVid) return (
+                              <button
+                                key={m.id || idx}
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setVideoLightbox({ url: m.url, fileName: m.fileName }); }}
+                                className="group relative h-9 w-14 overflow-hidden rounded-md bg-slate-800 hover:bg-slate-700 transition cursor-pointer shrink-0"
+                                title="Bấm để xem video"
+                              >
+                                {/* Dùng div thay video để tránh text fallback encoding lỗi */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-900" />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="h-3.5 w-3.5 opacity-70"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3V9z" fill="white" stroke="none"/></svg>
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 shadow-lg group-hover:scale-110 transition">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-blue-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
+                                  </span>
+                                </div>
+                              </button>
+                            );
+
+                            if (isAud) return (
+                              <button
+                                key={m.id || idx}
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
+                                className="group inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[10.5px] font-semibold text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
+                                title="Bấm để phát âm thanh"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3 text-blue-600 group-hover:scale-110 transition"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                                <span>Audio</span>
+                              </button>
+                            );
+
+                            return (
+                              <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-semibold text-slate-500 shrink-0">
+                                <ImageIcon className="h-3 w-3 text-blue-400" />
+                                {cleanMediaFileName(m.fileName, 'Tập tin')}
+                              </span>
+                            );
+                          })}
+                        </div>
                       </div>
                     </td>
                   )}
@@ -599,6 +640,16 @@ export function QuestionBankTable({
           onClose={() => setLightboxUrl(null)}
         />
       )}
+      <VideoLightboxModal
+        videoUrl={videoLightbox?.url ?? null}
+        fileName={videoLightbox?.fileName}
+        onClose={() => setVideoLightbox(null)}
+      />
+      <AudioLightboxModal
+        audioUrl={audioLightbox?.url ?? null}
+        fileName={audioLightbox?.fileName}
+        onClose={() => setAudioLightbox(null)}
+      />
     </>
   );
 }

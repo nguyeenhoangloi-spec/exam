@@ -4,26 +4,47 @@ import React, { useState } from 'react';
 import { Question } from '../../types';
 import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
-import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle } from 'lucide-react';
+import { VideoLightboxModal } from '../VideoLightboxModal';
+import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle, Hash, Award, Brain } from 'lucide-react';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
 
 export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
+
   if (!question) return null;
 
   const rich = question?.contentRich && typeof question.contentRich === 'object' && 'html' in question.contentRich ? String((question.contentRich as { html?: string }).html || '') : '';
   const codeText = question.code || `QH${question.id.slice(-5).toUpperCase()}`;
 
+  const creatorName =
+    question.createdByName ||
+    (question.createdBy as any)?.teacher?.fullName ||
+    question.createdBy?.fullName ||
+    question.createdBy?.username ||
+    (question.createdById ? `User #${question.createdById}` : 'Hệ thống');
+
+  const getBloomLabel = (level?: string) => {
+    if (level === 'REMEMBER') return 'Ghi nhớ';
+    if (level === 'UNDERSTAND') return 'Thông hiểu';
+    if (level === 'APPLY') return 'Vận dụng';
+    if (level === 'ANALYZE') return 'Phân tích';
+    return 'Thông hiểu';
+  };
+
+  const scoreText = question.score !== undefined && question.score !== null ? `${question.score} điểm` : '1.0 điểm';
+  const topicText = (question as any).topic || (question as any).chapter?.chapterName || 'Chưa phân loại';
+
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
       {/* Right Drawer Modal */}
-      <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[540px] flex-col bg-white shadow-2xl transition-transform duration-300 border-l border-slate-200">
+      <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[580px] flex-col bg-white shadow-2xl transition-transform duration-300 border-l border-slate-200">
         {lightboxUrl && (
           <ImageLightboxModal
             imageUrl={lightboxUrl}
@@ -31,11 +52,16 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             onClose={() => setLightboxUrl(null)}
           />
         )}
+        <VideoLightboxModal
+          videoUrl={videoLightbox?.url ?? null}
+          fileName={videoLightbox?.fileName}
+          onClose={() => setVideoLightbox(null)}
+        />
 
         {/* Drawer Header */}
         <div className="flex items-center justify-between border-b border-slate-200/90 px-6 py-4 bg-slate-50/80">
           <div className="flex items-center gap-3">
-            <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-600 border border-blue-200">
+            <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-600 border border-blue-200 font-mono">
               {codeText}
             </span>
             <QuestionStatusBadge status={question.status || 'APPROVED'} />
@@ -68,18 +94,31 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 {question.media.map((media) => {
                   const fullUrl = getImageUrl(media.url);
                   const mime: string = (media as any).mimeType || '';
-                  if (mime.startsWith('video/')) {
+                  const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
+                  const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
+
+                  if (isVid) {
                     return (
-                      <div key={media.id || media.url} className="rounded-xl border border-slate-200 overflow-hidden bg-black">
-                        <video src={fullUrl} controls className="max-h-48 max-w-full rounded-xl" />
-                      </div>
+                      <button
+                        key={media.id || media.url}
+                        type="button"
+                        onClick={() => setVideoLightbox({ url: media.url, fileName: media.fileName })}
+                        className="group relative h-20 w-32 overflow-hidden rounded-xl border border-slate-200 bg-black shadow-2xs hover:border-blue-400 hover:shadow-md transition cursor-pointer"
+                      >
+                        <video src={fullUrl} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-lg group-hover:scale-110 transition">
+                            <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 text-blue-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
+                          </span>
+                        </div>
+                      </button>
                     );
                   }
-                  if (mime.startsWith('audio/')) {
+                  if (isAud) {
                     return (
                       <div key={media.id || media.url} className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
                         <span className="text-[10px] font-semibold text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
-                        <audio src={fullUrl} controls className="h-9" />
+                        <audio src={fullUrl} controls className="h-8 w-44" />
                       </div>
                     );
                   }
@@ -148,16 +187,34 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           {/* Metadata Cards */}
           <div className="space-y-2">
             <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Thông tin chi tiết</h4>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+              {/* Mã câu hỏi */}
+              <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
+                <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <Hash className="h-3.5 w-3.5 text-blue-500" /> Mã câu hỏi
+                </span>
+                <p className="font-mono font-black text-slate-900">{codeText}</p>
+              </div>
+
+              {/* Môn học */}
               <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                   <BookOpen className="h-3.5 w-3.5 text-blue-500" /> Môn học
                 </span>
-                <p className="font-extrabold text-slate-800">{question.subject?.subjectName || 'Chưa gán'}</p>
+                <p className="font-extrabold text-slate-800 truncate" title={question.subject?.subjectName}>
+                  {question.subject?.subjectName || 'Chưa gán'}
+                </p>
               </div>
 
+              {/* Điểm số */}
+              <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
+                <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <Award className="h-3.5 w-3.5 text-blue-500" /> Điểm số
+                </span>
+                <p className="font-extrabold text-blue-700">{scoreText}</p>
+              </div>
 
-
+              {/* Độ khó */}
               <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                   <HelpCircle className="h-3.5 w-3.5 text-blue-500" /> Độ khó
@@ -167,6 +224,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 </div>
               </div>
 
+              {/* Loại câu hỏi */}
               <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                   <FileText className="h-3.5 w-3.5 text-blue-500" /> Loại câu hỏi
@@ -176,18 +234,36 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 </div>
               </div>
 
+              {/* Mức độ tư duy */}
+              <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
+                <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <Brain className="h-3.5 w-3.5 text-blue-500" /> Mức độ tư duy
+                </span>
+                <p className="font-extrabold text-slate-800">{getBloomLabel(question.bloomLevel)}</p>
+              </div>
+
+              {/* Chủ đề */}
+              <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
+                <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <Layers className="h-3.5 w-3.5 text-blue-500" /> Chủ đề
+                </span>
+                <p className="font-bold text-slate-700 truncate">{topicText}</p>
+              </div>
+
+              {/* Người tạo */}
               <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                   <User className="h-3.5 w-3.5 text-blue-500" /> Người tạo
                 </span>
-                <p className="font-extrabold text-slate-800">{question.createdByName || question.createdBy?.fullName || '—'}</p>
+                <p className="font-extrabold text-slate-800 truncate" title={creatorName}>{creatorName}</p>
               </div>
 
+              {/* Ngày tạo */}
               <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-1">
                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                   <Calendar className="h-3.5 w-3.5 text-blue-500" /> Ngày tạo
                 </span>
-                <p className="font-extrabold text-slate-800">{question.createdAt ? new Date(question.createdAt).toLocaleDateString('vi-VN') : '24/05/2024'}</p>
+                <p className="font-bold text-slate-800">{question.createdAt ? new Date(question.createdAt).toLocaleDateString('vi-VN') : '24/05/2024'}</p>
               </div>
             </div>
           </div>
@@ -207,4 +283,3 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
     </>
   );
 }
-
