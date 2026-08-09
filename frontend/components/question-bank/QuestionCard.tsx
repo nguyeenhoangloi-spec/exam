@@ -44,21 +44,21 @@ export function QuestionCard({
             onChange={(e) => onSelect(e.target.checked)}
             className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
           />
-          <b className="text-blue-600 font-mono text-sm">{q.code}</b>
+          <b className="text-[#2563EB] font-mono text-[14px] font-bold">{q.code}</b>
           {q.subject?.subjectName && (
-            <span className="rounded-[8px] bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-bold text-blue-800 h-6 inline-flex items-center">
+            <span className="rounded-[8px] bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[13px] font-medium text-[#2563EB] h-6 inline-flex items-center">
               {q.subject.subjectName}
             </span>
           )}
           {q.chapter?.name && (
-            <span className="rounded-[8px] bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-700 h-6 inline-flex items-center">
+            <span className="rounded-[8px] bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[13px] font-medium text-[#334155] h-6 inline-flex items-center">
               {q.chapter.name}
             </span>
           )}
           <QuestionTypeBadge type={q.type} />
           <QuestionDifficultyBadge difficulty={q.difficulty} />
           <QuestionStatusBadge status={q.status} />
-          <span className="text-xs font-bold text-slate-700 ml-1">{q.score || (q.type === 'ESSAY' ? 1.0 : 0.25)}đ</span>
+          <span className="text-[14px] font-semibold text-[#0F172A] ml-1">{q.score || (q.type === 'ESSAY' ? 1.0 : 0.25)}đ</span>
         </div>
 
         {/* Action Buttons on Card */}
@@ -152,7 +152,7 @@ export function QuestionCard({
       {/* Question Content */}
       <div className="space-y-3">
         <div
-          className="text-sm font-bold text-slate-900 leading-relaxed cursor-pointer hover:text-blue-600 transition"
+          className="text-[15px] font-medium text-[#0F172A] leading-relaxed cursor-pointer hover:text-[#2563EB] transition"
           onClick={onDetail}
         >
           {q.contentRich && typeof q.contentRich === 'object' && 'html' in q.contentRich ? (
@@ -180,7 +180,7 @@ export function QuestionCard({
               if (mime.startsWith('audio/')) {
                 return (
                   <div key={mediaItem.id || idx} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 shadow-2xs">
-                    <span className="text-[10px] font-semibold text-slate-600 max-w-[140px] truncate">
+                    <span className="text-[13px] font-medium text-[#64748B] max-w-[140px] truncate">
                       {mediaItem.fileName || `Audio ${idx + 1}`}
                     </span>
                     <audio src={fullUrl} controls className="h-8 w-44" />
@@ -208,13 +208,13 @@ export function QuestionCard({
                       }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-xs">
+                      <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-[13px] font-medium text-white shadow-lg backdrop-blur-xs">
                         <Maximize2 className="h-3.5 w-3.5 text-blue-400" /> Xem rõ ảnh
                       </span>
                     </div>
                   </div>
-                  <div className="mt-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-600">
-                    <ImageIcon className="h-3 w-3 text-blue-600" />
+                  <div className="mt-1 flex items-center justify-center gap-1 text-[13px] font-normal text-[#64748B]">
+                    <ImageIcon className="h-3.5 w-3.5 text-[#2563EB]" />
                     <span className="truncate max-w-[110px]">{mediaItem.fileName || `Hình ${idx + 1}`}</span>
                   </div>
                 </div>
@@ -228,12 +228,12 @@ export function QuestionCard({
       {options.length > 0 && (
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between border-t border-slate-100 pt-2.5">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+            <span className="text-[13px] font-semibold uppercase tracking-wider text-[#64748B]">
               Lựa chọn ({options.length} phương án)
             </span>
             <button
               onClick={() => setShowOptions(!showOptions)}
-              className="text-[11px] font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 transition"
+              className="text-[13px] font-medium text-[#2563EB] hover:text-blue-700 flex items-center gap-1 transition"
             >
               {showOptions ? (
                 <>Thu gọn <ChevronUp className="w-3.5 h-3.5" /></>
@@ -250,11 +250,11 @@ export function QuestionCard({
                 return (
                   <div
                     key={opt.id || idx}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-xs font-medium text-slate-700 transition"
+                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-[15px] font-normal text-[#334155] transition"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <span
-                        className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 px-1.5 text-[11px] font-black text-slate-700"
+                        className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 px-1.5 text-[13px] font-bold text-[#0F172A]"
                       >
                         {label}
                       </span>
@@ -270,19 +270,19 @@ export function QuestionCard({
 
       {/* Explanation if present */}
       {q.explanation && showOptions && (
-        <div className="rounded-xl bg-blue-50/70 border border-blue-200/80 p-3 text-xs text-blue-900 flex items-start gap-2">
-          <HelpCircle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+        <div className="rounded-xl bg-blue-50/70 border border-blue-200/80 p-3 text-[14px] text-[#334155] flex items-start gap-2">
+          <HelpCircle className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
           <div>
-            <strong className="font-bold text-blue-950">Giải thích: </strong>
+            <strong className="font-semibold text-[#0F172A]">Giải thích: </strong>
             <span>{q.explanation}</span>
           </div>
         </div>
       )}
 
       {/* Footer Info */}
-      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[14px] text-[#64748B] font-normal">
         <span>
-          Người tạo: <strong className="text-slate-700 font-bold">{q.createdBy?.username || '—'}</strong>
+          Người tạo: <strong className="text-[#0F172A] font-medium">{q.createdBy?.username || '—'}</strong>
         </span>
         <span>
           {q.statistic?.usedCount ? `Đã dùng ${q.statistic.usedCount} lần` : 'Chưa sử dụng'}

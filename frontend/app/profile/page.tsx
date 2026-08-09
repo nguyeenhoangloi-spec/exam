@@ -287,12 +287,12 @@ export default function ProfilePage() {
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{displayName}</h1>
+              <h1 className="text-[28px] font-bold leading-[36px] text-white tracking-tight">{displayName}</h1>
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-blue-100/90 font-medium">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-[15px] text-blue-100/90 font-normal leading-[22px]">
                 <span className="flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5 text-blue-300" />
-                  Mã số: <strong className="font-bold text-white">{userCode}</strong>
+                  Mã số: <strong className="font-semibold text-white">{userCode}</strong>
                 </span>
                 <span className="flex items-center gap-1">
                   <Building2 className="h-3.5 w-3.5 text-blue-300" />
@@ -307,7 +307,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2 text-[15px] font-medium shadow-sm transition active:scale-95 cursor-pointer"
             >
               <Settings className="h-4 w-4 text-blue-700" />
               <span>Cài đặt tài khoản</span>
@@ -316,7 +316,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => router.push('/change-password')}
-              className="flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 text-xs font-black transition active:scale-95 cursor-pointer border border-blue-400/20"
+              className="flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-[15px] font-medium transition active:scale-95 cursor-pointer border border-blue-400/20"
             >
               <Lock className="h-4 w-4 text-white" />
               <span>Đổi mật khẩu</span>
@@ -328,29 +328,29 @@ export default function ProfilePage() {
       {/* 4 KPI Statistic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hồ sơ cá nhân</span>
-          <div className="text-xl font-black text-slate-900">{profileCompletion}% Hoàn tất</div>
-          <span className="text-[10.5px] font-bold text-emerald-600 flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" /> {profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm thông tin để hoàn tất hồ sơ'}
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Hồ sơ cá nhân</span>
+          <div className="text-[20px] font-semibold text-slate-900">{profileCompletion}% Hoàn tất</div>
+          <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
+            <CheckCircle2 className="h-3.5 w-3.5" /> {profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm thông tin để hoàn tất hồ sơ'}
           </span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vai trò hệ thống</span>
-          <div className="text-xl font-black text-blue-600">{roleName}</div>
-          <span className="text-[10.5px] font-medium text-slate-500">Quyền hạn truy cập chuẩn</span>
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Vai trò hệ thống</span>
+          <div className="text-[20px] font-semibold text-blue-600">{roleName}</div>
+          <span className="text-[13px] font-normal text-slate-500">Quyền hạn truy cập chuẩn</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đơn vị quản lý</span>
-          <div className="text-base font-black text-slate-900 truncate">{deptOrClass}</div>
-          <span className="text-[10.5px] font-medium text-slate-500">Hệ thống khảo thí</span>
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Đơn vị quản lý</span>
+          <div className="text-[20px] font-semibold text-slate-900 truncate">{deptOrClass}</div>
+          <span className="text-[13px] font-normal text-slate-500">Hệ thống khảo thí</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Bảo mật tài khoản</span>
-          <div className="text-xl font-black text-emerald-700">An toàn</div>
-          <span className="text-[10.5px] font-medium text-slate-500">JWT Token mã hóa 256-bit</span>
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Bảo mật tài khoản</span>
+          <div className="text-[20px] font-semibold text-emerald-700">An toàn</div>
+          <span className="text-[13px] font-normal text-slate-500">JWT Token mã hóa 256-bit</span>
         </div>
       </div>
 

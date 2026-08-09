@@ -56,19 +56,19 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
       {/* Header & Dropdown */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-base sm:text-lg font-black text-slate-900">Thống kê trạng thái câu hỏi</h3>
+        <h3 className="text-[18px] font-semibold text-[#0F172A]">Thống kê trạng thái câu hỏi</h3>
 
         <div className="relative">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 pr-8 text-[14px] font-medium text-[#334155] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="Tất cả">Tất cả</option>
             <option value="Tháng này">Tháng này</option>
             <option value="Học kỳ này">Học kỳ này</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
         </div>
       </div>
 
@@ -97,8 +97,8 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                    fontSize: '13px',
-                    fontWeight: 700,
+                    fontSize: '14px',
+                    fontWeight: 600,
                   }}
                   formatter={(value, name) => [`${Number(value).toLocaleString('vi-VN')} câu`, name]}
                 />
@@ -110,11 +110,11 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
 
           {/* Large Center Text */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-xs font-extrabold text-slate-400">Tổng</span>
-            <span className="text-2xl font-black text-slate-900 leading-none my-1">
+            <span className="text-[13px] font-semibold text-[#64748B]">Tổng</span>
+            <span className="text-[28px] font-bold text-[#0F172A] leading-none my-1">
               {totalCount.toLocaleString('vi-VN')}
             </span>
-            <span className="text-xs font-extrabold text-slate-400">câu hỏi</span>
+            <span className="text-[13px] font-semibold text-[#64748B]">câu hỏi</span>
           </div>
         </div>
 
@@ -125,11 +125,11 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-2 min-w-0">
                   <span className="h-2.5 w-2.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
-                  <span className="text-xs font-extrabold text-slate-800 truncate">{item.label}</span>
+                  <span className="text-[14px] font-medium text-[#334155] truncate">{item.label}</span>
                 </span>
-                <span className="text-xs font-black text-slate-900">{item.count.toLocaleString('vi-VN')}</span>
+                <span className="text-[14px] font-semibold text-[#0F172A]">{item.count.toLocaleString('vi-VN')}</span>
               </div>
-              <div className="text-right text-[11px] text-slate-400 font-medium">
+              <div className="text-right text-[13px] text-[#64748B] font-normal">
                 {item.percent} tổng số câu hỏi
               </div>
             </div>

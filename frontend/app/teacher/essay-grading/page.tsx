@@ -545,12 +545,12 @@ function TeacherEssayGradingContent() {
   return (
     <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
       {/* Page Header (Match System Standard Header Layout) */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
               Chấm Bài Thi Tự Luận
             </h1>
-            <p className="text-xs font-semibold text-slate-500">
+            <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
               Chấm điểm và đánh giá bài làm tự luận của sinh viên theo chuẩn Rubric.
             </p>
           </div>
@@ -560,9 +560,9 @@ function TeacherEssayGradingContent() {
               type="button"
               onClick={handleBatchAiGradeAll}
               disabled={batchAiLoading || loading}
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
             >
-              {batchAiLoading && <Loader2 className="h-3.5 w-3.5 text-white animate-spin" />}
+              {batchAiLoading && <Loader2 className="h-4 w-4 text-white animate-spin" />}
               <span>{batchAiLoading ? 'Đang AI chấm tất cả...' : 'AI Chấm Tất Cả Bài'}</span>
             </button>
 
@@ -570,9 +570,9 @@ function TeacherEssayGradingContent() {
               type="button"
               onClick={loadAssignments}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[15px] font-medium text-[#334155] hover:bg-slate-50 shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
             >
-              <RotateCcw className={`h-3.5 w-3.5 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`h-4 w-4 text-[#64748B] ${loading ? 'animate-spin' : ''}`} />
               <span>Làm mới</span>
             </button>
           </div>

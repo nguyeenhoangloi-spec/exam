@@ -388,7 +388,7 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-600 shadow-2xs transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-[#64748B] shadow-2xs transition hover:bg-slate-50 hover:text-[#0F172A] active:scale-95 cursor-pointer"
             title="Quay lại danh sách phân công"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -396,10 +396,10 @@ export default function ProctorDashboardPage() {
 
           <div className="space-y-0.5">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Giám Thị Phòng: <span className="text-blue-600">{data.roomName}</span>
+              <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+                Giám Thị Phòng: <span className="text-[#2563EB]">{data.roomName}</span>
               </h1>
-              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-emerald-600">
                 <span className="relative flex w-2 h-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -408,10 +408,10 @@ export default function ProctorDashboardPage() {
               </span>
             </div>
 
-            <p className="text-xs font-semibold text-slate-500">
-              Môn thi: <strong className="text-slate-800 font-extrabold">{data.subjectName}</strong> &nbsp;•&nbsp; Ngày thi: <strong className="text-slate-800 font-bold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong> &nbsp;•&nbsp; Ca thi: <strong className="text-slate-800 font-bold">{data.startTime} – {data.endTime}</strong>
+            <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+              Môn thi: <strong className="text-[#0F172A] font-semibold">{data.subjectName}</strong> &nbsp;•&nbsp; Ngày thi: <strong className="text-[#0F172A] font-semibold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong> &nbsp;•&nbsp; Ca thi: <strong className="text-[#0F172A] font-semibold">{data.startTime} – {data.endTime}</strong>
               {lastUpdated && (
-                <span className="ml-2 text-slate-400 font-normal">
+                <span className="ml-2 text-[#64748B] font-normal">
                   (Cập nhật lúc {lastUpdated.toLocaleTimeString('vi-VN')})
                 </span>
               )}
@@ -423,7 +423,7 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => setShowReopenEntryModal(true)}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-xs transition active:scale-95 cursor-pointer"
             title="Mở thêm thời gian cho sinh viên tới thi muộn"
           >
             <PlusCircle className="h-4 w-4" />
@@ -433,17 +433,17 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => setShowBulkModal(true)}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 px-4 py-2 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#334155] px-4 py-2 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
             title="Cộng bù giờ hàng loạt cho tất cả sinh viên đang làm bài trong phòng"
           >
-            <Clock className="h-4 w-4 text-slate-500" />
+            <Clock className="h-4 w-4 text-[#64748B]" />
             <span>Bù giờ toàn phòng (+15p)</span>
           </button>
 
           <button
             type="button"
             onClick={() => loadDashboard(false)}
-            className="p-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-2xs transition active:scale-95 cursor-pointer"
+            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#64748B] hover:text-[#0F172A] shadow-2xs transition active:scale-95 cursor-pointer"
             title="Làm mới dữ liệu"
           >
             <RefreshCw className="h-4 w-4" />
@@ -453,15 +453,15 @@ export default function ProctorDashboardPage() {
 
       {/* ── Banner Cảnh Báo Sự Cố Ngắt Kết Nối Hàng Loạt ── */}
       {(stats.disconnected ?? 0) > 0 && (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50/90 p-4 text-xs font-bold text-rose-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50/90 p-4 text-[15px] font-medium text-rose-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-rose-600 text-white shadow-2xs">
               <AlertTriangle className="w-5 h-5 shrink-0" />
             </div>
             <div>
-              <span className="text-sm font-black text-rose-950 block">CẢNH BÁO MẤT KẾT NỐI MẠNG</span>
-              <span className="text-rose-800 font-semibold text-xs">
-                Hiện có <strong className="font-extrabold">{stats.disconnected}</strong> sinh viên bị ngắt kết nối trong phòng thi. Vui lòng kiểm tra lại đường truyền mạng.
+              <span className="text-[18px] font-semibold text-rose-950 block">CẢNH BÁO MẤT KẾT NỐI MẠNG</span>
+              <span className="text-rose-800 font-normal text-[15px]">
+                Hiện có <strong className="font-bold">{stats.disconnected}</strong> sinh viên bị ngắt kết nối trong phòng thi. Vui lòng kiểm tra lại đường truyền mạng.
               </span>
             </div>
           </div>
@@ -472,7 +472,7 @@ export default function ProctorDashboardPage() {
               setBulkReason('Sự cố gián đoạn kỹ thuật / mạng toàn phòng thi');
               setShowBulkModal(true);
             }}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-[15px] rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
           >
             Bù giờ khẩn cấp toàn phòng (+15p)
           </button>
@@ -488,10 +488,10 @@ export default function ProctorDashboardPage() {
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">
                   {label}
                 </span>
-                <p className="text-2xl font-black text-slate-900 leading-tight">
+                <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
                   {value}
                 </p>
               </div>
@@ -501,8 +501,8 @@ export default function ProctorDashboardPage() {
               </div>
             </div>
 
-            <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-              <span className="font-semibold text-slate-500">{subtext}</span>
+            <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[13px]">
+              <span className="font-normal text-[#64748B]">{subtext}</span>
             </div>
           </div>
         ))}
@@ -513,7 +513,7 @@ export default function ProctorDashboardPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {/* Search Box */}
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] pointer-events-none" />
             <input
               type="text"
               placeholder="Tìm theo tên, mã SV, SBD, ghế..."
@@ -522,7 +522,7 @@ export default function ProctorDashboardPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
             {search && (
               <button
@@ -543,7 +543,7 @@ export default function ProctorDashboardPage() {
                 setFilter(e.target.value as any);
                 setPage(1);
               }}
-              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
             >
               <option value="ALL">Tất cả trạng thái thi</option>
               <option value="IN_PROGRESS">Đang làm bài trực tuyến</option>
@@ -864,8 +864,8 @@ export default function ProctorDashboardPage() {
       ) : viewMode === 'compact' ? (
         /* ── 5.2 Compact View Mode ── */
         <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-          <table className="w-full text-left text-xs text-slate-700 border-collapse">
-            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+          <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
               <tr>
                 <th scope="col" className="p-2 pl-3 text-center w-8">
                   <input
@@ -961,8 +961,8 @@ export default function ProctorDashboardPage() {
       ) : (
         /* ── 5.3 Standard List View Mode (Default Table) ── */
         <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-          <table className="w-full text-left text-xs text-slate-700 border-collapse">
-            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+          <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
               <tr>
                 <th scope="col" className="p-3.5 pl-4 text-center w-10">
                   <input

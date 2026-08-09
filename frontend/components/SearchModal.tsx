@@ -311,10 +311,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         </div>
 
         {/* Search Results List */}
-        <div className="p-3 max-h-96 overflow-y-auto space-y-1 text-xs">
+        <div className="p-3 max-h-96 overflow-y-auto space-y-1 text-[15px]">
           {!query && (
-            <p className="px-3 py-1.5 text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Compass className="w-3.5 h-3.5 text-blue-600" />
+            <p className="px-3 py-1.5 text-[13px] font-semibold text-[#64748B] dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-[#2563EB]" />
               <span>Đoạn chat & điều hướng gần đây</span>
             </p>
           )}
@@ -329,35 +329,35 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
                   onClick={() => handleSelect(item.href)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition text-left cursor-pointer group"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-[#2563EB] group-hover:text-white transition">
                     <Icon className="w-4 h-4" />
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition truncate">
+                      <span className="font-medium text-[#0F172A] dark:text-slate-100 group-hover:text-[#2563EB] dark:group-hover:text-blue-400 transition truncate">
                         {item.title}
                       </span>
-                      <span className="text-[10px] font-semibold text-slate-400 shrink-0">
+                      <span className="text-[13px] font-medium text-[#64748B] shrink-0">
                         {item.category}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                    <p className="text-[14px] text-[#64748B] dark:text-slate-400 truncate mt-0.5 font-normal">
                       {item.desc}
                     </p>
                   </div>
 
-                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-blue-600 transition shrink-0" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-[#2563EB] transition shrink-0" />
                 </button>
               );
             })
           ) : (
-            <div className="py-12 text-center text-slate-400">
+            <div className="py-12 text-center text-[#64748B]">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
-              <p className="font-bold text-slate-600 dark:text-slate-300 text-sm">
+              <p className="font-semibold text-[#0F172A] dark:text-slate-300 text-[16px]">
                 Không tìm thấy kết quả phù hợp
               </p>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-[14px] text-[#64748B] mt-1 font-normal">
                 Thử tìm với từ khóa như &quot;kỳ thi&quot;, &quot;phòng thi&quot;, &quot;sinh viên&quot;...
               </p>
             </div>
@@ -365,9 +365,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         </div>
 
         {/* Footer shortcuts hint */}
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[13px] text-[#64748B]">
           <span>Bấm để truy cập nhanh trang</span>
-          <span className="font-medium">Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border rounded text-[10px]">ESC</kbd> để thoát</span>
+          <span className="font-medium">Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border rounded text-[11px]">ESC</kbd> để thoát</span>
         </div>
       </div>
     </div>

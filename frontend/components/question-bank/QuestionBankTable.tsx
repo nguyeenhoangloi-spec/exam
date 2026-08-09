@@ -235,15 +235,15 @@ export function QuestionBankTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               <th scope="col" className="p-2 whitespace-nowrap">Mã</th>
@@ -254,7 +254,7 @@ export function QuestionBankTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+          <tbody className="divide-y divide-slate-100 font-normal">
             {questions.map((q) => {
               const isChecked = selected.includes(q.id);
               const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;

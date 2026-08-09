@@ -47,7 +47,7 @@ export default function ReportsPage() {
     <>
       <main className="w-full px-6 py-6 space-y-6">
         <div>
-          <p className="text-xs text-slate-500 font-medium">Số liệu được tổng hợp trực tiếp từ PostgreSQL tại thời điểm hiện tại</p>
+          <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">Số liệu được tổng hợp trực tiếp từ PostgreSQL tại thời điểm hiện tại</p>
         </div>
         {loading ? <DashboardSkeleton /> : error || !data ? (
           <DashboardErrorState message={error || 'Báo cáo không khả dụng.'} onRetry={load} />

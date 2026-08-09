@@ -58,7 +58,7 @@ interface StatusConfig {
 }
 
 /** Màu chữ trung tính dùng chung cho toàn bộ nhãn trạng thái. */
-const LABEL_CLASS = 'text-slate-700 dark:text-slate-200 font-bold';
+const LABEL_CLASS = 'text-[#334155] dark:text-slate-200 font-medium';
 
 const statusConfigs: Record<string, StatusConfig> = {
   // 1. Nhóm Xanh Lá (Emerald / Success) — Đã hoàn thành, đã duyệt...
@@ -125,7 +125,7 @@ export function StatusBadge({ status, customLabel, className = '' }: StatusBadge
   return (
     <span
       className={[
-        'inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none',
+        'inline-flex items-center gap-1.5 text-[14px] whitespace-nowrap select-none',
         LABEL_CLASS,
         className,
       ].join(' ')}

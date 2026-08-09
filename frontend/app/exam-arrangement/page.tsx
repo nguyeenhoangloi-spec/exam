@@ -539,10 +539,10 @@ export default function ExamArrangementPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
         <div className="space-y-1">
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
             Xếp Phòng Thi Tự Động
           </h1>
-          <p className="text-xs font-semibold text-slate-500">
+          <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
             Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
           </p>
         </div>
@@ -555,28 +555,28 @@ export default function ExamArrangementPage() {
               value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn',
               subtext: `${schedules.length} ca thi trong kỳ`,
               icon: Zap,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
             {
               title: 'Phòng thi khả dụng',
               value: `${availableCount}/${rooms.length}`,
               subtext: 'Trạng thái rảnh trong khung giờ',
               icon: DoorOpen,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
             {
               title: 'Sức chứa đã chọn',
               value: `${selectedCapacity} chỗ`,
               subtext: `${selectedRoomIds.length} phòng đang được chọn`,
               icon: Users,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
             {
               title: 'Kết quả phân bổ',
               value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp',
               subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu',
               icon: CheckCircle2,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
           ].map((item) => {
             const IconComponent = item.icon;
@@ -587,14 +587,14 @@ export default function ExamArrangementPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{item.title}</span>
-                    <p className="text-2xl font-black text-slate-900 leading-tight">{item.value}</p>
+                    <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">{item.title}</span>
+                    <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">{item.value}</p>
                   </div>
                   <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-transform group-hover:scale-110`}>
                     <IconComponent className="h-5 w-5" />
                   </div>
                 </div>
-                <span className="text-[10.5px] font-semibold text-slate-400 mt-2">{item.subtext}</span>
+                <span className="text-[13px] font-normal text-[#64748B] mt-2">{item.subtext}</span>
               </div>
             );
           })}
@@ -1087,8 +1087,8 @@ export default function ExamArrangementPage() {
                       {/* View Mode 2: Detailed Table */}
                       {viewMode === 'table' && (
                         <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[580px] overflow-y-auto">
-                          <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+                          <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+                            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
                               <tr>
                                 <th className="p-3.5">Phòng</th>
                                 <th className="p-3.5 text-center">Vị trí</th>
@@ -1098,21 +1098,21 @@ export default function ExamArrangementPage() {
                                 <th className="p-3.5">Khung Đào tạo Ngành</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 font-medium">
+                            <tbody className="divide-y divide-slate-100 font-normal">
                               {filteredDetails.map((st, dIdx) => (
-                                <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-blue-50/40 transition">
-                                  <td className="p-3.5 font-bold text-slate-900">{st.roomName || st.roomCode}</td>
-                                  <td className="p-3.5 text-center font-extrabold text-blue-700">Ghế #{st.seatNumber}</td>
+                                <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50/60 transition">
+                                  <td className="p-3.5 font-medium text-[#0F172A]">{st.roomName || st.roomCode}</td>
+                                  <td className="p-3.5 text-center font-bold text-[#2563EB]">Ghế #{st.seatNumber}</td>
                                   <td className="p-3.5">
-                                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                                    <span className="font-mono font-bold text-[14px] text-[#0F172A]">
                                       {st.studentCode}
                                     </span>
                                   </td>
-                                  <td className="p-3.5 font-extrabold text-slate-900">{st.fullName}</td>
-                                  <td className="p-3.5 font-semibold text-slate-700">
+                                  <td className="p-3.5 font-medium text-[#0F172A]">{st.fullName}</td>
+                                  <td className="p-3.5 font-normal text-[#334155]">
                                     {st.className && st.className !== '---' ? st.className : 'CNTT-K65'}
                                   </td>
-                                  <td className="p-3.5 font-bold text-slate-800 whitespace-nowrap">
+                                  <td className="p-3.5 font-normal text-[#334155] whitespace-nowrap">
                                     {(st.requirementLabel || st.departmentName || 'Khoa Công nghệ thông tin').split(/[•\.\·]/)[0].trim()}
                                   </td>
                                 </tr>
@@ -1132,25 +1132,25 @@ export default function ExamArrangementPage() {
           <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-base font-black text-slate-900">
+                <h3 className="text-[20px] font-semibold text-[#0F172A]">
                   Nhật ký thao tác & Lịch sử Xếp phòng thi
                 </h3>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                <p className="text-[15px] text-[#64748B] font-normal mt-0.5">
                   Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi
                 </p>
               </div>
               <button
                 type="button"
                 onClick={fetchHistory}
-                className="text-xs font-extrabold text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
+                className="text-[14px] font-medium text-[#2563EB] hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
               >
                 Tải lại Nhật ký
               </button>
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-              <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+              <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+                <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
                   <tr>
                     <th className="p-3.5">Thời gian</th>
                     <th className="p-3.5">Người thực hiện</th>

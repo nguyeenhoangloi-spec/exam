@@ -55,8 +55,8 @@ export function PendingQuestionList({
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-base font-black text-slate-900">
-          Câu hỏi chờ duyệt <span className="text-slate-500 font-bold">({count})</span>
+        <h3 className="text-[18px] font-semibold text-[#0F172A]">
+          Câu hỏi chờ duyệt <span className="text-[#2563EB] font-semibold">({count})</span>
         </h3>
 
         <button
@@ -72,8 +72,8 @@ export function PendingQuestionList({
       {/* Table Container */}
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-          <table className="w-full text-left text-xs min-w-[760px] text-slate-700 border-collapse">
-            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+          <table className="w-full text-left text-[15px] min-w-[760px] text-[#334155] border-collapse">
+            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
               <tr>
                 <th className="py-3 px-3 whitespace-nowrap">Mã câu hỏi</th>
                 <th className="py-3 px-3">Nội dung câu hỏi</th>
@@ -85,27 +85,27 @@ export function PendingQuestionList({
                 <th className="py-3 px-3 text-center whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium text-xs">
+            <tbody className="divide-y divide-slate-100 font-normal text-[15px]">
               {list.map((q) => {
                 const difficultyInfo = difficultyBadge[q.difficulty as keyof typeof difficultyBadge] || difficultyBadge['MEDIUM'];
                 return (
-                  <tr key={q.id} className="hover:bg-blue-50/40 transition">
+                  <tr key={q.id} className="hover:bg-slate-50/60 transition">
                     <td className="py-3 px-3 whitespace-nowrap">
-                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      <span className="font-mono font-bold text-[14px] text-[#0F172A]">
                         {q.code}
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-semibold text-slate-900 max-w-xs truncate">
+                    <td className="py-3 px-3 font-medium text-[#0F172A] max-w-xs truncate">
                       {q.content}
                     </td>
-                    <td className="py-3 px-3 font-extrabold text-slate-900 whitespace-nowrap">
+                    <td className="py-3 px-3 font-medium text-[#0F172A] whitespace-nowrap">
                       {q.subjectName}
                     </td>
-                    <td className="py-3 px-3 text-slate-600 font-medium whitespace-nowrap">
+                    <td className="py-3 px-3 text-[#64748B] font-normal whitespace-nowrap">
                       {q.chapter}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
-                      <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold ${difficultyInfo[1]}`}>
+                      <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[13px] font-medium ${difficultyInfo[1]}`}>
                         {difficultyInfo[0]}
                       </span>
                     </td>

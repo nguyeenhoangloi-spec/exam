@@ -112,8 +112,8 @@ export default function ChangePasswordPage() {
               <Lock className="h-7 w-7 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Đổi mật khẩu tài khoản</h1>
-              <p className="text-xs font-semibold text-blue-100/80">Cập nhật mật khẩu để bảo vệ tài khoản khỏi truy cập trái phép</p>
+              <h1 className="text-[28px] font-bold leading-[36px] text-white tracking-tight">Đổi mật khẩu tài khoản</h1>
+              <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Cập nhật mật khẩu để bảo vệ tài khoản khỏi truy cập trái phép</p>
             </div>
           </div>
         </div>
@@ -122,29 +122,29 @@ export default function ChangePasswordPage() {
       {/* 4 KPI Security Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Trạng thái mã hóa</span>
-          <div className="text-lg font-black text-emerald-700">Bcrypt 10-rounds</div>
-          <span className="text-[10.5px] font-bold text-emerald-600 flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" /> Chuẩn mã hóa cao nhất
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Trạng thái mã hóa</span>
+          <div className="text-[20px] font-semibold text-emerald-700">Bcrypt 10-rounds</div>
+          <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
+            <CheckCircle2 className="h-3.5 w-3.5" /> Chuẩn mã hóa cao nhất
           </span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Độ dài tối thiểu</span>
-          <div className="text-lg font-black text-blue-600">Tối thiểu 6 ký tự</div>
-          <span className="text-[10.5px] font-medium text-slate-500">Bao gồm chữ & số</span>
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Độ dài tối thiểu</span>
+          <div className="text-[20px] font-semibold text-blue-600">Tối thiểu 6 ký tự</div>
+          <span className="text-[13px] font-normal text-slate-500">Bao gồm chữ & số</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đánh giá mật khẩu mới</span>
-          <div className={`text-lg font-black ${strength.text || 'text-slate-900'}`}>{strength.label}</div>
-          <span className="text-[10.5px] font-medium text-slate-500">Độ phức tạp mật khẩu</span>
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Đánh giá mật khẩu mới</span>
+          <div className={`text-[20px] font-semibold ${strength.text || 'text-slate-900'}`}>{strength.label}</div>
+          <span className="text-[13px] font-normal text-slate-500">Độ phức tạp mật khẩu</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Xác thực phiên làm việc</span>
-          <div className="text-lg font-black text-slate-900">JWT Authenticated</div>
-          <span className="text-[10.5px] font-medium text-slate-500">Bảo mật tự động</span>
+          <span className="text-[13px] font-semibold text-slate-400 uppercase tracking-wider">Xác thực phiên làm việc</span>
+          <div className="text-[20px] font-semibold text-slate-900">JWT Authenticated</div>
+          <span className="text-[13px] font-normal text-slate-500">Bảo mật tự động</span>
         </div>
       </div>
 

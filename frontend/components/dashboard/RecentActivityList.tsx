@@ -40,15 +40,15 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-base font-black text-slate-900">Hoạt động gần đây</h3>
+        <h3 className="text-[18px] font-semibold text-[#0F172A]">Hoạt động gần đây</h3>
 
         <button
           type="button"
           onClick={() => router.push('/reports')}
-          className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-[14px] font-medium text-[#2563EB] hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem tất cả</span>
-          <ArrowRight className="h-3.5 w-3.5" />
+          <ArrowRight className="h-4 w-4" />
         </button>
       </div>
 
@@ -58,23 +58,23 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
           {activityList.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.id} className="flex items-start justify-between gap-3 text-xs">
+              <div key={item.id} className="flex items-start justify-between gap-3 text-[15px]">
                 <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-slate-100 border border-slate-200/80 text-slate-700 font-bold mt-0.5">
-                    <Icon className="h-3.5 w-3.5" />
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-slate-100 border border-slate-200/80 text-slate-700 font-medium mt-0.5">
+                    <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 leading-tight">
-                    <p className="text-slate-800">
-                      <strong className="font-extrabold text-slate-900">{item.actorName}</strong>{' '}
-                      <span className="font-medium text-slate-700">{item.actionText}</span>
+                    <p className="text-[#334155]">
+                      <strong className="font-semibold text-[#0F172A]">{item.actorName}</strong>{' '}
+                      <span className="font-normal text-[#334155]">{item.actionText}</span>
                     </p>
-                    <p className="text-[10.5px] font-medium text-slate-500 truncate mt-0.5">
+                    <p className="text-[13px] font-normal text-[#64748B] truncate mt-0.5">
                       {item.targetInfo}
                     </p>
                   </div>
                 </div>
 
-                <span className="text-[10.5px] font-bold text-slate-400 shrink-0 mt-0.5">
+                <span className="text-[13px] font-medium text-[#64748B] shrink-0 mt-0.5">
                   {item.time}
                 </span>
               </div>

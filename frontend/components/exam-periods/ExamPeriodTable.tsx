@@ -187,15 +187,15 @@ export function ExamPeriodTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               <th scope="col" className="p-2 min-w-[200px]">Tên kỳ thi</th>
@@ -206,32 +206,32 @@ export function ExamPeriodTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+          <tbody className="divide-y divide-slate-100 font-normal">
             {periods.map((p) => {
               const isChecked = selected.includes(p.id);
 
               return (
-                <tr key={p.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                <tr key={p.id} className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''}`}>
                   <td className="p-2 pl-3 text-center">
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(p.id, e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(p)}>
+                    <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p)}>
                       {p.name}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{p.semester}</td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{p.schoolYear}</td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
+                  <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{p.semester}</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{p.schoolYear}</td>
+                  <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
                   <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status, p)}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
-                    <button type="button" onClick={() => onDetail(p)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
-                      <Eye className="h-3.5 w-3.5" />
+                    <button type="button" onClick={() => onDetail(p)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+                      <Eye className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
@@ -246,8 +246,8 @@ export function ExamPeriodTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+      <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+        <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input

@@ -69,7 +69,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {d.code}
                     </button>
@@ -78,9 +78,9 @@ export function DepartmentTable({
                   <button
                     type="button"
                     onClick={() => onOpenCurriculum(d)}
-                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition border border-blue-200 cursor-pointer"
+                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-[13px] font-medium text-[#2563EB] hover:bg-blue-100 transition border border-blue-200 cursor-pointer"
                   >
-                    <Sparkles className="h-3 w-3 text-blue-600" />
+                    <Sparkles className="h-3.5 w-3.5 text-[#2563EB]" />
                     <span>Khung CTDT</span>
                   </button>
                 </div>
@@ -88,33 +88,33 @@ export function DepartmentTable({
                 <div>
                   <h4
                     onClick={() => onDetail(d)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                    className="text-[18px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition"
                   >
                     {d.name}
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-slate-600 pt-1">
+                <div className="grid grid-cols-3 gap-2 text-[14px] font-normal text-[#475569] pt-1">
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
-                    <span className="text-[10px] text-slate-400 uppercase font-bold">Môn học</span>
-                    <span className="text-sm font-black text-slate-900">{subjectsCount}</span>
+                    <span className="text-[12px] text-[#64748B] uppercase font-semibold">Môn học</span>
+                    <span className="text-[16px] font-bold text-[#0F172A]">{subjectsCount}</span>
                   </div>
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
-                    <span className="text-[10px] text-slate-400 uppercase font-bold">Lớp học</span>
-                    <span className="text-sm font-black text-slate-900">{classesCount}</span>
+                    <span className="text-[12px] text-[#64748B] uppercase font-semibold">Lớp học</span>
+                    <span className="text-[16px] font-bold text-[#0F172A]">{classesCount}</span>
                   </div>
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
-                    <span className="text-[10px] text-slate-400 uppercase font-bold">Giảng viên</span>
-                    <span className="text-sm font-black text-slate-900">{teachersCount}</span>
+                    <span className="text-[12px] text-[#64748B] uppercase font-semibold">Giảng viên</span>
+                    <span className="text-[16px] font-bold text-[#0F172A]">{teachersCount}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
                 <button
                   type="button"
                   onClick={() => onDetail(d)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-1 text-[#2563EB] hover:text-blue-700 cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Xem chi tiết</span>
@@ -152,15 +152,15 @@ export function DepartmentTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               <th scope="col" className="p-2 whitespace-nowrap">Mã Khoa</th>

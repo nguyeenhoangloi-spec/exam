@@ -74,7 +74,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {t.teacherCode}
                     </button>
@@ -88,35 +88,35 @@ export function TeacherTable({
                 <div>
                   <h4
                     onClick={() => onDetail(t)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                    className="text-[18px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition"
                   >
                     {t.fullName}
                   </h4>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-600 font-medium pt-1">
+                <div className="space-y-1.5 text-[14px] text-[#475569] font-normal pt-1">
                   <div className="flex items-center gap-1.5">
-                    <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
                     <span className="truncate">{t.department?.name || '---'}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                    <span className="truncate text-slate-500">{t.email}</span>
+                    <Mail className="h-4 w-4 text-slate-400 shrink-0" />
+                    <span className="truncate text-[#64748B]">{t.email}</span>
                   </div>
                   {t.phone && (
                     <div className="flex items-center gap-1.5">
-                      <Phone className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                      <Phone className="h-4 w-4 text-slate-400 shrink-0" />
                       <span>{t.phone}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
                 <button
                   type="button"
                   onClick={() => onDetail(t)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-1 text-[#2563EB] hover:text-blue-700 cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Xem hồ sơ</span>
@@ -154,15 +154,15 @@ export function TeacherTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th className="p-2 pl-3 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               <th className="p-2 whitespace-nowrap">Mã GV</th>

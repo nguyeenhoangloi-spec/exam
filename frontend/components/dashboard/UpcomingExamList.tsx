@@ -30,23 +30,23 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-base font-black text-slate-900">Kỳ thi sắp tới</h3>
+        <h3 className="text-[18px] font-semibold text-[#0F172A]">Kỳ thi sắp tới</h3>
 
         <button
           type="button"
           onClick={() => router.push('/exam-periods')}
-          className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-[14px] font-medium text-[#2563EB] hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem tất cả</span>
-          <ArrowRight className="h-3.5 w-3.5" />
+          <ArrowRight className="h-4 w-4" />
         </button>
       </div>
 
       {/* Table Container */}
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-          <table className="w-full min-w-[620px] text-left text-xs text-slate-700 border-collapse">
-            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+          <table className="w-full min-w-[620px] text-left text-[15px] text-[#334155] border-collapse">
+            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
               <tr>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Mã môn</th>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Tên môn thi</th>
@@ -58,19 +58,19 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
                 <th className="py-2.5 px-1.5 text-center whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium text-slate-800 text-xs">
+            <tbody className="divide-y divide-slate-100 font-normal text-[#334155]">
               {list.map((exam) => (
-                <tr key={exam.id} className="hover:bg-blue-50/40 transition">
+                <tr key={exam.id} className="hover:bg-slate-50/60 transition">
                   <td className="py-2.5 px-2.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                    <span className="font-mono font-bold text-[14px] text-[#0F172A]">
                       {exam.code}
                     </span>
                   </td>
-                  <td className="py-2.5 px-2.5 font-black text-slate-900 whitespace-nowrap">{exam.name}</td>
-                  <td className="py-2.5 px-2 text-center whitespace-nowrap font-medium text-slate-600">{exam.date}</td>
-                  <td className="py-2.5 px-2 text-center whitespace-nowrap font-medium text-slate-600">{exam.time}</td>
-                  <td className="py-2.5 px-2 text-center font-bold text-slate-700 whitespace-nowrap">{exam.rooms}</td>
-                  <td className="py-2.5 px-2 text-center font-black text-slate-900 whitespace-nowrap">{exam.students}</td>
+                  <td className="py-2.5 px-2.5 font-medium text-[#0F172A] whitespace-nowrap">{exam.name}</td>
+                  <td className="py-2.5 px-2 text-center whitespace-nowrap font-normal text-[#64748B]">{exam.date}</td>
+                  <td className="py-2.5 px-2 text-center whitespace-nowrap font-normal text-[#64748B]">{exam.time}</td>
+                  <td className="py-2.5 px-2 text-center font-medium text-[#334155] whitespace-nowrap">{exam.rooms}</td>
+                  <td className="py-2.5 px-2 text-center font-bold text-[#0F172A] whitespace-nowrap">{exam.students}</td>
                   <td className="py-2.5 px-2 text-center whitespace-nowrap">
                     <StatusBadge status={exam.status} />
                   </td>

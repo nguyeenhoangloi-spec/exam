@@ -40,8 +40,8 @@ export function ClassTableToolbar({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-      <span className="text-xs font-bold text-slate-700">
-        <span className="font-black text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
+      <span className="text-[15px] font-normal text-[#334155]">
+        <span className="font-bold text-[#0F172A]">{totalCount.toLocaleString('vi-VN')}</span> kết quả
       </span>
 
       <div className="flex items-center gap-2">
@@ -50,14 +50,14 @@ export function ClassTableToolbar({
           <select
             value={sortOrder}
             onChange={(e) => onSortChange?.(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-[15px] font-medium text-[#0F172A] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
             <option value="name_asc">Tên Lớp: A - Z</option>
             <option value="students_desc">Sĩ số: Cao nhất</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
         </div>
 
         {/* Column Selector */}
@@ -65,21 +65,21 @@ export function ClassTableToolbar({
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-medium text-[#334155] transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+            <SlidersHorizontal className="h-4 w-4 text-[#2563EB]" />
             <span>Chọn cột</span>
-            <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-4 w-4 text-[#64748B] transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {openColumnMenu && (
             <div
-              className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+              className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-[14px] space-y-2"
               onMouseLeave={() => setOpenColumnMenu(false)}
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
-                <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
+                <span className="font-semibold text-[#0F172A] text-[14px]">Hiển thị cột</span>
+                <span className="text-[12px] text-[#64748B] font-normal">Click để ẩn/hiện</span>
               </div>
 
               <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
@@ -88,20 +88,20 @@ export function ClassTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 select-none transition"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-[#334155] select-none transition"
                     >
                       <span className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           checked={isVisible}
                           onChange={() => onColumnToggle?.(col.key)}
-                          className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="h-4 w-4 rounded border-slate-300 text-[#2563EB] focus:ring-blue-500 cursor-pointer"
                         />
-                        <span className={isVisible ? 'text-slate-900' : 'text-slate-400 line-through'}>
+                        <span className={isVisible ? 'text-[#0F172A]' : 'text-[#64748B] line-through'}>
                           {col.label}
                         </span>
                       </span>
-                      {isVisible && <Check className="h-3 w-3 text-blue-600 shrink-0" />}
+                      {isVisible && <Check className="h-3.5 w-3.5 text-[#2563EB] shrink-0" />}
                     </label>
                   );
                 })}

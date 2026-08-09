@@ -44,10 +44,10 @@ export function DashboardHeader({
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       {/* Title & Subtitle */}
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+        <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
           Tổng quan hệ thống
         </h1>
-        <p className="text-xs font-semibold text-slate-500">
+        <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
           Theo dõi tình hình tổ chức thi và các công việc cần xử lý
         </p>
       </div>
@@ -57,12 +57,12 @@ export function DashboardHeader({
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Semester / Exam Period Filter Selector */}
           {onPeriodChange && (
-            <div className="flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs">
-              <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] shadow-2xs">
+              <Calendar className="w-4 h-4 text-[#64748B] shrink-0" />
               <select
                 value={selectedPeriod}
                 onChange={(e) => onPeriodChange(e.target.value)}
-                className="bg-transparent font-bold text-slate-800 focus:outline-none cursor-pointer"
+                className="bg-transparent font-medium text-[#0F172A] focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Tất cả đợt thi & Học kỳ</option>
                 <option value="HK2_2025_2026">Học kỳ 2 (2025 - 2026)</option>
@@ -75,10 +75,10 @@ export function DashboardHeader({
 
         {/* Date & Timestamp Display (Right-aligned below buttons) */}
         {currentDateStr && (
-          <div className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 select-none">
-            <span className="font-bold text-slate-700">{currentDateStr}</span>
+          <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#64748B] select-none">
+            <span className="font-semibold text-[#0F172A]">{currentDateStr}</span>
             {lastUpdatedStr && (
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[13px] text-[#64748B] font-normal">
                 ({lastUpdatedStr})
               </span>
             )}

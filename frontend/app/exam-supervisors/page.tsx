@@ -315,10 +315,10 @@ export default function ExamSupervisorsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
               Quản lý & Phân công Giám thị
             </h1>
-            <p className="text-xs font-semibold text-slate-500">
+            <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
               Theo dõi trạng thái xác nhận, phê duyệt yêu cầu đổi ca và đánh dấu điểm danh gác thi
             </p>
           </div>
@@ -327,18 +327,18 @@ export default function ExamSupervisorsPage() {
             <button
               type="button"
               onClick={exportCsv}
-              className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
             >
-              <Download className="h-4 w-4 text-slate-500" />
+              <Download className="h-4 w-4 text-[#64748B]" />
               <span>Xuất CSV</span>
             </button>
 
             <button
               type="button"
               onClick={handlePrintReport}
-              className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
             >
-              <Printer className="h-4 w-4 text-slate-500" />
+              <Printer className="h-4 w-4 text-[#64748B]" />
               <span>In Báo cáo</span>
             </button>
           </div>
@@ -352,28 +352,28 @@ export default function ExamSupervisorsPage() {
               value: totalAssignments,
               subtext: `Lịch thi: ${(selectedSchedule?.examScheduleRooms || []).length} phòng`,
               icon: ShieldCheck,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
             {
               title: 'Yêu cầu đổi ca',
               value: changeRequestedCount,
               subtext: changeRequestedCount > 0 ? 'Cần quản trị viên phê duyệt' : 'Không có yêu cầu mới',
               icon: RefreshCw,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
             {
               title: 'Đã xác nhận ca',
               value: `${confirmedCount}/${totalAssignments}`,
               subtext: 'Sẵn sàng gác thi',
               icon: CheckCircle2,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
             {
               title: 'Hoàn thành gác thi',
               value: `${completedCount}/${totalAssignments}`,
               subtext: 'Theo báo cáo phòng thi',
               icon: UserCheck,
-              iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+              iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
             },
           ].map((item) => {
             const IconComponent = item.icon;
@@ -384,14 +384,14 @@ export default function ExamSupervisorsPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{item.title}</span>
-                    <p className="text-2xl font-black text-slate-900 leading-tight">{item.value}</p>
+                    <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">{item.title}</span>
+                    <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">{item.value}</p>
                   </div>
                   <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-transform group-hover:scale-110`}>
                     <IconComponent className="h-5 w-5" />
                   </div>
                 </div>
-                <span className="text-[10.5px] font-semibold text-slate-400 mt-2">{item.subtext}</span>
+                <span className="text-[13px] font-normal text-[#64748B] mt-2">{item.subtext}</span>
               </div>
             );
           })}
@@ -812,8 +812,8 @@ export default function ExamSupervisorsPage() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                    <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+                  <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+                    <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
                       <tr>
                         <th className="p-3.5 pl-4 whitespace-nowrap">Mã GV</th>
                         <th className="p-3.5 min-w-[160px]">Họ và tên Giám thị</th>

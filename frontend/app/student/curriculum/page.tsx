@@ -342,11 +342,11 @@ export default function StudentCurriculumPage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
               Khung Chương Trình Đào Tạo
             </h1>
-            <p className="text-xs font-semibold text-slate-500">
-              Sinh viên: <strong className="text-slate-800 font-extrabold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-slate-800 font-bold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
+            <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+              Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-[#0F172A] font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
             </p>
           </div>
 
@@ -354,18 +354,18 @@ export default function StudentCurriculumPage() {
             <button
               type="button"
               onClick={handleExportExcel}
-              className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
             >
-              <Download className="h-4 w-4 text-slate-500" />
+              <Download className="h-4 w-4 text-[#64748B]" />
               <span>Xuất Excel</span>
             </button>
 
             <button
               type="button"
               onClick={handlePrintReport}
-              className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
             >
-              <Printer className="h-4 w-4 text-slate-500" />
+              <Printer className="h-4 w-4 text-[#64748B]" />
               <span>In Khung Đào Tạo</span>
             </button>
           </div>
@@ -382,10 +382,10 @@ export default function StudentCurriculumPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">
                       {item.title}
                     </span>
-                    <p className="text-2xl font-black text-slate-900 leading-tight">
+                    <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
                       {item.value.toLocaleString('vi-VN')}
                       {item.unit || ''}
                     </p>
@@ -398,7 +398,7 @@ export default function StudentCurriculumPage() {
                   </div>
                 </div>
 
-                <span className="text-[10.5px] font-semibold text-slate-400 mt-2">
+                <span className="text-[13px] font-normal text-[#64748B] mt-2">
                   {item.subtext}
                 </span>
               </div>
@@ -411,7 +411,7 @@ export default function StudentCurriculumPage() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {/* Search Input */}
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] pointer-events-none" />
               <input
                 type="text"
                 placeholder="Tìm theo mã môn, tên môn học..."
@@ -420,7 +420,7 @@ export default function StudentCurriculumPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none transition"
               />
               {search && (
                 <button
@@ -441,7 +441,7 @@ export default function StudentCurriculumPage() {
                   setFilterSemester(e.target.value);
                   setPage(1);
                 }}
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="ALL">Tất cả học kỳ đào tạo</option>
                 {semesters.map((sem) => (
@@ -450,7 +450,7 @@ export default function StudentCurriculumPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
             </div>
 
             {/* Type Filter */}
@@ -461,13 +461,13 @@ export default function StudentCurriculumPage() {
                   setFilterType(e.target.value);
                   setPage(1);
                 }}
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="ALL">Tất cả loại môn học</option>
                 <option value="MANDATORY">Môn bắt buộc</option>
                 <option value="ELECTIVE">Môn tự chọn</option>
               </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
             </div>
 
             {/* Status Filter */}
@@ -478,21 +478,21 @@ export default function StudentCurriculumPage() {
                   setFilterStatus(e.target.value);
                   setPage(1);
                 }}
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="ALL">Tất cả trạng thái tích lũy</option>
                 <option value="COMPLETED">Đã hoàn thành (Đã học)</option>
                 <option value="INCOMPLETE">Chưa tích lũy tín chỉ</option>
               </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
             </div>
           </div>
         </div>
 
         {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
         <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-          <span className="text-xs font-bold text-slate-700">
-            <span className="font-black text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
+          <span className="text-[15px] font-normal text-[#334155]">
+            <span className="font-bold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
           </span>
 
           <div className="flex items-center gap-2">
@@ -716,8 +716,8 @@ export default function StudentCurriculumPage() {
         ) : viewMode === 'compact' ? (
           /* ── 5.2 Compact View Mode ── */
           <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-            <table className="w-full text-left text-xs text-slate-700 border-collapse">
-              <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+            <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+              <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
                 <tr>
                   <th scope="col" className="p-2 pl-3 text-center w-8">
                     <input
@@ -805,8 +805,8 @@ export default function StudentCurriculumPage() {
         ) : (
           /* ── 5.3 Standard List View Mode (Default Table) ── */
           <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-            <table className="w-full text-left text-xs text-slate-700 border-collapse">
-              <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+            <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+              <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
                 <tr>
                   <th scope="col" className="p-3.5 pl-4 text-center w-10">
                     <input

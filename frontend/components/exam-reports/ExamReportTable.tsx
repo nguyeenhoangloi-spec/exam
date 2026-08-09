@@ -149,15 +149,15 @@ export function ExamReportTable({
     return (
       <>
         <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-          <table className="w-full text-left text-xs text-slate-700 border-collapse">
-            <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+          <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
               <tr>
                 <th scope="col" className="p-2 pl-3 text-center w-8">
                   <input
                     type="checkbox"
                     checked={allSelected}
                     onChange={(e) => onSelectAll(e.target.checked)}
-                    className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </th>
                 <th scope="col" className="p-2 whitespace-nowrap">Mã SV</th>
@@ -168,38 +168,38 @@ export function ExamReportTable({
                 <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
+            <tbody className="divide-y divide-slate-100 font-normal">
               {candidates.map((c) => {
                 const isChecked = selected.includes(c.studentId);
                 const badge = statusBadgeMap[c.status] || { label: c.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
 
                 return (
-                  <tr key={c.studentId} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                  <tr key={c.studentId} className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''}`}>
                     <td className="p-2 pl-3 text-center">
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={(e) => onSelect(c.studentId, e.target.checked)}
-                        className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      <span className="font-mono font-bold text-[14px] text-[#0F172A]">
                         {c.studentCode}
                       </span>
                     </td>
                     <td className="p-2 min-w-[180px]">
-                      <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(c)}>
+                      <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(c)}>
                         {c.fullName}
                       </p>
                     </td>
-                    <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{c.className}</td>
+                    <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{c.className}</td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[10.5px] font-bold ${badge.className}`}>
+                      <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[13px] font-medium ${badge.className}`}>
                         {badge.label}
                       </span>
                     </td>
-                    <td className={`p-2 whitespace-nowrap text-center font-black ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    <td className={`p-2 whitespace-nowrap text-center font-bold ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {c.status === 'ABSENT' ? 'Vắng' : c.totalScore}
                     </td>
                     <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -208,14 +208,14 @@ export function ExamReportTable({
                           <button
                             type="button"
                             onClick={() => setReviewAttemptId(c.attemptId!)}
-                            className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[10px] font-bold transition cursor-pointer"
+                            className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-[#2563EB] hover:bg-blue-100 text-[13px] font-medium transition cursor-pointer"
                             title="Xem chi tiết bài làm"
                           >
-                            <Eye className="h-3 w-3" />
+                            <Eye className="h-3.5 w-3.5" />
                           </button>
                         )}
-                        <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
-                          <Eye className="h-3.5 w-3.5" />
+                        <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+                          <Eye className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
@@ -239,8 +239,8 @@ export function ExamReportTable({
   return (
     <>
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th scope="col" className="p-3.5 pl-4 text-center w-10">
                 <input

@@ -40,10 +40,10 @@ export function ExamPaperPaginationBar({
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3">
-      <p className="text-xs font-semibold text-slate-500">
-        Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
-        <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
-        <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Đề thi
+      <p className="text-[14px] font-normal text-[#64748B]">
+        Hiển thị <span className="font-semibold text-[#0F172A]">{startItem}</span> -{' '}
+        <span className="font-semibold text-[#0F172A]">{endItem}</span> trong{' '}
+        <span className="font-semibold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> Đề thi
       </p>
 
       <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export function ExamPaperPaginationBar({
             type="button"
             disabled={page <= 1}
             onClick={() => onPage(page - 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-[#64748B] hover:bg-slate-50 hover:text-[#0F172A] transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
             title="Trang trước"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -61,7 +61,7 @@ export function ExamPaperPaginationBar({
           {pages.map((p, idx) => {
             if (p === '...') {
               return (
-                <span key={`dots-${idx}`} className="px-1 text-xs font-bold text-slate-400">
+                <span key={`dots-${idx}`} className="px-1 text-[14px] font-medium text-[#64748B]">
                   ...
                 </span>
               );
@@ -75,10 +75,10 @@ export function ExamPaperPaginationBar({
                 key={pNum}
                 type="button"
                 onClick={() => onPage(pNum)}
-                className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-xs font-extrabold transition cursor-pointer shadow-2xs ${
+                className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-[14px] font-medium transition cursor-pointer shadow-2xs ${
                   isCurrent
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    ? 'bg-[#2563EB] text-white shadow-xs font-semibold'
+                    : 'border border-slate-200 bg-white text-[#334155] hover:bg-slate-50'
                 }`}
               >
                 {pNum}
@@ -90,7 +90,7 @@ export function ExamPaperPaginationBar({
             type="button"
             disabled={page >= totalPages}
             onClick={() => onPage(page + 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-[#64748B] hover:bg-slate-50 hover:text-[#0F172A] transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
             title="Trang sau"
           >
             <ChevronRight className="h-4 w-4" />
@@ -101,14 +101,14 @@ export function ExamPaperPaginationBar({
           <select
             value={limit}
             onChange={(e) => onLimit(Number(e.target.value))}
-            className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-extrabold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-[14px] font-medium text-[#0F172A] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value={8}>8 / trang</option>
             <option value={10}>10 / trang</option>
             <option value={20}>20 / trang</option>
             <option value={50}>50 / trang</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
         </div>
       </div>
     </div>

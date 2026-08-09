@@ -34,17 +34,17 @@ export function TabBar<T extends string = string>({
                 onChange(tab.key);
               });
             }}
-            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap shrink-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none ${
-              isActive ? 'text-blue-600 font-black' : 'text-slate-500 hover:text-slate-900'
+            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-[15px] font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none ${
+              isActive ? 'text-[#2563EB] font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
             }`}
           >
             <span>{tab.label}</span>
             {tab.count !== undefined && (
               <span
-                className={`rounded-full px-2 py-0.5 text-[11px] font-bold transition ${
+                className={`rounded-full px-2.5 py-0.5 text-[13px] font-semibold transition ${
                   isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                    ? 'bg-blue-50 text-[#2563EB]'
+                    : 'bg-slate-100 text-[#64748B] group-hover:bg-slate-200'
                 }`}
               >
                 ({tab.count.toLocaleString('vi-VN')})

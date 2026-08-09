@@ -160,8 +160,8 @@ export function ExamRoomTable({
   // 2. Dạng Bảng Chuẩn (List View Mode)
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs border-collapse">
-        <thead className="bg-blue-50 text-blue-700 font-extrabold text-[11px] uppercase tracking-wider border-b border-blue-100">
+      <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+        <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
           <tr>
             <th className="p-3.5 pl-4 text-center whitespace-nowrap w-10">
               <input

@@ -62,21 +62,21 @@ export function ExamPeriodKPICards({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
                   {item.title}
                 </span>
-                <p className="text-2xl font-black text-slate-900 leading-tight">
+                <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
                   {item.value.toLocaleString('vi-VN')}
                 </p>
               </div>
 
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 transition-transform group-hover:scale-105">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-transform group-hover:scale-105">
                 <IconComponent className="h-5 w-5" />
               </div>
             </div>
 
             <div className="pt-2 border-t border-slate-100/80">
-              <span className="text-[11px] font-medium text-slate-500">
+              <span className="text-[13px] font-normal text-[#64748B]">
                 {item.subtext}
               </span>
             </div>

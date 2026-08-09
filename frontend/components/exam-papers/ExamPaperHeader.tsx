@@ -17,13 +17,13 @@ export function ExamPaperHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
           <span>Quản lý Đề thi & Ma trận đề</span>
-          <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-extrabold text-blue-600 border border-blue-200">
+          <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[13px] font-semibold text-[#2563EB] border border-blue-200">
             Tự động sinh đề
           </span>
         </h1>
-        <p className="text-xs font-semibold text-slate-500">
+        <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
           Sinh đề thi ngẫu nhiên theo ma trận độ khó, phát hành, đảo đề thi và lưu trữ đề thi theo quy chuẩn
         </p>
       </div>
@@ -33,7 +33,7 @@ export function ExamPaperHeader({
           <button
             type="button"
             onClick={onExportAll}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-bold text-white shadow-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 px-4 py-2 text-[15px] font-medium text-white shadow-xs transition active:scale-95 cursor-pointer"
           >
             <Download className="h-4 w-4 text-white" />
             <span>Xuất báo cáo</span>
@@ -44,9 +44,9 @@ export function ExamPaperHeader({
           <button
             type="button"
             onClick={onPrintAll}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
           >
-            <Printer className="h-4 w-4 text-slate-500" />
+            <Printer className="h-4 w-4 text-[#64748B]" />
             <span>In danh sách đề</span>
           </button>
         )}

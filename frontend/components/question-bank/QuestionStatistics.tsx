@@ -35,15 +35,15 @@ export function QuestionStatistics({
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-500">{item.label}</p>
-                <p className="mt-1 text-2xl font-black text-slate-900">{item.count}</p>
+                <p className="text-[13px] font-semibold text-[#64748B]">{item.label}</p>
+                <p className="mt-1 text-[32px] font-bold text-[#0F172A] leading-[38px]">{item.count}</p>
               </div>
               <div className={`rounded-xl p-2.5 border ${item.color}`}>
                 <Icon className="h-5 w-5" />
               </div>
             </div>
             {item.key === 'ARCHIVED' && (
-              <p className="mt-2 text-[10px] text-slate-400 font-medium">Bấm vào để xem danh sách câu hỏi trong Kho lưu trữ</p>
+              <p className="mt-2 text-[13px] text-[#64748B] font-normal">Bấm vào để xem danh sách câu hỏi trong Kho lưu trữ</p>
             )}
           </div>
         );

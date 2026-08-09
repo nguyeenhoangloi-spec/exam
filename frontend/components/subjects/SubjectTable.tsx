@@ -66,37 +66,37 @@ export function SubjectTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {s.subjectCode}
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500">
-                    <Award className="h-3 w-3 text-slate-400" /> {s.credits} Tín chỉ
+                  <span className="inline-flex items-center gap-1 text-[13px] font-medium text-[#64748B]">
+                    <Award className="h-3.5 w-3.5 text-slate-400" /> {s.credits} Tín chỉ
                   </span>
                 </div>
 
                 <div>
                   <h4
                     onClick={() => onDetail(s)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                    className="text-[18px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition"
                   >
                     {s.subjectName}
                   </h4>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 pt-1">
-                  <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                <div className="flex items-center gap-1.5 text-[14px] font-normal text-[#475569] pt-1">
+                  <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
                   <span className="truncate">{deptName}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
                 <button
                   type="button"
                   onClick={() => onEnroll(s)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-1 text-[#2563EB] hover:text-blue-700 cursor-pointer"
                 >
                   <UserPlus className="h-3.5 w-3.5" />
                   <span>Gán sinh viên</span>
@@ -134,15 +134,15 @@ export function SubjectTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               <th scope="col" className="p-2 whitespace-nowrap">Mã môn</th>
@@ -152,7 +152,7 @@ export function SubjectTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+          <tbody className="divide-y divide-slate-100 font-normal">
             {subjects.map((s) => {
               const isChecked = selected.includes(s.id);
               const deptName = s.department?.name || (s as any).departmentName || '---';

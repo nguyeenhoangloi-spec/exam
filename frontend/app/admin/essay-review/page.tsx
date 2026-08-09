@@ -368,12 +368,12 @@ export default function AdminEssayReviewPage() {
   return (
     <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
       {/* Page Header matching system standards */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-1">
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+          <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
             Duyệt & Quản Lý Bài Thi Tự Luận
           </h1>
-          <p className="text-xs font-semibold text-slate-500">
+          <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
             Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.
           </p>
         </div>
@@ -381,7 +381,7 @@ export default function AdminEssayReviewPage() {
         <button
           type="button"
           onClick={loadAssignments}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition cursor-pointer shadow-2xs active:scale-95 shrink-0 select-none"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-[15px] font-medium text-[#334155] hover:bg-slate-50 hover:text-[#2563EB] transition cursor-pointer shadow-2xs active:scale-95 shrink-0 select-none"
         >
           <span>Làm mới danh sách</span>
         </button>

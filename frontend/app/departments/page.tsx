@@ -598,8 +598,8 @@ export default function DepartmentsPage() {
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                  <thead className="bg-blue-50 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 border-b border-blue-100">
+                <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+                  <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
                     <tr>
                       <th className="p-3">Mã môn</th>
                       <th className="p-3">Tên môn học</th>

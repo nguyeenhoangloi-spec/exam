@@ -274,15 +274,15 @@ export function ExamScheduleTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
-          <thead className="bg-blue-50 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-slate-300 border-b border-blue-100 dark:border-slate-700">
+        <table className="w-full text-left text-[15px] text-[#334155] dark:text-slate-200 border-collapse">
+          <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-semibold uppercase tracking-wider text-[#475569] dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               <th scope="col" className="p-2 whitespace-nowrap">Mã lịch</th>
@@ -294,7 +294,7 @@ export function ExamScheduleTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-medium">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-normal">
             {schedules.map((s) => {
               const isChecked = selected.includes(s.id);
               const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
@@ -303,36 +303,36 @@ export function ExamScheduleTable({
               const roomName = s.roomName || 'P.101';
 
               return (
-                <tr key={s.id} className={`transition hover:bg-blue-50/40 dark:hover:bg-slate-800/90 ${isChecked ? 'bg-blue-50/60 dark:bg-blue-950/60' : ''}`}>
+                <tr key={s.id} className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/90 ${isChecked ? 'bg-blue-50/50 dark:bg-blue-950/60' : ''}`}>
                   <td className="p-2 pl-3 text-center">
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(s.id, e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
                   <td className="p-2 whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {codeText}
                     </button>
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(s)}>
+                    <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(s)}>
                       {periodName}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{shiftName}</td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{roomName}</td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{formatDate(s.examDate)}</td>
+                  <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{shiftName}</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{roomName}</td>
+                  <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{formatDate(s.examDate)}</td>
                   <td className="p-2 whitespace-nowrap">{getStatusBadge(s.statusBadge || s.status, s)}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
-                    <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
-                      <Eye className="h-3.5 w-3.5" />
+                    <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+                      <Eye className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
@@ -347,8 +347,8 @@ export function ExamScheduleTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default matching Mockup Image 100%)
   return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
-        <thead className="bg-blue-50 dark:bg-slate-800/90 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-slate-300 border-b border-blue-100 dark:border-slate-700">
+      <table className="w-full text-left text-[15px] text-[#334155] dark:text-slate-200 border-collapse">
+        <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-semibold uppercase tracking-wider text-[#475569] dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input

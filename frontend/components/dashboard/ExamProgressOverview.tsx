@@ -28,15 +28,15 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-base font-black text-slate-900">Tiến độ tổ chức kỳ thi</h3>
+        <h3 className="text-[18px] font-semibold text-[#0F172A]">Tiến độ tổ chức kỳ thi</h3>
 
         <button
           type="button"
           onClick={() => router.push('/exam-periods')}
-          className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-[14px] font-medium text-[#2563EB] hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem chi tiết</span>
-          <ArrowRight className="h-3.5 w-3.5" />
+          <ArrowRight className="h-4 w-4" />
         </button>
       </div>
 
@@ -45,11 +45,11 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
         <div className="space-y-4 my-auto">
           {list.map((item) => (
             <div key={item.code} className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-extrabold text-slate-800 truncate pr-2">
-                  <span className="font-black text-slate-900">{item.code}</span> - {item.name}
+              <div className="flex items-center justify-between text-[15px]">
+                <span className="font-medium text-[#334155] truncate pr-2">
+                  <span className="font-bold text-[#0F172A]">{item.code}</span> - {item.name}
                 </span>
-                <span className={`font-black text-xs ${item.textColor} shrink-0`}>
+                <span className={`font-bold text-[14px] ${item.textColor} shrink-0`}>
                   {item.progress}%
                 </span>
               </div>
@@ -64,14 +64,14 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
           ))}
         </div>
       ) : (
-        <div className="py-12 text-center my-auto space-y-2 text-slate-400">
+        <div className="py-12 text-center my-auto space-y-2 text-[#64748B]">
           <Layers className="w-8 h-8 mx-auto text-slate-300" />
-          <p className="text-xs font-semibold text-slate-500">Chưa có tiến độ kỳ thi nào</p>
+          <p className="text-[14px] font-normal text-[#64748B]">Chưa có tiến độ kỳ thi nào</p>
         </div>
       )}
 
       {/* Footer Legend */}
-      <div className="flex items-center justify-center gap-4 border-t border-slate-100 pt-3 text-xs font-bold text-slate-600">
+      <div className="flex items-center justify-center gap-4 border-t border-slate-100 pt-3 text-[13px] font-normal text-[#64748B]">
         <div className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-sm bg-slate-300 inline-block" />
           <span>Chưa bắt đầu</span>

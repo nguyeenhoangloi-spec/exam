@@ -19,19 +19,19 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3 h-full flex flex-col justify-between">
       {/* Header & Dropdown Filter */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-sm sm:text-base font-black text-slate-900">Lịch thi trong 7 ngày tới</h3>
+        <h3 className="text-[18px] font-semibold text-[#0F172A]">Lịch thi trong 7 ngày tới</h3>
 
         <div className="relative">
           <select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 pr-8 text-[14px] font-medium text-[#334155] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="7 ngày tới">7 ngày tới</option>
             <option value="14 ngày tới">14 ngày tới</option>
             <option value="30 ngày tới">30 ngày tới</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
         </div>
       </div>
 

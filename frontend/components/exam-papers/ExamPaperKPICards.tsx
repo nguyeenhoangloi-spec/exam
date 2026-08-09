@@ -71,10 +71,10 @@ export function ExamPaperKPICards({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
                   {item.title}
                 </span>
-                <p className="text-2xl font-black text-slate-900 leading-tight">
+                <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
                   {item.value.toLocaleString('vi-VN')}
                   {item.unit || ''}
                 </p>
@@ -87,7 +87,7 @@ export function ExamPaperKPICards({
               </div>
             </div>
 
-            <span className="text-[10.5px] font-semibold text-slate-400 mt-2">
+            <span className="text-[13px] font-normal text-[#64748B] mt-2">
               {item.subtext}
             </span>
           </div>
