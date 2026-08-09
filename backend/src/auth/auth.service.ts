@@ -183,7 +183,7 @@ export class AuthService {
    * Generates Google OAuth redirect URL
    */
   getGoogleAuthUrl(): string {
-    const clientId = process.env.GOOGLE_CLIENT_ID || '1050574656376-9r8njqcglsflfm8crdh8136k1o84tigo.apps.googleusercontent.com';
+    const clientId = process.env.GOOGLE_CLIENT_ID || '';
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
     const scope = encodeURIComponent('email profile');
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&prompt=select_account`;
@@ -258,8 +258,8 @@ export class AuthService {
       throw new BadRequestException('Mã xác thực Google không hợp lệ.');
     }
 
-    const clientId = process.env.GOOGLE_CLIENT_ID || '1050574656376-9r8njqcglsflfm8crdh8136k1o84tigo.apps.googleusercontent.com';
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || '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';
+    const clientId = process.env.GOOGLE_CLIENT_ID || '';
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
 
     try {
