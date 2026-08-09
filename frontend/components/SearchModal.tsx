@@ -304,7 +304,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
               <X className="w-4 h-4" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-400">
+            <kbd className="hidden sm:inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2 py-0.5 text-[13px] font-semibold text-[#64748B]">
               ESC
             </kbd>
           )}
@@ -367,7 +367,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         {/* Footer shortcuts hint */}
         <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[13px] text-[#64748B]">
           <span>Bấm để truy cập nhanh trang</span>
-          <span className="font-medium">Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border rounded text-[11px]">ESC</kbd> để thoát</span>
+          <span className="font-medium">Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border rounded text-[13px] font-semibold">ESC</kbd> để thoát</span>
         </div>
       </div>
     </div>

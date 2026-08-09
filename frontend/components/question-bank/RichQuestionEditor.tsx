@@ -73,8 +73,8 @@ export function RichQuestionEditor({
           </button>
         </div>
 
-        <span className="text-[11px] font-bold text-slate-400">
-          Công thức: nhập giữa <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-mono">\(...\)</code> hoặc <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-mono">$$...$$</code>
+        <span className="text-[13px] font-normal text-[#64748B]">
+          Công thức: nhập giữa <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-mono text-[13px]">\(...\)</code> hoặc <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-mono text-[13px]">$$...$$</code>
         </span>
       </div>
 
@@ -84,7 +84,7 @@ export function RichQuestionEditor({
         suppressContentEditableWarning
         onInput={(e) => onChange(e.currentTarget.innerHTML)}
         data-placeholder={placeholder || 'Nhập nội dung câu hỏi...'}
-        className="min-h-[120px] p-3.5 text-xs font-semibold text-slate-800 leading-6 outline-none empty:before:text-slate-400 empty:before:content-[attr(data-placeholder)]"
+        className="min-h-[120px] p-3.5 text-[15px] font-medium text-[#0F172A] leading-6 outline-none empty:before:text-slate-400 empty:before:content-[attr(data-placeholder)]"
       />
     </div>
   );

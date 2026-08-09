@@ -305,7 +305,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Bell className="h-4.5 w-4.5" />
                 {effectiveUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white shadow-xs animate-pulse">
+                  <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-600 text-[13px] font-semibold text-white shadow-xs animate-pulse">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
                   </span>
                 )}
@@ -313,18 +313,18 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Notifications Dropdown Panel */}
               {openPanel === 'notifications' && (
-                <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-[15px] z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
-                    <p className="font-black text-slate-900 dark:text-slate-100 text-xs flex items-center gap-1.5">
-                      <Bell className="w-3.5 h-3.5 text-blue-600" />
+                    <p className="font-semibold text-[#0F172A] dark:text-slate-100 text-[15px] flex items-center gap-1.5">
+                      <Bell className="w-4 h-4 text-blue-600" />
                       <span>Thông báo hệ thống</span>
                     </p>
                     {effectiveUnreadCount > 0 ? (
-                      <span className="rounded-full bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-rose-600">
+                      <span className="rounded-full bg-rose-50 border border-rose-200 px-2.5 py-0.5 text-[13px] font-semibold text-rose-600">
                         {effectiveUnreadCount} chưa đọc
                       </span>
                     ) : (
-                      <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
+                      <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[13px] font-semibold text-emerald-600">
                         Đã đọc tất cả
                       </span>
                     )}
@@ -344,15 +344,15 @@ export const Header: React.FC<HeaderProps> = ({
                               }`}
                           >
                             <div className="flex items-center justify-between gap-1.5">
-                              <p className="font-black text-slate-900 dark:text-slate-100 text-xs group-hover:text-blue-600 transition flex items-center gap-1.5">
+                              <p className="font-semibold text-[#0F172A] dark:text-slate-100 text-[15px] group-hover:text-blue-600 transition flex items-center gap-1.5">
                                 {isUnread && (
                                   <span className="h-1.5 w-1.5 rounded-full bg-blue-600 shrink-0 animate-pulse" />
                                 )}
                                 <span>{item.title}</span>
                               </p>
-                              <ArrowRight className="w-3 h-3 text-blue-500 group-hover:translate-x-0.5 transition shrink-0" />
+                              <ArrowRight className="w-3.5 h-3.5 text-blue-500 group-hover:translate-x-0.5 transition shrink-0" />
                             </div>
-                            <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                            <p className="text-[13px] text-[#64748B] dark:text-slate-300 font-normal leading-relaxed">
                               {item.desc}
                             </p>
                           </div>
@@ -363,9 +363,9 @@ export const Header: React.FC<HeaderProps> = ({
                         <button
                           type="button"
                           onClick={handleMarkAllAsRead}
-                          className="w-full mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-center text-[11px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-center text-[13px] font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 flex items-center justify-center gap-1 cursor-pointer"
                         >
-                          <CheckCheck className="w-3.5 h-3.5" />
+                          <CheckCheck className="w-4 h-4" />
                           <span>Đánh dấu đã đọc tất cả</span>
                         </button>
                       )}

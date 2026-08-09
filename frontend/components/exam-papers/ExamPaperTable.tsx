@@ -95,29 +95,29 @@ export function ExamPaperTable({
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {subCode && (
-                      <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-black text-blue-700 border border-blue-200/70 font-mono">
+                      <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[13px] font-semibold text-blue-700 border border-blue-200/70 font-mono">
                         {subCode}
                       </span>
                     )}
                     <h4
                       onClick={() => onDetail(p.id)}
-                      className="text-xs font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition truncate"
+                      className="text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-blue-600 transition truncate"
                     >
                       {subName}
                     </h4>
                   </div>
                   {periodName && (
-                    <p className="text-[10.5px] font-medium text-slate-400 mt-0.5 truncate">
+                    <p className="text-[13px] font-normal text-[#64748B] mt-0.5 truncate">
                       {periodName}
                     </p>
                   )}
 
-                  <div className="mt-2 space-y-0.5 text-[11px] font-semibold text-slate-600">
-                    <span className="flex items-center gap-1 text-slate-700">
-                      <Clock className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+                  <div className="mt-2 space-y-0.5 text-[14px] font-normal text-[#475569]">
+                    <span className="flex items-center gap-1 text-[#334155]">
+                      <Clock className="h-4 w-4 text-blue-600 shrink-0" />
                       {dateStr ? `${dateStr} (${timeStr || 'Chưa có giờ'})` : 'Chưa xếp lịch thi'}
                     </span>
-                    <span className="text-[10.5px] text-slate-400 font-medium block pl-4.5">
+                    <span className="text-[13px] text-[#64748B] font-normal block pl-5">
                       Thời gian làm bài: {p.durationMinutes} phút
                     </span>
                   </div>

@@ -223,17 +223,17 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           {/* Step 3: Type Exact Confirmation Phrase */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-bold uppercase text-slate-600">
+              <label className="block text-[15px] font-medium text-[#0F172A]">
                 3. Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
               </label>
               <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md">
+                <span className="text-[13px] font-semibold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-md">
                   {targetPhrase}
                 </span>
                 <button
                   type="button"
                   onClick={handleQuickFillPhrase}
-                  className="text-[10px] font-black text-blue-600 hover:bg-blue-50 px-2 py-0.5 rounded-md transition cursor-pointer"
+                  className="text-[13px] font-semibold text-blue-600 hover:bg-blue-50 px-2.5 py-0.5 rounded-md transition cursor-pointer"
                   title="Tự động điền cụm từ xác nhận"
                 >
                   Điền nhanh
@@ -247,13 +247,13 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder={`Gõ: ${targetPhrase} (hoặc bấm Điền nhanh)`}
               value={inputPhrase}
               onChange={(e) => setInputPhrase(e.target.value)}
-              className={`w-full rounded-xl border px-3.5 py-2 text-xs font-bold focus:outline-none transition ${isPhraseMatched
-                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900'
-                : 'border-slate-200 focus:border-blue-500'
+              className={`w-full rounded-xl border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${isPhraseMatched
+                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900 font-semibold'
+                : 'border-slate-200 text-[#0F172A] focus:border-blue-500'
                 }`}
             />
             {isPhraseMatched && (
-              <p className="mt-1 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+              <p className="mt-1 text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
                 Cụm từ xác nhận hợp lệ
               </p>
             )}
@@ -261,27 +261,27 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 4: Account Password Verification (Optional if logged in) */}
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-600 mb-1 flex items-center justify-between">
+            <label className="block text-[15px] font-medium text-[#0F172A] mb-1 flex items-center justify-between">
               <span className="flex items-center gap-1">
-                <KeyRound className="w-3.5 h-3.5 text-slate-500" />
+                <KeyRound className="w-4 h-4 text-[#64748B]" />
                 4. Mật khẩu tài khoản của bạn
               </span>
-              <span className="text-[10px] text-slate-400 font-normal">(Tùy chọn nếu đã đăng nhập)</span>
+              <span className="text-[13px] text-[#64748B] font-normal">(Tùy chọn nếu đã đăng nhập)</span>
             </label>
             <input
               type="password"
               placeholder="Mật khẩu tài khoản (tùy chọn)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-medium focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition"
             />
           </div>
 
           {/* Step 5: Exam Password (only for publishing official exam paper) */}
           {examPasswordRequired && (
             <div className="rounded-2xl border border-slate-200/90 bg-slate-50/60 p-4 space-y-2">
-              <label className="block text-xs font-bold uppercase text-slate-800 flex items-center gap-1">
-                <Lock className="w-3.5 h-3.5 text-blue-600" />
+              <label className="block text-[15px] font-medium text-[#0F172A] flex items-center gap-1">
+                <Lock className="w-4 h-4 text-blue-600" />
                 5. Mật khẩu thi chính thức <span className="text-rose-500">*</span>
               </label>
               <input
@@ -291,9 +291,9 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
                 value={examPassword}
                 onChange={(e) => setExamPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold bg-white focus:border-blue-500 focus:outline-none shadow-2xs transition"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] bg-white focus:border-blue-500 focus:outline-none shadow-2xs transition"
               />
-              <p className="text-[11px] font-semibold text-slate-500 leading-relaxed">
+              <p className="text-[13px] font-normal text-[#64748B] leading-relaxed">
                 Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.
                 Hệ thống lưu dạng bảo mật (bcrypt) và không ai xem lại được sau khi lưu.
               </p>

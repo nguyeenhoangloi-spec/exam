@@ -36,7 +36,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
       </div>
 
       {/* Y-axis title label */}
-      <div className="text-[10px] font-bold text-slate-400 pl-1 -mb-2">
+      <div className="text-[13px] font-normal text-[#64748B] pl-1 -mb-2">
         Số lượng
       </div>
 

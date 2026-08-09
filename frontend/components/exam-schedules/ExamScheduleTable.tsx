@@ -203,30 +203,30 @@ export function ExamScheduleTable({
 
                 {/* Period & Shift Info */}
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">{shiftName}</span>
+                  <span className="text-[13px] font-semibold text-blue-600">{shiftName}</span>
                   <h4
                     onClick={() => onDetail(s)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
+                    className="text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
                   >
                     {periodName}
                   </h4>
                 </div>
 
                 {/* Details */}
-                <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
+                <div className="grid grid-cols-2 gap-2 text-[15px] font-medium text-[#334155] pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Building className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                    <Building className="h-4 w-4 text-blue-500 shrink-0" />
                     <span>Phòng {roomName}</span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Users className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                    <Users className="h-4 w-4 text-slate-500 shrink-0" />
                     <span>{studentCount} TS ({supervisorCount} GT)</span>
                   </div>
                 </div>
 
                 {/* Date & Time */}
-                <div className="text-[11px] font-semibold text-slate-500 flex items-center justify-between pt-1">
-                  <span>Ngày: <strong className="text-slate-800">{formatDate(s.examDate)}</strong></span>
+                <div className="text-[14px] font-normal text-[#64748B] flex items-center justify-between pt-1">
+                  <span>Ngày: <strong className="text-[#0F172A] font-semibold">{formatDate(s.examDate)}</strong></span>
                   <span>{s.startTime || '07:00'} - {s.endTime || '09:00'}</span>
                 </div>
               </div>
@@ -422,7 +422,7 @@ export function ExamScheduleTable({
                       >
                         {periodName}
                       </p>
-                      <p className="text-[11px] font-medium text-slate-500">
+                      <p className="text-[14px] font-normal text-[#64748B]">
                         {s.examType === 'DIEN_LO' || s.examType === 'FILL_BLANK' ? 'Điền khuyết' : s.examType === 'TU_LUAN' ? 'Tự luận' : 'Trắc nghiệm'}
                       </p>
                     </div>

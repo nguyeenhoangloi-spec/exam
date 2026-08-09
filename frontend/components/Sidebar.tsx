@@ -223,10 +223,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <GraduationCap className="h-5 w-5 text-white" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-xs font-bold tracking-wider text-white uppercase leading-tight">
+              <h1 className="truncate text-[15px] font-semibold tracking-wider text-white uppercase leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[10px] font-semibold tracking-tight text-blue-300 uppercase leading-tight mt-0.5">
+              <h2 className="truncate text-[13px] font-semibold tracking-tight text-blue-300 uppercase leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
@@ -394,10 +394,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {!collapsed && (
               <div className="min-w-0">
-                <span className="block truncate text-xs font-black text-white leading-tight">
+                <span className="block truncate text-[15px] font-semibold text-white leading-tight">
                   {displayName}
                 </span>
-                <span className="block truncate text-[11px] font-semibold text-blue-200 leading-tight mt-0.5">
+                <span className="block truncate text-[13px] font-semibold text-blue-200 leading-tight mt-0.5">
                   {role === 'ADMIN' ? 'Quản trị hệ thống' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                 </span>
               </div>
@@ -406,7 +406,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {!collapsed && (
             <ChevronDown
-              className={`h-3.5 w-3.5 shrink-0 text-blue-200 transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-white' : ''
+              className={`h-4 w-4 shrink-0 text-blue-200 transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-white' : ''
                 }`}
             />
           )}
@@ -418,7 +418,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className={`absolute ${collapsed
                 ? 'left-[calc(100%+12px)] bottom-1 w-64'
                 : 'bottom-[calc(100%+10px)] left-3 right-3 w-auto'
-              } rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-2xl z-[9999] text-xs animate-in fade-in zoom-in-95 duration-150`}
+              } rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-2xl z-[9999] text-[15px] animate-in fade-in zoom-in-95 duration-150`}
           >
             {/* Little pointer triangle arrow pointing to trigger card */}
             <div
@@ -444,15 +444,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className="h-9 w-9 shrink-0 rounded-full object-cover shadow-xs border border-slate-200 dark:border-slate-700"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-600 text-white font-black text-xs shadow-xs">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-600 text-white font-bold text-xs shadow-xs">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="font-extrabold text-slate-900 dark:text-slate-100 text-xs truncate group-hover:text-blue-600 transition">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] truncate group-hover:text-blue-600 transition">
                     {displayName}
                   </p>
-                  <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                  <p className="text-[13px] font-normal text-slate-400 dark:text-slate-500 truncate mt-0.5">
                     {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                   </p>
                 </div>

@@ -166,15 +166,15 @@ export function ExamPaperMatrixForm({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-start">
 
           {/* 1. Loại đề */}
-          <div className="space-y-1.5 col-span-2 sm:col-span-1">
-            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
+          <div className="space-y-1.5">
+            <label className="block text-[15px] font-medium text-[#0F172A]">
               Loại đề <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-1">
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[15px] font-medium border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
                   ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                   : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
                   }`}
@@ -184,7 +184,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[15px] font-medium border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
                   ? 'bg-blue-700 text-white border-blue-700 shadow-sm'
                   : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
                   }`}
@@ -194,7 +194,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[10.5px] font-extrabold border transition cursor-pointer ${examType === 'TU_LUAN'
+                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[15px] font-medium border transition cursor-pointer ${examType === 'TU_LUAN'
                   ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                   : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700'
                   }`}
@@ -202,47 +202,47 @@ export function ExamPaperMatrixForm({
                 TL
               </button>
             </div>
-            <p className="text-[9.5px] text-slate-400 font-semibold">
+            <p className="text-[13px] text-[#64748B] font-normal">
               {examType === 'DIEN_LO' || examType === 'FILL_BLANK' ? 'Điền vào chỗ trống' : isEssay ? 'Tự luận' : 'Trắc nghiệm'}
             </p>
           </div>
 
           {/* 2. Mã đề gốc */}
           <div className="space-y-1.5">
-            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Mã đề gốc</label>
+            <label className="block text-[15px] font-medium text-[#0F172A]">Mã đề gốc</label>
             <input
               type="text"
               required
               value={formData.paperCode}
               onChange={(e) => setFormData((p: any) => ({ ...p, paperCode: e.target.value }))}
               placeholder="101"
-              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-extrabold text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 outline-none transition"
             />
           </div>
 
           {/* 3. Số mã đảo */}
           <div className="space-y-1.5">
-            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Số mã đảo</label>
+            <label className="block text-[15px] font-medium text-[#0F172A]">Số mã đảo</label>
             <input
               type="number"
               min={1}
               max={10}
               value={formData.variantCount}
               onChange={(e) => setFormData((p: any) => ({ ...p, variantCount: e.target.value }))}
-              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-extrabold text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 outline-none transition"
             />
           </div>
 
           {/* 4. Thời gian */}
           <div className="space-y-1.5">
-            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Thời gian (phút)</label>
+            <label className="block text-[15px] font-medium text-[#0F172A]">Thời gian (phút)</label>
             <input
               type="number"
               min={15}
               max={scheduleDuration || 180}
               value={formData.durationMinutes}
               onChange={(e) => handleDurationChange(e.target.value)}
-              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-extrabold text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 outline-none transition"
             />
             {scheduleDuration > 0 && (
               <p className="text-[9.5px] text-slate-400 font-semibold">Tối đa: {scheduleDuration} phút</p>

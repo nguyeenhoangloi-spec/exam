@@ -326,23 +326,23 @@ export function QuestionFormDialog({
                     {mime.startsWith('video/') && (
                       <div className="flex flex-col items-center justify-center h-20 w-28 bg-slate-800 gap-1">
                         <Video className="h-6 w-6 text-slate-300" />
-                        <span className="text-[10px] text-slate-300 truncate max-w-[100px]">{media.fileName}</span>
+                        <span className="text-[13px] text-slate-300 truncate max-w-[100px]">{media.fileName}</span>
                       </div>
                     )}
                     {mime.startsWith('audio/') && (
                       <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
-                        <span className="text-[10px] font-semibold text-slate-600 max-w-[120px] truncate">{media.fileName}</span>
+                        <span className="text-[13px] font-semibold text-[#334155] max-w-[120px] truncate">{media.fileName}</span>
                         <audio src={fullUrl} controls className="h-8 w-36" />
                       </div>
                     )}
                     {!mime.startsWith('image/') && !mime.startsWith('video/') && !mime.startsWith('audio/') && (
                       <div className="flex flex-col items-center justify-center h-20 w-28 gap-1">
                         <ImageIcon className="h-6 w-6 text-slate-400" />
-                        <span className="text-[10px] text-slate-500 truncate max-w-[100px]">{media.fileName}</span>
+                        <span className="text-[13px] text-[#64748B] truncate max-w-[100px]">{media.fileName}</span>
                       </div>
                     )}
                     {/* Badge 'đã lưu' */}
-                    <span className="absolute bottom-1 left-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold text-white">Đã lưu</span>
+                    <span className="absolute bottom-1 left-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[13px] font-semibold text-white">Đã lưu</span>
                     <button
                       type="button"
                       onClick={() => media.id && removeExistingMedia(media.id)}
@@ -370,7 +370,7 @@ export function QuestionFormDialog({
                   )}
                   {file.type.startsWith('audio/') && (
                     <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
-                      <span className="text-[10px] font-semibold text-slate-600 max-w-[120px] truncate">{file.name}</span>
+                      <span className="text-[13px] font-semibold text-[#334155] max-w-[120px] truncate">{file.name}</span>
                       <audio src={mediaUrls[idx]} controls className="h-8 w-36" />
                     </div>
                   )}
@@ -391,8 +391,8 @@ export function QuestionFormDialog({
         {!['FILL_BLANK', 'ESSAY'].includes(type) && (
           <div className="space-y-3 border-t border-slate-100 pt-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-slate-700 tracking-tight">Danh sách đáp án</span>
-              <span className="text-[11px] font-bold text-slate-400">Tích chọn để đánh dấu đáp án ĐÚNG</span>
+              <span className="text-[16px] font-semibold uppercase text-[#0F172A] tracking-tight">Danh sách đáp án</span>
+              <span className="text-[13px] font-normal text-[#64748B]">Tích chọn để đánh dấu đáp án ĐÚNG</span>
             </div>
             
             <div className="space-y-2">

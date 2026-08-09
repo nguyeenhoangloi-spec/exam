@@ -36,16 +36,16 @@ export function ExamScheduleTabsBar({
             key={tab.key}
             type="button"
             onClick={() => onSelectStatus(tab.key)}
-            className={`group relative flex items-center gap-1.5 px-4 py-3 text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
-              isActive ? 'text-blue-600 font-black' : 'text-slate-500 hover:text-slate-900'
+            className={`group relative flex items-center gap-1.5 px-4 py-3 text-[15px] font-medium transition-all cursor-pointer whitespace-nowrap ${
+              isActive ? 'text-blue-600 font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
             }`}
           >
             <span>{tab.label}</span>
             <span
-              className={`rounded-full px-2 py-0.5 text-[11px] font-bold transition ${
+              className={`rounded-full px-2 py-0.5 text-[13px] font-semibold transition ${
                 isActive
                   ? 'bg-blue-50 text-blue-600'
-                  : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                  : 'bg-slate-100 text-[#475569] group-hover:bg-slate-200'
               }`}
             >
               ({tab.count.toLocaleString('vi-VN')})

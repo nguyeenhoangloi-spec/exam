@@ -80,7 +80,7 @@ export function AILoadingProgress({
               ) : (
                 <Icon className="h-4 w-4 shrink-0 text-slate-400" />
               )}
-              <span className="truncate text-[11px] font-bold">{s.label}</span>
+              <span className="truncate text-[13px] font-semibold">{s.label}</span>
             </div>
           );
         })}

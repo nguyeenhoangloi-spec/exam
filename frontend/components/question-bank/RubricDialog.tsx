@@ -202,20 +202,20 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
               </div>
 
               {criteria.map((c, idx) => (
-                <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative">
-                  <div className="grid grid-cols-12 gap-2">
-                    <div className="col-span-6">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Tên tiêu chí *</label>
+                <div key={idx} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 relative">
+                  <div className="grid grid-cols-12 gap-3">
+                    <div className="col-span-6 space-y-1">
+                      <label className="block text-[15px] font-medium text-[#0F172A]">Tên tiêu chí *</label>
                       <input
                         type="text"
                         placeholder="Nhập tên tiêu chí..."
                         value={c.label}
                         onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] text-[#0F172A] font-medium focus:outline-none focus:border-blue-500"
                       />
                     </div>
-                    <div className="col-span-3">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Điểm tối đa *</label>
+                    <div className="col-span-3 space-y-1">
+                      <label className="block text-[15px] font-medium text-[#0F172A]">Điểm tối đa *</label>
                       <input
                         type="number"
                         step={0.1}
@@ -223,25 +223,25 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                         max={100}
                         value={c.maxScore}
                         onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-bold font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] text-[#0F172A] font-semibold font-mono focus:outline-none focus:border-blue-500"
                       />
                     </div>
                     <div className="col-span-3 flex justify-between items-end">
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-500 uppercase">Thứ tự *</label>
+                      <div className="space-y-1">
+                        <label className="block text-[15px] font-medium text-[#0F172A]">Thứ tự *</label>
                         <input
                           type="number"
                           min={1}
                           value={c.sortOrder}
                           onChange={(e) => handleFieldChange(idx, 'sortOrder', Number(e.target.value))}
-                          className="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-center focus:outline-none focus:border-blue-500"
+                          className="w-16 bg-white border border-slate-200 rounded-xl px-2 py-2 text-[15px] font-medium text-center focus:outline-none focus:border-blue-500"
                         />
                       </div>
                       {criteria.length > 1 && (
                         <button
                           type="button"
                           onClick={() => handleRemoveCriterion(idx)}
-                          className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition cursor-pointer"
                           title="Xóa tiêu chí này"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -250,14 +250,14 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                     </div>
                   </div>
 
-                  <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">Mô tả / Hướng dẫn tiêu chí (Tùy chọn)</label>
+                  <div className="space-y-1">
+                    <label className="block text-[15px] font-medium text-[#0F172A]">Mô tả / Hướng dẫn tiêu chí (Tùy chọn)</label>
                     <input
                       type="text"
                       placeholder="Mô tả hướng dẫn tiêu chí chấm..."
                       value={c.description}
                       onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>

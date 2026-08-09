@@ -23,7 +23,7 @@ type BadgeProps = {
 /** Soft badge dành cho thông tin phân loại hoặc ưu tiên có ý nghĩa ngữ nghĩa. */
 export function Badge({ children, tone = 'slate', size, className = '', leftIcon }: BadgeProps) {
   const sizeClass = size === 'xs'
-    ? 'px-1.5 py-0.5 text-[12px]'
+    ? 'px-1.5 py-0.5 text-[13px]'
     : size === 'lg'
       ? 'px-2.5 py-1.5 text-[14px]'
       : 'px-2 py-1 text-[13px]';

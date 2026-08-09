@@ -26,18 +26,18 @@ export function SegmentControl({ items, activeKey, onChange, className = '' }: S
             key={item.key}
             type="button"
             onClick={() => onChange(item.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-[10px] transition-all duration-150 cursor-pointer select-none ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-[15px] font-medium rounded-[10px] transition-all duration-150 cursor-pointer select-none ${
               isActive
-                ? 'bg-white text-blue-700 shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                ? 'bg-white text-blue-700 shadow-2xs font-semibold'
+                : 'text-[#64748B] hover:text-[#0F172A] hover:bg-slate-200/50'
             }`}
           >
             {item.icon && <span className="shrink-0">{item.icon}</span>}
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
               <span
-                className={`ml-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-extrabold ${
-                  isActive ? 'bg-blue-50 text-blue-700' : 'bg-slate-200 text-slate-600'
+                className={`ml-0.5 rounded-md px-1.5 py-0.5 text-[13px] font-semibold ${
+                  isActive ? 'bg-blue-50 text-blue-700' : 'bg-slate-200 text-[#475569]'
                 }`}
               >
                 {item.count}
@@ -67,16 +67,16 @@ export function Tabs({ items, activeKey, onChange, className = '' }: TabsProps) 
             key={item.key}
             type="button"
             onClick={() => onChange(item.key)}
-            className={`relative pb-3 text-xs font-bold transition-all duration-150 cursor-pointer select-none flex items-center gap-2 ${
-              isActive ? 'text-blue-600 font-extrabold' : 'text-slate-500 hover:text-slate-800'
+            className={`relative pb-3 text-[15px] font-medium transition-all duration-150 cursor-pointer select-none flex items-center gap-2 ${
+              isActive ? 'text-blue-600 font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
             }`}
           >
             {item.icon && <span className="shrink-0">{item.icon}</span>}
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
               <span
-                className={`rounded-md px-1.5 py-0.5 text-[10px] font-extrabold ${
-                  isActive ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
+                className={`rounded-md px-1.5 py-0.5 text-[13px] font-semibold ${
+                  isActive ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-[#475569]'
                 }`}
               >
                 {item.count}

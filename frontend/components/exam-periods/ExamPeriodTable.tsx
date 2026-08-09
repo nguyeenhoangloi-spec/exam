@@ -140,8 +140,8 @@ export function ExamPeriodTable({
                   </div>
                 </div>
 
-                <div className="text-[11px] font-semibold text-slate-500 flex items-center justify-between pt-1">
-                  <span>Thời gian: <strong className="text-slate-800">{formatDate(p.startDate)} - {formatDate(p.endDate)}</strong></span>
+                <div className="text-[14px] font-normal text-[#64748B] flex items-center justify-between pt-1">
+                  <span>Thời gian: <strong className="text-[#0F172A] font-semibold">{formatDate(p.startDate)} - {formatDate(p.endDate)}</strong></span>
                 </div>
               </div>
 

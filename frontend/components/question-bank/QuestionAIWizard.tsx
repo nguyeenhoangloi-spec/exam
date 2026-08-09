@@ -128,14 +128,14 @@ export function QuestionAIWizard({
 
   return (
     <Modal isOpen={open} onClose={onClose} title="Trình tạo câu hỏi bằng AI">
-      <div className="space-y-4 text-slate-800">
+      <div className="space-y-4 text-[#0F172A]">
         {/* Banner Header */}
         <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3.5">
           <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-blue-900">
+            <h4 className="text-[16px] font-semibold text-blue-900">
               Trợ lý AI thiết kế ngân hàng câu hỏi
             </h4>
-            <p className="text-[11.5px] font-medium text-blue-700 leading-relaxed">
+            <p className="text-[13px] font-medium text-blue-700 leading-relaxed">
               Tự động khởi tạo câu hỏi chuẩn hóa theo môn học, cấp độ Bloom & ma trận đề thi. Tải tài liệu bài giảng để AI tổng hợp tự động.
             </p>
           </div>
@@ -143,18 +143,18 @@ export function QuestionAIWizard({
 
         {/* Configuration Parameters Grid */}
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-3">
-          <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          <h5 className="text-[13px] font-semibold uppercase tracking-wider text-[#64748B]">
             Cấu hình tham số khởi tạo
           </h5>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[15px]">
             {/* Subject Select */}
             <div className="space-y-1">
-              <label className="block font-bold text-slate-700">Môn học áp dụng <span className="text-rose-500">*</span></label>
+              <label className="block text-[15px] font-medium text-[#0F172A]">Môn học áp dụng <span className="text-rose-500">*</span></label>
               <select
                 value={form.subjectId}
                 onChange={(e) => set('subjectId', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
               >
                 <option value="">-- Chọn môn học --</option>
                 {subjects.map((s) => (
@@ -167,11 +167,11 @@ export function QuestionAIWizard({
 
             {/* Question Type */}
             <div className="space-y-1">
-              <label className="block font-bold text-slate-700">Hình thức câu hỏi</label>
+              <label className="block text-[15px] font-medium text-[#0F172A]">Hình thức câu hỏi</label>
               <select
                 value={form.type}
                 onChange={(e) => set('type', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
               >
                 <option value="SINGLE_CHOICE">Trắc nghiệm chọn 1 đáp án</option>
                 <option value="FILL_BLANK">Điền vào chỗ trống</option>
@@ -181,11 +181,11 @@ export function QuestionAIWizard({
 
             {/* Difficulty */}
             <div className="space-y-1">
-              <label className="block font-bold text-slate-700">Mức độ khó</label>
+              <label className="block text-[15px] font-medium text-[#0F172A]">Mức độ khó</label>
               <select
                 value={form.difficulty}
                 onChange={(e) => set('difficulty', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
               >
                 <option value="EASY">Dễ (Cơ bản)</option>
                 <option value="MEDIUM">Trung bình (Vừa phải)</option>
@@ -195,11 +195,11 @@ export function QuestionAIWizard({
 
             {/* Bloom Level */}
             <div className="space-y-1">
-              <label className="block font-bold text-slate-700">Cấp độ tư duy (Bloom)</label>
+              <label className="block text-[15px] font-medium text-[#0F172A]">Cấp độ tư duy (Bloom)</label>
               <select
                 value={form.bloomLevel}
                 onChange={(e) => set('bloomLevel', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
               >
                 <option value="REMEMBER">Nhận biết (Remember)</option>
                 <option value="UNDERSTAND">Thông hiểu (Understand)</option>
@@ -211,8 +211,8 @@ export function QuestionAIWizard({
             {/* Question Count */}
             <div className="space-y-1 sm:col-span-2">
               <div className="flex items-center justify-between">
-                <label className="block font-bold text-slate-700">Số lượng câu hỏi tạo tự động</label>
-                <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-[8px] border border-blue-200">
+                <label className="block text-[15px] font-medium text-[#0F172A]">Số lượng câu hỏi tạo tự động</label>
+                <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-[8px] border border-blue-200">
                   {form.count} câu
                 </span>
               </div>
@@ -231,14 +231,14 @@ export function QuestionAIWizard({
         {/* File Upload Dropzone */}
         <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-3.5 transition hover:border-slate-400">
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-xs font-bold text-slate-700">
+            <label className="text-[15px] font-medium text-[#0F172A]">
               Tải lên tài liệu bài giảng / đề tham khảo (PDF, Word, TXT)
             </label>
             {fileName && (
               <button
                 type="button"
                 onClick={clearUploadedFile}
-                className="text-[10.5px] font-bold text-rose-600 hover:underline cursor-pointer"
+                className="text-[13px] font-semibold text-rose-600 hover:underline cursor-pointer"
               >
                 Gỡ tệp
               </button>
@@ -260,22 +260,22 @@ export function QuestionAIWizard({
           >
             {uploading ? (
               <div className="flex flex-col items-center space-y-1">
-                <p className="text-xs font-bold text-blue-700">{uploadStatus}</p>
+                <p className="text-[15px] font-medium text-blue-700">{uploadStatus}</p>
               </div>
             ) : fileName ? (
-              <div className="text-xs font-bold text-emerald-700">
+              <div className="text-[15px] font-semibold text-emerald-700">
                 {fileName}
               </div>
             ) : (
               <div className="space-y-0.5">
-                <p className="text-xs font-bold text-slate-700">Bấm để tải tệp hoặc kéo thả vào đây</p>
-                <p className="text-[11px] font-medium text-slate-400">Định dạng hỗ trợ: PDF, Word (.docx), TXT, Markdown (.md)</p>
+                <p className="text-[15px] font-medium text-[#0F172A]">Bấm để tải tệp hoặc kéo thả vào đây</p>
+                <p className="text-[13px] font-normal text-[#64748B]">Định dạng hỗ trợ: PDF, Word (.docx), TXT, Markdown (.md)</p>
               </div>
             )}
           </div>
 
           {uploadStatus && !uploading && (
-            <p className="mt-1.5 text-[11.5px] font-medium text-blue-700">
+            <p className="mt-1.5 text-[13px] font-medium text-blue-700">
               {uploadStatus}
             </p>
           )}
@@ -283,7 +283,7 @@ export function QuestionAIWizard({
 
         {/* Prompt Input Area */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700">
+          <label className="block text-[15px] font-medium text-[#0F172A]">
             Chủ đề chi tiết hoặc ghi chú nội dung cho AI:
           </label>
           <textarea
@@ -291,7 +291,7 @@ export function QuestionAIWizard({
             value={form.prompt}
             onChange={(e) => set('prompt', e.target.value)}
             placeholder="Ví dụ: Tập trung vào Chương 2 - Thuật toán sắp xếp nhanh (QuickSort), yêu cầu có câu hỏi phân tích độ phức tạp thời gian O(n log n)..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+            className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-[15px] font-medium text-[#0F172A] placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
           />
         </div>
 
@@ -300,7 +300,7 @@ export function QuestionAIWizard({
           type="button"
           disabled={busy || !form.subjectId || uploading}
           onClick={generate}
-          className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-xl bg-[#2563EB] hover:bg-blue-700 px-4 py-2.5 text-[15px] font-medium text-white shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {busy ? 'AI đang tạo câu hỏi...' : 'Khởi tạo câu hỏi tự động bằng AI'}
         </button>
@@ -309,21 +309,21 @@ export function QuestionAIWizard({
         {items.length > 0 && (
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <h5 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+              <h5 className="text-[16px] font-semibold uppercase tracking-wider text-[#0F172A]">
                 Danh sách {items.length} câu hỏi AI vừa khởi tạo
               </h5>
-              <span className="text-[11px] font-medium text-slate-500">Xem lại & chỉnh sửa trước khi lưu</span>
+              <span className="text-[13px] font-normal text-[#64748B]">Xem lại & chỉnh sửa trước khi lưu</span>
             </div>
 
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
               {items.map((q, i) => (
                 <div key={i} className="rounded-xl border border-slate-200 bg-white p-3 space-y-2 text-left shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-[8px]">
+                    <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-[8px]">
                       Câu {i + 1}
                     </span>
                     {q.duplicate && (
-                      <span className="rounded-[8px] bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
+                      <span className="rounded-[8px] bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[13px] font-semibold text-amber-800">
                         Trùng câu {q.duplicate.code}
                       </span>
                     )}
@@ -335,7 +335,7 @@ export function QuestionAIWizard({
                     onChange={(e) =>
                       setItems(items.map((x, j) => (j === i ? { ...x, content: e.target.value } : x)))
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-blue-500 transition"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 transition"
                   />
 
                   {q.sourceImages?.length > 0 && (
@@ -353,25 +353,25 @@ export function QuestionAIWizard({
 
                   {q.options && q.options.length > 0 && (
                     <div className="space-y-1.5 pt-1">
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Các lựa chọn đáp án:</span>
+                      <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">Các lựa chọn đáp án:</span>
                       <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                         {q.options.map((opt: any, optIdx: number) => (
                           <div
                             key={optIdx}
-                            className={`flex items-center gap-2 rounded-lg border p-2 text-xs font-medium transition ${opt.isCorrect
+                            className={`flex items-center gap-2 rounded-lg border p-2 text-[15px] font-medium transition ${opt.isCorrect
                               ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
-                              : 'border-slate-200 bg-slate-50 text-slate-700'
+                              : 'border-slate-200 bg-slate-50 text-[#334155]'
                               }`}
                           >
                             <span
-                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10.5px] font-bold ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-[#475569]'
                                 }`}
                             >
                               {opt.label}
                             </span>
-                            <span className="flex-1 text-[11.5px]">{opt.content}</span>
+                            <span className="flex-1 text-[15px] font-medium">{opt.content}</span>
                             {opt.isCorrect && (
-                              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.5 rounded-[8px]">
+                              <span className="text-[13px] text-emerald-700 font-semibold bg-emerald-100 px-1.5 py-0.5 rounded-[8px]">
                                 Đáp án đúng
                               </span>
                             )}
@@ -382,8 +382,8 @@ export function QuestionAIWizard({
                   )}
 
                   {q.explanation && (
-                    <div className="rounded-lg bg-blue-50/70 border border-blue-200 p-2 text-xs text-blue-900 font-medium">
-                      <strong className="font-bold text-blue-950">Giải thích chi tiết:</strong> {q.explanation}
+                    <div className="rounded-lg bg-blue-50/70 border border-blue-200 p-2 text-[15px] font-normal text-blue-900">
+                      <strong className="font-semibold text-blue-950">Giải thích chi tiết:</strong> {q.explanation}
                     </div>
                   )}
                 </div>
@@ -395,7 +395,7 @@ export function QuestionAIWizard({
               type="button"
               disabled={busy}
               onClick={() => setShowSaveConfirm(true)}
-              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer disabled:opacity-50"
+              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-[15px] font-medium text-white shadow-xs transition cursor-pointer disabled:opacity-50"
             >
               {busy ? 'Đang lưu vào ngân hàng dữ liệu...' : `Lưu ${items.length} câu hỏi AI vào Ngân hàng (Bản nháp DRAFT)`}
             </button>

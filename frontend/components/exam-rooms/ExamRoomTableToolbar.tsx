@@ -78,12 +78,12 @@ export function ExamRoomTableToolbar({
 
           {openColumnMenu && (
             <div
-              className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+              className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-[15px] space-y-2"
               onMouseLeave={() => setOpenColumnMenu(false)}
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
-                <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
+                <span className="font-semibold text-[#0F172A] text-[15px]">Hiển thị cột</span>
+                <span className="text-[13px] text-[#64748B] font-normal">Click để ẩn/hiện</span>
               </div>
 
               <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">

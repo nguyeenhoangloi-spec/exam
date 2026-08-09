@@ -47,7 +47,7 @@ export function QuestionBulkAction({
         <button
           type="button"
           onClick={onToggleAll}
-          className="text-xs font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1 rounded-lg hover:bg-slate-100 transition"
+          className="text-[15px] font-medium text-[#475569] hover:text-[#0F172A] px-2.5 py-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"
         >
           {allSelected ? 'Bỏ chọn' : 'Chọn tất cả'}
         </button>
@@ -55,15 +55,15 @@ export function QuestionBulkAction({
         <button
           type="button"
           onClick={onClear}
-          className="text-xs font-semibold text-rose-600 hover:text-rose-800 px-2.5 py-1 rounded-lg hover:bg-rose-50 transition flex items-center gap-1"
+          className="text-[15px] font-medium text-rose-600 hover:text-rose-800 px-2.5 py-1 rounded-lg hover:bg-rose-50 transition flex items-center gap-1 cursor-pointer"
         >
-          <X className="h-3.5 w-3.5" /> Hủy chọn
+          <X className="h-4 w-4" /> Hủy chọn
         </button>
       </div>
 
       {/* Right side bulk action buttons */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider mr-1 hidden sm:inline">
+        <span className="text-[#64748B] text-[13px] font-medium uppercase tracking-wider mr-1 hidden sm:inline">
           Thao tác:
         </span>
 
@@ -71,9 +71,9 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('SUBMIT')}
-            className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 text-[15px] font-medium shadow-2xs transition cursor-pointer"
           >
-            <Send className="h-3.5 w-3.5" /> Gửi duyệt ({selectedCount})
+            <Send className="h-4 w-4" /> Gửi duyệt ({selectedCount})
           </button>
         )}
 
@@ -81,9 +81,9 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('APPROVE')}
-            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-bold shadow-2xs transition"
+            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 text-[15px] font-medium shadow-2xs transition cursor-pointer"
           >
-            <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt ({selectedCount})
+            <CheckCircle2 className="h-4 w-4" /> Duyệt ({selectedCount})
           </button>
         )}
 

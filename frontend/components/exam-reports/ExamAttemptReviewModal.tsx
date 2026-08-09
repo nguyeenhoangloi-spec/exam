@@ -93,10 +93,10 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
       {expanded && (
         <div className="border-t border-slate-100 p-4 pt-3 space-y-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider rounded-lg bg-slate-100 px-2 py-1">
+            <span className="text-[13px] font-semibold text-[#475569] rounded-lg bg-slate-100 px-2.5 py-1">
               {q.type === 'ESSAY' ? 'Tự luận' : q.type === 'FILL_BLANK' ? 'Điền khuyết' : q.type === 'TRUE_FALSE' ? 'Đúng / Sai' : 'Trắc nghiệm'}
             </span>
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider rounded-lg bg-slate-100 px-2 py-1">
+            <span className="text-[13px] font-semibold text-[#475569] rounded-lg bg-slate-100 px-2.5 py-1">
               {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
             </span>
           </div>
@@ -243,22 +243,22 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                 <div className="rounded-2xl bg-blue-50 p-4 text-center space-y-1">
                   <Award className="w-5 h-5 text-blue-600 mx-auto" />
                   <p className="text-xl font-black text-blue-700">{data.attemptInfo?.totalScore ?? '--'} <span className="text-xs font-bold">/ {data.attemptInfo?.maxScore ?? 10}</span></p>
-                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Tong diem</p>
+                  <p className="text-[13px] font-semibold text-blue-600">Tổng điểm</p>
                 </div>
                 <div className="rounded-2xl bg-emerald-50 p-4 text-center space-y-1">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 mx-auto" />
                   <p className="text-xl font-black text-emerald-700">{correct}</p>
-                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Cau dung</p>
+                  <p className="text-[13px] font-semibold text-emerald-600">Câu đúng</p>
                 </div>
                 <div className="rounded-2xl bg-rose-50 p-4 text-center space-y-1">
                   <XCircle className="w-5 h-5 text-rose-600 mx-auto" />
                   <p className="text-xl font-black text-rose-700">{wrong}</p>
-                  <p className="text-[10px] font-bold text-rose-600 uppercase tracking-wider">Cau sai</p>
+                  <p className="text-[13px] font-semibold text-rose-600">Câu sai</p>
                 </div>
                 <div className="rounded-2xl bg-slate-100 p-4 text-center space-y-1">
                   <Minus className="w-5 h-5 text-slate-500 mx-auto" />
                   <p className="text-xl font-black text-slate-700">{skipped}</p>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Bo qua</p>
+                  <p className="text-[13px] font-semibold text-[#64748B]">Bỏ qua</p>
                 </div>
               </div>
 

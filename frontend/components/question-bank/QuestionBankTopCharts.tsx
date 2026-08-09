@@ -67,11 +67,11 @@ export function QuestionBankTopCharts({
   const cardCls = 'group flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md overflow-hidden cursor-pointer';
   const hdrCls = 'flex items-center gap-2 border-b border-slate-100 pb-3 mb-3';
   const iconCls = 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-transform group-hover:scale-110';
-  const titleCls = 'text-[11.5px] font-black uppercase tracking-wider text-slate-600';
+  const titleCls = 'text-[15px] font-semibold text-[#0F172A]';
   const legendRowCls = 'flex items-center justify-between gap-1';
-  const legendNameCls = 'text-[11px] font-semibold text-slate-600 truncate';
-  const legendValCls = 'text-[11px] font-black text-slate-800 shrink-0';
-  const legendPctCls = 'text-[9px] text-slate-400 font-medium ml-0.5';
+  const legendNameCls = 'text-[13px] font-medium text-[#475569] truncate';
+  const legendValCls = 'text-[14px] font-semibold text-[#0F172A] shrink-0';
+  const legendPctCls = 'text-[13px] text-[#64748B] font-normal ml-0.5';
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -96,8 +96,8 @@ export function QuestionBankTopCharts({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[14px] font-black text-slate-900 leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="text-[8px] font-bold text-slate-400 mt-0.5">Tổng</span>
+              <span className="text-[18px] font-bold text-[#0F172A] leading-none">{total.toLocaleString('vi-VN')}</span>
+              <span className="text-[13px] font-normal text-[#64748B] mt-0.5">Tổng</span>
             </div>
           </div>
           <div className="flex-1 space-y-2">
@@ -131,12 +131,12 @@ export function QuestionBankTopCharts({
           {difficultyData.map((item) => (
             <div key={item.label}>
               <div className="flex items-center justify-between mb-1">
-                <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold ${item.pill}`}>
+                <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[13px] font-semibold ${item.pill}`}>
                   {item.label}
                 </span>
                 <span className={legendValCls}>
                   {item.value.toLocaleString('vi-VN')}
-                  <span className="text-[9px] text-slate-400 font-medium ml-1">({pctLabel(item.value)})</span>
+                  <span className="text-[13px] text-[#64748B] font-normal ml-1">({pctLabel(item.value)})</span>
                 </span>
               </div>
               <div className="h-[5px] w-full overflow-hidden rounded-full bg-slate-100">

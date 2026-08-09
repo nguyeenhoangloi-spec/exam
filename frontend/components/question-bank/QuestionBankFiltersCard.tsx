@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Search, X, SlidersHorizontal, RotateCcw, ChevronDown } from 'lucide-react';
@@ -25,9 +25,9 @@ interface QuestionBankFiltersCardProps {
 }
 
 const selectCls =
-  'h-9 w-full rounded-lg border border-slate-200 bg-white px-3 pr-8 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-slate-300 transition cursor-pointer appearance-none';
+  'h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-[15px] font-medium text-[#0F172A] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-slate-300 transition cursor-pointer appearance-none';
 
-const labelCls = 'block text-[10.5px] font-bold uppercase tracking-wider text-slate-400 mb-1';
+const labelCls = 'block text-[15px] font-medium text-[#0F172A] mb-1';
 
 const DIFFICULTY_LABELS: Record<string, string> = { EASY: 'Dễ', MEDIUM: 'Trung bình', HARD: 'Khó' };
 const TYPE_LABELS: Record<string, string> = {
@@ -58,7 +58,7 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
     { key: 'search', label: 'Từ khóa', getVal: (v) => v },
     { key: 'subjectId', label: 'Môn học', getVal: (v) => subjects.find((s) => String(s.id) === v)?.subjectName ?? v },
     { key: 'difficulty', label: 'Độ khó', getVal: (v) => DIFFICULTY_LABELS[v] ?? v },
-    { key: 'type', label: 'Loai', getVal: (v) => TYPE_LABELS[v] ?? v },
+    { key: 'type', label: 'Loại', getVal: (v) => TYPE_LABELS[v] ?? v },
     { key: 'status', label: 'Trạng thái', getVal: (v) => STATUS_LABELS[v] ?? v },
     { key: 'creator', label: 'Người tạo', getVal: (v) => (v === 'ADMIN' ? 'Quản trị viên' : v === 'TEACHER' ? 'Giảng viên' : v) },
     { key: 'dateRange', label: 'Ngày tạo', getVal: (v) => v },
@@ -74,9 +74,9 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 border border-blue-100">
             <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
           </span>
-          <span className="text-[11.5px] font-black uppercase tracking-wider text-slate-600">Bộ lọc tìm kiếm</span>
+          <span className="text-[15px] font-semibold text-[#0F172A]">Bộ lọc tìm kiếm</span>
           {hasActive && (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-black text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[13px] font-semibold text-white">
               {activeChips.length}
             </span>
           )}
@@ -85,9 +85,9 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
           <button
             type="button"
             onClick={onReset}
-            className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[10.5px] font-bold text-slate-500 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 transition-all"
+            className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[13px] font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 transition-all cursor-pointer"
           >
-            <RotateCcw className="h-3 w-3" />
+            <RotateCcw className="h-3.5 w-3.5" />
             Xoá bộ lọc
           </button>
         )}

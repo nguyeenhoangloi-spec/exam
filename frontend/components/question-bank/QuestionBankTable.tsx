@@ -118,7 +118,7 @@ export function QuestionBankTable({
 
                 {/* Content: Truncated 2 Lines */}
                 <p
-                  className="text-xs font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2 min-h-[34px]"
+                  className="text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2 min-h-[34px]"
                   onClick={() => onDetail(q)}
                   title={q.content}
                 >
@@ -127,8 +127,8 @@ export function QuestionBankTable({
 
                 {/* ESSAY vs MULTIPLE_CHOICE Display */}
                 {isEssay ? (
-                  <div className="rounded-xl bg-blue-50/80 border border-blue-200/70 p-2.5 text-[11px] font-semibold text-blue-900 space-y-1">
-                    <p className="font-extrabold text-blue-700 flex items-center gap-1.5">
+                  <div className="rounded-xl bg-blue-50/80 border border-blue-200/70 p-2.5 text-[13px] font-semibold text-blue-900 space-y-1">
+                    <p className="font-semibold text-blue-700 flex items-center gap-1.5">
                       <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> Câu tự luận
                     </p>
                     <p className="text-blue-900 font-medium">
@@ -140,14 +140,14 @@ export function QuestionBankTable({
                     {optionsList.map((opt) => (
                       <div
                         key={opt.label + opt.content}
-                        className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-[11px] font-bold text-slate-700 transition"
+                        className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-[13px] font-medium text-[#334155] transition"
                       >
                         <span
-                          className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[10px] font-black text-slate-700"
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[13px] font-semibold text-[#334155]"
                         >
                           {opt.label}
                         </span>
-                        <span className="truncate leading-tight" title={opt.content}>
+                        <span className="truncate leading-tight text-[13px]" title={opt.content}>
                           {opt.content}
                         </span>
                       </div>
@@ -157,7 +157,7 @@ export function QuestionBankTable({
               </div>
 
               {/* Card Footer: Metadata & Actions */}
-              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 text-[10.5px] font-semibold text-slate-500">
+              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 text-[13px] font-normal text-[#64748B]">
                 <span className="truncate max-w-[180px]">
                   {creatorName} • {formatDate(q.createdAt).slice(0, 10)}
                 </span>
@@ -469,7 +469,7 @@ export function QuestionBankTable({
 
                   {/* Môn học */}
                   {visibleColumns.subject !== false && (
-                    <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700 align-top pt-4">
+                    <td className="p-3.5 whitespace-nowrap text-[15px] font-normal text-[#334155] align-top pt-4">
                       {subjectName}
                     </td>
                   )}
@@ -490,7 +490,7 @@ export function QuestionBankTable({
 
                   {/* Điểm số */}
                   <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <span className="text-xs font-extrabold text-slate-800">
+                    <span className="text-[15px] font-medium text-[#0F172A]">
                       {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
                     </span>
                   </td>
@@ -505,8 +505,8 @@ export function QuestionBankTable({
                   {/* Người tạo */}
                   {visibleColumns.creator !== false && (
                     <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                        <div className="h-5 w-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] border border-slate-200">
+                      <div className="flex items-center gap-1.5 text-[15px] font-normal text-[#334155]">
+                        <div className="h-5 w-5 rounded-full bg-slate-100 text-[#475569] flex items-center justify-center font-semibold text-[13px] border border-slate-200">
                           {creatorName.charAt(0).toUpperCase()}
                         </div>
                         <span>{creatorName}</span>
@@ -516,7 +516,7 @@ export function QuestionBankTable({
 
                   {/* Ngày tạo */}
                   {visibleColumns.createdAt !== false && (
-                    <td className="p-3.5 whitespace-nowrap text-[11px] text-slate-500 font-semibold align-top pt-4">
+                    <td className="p-3.5 whitespace-nowrap text-[14px] text-[#64748B] font-normal align-top pt-4">
                       {formatDate(q.createdAt)}
                     </td>
                   )}

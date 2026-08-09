@@ -501,15 +501,15 @@ export function QuestionImportWizard({
           <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
-                <p className="text-[11px] font-medium text-slate-500">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động sinh danh sách câu hỏi bám sát kiến thức.</p>
+                <h4 className="text-[16px] font-semibold text-[#0F172A]">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
+                <p className="text-[14px] font-normal text-[#64748B]">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động sinh danh sách câu hỏi bám sát kiến thức.</p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Số lượng:</label>
+                <label className="text-[15px] font-medium text-[#0F172A] whitespace-nowrap">Số lượng:</label>
                 <select
                   value={aiCount}
                   onChange={(e) => setAiCount(Number(e.target.value))}
-                  className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer"
+                  className="rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer"
                 >
                   <option value={3}>3 câu</option>
                   <option value={5}>5 câu</option>
@@ -521,12 +521,12 @@ export function QuestionImportWizard({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
+              <label className="block text-[15px] font-medium text-[#0F172A] mb-1.5">
                 1. Tải lên tệp Đề cương / Bài giảng làm căn cứ (PDF, Word, TXT):
               </label>
               <label className="inline-flex items-center gap-3 cursor-pointer">
-                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-extrabold text-xs transition shadow-xs">Choose File</span>
-                <span className="text-xs font-bold text-slate-700 truncate max-w-[320px]">
+                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-medium text-[15px] transition shadow-xs">Choose File</span>
+                <span className="text-[15px] font-medium text-[#0F172A] truncate max-w-[320px]">
                   {file ? file.name : 'Chưa đính kèm tệp...'}
                 </span>
                 <input
@@ -542,7 +542,7 @@ export function QuestionImportWizard({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
+              <label className="block text-[15px] font-medium text-[#0F172A] mb-1">
                 2. Nhập/Dán nội dung Đề cương hoặc Yêu cầu bổ sung cho AI:
               </label>
               <textarea
@@ -550,7 +550,7 @@ export function QuestionImportWizard({
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Dán nội dung Đề cương chi tiết hoặc yêu cầu cụ thể (Ví dụ: Tập trung vào nội dung SQL JOIN, Indexing, Transaction...)"
-                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-xs font-medium text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
+                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-medium text-[#0F172A] placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
               />
             </div>
 
@@ -727,13 +727,13 @@ export function QuestionImportWizard({
                       </label>
 
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                        <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[13px] font-semibold text-[#475569]">
                           {q.type === 'ESSAY' ? 'Tự luận' : q.type === 'FILL_BLANK' ? 'Điền vào chỗ trống' : q.type === 'TRUE_FALSE' ? 'Đúng / Sai' : 'Trắc nghiệm'}
                         </span>
-                        <span className="rounded-full bg-blue-100 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                        <span className="rounded-full bg-blue-100 border border-blue-200 px-2.5 py-0.5 text-[13px] font-semibold text-blue-800">
                           {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
                         </span>
-                        <span className="rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                        <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[13px] font-semibold text-blue-800">
                           {q.score || meta.defaultScore} điểm
                         </span>
                       </div>

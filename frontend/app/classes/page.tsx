@@ -1,5 +1,5 @@
-'use client';
 
+'use client';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
@@ -537,8 +537,8 @@ export default function ClassesPage() {
               <button
                 onClick={() => setDrawerTab('info')}
                 className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'info'
-                    ? 'border-blue-600 text-blue-600 font-semibold'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                  ? 'border-blue-600 text-blue-600 font-semibold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
                   }`}
               >
                 Thông tin
@@ -546,8 +546,8 @@ export default function ClassesPage() {
               <button
                 onClick={() => setDrawerTab('students')}
                 className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'students'
-                    ? 'border-blue-600 text-blue-600 font-semibold'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                  ? 'border-blue-600 text-blue-600 font-semibold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
                   }`}
               >
                 Sinh viên
@@ -555,8 +555,8 @@ export default function ClassesPage() {
               <button
                 onClick={() => setDrawerTab('enrollments')}
                 className={`px-4 py-3 text-[15px] font-medium border-b-2 transition-colors ${drawerTab === 'enrollments'
-                    ? 'border-blue-600 text-blue-600 font-semibold'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                  ? 'border-blue-600 text-blue-600 font-semibold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
                   }`}
               >
                 Môn đăng ký
