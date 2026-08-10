@@ -66,7 +66,7 @@ export function QuestionBankTopCharts({
   // Shared class tokens
   const cardCls = 'group flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md overflow-hidden cursor-pointer';
   const hdrCls = 'flex items-center gap-2 border-b border-slate-100 pb-3 mb-3';
-  const iconCls = 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-transform group-hover:scale-110';
+  const iconCls = 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 text-blue-600 bg-blue-50 border-blue-100';
   const titleCls = 'text-[15px] font-semibold text-[#0F172A]';
   const legendRowCls = 'flex items-center justify-between gap-1';
   const legendNameCls = 'text-[13px] font-medium text-[#475569] truncate';
@@ -80,8 +80,8 @@ export function QuestionBankTopCharts({
       <div className={cardCls}>
         <div className="px-4 pt-4 pb-0">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-            <span className={`${iconCls} bg-blue-50 border-blue-100`}>
-              <Database className="h-4 w-4 text-blue-600" />
+            <span className={iconCls}>
+              <Database className="h-4 w-4" />
             </span>
             <span className={titleCls}>Tổng quan ngân hàng</span>
           </div>
@@ -121,8 +121,8 @@ export function QuestionBankTopCharts({
       <div className={cardCls}>
         <div className="px-4 pt-4 pb-0">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-            <span className={`${iconCls} bg-blue-50 border-blue-100`}>
-              <BarChart2 className="h-4 w-4 text-blue-600" />
+            <span className={iconCls}>
+              <BarChart2 className="h-4 w-4" />
             </span>
             <span className={titleCls}>Phân bố độ khó</span>
           </div>
@@ -154,8 +154,8 @@ export function QuestionBankTopCharts({
       <div className={cardCls}>
         <div className="px-4 pt-4 pb-0">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-            <span className={`${iconCls} bg-blue-50 border-blue-100`}>
-              <LayoutGrid className="h-4 w-4 text-blue-600" />
+            <span className={iconCls}>
+              <LayoutGrid className="h-4 w-4" />
             </span>
             <span className={titleCls}>Phân bố loại câu hỏi</span>
           </div>
@@ -195,8 +195,8 @@ export function QuestionBankTopCharts({
       <div className={cardCls}>
         <div className="px-4 pt-4 pb-0">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-            <span className={`${iconCls} bg-blue-50 border-blue-100`}>
-              <Zap className="h-4 w-4 text-blue-600" />
+            <span className={iconCls}>
+              <Zap className="h-4 w-4" />
             </span>
             <span className={titleCls}>Thao tác nhanh</span>
           </div>

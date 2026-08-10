@@ -57,7 +57,7 @@ export function RegradeTable({
           return (
             <div
               key={item.id}
-              className="rounded-2xl border border-slate-200/90 bg-white p-4.5 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-blue-400 transition-all duration-200 space-y-3.5"
+              className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-blue-400 transition-all duration-200 space-y-3.5"
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">

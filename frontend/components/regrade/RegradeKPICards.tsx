@@ -60,7 +60,7 @@ export function RegradeKPICards({
         return (
           <div
             key={item.title}
-            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4.5 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer overflow-hidden"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer overflow-hidden"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
@@ -74,7 +74,7 @@ export function RegradeKPICards({
               </div>
 
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-transform duration-200 group-hover:scale-110`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}
               >
                 <IconComponent className="h-5 w-5" />
               </div>
