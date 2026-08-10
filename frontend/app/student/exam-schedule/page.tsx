@@ -24,10 +24,7 @@ import {
   DoorOpen,
   CheckCircle2,
   Eye,
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
-  AlertCircle,
   Search,
   X,
 } from 'lucide-react';
@@ -139,38 +136,40 @@ export default function StudentExamSchedulePage() {
   const filteredSchedules = useMemo(() => {
     const todayTime = new Date().setHours(0, 0, 0, 0);
 
-    return schedules.filter((s) => {
-      const isExpired = new Date(s.examDate).getTime() < todayTime;
+    return schedules
+      .filter((s) => {
+        const isExpired = new Date(s.examDate).getTime() < todayTime;
 
-      // 1. Mode Filter (Chính thức / Thi thử)
-      if (modeFilter !== 'ALL') {
-        if (modeFilter === 'OFFICIAL' && s.mode === 'MOCK') return false;
-        if (modeFilter === 'MOCK' && s.mode !== 'MOCK') return false;
-      }
+        // 1. Mode Filter (Chính thức / Thi thử)
+        if (modeFilter !== 'ALL') {
+          if (modeFilter === 'OFFICIAL' && s.mode === 'MOCK') return false;
+          if (modeFilter === 'MOCK' && s.mode !== 'MOCK') return false;
+        }
 
-      // 2. Status Filter (Sắp thi / Đã thi)
-      if (statusFilter !== 'ALL') {
-        if (statusFilter === 'UPCOMING' && isExpired) return false;
-        if (statusFilter === 'COMPLETED' && !isExpired) return false;
-      }
+        // 2. Status Filter (Sắp thi / Đã thi)
+        if (statusFilter !== 'ALL') {
+          if (statusFilter === 'UPCOMING' && isExpired) return false;
+          if (statusFilter === 'COMPLETED' && !isExpired) return false;
+        }
 
-      // 3. Search Query
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const code = (s.subjectCode || '').toLowerCase();
-        const name = (s.subjectName || '').toLowerCase();
-        const period = (s.periodName || '').toLowerCase();
-        const room = (s.roomName || s.roomCode || '').toLowerCase();
-        return code.includes(q) || name.includes(q) || period.includes(q) || room.includes(q);
-      }
+        // 3. Search Query
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const code = (s.subjectCode || '').toLowerCase();
+          const name = (s.subjectName || '').toLowerCase();
+          const period = (s.periodName || '').toLowerCase();
+          const room = (s.roomName || s.roomCode || '').toLowerCase();
+          return code.includes(q) || name.includes(q) || period.includes(q) || room.includes(q);
+        }
 
-      return true;
-    }).sort((a, b) => {
-      const timeA = new Date(a.examDate || 0).getTime();
-      const timeB = new Date(b.examDate || 0).getTime();
-      if (timeB !== timeA) return timeB - timeA;
-      return (b.startTime || '').localeCompare(a.startTime || '');
-    });
+        return true;
+      })
+      .sort((a, b) => {
+        const timeA = new Date(a.examDate || 0).getTime();
+        const timeB = new Date(b.examDate || 0).getTime();
+        if (timeB !== timeA) return timeB - timeA;
+        return (b.startTime || '').localeCompare(a.startTime || '');
+      });
   }, [schedules, modeFilter, statusFilter, searchQuery]);
 
   return (
@@ -183,7 +182,7 @@ export default function StudentExamSchedulePage() {
               Lịch Thi Cá Nhân Sinh Viên
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
-              Sinh viên: <strong className="text-[#0F172A] font-semibold">{currentUser?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Kiểm tra phòng thi, SBD và số ghế trước giờ thi
+              Sinh viên: <strong className="text-[#0F172A] font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
             </p>
           </div>
 

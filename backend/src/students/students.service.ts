@@ -400,6 +400,11 @@ export class StudentsService {
     const student = await this.prisma.student.findUnique({
       where: { userId },
       include: {
+        class: {
+          include: {
+            department: true,
+          },
+        },
         studentSubjects: {
           include: {
             subject: true,
@@ -558,6 +563,15 @@ export class StudentsService {
     const failedCount = results.filter((r) => r.status === 'FAILED').length;
 
     return {
+      student: {
+        id: student.id,
+        studentCode: student.studentCode,
+        fullName: student.fullName,
+        className: student.class?.name || 'CNTT-K18A',
+        classCode: student.class?.code || 'CNTT-K18A',
+        departmentName: student.class?.department?.name || 'Công nghệ thông tin',
+        departmentCode: student.class?.department?.code || 'CNTT',
+      },
       stats: {
         totalExams,
         avgScore,

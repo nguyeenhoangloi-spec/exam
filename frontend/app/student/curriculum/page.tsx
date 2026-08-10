@@ -108,13 +108,25 @@ export default function StudentCurriculumPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const fetchData = useCallback(async () => {
+    const authUser = getAuthUser();
+    const defaultStudent = {
+      id: authUser?.student?.id || authUser?.id || 1,
+      studentCode: authUser?.student?.studentCode || authUser?.username || 'sv048',
+      fullName: authUser?.student?.fullName || (authUser as any)?.fullName || authUser?.username || 'sv048',
+      className: authUser?.student?.class?.name || 'CNTT-K18A',
+      classCode: authUser?.student?.class?.code || 'CNTT-K18A',
+      departmentName: authUser?.student?.class?.department?.name || 'Công nghệ thông tin',
+      departmentCode: authUser?.student?.class?.department?.code || 'CNTT',
+    };
+
     try {
       setLoading(true);
       const res = await api.get('/students/my-curriculum');
-      setStudentInfo(res.data.student);
+      setStudentInfo(res.data.student || defaultStudent);
       setStats(res.data.stats);
       setCurriculumList(res.data.curriculum || []);
     } catch (err: any) {
+      setStudentInfo(defaultStudent);
       setToast({
         message: err?.response?.data?.message || err.message || 'Lỗi tải khung chương trình đào tạo',
         type: 'error',
@@ -1010,12 +1022,12 @@ export default function StudentCurriculumPage() {
                   }}
                   className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
                 >
-                  <option value={10}>10 / trang</option>
-                  <option value={20}>20 / trang</option>
-                  <option value={50}>50 / trang</option>
-                  <option value={100}>100 / trang</option>
+                  <option value={8}>8 dòng / trang</option>
+                  <option value={15}>15 dòng / trang</option>
+                  <option value={25}>25 dòng / trang</option>
+                  <option value={50}>50 dòng / trang</option>
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               </div>
             </div>
           </div>

@@ -128,25 +128,28 @@ export default function StudentResultsPage() {
   const [submittingAppeal, setSubmittingAppeal] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
+    const authUser = getAuthUser();
+    const defaultStudent: StudentInfo = {
+      id: authUser?.student?.id || authUser?.id || 1,
+      studentCode: authUser?.student?.studentCode || authUser?.username || 'sv048',
+      fullName: authUser?.student?.fullName || (authUser as any)?.fullName || authUser?.username || 'sv048',
+      className: authUser?.student?.class?.name || 'CNTT-K18A',
+      classCode: authUser?.student?.class?.code || 'CNTT-K18A',
+      departmentName: authUser?.student?.class?.department?.name || 'Công nghệ thông tin',
+      departmentCode: authUser?.student?.class?.department?.code || 'CNTT',
+    };
+
     try {
       setLoading(true);
       const res = await api.get('/students/my-results');
       if (res.data) {
-        setStudentInfo(res.data.student || null);
+        setStudentInfo(res.data.student || defaultStudent);
         setStats(res.data.stats || { totalExams: 0, avgScore: 0, passedCount: 0, failedCount: 0 });
         setResults(res.data.results || []);
       }
     } catch (err: any) {
       // Mock Data fallback if unseeded
-      const mockStudent: StudentInfo = {
-        id: 1,
-        studentCode: 'SV2025001',
-        fullName: 'Đỗ Ngọc An',
-        className: 'CNTT-K18A',
-        classCode: 'CNTT-K18A',
-        departmentName: 'Công nghệ thông tin',
-        departmentCode: 'CNTT',
-      };
+      const mockStudent: StudentInfo = defaultStudent;
 
       const mockResults: ExamResultItem[] = [
         {
@@ -597,7 +600,7 @@ export default function StudentResultsPage() {
               Kết Quả Thi Sinh Viên
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
-              Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-[#0F172A] font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
+              Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Tra cứu bảng điểm môn học, lịch sử tích lũy & gửi yêu cầu phúc khảo
             </p>
           </div>
 
