@@ -11,7 +11,7 @@ interface ProfileDrawerProps {
   title: string;
   subtitle?: string;
   avatarText?: string;
-  badge?: { label: string; className: string };
+  badge?: { label: string; className: string; status?: string };
   details: { label: string; value: React.ReactNode; icon?: React.ElementType }[];
   extraSections?: { title: string; content: React.ReactNode }[];
 }
@@ -50,11 +50,13 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 <div className="min-w-0 flex-1 pr-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white max-w-[220px]" title={title}>{title}</h2>
-                    {badge && (
+                    {badge && (badge.status ? (
+                      <StatusBadge status={badge.status} customLabel={badge.label} />
+                    ) : (
                       <span className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 text-[13px] font-semibold ${badge.className}`}>
                         {badge.label}
                       </span>
-                    )}
+                    ))}
                   </div>
                   {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 font-mono">{subtitle}</p>}
                 </div>
@@ -84,7 +86,11 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                         {Icon && <Icon className="h-4 w-4 text-[#64748B]" />}
                         {item.label}:
                       </span>
-                      <span className="font-semibold text-[#0F172A] text-right text-[15px]">{item.value || '---'}</span>
+                      <span className="font-semibold text-[#0F172A] text-right text-[15px]">
+                        {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
+                          ? <StatusBadge status={item.value} />
+                          : item.value || '---'}
+                      </span>
                     </div>
                   );
                 })}

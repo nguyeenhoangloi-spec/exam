@@ -65,12 +65,12 @@ export function AILoadingProgress({
           return (
             <div
               key={s.id}
-              className={`flex items-center gap-2 rounded-xl p-2.5 text-xs font-semibold transition border ${
+              className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold transition ${
                 isDone
-                  ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+                  ? 'text-[#15803D]'
                   : isCurrent
-                  ? 'bg-white text-blue-800 border-blue-300 shadow-xs ring-2 ring-blue-100'
-                  : 'bg-slate-50 text-slate-400 border-slate-200/70'
+                  ? 'text-[#2563EB]'
+                  : 'text-[#475569]'
               }`}
             >
               {isDone ? (

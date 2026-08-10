@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
@@ -103,10 +103,10 @@ export function StudentPaginationBar({
             onChange={(e) => onLimit(Number(e.target.value))}
             className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-[14px] font-medium text-[#0F172A] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
-            <option value={8}>8 / trang</option>
             <option value={10}>10 / trang</option>
             <option value={20}>20 / trang</option>
             <option value={50}>50 / trang</option>
+            <option value={100}>100 / trang</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
         </div>

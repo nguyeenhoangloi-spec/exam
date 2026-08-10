@@ -7,6 +7,7 @@ import { CheckCircle2, AlertCircle, FileText, Send, ArrowLeft, Eye } from 'lucid
 import { ExamAttemptReviewModal } from '@/components/exam-reports/ExamAttemptReviewModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/Button';
 
 export default function StudentExamResultPage() {
@@ -140,7 +141,8 @@ export default function StudentExamResultPage() {
             <div className="bg-slate-50/70 border border-slate-100 p-5 rounded-xl space-y-2.5">
               <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-[15px]">
                 <span className="text-[#64748B] font-normal">Trạng thái bài thi:</span>
-                <span className="inline-flex items-center rounded-[6px] bg-[#EFF6FF] px-2.5 py-1 text-[13px] font-semibold text-[#2563EB]">
+                <StatusBadge status={result.status} />
+                <span className="sr-only">
                   {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}
                 </span>
               </div>

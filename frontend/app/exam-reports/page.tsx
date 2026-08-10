@@ -8,6 +8,7 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { downloadCsv } from '../../lib/export-csv';
 import { Toast } from '../../components/Toast';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { StatusBadge } from '../../components/common/StatusBadge';
 import { Button } from '../../components/ui/Button';
 import { ExamSchedule, User } from '../../types';
 import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle, GraduationCap, FileCheck, RotateCcw } from 'lucide-react';
@@ -752,8 +753,7 @@ export default function ExamReportsPage() {
                                   </div>
 
                                   <div className="flex items-center gap-1.5 shrink-0">
-                                    <span className={`w-2 h-2 rounded-full ${statusBadge.dotClass}`} />
-                                    <span className={`text-[11px] ${statusBadge.textClass}`}>{statusBadge.label}</span>
+                                    <StatusBadge status={statusBadge.key} customLabel={statusBadge.label} />
                                   </div>
                                 </div>
 
@@ -913,7 +913,8 @@ export default function ExamReportsPage() {
         avatarText={drawerCandidate?.studentCode?.slice(0, 3) || 'SV'}
         badge={{
           label: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : `Điểm thi: ${drawerCandidate?.totalScore} / 10`,
-          className: drawerCandidate?.status === 'ABSENT' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          className: '',
+          status: drawerCandidate?.status || 'GRADED',
         }}
         details={[
           { label: 'Họ và Tên', value: drawerCandidate?.fullName },

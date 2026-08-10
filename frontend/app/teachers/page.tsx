@@ -12,6 +12,7 @@ import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
+import { StatusBadge } from '../../components/common/StatusBadge';
 import { Teacher, Department, User } from '../../types';
 import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown } from 'lucide-react';
 
@@ -697,11 +698,12 @@ export default function TeachersPage() {
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-[#64748B]">Trạng thái:</span>
-                                <span className={`font-semibold ${assignment.status === 'CONFIRMED'
-                                  ? 'text-emerald-600'
+                                <StatusBadge status={assignment.status || 'CONFIRMED'} customLabel={assignment.status === 'CONFIRMED' ? 'Đã xác nhận' : assignment.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : assignment.status || 'Đã phân công'} />
+                                <span className={`sr-only ${assignment.status === 'CONFIRMED'
+                                  ? 'text-emerald-600 before:content-[\'✓\'] before:mr-1'
                                   : assignment.status === 'CHANGE_REQUESTED'
-                                    ? 'text-amber-600'
-                                    : 'text-[#0F172A]'
+                                    ? 'text-amber-600 before:content-[\'•\'] before:mr-1'
+                                    : 'text-[#0F172A] before:content-[\'•\'] before:mr-1'
                                   }`}>
                                   {assignment.status === 'CONFIRMED'
                                     ? 'Đã xác nhận'

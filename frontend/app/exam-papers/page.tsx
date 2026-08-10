@@ -964,10 +964,10 @@ export default function ExamPapersPage() {
                 <span className="text-xs font-semibold text-slate-500">
                   Trạng thái: <strong className={
                     selectedPaper.status === 'PUBLISHED'
-                      ? 'inline-flex items-center rounded-[6px] bg-[#F0FDF4] px-2 py-1 text-[13px] text-[#15803D] font-semibold'
+                      ? 'inline-flex items-center gap-[6px] text-[14px] text-[#15803D] font-semibold leading-5 before:content-[\'✓\'] before:mr-1'
                       : selectedPaper.status === 'ARCHIVED'
-                        ? 'inline-flex items-center rounded-[6px] bg-[#F8FAFC] px-2 py-1 text-[13px] text-[#475569] font-semibold'
-                        : 'inline-flex items-center rounded-[6px] bg-[#F8FAFC] px-2 py-1 text-[13px] text-[#475569] font-semibold'
+                        ? 'inline-flex items-center gap-[6px] text-[14px] text-[#475569] font-semibold leading-5 before:content-[\'•\'] before:mr-1'
+                        : 'inline-flex items-center gap-[6px] text-[14px] text-[#475569] font-semibold leading-5 before:content-[\'•\'] before:mr-1'
                   }>
                     {selectedPaper.status === 'PUBLISHED' ? 'Đã phát hành' : selectedPaper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
                   </strong>

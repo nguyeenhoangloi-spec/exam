@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -956,7 +956,7 @@ export default function StudentCurriculumPage() {
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
                   title="Trang trước"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -979,7 +979,7 @@ export default function StudentCurriculumPage() {
                       key={pNum}
                       type="button"
                       onClick={() => setPage(pNum)}
-                      className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-xs font-extrabold transition cursor-pointer shadow-2xs ${isCurrent
+                      className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-bold transition cursor-pointer shadow-2xs ${isCurrent
                           ? 'bg-blue-600 text-white shadow-xs'
                           : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
@@ -993,7 +993,7 @@ export default function StudentCurriculumPage() {
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
                   title="Trang sau"
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -1008,12 +1008,12 @@ export default function StudentCurriculumPage() {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
                 >
-                  <option value={8}>8 / trang</option>
-                  <option value={15}>15 / trang</option>
-                  <option value={30}>30 / trang</option>
+                  <option value={10}>10 / trang</option>
+                  <option value={20}>20 / trang</option>
                   <option value={50}>50 / trang</option>
+                  <option value={100}>100 / trang</option>
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               </div>

@@ -403,7 +403,7 @@ function TrashPageContent() {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-[15px] font-medium text-[#334155] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
                 <option value="newest">Sắp xếp: Mới nhất</option>
                 <option value="oldest">Sắp xếp: Cũ nhất</option>
@@ -417,11 +417,11 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[15px] font-medium text-[#334155] transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+                className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
               >
                 <SlidersHorizontal className="h-4 w-4 text-[#2563EB]" />
                 <span>Chọn cột</span>
-                <ChevronDown className={`h-4 w-4 text-[#64748B] transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
               </button>
 
               {openColumnMenu && (
@@ -468,12 +468,11 @@ function TrashPageContent() {
             </div>
 
             {/* View Mode Switcher 3 Icon */}
-            <div className="flex items-center rounded-xl border border-slate-200 bg-white p-1 shadow-2xs">
+            <div className="flex items-center h-9 rounded-xl border border-slate-200 bg-white px-1 shadow-2xs gap-0.5">
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-[#2563EB] font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
-                  }`}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-[#2563EB]' : 'text-[#64748B] hover:text-[#0F172A]'}`}
                 title="Xem dạng danh sách"
               >
                 <List className="h-4 w-4" />
@@ -481,8 +480,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-[#2563EB] font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
-                  }`}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-[#2563EB]' : 'text-[#64748B] hover:text-[#0F172A]'}`}
                 title="Xem dạng lưới"
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -490,8 +488,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('compact')}
-                className={`p-2 rounded-lg transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-[#2563EB] font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
-                  }`}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-[#2563EB]' : 'text-[#64748B] hover:text-[#0F172A]'}`}
                 title="Xem dạng thu gọn"
               >
                 <Layers className="h-4 w-4" />
@@ -501,7 +498,7 @@ function TrashPageContent() {
             {/* Refresh Button */}
             <button
               onClick={() => fetchItems()}
-              className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
+              className="h-9 w-9 flex items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none border border-slate-200 bg-white shadow-2xs"
               title="Tải lại dữ liệu"
             >
               <RefreshCw className="w-4 h-4" />

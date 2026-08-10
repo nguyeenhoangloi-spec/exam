@@ -320,11 +320,11 @@ export const Header: React.FC<HeaderProps> = ({
                       <span>Thông báo hệ thống</span>
                     </p>
                     {effectiveUnreadCount > 0 ? (
-                      <span className="rounded-full bg-rose-50 border border-rose-200 px-2.5 py-0.5 text-[13px] font-semibold text-rose-600">
+                      <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#D97706] before:content-[\'•\']">
                         {effectiveUnreadCount} chưa đọc
                       </span>
                     ) : (
-                      <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[13px] font-semibold text-emerald-600">
+                      <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#15803D] before:content-[\'✓\']">
                         Đã đọc tất cả
                       </span>
                     )}

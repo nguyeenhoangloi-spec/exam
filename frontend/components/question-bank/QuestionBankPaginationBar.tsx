@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
@@ -108,10 +108,10 @@ export function QuestionBankPaginationBar({
             onChange={(e) => onLimit(Number(e.target.value))}
             className="h-8 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs"
           >
-            <option value={8}>8 / trang</option>
             <option value={10}>10 / trang</option>
             <option value={20}>20 / trang</option>
             <option value={50}>50 / trang</option>
+            <option value={100}>100 / trang</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
         </div>
