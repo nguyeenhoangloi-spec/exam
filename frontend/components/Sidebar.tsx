@@ -291,18 +291,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer ${isActive
+                            className={`w-full flex items-center rounded-xl py-2.5 text-[14px] font-semibold transition-all cursor-pointer ${collapsed ? 'justify-center px-0' : 'justify-between px-3'} ${isActive
                               ? 'bg-[#EFF6FF] dark:bg-blue-950/70 text-[#2563EB] dark:text-blue-400 font-bold'
                               : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white'
                               }`}
                           >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#64748B] dark:text-slate-400'}`} />
+                            <div className={`flex items-center min-w-0 ${collapsed ? 'justify-center' : 'gap-3'}`}>
+                              <Icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#64748B] dark:text-slate-400'}`} />
                               {!collapsed && <span className="truncate">{item.name}</span>}
                             </div>
                             {!collapsed && (
                               <ChevronDown
-                                className={`h-3.5 w-3.5 text-[#94A3B8] transition-transform duration-200 ${isSubOpen ? 'rotate-180' : ''}`}
+                                className={`h-4 w-4 text-[#94A3B8] transition-transform duration-200 ${isSubOpen ? 'rotate-180' : ''}`}
                               />
                             )}
                           </button>
@@ -316,7 +316,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                   <Link
                                     key={sub.href}
                                     href={sub.href}
-                                    className={`block rounded-lg px-3 py-2 text-xs font-semibold transition-all ${isSubActive
+                                    className={`block rounded-lg px-3 py-2 text-[13px] font-semibold transition-all ${isSubActive
                                       ? 'bg-blue-100/70 dark:bg-blue-900/40 text-[#2563EB] dark:text-blue-400 font-bold'
                                       : 'text-[#64748B] dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200'
                                       }`}
@@ -337,13 +337,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         href={item.href}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all group ${isActive
+                        className={`flex items-center rounded-xl py-2.5 text-[14px] font-semibold transition-all group ${collapsed ? 'justify-center px-0' : 'gap-3 px-3'} ${isActive
                           ? 'bg-[#EFF6FF] dark:bg-blue-950/70 text-[#2563EB] dark:text-blue-400 font-bold shadow-xs'
                           : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white'
                           }`}
                       >
                         <Icon
-                          className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#64748B] dark:text-slate-400'
+                          className={`h-5 w-5 shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#64748B] dark:text-slate-400'
                             }`}
                         />
                         {!collapsed && <span className="truncate">{item.name}</span>}
@@ -358,32 +358,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* User Footer Profile Card */}
-      <div ref={footerRef} className="relative border-t border-[#E2E8F0] dark:border-slate-800 p-3 bg-white dark:bg-[#0F172A]">
+      <div ref={footerRef} className="relative border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-[#0F172A] p-2">
         <button
           type="button"
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`flex w-full items-center gap-3 rounded-xl p-2 transition text-left cursor-pointer hover:bg-[#F8FAFC] dark:hover:bg-slate-800 ${showUserMenu ? 'bg-[#F8FAFC] dark:bg-slate-800' : ''
-            }`}
+          className={`group flex w-full items-center ${collapsed ? 'justify-center' : 'gap-3'} rounded-xl px-2.5 py-2 transition-all text-left cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800 ${showUserMenu ? 'bg-slate-100 dark:bg-slate-800' : ''}`}
         >
           {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]" />
+            <img src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover" />
           ) : (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-400 font-bold text-xs">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-black text-[15px]">
               {displayName.charAt(0).toUpperCase()}
             </div>
           )}
 
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-bold text-[#0F172A] dark:text-slate-100">{displayName}</p>
-              <p className="truncate text-[11px] font-normal text-[#64748B] dark:text-slate-400 mt-0.5">
+              <p className="truncate text-[14px] font-bold text-[#0F172A] dark:text-slate-100 leading-snug">{displayName}</p>
+              <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug">
                 {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
               </p>
             </div>
           )}
 
-          {!collapsed && <ChevronRight className="h-4 w-4 text-[#94A3B8] shrink-0" />}
+          {!collapsed && <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-600 shrink-0" />}
         </button>
+
 
         {/* Sidebar Popover Menu */}
         {showUserMenu && (
