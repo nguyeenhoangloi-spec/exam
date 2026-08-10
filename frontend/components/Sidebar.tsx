@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   CalendarDays,
@@ -69,6 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onMobileClose,
 }) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const role: Role = user?.role || 'ADMIN';
 
@@ -196,37 +197,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
     .filter((grp) => grp.items.length > 0);
 
   const isItemActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
+  const isSubItemActive = (href: string) => {
+    const [path, query] = href.split('?');
+    if (pathname !== path) return false;
+    return query ? new URLSearchParams(query).get('type') === searchParams.get('type') : true;
+  };
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-[#0F2A4A] text-slate-100 border-r border-white/10 shadow-2xl transition-all duration-200 ease-in-out ${collapsed ? 'w-[76px]' : 'w-64'
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white text-[#475569] border-r border-[#E2E8F0] transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[256px]'
         } ${mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
         }`}
     >
       {/* Header Section with Toggle Button */}
       {collapsed ? (
-        <div className="flex h-16 shrink-0 items-center justify-center border-b border-white/10 px-3 bg-[#0F2A4A]">
+        <div className="flex h-16 shrink-0 items-center justify-center border-b border-[#E2E8F0] px-3 bg-white">
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-blue-200 transition active:scale-95 cursor-pointer border border-white/15 shadow-xs"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#334155] transition active:scale-95 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
-            <PanelLeftOpen className="h-5 w-5 text-blue-200" />
+            <PanelLeftOpen className="h-5 w-5" />
           </button>
         </div>
       ) : (
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-4 bg-[#0F2A4A]">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#E2E8F0] px-4 bg-white">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white shadow-md">
-              <GraduationCap className="h-5 w-5 text-white" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#2563EB]">
+              <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[15px] font-semibold tracking-wider text-white uppercase leading-tight">
+              <h1 className="truncate text-[16px] font-bold tracking-tight text-[#0F172A] leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[13px] font-semibold tracking-tight text-blue-300 uppercase leading-tight mt-0.5">
+              <h2 className="truncate text-[12px] font-medium tracking-tight text-[#64748B] leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
@@ -235,17 +241,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition active:scale-95 cursor-pointer border border-white/15"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#334155] transition active:scale-95 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
-            <PanelLeft className="h-4 w-4 text-slate-200" />
+            <PanelLeft className="h-4 w-4" />
           </button>
         </div>
       )}
 
       {/* Navigation Groups List */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-3 no-scrollbar" aria-label="Điều hướng chính">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 no-scrollbar" aria-label="Điều hướng chính">
         {filteredGroups.map((group, groupIdx) => {
           const groupName = group.group || `group_${groupIdx}`;
           const isExpanded = expandedGroups[groupName] ?? true;
@@ -256,7 +262,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-wider text-[#94A3B8] uppercase hover:text-slate-200 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                    className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#94A3B8] hover:text-[#64748B] transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                     }`}
                 >
                   <span className="truncate">{group.group}</span>
@@ -283,13 +289,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`group relative flex w-full h-10 items-center justify-between rounded-xl px-3 text-[15px] font-medium transition-all duration-200 overflow-hidden cursor-pointer ${isActive
-                                ? 'bg-[#2563EB] text-white shadow-md border border-blue-500 font-semibold'
-                                : 'text-[#CBD5E1] hover:bg-white/[0.08] hover:text-white'
+                            className={`group relative flex w-full h-11 items-center justify-between rounded-lg px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isActive
+                                ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
+                                : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#334155]'
                               }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-[#94A3B8] group-hover:text-white'}`} />
+                            <Icon className={`h-[19px] w-[19px] shrink-0 transition-colors duration-150 ${isActive ? 'text-[#2563EB]' : 'text-[#64748B] group-hover:text-[#475569]'}`} />
                               <span className={`whitespace-nowrap transition-all duration-200 truncate ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100'}`}>
                                 {item.name}
                               </span>
@@ -306,14 +312,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                           {/* Sub Items */}
                           {isSubOpen && !collapsed && (
-                            <div className="pl-7 space-y-1 border-l border-white/10 ml-4 py-1">
+                            <div className="pl-8 space-y-1 ml-2 py-1">
                               {item.children?.map((sub) => {
                                 return (
                                   <Link
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className="block py-1.5 px-3 rounded-lg text-[14px] font-medium text-[#CBD5E1] hover:text-white hover:bg-white/[0.08] transition-all"
+                                    className={`block min-h-9 py-2 px-3 rounded-lg text-[14px] font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isSubItemActive(sub.href)
+                                      ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
+                                      : 'text-[#64748B] hover:text-[#334155] hover:bg-[#F8FAFC]'
+                                      }`}
                                   >
                                     {sub.name}
                                   </Link>
@@ -333,12 +342,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onMouseEnter={() => router.prefetch(item.href)}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group relative flex h-10 items-center justify-start rounded-[10px] px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden ${isActive
-                            ? 'bg-[#2563EB] text-white shadow-md border border-blue-500 font-semibold'
-                            : 'text-[#CBD5E1] hover:bg-white/[0.08] hover:text-white'
+                        className={`group relative flex h-11 items-center justify-start rounded-lg px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isActive
+                            ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
+                            : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#334155]'
                           }`}
                       >
-                        <Icon className={`h-5 w-5 shrink-0 transition-transform duration-150 group-hover:scale-105 ${isActive ? 'text-white' : 'text-[#94A3B8] group-hover:text-white'}`} />
+                        <Icon className={`h-[19px] w-[19px] shrink-0 transition-colors duration-150 ${isActive ? 'text-[#2563EB]' : 'text-[#64748B] group-hover:text-[#475569]'}`} />
 
                         <span
                           className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
@@ -369,12 +378,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       />
 
       {/* Footer User Profile Section matching User Screenshots */}
-      <div ref={footerRef} className="relative shrink-0 border-t border-white/10 p-3 bg-[#0F2A4A]">
+      <div ref={footerRef} className="relative shrink-0 border-t border-[#E2E8F0] p-3 bg-white">
         <button
           type="button"
           onClick={() => setShowUserMenu((prev) => !prev)}
           aria-expanded={showUserMenu}
-          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl bg-white/5 hover:bg-white/10 p-2.5 border border-white/10 shadow-md backdrop-blur-md transition cursor-pointer text-left ${collapsed ? 'justify-center p-2' : ''
+          className={`w-full flex items-center justify-between gap-2.5 rounded-lg hover:bg-[#F8FAFC] p-2 transition cursor-pointer text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${collapsed ? 'justify-center p-2' : ''
             }`}
           title={collapsed ? displayName : undefined}
         >
@@ -384,20 +393,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="h-9 w-9 shrink-0 rounded-full object-cover shadow-sm border border-blue-400/40"
+                className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
               />
             ) : (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-black text-sm shadow-sm">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-sm">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
 
             {!collapsed && (
               <div className="min-w-0">
-                <span className="block truncate text-[15px] font-semibold text-white leading-tight">
+                <span className="block truncate text-[15px] font-semibold text-[#0F172A] leading-tight">
                   {displayName}
                 </span>
-                <span className="block truncate text-[13px] font-semibold text-blue-200 leading-tight mt-0.5">
+                <span className="block truncate text-[13px] font-normal text-[#64748B] leading-tight mt-0.5">
                   {role === 'ADMIN' ? 'Quản trị hệ thống' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                 </span>
               </div>
@@ -406,7 +415,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {!collapsed && (
             <ChevronDown
-              className={`h-4 w-4 shrink-0 text-blue-200 transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-white' : ''
+              className={`h-4 w-4 shrink-0 text-[#94A3B8] transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-[#2563EB]' : ''
                 }`}
             />
           )}
@@ -444,7 +453,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className="h-9 w-9 shrink-0 rounded-full object-cover shadow-xs border border-slate-200 dark:border-slate-700"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-600 text-white font-bold text-xs shadow-xs">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
