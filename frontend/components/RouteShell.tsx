@@ -126,11 +126,11 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
             <div
                 className={`app-shell-main min-h-screen min-w-0 ${isToggling ? 'transition-[margin] duration-300 ease-in-out' : ''
-                    } ${collapsed ? 'md:ml-[76px]' : 'md:ml-64'}`}
+                    } ${collapsed ? 'md:ml-[72px]' : 'md:ml-[252px]'}`}
             >
                 <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
-                {/* pt-14 (56px) matches the fixed header height (h-14) so content never hides underneath it */}
-                <main className="w-full pt-14 min-h-screen">{children}</main>
+                {/* pt-16 (64px) matches the fixed header height (h-16) so content never hides underneath it */}
+                <main className="w-full pt-16 min-h-screen">{children}</main>
             </div>
         </div>
     );

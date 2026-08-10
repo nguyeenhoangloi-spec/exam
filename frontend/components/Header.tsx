@@ -245,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({
       />
 
       <header
-        className={`app-header-fixed fixed top-0 left-0 right-0 z-30 flex h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all border-b border-slate-200/70 dark:border-slate-700/70 shadow-2xs ${collapsed ? 'md:left-[76px]' : 'md:left-[260px]'
+        className={`app-header-fixed fixed top-0 left-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all border-b border-slate-200/70 dark:border-slate-700/70 shadow-2xs ${collapsed ? 'md:left-[72px]' : 'md:left-[252px]'
           }`}
       >
 
@@ -276,7 +276,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 ml-1" aria-label="Breadcrumb">
               <span
-                className="cursor-pointer transition hover:text-slate-800 dark:hover:text-slate-200"
+                className="cursor-pointer text-slate-400/80 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
                 onClick={() => {
                   if (user?.role === 'TEACHER') router.push('/teacher/assignments');
                   else if (user?.role === 'STUDENT') router.push('/student/exam-schedule');

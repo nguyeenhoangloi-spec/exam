@@ -205,8 +205,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white text-[#475569] border-r border-[#E2E8F0] transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[256px]'
-        } ${mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white text-[#475569] border-r border-[#E2E8F0] transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[252px]'
+        } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'
         }`}
     >
       {/* Header Section with Toggle Button */}
@@ -232,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <h1 className="truncate text-[16px] font-bold tracking-tight text-[#0F172A] leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[13px] font-medium tracking-tight text-[#64748B] leading-tight mt-0.5">
+              <h2 className="truncate text-[12px] font-medium tracking-tight text-[#64748B] leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
