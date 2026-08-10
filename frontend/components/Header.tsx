@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
   const avatarUrl = user?.avatarUrl || user?.teacher?.avatarUrl || user?.student?.avatarUrl;
   const roleCode = user?.role || 'ADMIN';
   const displayRoleLabel =
-    roleCode === 'ADMIN' ? 'QUẢN TRỊ VIÊN' : roleCode === 'TEACHER' ? 'GIẢNG VIÊN' : 'SINH VIÊN';
+    roleCode === 'ADMIN' ? 'Quản trị viên' : roleCode === 'TEACHER' ? 'Giảng viên' : 'Sinh viên';
 
   /* ── Load real notifications based on user role ── */
   useEffect(() => {
@@ -303,7 +303,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => togglePanel('notifications')}
                 className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
-                <Bell className="h-4.5 w-4.5" />
+                <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-bold text-white shadow-xs leading-none">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
@@ -360,7 +360,7 @@ export const Header: React.FC<HeaderProps> = ({
                       })}
 
                       {effectiveUnreadCount > 0 && (
-                        <button
+                <button
                           type="button"
                           onClick={handleMarkAllAsRead}
                           className="w-full mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-center text-[13px] font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 flex items-center justify-center gap-1 cursor-pointer"
@@ -393,25 +393,25 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-expanded={openPanel === 'account'}
                 aria-controls="user-account-dropdown"
                 onClick={() => togglePanel('account')}
-                className="flex items-center gap-2.5 rounded-xl p-1.5 text-left transition hover:bg-slate-100/70 dark:hover:bg-slate-800/70 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="flex items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-slate-100/70 dark:hover:bg-slate-800/70 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {/* Avatar Circle */}
                 {avatarUrl ? (
                   <img
                     src={avatarUrl}
                     alt={displayName}
-                    className="h-10 w-10 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
+                    className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-sm tracking-tight">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-sm tracking-tight">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-none">
-                  <span className="block text-[15px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[13px] font-semibold text-[#2563EB] uppercase tracking-wide mt-1">
+                  <span className="block text-[14px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
+                  <span className="block text-[12px] font-medium text-[#2563EB] tracking-normal mt-1">
                     {displayRoleLabel}
                   </span>
                 </div>
