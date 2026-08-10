@@ -208,7 +208,7 @@ export function QuestionFormDialog({
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
               Môn học / Học phần <span className="text-rose-500">*</span>
             </label>
-            <select {...register('subjectId', { valueAsNumber: true })} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {subjects.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.subjectName}
@@ -222,7 +222,7 @@ export function QuestionFormDialog({
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
               Loại câu hỏi <span className="text-rose-500">*</span>
             </label>
-            <select {...register('type')} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -236,7 +236,7 @@ export function QuestionFormDialog({
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
               Mức độ khó <span className="text-rose-500">*</span>
             </label>
-            <select {...register('difficulty')} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -250,7 +250,7 @@ export function QuestionFormDialog({
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
               Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
             </label>
-            <select {...register('bloomLevel')} className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(BLOOM_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}

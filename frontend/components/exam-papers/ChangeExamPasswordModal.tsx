@@ -78,10 +78,10 @@ export function ChangeExamPasswordModal({
               Mã đề: {paper.paperCode}
             </span>
             <span
-              className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10.5px] font-bold border ${
+              className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${
                 hasPassword
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
-                  : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
+                  ? 'text-[#15803D] dark:text-emerald-400'
+                  : 'text-[#D97706] dark:text-amber-400'
               }`}
             >
               <KeyRound className="h-3 w-3" />
@@ -115,7 +115,7 @@ export function ChangeExamPasswordModal({
               required
               minLength={4}
               maxLength={50}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 pr-10 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 pr-10 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             />
             <button
               type="button"
@@ -140,7 +140,7 @@ export function ChangeExamPasswordModal({
             required
             minLength={4}
             maxLength={50}
-            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </div>
 
@@ -155,7 +155,7 @@ export function ChangeExamPasswordModal({
             onChange={(e) => setReason(e.target.value)}
             placeholder="VD: Giảng viên cấp lại do sinh viên quên mật khẩu thi"
             maxLength={255}
-            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </div>
 
@@ -165,14 +165,14 @@ export function ChangeExamPasswordModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            className="h-9 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
           >
             Hủy
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-blue-700 transition cursor-pointer disabled:opacity-50"
+            className="h-9 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 text-xs font-bold text-white shadow-md hover:bg-blue-700 transition cursor-pointer disabled:opacity-50"
           >
             {submitting ? (
               <>

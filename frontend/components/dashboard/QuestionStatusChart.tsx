@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
 import { ChevronDown } from 'lucide-react';
+import { StatusBadge } from '../common/StatusBadge';
 
 export function QuestionStatusChart({ data }: { data?: DashboardOverview['questionStatus'] }) {
   const [filter, setFilter] = useState('Tất cả');
@@ -123,10 +124,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
           {chartData.map((item) => (
             <div key={item.status} className="flex flex-col gap-0.5 border-b border-slate-100 pb-2 last:border-b-0">
               <div className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 min-w-0">
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-xs" style={{ backgroundColor: item.color }} />
-                  <span className="text-[14px] font-medium text-[#334155] truncate">{item.label}</span>
-                </span>
+                <StatusBadge status={item.status} customLabel={item.label} />
                 <span className="text-[14px] font-semibold text-[#0F172A]">{item.count.toLocaleString('vi-VN')}</span>
               </div>
               <div className="text-right text-[13px] text-[#64748B] font-normal">

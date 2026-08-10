@@ -650,7 +650,7 @@ export function QuestionImportWizard({
               <span className="font-bold text-slate-800">
                 {mode === 'document' ? 'Hệ thống AI đang đọc và phân tích tài liệu...' : 'Đang kiểm tra & phân tích dữ liệu...'}
               </span>
-              <span className="font-black text-white bg-blue-600 rounded-full px-2.5 py-0.5 text-[11px]">
+        <span className="font-semibold text-[13px] text-[#2563EB]">
                 {progress}%
               </span>
             </div>

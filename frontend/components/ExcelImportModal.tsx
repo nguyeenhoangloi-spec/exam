@@ -115,11 +115,11 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
           {previewData.length > 0 && <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" /> Đã đọc {previewData.length} dòng từ tệp.</div>}
           {errorMsg && <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700"><AlertCircle className="h-4 w-4" /> {errorMsg}</div>}
           {previewData.length > 0 && <div className="max-h-48 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-left text-[15px] text-[#334155]"><thead className="sticky top-0 bg-slate-50 text-[14px] font-semibold text-[#475569] border-b border-slate-200"><tr>{Object.keys(previewData[0]).map((key) => <th key={key} className="px-3 py-2 font-semibold">{key}</th>)}</tr></thead><tbody className="font-normal text-[15px]">{previewData.slice(0, 20).map((row, index) => <tr key={index} className="border-t border-slate-100">{Object.keys(previewData[0]).map((key) => <td key={key} className="px-3 py-2">{row[key]}</td>)}</tr>)}</tbody></table></div>}
-          <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+          <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
+              className="h-9 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 text-xs font-bold transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
             >
               Hủy
             </button>
@@ -127,7 +127,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
               type="button"
               disabled={loading || previewData.length === 0}
               onClick={() => setShowConfirm(true)}
-              className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-sm font-bold text-white transition shadow-2xs cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              className="h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white transition shadow-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? 'Đang lưu...' : 'Xác nhận nhập'}
             </button>

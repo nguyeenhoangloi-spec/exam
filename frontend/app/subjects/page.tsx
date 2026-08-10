@@ -489,25 +489,25 @@ export default function SubjectsPage() {
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Môn học</label>
             <input type="text" required placeholder="VD: INT101" value={formData.subjectCode}
               onChange={(e) => setFormData({ ...formData, subjectCode: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
           </div>
           <div>
             <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tên Môn học</label>
             <input type="text" required placeholder="VD: Lập trình Căn bản" value={formData.subjectName}
               onChange={(e) => setFormData({ ...formData, subjectName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Số Tín chỉ</label>
               <input type="number" required min={1} max={10} value={formData.credits}
                 onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Khoa đào tạo</label>
               <select required value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
                 <option value="">-- Chọn Khoa --</option>
                 {departments.map((d) => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
               </select>

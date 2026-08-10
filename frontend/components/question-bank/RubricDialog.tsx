@@ -175,12 +175,12 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
           )}
 
           {/* Real-time score balance status badge */}
-          <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-bold ${isMatched
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-amber-50 border-amber-200 text-amber-800'
+          <div className={`inline-flex w-full items-center justify-between gap-3 text-[14px] leading-5 font-semibold ${isMatched
+              ? 'text-[#15803D]'
+              : 'text-[#D97706]'
             }`}>
-            <span className="flex items-center gap-1.5">
-              {isMatched ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertTriangle className="w-4 h-4 text-amber-600" />}
+            <span className="inline-flex items-center gap-[6px]">
+              {isMatched ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
               {isMatched ? 'Tổng điểm Rubric đã khớp hoàn hảo với điểm câu hỏi' : 'Tổng điểm Rubric CHƯA khớp với điểm câu hỏi'}
             </span>
             <span className="font-mono text-sm font-black">

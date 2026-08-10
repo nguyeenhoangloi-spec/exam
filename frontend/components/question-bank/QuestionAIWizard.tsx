@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import api from '../../lib/api';
 import { Subject } from '../../types';
 import { Modal } from '../Modal';
@@ -155,7 +156,7 @@ export function QuestionAIWizard({
               <select
                 value={form.subjectId}
                 onChange={(e) => set('subjectId', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="">-- Chọn môn học --</option>
                 {subjects.map((s) => (
@@ -172,7 +173,7 @@ export function QuestionAIWizard({
               <select
                 value={form.type}
                 onChange={(e) => set('type', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="SINGLE_CHOICE">Trắc nghiệm chọn 1 đáp án</option>
                 <option value="FILL_BLANK">Điền vào chỗ trống</option>
@@ -186,7 +187,7 @@ export function QuestionAIWizard({
               <select
                 value={form.difficulty}
                 onChange={(e) => set('difficulty', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="EASY">Dễ (Cơ bản)</option>
                 <option value="MEDIUM">Trung bình (Vừa phải)</option>
@@ -200,7 +201,7 @@ export function QuestionAIWizard({
               <select
                 value={form.bloomLevel}
                 onChange={(e) => set('bloomLevel', e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="REMEMBER">Nhận biết (Remember)</option>
                 <option value="UNDERSTAND">Thông hiểu (Understand)</option>
@@ -323,11 +324,12 @@ export function QuestionAIWizard({
               {items.map((q, i) => (
                 <div key={i} className="rounded-xl border border-slate-200 bg-white p-3 space-y-2 text-left shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-[8px]">
+                    <span className="text-[13px] font-semibold text-[#475569]">
                       Câu {i + 1}
                     </span>
                     {q.duplicate && (
-                      <span className="rounded-[8px] bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[13px] font-semibold text-amber-800">
+                      <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-[#D97706]">
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                         Trùng câu {q.duplicate.code}
                       </span>
                     )}

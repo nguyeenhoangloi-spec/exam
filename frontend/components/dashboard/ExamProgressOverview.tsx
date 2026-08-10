@@ -4,12 +4,12 @@ import React from 'react';
 import { ArrowRight, Layers } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DashboardOverview } from '../../types/dashboard';
+import { StatusBadge } from '../common/StatusBadge';
 
 export function ExamProgressOverview({ periods }: { periods?: DashboardOverview['examProgress'] }) {
   const router = useRouter();
-
   const list = (periods && periods.length > 0)
-    ? periods.slice(0, 5).map((p, idx) => {
+    ? periods.slice(0, 5).map((p) => {
         const pct = Math.min(100, Math.max(0, p.paperProgress || p.roomProgress || 0));
         const isComplete = pct === 100;
         const periodItem = p as any;
@@ -26,10 +26,8 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
-      {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 className="text-[18px] font-semibold text-[#0F172A]">Tiến độ tổ chức kỳ thi</h3>
-
         <button
           type="button"
           onClick={() => router.push('/exam-periods')}
@@ -40,7 +38,6 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
         </button>
       </div>
 
-      {/* Progress Bars List */}
       {list.length > 0 ? (
         <div className="space-y-4 my-auto">
           {list.map((item) => (
@@ -49,16 +46,10 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
                 <span className="font-medium text-[#334155] truncate pr-2">
                   <span className="font-bold text-[#0F172A]">{item.code}</span> - {item.name}
                 </span>
-                <span className={`font-bold text-[14px] ${item.textColor} shrink-0`}>
-                  {item.progress}%
-                </span>
+                <StatusBadge status={item.status} customLabel={`${item.progress}%`} className="shrink-0" />
               </div>
-
               <div className="h-2 w-full overflow-hidden rounded-md bg-slate-100">
-                <div
-                  className={`h-full rounded-md transition-all duration-500 ${item.color}`}
-                  style={{ width: `${item.progress}%` }}
-                />
+                <div className={`h-full rounded-md transition-all duration-500 ${item.color}`} style={{ width: `${item.progress}%` }} />
               </div>
             </div>
           ))}
@@ -70,20 +61,10 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
         </div>
       )}
 
-      {/* Footer Legend */}
-      <div className="flex items-center justify-center gap-4 border-t border-slate-100 pt-3 text-[13px] font-normal text-[#64748B]">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-slate-300 inline-block" />
-          <span>Chưa bắt đầu</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-blue-600 inline-block" />
-          <span>Đang thực hiện</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-emerald-600 inline-block" />
-          <span>Hoàn thành</span>
-        </div>
+      <div className="flex flex-wrap items-center justify-center gap-4 border-t border-slate-100 pt-3 text-[13px] font-normal text-[#64748B]">
+        <StatusBadge status="NOT_STARTED" customLabel="Chưa bắt đầu" />
+        <StatusBadge status="IN_PROGRESS" customLabel="Đang thực hiện" />
+        <StatusBadge status="COMPLETED" customLabel="Hoàn thành" />
       </div>
     </div>
   );
