@@ -8,9 +8,10 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
+import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
 import {
   Trash2, RotateCcw, Search, CalendarCheck, FileText,
-  HelpCircle, RefreshCw, ChevronDown, Clock, Users, Building2, GraduationCap, BookOpen, CheckCircle2, SlidersHorizontal, Eye, MoreVertical, List, LayoutGrid, Layers
+  HelpCircle, RefreshCw, ChevronDown, Clock, Users, Building2, GraduationCap, BookOpen, CheckCircle2, SlidersHorizontal, Eye, MoreVertical, List, LayoutGrid, Layers, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 interface TrashItem {
@@ -33,6 +34,15 @@ interface TrashStats {
   subjects?: number;
 }
 
+const categoryLabelMap: Record<string, string> = {
+  schedules: 'Lịch thi',
+  papers: 'Đề thi',
+  questions: 'Câu hỏi',
+  users: 'Tài khoản / Sinh viên',
+  subjects: 'Môn học',
+  classes: 'Lớp học',
+};
+
 function TrashPageContent() {
   usePageTitle('Thùng rác hệ thống');
   const router = useRouter();
@@ -50,6 +60,9 @@ function TrashPageContent() {
     deletedBy: true,
     actions: true,
   });
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     if (typeParam) {
@@ -112,6 +125,16 @@ function TrashPageContent() {
     }
     return result;
   }, [items, sortOrder]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeCategory, search, sortOrder]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedItems.length / pageSize));
+  const paginatedItems = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return sortedItems.slice(start, start + pageSize);
+  }, [sortedItems, page, pageSize]);
 
   useEffect(() => {
     const user = getAuthUser();
@@ -394,7 +417,7 @@ function TrashPageContent() {
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3 px-1">
           <p className="text-[15px] font-normal text-[#334155]">
-            <span className="font-semibold text-[#0F172A]">{items.length}</span> kết quả
+            <span className="font-semibold text-[#0F172A]">{sortedItems.length}</span> kết quả
           </p>
 
           <div className="flex items-center gap-2">
@@ -523,7 +546,7 @@ function TrashPageContent() {
         ) : viewMode === 'grid' ? (
           /* CHẾ ĐỘ XEM GRID (LƯỚI THẺ CARD UI) */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedItems.map((item) => {
+            {paginatedItems.map((item) => {
               const remainingDays = getRemainingDays(item.deletedAt);
               return (
                 <div
@@ -596,7 +619,7 @@ function TrashPageContent() {
                     <th className={`px-5 w-10 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>
                       <input
                         type="checkbox"
-                        checked={selectedIds.length === sortedItems.length && sortedItems.length > 0}
+                        checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
                         onChange={(e) => handleSelectAll(e.target.checked)}
                         className="h-4 w-4 rounded-md border-slate-300 text-[#2563EB] focus:ring-blue-500 cursor-pointer"
                       />
@@ -609,7 +632,7 @@ function TrashPageContent() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-normal">
-                  {sortedItems.map((item) => {
+                  {paginatedItems.map((item) => {
                     const remainingDays = getRemainingDays(item.deletedAt);
                     const isSelected = selectedIds.includes(item.id);
 
@@ -687,6 +710,22 @@ function TrashPageContent() {
               </table>
             </div>
           </div>
+        )}
+
+        {/* Thanh Phân Trang Chuẩn Hệ Thống */}
+        {sortedItems.length > 0 && (
+          <TrashPaginationBar
+            page={page}
+            totalPages={totalPages}
+            limit={pageSize}
+            totalItems={sortedItems.length}
+            categoryLabel={categoryLabelMap[activeCategory] || 'dữ liệu'}
+            onPage={(p) => setPage(p)}
+            onLimit={(l) => {
+              setPageSize(l);
+              setPage(1);
+            }}
+          />
         )}
       </div>
     </main>

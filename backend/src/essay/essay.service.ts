@@ -266,9 +266,17 @@ export class EssayService {
       orderBy: { submittedAt: 'asc' },
       include: {
         student: true,
+        snapshot: true,
         onlineExamConfig: {
           include: {
             examSchedule: { include: { subject: true, examPeriod: true } },
+            examPaper: {
+              include: {
+                questions: {
+                  include: { question: true },
+                },
+              },
+            },
           },
         },
         incidents: true,
@@ -277,10 +285,14 @@ export class EssayService {
 
     const attemptsWithEssay = attempts.filter((a) => {
       const snap = a.snapshot?.snapshotData;
-      if (Array.isArray(snap)) {
+      if (Array.isArray(snap) && snap.length > 0) {
         return (snap as any[]).some((q) => q.type === 'ESSAY');
       }
-      return a.onlineExamConfig?.essayEnabled !== false;
+      const paperQuestions = a.onlineExamConfig?.examPaper?.questions || [];
+      if (paperQuestions.length > 0) {
+        return paperQuestions.some((eq: any) => eq.question?.type === 'ESSAY');
+      }
+      return Boolean(a.onlineExamConfig?.essayEnabled);
     });
 
     try {
@@ -294,6 +306,13 @@ export class EssayService {
           essayEnabled: true,
         },
         include: {
+          examPaper: {
+            include: {
+              questions: {
+                include: { question: true },
+              },
+            },
+          },
           examSchedule: {
             include: {
               subject: true,
@@ -310,12 +329,20 @@ export class EssayService {
         },
       });
 
+      const onlineConfigsWithEssay = onlineConfigs.filter((cfg) => {
+        const paperQuestions = cfg.examPaper?.questions || [];
+        if (paperQuestions.length > 0) {
+          return paperQuestions.some((eq: any) => eq.question?.type === 'ESSAY');
+        }
+        return true;
+      });
+
       const existingStudentAttemptKeys = new Set(
         attemptsWithEssay.map((a) => `${a.studentId}-${a.onlineExamConfigId}`),
       );
 
       const virtualAttempts: any[] = [];
-      for (const config of onlineConfigs) {
+      for (const config of onlineConfigsWithEssay) {
         const rooms = config.examSchedule?.examScheduleRooms || [];
         for (const room of rooms) {
           const roomStudents = room.examRoomStudents || [];
