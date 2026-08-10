@@ -360,7 +360,7 @@ export const Header: React.FC<HeaderProps> = ({
                       })}
 
                       {effectiveUnreadCount > 0 && (
-                <button
+                        <button
                           type="button"
                           onClick={handleMarkAllAsRead}
                           className="w-full mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-center text-[13px] font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 flex items-center justify-center gap-1 cursor-pointer"
@@ -393,7 +393,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-expanded={openPanel === 'account'}
                 aria-controls="user-account-dropdown"
                 onClick={() => togglePanel('account')}
-                className="flex items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-slate-100/70 dark:hover:bg-slate-800/70 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="flex items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {/* Avatar Circle */}
                 {avatarUrl ? (
@@ -403,36 +403,36 @@ export const Header: React.FC<HeaderProps> = ({
                     className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-sm tracking-tight">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2563EB] font-bold text-white text-xs tracking-tight">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
 
                 {/* Name & Role text */}
-                <div className="hidden sm:block text-left leading-none">
-                  <span className="block text-[14px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[12px] font-medium text-[#2563EB] tracking-normal mt-1">
+                <div className="hidden sm:block text-left leading-tight">
+                  <span className="block text-[13px] font-bold text-[#0F172A] dark:text-slate-100">{displayName}</span>
+                  <span className="block text-[11px] font-semibold text-[#2563EB]">
                     {displayRoleLabel}
                   </span>
                 </div>
 
-                {/* Chevron Down Arrow */}
+                {/* Chevron Arrow */}
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
+                  className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-[#2563EB]' : ''
                     }`}
                 />
               </button>
 
-              {/* Redesigned Account Dropdown Menu - Compact & Sleek */}
+              {/* Redesigned Account Dropdown Menu */}
               {openPanel === 'account' && (
                 <div
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+8px)] w-[230px] sm:w-[245px] rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150"
+                  className="absolute right-0 top-[calc(100%+10px)] w-[240px] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150"
                 >
                   {/* Isometric Top Pointer Tip pointing up to Header trigger */}
-                  <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
+                  <div className="absolute -top-1.5 right-7 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
 
                   <div className="relative z-20 space-y-0.5">
                     {/* Item 1: Hồ sơ cá nhân */}
@@ -443,11 +443,11 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/profile');
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         <UserIcon className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-slate-900">
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
                           Hồ sơ cá nhân
                         </span>
                       </div>
@@ -462,11 +462,11 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/settings');
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-slate-900">
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
                           Cài đặt tài khoản
                         </span>
                       </div>
@@ -481,11 +481,11 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/change-password');
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         <Lock className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-slate-900">
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
                           Đổi mật khẩu
                         </span>
                       </div>
@@ -493,7 +493,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
 
                     {/* Divider */}
-                    <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                    <div className="my-1.5 border-t border-slate-100 dark:border-slate-800" />
 
                     {/* Item 4: Đăng xuất */}
                     <button
@@ -503,9 +503,9 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-rose-600 font-bold hover:bg-rose-50/80 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-rose-600 font-bold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         <LogOut className="h-4 w-4 text-rose-600 group-hover:scale-105 transition-transform" />
                         <span className="text-xs font-bold text-rose-600">Đăng xuất</span>
                       </div>

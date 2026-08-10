@@ -205,17 +205,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white text-[#475569] border-r border-[#E2E8F0] transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[252px]'
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-[#0F172A] text-[#475569] dark:text-slate-300 border-r border-[#E2E8F0] dark:border-slate-800 transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[252px]'
         } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'
         }`}
     >
       {/* Header Section with Toggle Button */}
       {collapsed ? (
-        <div className="flex h-[68px] shrink-0 items-center justify-center border-b border-[#E2E8F0] px-3 py-1.5 bg-white">
+        <div className="relative flex h-[68px] shrink-0 items-center justify-center border-b border-[#E2E8F0] dark:border-slate-800 px-3 py-1.5 bg-white dark:bg-[#0F172A]">
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#334155] transition active:scale-95 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25"
+            className="absolute left-1/2 -translate-x-1/2 flex h-9 w-9 items-center justify-center rounded-lg text-[#64748B] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#334155] dark:hover:text-white transition-none active:scale-95 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
@@ -223,16 +223,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       ) : (
-        <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-[#E2E8F0] px-4 py-1.5 bg-white">
+        <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-[#E2E8F0] dark:border-slate-800 px-4 py-1.5 bg-white dark:bg-[#0F172A]">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#2563EB]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[16px] font-bold tracking-tight text-[#0F172A] leading-tight">
+              <h1 className="truncate text-[16px] font-bold tracking-tight text-[#0F172A] dark:text-slate-100 leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[12px] font-medium tracking-tight text-[#64748B] leading-tight mt-0.5">
+              <h2 className="truncate text-[12px] font-medium tracking-tight text-[#64748B] dark:text-slate-400 leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
@@ -241,7 +241,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#334155] transition active:scale-95 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#334155] dark:hover:text-white transition active:scale-95 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
@@ -262,7 +262,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                    className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#94A3B8] hover:text-[#64748B] transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                    className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#94A3B8] dark:text-slate-500 hover:text-[#64748B] dark:hover:text-slate-300 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                     }`}
                 >
                   <span className="truncate">{group.group}</span>
@@ -290,8 +290,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
                             className={`group relative flex w-full h-11 items-center justify-between rounded-lg px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isActive
-                                ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
-                                : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#334155]'
+                                ? 'bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-semibold'
+                                : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#334155] dark:hover:text-slate-100'
                               }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
@@ -320,8 +320,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     href={sub.href}
                                     onClick={onMobileClose}
                                     className={`block min-h-9 py-2 px-3 rounded-lg text-[14px] font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isSubItemActive(sub.href)
-                                      ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
-                                      : 'text-[#64748B] hover:text-[#334155] hover:bg-[#F8FAFC]'
+                                      ? 'bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-semibold'
+                                      : 'text-[#64748B] dark:text-slate-400 hover:text-[#334155] dark:hover:text-slate-100 hover:bg-[#F8FAFC] dark:hover:bg-slate-800'
                                       }`}
                                   >
                                     {sub.name}
@@ -343,8 +343,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
                         className={`group relative flex h-11 items-center justify-start rounded-lg px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isActive
-                            ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
-                            : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#334155]'
+                            ? 'bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-semibold'
+                            : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#334155] dark:hover:text-slate-100'
                           }`}
                       >
                         <Icon className={`h-[19px] w-[19px] shrink-0 transition-colors duration-150 ${isActive ? 'text-[#2563EB]' : 'text-[#64748B] group-hover:text-[#475569]'}`} />
@@ -378,12 +378,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       />
 
       {/* Footer User Profile Section matching User Screenshots */}
-      <div ref={footerRef} className="relative shrink-0 border-t border-[#E2E8F0] p-3 bg-white">
+      <div ref={footerRef} className="relative shrink-0 border-t border-[#E2E8F0] dark:border-slate-800 p-3 bg-white dark:bg-[#0F172A]">
         <button
           type="button"
           onClick={() => setShowUserMenu((prev) => !prev)}
           aria-expanded={showUserMenu}
-          className={`w-full flex items-center justify-between gap-2.5 rounded-lg hover:bg-[#F8FAFC] p-2 transition cursor-pointer text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${collapsed ? 'justify-center p-2' : ''
+          className={`w-full flex items-center justify-between gap-2.5 rounded-lg hover:bg-[#F8FAFC] dark:hover:bg-slate-800 p-2 transition cursor-pointer text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${collapsed ? 'justify-center p-2' : ''
             }`}
           title={collapsed ? displayName : undefined}
         >
@@ -393,20 +393,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
+                className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0] dark:border-slate-700"
               />
             ) : (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-sm">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-bold text-sm">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
 
             {!collapsed && (
               <div className="min-w-0">
-                <span className="block truncate text-[15px] font-semibold text-[#0F172A] leading-tight">
+                <span className="block truncate text-[15px] font-semibold text-[#0F172A] dark:text-slate-100 leading-tight">
                   {displayName}
                 </span>
-                <span className="block truncate text-[13px] font-normal text-[#64748B] leading-tight mt-0.5">
+                <span className="block truncate text-[13px] font-normal text-[#64748B] dark:text-slate-400 leading-tight mt-0.5">
                   {role === 'ADMIN' ? 'Quản trị hệ thống' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                 </span>
               </div>
