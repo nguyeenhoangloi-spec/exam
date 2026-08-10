@@ -560,12 +560,12 @@ export function QuestionImportWizard({
                 type="button"
                 disabled={busy || !meta.subjectId}
                 onClick={generateAiQuestions}
-                className="rounded-xl px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-xs transition disabled:opacity-50 cursor-pointer flex items-center gap-2"
+                className="rounded-xl px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-xs transition disabled:opacity-60 cursor-pointer flex items-center gap-2"
               >
                 {busy ? (
                   <>
                     <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Đang sinh câu hỏi {progress}%...</span>
+                    <span>Đang sinh câu hỏi...</span>
                   </>
                 ) : (
                   <span>Bắt đầu Sinh câu hỏi từ Đề cương</span>
@@ -649,7 +649,11 @@ export function QuestionImportWizard({
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-800">
-                {mode === 'document' ? 'Hệ thống AI đang đọc và phân tích tài liệu...' : 'Đang kiểm tra & phân tích dữ liệu...'}
+                {mode === 'document'
+                  ? 'Hệ thống AI đang đọc và phân tích tài liệu...'
+                  : mode === 'ai_generate'
+                    ? 'Hệ thống AI đang phân tích đề cương và sinh câu hỏi tự động...'
+                    : 'Đang kiểm tra & phân tích dữ liệu...'}
               </span>
         <span className="font-semibold text-[13px] text-[#2563EB]">
                 {progress}%

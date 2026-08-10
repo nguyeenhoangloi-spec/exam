@@ -131,7 +131,7 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
             <select value={filters.difficulty} onChange={(e) => set('difficulty', e.target.value)} className={selectCls}>
               <option value="">Tất cả</option>
               <option value="EASY">Dễ</option>
-              <option value="MEDIUM">Trung binh</option>
+              <option value="MEDIUM">Trung bình</option>
               <option value="HARD">Khó</option>
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
@@ -143,11 +143,11 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
           <div className="relative">
             <select value={filters.type} onChange={(e) => set('type', e.target.value)} className={selectCls}>
               <option value="">Tất cả</option>
-              <option value="SINGLE_CHOICE">Trac nghiem</option>
-              <option value="MULTIPLE_CHOICE">Nhieu dap an</option>
+              <option value="SINGLE_CHOICE">Trắc nghiệm</option>
+              <option value="MULTIPLE_CHOICE">Nhiều đáp án</option>
               <option value="TRUE_FALSE">Đúng / Sai</option>
-              <option value="FILL_BLANK">Dien khuyet</option>
-              <option value="ESSAY">Tu luan</option>
+              <option value="FILL_BLANK">Điền khuyết</option>
+              <option value="ESSAY">Tự luận</option>
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
           </div>
@@ -158,10 +158,10 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
           <div className="relative">
             <select value={filters.status} onChange={(e) => set('status', e.target.value)} className={selectCls}>
               <option value="">Tất cả</option>
-              <option value="APPROVED">Da duyet</option>
-              <option value="PENDING">Cho duyet</option>
-              <option value="REJECTED">Bi tu choi</option>
-              <option value="DRAFT">Nhap</option>
+              <option value="APPROVED">Đã duyệt</option>
+              <option value="PENDING">Chờ duyệt</option>
+              <option value="REJECTED">Bị từ chối</option>
+              <option value="DRAFT">Nháp</option>
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
           </div>

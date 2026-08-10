@@ -391,7 +391,7 @@ export class AiQuestionsService {
     const timeout = Number.isFinite(configuredTimeout) && configuredTimeout >= 30000 ? Math.min(configuredTimeout, 300000) : 180000;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
-    const isExtraction = Boolean(input.isExtractionOnly || (input.prompt && input.prompt.length > 20));
+    const isExtraction = Boolean(input.isExtractionOnly);
     const prompt = isExtraction
       ? [
         `Nhiệm vụ: Trích xuất chính xác và đầy đủ TOÀN BỘ các câu hỏi và đáp án từ tài liệu văn bản dưới đây.`,
@@ -414,9 +414,10 @@ export class AiQuestionsService {
         `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
       ].join('\n')
       : [
-        `Tạo đúng ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
-        `Môn: ${subject.subjectName}; ${chapter ? `chương: ${chapter.name}.` : 'không phân chương.'}`,
-        `Loại: ${input.type}; độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
+        `Tạo ĐÚNG CHÍNH XÁC ${input.count} câu hỏi khảo thí bằng tiếng Việt.`,
+        `Môn: ${subject.subjectName}; ${chapter ? `Chương: ${chapter.name}.` : 'Không phân chương.'}`,
+        `Loại: ${input.type}; Độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
+        input.prompt ? `YÊU CẦU: Sinh các câu hỏi bám sát 100% nội dung Đề cương/Bài giảng tham khảo dưới đây. Tạo đúng chính xác ${input.count} câu hỏi, tuyệt đối không tạo thiếu hay tạo thừa:\n\n${input.prompt}` : '',
         'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
         'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
         input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
@@ -700,6 +701,9 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
         unpacked.push(item);
       }
       rawQuestions = pairQuestionsAndAnswers(unpacked, input.type);
+      if (!isExtraction && input.count > 0 && rawQuestions.length > input.count) {
+        rawQuestions = rawQuestions.slice(0, input.count);
+      }
 
       if (!rawQuestions || rawQuestions.length === 0) {
         throw new BadGatewayException('Không thể bóc tách câu hỏi từ tài liệu. Vui lòng kiểm tra lại nội dung file Word/PDF.');
