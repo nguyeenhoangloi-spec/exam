@@ -248,7 +248,6 @@ export const Header: React.FC<HeaderProps> = ({
         className={`app-header-fixed fixed top-0 left-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all border-b border-slate-200/70 dark:border-slate-700/70 shadow-2xs ${collapsed ? 'md:left-[72px]' : 'md:left-[252px]'
           }`}
       >
-
         <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
           {/* Left Side: Navigation / Search / Sidebar Toggle / Breadcrumb */}
           <div className="flex items-center gap-2 sm:gap-2.5">
@@ -319,60 +318,52 @@ export const Header: React.FC<HeaderProps> = ({
                       <Bell className="w-4 h-4 text-blue-600" />
                       <span>Thông báo hệ thống</span>
                     </p>
-                    {effectiveUnreadCount > 0 ? (
-                      <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#D97706] before:content-[\'•\']">
-                        {effectiveUnreadCount} chưa đọc
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#15803D] before:content-[\'✓\']">
-                        Đã đọc tất cả
-                      </span>
+                    {effectiveUnreadCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleMarkAllAsRead}
+                        className="inline-flex items-center gap-1 text-[13px] font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition cursor-pointer"
+                      >
+                        <CheckCheck className="w-3.5 h-3.5" />
+                        <span>Đọc tất cả</span>
+                      </button>
                     )}
                   </div>
 
                   {notifications.length > 0 ? (
-                    <div className="space-y-2">
-                      {notifications.map((item) => {
-                        const isUnread = !readNotificationIds.includes(item.id);
-                        return (
-                          <div
-                            key={item.id}
-                            onClick={() => handleNotificationClick(item)}
-                            className={`rounded-xl p-3 transition border cursor-pointer space-y-1.5 group ${isUnread
-                              ? 'bg-blue-50/80 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800 hover:bg-blue-100/80'
-                              : 'bg-slate-50/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700 hover:bg-slate-100/70'
-                              }`}
-                          >
-                            <div className="flex items-center justify-between gap-1.5">
-                              <p className="font-semibold text-[#0F172A] dark:text-slate-100 text-[15px] group-hover:text-blue-600 transition flex items-center gap-1.5">
-                                {isUnread && (
-                                  <span className="h-1.5 w-1.5 rounded-full bg-blue-600 shrink-0 animate-pulse" />
-                                )}
-                                <span>{item.title}</span>
+                    <div>
+                      <div className="divide-y divide-slate-100 dark:divide-slate-800 border-t border-b border-slate-100 dark:border-slate-800 -mx-4 px-4">
+                        {notifications.map((item) => {
+                          const isUnread = !readNotificationIds.includes(item.id);
+                          return (
+                            <div
+                              key={item.id}
+                              onClick={() => handleNotificationClick(item)}
+                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                                }`}
+                            >
+                              <div className="flex items-center justify-between gap-1.5">
+                                <p className="font-semibold text-[#0F172A] dark:text-slate-100 text-[14px] group-hover:text-blue-600 transition flex items-center gap-2">
+                                  {isUnread ? (
+                                    <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" />
+                                  ) : (
+                                    <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
+                                  )}
+                                  <span>{item.title}</span>
+                                </p>
+                                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" />
+                              </div>
+                              <p className="text-[13px] text-[#64748B] dark:text-slate-400 font-normal leading-relaxed pl-4">
+                                {item.desc}
                               </p>
-                              <ArrowRight className="w-3.5 h-3.5 text-blue-500 group-hover:translate-x-0.5 transition shrink-0" />
                             </div>
-                            <p className="text-[13px] text-[#64748B] dark:text-slate-300 font-normal leading-relaxed">
-                              {item.desc}
-                            </p>
-                          </div>
-                        );
-                      })}
-
-                      {effectiveUnreadCount > 0 && (
-                        <button
-                          type="button"
-                          onClick={handleMarkAllAsRead}
-                          className="w-full mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-center text-[13px] font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 flex items-center justify-center gap-1 cursor-pointer"
-                        >
-                          <CheckCheck className="w-4 h-4" />
-                          <span>Đánh dấu đã đọc tất cả</span>
-                        </button>
-                      )}
+                          );
+                        })}
+                      </div>
                     </div>
                   ) : (
                     <div className="py-6 text-center space-y-2 text-slate-400 dark:text-slate-500">
-                      <Inbox className="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600" />
+                      <Inbox className="w-8 h-8 mx-auto text-slate-300 dark:bg-slate-600" />
                       <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Không có thông báo mới</p>
                       <p className="text-[10.5px] text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
                     </div>

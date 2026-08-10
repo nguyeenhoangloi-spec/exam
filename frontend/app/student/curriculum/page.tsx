@@ -8,6 +8,7 @@ import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import { Modal } from '../../../components/Modal';
 import { Button } from '../../../components/ui/Button';
+import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import {
@@ -1033,105 +1034,48 @@ export default function StudentCurriculumPage() {
           </div>
         )}
 
-        {/* ── 7. Detail Course Modal ── */}
-        {detailItem && (
-          <div
-            className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm animate-in fade-in duration-150"
-            role="presentation"
-            onMouseDown={() => setDetailItem(null)}
-          >
-            <div
-              role="dialog"
-              aria-modal="true"
-              onMouseDown={(e) => e.stopPropagation()}
-              className="relative my-auto flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xl shadow-slate-950/20"
-            >
-              {/* ── Gradient Header ── */}
-              <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 px-5 py-4">
-                <button
-                  type="button"
-                  onClick={() => setDetailItem(null)}
-                  className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-lg bg-white/15 text-white hover:bg-white/25 transition cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-
-                <div className="flex items-center gap-3 pr-10">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white font-black text-base">
-                    {detailItem.subjectCode.slice(0, 2).toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-base font-bold text-white leading-tight truncate">{detailItem.subjectName}</h3>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <span className="inline-flex items-center rounded-md bg-white/20 px-2 py-0.5 text-[11px] font-semibold text-white">
-                        Học kỳ {detailItem.recommendedSemester}
-                      </span>
-                      <span className="text-[11px] text-blue-200 font-mono">Mã môn: {detailItem.subjectCode}</span>
-                    </div>
+        {/* ── 7. Detail Course Drawer ── */}
+        <ProfileDrawer
+          isOpen={Boolean(detailItem)}
+          onClose={() => setDetailItem(null)}
+          title={detailItem?.subjectName || ''}
+          subtitle={`Mã môn: ${detailItem?.subjectCode}`}
+          avatarText={detailItem?.subjectCode?.slice(0, 2) || 'CT'}
+          badge={{
+            label: `Học kỳ ${detailItem?.recommendedSemester}`,
+            className: 'bg-blue-50 text-blue-700 border border-blue-200',
+          }}
+          details={[
+            { label: 'Tên môn học', value: detailItem?.subjectName, icon: BookOpen },
+            { label: 'Mã môn học', value: detailItem?.subjectCode, icon: Info },
+            { label: 'Học kỳ đào tạo', value: detailItem ? `Học kỳ ${detailItem.recommendedSemester}` : '', icon: BookMarked },
+            { label: 'Số tín chỉ', value: detailItem ? `${detailItem.credits} Tín chỉ` : '', icon: Layers },
+            { label: 'Phân loại môn', value: detailItem?.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn', icon: Award },
+            ...(detailItem?.note ? [{ label: 'Ghi chú', value: detailItem.note }] : []),
+          ]}
+          extraSections={detailItem ? [
+            {
+              title: 'Trạng thái tích lũy',
+              content: detailItem.isCompleted ? (
+                <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="text-[13px] font-bold text-emerald-800">Đã hoàn thành</p>
+                    <p className="text-[12px] text-emerald-600 font-medium mt-0.5">Sinh viên đã tích lũy đủ tín chỉ môn học này</p>
                   </div>
                 </div>
-              </div>
-
-              {/* ── Body ── */}
-              <div className="min-h-0 overflow-y-auto">
-                {/* Info rows */}
-                <div className="px-5 pt-4 pb-2 divide-y divide-slate-100">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider pb-2">Thông tin chi tiết</p>
-
-                  {[
-                    { icon: <BookOpen className="h-4 w-4 text-slate-400" />, label: 'Tên môn học', value: detailItem.subjectName },
-                    { icon: <Info className="h-4 w-4 text-slate-400" />, label: 'Mã môn học', value: detailItem.subjectCode },
-                    { icon: <BookMarked className="h-4 w-4 text-slate-400" />, label: 'Học kỳ đào tạo', value: `Học kỳ ${detailItem.recommendedSemester}` },
-                    { icon: <Layers className="h-4 w-4 text-slate-400" />, label: 'Số tín chỉ', value: `${detailItem.credits} Tín chỉ` },
-                    { icon: <Award className="h-4 w-4 text-slate-400" />, label: 'Phân loại môn', value: detailItem.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn' },
-                  ].map(({ icon, label, value }) => (
-                    <div key={label} className="flex items-center justify-between py-2.5 gap-4">
-                      <span className="flex items-center gap-2 text-xs text-slate-500 font-medium shrink-0">
-                        {icon} {label}:
-                      </span>
-                      <span className="text-xs font-bold text-slate-900 text-right">{value}</span>
-                    </div>
-                  ))}
-
-                  {detailItem.note && (
-                    <div className="py-2.5">
-                      <span className="text-xs text-slate-500 font-medium">Ghi chú:</span>
-                      <p className="text-xs text-slate-700 font-normal mt-1 italic leading-relaxed">{detailItem.note}</p>
-                    </div>
-                  )}
+              ) : (
+                <div className="flex items-center gap-2.5 rounded-xl bg-slate-50 border border-slate-200 p-3">
+                  <Clock className="h-5 w-5 text-slate-400 shrink-0" />
+                  <div>
+                    <p className="text-[13px] font-bold text-slate-700">Chưa tích lũy</p>
+                    <p className="text-[12px] text-slate-500 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo</p>
+                  </div>
                 </div>
-
-                {/* Status Section */}
-                <div className="px-5 pt-2 pb-3">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Trạng thái tích lũy</p>
-                  {detailItem.isCompleted ? (
-                    <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-                      <div>
-                        <p className="text-xs font-bold text-emerald-800">Đã hoàn thành</p>
-                        <p className="text-[11px] text-emerald-600 font-medium mt-0.5">Sinh viên đã tích lũy đủ tín chỉ môn học này</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2.5 rounded-xl bg-slate-50 border border-slate-200 p-3">
-                      <Clock className="h-5 w-5 text-slate-400 shrink-0" />
-                      <div>
-                        <p className="text-xs font-bold text-slate-700">Chưa tích lũy</p>
-                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-end px-5 py-4 border-t border-slate-100 bg-slate-50/70">
-                  <Button variant="secondary" size="md" onClick={() => setDetailItem(null)}>Đóng</Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
+              ),
+            },
+          ] : undefined}
+        />
 
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </main>
