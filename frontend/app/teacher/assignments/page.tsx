@@ -10,6 +10,7 @@ import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
+import { Button } from '../../../components/ui/Button';
 import {
   ShieldCheck,
   Calendar,
@@ -275,23 +276,23 @@ export default function TeacherAssignmentsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={exportCsv}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Download className="h-4 w-4" />}
             >
-              <Download className="h-4 w-4 text-[#64748B]" />
-              <span>Xuất CSV</span>
-            </button>
+              Xuất CSV
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={handlePrintReport}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Printer className="h-4 w-4" />}
             >
-              <Printer className="h-4 w-4 text-[#64748B]" />
-              <span>In Lịch Coi Thi</span>
-            </button>
+              In Lịch Coi Thi
+            </Button>
           </div>
         </div>
 
@@ -432,54 +433,48 @@ export default function TeacherAssignmentsPage() {
                   <div className="pt-4 mt-3 border-t border-slate-100 space-y-2.5">
                     {/* Confirmation buttons */}
                     <div className="flex items-center justify-between gap-2.5">
-                      <button
-                        type="button"
+                      <Button
+                        variant={item.status === 'CONFIRMED' ? 'success' : 'primary'}
+                        size="sm"
                         disabled={busyId === item.id || isLocked}
+                        isLoading={busyId === item.id}
                         onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
-                        className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-extrabold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                          item.status === 'CONFIRMED'
-                            ? 'bg-emerald-600 text-white shadow-xs hover:bg-emerald-700'
-                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs active:scale-95'
-                        }`}
+                        leftIcon={<CheckCircle2 className="w-4 h-4" />}
+                        className="flex-1"
                       >
-                        <CheckCircle2 className="w-4 h-4 shrink-0" />
-                        <span>{item.status === 'CONFIRMED' ? 'Đã khóa ca' : 'Xác nhận ca'}</span>
-                      </button>
+                        {item.status === 'CONFIRMED' ? 'Đã khóa ca' : 'Xác nhận ca'}
+                      </Button>
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="warning"
+                        size="sm"
                         disabled={busyId === item.id || isLocked}
                         onClick={() => handleUpdateStatus(item.id, 'CHANGE_REQUESTED')}
-                        className={`inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-extrabold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                          item.status === 'CHANGE_REQUESTED'
-                            ? 'text-amber-700 bg-amber-50 hover:bg-amber-100/60'
-                            : 'text-amber-700 hover:text-amber-800 hover:bg-amber-50/80 active:scale-95'
-                        }`}
+                        leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
                       >
-                        <RefreshCw className="w-3.5 h-3.5 shrink-0" />
-                        <span>{item.status === 'CHANGE_REQUESTED' ? 'Đã xin đổi' : 'Xin đổi ca'}</span>
-                      </button>
+                        {item.status === 'CHANGE_REQUESTED' ? 'Đã xin đổi' : 'Xin đổi ca'}
+                      </Button>
                     </div>
 
                     {/* Secondary print / detail links */}
                     <div className="flex items-center justify-between pt-1">
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handlePrintAttendance(item)}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-blue-700 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg transition cursor-pointer"
+                        leftIcon={<Printer className="w-3.5 h-3.5 text-blue-600" />}
                       >
-                        <Printer className="w-3.5 h-3.5 text-blue-600" />
-                        <span>Điểm danh A4</span>
-                      </button>
+                        Điểm danh A4
+                      </Button>
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setDrawerDuty(item)}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-blue-700 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg transition cursor-pointer"
+                        leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
                       >
-                        <Eye className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Chi tiết</span>
-                      </button>
+                        Chi tiết
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -514,15 +509,16 @@ export default function TeacherAssignmentsPage() {
           {
             title: 'Xử lý vi phạm & Giám sát trực tuyến',
             content: (
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="md"
                 onClick={() => drawerDuty?.examScheduleRoomId && router.push(`/teacher/proctor/${drawerDuty.examScheduleRoomId}`)}
                 disabled={!drawerDuty?.examScheduleRoomId}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2.5 text-xs font-bold text-white shadow-md transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                leftIcon={<ExternalLink className="w-4 h-4" />}
+                className="w-full"
               >
-                <ExternalLink className="w-4 h-4" />
-                <span>Mở bảng giám thị Realtime phòng thi này</span>
-              </button>
+                Mở bảng giám thị Realtime phòng thi này
+              </Button>
             ),
           },
         ]}

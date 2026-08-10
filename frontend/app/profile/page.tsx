@@ -8,6 +8,7 @@ import { User as UserType } from '../../types';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { TabBar } from '../../components/ui/TabBar';
+import { Button } from '../../components/ui/Button';
 import {
   User,
   Mail,
@@ -456,23 +457,25 @@ export default function ProfilePage() {
                 </div>
                 <div className="space-y-1.5 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <button
+                    <Button
                       type="button"
+                      variant="primary"
+                      size="md"
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
+                      leftIcon={<Upload className="h-4 w-4" />}
                     >
-                      <Upload className="h-4 w-4" />
-                      <span>Tải ảnh đại diện mới</span>
-                    </button>
+                      Tải ảnh đại diện mới
+                    </Button>
                     {avatarUrl && (
-                      <button
+                      <Button
                         type="button"
+                        variant="danger-outline"
+                        size="md"
                         onClick={handleRemoveAvatar}
-                        className="flex items-center gap-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 px-3.5 py-2 text-[15px] font-medium border border-rose-200 transition active:scale-95 cursor-pointer"
+                        leftIcon={<Trash2 className="h-4 w-4" />}
                       >
-                        <Trash2 className="h-4 w-4" />
-                        <span>Gỡ ảnh đại diện</span>
-                      </button>
+                        Gỡ ảnh đại diện
+                      </Button>
                     )}
                   </div>
                   <p className="text-[13px] font-normal text-[#64748B]">
@@ -527,14 +530,16 @@ export default function ProfilePage() {
           </div>
 
           <div className="pt-3 border-t border-slate-100 flex justify-end">
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
               disabled={saving}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-[15px] font-medium shadow-sm transition active:scale-95 cursor-pointer disabled:opacity-50"
+              isLoading={saving}
+              leftIcon={<Save className="h-4 w-4" />}
             >
-              <Save className="h-4 w-4 text-white" />
-              <span>{saving ? 'Đang lưu vào database...' : 'Lưu hồ sơ cá nhân'}</span>
-            </button>
+              Lưu hồ sơ cá nhân
+            </Button>
           </div>
         </form>
       )}

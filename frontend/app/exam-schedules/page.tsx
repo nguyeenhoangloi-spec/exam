@@ -11,6 +11,7 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { Button } from '../../components/ui/Button';
 import { ExamSchedule, ExamPeriod, ExamRoom } from '../../types';
 
 import { ExamScheduleHeader } from '../../components/exam-schedules/ExamScheduleHeader';
@@ -732,21 +733,23 @@ export default function ExamSchedulesPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
             >
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
               disabled={isPastTime}
-              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Lưu Lịch Thi
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>

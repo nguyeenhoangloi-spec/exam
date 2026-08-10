@@ -6,6 +6,7 @@ import {
   FileText, CheckSquare, ChevronDown, X, ArrowLeftRight, Volume2,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
+import { Button } from '../ui/Button';
 
 export interface ExamPaperMatrixFormData {
   examScheduleId: string;
@@ -585,20 +586,19 @@ export function ExamPaperMatrixForm({
             </span>
           )}
 
-          <button
+          <Button
             type="submit"
+            variant="primary"
+            size="md"
             disabled={creating || !isValidMatrix || isPublished}
-            className={`rounded-xl text-white px-5 py-2.5 text-xs font-black transition shadow-2xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${isPublished
-              ? 'bg-slate-300 text-slate-500 border border-slate-300'
-              : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+            isLoading={creating}
           >
             {creating
               ? 'Đang sinh đề...'
               : isPublished
                 ? 'Đã Có Đề Công Bố'
                 : 'Tạo đề chung'}
-          </button>
+          </Button>
         </div>
       </div>
     </form>

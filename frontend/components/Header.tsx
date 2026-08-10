@@ -305,7 +305,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Bell className="h-4.5 w-4.5" />
                 {effectiveUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-600 text-[13px] font-semibold text-white shadow-xs animate-pulse">
+                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-bold text-white shadow-xs leading-none">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
                   </span>
                 )}

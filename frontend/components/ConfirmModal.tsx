@@ -128,14 +128,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </div>
 
         {/* Footer Actions: Cancel (Left / Secondary White) - Confirm (Right / Primary or Danger/Warning) */}
-        <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 px-6 py-4">
+        <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-4 rounded-b-2xl">
           {Boolean(cancelText) && (
-            <Button variant="outline" size="md" onClick={onClose} disabled={isLoading}>
+            <Button variant="secondary" size="md" onClick={onClose} disabled={isLoading}>
               {cancelText}
             </Button>
           )}
           <Button
-            variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'warning'}
+            variant={type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'primary'}
             size="md"
             onClick={handleConfirm}
             disabled={isLoading}

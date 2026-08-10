@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { Toast } from '../../components/Toast';
 import { Modal } from '../../components/Modal';
+import { Button } from '../../components/ui/Button';
 import api from '../../lib/api';
 
 interface ArticleItem {
@@ -411,14 +412,15 @@ export default function ContactSupportPage() {
               Tổng hợp toàn bộ tài liệu hướng dẫn, quy chế phòng thi, xử lý sự cố kỹ thuật và liên hệ Quản trị viên dành cho Sinh viên & Giảng viên.
             </p>
           </div>
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={() => setIsAllArticlesModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-2.5 text-xs font-bold transition shrink-0 cursor-pointer"
+            rightIcon={<ChevronRight className="h-4 w-4" />}
           >
-            <span>Tất cả bài viết</span>
-            <ChevronRight className="h-4 w-4" />
-          </button>
+            Tất cả bài viết
+          </Button>
         </div>
 
         {/* Support Direct Contacts Section */}
@@ -617,14 +619,16 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="flex justify-end pt-2">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="md"
                 disabled={sending}
-                className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-xs font-black shadow-md transition active:scale-95 cursor-pointer disabled:opacity-50"
+                isLoading={sending}
+                leftIcon={<Send className="h-4 w-4" />}
               >
-                <Send className="h-4 w-4" />
-                <span>{sending ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu hỗ trợ'}</span>
-              </button>
+                Gửi yêu cầu hỗ trợ
+              </Button>
             </div>
           </form>
         </div>

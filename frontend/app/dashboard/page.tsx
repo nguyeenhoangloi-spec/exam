@@ -7,6 +7,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
+import { Button } from '../../components/ui/Button';
 import { DashboardHeader } from '../../components/dashboard/DashboardHeader';
 
 import { TaskAttention } from '../../components/dashboard/TaskAttention';
@@ -290,34 +291,30 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
-            <button
+          <div className="flex justify-end gap-2.5 border-t border-slate-100 pt-4">
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               disabled={isSubmittingReject}
               onClick={() => {
                 setRejecting(null);
                 setReason('');
                 setReasonError('');
               }}
-              className="rounded-xl hover:bg-slate-100 px-4 py-2 text-xs font-bold text-slate-700 transition cursor-pointer"
             >
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="danger"
+              size="md"
               disabled={isSubmittingReject}
+              isLoading={isSubmittingReject}
               onClick={reject}
-              className="flex items-center gap-2 rounded-xl bg-rose-600 hover:bg-rose-700 px-4 py-2 text-xs font-bold text-white transition shadow-xs disabled:opacity-50"
             >
-              {isSubmittingReject ? (
-                <>
-                  <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                  <span>Đang xử lý...</span>
-                </>
-              ) : (
-                <span>Xác nhận từ chối</span>
-              )}
-            </button>
+              Xác nhận từ chối
+            </Button>
           </div>
         </div>
       </Modal>

@@ -11,6 +11,7 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { Button } from '../../components/ui/Button';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { ExamPaper, ExamSchedule, User } from '../../types';
 import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award, RotateCcw, RefreshCw, Trash2, Send, Archive } from 'lucide-react';
@@ -715,7 +716,7 @@ export default function ExamPapersPage() {
           />
 
           <div className="relative w-full md:w-80 shrink-0 pb-1 md:pb-0">
-            <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã đề, Tên môn học..."
@@ -724,7 +725,7 @@ export default function ExamPapersPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-8 py-1.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
             {search && (
               <button
@@ -733,7 +734,7 @@ export default function ExamPapersPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -821,8 +822,8 @@ export default function ExamPapersPage() {
                   type="button"
                   onClick={() => setShowAnswers(!showAnswers)}
                   className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition cursor-pointer ${showAnswers
-                      ? 'bg-amber-500 text-white shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-amber-500 text-white shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                 >
                   <KeyRound className="h-3.5 w-3.5" />
@@ -892,8 +893,8 @@ export default function ExamPapersPage() {
                             <div
                               key={c.label}
                               className={`rounded-xl border p-2.5 font-medium transition ${showAnswers && isCorrect
-                                  ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-extrabold'
-                                  : 'border-slate-200 bg-slate-50/70 text-slate-700'
+                                ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-extrabold'
+                                : 'border-slate-200 bg-slate-50/70 text-slate-700'
                                 }`}
                             >
                               <span className="font-black text-slate-900 mr-1.5">{c.label}.</span>
@@ -974,54 +975,57 @@ export default function ExamPapersPage() {
               </div>
 
               <div className="flex items-center gap-2.5 shrink-0">
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
+                  size="md"
                   onClick={() => setSelectedPaper(null)}
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 px-[18px] py-[8px] text-sm font-semibold whitespace-nowrap shrink-0 transition shadow-2xs cursor-pointer min-w-max"
                 >
-                  <span className="whitespace-nowrap leading-none">Hủy bỏ</span>
-                </button>
+                  Hủy
+                </Button>
 
                 {selectedPaper.status === 'DRAFT' && (currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER') && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="primary"
+                    size="md"
                     onClick={() => {
                       const p = selectedPaper;
                       setSelectedPaper(null);
                       runAction(p, 'publish');
                     }}
-                    className="inline-flex items-center justify-center rounded-xl bg-[#16A34A] text-white hover:bg-emerald-700 active:bg-emerald-800 px-[20px] py-[8px] text-sm font-bold whitespace-nowrap shrink-0 transition shadow-2xs cursor-pointer min-w-max"
+                    leftIcon={<Send className="w-4 h-4" />}
                   >
-                    <span className="whitespace-nowrap leading-none">Phát hành</span>
-                  </button>
+                    Phát hành
+                  </Button>
                 )}
 
                 {selectedPaper.status === 'PUBLISHED' && currentUser?.role === 'ADMIN' && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="secondary"
+                    size="md"
                     onClick={() => {
                       const p = selectedPaper;
                       setSelectedPaper(null);
                       runAction(p, 'archive');
                     }}
-                    className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 px-[18px] py-[8px] text-sm font-semibold whitespace-nowrap shrink-0 transition shadow-2xs cursor-pointer min-w-max"
+                    leftIcon={<Archive className="w-4 h-4 text-[#64748B]" />}
                   >
-                    <span className="whitespace-nowrap leading-none">Lưu trữ</span>
-                  </button>
+                    Lưu trữ
+                  </Button>
                 )}
 
                 {selectedPaper.status === 'ARCHIVED' && currentUser?.role === 'ADMIN' && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="secondary"
+                    size="md"
                     onClick={() => {
                       const p = selectedPaper;
                       setSelectedPaper(null);
                       runAction(p, 'restore');
                     }}
-                    className="inline-flex items-center justify-center rounded-xl border border-amber-200 bg-white text-amber-700 hover:bg-amber-50 hover:border-amber-300 px-[18px] py-[8px] text-sm font-semibold whitespace-nowrap shrink-0 transition shadow-2xs cursor-pointer min-w-max"
+                    leftIcon={<RotateCcw className="w-4 h-4 text-[#64748B]" />}
                   >
-                    <span className="whitespace-nowrap leading-none">Khôi phục</span>
-                  </button>
+                    Khôi phục
+                  </Button>
                 )}
               </div>
             </div>

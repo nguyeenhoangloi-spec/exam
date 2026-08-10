@@ -5,6 +5,7 @@ import api from '../../lib/api';
 import { Subject } from '../../types';
 import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
+import { Button } from '../ui/Button';
 
 export function QuestionAIWizard({
   open,
@@ -296,14 +297,17 @@ export function QuestionAIWizard({
         </div>
 
         {/* Generate Button - Standard Primary Button (bg-blue-600) */}
-        <button
+        <Button
           type="button"
+          variant="primary"
+          size="md"
           disabled={busy || !form.subjectId || uploading}
+          isLoading={busy}
           onClick={generate}
-          className="w-full rounded-xl bg-[#2563EB] hover:bg-blue-700 px-4 py-2.5 text-[15px] font-medium text-white shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full"
         >
           {busy ? 'AI đang tạo câu hỏi...' : 'Khởi tạo câu hỏi tự động bằng AI'}
-        </button>
+        </Button>
 
         {/* Generated Questions List */}
         {items.length > 0 && (
@@ -390,15 +394,18 @@ export function QuestionAIWizard({
               ))}
             </div>
 
-            {/* Save to Question Bank - Standard Emerald Success Button (bg-emerald-600) */}
-            <button
+            {/* Save to Question Bank - Standard Success Button */}
+            <Button
               type="button"
+              variant="success"
+              size="md"
               disabled={busy}
+              isLoading={busy}
               onClick={() => setShowSaveConfirm(true)}
-              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-[15px] font-medium text-white shadow-xs transition cursor-pointer disabled:opacity-50"
+              className="w-full"
             >
               {busy ? 'Đang lưu vào ngân hàng dữ liệu...' : `Lưu ${items.length} câu hỏi AI vào Ngân hàng (Bản nháp DRAFT)`}
-            </button>
+            </Button>
           </div>
         )}
       </div>

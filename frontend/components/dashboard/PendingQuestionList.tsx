@@ -4,6 +4,7 @@ import React from 'react';
 import { ArrowRight, Check, X, MoreVertical, Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
+import { Button } from '../ui/Button';
 
 const difficultyBadge = {
   EASY: ['Dễ', 'bg-slate-100 text-slate-600 border-slate-200'],
@@ -118,38 +119,40 @@ export function PendingQuestionList({
                     <td className="py-3 px-3 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1.5">
                         {/* Approve Button */}
-                        <button
+                        <Button
                           type="button"
+                          variant="success"
+                          size="sm"
                           disabled={busyId === q.id}
+                          isLoading={busyId === q.id}
                           onClick={() => onApprove(q.id, q.code)}
-                          className="flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 text-xs font-bold transition shadow-2xs active:scale-95 disabled:opacity-50 cursor-pointer"
-                          title="Duyệt câu hỏi"
+                          leftIcon={<Check className="h-3.5 w-3.5 stroke-[3]" />}
                         >
-                          <Check className="h-3.5 w-3.5 stroke-[3]" />
-                          <span>Duyệt</span>
-                        </button>
+                          Duyệt
+                        </Button>
 
                         {/* Reject Button */}
-                        <button
+                        <Button
                           type="button"
+                          variant="danger"
+                          size="sm"
                           disabled={busyId === q.id}
                           onClick={() => onReject(q.id, q.code)}
-                          className="flex items-center gap-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 text-xs font-bold transition shadow-2xs active:scale-95 disabled:opacity-50 cursor-pointer"
-                          title="Từ chối câu hỏi"
+                          leftIcon={<X className="h-3.5 w-3.5 stroke-[3]" />}
                         >
-                          <X className="h-3.5 w-3.5 stroke-[3]" />
-                          <span>Từ chối</span>
-                        </button>
+                          Từ chối
+                        </Button>
 
                         {/* View Details Button */}
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon"
                           onClick={() => (onView ? onView(q.id) : router.push(`/question-bank?view=${q.id}`))}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
                           title="Xem chi tiết"
                         >
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
+                          <MoreVertical className="h-4 w-4 text-slate-500" />
+                        </Button>
                       </div>
                     </td>
                   </tr>

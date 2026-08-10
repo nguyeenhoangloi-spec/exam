@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
+import { Button } from '@/components/ui/Button';
 import {
   Clock,
   ShieldCheck,
@@ -256,148 +257,145 @@ export default function StudentExamLobbyPage() {
         ) : (
           <div className="space-y-4">
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm divide-y divide-slate-100 overflow-hidden">
-            {/* Thông báo lỗi nếu có */}
-            {error && (
-              <div className="p-5 bg-rose-50/80 text-rose-900 space-y-1">
-                <div className="flex items-center gap-2 text-rose-950 font-semibold text-[15px]">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-                  <span>Thông báo từ hệ thống khảo thí:</span>
+              {/* Thông báo lỗi nếu có */}
+              {error && (
+                <div className="p-5 bg-rose-50/80 text-rose-900 space-y-1">
+                  <div className="flex items-center gap-2 text-rose-950 font-semibold text-[15px]">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <span>Thông báo từ hệ thống khảo thí:</span>
+                  </div>
+                  <p className="text-[15px] font-medium pl-6 text-rose-800 leading-relaxed">{error}</p>
                 </div>
-                <p className="text-[15px] font-medium pl-6 text-rose-800 leading-relaxed">{error}</p>
-              </div>
-            )}
+              )}
 
-            {/* ── Khối 1: Thông tin Thí sinh & Ca thi (Rõ ràng, đầy đủ, đậm nét) ── */}
-            <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-blue-600" />
+              {/* ── Khối 1: Thông tin Thí sinh & Ca thi (Rõ ràng, đầy đủ, đậm nét) ── */}
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <User className="w-5 h-5 text-blue-600" />
+                    <h2 className="text-[20px] font-semibold text-[#0F172A]">
+                      Thông tin Thí sinh & Phòng thi
+                    </h2>
+                  </div>
+                  <span className="text-[15px] font-medium text-[#64748B]">
+                    Phòng thi: <strong className="text-blue-700 font-semibold">{roomName} ({building})</strong>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-[15px]">
+                  <div className="space-y-1">
+                    <span className="text-[#64748B] font-semibold block text-[13px]">Họ và tên thí sinh</span>
+                    <span className="font-semibold text-[#0F172A] text-[15px] block truncate">{fullName}</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[#64748B] font-semibold block text-[13px]">Mã sinh viên</span>
+                    <span className="font-mono font-semibold text-[#0F172A] text-[15px] block">
+                      {studentCode}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[#64748B] font-semibold block text-[13px]">Lớp sinh hoạt</span>
+                    <span className="font-semibold text-[#0F172A] text-[15px] block">
+                      {studentClass}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[#64748B] font-semibold block text-[13px]">SBD / Số ghế</span>
+                    <span className="font-semibold text-[#0F172A] text-[15px] block">
+                      {examNumber} • Ghế {seatNumber}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1 col-span-2 sm:col-span-1">
+                    <span className="text-[#64748B] font-semibold block text-[13px]">Ca thi & Ngày thi</span>
+                    <span className="font-semibold text-[#0F172A] block text-[15px]">{timeSlotStr}</span>
+                    <span className="text-[13px] text-[#64748B] font-normal">{examDateStr}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Khối 2: Quy định giám sát & Tiêu chuẩn phòng thi ── */}
+              <div className="p-6 space-y-3.5">
+                <div className="flex items-center gap-2 pb-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
                   <h2 className="text-[20px] font-semibold text-[#0F172A]">
-                    Thông tin Thí sinh & Phòng thi
+                    Quy chế giám sát an toàn thi trực tuyến
                   </h2>
                 </div>
-                <span className="text-[15px] font-medium text-[#64748B]">
-                  Phòng thi: <strong className="text-blue-700 font-semibold">{roomName} ({building})</strong>
-                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[15px]">
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-blue-50/70 border border-blue-100">
+                    <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                    <div>
+                      <strong className="text-blue-950 font-semibold block">Tự động lưu câu trả lời</strong>
+                      <span className="text-blue-900/80 text-[13px] font-normal leading-relaxed">
+                        Mỗi đáp án bạn chọn sẽ được lưu ngay lập tức về máy chủ thi.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                    <div>
+                      <strong className="text-emerald-950 font-semibold block">Chế độ toàn màn hình</strong>
+                      <span className="text-emerald-900/80 text-[13px] font-normal leading-relaxed">
+                        Trình duyệt sẽ tự động chuyển sang chế độ Fullscreen khi bắt đầu làm bài.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/70 border border-amber-100">
+                    <ShieldAlert className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                    <div>
+                      <strong className="text-amber-950 font-semibold block">Cảnh báo rời bài thi</strong>
+                      <span className="text-amber-900/80 text-[13px] font-normal leading-relaxed">
+                        Chuyển tab hoặc mở ứng dụng khác sẽ bị ghi nhật ký giám thị.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-50/70 border border-rose-100">
+                    <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+                    <div>
+                      <strong className="text-rose-950 font-semibold block">Khóa bài khi vi phạm</strong>
+                      <span className="text-rose-900/80 text-[13px] font-normal leading-relaxed">
+                        Vi phạm quá {config?.maxAllowedViolations || 5} lần sẽ tự động khóa và thu bài.
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-[15px]">
-                <div className="space-y-1">
-                  <span className="text-[#64748B] font-semibold block text-[13px]">Họ và tên thí sinh</span>
-                  <span className="font-semibold text-[#0F172A] text-[15px] block truncate">{fullName}</span>
+              {/* Checkbox cam kết */}
+              {config?.requireRulesAcceptance !== false && (
+                <div className="p-4 bg-slate-50/30">
+                  <label className="flex items-start gap-3 text-[15px] font-medium text-[#0F172A] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={rulesAccepted}
+                      onChange={(event) => setRulesAccepted(event.target.checked)}
+                      className="mt-0.5 h-4.5 w-4.5 rounded accent-blue-600 cursor-pointer"
+                    />
+                    <span className="leading-relaxed">
+                      Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
+                    </span>
+                  </label>
                 </div>
-
-                <div className="space-y-1">
-                  <span className="text-[#64748B] font-semibold block text-[13px]">Mã sinh viên</span>
-                  <span className="font-mono font-semibold text-[#0F172A] text-[15px] block">
-                    {studentCode}
-                  </span>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[#64748B] font-semibold block text-[13px]">Lớp sinh hoạt</span>
-                  <span className="font-semibold text-[#0F172A] text-[15px] block">
-                    {studentClass}
-                  </span>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[#64748B] font-semibold block text-[13px]">SBD / Số ghế</span>
-                  <span className="font-semibold text-[#0F172A] text-[15px] block">
-                    {examNumber} • Ghế {seatNumber}
-                  </span>
-                </div>
-
-                <div className="space-y-1 col-span-2 sm:col-span-1">
-                  <span className="text-[#64748B] font-semibold block text-[13px]">Ca thi & Ngày thi</span>
-                  <span className="font-semibold text-[#0F172A] block text-[15px]">{timeSlotStr}</span>
-                  <span className="text-[13px] text-[#64748B] font-normal">{examDateStr}</span>
-                </div>
-              </div>
+              )}
             </div>
 
-            {/* ── Khối 2: Quy định giám sát & Tiêu chuẩn phòng thi ── */}
-            <div className="p-6 space-y-3.5">
-              <div className="flex items-center gap-2 pb-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                <h2 className="text-[20px] font-semibold text-[#0F172A]">
-                  Quy chế giám sát an toàn thi trực tuyến
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[15px]">
-                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-blue-50/70 border border-blue-100">
-                  <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                  <div>
-                    <strong className="text-blue-950 font-semibold block">Tự động lưu câu trả lời</strong>
-                    <span className="text-blue-900/80 text-[13px] font-normal leading-relaxed">
-                      Mỗi đáp án bạn chọn sẽ được lưu ngay lập tức về máy chủ thi.
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                  <div>
-                    <strong className="text-emerald-950 font-semibold block">Chế độ toàn màn hình</strong>
-                    <span className="text-emerald-900/80 text-[13px] font-normal leading-relaxed">
-                      Trình duyệt sẽ tự động chuyển sang chế độ Fullscreen khi bắt đầu làm bài.
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/70 border border-amber-100">
-                  <ShieldAlert className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                  <div>
-                    <strong className="text-amber-950 font-semibold block">Cảnh báo rời bài thi</strong>
-                    <span className="text-amber-900/80 text-[13px] font-normal leading-relaxed">
-                      Chuyển tab hoặc mở ứng dụng khác sẽ bị ghi nhật ký giám thị.
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-50/70 border border-rose-100">
-                  <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
-                  <div>
-                    <strong className="text-rose-950 font-semibold block">Khóa bài khi vi phạm</strong>
-                    <span className="text-rose-900/80 text-[13px] font-normal leading-relaxed">
-                      Vi phạm quá {config?.maxAllowedViolations || 5} lần sẽ tự động khóa và thu bài.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Checkbox cam kết */}
-            {config?.requireRulesAcceptance !== false && (
-              <div className="p-4 bg-slate-50/30">
-                <label className="flex items-start gap-3 text-[15px] font-medium text-[#0F172A] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rulesAccepted}
-                    onChange={(event) => setRulesAccepted(event.target.checked)}
-                    className="mt-0.5 h-4.5 w-4.5 rounded accent-blue-600 cursor-pointer"
-                  />
-                  <span className="leading-relaxed">
-                    Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
-                  </span>
-                </label>
-              </div>
-            )}
-          </div>
-
-          {/* ── Nút Thao tác ── */}
+            {/* ── Nút Thao tác ── */}
             <div className="flex items-center justify-between pt-3">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#0F172A] text-[15px] font-medium transition cursor-pointer shadow-2xs active:scale-95"
-              >
+              <Button variant="secondary" size="md" onClick={() => router.back()}>
                 Quay lại
-              </button>
+              </Button>
 
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="md"
                 onClick={() => {
                   if ((isPasswordRequired && !examPassword.trim()) || (isAccessCodeRequired && !accessCode.trim())) {
                     setShowPasswordModal(true);
@@ -410,17 +408,11 @@ export default function StudentExamLobbyPage() {
                   (error && !isPasswordRequired && !isAccessCodeRequired) ||
                   (config?.requireRulesAcceptance !== false && !rulesAccepted)
                 }
-                className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-[15px] font-medium flex items-center gap-2 shadow-lg shadow-blue-600/30 transition active:scale-98 cursor-pointer"
+                isLoading={starting}
+                rightIcon={!starting ? <ArrowRight className="w-4 h-4" /> : undefined}
               >
-                {starting ? (
-                  <span>Đang khởi tạo bài thi...</span>
-                ) : (
-                  <>
-                    <span>Bắt đầu Làm bài thi</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
+                {starting ? 'Đang khởi tạo bài thi...' : 'Bắt đầu Làm bài thi'}
+              </Button>
             </div>
           </div>
         )}
@@ -529,15 +521,16 @@ export default function StudentExamLobbyPage() {
 
             {/* Footer Modal */}
             <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-slate-100 bg-slate-50/80">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="md"
                 onClick={() => setShowPasswordModal(false)}
-                className="px-4 py-2 text-[15px] font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 rounded-xl transition cursor-pointer"
               >
                 Hủy
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
                 onClick={() => {
                   setShowPasswordModal(false);
                   void handleStartExam();
@@ -547,10 +540,9 @@ export default function StudentExamLobbyPage() {
                   (isPasswordRequired && !examPassword.trim()) ||
                   (isAccessCodeRequired && !accessCode.trim())
                 }
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium text-[15px] rounded-xl shadow-md shadow-blue-600/30 transition active:scale-95 cursor-pointer"
               >
-                <span>Xác nhận</span>
-              </button>
+                Xác nhận
+              </Button>
             </div>
           </div>
         </div>

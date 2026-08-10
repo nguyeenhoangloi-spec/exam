@@ -10,6 +10,7 @@ import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { TabBar } from '../../../components/ui/TabBar';
+import { Button } from '../../../components/ui/Button';
 import {
   BookMarked,
   Calendar,
@@ -187,23 +188,23 @@ export default function StudentExamSchedulePage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={exportCsv}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
             >
-              <Download className="h-4 w-4 text-[#64748B]" />
-              <span>Xuất CSV</span>
-            </button>
+              Xuất CSV
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={handlePrintReport}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
             >
-              <Printer className="h-4 w-4 text-[#64748B]" />
-              <span>In Lịch Thi</span>
-            </button>
+              In Lịch Thi
+            </Button>
           </div>
         </div>
 
@@ -382,11 +383,10 @@ export default function StudentExamSchedulePage() {
                           <Award className="w-3.5 h-3.5 text-emerald-600" />
                           Điểm công bố:
                         </span>
-                        <span className={`font-mono font-black text-xs px-2.5 py-0.5 rounded-lg border ${
-                          (item as any).attempt.totalScore === 0 
-                            ? 'bg-rose-50 text-rose-700 border-rose-200' 
+                        <span className={`font-mono font-black text-xs px-2.5 py-0.5 rounded-lg border ${(item as any).attempt.totalScore === 0
+                            ? 'bg-rose-50 text-rose-700 border-rose-200'
                             : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        }`}>
+                          }`}>
                           {(item as any).attempt.totalScore}đ {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
                         </span>
                       </div>
@@ -397,38 +397,34 @@ export default function StudentExamSchedulePage() {
                 {/* Footer actions */}
                 <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                   {(item as any).attempt?.gradingStatus === 'PUBLISHED' ? (
-                    <button
-                      type="button"
+                    <Button
+                      variant="success"
+                      size="sm"
                       onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
-                      className="inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-xs shadow-emerald-600/20 transition cursor-pointer active:scale-95"
+                      leftIcon={<Award className="w-3.5 h-3.5" />}
                     >
-                      <Award className="w-3.5 h-3.5" />
-                      <span>Xem Kết Quả & Điểm Thi</span>
-                    </button>
+                      Xem Kết Quả & Điểm Thi
+                    </Button>
                   ) : (
-                    <button
-                      type="button"
+                    <Button
+                      variant={item.mode === 'MOCK' ? 'warning' : 'primary'}
+                      size="sm"
                       onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                      className={[
-                        'inline-flex items-center gap-1.5 text-xs font-black text-white px-4 py-2 rounded-xl shadow-xs transition cursor-pointer active:scale-95',
-                        item.mode === 'MOCK'
-                          ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20'
-                          : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20',
-                      ].join(' ')}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
                     >
-                      <span>{item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi Online'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                      {item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi Online'}
+                    </Button>
                   )}
 
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setDrawerSchedule(item)}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-2 rounded-xl transition cursor-pointer ml-auto"
+                    leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
+                    className="ml-auto"
                   >
-                    <Eye className="w-3.5 h-3.5 text-slate-400" />
                     Chi tiết
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}

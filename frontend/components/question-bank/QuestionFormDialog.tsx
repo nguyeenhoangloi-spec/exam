@@ -522,11 +522,11 @@ export function QuestionFormDialog({
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-          <Button type="button" variant="outline" onClick={onClose}>
+        <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
+          <Button type="button" variant="secondary" size="md" onClick={onClose}>
             Hủy
           </Button>
-          <Button type="submit" isLoading={isSubmitting} variant="primary">
+          <Button type="submit" isLoading={isSubmitting} variant="primary" size="md">
             Lưu câu hỏi
           </Button>
         </div>

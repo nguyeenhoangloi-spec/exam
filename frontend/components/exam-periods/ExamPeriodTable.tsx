@@ -327,7 +327,7 @@ export function ExamPeriodTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
                       title="Xem chi tiết"
                     >
                       <Eye className="h-4 w-4" />
@@ -342,9 +342,9 @@ export function ExamPeriodTable({
                               closeMenu();
                               onDetail(p);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
                           >
-                            <Eye className="h-3.5 w-3.5 text-slate-500" />
+                            <Eye className="h-4 w-4 text-[#64748B]" />
                             <span>Xem chi tiết</span>
                           </button>
 
@@ -356,11 +356,13 @@ export function ExamPeriodTable({
                                   closeMenu();
                                   onEdit(p);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-blue-600"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
                               >
-                                <Edit className="h-3.5 w-3.5" />
+                                <Edit className="h-4 w-4 text-[#2563EB]" />
                                 <span>Chỉnh sửa kỳ thi</span>
                               </button>
+
+                              <div className="my-1 border-t border-[#E2E8F0]" />
 
                               <button
                                 type="button"
@@ -368,9 +370,9 @@ export function ExamPeriodTable({
                                   closeMenu();
                                   onDelete(p.id);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600"
+                                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
+                                <Trash2 className="h-4 w-4 text-[#DC2626]" />
                                 <span>Xóa kỳ thi</span>
                               </button>
                             </>

@@ -7,6 +7,7 @@ import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import { Modal } from '../../../components/Modal';
+import { Button } from '../../../components/ui/Button';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import {
@@ -351,23 +352,23 @@ export default function StudentCurriculumPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={handleExportExcel}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
             >
-              <Download className="h-4 w-4 text-[#64748B]" />
-              <span>Xuất Excel</span>
-            </button>
+              Xuất Excel
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={handlePrintReport}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
             >
-              <Printer className="h-4 w-4 text-[#64748B]" />
-              <span>In Khung Đào Tạo</span>
-            </button>
+              In Khung Đào Tạo
+            </Button>
           </div>
         </div>
 
@@ -568,9 +569,8 @@ export default function StudentCurriculumPage() {
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`rounded-lg p-1.5 transition cursor-pointer ${
-                  viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
-                }`}
+                className={`rounded-lg p-1.5 transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+                  }`}
                 title="Dạng Danh sách chuẩn"
               >
                 <List className="h-4 w-4" />
@@ -578,9 +578,8 @@ export default function StudentCurriculumPage() {
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`rounded-lg p-1.5 transition cursor-pointer ${
-                  viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
-                }`}
+                className={`rounded-lg p-1.5 transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+                  }`}
                 title="Dạng Lưới card"
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -588,9 +587,8 @@ export default function StudentCurriculumPage() {
               <button
                 type="button"
                 onClick={() => setViewMode('compact')}
-                className={`rounded-lg p-1.5 transition cursor-pointer ${
-                  viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
-                }`}
+                className={`rounded-lg p-1.5 transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
+                  }`}
                 title="Dạng Thu gọn"
               >
                 <Layers className="h-4 w-4" />
@@ -633,9 +631,8 @@ export default function StudentCurriculumPage() {
               return (
                 <div
                   key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
+                  className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                    }`}
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -982,11 +979,10 @@ export default function StudentCurriculumPage() {
                       key={pNum}
                       type="button"
                       onClick={() => setPage(pNum)}
-                      className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-xs font-extrabold transition cursor-pointer shadow-2xs ${
-                        isCurrent
+                      className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-xs font-extrabold transition cursor-pointer shadow-2xs ${isCurrent
                           ? 'bg-blue-600 text-white shadow-xs'
                           : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                      }`}
+                        }`}
                     >
                       {pNum}
                     </button>
@@ -1077,14 +1073,10 @@ export default function StudentCurriculumPage() {
                 )}
               </div>
 
-              <div className="flex justify-end pt-2">
-                <button
-                  type="button"
-                  onClick={() => setDetailItem(null)}
-                  className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
-                >
+              <div className="flex justify-end pt-3 border-t border-slate-100">
+                <Button variant="primary" size="md" onClick={() => setDetailItem(null)}>
                   Đóng
-                </button>
+                </Button>
               </div>
             </div>
           </Modal>

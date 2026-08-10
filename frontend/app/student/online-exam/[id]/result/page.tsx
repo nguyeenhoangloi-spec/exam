@@ -7,6 +7,7 @@ import { CheckCircle2, AlertCircle, FileText, Send, ArrowLeft, Eye } from 'lucid
 import { ExamAttemptReviewModal } from '@/components/exam-reports/ExamAttemptReviewModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
 
 export default function StudentExamResultPage() {
   const router = useRouter();
@@ -73,12 +74,13 @@ export default function StudentExamResultPage() {
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Không Thể Tải Kết Quả</h2>
           <p className="text-slate-600 text-sm mb-6">{error}</p>
-          <button
+          <Button
+            variant="primary"
+            size="md"
             onClick={() => router.push('/student/exam-schedule')}
-            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl"
           >
             Về Lịch Thi
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -96,13 +98,14 @@ export default function StudentExamResultPage() {
           <p className="text-xs font-semibold text-slate-500 max-w-md mx-auto">
             Điểm tự luận sẽ hiển thị sau khi giảng viên hoàn tất chấm bài và ban quản trị duyệt công bố kết quả.
           </p>
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
             onClick={() => router.push('/student/exam-schedule')}
-            className="inline-flex items-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-xs font-bold shadow-2xs active:scale-95 transition cursor-pointer"
           >
             Quay về lịch thi
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -186,35 +189,42 @@ export default function StudentExamResultPage() {
                     className="w-full bg-white border border-slate-200 rounded-xl p-3 text-[15px] text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:border-blue-500 font-medium"
                     required
                   />
-                  <button
+                  <Button
                     type="submit"
+                    variant="warning"
+                    size="md"
                     disabled={submittingAppeal || !appealReason.trim()}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 text-[15px] font-medium shadow-2xs active:scale-95 transition cursor-pointer disabled:opacity-50"
+                    isLoading={submittingAppeal}
+                    leftIcon={<Send className="w-4 h-4" />}
                   >
-                    <Send className="w-4 h-4" /> Gửi giải trình cho giám thị
-                  </button>
+                    Gửi giải trình cho giám thị
+                  </Button>
                 </form>
               )}
             </div>
           )}
 
           <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="md"
               onClick={() => router.push('/student/exam-schedule')}
-              className="inline-flex items-center gap-1.5 text-[15px] font-medium text-[#64748B] hover:text-blue-600 transition cursor-pointer"
+              leftIcon={<ArrowLeft className="w-4 h-4 text-[#64748B]" />}
             >
-              <ArrowLeft className="w-4 h-4" /> Về danh sách lịch thi
-            </button>
+              Về danh sách lịch thi
+            </Button>
 
             {result.allowReview !== false && (
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
                 onClick={() => setShowReview(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-[#0F172A] hover:text-blue-600 px-4 py-2 text-[15px] font-medium transition cursor-pointer shadow-2xs active:scale-95"
+                leftIcon={<Eye className="w-4 h-4 text-[#64748B]" />}
               >
-                <Eye className="w-4 h-4 text-[#64748B]" /> Xem lại bài làm
-              </button>
+                Xem lại bài làm
+              </Button>
             )}
           </div>
         </div>

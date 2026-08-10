@@ -8,6 +8,7 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { downloadCsv } from '../../lib/export-csv';
 import { Toast } from '../../components/Toast';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { Button } from '../../components/ui/Button';
 import { ExamSchedule, User } from '../../types';
 import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle, GraduationCap, FileCheck, RotateCcw } from 'lucide-react';
 
@@ -781,10 +782,9 @@ export default function ExamReportsPage() {
                         <span className="text-[11px] font-semibold text-slate-500">
                           Đã chọn lịch thi ID: <strong className="text-slate-800">#{selectedScheduleId || '---'}</strong>
                         </span>
-                        <button type="button" onClick={() => setShowSchedulePicker(false)}
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
+                        <Button variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
                           Đóng
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

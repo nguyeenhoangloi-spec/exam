@@ -492,7 +492,15 @@ export function ExamScheduleTable({
                 {/* Thao tác */}
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
-                    {/* Detail Eye button */}
+                    <button
+                      type="button"
+                      onClick={() => onDetail(s)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+                      title="Xem chi tiết"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </button>
+
                     <ActionDropdownPortal>
                       {(closeMenu) => (
                         <>
@@ -502,9 +510,9 @@ export function ExamScheduleTable({
                               closeMenu();
                               onDetail(s);
                             }}
-                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
+                            className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
                           >
-                            <Eye className="h-3.5 w-3.5 text-slate-500" />
+                            <Eye className="h-4 w-4 text-[#64748B]" />
                             <span>Xem chi tiết</span>
                           </button>
 
@@ -518,20 +526,21 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onRestore?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-emerald-50 text-emerald-600 cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#2563EB] cursor-pointer"
                                   >
-                                    <RotateCcw className="h-3.5 w-3.5" />
+                                    <RotateCcw className="h-4 w-4 text-[#2563EB]" />
                                     <span>Khôi phục lịch thi</span>
                                   </button>
+                                  <div className="my-1 border-t border-[#E2E8F0]" />
                                   <button
                                     type="button"
                                     onClick={() => {
                                       closeMenu();
                                       onHardDelete?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
                                   >
-                                    <Trash2 className="h-3.5 w-3.5" />
+                                    <Trash2 className="h-4 w-4 text-[#DC2626]" />
                                     <span>Xóa vĩnh viễn</span>
                                   </button>
                                 </>
@@ -543,20 +552,21 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onEdit(s);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700 cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
                                   >
-                                    <Edit className="h-3.5 w-3.5 text-slate-500" />
+                                    <Edit className="h-4 w-4 text-[#2563EB]" />
                                     <span>Chỉnh sửa ca thi</span>
                                   </button>
+                                  <div className="my-1 border-t border-[#E2E8F0]" />
                                   <button
                                     type="button"
                                     onClick={() => {
                                       closeMenu();
                                       onDelete(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
                                   >
-                                    <Trash2 className="h-3.5 w-3.5 text-rose-500" />
+                                    <Trash2 className="h-4 w-4 text-[#DC2626]" />
                                     <span>Xóa ca thi</span>
                                   </button>
                                 </>

@@ -12,6 +12,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { TabBar } from '../../components/ui/TabBar';
+import { Button } from '../../components/ui/Button';
 import {
   UserCheck,
   Trash2,
@@ -324,23 +325,25 @@ export default function ExamSupervisorsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               onClick={exportCsv}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
             >
-              <Download className="h-4 w-4 text-[#64748B]" />
-              <span>Xuất CSV</span>
-            </button>
+              Xuất CSV
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               onClick={handlePrintReport}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
             >
-              <Printer className="h-4 w-4 text-[#64748B]" />
-              <span>In Báo cáo</span>
-            </button>
+              In Báo cáo
+            </Button>
           </div>
         </div>
 
@@ -635,10 +638,9 @@ export default function ExamSupervisorsPage() {
 
                       {/* Footer */}
                       <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
-                        <button type="button" onClick={() => setShowSchedulePicker(false)}
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                        <Button type="button" variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
                           Đóng
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -705,18 +707,20 @@ export default function ExamSupervisorsPage() {
                   <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
                     THÊM PHÂN CÔNG GIÁM THỊ
                   </h3>
-                  <button
+                  <Button
                     type="button"
+                    variant="primary"
+                    size="md"
                     onClick={() => void previewAutoAssign()}
                     disabled={autoLoading || !selectedSchedule?.id}
-                    className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                    isLoading={autoLoading}
                   >
-                    {autoLoading ? 'Đang tạo phương án...' : 'Đề xuất tự động'}
-                  </button>
+                    Đề xuất tự động
+                  </Button>
                 </div>
 
                 {autoProposal && (
-                  <div className="mb-2 space-y-2">
+                  <div className="mb-4 space-y-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
                     <p className="text-xs font-semibold text-slate-500">
                       Đề xuất tự động · <span className="text-emerald-600 font-bold">{autoProposal.score}/100 điểm</span>
                     </p>
@@ -743,14 +747,16 @@ export default function ExamSupervisorsPage() {
                     {autoProposal.unassigned?.length > 0 && (
                       <p className="text-xs text-amber-600 font-medium">Chưa xếp {autoProposal.unassigned.length} vị trí.</p>
                     )}
-                    <button
+                    <Button
                       type="button"
+                      variant="success"
+                      size="md"
                       onClick={() => void acceptAutoAssign()}
                       disabled={autoLoading || !selectedAutoProposalKeys.length}
-                      className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition cursor-pointer"
+                      isLoading={autoLoading}
                     >
                       Xác nhận lưu phương án đã chọn
-                    </button>
+                    </Button>
                   </div>
                 )}
 
@@ -784,12 +790,14 @@ export default function ExamSupervisorsPage() {
                   </div>
 
                   <div className="md:col-span-3">
-                    <button
+                    <Button
                       type="submit"
-                      className="w-full h-[42px] flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition active:scale-98 cursor-pointer"
+                      variant="primary"
+                      size="md"
+                      className="w-full h-[42px]"
                     >
                       Phân công Giám thị
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -856,20 +864,22 @@ export default function ExamSupervisorsPage() {
                               <div className="flex items-center justify-end gap-1.5">
                                 {sup.status === 'CHANGE_REQUESTED' && currentUser?.role === 'ADMIN' && (
                                   <>
-                                    <button
+                                    <Button
                                       type="button"
+                                      variant="success"
+                                      size="sm"
                                       onClick={() => void handleUpdateStatus(sup.id, 'CHANGE_APPROVED', 'chấp nhận cho đổi ca')}
-                                      className="px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition cursor-pointer"
                                     >
                                       Duyệt đổi ca
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                       type="button"
+                                      variant="secondary"
+                                      size="sm"
                                       onClick={() => void handleUpdateStatus(sup.id, 'REJECTED', 'từ chối yêu cầu đổi ca')}
-                                      className="px-3 py-1.5 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl transition cursor-pointer"
                                     >
                                       Từ chối
-                                    </button>
+                                    </Button>
                                   </>
                                 )}
                                 {sup.status === 'CONFIRMED' && currentUser?.role === 'ADMIN' && (

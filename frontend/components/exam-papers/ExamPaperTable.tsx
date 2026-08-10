@@ -389,7 +389,7 @@ export function ExamPaperTable({
                       type="button"
                       onClick={() => onDetail(p.id)}
                       disabled={busyId === p.id}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
                       title="Xem chi tiết đề"
                     >
                       <Eye className="h-4 w-4" />
@@ -398,7 +398,7 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onExportWord(p)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
                       title="Xuất Word (.doc)"
                     >
                       <Download className="h-4 w-4" />

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthToken, getAuthUser, setAuthToken } from '../../lib/auth';
 import { Toast } from '../../components/Toast';
+import { Button } from '../../components/ui/Button';
 import {
   GraduationCap,
   Lock,
@@ -360,13 +361,16 @@ export default function LoginPage() {
                         </button>
                       </div>
                     </div>
-                    <button
+                    <Button
                       type="submit"
+                      variant="primary"
+                      size="md"
                       disabled={loading || !username || !password}
-                      className="w-full rounded-xl py-2.5 text-[15px] font-medium text-white bg-slate-800 hover:bg-slate-900 transition shadow-2xs disabled:opacity-50 cursor-pointer"
+                      isLoading={loading}
+                      className="w-full"
                     >
                       Đăng nhập nội bộ
-                    </button>
+                    </Button>
                   </form>
                 )}
               </div>

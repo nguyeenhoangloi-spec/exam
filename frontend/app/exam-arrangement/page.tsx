@@ -8,6 +8,7 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { TabBar } from '../../components/ui/TabBar';
+import { Button } from '../../components/ui/Button';
 import {
   Layers,
   Sparkles,
@@ -795,10 +796,9 @@ export default function ExamArrangementPage() {
 
                           {/* Footer */}
                           <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
-                            <button type="button" onClick={() => setShowSchedulePicker(false)}
-                              className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                            <Button type="button" variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
                               Đóng
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -888,24 +888,28 @@ export default function ExamArrangementPage() {
                   </div>
                 </div>
 
-                <div className="pt-2 grid grid-cols-2 gap-2.5">
-                  <button
+                <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
+                  <Button
                     type="submit"
+                    variant="primary"
+                    size="md"
                     disabled={arranging || selectedRoomIds.length === 0}
-                    className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 px-4 rounded-xl text-xs transition shadow-sm active:scale-98 cursor-pointer ${result ? 'col-span-1' : 'col-span-2'
-                      }`}
+                    isLoading={arranging}
+                    className="flex-1 w-full"
                   >
-                    {arranging ? 'Đang xử lý...' : 'Xem sắp xếp'}
-                  </button>
+                    Xem sắp xếp
+                  </Button>
 
                   {result && (
-                    <button
+                    <Button
                       type="button"
+                      variant="danger-outline"
+                      size="md"
                       onClick={handleResetArrangement}
-                      className="col-span-1 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-slate-100 font-extrabold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer"
+                      className="flex-1 w-full"
                     >
                       Hủy phương án
-                    </button>
+                    </Button>
                   )}
                 </div>
               </form>
@@ -974,27 +978,33 @@ export default function ExamArrangementPage() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                          <button
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="md"
                             onClick={handleShuffleSeats}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-xs px-3 py-2 border border-blue-200 transition cursor-pointer shadow-2xs"
+                            leftIcon={<Shuffle className="h-3.5 w-3.5" />}
                             title="Trộn ngẫu nhiên thí sinh các lớp ngồi xen kẽ chống nhìn bài"
                           >
-                            <Shuffle className="h-3.5 w-3.5" /> Trộn ghế ngẫu nhiên
-                          </button>
+                            Trộn ghế ngẫu nhiên
+                          </Button>
 
-                          <button
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="md"
                             onClick={handlePrintAttendanceSheet}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-3 py-2 border border-slate-300 transition cursor-pointer shadow-2xs"
+                            leftIcon={<Printer className="h-3.5 w-3.5" />}
                             title="In danh sách thí sinh dự thi và ký tên A4 theo chuẩn Bộ GD&ĐT"
                           >
-                            <Printer className="h-3.5 w-3.5" /> In Danh sách ký tên A4
-                          </button>
+                            In Danh sách ký tên A4
+                          </Button>
 
                           {result.preview && (
-                            <button
+                            <Button
                               type="button"
+                              variant="primary"
+                              size="md"
                               onClick={() =>
                                 setConfirmModal({
                                   isOpen: true,
@@ -1004,10 +1014,10 @@ export default function ExamArrangementPage() {
                                   onConfirm: runSaveArrangement,
                                 })
                               }
-                              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 shadow-xs transition cursor-pointer"
+                              leftIcon={<CheckCircle className="h-4 w-4" />}
                             >
-                              <CheckCircle className="h-4 w-4" /> Xác nhận lưu phương án
-                            </button>
+                              Xác nhận lưu phương án
+                            </Button>
                           )}
                         </div>
                       </div>

@@ -33,11 +33,10 @@ export function ExamPaperHeader({
         {onExportAll && (
           <Button
             type="button"
-            variant="primary"
+            variant="secondary"
             size="md"
             onClick={onExportAll}
-            leftIcon={<Download className="h-4 w-4" />}
-            className="rounded-xl font-medium"
+            leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
           >
             Xuất báo cáo
           </Button>
@@ -50,7 +49,6 @@ export function ExamPaperHeader({
             size="md"
             onClick={onPrintAll}
             leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
-            className="rounded-xl font-medium"
           >
             In danh sách
           </Button>

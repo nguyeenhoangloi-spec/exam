@@ -6,6 +6,7 @@ import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { RubricDialog } from '../../../components/question-bank/RubricDialog';
+import { Button } from '../../../components/ui/Button';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
@@ -556,25 +557,25 @@ function TeacherEssayGradingContent() {
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              size="md"
               onClick={handleBatchAiGradeAll}
               disabled={batchAiLoading || loading}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-60 shrink-0 whitespace-nowrap"
+              isLoading={batchAiLoading}
             >
-              {batchAiLoading && <Loader2 className="h-4 w-4 text-white animate-spin" />}
-              <span>{batchAiLoading ? 'Đang AI chấm...' : 'AI chấm bài'}</span>
-            </button>
+              {batchAiLoading ? 'Đang AI chấm...' : 'AI chấm bài'}
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={loadAssignments}
               disabled={loading}
               title="Làm mới danh sách"
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition cursor-pointer active:scale-95 shrink-0 disabled:opacity-50 select-none"
             >
-              <RotateCcw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
-            </button>
+              <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
           </div>
         </div>
 
@@ -984,38 +985,35 @@ function TeacherEssayGradingContent() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
+                    <Button
+                      variant="secondary"
+                      size="md"
                       onClick={handleSaveAllClick}
                       disabled={saving || isNotSubmitted(selected) || selected.isVirtual}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer disabled:opacity-40 shadow-2xs active:scale-95"
+                      isLoading={saving}
+                      leftIcon={<Save className="h-4 w-4 text-[#64748B]" />}
                     >
-                      <Save className="h-3.5 w-3.5 text-slate-300" />
-                      <span>{saving ? 'Đang lưu...' : 'Lưu tất cả điểm'}</span>
-                    </button>
+                      {saving ? 'Đang lưu...' : 'Lưu tất cả điểm'}
+                    </Button>
                     {currentIndex >= 0 && currentIndex < filteredRows.length - 1 && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="secondary"
+                        size="md"
                         onClick={handleNextStudent}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition cursor-pointer active:scale-95 shadow-2xs"
+                        rightIcon={<ChevronRight className="h-4 w-4 text-[#64748B]" />}
                       >
-                        <span>Bài tiếp theo</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-500" />
-                      </button>
+                        Bài tiếp theo
+                      </Button>
                     )}
-                    <button
-                      type="button"
+                    <Button
+                      variant="primary"
+                      size="md"
                       onClick={handleCompleteGrading}
                       disabled={isNotSubmitted(selected) || selected.isVirtual}
-                      className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs hover:shadow-xs active:scale-95 transition cursor-pointer disabled:opacity-40"
+                      leftIcon={<CheckCircle2 className="h-4 w-4" />}
                     >
-                      <CheckCircle2 className="h-4 w-4 text-blue-100" />
-                      <span>
-                        {currentUser?.role === 'ADMIN'
-                          ? 'Duyệt bài'
-                          : 'Gửi duyệt'}
-                      </span>
-                    </button>
+                      {currentUser?.role === 'ADMIN' ? 'Duyệt bài' : 'Gửi duyệt'}
+                    </Button>
                   </div>
                 </div>
               </div>

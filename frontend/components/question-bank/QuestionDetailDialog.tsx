@@ -7,6 +7,7 @@ import { ImageLightboxModal } from '../ImageLightboxModal';
 import { VideoLightboxModal } from '../VideoLightboxModal';
 import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle, Hash, Award, Brain } from 'lucide-react';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
+import { Button } from '../ui/Button';
 
 export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -272,13 +273,13 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
         {/* Drawer Footer */}
         <div className="border-t border-slate-200 p-4 bg-slate-50 flex items-center justify-end gap-2">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="md"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] hover:bg-slate-100 cursor-pointer shadow-2xs"
           >
             Đóng
-          </button>
+          </Button>
         </div>
       </div>
     </>

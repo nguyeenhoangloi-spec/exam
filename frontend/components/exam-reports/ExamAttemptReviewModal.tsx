@@ -17,6 +17,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { onlineExamService } from '@/lib/services/online-exam.service';
+import { Button } from '../ui/Button';
 
 interface ExamAttemptReviewModalProps {
   attemptId: string | null;
@@ -309,22 +310,17 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           )}
         </div>
 
-        <div className="border-t border-slate-100 px-6 py-4 shrink-0 flex items-center justify-between gap-3">
+        <div className="border-t border-slate-100 px-6 py-4 shrink-0 flex items-center justify-between gap-3 bg-white rounded-b-2xl">
           {data?.questions?.some((q: any) => q.type === 'ESSAY') ? (
-            <a
-              href={`/teacher/essay-grading?attemptId=${attemptId}`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold transition shadow-xs"
-            >
-              <FileText className="w-3.5 h-3.5" /> Chấm / Sửa Điểm Tự Luận
+            <a href={`/teacher/essay-grading?attemptId=${attemptId}`}>
+              <Button variant="primary" size="md" leftIcon={<FileText className="w-4 h-4" />}>
+                Chấm / Sửa Điểm Tự Luận
+              </Button>
             </a>
           ) : <div />}
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
-          >
+          <Button variant="secondary" size="md" onClick={onClose}>
             Đóng
-          </button>
+          </Button>
         </div>
       </div>
     </div>

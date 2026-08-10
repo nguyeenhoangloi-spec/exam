@@ -599,14 +599,16 @@ export function QuestionImportWizard({
               </label>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {preview ? (
                 <>
-                  <Button type="button" variant="outline" onClick={onClose}>
+                  <Button type="button" variant="secondary" size="md" onClick={onClose}>
                     Hủy
                   </Button>
                   <Button
                     type="button"
+                    variant="primary"
+                    size="md"
                     disabled={!selected.length || busy}
                     onClick={() => setShowSaveConfirm(true)}
                   >
@@ -616,26 +618,26 @@ export function QuestionImportWizard({
               ) : (
                 <>
                   {mode === 'table' && (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="md"
                       onClick={template}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline transition cursor-pointer px-2.5 py-1.5"
+                      leftIcon={<Download className="w-4 h-4 text-[#2563EB]" />}
                     >
                       Tải mẫu CSV
-                    </button>
+                    </Button>
                   )}
-                  <button
+                  <Button
                     type="button"
+                    variant="primary"
+                    size="md"
                     disabled={!file || busy}
+                    isLoading={busy}
                     onClick={load}
-                    className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xs transition disabled:opacity-50 cursor-pointer"
                   >
-                    {busy ? (
-                      <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    ) : (
-                      <span>Trích xuất</span>
-                    )}
-                  </button>
+                    Trích xuất
+                  </Button>
                 </>
               )}
             </div>

@@ -6,6 +6,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { TabBar } from '../../components/ui/TabBar';
+import { Button } from '../../components/ui/Button';
 import {
   Settings,
   Bell,
@@ -301,13 +302,14 @@ export default function SettingsPage() {
 
         {/* Save Button */}
         <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end">
-          <button
+          <Button
             type="submit"
-            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-6 py-2.5 text-[15px] font-medium shadow-sm transition active:scale-95 cursor-pointer"
+            variant="primary"
+            size="md"
+            leftIcon={<Save className="h-4 w-4 text-white" />}
           >
-            <Save className="h-4 w-4 text-white" />
-            <span>Lưu thiết lập cài đặt</span>
-          </button>
+            Lưu thiết lập cài đặt
+          </Button>
         </div>
       </form>
     </div>

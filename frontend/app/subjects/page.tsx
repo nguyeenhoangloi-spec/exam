@@ -10,6 +10,7 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { Button } from '../../components/ui/Button';
 import { Subject, Department } from '../../types';
 import { BookOpen, Building2, Search, X, Award, ChevronDown, Users, GraduationCap, BookMarked } from 'lucide-react';
 
@@ -512,20 +513,22 @@ export default function SubjectsPage() {
               </select>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
             >
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer"
+              variant="primary"
+              size="md"
             >
               Lưu Môn Học
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>
@@ -608,13 +611,24 @@ export default function SubjectsPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <button type="button" onClick={() => setEnrollClassSubject(null)}
-              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-medium transition cursor-pointer">Hủy</button>
-            <button type="submit" disabled={!enrollClassData.classId || enrollClassLoading}
-              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-sm font-black transition shadow-xs cursor-pointer">
-              {enrollClassLoading ? 'Đang gán...' : 'Xác nhận Gán Lớp'}
-            </button>
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              onClick={() => setEnrollClassSubject(null)}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              disabled={!enrollClassData.classId || enrollClassLoading}
+              isLoading={enrollClassLoading}
+            >
+              Xác nhận Gán Lớp
+            </Button>
           </div>
         </form>
       </Modal>

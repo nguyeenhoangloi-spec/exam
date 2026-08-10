@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Download, Plus, Printer } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 interface ExamRoomHeaderProps {
   onAdd?: () => void;
@@ -28,35 +29,38 @@ export function ExamRoomHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-2.5">
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="md"
           onClick={onExport}
-          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+          leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
         >
-          <Download className="h-4 w-4 text-[#64748B]" />
-          <span>Xuất Excel</span>
-        </button>
+          Xuất Excel
+        </Button>
 
         {onPrint && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={onPrint}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-[#334155] shadow-2xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
           >
-            <Printer className="h-4 w-4 text-[#64748B]" />
-            <span>In Báo cáo</span>
-          </button>
+            In Báo cáo
+          </Button>
         )}
 
         {isAdmin && (
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
             onClick={onAdd}
-            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-xs transition active:scale-95 cursor-pointer"
+            leftIcon={<Plus className="h-4 w-4" />}
           >
-            <Plus className="h-4 w-4" />
-            <span>Tạo phòng thi</span>
-          </button>
+            Tạo phòng thi
+          </Button>
         )}
       </div>
     </div>

@@ -305,25 +305,26 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
+              disabled={loading}
+              className="h-[38px] px-3.5 rounded-lg border border-[#E2E8F0] bg-white text-[#334155] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] text-sm font-medium transition cursor-pointer disabled:opacity-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`px-5 py-2.5 rounded-xl text-white font-bold text-sm transition shadow-2xs flex items-center gap-2 cursor-pointer ${
-                loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700 active:scale-95'
+              className={`h-[38px] px-4 rounded-lg text-white font-medium text-sm transition flex items-center gap-2 cursor-pointer ${
+                loading ? 'bg-[#E5E7EB] text-[#9CA3AF] cursor-not-allowed' : 'bg-[#DC2626] hover:bg-[#B91C1C] active:bg-[#991B1B]'
               }`}
             >
               {loading ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   <span>Đang xác thực...</span>
                 </>
               ) : (
                 <>
-                  <Lock className="w-3.5 h-3.5" />
+                  <Lock className="w-4 h-4" />
                   <span>{actionButtonText}</span>
                 </>
               )}

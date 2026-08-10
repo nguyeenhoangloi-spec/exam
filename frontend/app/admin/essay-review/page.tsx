@@ -6,6 +6,7 @@ import { usePageTitle } from '../../../components/PageTitleContext';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
+import { Button } from '../../../components/ui/Button';
 import {
   FileCheck,
   ShieldCheck,
@@ -715,36 +716,44 @@ export default function AdminEssayReviewPage() {
                 <div className="flex flex-wrap items-center gap-2.5 pt-1">
                   {selected.gradingStatus !== 'PUBLISHED' && (
                     <>
-                      <button
+                      <Button
                         type="button"
+                        variant="primary"
+                        size="md"
                         onClick={() => handleApprove(true)}
-                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                        leftIcon={<Send className="w-4 h-4" />}
                       >
-                        <Send className="w-4 h-4" /> Công bố điểm
-                      </button>
-                      <button
+                        Công bố điểm
+                      </Button>
+                      <Button
                         type="button"
+                        variant="primary"
+                        size="md"
                         onClick={() => handleApprove(false)}
-                        className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                        leftIcon={<ShieldCheck className="w-4 h-4" />}
                       >
-                        <ShieldCheck className="w-4 h-4" /> Duyệt điểm
-                      </button>
+                        Duyệt điểm
+                      </Button>
                     </>
                   )}
-                  <button
+                  <Button
                     type="button"
+                    variant="warning"
+                    size="md"
                     onClick={handleReopen}
-                    className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                    leftIcon={<RotateCcw className="w-4 h-4" />}
                   >
-                    <RotateCcw className="w-4 h-4" /> Mở lại bài thi
-                  </button>
-                  <button
+                    Mở lại bài thi
+                  </Button>
+                  <Button
                     type="button"
+                    variant="danger-outline"
+                    size="md"
                     onClick={handleReturn}
-                    className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-medium text-[15px] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer select-none flex items-center gap-1.5"
+                    leftIcon={<XCircle className="w-4 h-4" />}
                   >
-                    <XCircle className="w-4 h-4" /> Trả lại chấm lại
-                  </button>
+                    Trả lại chấm lại
+                  </Button>
                 </div>
 
                 {/* Adjustment Controls Grid: Gia hạn & Trừ điểm */}
@@ -765,13 +774,14 @@ export default function AdminEssayReviewPage() {
                         <span className="text-[13px] font-semibold text-[#64748B] ml-1">phút</span>
                       </div>
                     </div>
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="sm"
                       onClick={handleExtend}
-                      className="px-3.5 py-1.5 bg-slate-900 hover:bg-black active:bg-slate-950 text-white font-medium text-[15px] rounded-lg transition-all cursor-pointer shadow-xs select-none"
                     >
                       Gia hạn
-                    </button>
+                    </Button>
                   </div>
 
                   {/* Trừ điểm phạt */}
@@ -790,13 +800,14 @@ export default function AdminEssayReviewPage() {
                         <span className="text-[11px] font-bold text-slate-800 ml-1">điểm</span>
                       </div>
                     </div>
-                    <button
+                    <Button
                       type="button"
+                      variant="danger-outline"
+                      size="sm"
                       onClick={handlePenalty}
-                      className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white font-bold text-xs rounded-lg transition-all cursor-pointer shadow-xs select-none"
                     >
                       Trừ điểm
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

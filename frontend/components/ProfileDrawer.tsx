@@ -3,6 +3,7 @@
 import React from 'react';
 import { X, User, Mail, Phone, Calendar, BookOpen, GraduationCap, Building2, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from './common/StatusBadge';
+import { Button } from './ui/Button';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -104,13 +105,15 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-slate-200 bg-slate-50 px-6 py-4 text-right">
-            <button
+          <div className="border-t border-slate-200/90 bg-slate-50 px-6 py-4 flex items-center justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
               onClick={onClose}
-              className="rounded-xl border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-100 transition"
             >
               Đóng
-            </button>
+            </Button>
           </div>
         </div>
       </div>

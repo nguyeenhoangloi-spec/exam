@@ -11,8 +11,9 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
+import { Button } from '../../components/ui/Button';
 import { Teacher, Department, User } from '../../types';
-import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info } from 'lucide-react';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown } from 'lucide-react';
 
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
@@ -30,6 +31,7 @@ export default function TeachersPage() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [search, setSearch] = useState('');
+  const [selectedDeptId, setSelectedDeptId] = useState('');
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(1);
@@ -142,7 +144,8 @@ export default function TeachersPage() {
           t.fullName.toLowerCase().includes(search.toLowerCase()) ||
           t.teacherCode.toLowerCase().includes(search.toLowerCase()) ||
           t.email.toLowerCase().includes(search.toLowerCase());
-        return matchSearch;
+        const matchDept = !selectedDeptId || String(t.departmentId) === selectedDeptId;
+        return matchSearch && matchDept;
       })
       .sort((a, b) => {
         if (sortOrder === 'oldest') return a.id - b.id;
@@ -151,7 +154,7 @@ export default function TeachersPage() {
         if (sortOrder === 'code_asc') return a.teacherCode.localeCompare(b.teacherCode);
         return b.id - a.id;
       });
-  }, [teachers, search, sortOrder]);
+  }, [teachers, search, selectedDeptId, sortOrder]);
 
   // Pagination Slice
   const totalPages = Math.max(1, Math.ceil(filteredTeachers.length / limit));
@@ -300,9 +303,9 @@ export default function TeachersPage() {
         />
 
         {/* Filter Card */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex items-center justify-between gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+          <div className="relative flex-1 min-w-[260px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã GV, Họ tên, Email..."
@@ -311,7 +314,7 @@ export default function TeachersPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
             {search && (
               <button
@@ -320,11 +323,33 @@ export default function TeachersPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-500">Khoa trực thuộc:</span>
+            <div className="relative">
+              <select
+                value={selectedDeptId}
+                onChange={(e) => {
+                  setSelectedDeptId(e.target.value);
+                  setPage(1);
+                }}
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+              >
+                <option value="">Tất cả các Khoa</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={String(d.id)}>
+                    {d.name} ({d.code})
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            </div>
           </div>
         </div>
 
@@ -474,20 +499,22 @@ export default function TeachersPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <button
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
             >
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer"
+              variant="primary"
+              size="md"
             >
               Lưu Giảng viên
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>

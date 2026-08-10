@@ -10,6 +10,7 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { Button } from '../../components/ui/Button';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExamPeriod } from '../../types';
 import { Calendar, Clock, Search, X, ChevronDown } from 'lucide-react';
@@ -74,7 +75,7 @@ export default function ExamPeriodsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -519,20 +520,13 @@ export default function ExamPeriodsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
-            >
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <Button variant="secondary" size="md" onClick={() => setIsModalOpen(false)}>
               Hủy
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer"
-            >
+            </Button>
+            <Button variant="primary" size="md" type="submit">
               Lưu Kỳ Thi
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>

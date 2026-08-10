@@ -31,7 +31,6 @@ export function ExamReportHeader({
           size="md"
           onClick={onExport}
           leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
-          className="rounded-xl font-medium"
         >
           Xuất File CSV
         </Button>
@@ -39,11 +38,10 @@ export function ExamReportHeader({
         {onPrint && (
           <Button
             type="button"
-            variant="primary"
+            variant="secondary"
             size="md"
             onClick={onPrint}
-            leftIcon={<Printer className="h-4 w-4" />}
-            className="rounded-xl font-medium"
+            leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
           >
             In Báo cáo Tổng kết
           </Button>

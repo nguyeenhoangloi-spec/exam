@@ -35,6 +35,7 @@ import { usePageTitle } from '@/components/PageTitleContext';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { Button } from '@/components/ui/Button';
 
 /* ─── helpers ─── */
 function statusMeta(att: any) {
@@ -421,25 +422,25 @@ export default function ProctorDashboardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
             onClick={() => setShowReopenEntryModal(true)}
-            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-xs transition active:scale-95 cursor-pointer"
-            title="Mở thêm thời gian cho sinh viên tới thi muộn"
+            leftIcon={<PlusCircle className="h-4 w-4" />}
           >
-            <PlusCircle className="h-4 w-4" />
-            <span>Cho vào trễ (+30p)</span>
-          </button>
+            Cho vào trễ (+30p)
+          </Button>
 
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={() => setShowBulkModal(true)}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[#334155] px-4 py-2 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
-            title="Cộng bù giờ hàng loạt cho tất cả sinh viên đang làm bài trong phòng"
+            leftIcon={<Clock className="h-4 w-4 text-[#64748B]" />}
           >
-            <Clock className="h-4 w-4 text-[#64748B]" />
-            <span>Bù giờ toàn phòng (+15p)</span>
-          </button>
+            Bù giờ toàn phòng (+15p)
+          </Button>
 
           <button
             type="button"
@@ -1403,23 +1404,26 @@ export default function ProctorDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
-              <button
+            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
                 onClick={() => setShowBulkModal(false)}
                 disabled={bulkProcessing}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
               >
                 Hủy
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="warning"
+                size="md"
                 onClick={handleBulkExtend}
                 disabled={bulkProcessing}
-                className="rounded-xl bg-amber-600 hover:bg-amber-700 px-5 py-2 text-xs font-black text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+                isLoading={bulkProcessing}
               >
-                {bulkProcessing ? 'Đang thực hiện...' : 'Bù Giờ Ngay'}
-              </button>
+                Bù Giờ Ngay
+              </Button>
             </div>
           </div>
         </div>
@@ -1477,23 +1481,26 @@ export default function ProctorDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
-              <button
+            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
                 onClick={() => setShowReopenEntryModal(false)}
                 disabled={reopenEntryProcessing}
-                className="px-4 py-2 text-xs font-extrabold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer"
               >
                 Hủy
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="primary"
+                size="md"
                 onClick={handleReopenEntryConfirm}
                 disabled={reopenEntryProcessing}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-2 text-xs font-black text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+                isLoading={reopenEntryProcessing}
               >
-                {reopenEntryProcessing ? 'Đang mở...' : 'Mở Giờ Vào Thi'}
-              </button>
+                Mở Giờ Vào Thi
+              </Button>
             </div>
           </div>
         </div>

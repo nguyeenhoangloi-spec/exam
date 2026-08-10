@@ -35,7 +35,6 @@ export function ClassHeader({
           size="md"
           onClick={onExport}
           leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
-          className="rounded-xl font-medium"
         >
           Xuất Excel
         </Button>
@@ -47,7 +46,6 @@ export function ClassHeader({
             size="md"
             onClick={onPrint}
             leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
-            className="rounded-xl font-medium"
           >
             In Báo cáo
           </Button>
@@ -60,7 +58,6 @@ export function ClassHeader({
             size="md"
             onClick={onAdd}
             leftIcon={<Plus className="h-4 w-4" />}
-            className="rounded-xl font-medium"
           >
             Tạo lớp mới
           </Button>

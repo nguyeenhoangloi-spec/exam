@@ -7,6 +7,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { Button } from '../../components/ui/Button';
 import {
   Trash2, RotateCcw, Search, CalendarCheck, FileText,
   HelpCircle, RefreshCw, ChevronDown, Clock, Users, Building2, GraduationCap, BookOpen, CheckCircle2, SlidersHorizontal, Eye, MoreVertical, List, LayoutGrid, Layers
@@ -255,15 +256,16 @@ function TrashPageContent() {
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={handleAutoClean}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-[#334155] px-4 py-2.5 text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
+            leftIcon={<Trash2 className="h-4 w-4 text-[#64748B]" />}
             title="Quét và xóa vĩnh viễn toàn bộ bản ghi trong Thùng rác đã quá 30 ngày"
           >
-            <Trash2 className="h-4 w-4 text-[#64748B]" />
-            <span>Dọn dẹp tự động (&gt; 30 ngày)</span>
-          </button>
+            Dọn dẹp tự động (&gt; 30 ngày)
+          </Button>
           <button
             type="button"
             onClick={() => { fetchItems(); fetchStats(); }}
@@ -564,21 +566,24 @@ function TrashPageContent() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-1">
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-1.5">
                     <button
+                      type="button"
                       onClick={() => handleRestore(item)}
                       title="Khôi phục"
                       className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95"
                     >
                       <RotateCcw className="w-5 h-5" />
                     </button>
-                    <button
+                    <Button
+                      type="button"
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleHardDelete(item)}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[15px] font-medium transition cursor-pointer shadow-2xs active:scale-95"
+                      leftIcon={<Trash2 className="w-4 h-4" />}
                     >
-                      <Trash2 className="w-4 h-4 text-rose-100" />
                       Xóa vĩnh viễn
-                    </button>
+                    </Button>
                   </div>
                 </div>
               );

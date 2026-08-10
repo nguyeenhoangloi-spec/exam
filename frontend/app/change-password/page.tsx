@@ -6,6 +6,7 @@ import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
+import { Button } from '../../components/ui/Button';
 import {
   Lock,
   KeyRound,
@@ -247,14 +248,16 @@ export default function ChangePasswordPage() {
           </div>
 
           <div className="pt-3 border-t border-slate-100 flex justify-end">
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
               disabled={loading}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 text-xs font-black shadow-sm transition active:scale-95 cursor-pointer disabled:opacity-50"
+              isLoading={loading}
+              leftIcon={<KeyRound className="h-4 w-4" />}
             >
-              <KeyRound className="h-4 w-4 text-white" />
-              <span>{loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}</span>
-            </button>
+              Cập nhật mật khẩu
+            </Button>
           </div>
         </form>
 
