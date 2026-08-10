@@ -25,9 +25,9 @@ interface QuestionBankFiltersCardProps {
 }
 
 const selectCls =
-  'h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-[15px] font-medium text-[#0F172A] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-slate-300 transition cursor-pointer appearance-none';
+  'h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition cursor-pointer shadow-2xs';
 
-const labelCls = 'block text-[15px] font-medium text-[#0F172A] mb-1';
+const labelCls = 'block text-xs font-bold text-slate-500 mb-1';
 
 const DIFFICULTY_LABELS: Record<string, string> = { EASY: 'Dễ', MEDIUM: 'Trung bình', HARD: 'Khó' };
 const TYPE_LABELS: Record<string, string> = {
@@ -74,9 +74,9 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 border border-blue-100">
             <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
           </span>
-          <span className="text-[15px] font-semibold text-[#0F172A]">Bộ lọc tìm kiếm</span>
+          <span className="text-xs font-bold text-slate-800">Bộ lọc tìm kiếm</span>
           {hasActive && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[13px] font-semibold text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
               {activeChips.length}
             </span>
           )}
@@ -85,7 +85,7 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
           <button
             type="button"
             onClick={onReset}
-            className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-[13px] font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 transition-all cursor-pointer"
+            className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 transition-all cursor-pointer"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Xoá bộ lọc

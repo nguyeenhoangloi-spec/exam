@@ -43,7 +43,7 @@ export function ExamScheduleFiltersCard({
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3.5">
       {/* Filter Grid matching Mockup Image 100% */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Row 1, Col 1: Kỳ thi */}
@@ -53,7 +53,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.examPeriodId}
               onChange={(e) => handleChange('examPeriodId', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Chọn kỳ thi</option>
               {periods.map((p) => (
@@ -73,7 +73,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.shift}
               onChange={(e) => handleChange('shift', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Tất cả ca thi</option>
               <option value="CA_1">Ca 1 - Sáng (07:00 - 09:00)</option>
@@ -92,7 +92,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.roomId}
               onChange={(e) => handleChange('roomId', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Tất cả phòng thi</option>
               {rooms.map((r) => (
@@ -113,7 +113,7 @@ export function ExamScheduleFiltersCard({
               type="date"
               value={filters.examDate}
               onChange={(e) => handleChange('examDate', e.target.value)}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             />
             <Calendar className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
           </div>
@@ -126,7 +126,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.status}
               onChange={(e) => handleChange('status', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Tất cả trạng thái</option>
               <option value="UPCOMING">Sắp diễn ra</option>
@@ -145,7 +145,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.semester}
               onChange={(e) => handleChange('semester', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Tất cả học kỳ</option>
               <option value="HK1">Học kỳ I</option>
@@ -163,7 +163,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.schoolYear}
               onChange={(e) => handleChange('schoolYear', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Tất cả năm học</option>
               <option value="2023-2024">2023 - 2024</option>
@@ -181,7 +181,7 @@ export function ExamScheduleFiltersCard({
             <select
               value={filters.supervisorId}
               onChange={(e) => handleChange('supervisorId', e.target.value)}
-              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-semibold text-slate-800 outline-none focus:border-blue-500 cursor-pointer"
+              className="h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3.5 pr-8 text-xs font-bold text-slate-700 outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
             >
               <option value="">Tất cả giám thị</option>
               {supervisors.map((sup: any) => (

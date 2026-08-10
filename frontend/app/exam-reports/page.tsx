@@ -805,7 +805,7 @@ export default function ExamReportsPage() {
         {/* Filter Card */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
           <div className="relative flex-1 min-w-[260px]">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm theo Mã SV, Họ tên, Lớp sinh viên..."
@@ -814,7 +814,7 @@ export default function ExamReportsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
             />
             {search && (
               <button
@@ -823,7 +823,7 @@ export default function ExamReportsPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -839,7 +839,7 @@ export default function ExamReportsPage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
               >
                 <option value="ALL">Tất cả Thí sinh</option>
                 <option value="SUBMITTED">Đã tham gia / Nộp bài</option>

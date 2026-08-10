@@ -339,7 +339,7 @@ export default function TeachersPage() {
                   setSelectedDeptId(e.target.value);
                   setPage(1);
                 }}
-                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
               >
                 <option value="">Tất cả các Khoa</option>
                 {departments.map((d) => (
