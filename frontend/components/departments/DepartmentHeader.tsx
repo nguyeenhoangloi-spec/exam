@@ -34,7 +34,7 @@ export function DepartmentHeader({
           variant="secondary"
           size="md"
           onClick={onExport}
-          leftIcon={<Download className="h-4 w-4 text-slate-500" />}
+          leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
         >
           Xuất Excel
         </Button>

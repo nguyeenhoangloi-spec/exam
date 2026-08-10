@@ -36,7 +36,7 @@ export function TeacherHeader({
           variant="secondary"
           size="md"
           onClick={onExport}
-          leftIcon={<FileSpreadsheet className="h-4 w-4 text-[#15803D]" />}
+          leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
         >
           Xuất Excel
         </Button>
