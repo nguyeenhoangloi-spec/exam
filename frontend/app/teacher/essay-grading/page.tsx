@@ -866,9 +866,15 @@ function TeacherEssayGradingContent() {
                     <div className="w-12 h-12 rounded-full bg-amber-100 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
                       <AlertCircle className="h-6 w-6" />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-800">Thí sinh chưa làm hoặc chưa nộp bài thi</h3>
+                    <h3 className="text-sm font-bold text-slate-800">
+                      {!(selected.questions || []).filter((q: any) => q.type === 'ESSAY').length && !isNotSubmitted(selected)
+                        ? 'Đề thi chỉ gồm Trắc nghiệm / Điền khuyết (Đã tự động chấm)'
+                        : 'Thí sinh chưa nộp bài hoặc chưa làm bài thi tự luận'}
+                    </h3>
                     <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                      Sinh viên <strong className="text-slate-800">{selected.student?.fullName}</strong> (Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong>) chưa bắt đầu làm bài hoặc chưa gửi bài thi tự luận. Không có bài làm để chấm điểm.
+                      {!(selected.questions || []).filter((q: any) => q.type === 'ESSAY').length && !isNotSubmitted(selected)
+                        ? 'Các câu hỏi Trắc nghiệm và Điền khuyết đã có đáp án mặc định sẵn. Hệ thống tự động chấm điểm chính xác và tự động công bố khi hết hạn ca thi.'
+                        : `Sinh viên ${selected.student?.fullName || ''} (Mã SV: ${selected.student?.studentCode || ''}) chưa gửi bài thi tự luận hoặc không có câu tự luận nào cần Giảng viên chấm thủ công.`}
                     </p>
                   </div>
                 ) : (
