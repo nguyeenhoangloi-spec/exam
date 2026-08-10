@@ -76,14 +76,14 @@ export interface StatisticCardProps {
 
 export function StatisticCard({ title, value, icon, trend, description, badge, className = '' }: StatisticCardProps) {
   return (
-    <Card className={`flex flex-col justify-between transition hover:shadow-md ${className}`}>
+    <Card className={`group flex flex-col justify-between transition hover:shadow-md ${className}`}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</span>
           <div className="text-2xl font-black text-slate-900 tracking-tight">{value}</div>
         </div>
         {icon && (
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0 transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
             {icon}
           </div>
         )}

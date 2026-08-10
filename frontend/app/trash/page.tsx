@@ -283,7 +283,7 @@ function TrashPageContent() {
         <button
           type="button"
           onClick={() => setActiveCategory('schedules')}
-          className={`p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'schedules'
+          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'schedules'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
@@ -293,7 +293,7 @@ function TrashPageContent() {
             <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Lịch thi khảo thí</p>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100'
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
             }`}>
             <CalendarCheck className="w-5 h-5" />
           </div>
@@ -303,7 +303,7 @@ function TrashPageContent() {
         <button
           type="button"
           onClick={() => setActiveCategory('papers')}
-          className={`p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'papers'
+          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'papers'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
@@ -313,7 +313,7 @@ function TrashPageContent() {
             <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.papers}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Bộ đề thi trắc nghiệm / tự luận</p>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100'
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
             }`}>
             <FileText className="w-5 h-5" />
           </div>
@@ -323,7 +323,7 @@ function TrashPageContent() {
         <button
           type="button"
           onClick={() => setActiveCategory('questions')}
-          className={`p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'questions'
+          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'questions'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
@@ -333,7 +333,7 @@ function TrashPageContent() {
             <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.questions}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Ngân hàng câu hỏi</p>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100'
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
             }`}>
             <HelpCircle className="w-5 h-5" />
           </div>
@@ -343,7 +343,7 @@ function TrashPageContent() {
         <button
           type="button"
           onClick={() => setActiveCategory('users')}
-          className={`p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${['users', 'subjects', 'classes'].includes(activeCategory)
+          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${['users', 'subjects', 'classes'].includes(activeCategory)
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
@@ -353,7 +353,7 @@ function TrashPageContent() {
             <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Người dùng, Môn học, Lớp</p>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100'
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
             }`}>
             <Users className="w-5 h-5" />
           </div>

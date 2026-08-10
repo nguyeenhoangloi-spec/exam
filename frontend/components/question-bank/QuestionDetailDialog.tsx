@@ -60,9 +60,9 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
         />
 
         {/* Drawer Header - Solid Flat Color matching All Drawers */}
-        <div className="bg-[#2563EB] p-5 text-white shrink-0 flex items-center justify-between gap-3">
+        <div className="border-b border-slate-200 bg-white p-5 shrink-0 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="rounded-xl bg-white/10 px-3 py-1 text-[15px] font-semibold text-white border border-white/15 font-mono">
+            <span className="font-mono text-[15px] font-semibold text-[#0F172A]">
               {codeText}
             </span>
             <QuestionStatusBadge status={question.status || 'APPROVED'} />
@@ -71,7 +71,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+            className="shrink-0 rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
             title="Đóng"
           >
             <X className="h-5 w-5" />

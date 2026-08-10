@@ -64,7 +64,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ items }) => {
         return (
           <div
             key={index}
-            className={`relative overflow-hidden rounded-2xl border ${style.border} bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
+            className={`group relative overflow-hidden rounded-2xl border ${style.border} bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -73,7 +73,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ items }) => {
                 {item.subtext && <p className="mt-1 text-xs text-slate-500 font-medium">{item.subtext}</p>}
                 {item.trend && <span className="mt-1.5 block text-xs font-medium text-slate-500">{item.trend}</span>}
               </div>
-              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${style.bg} ${style.text}`}>
+              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${style.bg} ${style.text} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
                 <Icon className="h-6 w-6" />
               </div>
             </div>
