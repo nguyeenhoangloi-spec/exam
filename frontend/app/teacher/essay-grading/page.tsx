@@ -753,7 +753,7 @@ function TeacherEssayGradingContent() {
                               {schedCode ? ` (${schedCode})` : ''}
                             </span>
                             {dateStr && (
-                              <span className="shrink-0 text-[13px] font-semibold text-[#0F172A] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+                              <span className="shrink-0 text-[13px] font-semibold text-[#475569]">
                                 {dateStr}
                               </span>
                             )}

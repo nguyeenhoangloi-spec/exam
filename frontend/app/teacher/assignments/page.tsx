@@ -11,6 +11,7 @@ import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { Button } from '../../../components/ui/Button';
+import { StatusBadge } from '../../../components/common/StatusBadge';
 import {
   ShieldCheck,
   Calendar,
@@ -357,34 +358,15 @@ export default function TeacherAssignmentsPage() {
                   <div className="space-y-3.5">
                     {/* Card top badges */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+                      <span className="font-mono font-black text-xs text-[#475569]">
                         {item.subjectCode}
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span
-                          className={`text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-md ${isExpired
-                            ? 'bg-rose-50 text-rose-700'
-                            : item.status === 'CONFIRMED'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : item.status === 'CHANGE_REQUESTED'
-                                ? 'bg-amber-50 text-amber-700'
-                                : 'bg-slate-100 text-slate-700'
-                            }`}
-                        >
-                          {isExpired
-                            ? 'Quá hạn ca thi'
-                            : item.status === 'CONFIRMED'
-                              ? 'Đã xác nhận'
-                              : item.status === 'CHANGE_REQUESTED'
-                                ? 'Xin đổi ca'
-                                : 'Chờ xác nhận'}
-                        </span>
-                        <span
-                          className={`text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-md ${item.role === 'SUPERVISOR_1'
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'bg-slate-100 text-slate-700'
-                            }`}
-                        >
+                        <StatusBadge
+                          status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
+                          customLabel={isExpired ? 'Quá hạn ca thi' : item.status === 'CONFIRMED' ? 'Đã xác nhận' : item.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận'}
+                        />
+                        <span className="text-[13px] font-semibold text-[#475569]">
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                         </span>
                       </div>
@@ -491,10 +473,6 @@ export default function TeacherAssignmentsPage() {
         title={drawerDuty?.subjectName || ''}
         subtitle={`Mã môn: ${drawerDuty?.subjectCode}`}
         avatarText="GT"
-        badge={{
-          label: drawerDuty?.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
-          className: drawerDuty?.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 font-extrabold rounded-md' : 'bg-slate-100 text-slate-700 font-extrabold rounded-md',
-        }}
         details={[
           { label: 'Môn thi', value: drawerDuty?.subjectName, icon: BookOpen },
           { label: 'Mã môn', value: drawerDuty?.subjectCode },

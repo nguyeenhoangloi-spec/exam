@@ -169,16 +169,16 @@ export function ExamPaperMatrixForm({
 
           {/* 1. Loại đề */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-[#0F172A]">
-              Loại đề <span className="text-red-500">*</span>
+            <label className="block text-xs font-bold text-[#0F172A]">
+              Loại đề <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-1">
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[15px] font-medium border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
+                className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
+                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs'
+                  : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1]'
                   }`}
               >
                 TN
@@ -186,9 +186,9 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[15px] font-medium border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
-                  ? 'bg-blue-700 text-white border-blue-700 shadow-sm'
-                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
+                className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
+                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs'
+                  : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1]'
                   }`}
               >
                 Điền lỗ
@@ -196,15 +196,15 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex items-center justify-center gap-1 rounded-xl py-2 text-[15px] font-medium border transition cursor-pointer ${examType === 'TU_LUAN'
-                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700'
+                className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
+                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs'
+                  : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1]'
                   }`}
               >
                 TL
               </button>
             </div>
-            <p className="text-[13px] text-[#64748B] font-normal">
+            <p className="text-xs text-[#64748B] font-medium">
               {examType === 'DIEN_LO' || examType === 'FILL_BLANK' ? 'Điền vào chỗ trống' : isEssay ? 'Tự luận' : 'Trắc nghiệm'}
             </p>
           </div>
@@ -262,7 +262,7 @@ export function ExamPaperMatrixForm({
             <div className="flex flex-wrap items-center justify-between gap-3 py-2">
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-600 text-white text-[11px] font-black uppercase tracking-wide">
+                  <span className="text-[11px] font-black uppercase tracking-wide text-[#475569]">
                     {(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}
                   </span>
                   <span className="text-sm font-black text-slate-900 truncate">
@@ -278,7 +278,7 @@ export function ExamPaperMatrixForm({
                   </span>
                   <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
                   {scheduleDuration > 0 && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white border border-blue-200 text-blue-700 text-[10.5px] font-bold">
+                    <span className="text-[13px] font-semibold text-[#475569]">
                       {scheduleDuration} phút
                     </span>
                   )}
@@ -391,7 +391,8 @@ export function ExamPaperMatrixForm({
                                   <p className="text-xs font-extrabold text-slate-600 truncate">
                                     [{subCode}] {subName}
                                   </p>
-                                  <span className="shrink-0 rounded-md bg-rose-100 text-rose-700 text-[9px] font-black px-1.5 py-0.5">
+                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-[#DC2626]">
+                                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                                     Đã quá hạn
                                   </span>
                                 </div>
@@ -432,11 +433,12 @@ export function ExamPaperMatrixForm({
                                   [{subCode}] {subName}
                                 </p>
                                 {s.examPapers?.some((p: any) => p.status === 'PUBLISHED') && (
-                                  <span className="shrink-0 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-extrabold px-1.5 py-0.5">
+                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-[#15803D]">
+                                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                                     Đã phát hành
                                   </span>
                                 )}
-                                <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
+                                <span className="shrink-0 text-[13px] font-semibold text-[#475569]">
                                   {count} đề
                                 </span>
                               </div>

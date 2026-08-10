@@ -646,13 +646,13 @@ export default function StudentCurriculumPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                        className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                         >
                           {item.subjectCode}
                         </button>
                       </div>
 
-                      <span className="inline-flex items-center gap-1 rounded-[8px] bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-700 border border-slate-200">
+                      <span className="text-[13px] font-semibold text-[#64748B]">
                         HK {item.recommendedSemester}
                       </span>
                     </div>
@@ -747,7 +747,7 @@ export default function StudentCurriculumPage() {
                         />
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                        <span className="font-mono font-black text-xs text-[#475569]">
                           {item.subjectCode}
                         </span>
                       </td>
@@ -846,7 +846,7 @@ export default function StudentCurriculumPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                            className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                           >
                             {item.subjectCode}
                           </button>
@@ -1031,10 +1031,10 @@ export default function StudentCurriculumPage() {
             <div className="space-y-4 text-xs">
               <div className="rounded-xl bg-blue-50/70 border border-blue-100 p-4 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                  <span className="font-mono font-black text-xs text-[#475569]">
                     {detailItem.subjectCode}
                   </span>
-                  <span className="px-2.5 py-1 rounded-full bg-white text-slate-700 font-bold text-xs border border-slate-200">
+                  <span className="text-[13px] font-semibold text-[#64748B]">
                     Học kỳ {detailItem.recommendedSemester}
                   </span>
                 </div>

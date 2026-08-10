@@ -207,7 +207,7 @@ export default function StudentExamLobbyPage() {
                   <ArrowLeft className="w-4 h-4" /> Lịch thi
                 </button>
                 <span className="text-blue-300/60">•</span>
-                <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-md bg-white/15 text-blue-100 text-[13px] font-semibold tracking-wide uppercase">
+                <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold tracking-wide uppercase text-blue-100">
                   <Sparkles className="w-3.5 h-3.5 text-blue-300" />
                   {examTypeBadgeText}
                 </span>

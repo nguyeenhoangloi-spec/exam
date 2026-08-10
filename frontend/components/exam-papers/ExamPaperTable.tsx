@@ -95,7 +95,7 @@ export function ExamPaperTable({
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {subCode && (
-                      <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[13px] font-semibold text-blue-700 border border-blue-200/70 font-mono">
+                      <span className="text-[13px] font-semibold text-[#475569] font-mono">
                         {subCode}
                       </span>
                     )}
@@ -124,11 +124,11 @@ export function ExamPaperTable({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
-                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
+                  <div className="flex items-center gap-[6px] text-[13px] text-[#475569]">
                     <HelpCircle className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                     <span>{qCount} câu hỏi</span>
                   </div>
-                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
+                  <div className="flex items-center gap-[6px] text-[13px] text-[#475569]">
                     <Award className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                     <span>{p.totalScore} điểm</span>
                   </div>

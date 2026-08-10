@@ -246,7 +246,7 @@ function TrashPageContent() {
         <div>
           <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
             {currentCategoryInfo.title}
-            <span className="text-[13px] font-semibold px-3 py-1 rounded-full bg-blue-50 text-[#2563EB] border border-blue-100">
+            <span className="text-[13px] font-semibold text-[#64748B]">
               {items.length} mục
             </span>
           </h1>
@@ -535,7 +535,7 @@ function TrashPageContent() {
                       <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-[#64748B] flex items-center justify-center shrink-0">
                         <Trash2 className="w-5 h-5" />
                       </div>
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[13px] font-semibold ${remainingDays <= 5 ? 'text-rose-700 bg-rose-50' : 'text-amber-700 bg-amber-50'
+                      <span className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${remainingDays <= 5 ? 'text-[#DC2626]' : 'text-[#D97706]'
                         }`}>
                         <Clock className="w-3.5 h-3.5" />
                         Còn {remainingDays} ngày
@@ -644,9 +644,9 @@ function TrashPageContent() {
                         )}
                         {visibleColumns.expiresIn && (
                           <td className={`px-5 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
-                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[13px] font-semibold ${remainingDays <= 5
-                                ? 'text-rose-700 bg-rose-50'
-                                : 'text-amber-700 bg-amber-50'
+                            <span className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${remainingDays <= 5
+                                ? 'text-[#DC2626]'
+                                : 'text-[#D97706]'
                               }`}>
                               <Clock className="w-3.5 h-3.5" />
                               Còn {remainingDays} ngày
@@ -655,7 +655,7 @@ function TrashPageContent() {
                         )}
                         {visibleColumns.deletedBy && (
                           <td className={`px-5 font-normal text-[#334155] whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-[#334155] text-[13px] font-medium">
+                            <span className="text-[14px] font-medium text-[#334155]">
                               {item.deletedBy}
                             </span>
                           </td>

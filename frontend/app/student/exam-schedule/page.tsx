@@ -310,7 +310,7 @@ export default function StudentExamSchedulePage() {
                 <div className="space-y-3.5">
                   {/* Card top badges */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-md">
+                    <span className="font-mono font-black text-xs text-[#475569]">
                       {item.subjectCode}
                     </span>
                     <div className="flex items-center gap-2">
@@ -318,11 +318,11 @@ export default function StudentExamSchedulePage() {
                         {item.periodName}
                       </span>
                       {item.mode === 'MOCK' ? (
-                        <span className="text-[10.5px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0">
+                        <span className="text-[13px] font-semibold text-[#475569] shrink-0">
                           Thi thử
                         </span>
                       ) : (
-                        <span className="text-[10.5px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md shrink-0">
+                        <span className="text-[13px] font-semibold text-[#475569] shrink-0">
                           Chính thức
                         </span>
                       )}
@@ -383,9 +383,9 @@ export default function StudentExamSchedulePage() {
                           <Award className="w-3.5 h-3.5 text-emerald-600" />
                           Điểm công bố:
                         </span>
-                        <span className={`font-mono font-black text-xs px-2.5 py-0.5 rounded-lg border ${(item as any).attempt.totalScore === 0
-                            ? 'bg-rose-50 text-rose-700 border-rose-200'
-                            : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        <span className={`font-mono font-black text-xs ${(item as any).attempt.totalScore === 0
+                            ? 'text-[#DC2626]'
+                            : 'text-[#15803D]'
                           }`}>
                           {(item as any).attempt.totalScore}đ {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
                         </span>

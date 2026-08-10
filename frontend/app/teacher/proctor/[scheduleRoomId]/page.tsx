@@ -812,7 +812,7 @@ export default function ProctorDashboardPage() {
                       {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
                     </div>
 
-                    <span className="font-mono font-black text-[11px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 inline-block mt-1">
+                    <span className="font-mono font-black text-[11px] text-[#475569] inline-block mt-1">
                       {s.student.studentCode}
                     </span>
                   </div>
@@ -910,7 +910,7 @@ export default function ProctorDashboardPage() {
                       </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      <span className="font-mono font-black text-xs text-[#475569]">
                         {s.student.studentCode}
                       </span>
                     </td>
@@ -1014,7 +1014,7 @@ export default function ProctorDashboardPage() {
                     {/* Student code */}
                     {visibleColumns.code !== false && (
                       <td className="p-3.5 whitespace-nowrap">
-                        <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                        <span className="font-mono font-black text-xs text-[#475569]">
                           {s.student.studentCode}
                         </span>
                       </td>
@@ -1209,7 +1209,7 @@ export default function ProctorDashboardPage() {
               {/* Student info */}
               <div className="mx-6 mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 flex items-center justify-between">
                 <span>Thí sinh: <strong className="text-slate-900 font-extrabold">{selectedStudent.student.fullName}</strong></span>
-                <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                <span className="font-mono font-black text-xs text-[#475569]">
                   {selectedStudent.student.studentCode}
                 </span>
               </div>

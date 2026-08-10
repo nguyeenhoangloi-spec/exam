@@ -20,7 +20,8 @@ export function ExamPaperHeader({
       <div className="space-y-1">
         <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
           <span>Quản lý Đề thi & Ma trận đề</span>
-          <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[13px] font-semibold text-[#2563EB] border border-blue-200">
+          <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-[#2563EB]">
+            <Sparkles className="h-3.5 w-3.5" />
             Tự động sinh đề
           </span>
         </h1>
@@ -57,4 +58,3 @@ export function ExamPaperHeader({
     </div>
   );
 }
-

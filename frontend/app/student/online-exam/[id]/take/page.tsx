@@ -556,10 +556,10 @@ export default function StudentExamTakePage() {
                   <span className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
                     {currentIdx + 1}
                   </span>
-                  <span className="text-xs font-bold font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/80">
+                  <span className="text-xs font-bold font-mono text-slate-500">
                     Mã: {currentQ.code}
                   </span>
-                  <span className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold text-xs rounded-lg border border-blue-100">
+                  <span className="text-xs font-bold text-[#475569]">
                     {currentQ.score} điểm
                   </span>
                 </div>

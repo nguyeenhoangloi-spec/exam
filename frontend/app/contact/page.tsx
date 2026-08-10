@@ -280,7 +280,7 @@ export default function ContactSupportPage() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300">
+            <div className="hidden sm:flex items-center gap-[6px] text-xs font-bold text-slate-600 dark:text-slate-300">
               <Globe className="h-3.5 w-3.5 text-blue-600" />
               <span>Tiếng Việt</span>
             </div>
@@ -301,7 +301,7 @@ export default function ContactSupportPage() {
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-10 space-y-10">
         {/* Search Hero Section */}
         <div className="text-center space-y-6 max-w-3xl mx-auto pt-4">
-          <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-3.5 py-1.5 text-xs font-extrabold text-blue-700 dark:text-blue-300 shadow-2xs">
+          <div className="inline-flex items-center gap-[6px] text-xs font-extrabold text-blue-700 dark:text-blue-300">
             <Sparkles className="h-3.5 w-3.5 text-blue-600" />
             <span>Hệ thống giải đáp sự cố thi tự động 24/7</span>
           </div>
@@ -352,7 +352,7 @@ export default function ContactSupportPage() {
                       >
                         <div className="space-y-0.5 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="shrink-0 rounded-md bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 text-[10px] font-extrabold text-blue-700 dark:text-blue-300">
+                            <span className="shrink-0 text-[11px] font-extrabold text-[#475569] dark:text-slate-300">
                               {art.categoryLabel}
                             </span>
                             <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
@@ -503,7 +503,7 @@ export default function ContactSupportPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="hidden sm:inline-block rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+                        <span className="hidden sm:inline-block text-[11px] font-bold text-slate-500">
                           {faq.categoryLabel}
                         </span>
                         <ChevronRight
@@ -658,7 +658,7 @@ export default function ContactSupportPage() {
                 className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-blue-50/50 hover:border-blue-200 transition cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-black text-blue-700">
+                  <span className="text-[11px] font-black text-[#475569]">
                     {art.categoryLabel}
                   </span>
                   <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
@@ -690,7 +690,7 @@ export default function ContactSupportPage() {
         {selectedArticle && (
           <div className="space-y-5">
             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                <span className="text-xs font-black text-[#475569]">
                 {selectedArticle.categoryLabel}
               </span>
               <div className="flex items-center gap-3 text-xs font-bold text-slate-400">
@@ -717,7 +717,7 @@ export default function ContactSupportPage() {
             <div className="flex items-center gap-1.5 flex-wrap pt-2">
               <span className="text-xs font-bold text-slate-400">Thẻ liên quan:</span>
               {selectedArticle.tags.map((t) => (
-                <span key={t} className="rounded-lg bg-slate-100 px-2 py-1 text-[11px] font-bold text-slate-600">
+                <span key={t} className="text-[11px] font-bold text-slate-600">
                   #{t}
                 </span>
               ))}

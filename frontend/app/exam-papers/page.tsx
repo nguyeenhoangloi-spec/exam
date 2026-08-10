@@ -806,13 +806,13 @@ export default function ExamPapersPage() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700">
+                <span className="text-[13px] font-semibold text-[#475569]">
                   {(selectedPaper as any).questionCount ?? selectedPaper.questions?.length ?? (selectedPaper as any).details?.length ?? 0} câu hỏi
                 </span>
-                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700">
+                <span className="text-[13px] font-semibold text-[#475569]">
                   {selectedPaper.totalScore} điểm
                 </span>
-                <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-700">
+                <span className="text-[13px] font-semibold text-[#475569]">
                   {selectedPaper.durationMinutes} phút
                 </span>
               </div>
