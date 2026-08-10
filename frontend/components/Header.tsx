@@ -301,7 +301,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-label="Xem thông báo"
                 aria-expanded={openPanel === 'notifications'}
                 onClick={() => togglePanel('notifications')}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Bell className="h-4.5 w-4.5" />
                 {effectiveUnreadCount > 0 && (
@@ -382,7 +382,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Vertical Divider */}
-            <div className="h-6 w-px bg-slate-200/80 dark:bg-slate-700" />
+            <div className="h-6 w-px bg-[#E2E8F0] dark:bg-slate-700" />
 
             {/* Header User Profile Trigger Button */}
             <div className="relative">
@@ -400,18 +400,18 @@ export const Header: React.FC<HeaderProps> = ({
                   <img
                     src={avatarUrl}
                     alt={displayName}
-                    className="h-9 w-9 shrink-0 rounded-full object-cover shadow-2xs border border-blue-600/30"
+                    className="h-10 w-10 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 font-black text-white shadow-2xs text-sm tracking-tight">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-sm tracking-tight">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-none">
-                  <span className="block text-xs font-black text-slate-900 dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[9.5px] font-extrabold text-blue-600 uppercase tracking-wider mt-1">
+                  <span className="block text-[15px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
+                  <span className="block text-[13px] font-semibold text-[#2563EB] uppercase tracking-wide mt-1">
                     {displayRoleLabel}
                   </span>
                 </div>

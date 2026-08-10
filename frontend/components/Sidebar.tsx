@@ -211,7 +211,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     >
       {/* Header Section with Toggle Button */}
       {collapsed ? (
-        <div className="flex h-16 shrink-0 items-center justify-center border-b border-[#E2E8F0] px-3 bg-white">
+        <div className="flex h-[68px] shrink-0 items-center justify-center border-b border-[#E2E8F0] px-3 py-1.5 bg-white">
           <button
             type="button"
             onClick={onToggle}
@@ -223,7 +223,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       ) : (
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#E2E8F0] px-4 bg-white">
+        <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-[#E2E8F0] px-4 py-1.5 bg-white">
           <div className="flex items-center gap-3 min-w-0">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#2563EB]">
               <GraduationCap className="h-5 w-5" />
@@ -232,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <h1 className="truncate text-[16px] font-bold tracking-tight text-[#0F172A] leading-tight">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[12px] font-medium tracking-tight text-[#64748B] leading-tight mt-0.5">
+              <h2 className="truncate text-[13px] font-medium tracking-tight text-[#64748B] leading-tight mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
