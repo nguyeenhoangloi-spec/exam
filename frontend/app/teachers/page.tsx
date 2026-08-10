@@ -228,6 +228,29 @@ export default function TeachersPage() {
     });
   };
 
+  const handleToggleLock = (t: Teacher) => {
+    const isLocked = t.user?.status === 'LOCKED';
+    const actionText = isLocked ? 'Mở khóa đăng nhập' : 'Khóa đăng nhập';
+    setConfirmModal({
+      isOpen: true,
+      title: `${actionText} tài khoản giảng viên`,
+      message: isLocked
+        ? `Bạn có chắc chắn muốn MỞ KHÓA tài khoản cho giảng viên "${t.fullName}" (${t.teacherCode})? Giảng viên sẽ có thể đăng nhập lại hệ thống.`
+        : `Bạn có chắc chắn muốn KHÓA ĐĂNG NHẬP tài khoản giảng viên "${t.fullName}" (${t.teacherCode})? Giảng viên sẽ KHÔNG THỂ ĐĂNG NHẬP vào hệ thống nữa!`,
+      type: isLocked ? 'info' : 'warning',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/teachers/${t.id}/${isLocked ? 'unlock' : 'lock'}`);
+          setToast({ message: `Đã ${isLocked ? 'mở khóa' : 'khóa'} tài khoản giảng viên thành công!`, type: 'success' });
+          fetchData();
+        } catch (err: any) {
+          setToast({ message: err?.response?.data?.message || 'Thao tác thất bại', type: 'error' });
+        }
+      },
+    });
+  };
+
   const exportExcel = () => {
     exportToFormattedExcel({
       filename: `Danh_sach_giang_vien_${new Date().toISOString().slice(0, 10)}.xls`,
@@ -395,6 +418,7 @@ export default function TeachersPage() {
             }}
             onEdit={openEditModal}
             onDelete={handleDelete}
+            onToggleLock={handleToggleLock}
             isAdmin={currentUser?.role === 'ADMIN'}
           />
         )}

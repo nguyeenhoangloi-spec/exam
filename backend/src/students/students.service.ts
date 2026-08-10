@@ -1,10 +1,33 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class StudentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
+
+  async setLock(actor: { id: number }, id: number, locked: boolean) {
+    const student = await this.findOne(id);
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id: student.userId },
+        data: { status: locked ? 'LOCKED' : 'ACTIVE' },
+        include: { student: true },
+      });
+      await this.audit.write(
+        {
+          actorId: actor.id,
+          action: locked ? 'LOCK' : 'UNLOCK',
+          entityType: 'STUDENT',
+          entityId: id,
+          description: `${locked ? 'Đã khóa' : 'Đã mở khóa'} tài khoản sinh viên ${student.fullName}`,
+        },
+        tx,
+      );
+      return updated;
+    });
+  }
 
   async findAll(search?: string) {
     const where: any = {};

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Edit, Trash2, GraduationCap, Building2, Mail, Phone, MoreVertical } from 'lucide-react';
+import { Eye, Edit, Trash2, GraduationCap, Building2, Mail, Phone, MoreVertical, Lock, Unlock } from 'lucide-react';
 import { Teacher } from '../../types';
 import { Badge } from '../ui/Badge';
+import { StatusBadge } from '../common/StatusBadge';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 
 const DEGREE_BADGE: Record<string, string> = {
@@ -23,6 +24,7 @@ interface TeacherTableProps {
   onDetail: (t: Teacher) => void;
   onEdit: (t: Teacher) => void;
   onDelete: (id: number) => void;
+  onToggleLock?: (t: Teacher) => void;
   isAdmin: boolean;
 }
 
@@ -43,6 +45,7 @@ export function TeacherTable({
   onDetail,
   onEdit,
   onDelete,
+  onToggleLock,
   isAdmin,
 }: TeacherTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
@@ -55,6 +58,7 @@ export function TeacherTable({
         {teachers.map((t) => {
           const isChecked = selected.includes(t.id);
           const degreeBadge = DEGREE_BADGE[t.degree] || 'bg-slate-50 text-slate-600 border-slate-200';
+          const isLocked = t.user?.status === 'LOCKED';
 
           return (
             <div
@@ -80,9 +84,12 @@ export function TeacherTable({
                     </button>
                   </div>
 
-                  <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
-                    {t.degree || 'TS'}
-                  </Badge>
+                  <div className="flex items-center gap-1.5">
+                    {isLocked && <StatusBadge status="LOCKED" customLabel="Đã khóa" />}
+                    <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
+                      {t.degree || 'TS'}
+                    </Badge>
+                  </div>
                 </div>
 
                 <div>
@@ -349,6 +356,27 @@ export function TeacherTable({
                               <Edit className="h-4 w-4 text-[#2563EB]" />
                               <span>Chỉnh sửa</span>
                             </button>
+                            {onToggleLock && (
+                              <button
+                                type="button"
+                                onClick={() => { closeMenu(); onToggleLock(t); }}
+                                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-2 ${
+                                  t.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 text-emerald-600' : 'hover:bg-amber-50 text-amber-600'
+                                }`}
+                              >
+                                {t.user?.status === 'LOCKED' ? (
+                                  <>
+                                    <Unlock className="h-4 w-4 text-emerald-600" />
+                                    <span>Mở khóa tài khoản</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Lock className="h-4 w-4 text-amber-600" />
+                                    <span>Khóa đăng nhập</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
                             <div className="my-1 border-t border-[#E2E8F0]" />
                             <button
                               type="button"

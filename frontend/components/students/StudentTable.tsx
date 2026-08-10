@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Edit, Trash2, Users, School, Mail, Phone, CheckCircle2, MoreVertical } from 'lucide-react';
+import { Eye, Edit, Trash2, Users, School, Mail, Phone, CheckCircle2, MoreVertical, Lock, Unlock } from 'lucide-react';
 import { StatusBadge } from '../common/StatusBadge';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { Student } from '../../types';
@@ -16,6 +16,7 @@ interface StudentTableProps {
   onDetail: (s: Student) => void;
   onEdit: (s: Student) => void;
   onDelete: (id: number) => void;
+  onToggleLock?: (s: Student) => void;
   isAdmin: boolean;
 }
 
@@ -36,6 +37,7 @@ export function StudentTable({
   onDetail,
   onEdit,
   onDelete,
+  onToggleLock,
   isAdmin,
 }: StudentTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
@@ -47,6 +49,7 @@ export function StudentTable({
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {students.map((s) => {
           const isChecked = selected.includes(s.id);
+          const isLocked = s.user?.status === 'LOCKED';
           return (
             <div
               key={s.id}
@@ -71,7 +74,7 @@ export function StudentTable({
                     </button>
                   </div>
 
-                  <StatusBadge status="CONFIRMED" customLabel="Đang học" />
+                  <StatusBadge status={isLocked ? 'LOCKED' : 'CONFIRMED'} customLabel={isLocked ? 'Đã khóa' : 'Đang học'} />
                 </div>
 
                 <div>
@@ -333,6 +336,27 @@ export function StudentTable({
                               <Edit className="h-4 w-4 text-[#2563EB]" />
                               <span>Chỉnh sửa</span>
                             </button>
+                            {onToggleLock && (
+                              <button
+                                type="button"
+                                onClick={() => { closeMenu(); onToggleLock(s); }}
+                                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-2 ${
+                                  s.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 text-emerald-600' : 'hover:bg-amber-50 text-amber-600'
+                                }`}
+                              >
+                                {s.user?.status === 'LOCKED' ? (
+                                  <>
+                                    <Unlock className="h-4 w-4 text-emerald-600" />
+                                    <span>Mở khóa tài khoản</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Lock className="h-4 w-4 text-amber-600" />
+                                    <span>Khóa đăng nhập</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
                             <div className="my-1 border-t border-[#E2E8F0]" />
                             <button
                               type="button"

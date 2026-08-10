@@ -50,6 +50,18 @@ export class StudentsController {
     return this.studentsService.getStudentExamSchedule(id);
   }
 
+  @Roles('ADMIN')
+  @Post(':id/lock')
+  lock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.studentsService.setLock(req.user, id, true);
+  }
+
+  @Roles('ADMIN')
+  @Post(':id/unlock')
+  unlock(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
+    return this.studentsService.setLock(req.user, id, false);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.findOne(id);
