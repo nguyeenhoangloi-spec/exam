@@ -3,7 +3,7 @@
 import React, { FormEvent, useState } from 'react';
 import {
   Sparkles, Calendar, AlertTriangle, CheckCircle2,
-  FileText, CheckSquare, ChevronDown, X, ArrowLeftRight,
+  FileText, CheckSquare, ChevronDown, X, ArrowLeftRight, Volume2,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 
@@ -20,6 +20,7 @@ export interface ExamPaperMatrixFormData {
   easyScore?: string;
   mediumScore?: string;
   hardScore?: string;
+  mediaMaxPlays?: string;
 }
 
 interface ExamPaperMatrixFormProps {
@@ -318,17 +319,17 @@ export function ExamPaperMatrixForm({
                 <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
 
                   {/* Header */}
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                  <div className="flex items-center justify-between px-6 py-4 bg-[#2563EB] text-white">
                     <div>
-                      <p className="text-base font-bold text-slate-900">Chọn Ca thi / Lịch thi</p>
-                      <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                      <p className="text-lg font-semibold text-white tracking-tight">Chọn Ca thi / Lịch thi</p>
+                      <p className="text-xs font-semibold text-blue-100 mt-0.5">
                         {pending.length} ca chưa có đề · {created.length} ca đã có đề
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setShowPanel(false)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -537,6 +538,32 @@ export function ExamPaperMatrixForm({
               ))}
             </div>
           )}
+        </div>
+
+        {/* ── CẤU HÌNH MEDIA ── */}
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
+              <Volume2 className="h-5 w-5" />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-slate-900">Số lần phát Video/Audio mặc định cho đề thi</span>
+              <span className="text-xs font-normal text-slate-500 mt-0.5">
+                Tất cả câu hỏi nghe/xem trong đề thi này sẽ tự động áp dụng số lượt phát tối đa này
+              </span>
+            </div>
+          </div>
+          <select
+            value={formData.mediaMaxPlays || '2'}
+            onChange={(e) => setFormData((p: any) => ({ ...p, mediaMaxPlays: e.target.value }))}
+            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
+          >
+            <option value="1">1 lần (Ngặt nghèo / Thi Nghe)</option>
+            <option value="2">2 lần (Chuẩn Khảo thí / IELTS)</option>
+            <option value="3">3 lần</option>
+            <option value="5">5 lần</option>
+            <option value="0">Không giới hạn</option>
+          </select>
         </div>
 
         {/* ── FOOTER ── */}

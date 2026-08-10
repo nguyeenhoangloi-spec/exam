@@ -7,6 +7,7 @@ import * as express from 'express';
 import { join } from 'node:path';
 
 async function bootstrap() {
+  // Trigger config reload for updated .env
   const app = await NestFactory.create(AppModule);
 
   // Document/AI import sends extracted text and (for PDF) inline image data

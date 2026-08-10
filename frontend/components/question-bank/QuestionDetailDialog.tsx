@@ -59,7 +59,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
         />
 
         {/* Drawer Header - Solid Flat Color matching All Drawers */}
-        <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800 flex items-center justify-between gap-3">
+        <div className="bg-[#2563EB] p-5 text-white shrink-0 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="rounded-xl bg-white/10 px-3 py-1 text-[15px] font-semibold text-white border border-white/15 font-mono">
               {codeText}

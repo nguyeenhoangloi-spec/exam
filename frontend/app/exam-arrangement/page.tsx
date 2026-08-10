@@ -648,16 +648,16 @@ export default function ExamArrangementPage() {
                         <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
 
                           {/* Header */}
-                          <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
+                          <div className="flex items-center justify-between px-6 py-4 bg-[#2563EB] text-white">
                             <div>
-                              <p className="text-[20px] font-semibold text-[#0F172A] tracking-tight leading-none">Chọn Ca thi</p>
-                              <p className="text-[13px] text-[#64748B] font-semibold mt-1">
+                              <p className="text-lg font-semibold text-white tracking-tight">Chọn Ca thi</p>
+                              <p className="text-xs font-semibold text-blue-100 mt-0.5">
                                 {schedules.filter((s: any) => !s.examScheduleRooms?.length).length} ca chưa xếp
                                 · {schedules.filter((s: any) => s.examScheduleRooms?.length).length} ca đã xếp phòng
                               </p>
                             </div>
                             <button type="button" onClick={() => setShowSchedulePicker(false)}
-                              className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer">
                               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                           </div>

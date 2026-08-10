@@ -14,7 +14,7 @@ import {
   BLOOM_LABELS,
 } from '../../lib/enum-labels';
 import { getImageUrl } from '../../lib/media-utils';
-import { ImageIcon, Trash2, Video } from 'lucide-react';
+import { ImageIcon, Trash2, Video, Volume2 } from 'lucide-react';
 
 const option = z.object({
   label: z.string().min(1),
@@ -87,6 +87,7 @@ export function QuestionFormDialog({
   // Media đã tồn tại trên server (khi edit)
   const [existingMedia, setExistingMedia] = useState<QuestionMedia[]>([]);
   const [removedMediaIds, setRemovedMediaIds] = useState<string[]>([]);
+  const [maxPlays, setMaxPlays] = useState<number>((question?.media?.[0] as any)?.maxPlays ?? 2);
 
   const addMediaFiles = (incoming: File[]) => {
     const urls = incoming.map((f) => URL.createObjectURL(f));

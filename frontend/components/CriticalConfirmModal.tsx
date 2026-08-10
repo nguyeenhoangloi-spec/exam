@@ -305,14 +305,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-extrabold transition cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`px-5 py-2.5 rounded-xl text-white font-extrabold text-xs transition shadow-sm flex items-center gap-2 cursor-pointer ${
+              className={`px-5 py-2.5 rounded-xl text-white font-bold text-sm transition shadow-2xs flex items-center gap-2 cursor-pointer ${
                 loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700 active:scale-95'
               }`}
             >

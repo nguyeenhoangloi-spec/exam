@@ -140,18 +140,22 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
+        <div className="px-6 py-4 bg-[#2563EB] text-white flex justify-between items-center shrink-0">
           <div>
-            <h2 className="text-[20px] font-semibold leading-[28px] text-[#0F172A] flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-blue-600" />
+            <h2 className="text-[20px] font-semibold leading-[28px] text-white flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-white" />
               Thiết Lập Rubric Chấm Điểm Tự Luận
             </h2>
-            <p className="text-[13px] font-medium text-[#64748B] font-mono mt-0.5">
-              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-blue-700 font-extrabold">{expectedScore}đ</strong>
+            <p className="text-[13px] font-medium text-blue-100 font-mono mt-0.5">
+              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-white font-extrabold">{expectedScore}đ</strong>
             </p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-slate-200/80 text-slate-400 hover:text-slate-700 transition cursor-pointer">
-            <X className="w-5 h-5" />
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:bg-blue-700/80 hover:text-white transition cursor-pointer"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
 

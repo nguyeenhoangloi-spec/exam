@@ -488,13 +488,13 @@ export default function ClassesPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-[#334155] hover:bg-slate-100 text-[15px] font-medium transition cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-[15px] font-medium transition shadow-xs cursor-pointer"
+              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer"
             >
               Lưu Lớp Học
             </button>

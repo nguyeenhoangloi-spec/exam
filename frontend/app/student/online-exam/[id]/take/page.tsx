@@ -8,6 +8,7 @@ import { fixHtmlImageUrls, getImageUrl } from '@/lib/media-utils';
 import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { Toast } from '@/components/Toast';
 import { FillBlankQuestionRenderer } from '@/components/question-bank/FillBlankQuestionRenderer';
+import { QuestionMediaPlayer } from '@/components/exam/QuestionMediaPlayer';
 
 export default function StudentExamTakePage() {
   const router = useRouter();
@@ -608,17 +609,28 @@ export default function StudentExamTakePage() {
                       const mime: string = mediaItem.mimeType || '';
                       if (mime.startsWith('video/')) {
                         return (
-                          <div key={mediaItem.id || idx} className="rounded-xl border border-slate-200 overflow-hidden bg-black">
-                            <video src={fullUrl} controls className="max-h-52 max-w-full rounded-xl" />
-                          </div>
+                          <QuestionMediaPlayer
+                            key={mediaItem.id || idx}
+                            attemptId={tokenFromUrl}
+                            questionId={currentQ.questionId}
+                            src={fullUrl}
+                            type="video"
+                            fileName={mediaItem.fileName}
+                            maxPlays={mediaItem.maxPlays || 2}
+                          />
                         );
                       }
                       if (mime.startsWith('audio/')) {
                         return (
-                          <div key={mediaItem.id || idx} className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                            <span className="text-[11px] font-semibold text-slate-600 max-w-[200px] truncate">{mediaItem.fileName || 'Audio đính kèm'}</span>
-                            <audio src={fullUrl} controls className="h-9" />
-                          </div>
+                          <QuestionMediaPlayer
+                            key={mediaItem.id || idx}
+                            attemptId={tokenFromUrl}
+                            questionId={currentQ.questionId}
+                            src={fullUrl}
+                            type="audio"
+                            fileName={mediaItem.fileName}
+                            maxPlays={mediaItem.maxPlays || 2}
+                          />
                         );
                       }
                       // Default: image

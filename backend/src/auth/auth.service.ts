@@ -179,19 +179,53 @@ export class AuthService {
     return this.getProfile(userId);
   }
 
+  private getGoogleConfig() {
+    let clientId = process.env.GOOGLE_CLIENT_ID || '';
+    let clientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
+    let redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
+
+    try {
+      const fs = require('node:fs');
+      const path = require('node:path');
+      const candidatePaths = [
+        path.join(process.cwd(), 'backend', '.env'),
+        path.join(process.cwd(), '.env'),
+      ];
+      for (const envPath of candidatePaths) {
+        if (fs.existsSync(envPath)) {
+          const envContent = fs.readFileSync(envPath, 'utf8');
+          for (const line of envContent.split('\n')) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('GOOGLE_CLIENT_ID=')) {
+              const val = trimmed.replace('GOOGLE_CLIENT_ID=', '').replace(/^["']|["']$/g, '').trim();
+              if (val) clientId = val;
+            } else if (trimmed.startsWith('GOOGLE_CLIENT_SECRET=')) {
+              const val = trimmed.replace('GOOGLE_CLIENT_SECRET=', '').replace(/^["']|["']$/g, '').trim();
+              if (val) clientSecret = val;
+            } else if (trimmed.startsWith('GOOGLE_REDIRECT_URI=')) {
+              const val = trimmed.replace('GOOGLE_REDIRECT_URI=', '').replace(/^["']|["']$/g, '').trim();
+              if (val) redirectUri = val;
+            }
+          }
+        }
+      }
+    } catch {}
+
+    return { clientId, clientSecret, redirectUri };
+  }
+
   /**
    * Generates Google OAuth redirect URL
    */
   getGoogleAuthUrl(): string {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const { clientId, redirectUri } = this.getGoogleConfig();
     if (!clientId) {
       throw new BadRequestException(
         'Tính năng Đăng nhập Google chưa được kích hoạt: Chưa cấu hình GOOGLE_CLIENT_ID trong backend/.env.',
       );
     }
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
     const scope = encodeURIComponent('email profile');
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&prompt=select_account`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&prompt=select_account%20consent`;
   }
 
   /**
@@ -263,12 +297,10 @@ export class AuthService {
       throw new BadRequestException('Mã xác thực Google không hợp lệ.');
     }
 
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const { clientId, clientSecret, redirectUri } = this.getGoogleConfig();
     if (!clientId || !clientSecret) {
       throw new BadRequestException('Chưa cấu hình GOOGLE_CLIENT_ID hoặc GOOGLE_CLIENT_SECRET trong backend/.env.');
     }
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/auth/google/callback';
 
     try {
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {

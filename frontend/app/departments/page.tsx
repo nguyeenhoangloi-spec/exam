@@ -502,13 +502,13 @@ export default function DepartmentsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-xs font-extrabold transition shadow-md shadow-blue-600/20 cursor-pointer"
+              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer"
             >
               Lưu Thông Tin
             </button>
@@ -670,7 +670,7 @@ export default function DepartmentsPage() {
           {/* Drawer Content */}
           <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
             {/* Header - Solid Flat Color */}
-            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+            <div className="bg-[#2563EB] p-5 text-white shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-mono font-bold text-base text-white border border-white/15">

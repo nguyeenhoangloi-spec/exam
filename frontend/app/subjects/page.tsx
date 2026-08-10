@@ -513,10 +513,19 @@ export default function SubjectsPage() {
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button type="button" onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition cursor-pointer">Hủy</button>
-            <button type="submit"
-              className="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-xs font-extrabold transition shadow-md shadow-blue-600/20 cursor-pointer">Lưu Môn Học</button>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-semibold transition shadow-2xs cursor-pointer"
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 rounded-xl text-white bg-[#2563EB] hover:bg-blue-700 text-sm font-bold transition shadow-2xs cursor-pointer"
+            >
+              Lưu Môn Học
+            </button>
           </div>
         </form>
       </Modal>
@@ -616,7 +625,7 @@ export default function SubjectsPage() {
           <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
           <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
             {/* Header - Solid Flat Color matching Department/Teacher/Student Drawer */}
-            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+            <div className="bg-[#2563EB] p-5 text-white shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
