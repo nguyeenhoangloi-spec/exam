@@ -28,8 +28,9 @@ import {
   LogOut,
   Trash2,
   FileCheck,
-  type LucideIcon,
+  Award,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
 import { canAccessPath } from '../lib/access';
 import { removeAuth } from '../lib/auth';
@@ -76,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
   const [openSubMenus, setOpenSubMenus] = React.useState<Record<string, boolean>>({
-    '/trash': true, // Mặc định cho phép mục thùng rác mở ra khi truy cập
+    '/trash': true,
   });
   const footerRef = React.useRef<HTMLDivElement>(null);
 
@@ -169,6 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       group: 'DÀNH CHO SINH VIÊN',
       items: [
         { name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: BookMarked },
+        { name: 'Kết quả thi', href: '/student/results', icon: Award },
         { name: 'Khung đào tạo ngành', href: '/student/curriculum', icon: BookOpen },
       ],
     },
@@ -262,7 +264,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                    className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#94A3B8] dark:text-slate-500 hover:text-[#64748B] dark:hover:text-slate-300 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#94A3B8] dark:text-slate-500 hover:text-[#64748B] dark:hover:text-slate-300 transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                     }`}
                 >
                   <span className="truncate">{group.group}</span>
@@ -289,39 +291,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`group relative flex w-full h-11 items-center justify-between rounded-lg px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isActive
-                                ? 'bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-semibold'
-                                : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#334155] dark:hover:text-slate-100'
+                            className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer ${isActive
+                              ? 'bg-[#EFF6FF] dark:bg-blue-950/70 text-[#2563EB] dark:text-blue-400 font-bold'
+                              : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white'
                               }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                            <Icon className={`h-[19px] w-[19px] shrink-0 transition-colors duration-150 ${isActive ? 'text-[#2563EB]' : 'text-[#64748B] group-hover:text-[#475569]'}`} />
-                              <span className={`whitespace-nowrap transition-all duration-200 truncate ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100'}`}>
-                                {item.name}
-                              </span>
+                              <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#64748B] dark:text-slate-400'}`} />
+                              {!collapsed && <span className="truncate">{item.name}</span>}
                             </div>
-
                             {!collapsed && (
-                              isSubOpen ? (
-                                <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                              ) : (
-                                <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                              )
+                              <ChevronDown
+                                className={`h-3.5 w-3.5 text-[#94A3B8] transition-transform duration-200 ${isSubOpen ? 'rotate-180' : ''}`}
+                              />
                             )}
                           </button>
 
-                          {/* Sub Items */}
+                          {/* Sub items */}
                           {isSubOpen && !collapsed && (
-                            <div className="pl-8 space-y-1 ml-2 py-1">
+                            <div className="pl-9 space-y-1">
                               {item.children?.map((sub) => {
+                                const isSubActive = isSubItemActive(sub.href);
                                 return (
                                   <Link
                                     key={sub.href}
                                     href={sub.href}
-                                    onClick={onMobileClose}
-                                    className={`block min-h-9 py-2 px-3 rounded-lg text-[14px] font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isSubItemActive(sub.href)
-                                      ? 'bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-semibold'
-                                      : 'text-[#64748B] dark:text-slate-400 hover:text-[#334155] dark:hover:text-slate-100 hover:bg-[#F8FAFC] dark:hover:bg-slate-800'
+                                    className={`block rounded-lg px-3 py-2 text-xs font-semibold transition-all ${isSubActive
+                                      ? 'bg-blue-100/70 dark:bg-blue-900/40 text-[#2563EB] dark:text-blue-400 font-bold'
+                                      : 'text-[#64748B] dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200'
                                       }`}
                                   >
                                     {sub.name}
@@ -338,23 +335,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Link
                         key={item.href}
                         href={item.href}
-                        prefetch={true}
-                        onMouseEnter={() => router.prefetch(item.href)}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group relative flex h-11 items-center justify-start rounded-lg px-3 text-[15px] font-medium transition-all duration-150 overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${isActive
-                            ? 'bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-semibold'
-                            : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#334155] dark:hover:text-slate-100'
+                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all group ${isActive
+                          ? 'bg-[#EFF6FF] dark:bg-blue-950/70 text-[#2563EB] dark:text-blue-400 font-bold shadow-xs'
+                          : 'text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white'
                           }`}
                       >
-                        <Icon className={`h-[19px] w-[19px] shrink-0 transition-colors duration-150 ${isActive ? 'text-[#2563EB]' : 'text-[#64748B] group-hover:text-[#475569]'}`} />
-
-                        <span
-                          className={`whitespace-nowrap transition-all duration-150 overflow-hidden ${collapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 ml-3'
+                        <Icon
+                          className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#64748B] dark:text-slate-400'
                             }`}
-                        >
-                          {item.name}
-                        </span>
+                        />
+                        {!collapsed && <span className="truncate">{item.name}</span>}
                       </Link>
                     );
                   })}
@@ -365,181 +357,128 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Confirmation Modal for Logout */}
+      {/* User Footer Profile Card */}
+      <div ref={footerRef} className="relative border-t border-[#E2E8F0] dark:border-slate-800 p-3 bg-white dark:bg-[#0F172A]">
+        <button
+          type="button"
+          onClick={() => setShowUserMenu(!showUserMenu)}
+          className={`flex w-full items-center gap-3 rounded-xl p-2 transition text-left cursor-pointer hover:bg-[#F8FAFC] dark:hover:bg-slate-800 ${showUserMenu ? 'bg-[#F8FAFC] dark:bg-slate-800' : ''
+            }`}
+        >
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]" />
+          ) : (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] dark:bg-blue-950 text-[#2563EB] dark:text-blue-400 font-bold text-xs">
+              {displayName.charAt(0).toUpperCase()}
+            </div>
+          )}
+
+          {!collapsed && (
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold text-[#0F172A] dark:text-slate-100">{displayName}</p>
+              <p className="truncate text-[11px] font-normal text-[#64748B] dark:text-slate-400 mt-0.5">
+                {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
+              </p>
+            </div>
+          )}
+
+          {!collapsed && <ChevronRight className="h-4 w-4 text-[#94A3B8] shrink-0" />}
+        </button>
+
+        {/* Sidebar Popover Menu */}
+        {showUserMenu && (
+          <div
+            className={`absolute bottom-full mb-2 w-56 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 ${collapsed ? 'left-14' : 'left-3'
+              }`}
+          >
+            {/* Isometric tip */}
+            <div className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 border-r border-b border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
+
+            <div className="relative z-20 space-y-0.5">
+              {/* Header profile info item */}
+              <div className="flex items-center justify-between rounded-xl p-2 bg-slate-50/70 dark:bg-slate-800/50 mb-1">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-bold text-slate-900 dark:text-slate-100">{displayName}</p>
+                    <p className="truncate text-[10px] text-slate-400 dark:text-slate-500">
+                      {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              </div>
+
+              {/* Items */}
+              <Link
+                href="/profile"
+                onClick={() => setShowUserMenu(false)}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                  <span>Hồ sơ cá nhân</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-600 transition" />
+              </Link>
+
+              <Link
+                href="/settings"
+                onClick={() => setShowUserMenu(false)}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                  <span>Cài đặt tài khoản</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-600 transition" />
+              </Link>
+
+              <Link
+                href="/change-password"
+                onClick={() => setShowUserMenu(false)}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Lock className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                  <span>Đổi mật khẩu</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-600 transition" />
+              </Link>
+
+              <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowUserMenu(false);
+                  setShowLogoutConfirm(true);
+                }}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-rose-600 font-bold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <LogOut className="h-4 w-4 text-rose-600" />
+                  <span>Đăng xuất</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Logout Confirm Modal */}
       <ConfirmModal
         isOpen={showLogoutConfirm}
         onClose={() => setShowLogoutConfirm(false)}
         onConfirm={handleLogout}
-        title="Xác nhận đăng xuất"
-        message="Bạn có chắc chắn muốn đăng xuất khỏi hệ thống quản lý khảo thí?"
+        title="Đăng xuất khỏi hệ thống"
+        message="Bạn có chắc chắn muốn đăng xuất phiên làm việc hiện tại không?"
+        confirmText="Đăng xuất ngay"
+        cancelText="Hủy"
         type="danger"
-        confirmText="Đăng xuất"
-        cancelText="Hủy bỏ"
       />
-
-      {/* Footer User Profile Section matching User Screenshots */}
-      <div ref={footerRef} className="relative shrink-0 border-t border-[#E2E8F0] dark:border-slate-800 p-3 bg-white dark:bg-[#0F172A]">
-        <button
-          type="button"
-          onClick={() => setShowUserMenu((prev) => !prev)}
-          aria-expanded={showUserMenu}
-          className={`w-full flex items-center justify-between gap-2.5 rounded-lg hover:bg-[#F8FAFC] dark:hover:bg-slate-800 p-2 transition cursor-pointer text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500/25 ${collapsed ? 'justify-center p-2' : ''
-            }`}
-          title={collapsed ? displayName : undefined}
-        >
-          <div className="flex items-center gap-2.5 min-w-0">
-            {/* Circle Avatar */}
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={displayName}
-                className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0] dark:border-slate-700"
-              />
-            ) : (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 font-bold text-sm">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-            )}
-
-            {!collapsed && (
-              <div className="min-w-0">
-                <span className="block truncate text-[15px] font-semibold text-[#0F172A] dark:text-slate-100 leading-tight">
-                  {displayName}
-                </span>
-                <span className="block truncate text-[13px] font-normal text-[#64748B] dark:text-slate-400 leading-tight mt-0.5">
-                  {role === 'ADMIN' ? 'Quản trị hệ thống' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {!collapsed && (
-            <ChevronDown
-              className={`h-4 w-4 shrink-0 text-[#94A3B8] transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-[#2563EB]' : ''
-                }`}
-            />
-          )}
-        </button>
-
-        {/* Popover User Menu Card (Positioned ABOVE trigger matching Screenshot 3 or SIDEWAYS when collapsed) */}
-        {showUserMenu && (
-          <div
-            className={`absolute ${collapsed
-                ? 'left-[calc(100%+12px)] bottom-1 w-64'
-                : 'bottom-[calc(100%+10px)] left-3 right-3 w-auto'
-              } rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 shadow-2xl z-[9999] text-[15px] animate-in fade-in zoom-in-95 duration-150`}
-          >
-            {/* Little pointer triangle arrow pointing to trigger card */}
-            <div
-              className={`absolute ${collapsed
-                  ? '-left-1.5 bottom-4 h-3 w-3 rotate-45 border-l border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
-                  : '-bottom-1.5 left-8 h-3 w-3 rotate-45 border-r border-b border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
-                }`}
-            />
-
-            {/* Top User Info Header Item */}
-            <div
-              onClick={() => {
-                router.push('/profile');
-                setShowUserMenu(false);
-              }}
-              className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition group"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt={displayName}
-                    className="h-9 w-9 shrink-0 rounded-full object-cover shadow-xs border border-slate-200 dark:border-slate-700"
-                  />
-                ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs">
-                    {displayName.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div className="min-w-0">
-                  <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] truncate group-hover:text-blue-600 transition">
-                    {displayName}
-                  </p>
-                  <p className="text-[13px] font-normal text-slate-400 dark:text-slate-500 truncate mt-0.5">
-                    {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition shrink-0" />
-            </div>
-
-            {/* Divider */}
-            <div className="my-1.5 border-b border-slate-100 dark:border-slate-800" />
-
-            {/* Menu Items */}
-            <div className="space-y-1">
-              <button
-                type="button"
-                onClick={() => {
-                  router.push('/profile');
-                  setShowUserMenu(false);
-                }}
-                className="w-full flex items-center justify-between p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left cursor-pointer group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <UserIcon className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition" />
-                  <span className="font-semibold text-xs text-slate-800 dark:text-slate-200">Hồ sơ cá nhân</span>
-                </div>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  router.push('/settings');
-                  setShowUserMenu(false);
-                }}
-                className="w-full flex items-center justify-between p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left cursor-pointer group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition" />
-                  <span className="font-semibold text-xs text-slate-800 dark:text-slate-200">Cài đặt tài khoản</span>
-                </div>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  router.push('/change-password');
-                  setShowUserMenu(false);
-                }}
-                className="w-full flex items-center justify-between p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left cursor-pointer group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Lock className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition" />
-                  <span className="font-semibold text-xs text-slate-800 dark:text-slate-200">Đổi mật khẩu</span>
-                </div>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition" />
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="my-1.5 border-b border-slate-100 dark:border-slate-800" />
-
-            {/* Logout Item in Red */}
-            <button
-              type="button"
-              onClick={() => {
-                setShowUserMenu(false);
-                setShowLogoutConfirm(true);
-              }}
-              className="w-full flex items-center justify-between p-2 rounded-xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition text-left cursor-pointer group"
-            >
-              <div className="flex items-center gap-2.5">
-                <LogOut className="w-4 h-4 text-rose-600" />
-                <span className="font-bold text-xs text-rose-600">Đăng xuất</span>
-              </div>
-            </button>
-          </div>
-        )}
-      </div>
     </aside>
   );
 };

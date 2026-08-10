@@ -23,6 +23,18 @@ export class StudentsController {
     return this.studentsService.getPersonalCurriculum(req.user.id);
   }
 
+  @Roles('STUDENT')
+  @Get('my-results')
+  getMyResults(@Request() req: any) {
+    return this.studentsService.getPersonalResults(req.user.id);
+  }
+
+  @Roles('STUDENT')
+  @Post('my-results/:attemptId/appeal')
+  requestAppeal(@Request() req: any, @Param('attemptId') attemptId: string, @Body('reason') reason: string) {
+    return this.studentsService.requestAppeal(req.user.id, attemptId, reason);
+  }
+
   @Get()
   findAll(@Query('search') search?: string) {
     return this.studentsService.findAll(search);

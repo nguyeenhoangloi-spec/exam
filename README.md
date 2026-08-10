@@ -52,6 +52,7 @@ exam-management/
     │   ├── question-bank/
     │   ├── exam-papers/
     │   ├── student/exam-schedule/
+    │   ├── student/results/
     │   └── teacher/assignments/
     ├── components/
     ├── lib/
@@ -71,8 +72,8 @@ Hệ thống đã có file seed mẫu tạo sẵn các tài khoản:
 | **Quản trị viên (ADMIN)** | `admin` | `admin123` | Quản lý danh mục, xếp phòng thi tự động, phân công giám thị, duyệt câu hỏi, rút đề thi. |
 | **Giảng viên (TEACHER)** | `teacher1` | `123456` | Xem lịch coi thi cá nhân, tạo câu hỏi trắc nghiệm vào ngân hàng câu hỏi. |
 | **Giảng viên (TEACHER)** | `teacher2` | `123456` | Xem lịch coi thi cá nhân, tạo câu hỏi trắc nghiệm. |
-| **Sinh viên (STUDENT)** | `student1` | `123456` | Xem lịch thi cá nhân (Môn, Ngày giờ, Phòng thi, SBD, Số ghế). |
-| **Sinh viên (STUDENT)** | `student2` | `123456` | Xem lịch thi cá nhân. |
+| **Sinh viên (STUDENT)** | `student1` | `123456` | Xem lịch thi cá nhân (Phòng thi, SBD, Số ghế) & Tra cứu Kết quả thi (`/student/results`). |
+| **Sinh viên (STUDENT)** | `student2` | `123456` | Xem lịch thi cá nhân & Kết quả thi. |
 
 ---
 
@@ -155,6 +156,6 @@ Hệ thống đã có file seed mẫu tạo sẵn các tài khoản:
    - Thêm câu hỏi trắc nghiệm 4 lựa chọn (A/B/C/D), hỗ trợ phân loại môn học, chương, độ khó, kèm quy trình phê duyệt (`PENDING` -> `APPROVED`).
 4. **Tạo đề thi ngẫu nhiên (`/exam-papers`)**:
    - Sinh đề thi tự động dựa trên số lượng câu hỏi Dễ, Trung bình, Khó từ ngân hàng câu hỏi đã duyệt.
-5. **Cổng tra cứu Sinh viên (`/student/exam-schedule`) & Giảng viên (`/teacher/assignments`)**:
-   - Sinh viên tra cứu chính xác phòng thi, số báo danh và số ghế cá nhân.
+5. **Cổng tra cứu Sinh viên (`/student/exam-schedule` & `/student/results`) & Giảng viên (`/teacher/assignments`)**:
+   - Sinh viên tra cứu phòng thi, số báo danh, số ghế và tra cứu **Kết quả thi môn học (`/student/results`)** kèm điểm số, phân rã Trắc nghiệm / Tự luận, nhãn trạng thái inline và gửi yêu cầu phúc khảo.
    - Giảng viên tra cứu ca coi thi và phòng phân công.

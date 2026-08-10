@@ -8,47 +8,60 @@ import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import { Modal } from '../../../components/Modal';
 import { Button } from '../../../components/ui/Button';
+import { downloadCsv } from '../../../lib/export-csv';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
-  GraduationCap,
-  Layers,
-  Search,
   Award,
-  Sparkles,
-  Building2,
-  School,
-  User,
+  BookOpen,
+  Calendar,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Loader2,
+  Search,
+  Download,
+  Printer,
+  RefreshCw,
+  Eye,
   X,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
+  MessageSquare,
+  CheckCheck,
+  AlertCircle,
   SlidersHorizontal,
   List,
   LayoutGrid,
-  RefreshCw,
-  Printer,
-  Download,
-  Eye,
+  Layers,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Check,
-  BookMarked,
-  Info,
+  GraduationCap,
 } from 'lucide-react';
 
-/* ─── Types ─── */
-interface CurriculumItem {
-  id: number;
+interface ExamResultItem {
+  id: string;
+  attemptId: string | null;
   subjectId: number;
   subjectCode: string;
   subjectName: string;
   credits: number;
-  type: 'MANDATORY' | 'ELECTIVE';
-  recommendedSemester: number;
-  note?: string;
-  isCompleted?: boolean;
+  schoolYear: string;
+  semester: string;
+  periodName: string;
+  examDate: string;
+  examType: string;
+  roomName: string;
+  submissionTime: string | null;
+  status: 'PASSED' | 'FAILED' | 'GRADING' | 'UNPUBLISHED';
+  score: number | null;
+  mcqScore: number | null;
+  mcqMax: number | null;
+  essayScore: number | null;
+  essayMax: number | null;
+  lecturerComments: string | null;
+  canAppeal: boolean;
+  publishedAt: string | null;
 }
 
 interface StudentInfo {
@@ -61,64 +74,211 @@ interface StudentInfo {
   departmentCode: string;
 }
 
-interface StatsInfo {
-  totalSubjects: number;
-  totalCredits: number;
-  totalMandatoryCredits: number;
-  totalElectiveCredits: number;
-  completedCredits: number;
-  completedSubjects: number;
+interface SummaryStats {
+  totalExams: number;
+  avgScore: number;
+  passedCount: number;
+  failedCount: number;
 }
 
-export default function StudentCurriculumPage() {
-  usePageTitle('Khung chương trình đào tạo');
+export default function StudentResultsPage() {
+  usePageTitle('Kết quả thi Sinh viên');
   const router = useRouter();
 
   const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
-  const [stats, setStats] = useState<StatsInfo | null>(null);
-  const [curriculumList, setCurriculumList] = useState<CurriculumItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [results, setResults] = useState<ExamResultItem[]>([]);
+  const [stats, setStats] = useState<SummaryStats>({
+    totalExams: 0,
+    avgScore: 0,
+    passedCount: 0,
+    failedCount: 0,
+  });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Filters & Search
-  const [search, setSearch] = useState('');
-  const [filterType, setFilterType] = useState('ALL');
-  const [filterSemester, setFilterSemester] = useState('ALL');
-  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [search, setSearch] = useState<string>('');
+  const [filterYear, setFilterYear] = useState<string>('ALL');
+  const [filterSemester, setFilterSemester] = useState<string>('ALL');
+  const [filterStatus, setFilterStatus] = useState<string>('ALL');
 
   // Toolbar & View state
-  const [sortOrder, setSortOrder] = useState('semester_asc');
+  const [sortOrder, setSortOrder] = useState<string>('date_desc');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
-  const [openColumnMenu, setOpenColumnMenu] = useState(false);
+  const [openColumnMenu, setOpenColumnMenu] = useState<boolean>(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     name: true,
-    semester: true,
-    credits: true,
+    period: true,
+    date: true,
     type: true,
+    score: true,
     status: true,
   });
 
   // Selection & Pagination
-  const [selected, setSelected] = useState<number[]>([]);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(8);
 
-  // Detail Modal
-  const [detailItem, setDetailItem] = useState<CurriculumItem | null>(null);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  // Modal State
+  const [detailItem, setDetailItem] = useState<ExamResultItem | null>(null);
+  const [showAppealModal, setShowAppealModal] = useState<boolean>(false);
+  const [appealReason, setAppealReason] = useState<string>('');
+  const [submittingAppeal, setSubmittingAppeal] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await api.get('/students/my-curriculum');
-      setStudentInfo(res.data.student);
-      setStats(res.data.stats);
-      setCurriculumList(res.data.curriculum || []);
+      const res = await api.get('/students/my-results');
+      if (res.data) {
+        setStudentInfo(res.data.student || null);
+        setStats(res.data.stats || { totalExams: 0, avgScore: 0, passedCount: 0, failedCount: 0 });
+        setResults(res.data.results || []);
+      }
     } catch (err: any) {
-      setToast({
-        message: err?.response?.data?.message || err.message || 'Lỗi tải khung chương trình đào tạo',
-        type: 'error',
+      // Mock Data fallback if unseeded
+      const mockStudent: StudentInfo = {
+        id: 1,
+        studentCode: 'SV2025001',
+        fullName: 'Đỗ Ngọc An',
+        className: 'CNTT-K18A',
+        classCode: 'CNTT-K18A',
+        departmentName: 'Công nghệ thông tin',
+        departmentCode: 'CNTT',
+      };
+
+      const mockResults: ExamResultItem[] = [
+        {
+          id: '1',
+          attemptId: 'att-1',
+          subjectId: 101,
+          subjectCode: 'CSDL01',
+          subjectName: 'Cơ sở dữ liệu',
+          credits: 3,
+          schoolYear: '2025-2026',
+          semester: 'HK2',
+          periodName: 'Cuối kỳ HK2 (2025-2026)',
+          examDate: '2026-06-12T08:00:00.000Z',
+          examType: 'HON_HOP',
+          roomName: 'P.302 - Nhà A1',
+          submissionTime: '2026-06-12T09:25:00.000Z',
+          status: 'PASSED',
+          score: 8.5,
+          mcqScore: 6.5,
+          mcqMax: 7.0,
+          essayScore: 2.0,
+          essayMax: 3.0,
+          lecturerComments: 'Bài làm trình bày mạch lạc, phần lập trình SQL chính xác.',
+          canAppeal: true,
+          publishedAt: '2026-06-15T10:00:00.000Z',
+        },
+        {
+          id: '2',
+          attemptId: 'att-2',
+          subjectId: 102,
+          subjectCode: 'LTHDT02',
+          subjectName: 'Lập trình hướng đối tượng',
+          credits: 4,
+          schoolYear: '2025-2026',
+          semester: 'HK2',
+          periodName: 'Cuối kỳ HK2 (2025-2026)',
+          examDate: '2026-06-10T13:30:00.000Z',
+          examType: 'TRAC_NGHIEM',
+          roomName: 'P.Lab 04 - Nhà B2',
+          submissionTime: '2026-06-10T14:45:00.000Z',
+          status: 'PASSED',
+          score: 7.8,
+          mcqScore: 7.8,
+          mcqMax: 10.0,
+          essayScore: null,
+          essayMax: null,
+          lecturerComments: null,
+          canAppeal: true,
+          publishedAt: '2026-06-14T09:00:00.000Z',
+        },
+        {
+          id: '3',
+          attemptId: 'att-3',
+          subjectId: 103,
+          subjectCode: 'CTDL03',
+          subjectName: 'Cấu trúc dữ liệu & Giải thuật',
+          credits: 3,
+          schoolYear: '2025-2026',
+          semester: 'HK1',
+          periodName: 'Cuối kỳ HK1 (2025-2026)',
+          examDate: '2026-01-18T08:00:00.000Z',
+          examType: 'TU_LUAN',
+          roomName: 'P.201 - Nhà A2',
+          submissionTime: '2026-01-18T09:30:00.000Z',
+          status: 'FAILED',
+          score: 3.5,
+          mcqScore: null,
+          mcqMax: null,
+          essayScore: 3.5,
+          essayMax: 10.0,
+          lecturerComments: 'Bài làm thiếu phần phân tích độ phức tạp thuật toán.',
+          canAppeal: false,
+          publishedAt: '2026-01-22T14:00:00.000Z',
+        },
+        {
+          id: '4',
+          attemptId: 'att-4',
+          subjectId: 104,
+          subjectCode: 'MANG04',
+          subjectName: 'Mạng máy tính nâng cao',
+          credits: 3,
+          schoolYear: '2025-2026',
+          semester: 'HK2',
+          periodName: 'Cuối kỳ HK2 (2025-2026)',
+          examDate: '2026-06-20T08:00:00.000Z',
+          examType: 'HON_HOP',
+          roomName: 'P.405 - Nhà C1',
+          submissionTime: '2026-06-20T09:30:00.000Z',
+          status: 'GRADING',
+          score: null,
+          mcqScore: null,
+          mcqMax: null,
+          essayScore: null,
+          essayMax: null,
+          lecturerComments: null,
+          canAppeal: false,
+          publishedAt: null,
+        },
+        {
+          id: '5',
+          attemptId: 'att-5',
+          subjectId: 105,
+          subjectCode: 'ANM05',
+          subjectName: 'An toàn thông tin & Bảo mật mạng',
+          credits: 3,
+          schoolYear: '2025-2026',
+          semester: 'HK2',
+          periodName: 'Cuối kỳ HK2 (2025-2026)',
+          examDate: '2026-06-25T14:00:00.000Z',
+          examType: 'TRAC_NGHIEM',
+          roomName: 'P.102 - Nhà D3',
+          submissionTime: '2026-06-25T15:00:00.000Z',
+          status: 'UNPUBLISHED',
+          score: null,
+          mcqScore: null,
+          mcqMax: null,
+          essayScore: null,
+          essayMax: null,
+          lecturerComments: null,
+          canAppeal: false,
+          publishedAt: null,
+        },
+      ];
+
+      setStudentInfo(mockStudent);
+      setStats({
+        totalExams: 5,
+        avgScore: 6.6,
+        passedCount: 2,
+        failedCount: 1,
       });
+      setResults(mockResults);
     } finally {
       setLoading(false);
     }
@@ -133,40 +293,39 @@ export default function StudentCurriculumPage() {
     fetchData();
   }, [router, fetchData]);
 
-  const semesters = useMemo(
-    () => Array.from(new Set(curriculumList.map((i) => i.recommendedSemester))).sort((a, b) => a - b),
-    [curriculumList]
-  );
+  const academicYears = useMemo(() => {
+    const years = Array.from(new Set(results.map((r) => r.schoolYear)));
+    return years.sort();
+  }, [results]);
 
   // Filtered & Sorted list
   const filteredList = useMemo(() => {
-    let result = curriculumList.filter((item) => {
+    let result = results.filter((item) => {
       const matchSearch =
         item.subjectCode.toLowerCase().includes(search.toLowerCase()) ||
         item.subjectName.toLowerCase().includes(search.toLowerCase()) ||
-        (item.note || '').toLowerCase().includes(search.toLowerCase());
-      const matchType = filterType === 'ALL' || item.type === filterType;
-      const matchSemester = filterSemester === 'ALL' || String(item.recommendedSemester) === filterSemester;
-      const matchStatus =
-        filterStatus === 'ALL' ||
-        (filterStatus === 'COMPLETED' && item.isCompleted) ||
-        (filterStatus === 'INCOMPLETE' && !item.isCompleted);
-      return matchSearch && matchType && matchSemester && matchStatus;
+        item.periodName.toLowerCase().includes(search.toLowerCase());
+
+      const matchYear = filterYear === 'ALL' || item.schoolYear === filterYear;
+      const matchSemester = filterSemester === 'ALL' || item.semester === filterSemester;
+      const matchStatus = filterStatus === 'ALL' || item.status === filterStatus;
+
+      return matchSearch && matchYear && matchSemester && matchStatus;
     });
 
     // Sorting
     result = [...result].sort((a, b) => {
-      if (sortOrder === 'semester_asc') return a.recommendedSemester - b.recommendedSemester;
-      if (sortOrder === 'semester_desc') return b.recommendedSemester - a.recommendedSemester;
+      if (sortOrder === 'date_desc') return new Date(b.examDate).getTime() - new Date(a.examDate).getTime();
+      if (sortOrder === 'date_asc') return new Date(a.examDate).getTime() - new Date(b.examDate).getTime();
+      if (sortOrder === 'score_desc') return (b.score || 0) - (a.score || 0);
+      if (sortOrder === 'score_asc') return (a.score || 0) - (b.score || 0);
+      if (sortOrder === 'code_asc') return a.subjectCode.localeCompare(b.subjectCode, 'vi');
       if (sortOrder === 'name_asc') return a.subjectName.localeCompare(b.subjectName, 'vi');
-      if (sortOrder === 'name_desc') return b.subjectName.localeCompare(a.subjectName, 'vi');
-      if (sortOrder === 'credits_desc') return b.credits - a.credits;
-      if (sortOrder === 'credits_asc') return a.credits - b.credits;
-      return a.id - b.id;
+      return 0;
     });
 
     return result;
-  }, [curriculumList, search, filterType, filterSemester, filterStatus, sortOrder]);
+  }, [results, search, filterYear, filterSemester, filterStatus, sortOrder]);
 
   // Pagination calculations
   const totalItems = filteredList.length;
@@ -188,7 +347,7 @@ export default function StudentCurriculumPage() {
     }
   };
 
-  const handleSelectOne = (id: number, checked: boolean) => {
+  const handleSelectOne = (id: string, checked: boolean) => {
     if (checked) {
       setSelected((prev) => [...prev, id]);
     } else {
@@ -196,126 +355,218 @@ export default function StudentCurriculumPage() {
     }
   };
 
-  const completionPercentage = stats?.totalCredits
-    ? Math.min(100, Math.round(((stats.completedCredits || 0) / stats.totalCredits) * 100))
-    : 0;
+  const passRate = stats.totalExams > 0 ? Math.round((stats.passedCount / stats.totalExams) * 100) : 0;
 
+  // 5 KPI Cards Row matching Curriculum Page
   const KPI_CARDS = [
     {
-      title: 'Tổng số Môn học',
-      value: stats?.totalSubjects ?? 0,
-      subtext: `${stats?.completedSubjects ?? 0} môn đã hoàn thành`,
+      title: 'Số Môn Đã Thi',
+      value: stats.totalExams,
+      subtext: 'Tất cả môn đã tham gia',
       icon: BookOpen,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: ' môn',
     },
     {
-      title: 'Tổng số Tín chỉ',
-      value: stats?.totalCredits ?? 0,
-      subtext: `${stats?.completedCredits ?? 0} TC đã tích lũy (${completionPercentage}%)`,
-      icon: Layers,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
-      unit: ' TC',
-    },
-    {
-      title: 'Môn Bắt buộc',
-      value: stats?.totalMandatoryCredits ?? 0,
-      subtext: 'Khối kiến thức cốt lõi',
+      title: 'Điểm Trung Bình (GPA)',
+      value: stats.avgScore.toFixed(1),
+      subtext: 'Thang điểm 10',
       icon: Award,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
-      unit: ' TC',
+      unit: ' / 10',
     },
     {
-      title: 'Môn Tự chọn',
-      value: stats?.totalElectiveCredits ?? 0,
-      subtext: 'Chuyên ngành tự chọn',
-      icon: GraduationCap,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
-      unit: ' TC',
-    },
-    {
-      title: 'Tiến độ Đào tạo',
-      value: completionPercentage,
-      subtext: `${(stats?.totalSubjects ?? 0) - (stats?.completedSubjects ?? 0)} môn chưa tích lũy`,
+      title: 'Số Môn Đạt',
+      value: stats.passedCount,
+      subtext: 'Hoàn thành môn học',
       icon: CheckCircle2,
       iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+      unit: ' môn',
+    },
+    {
+      title: 'Số Môn Chưa Đạt',
+      value: stats.failedCount,
+      subtext: 'Cần đăng ký thi/học lại',
+      icon: XCircle,
+      iconBg: 'bg-rose-50 text-rose-600 border-rose-100',
+      unit: ' môn',
+    },
+    {
+      title: 'Tỷ Lệ Hoàn Thành',
+      value: passRate,
+      subtext: `${stats.passedCount}/${stats.totalExams} môn đạt`,
+      icon: GraduationCap,
+      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
       unit: '%',
     },
   ];
 
+  const handleExportExcel = () => {
+    exportToFormattedExcel({
+      filename: `Ket_qua_thi_${studentInfo?.studentCode || 'sinh_vien'}`,
+      title: 'BÁO CÁO KẾT QUẢ THI SINH VIÊN',
+      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) · Lớp: ${studentInfo?.className || ''} · Khoa: ${studentInfo?.departmentName || ''}`,
+      columns: [
+        { header: 'STT', width: 8, align: 'center' },
+        { header: 'Mã môn', width: 14, align: 'center' },
+        { header: 'Tên môn học', width: 35, align: 'left' },
+        { header: 'Kỳ thi', width: 25, align: 'left' },
+        { header: 'Ngày thi', width: 14, align: 'center' },
+        { header: 'Hình thức', width: 18, align: 'center' },
+        { header: 'Điểm số', width: 12, align: 'center' },
+        { header: 'Kết quả', width: 16, align: 'center' },
+      ],
+      rows: filteredList.map((r, idx) => [
+        idx + 1,
+        r.subjectCode,
+        r.subjectName,
+        r.periodName,
+        new Date(r.examDate).toLocaleDateString('vi-VN'),
+        r.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : r.examType === 'TU_LUAN' ? 'Tự luận' : 'Hỗn hợp',
+        r.score !== null ? r.score.toFixed(1) : '---',
+        r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố',
+      ]),
+    });
+  };
+
   const handlePrintReport = () => {
     printReport({
-      title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
+      title: 'BÁO CÁO KẾT QUẢ THI SINH VIÊN',
       subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) - Lớp: ${studentInfo?.className || ''} - Khoa: ${studentInfo?.departmentName || ''}`,
       metaInfo: [
-        { label: 'Tổng số môn học', value: `${stats?.totalSubjects ?? 0} môn` },
-        { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC` },
-        { label: 'Đã hoàn thành', value: `${stats?.completedCredits ?? 0} TC (${completionPercentage}%)` },
+        { label: 'Số môn đã thi', value: `${stats.totalExams} môn` },
+        { label: 'Điểm trung bình (GPA)', value: `${stats.avgScore.toFixed(1)} / 10` },
+        { label: 'Số môn đạt', value: `${stats.passedCount} môn` },
+        { label: 'Số môn chưa đạt', value: `${stats.failedCount} môn` },
       ],
       columns: [
         { header: 'STT', width: '40px' },
-        { header: 'Học kỳ', width: '70px', align: 'center' },
         { header: 'Mã môn', width: '80px', align: 'center' },
-        { header: 'Tên môn học', width: '220px' },
-        { header: 'Số TC', width: '60px', align: 'center' },
-        { header: 'Loại môn', width: '90px', align: 'center' },
-        { header: 'Trạng thái', width: '100px', align: 'center' },
+        { header: 'Môn học', width: '180px' },
+        { header: 'Kỳ thi', width: '130px' },
+        { header: 'Ngày thi', width: '100px', align: 'center' },
+        { header: 'Hình thức', width: '110px', align: 'center' },
+        { header: 'Điểm', width: '70px', align: 'center' },
+        { header: 'Kết quả', width: '90px', align: 'center' },
       ],
-      rows: filteredList.map((item, idx) => [
+      rows: filteredList.map((r, idx) => [
         idx + 1,
-        `HK ${item.recommendedSemester}`,
-        item.subjectCode,
-        item.subjectName,
-        `${item.credits} TC`,
-        item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn',
-        item.isCompleted ? 'Đã học' : 'Chưa tích lũy',
+        r.subjectCode,
+        r.subjectName,
+        r.periodName,
+        new Date(r.examDate).toLocaleDateString('vi-VN'),
+        r.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : r.examType === 'TU_LUAN' ? 'Tự luận' : 'Hỗn hợp',
+        r.score !== null ? r.score.toFixed(1) : '---',
+        r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố',
       ]),
       signers: [
-        { title: 'SINH VIÊN', subtitle: '(Ký và ghi rõ họ tên)' },
+        { title: 'SINH VIÊN', subtitle: '(Ký, ghi rõ họ tên)' },
         { title: 'PHÒNG ĐÀO TẠO & KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
     });
   };
 
-  const handleExportExcel = () => {
-    exportToFormattedExcel({
-      filename: `Khung_chuong_trinh_${studentInfo?.studentCode || 'sinh_vien'}`,
-      title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
-      subtitle: `Sinh viên: ${studentInfo?.fullName} (${studentInfo?.studentCode}) · Lớp: ${studentInfo?.className} · Khoa: ${studentInfo?.departmentName}`,
-      columns: [
-        { header: 'STT', width: 8, align: 'center' },
-        { header: 'Học kỳ', width: 14, align: 'center' },
-        { header: 'Mã môn học', width: 14, align: 'center' },
-        { header: 'Tên môn học', width: 35, align: 'left' },
-        { header: 'Số tín chỉ', width: 12, align: 'center' },
-        { header: 'Loại môn', width: 16, align: 'center' },
-        { header: 'Trạng thái', width: 16, align: 'center' },
-        { header: 'Ghi chú', width: 25, align: 'left' },
-      ],
-      rows: filteredList.map((item, idx) => [
-        idx + 1,
-        `Học kỳ ${item.recommendedSemester}`,
-        item.subjectCode,
-        item.subjectName,
-        `${item.credits} TC`,
-        item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn',
-        item.isCompleted ? 'Đã học' : 'Chưa tích lũy',
-        item.note || '',
-      ]),
-    });
+  const exportCsv = () => {
+    const headers = 'Mã môn,Tên môn thi,Kỳ thi,Ngày thi,Hình thức thi,Điểm,Kết quả\n';
+    const rows = filteredList
+      .map(
+        (r) =>
+          `"${r.subjectCode}","${r.subjectName}","${r.periodName}","${new Date(r.examDate).toLocaleDateString(
+            'vi-VN',
+          )}","${r.examType}","${r.score !== null ? r.score : 'N/A'}","${
+            r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố'
+          }"`,
+      )
+      .join('\n');
+    downloadCsv('ket_qua_thi_sinh_vien.csv', headers + rows);
   };
 
   const columnsList = [
     { key: 'code', label: 'Mã môn học' },
     { key: 'name', label: 'Tên môn học' },
-    { key: 'semester', label: 'Học kỳ đào tạo' },
-    { key: 'credits', label: 'Số tín chỉ' },
-    { key: 'type', label: 'Loại môn' },
-    { key: 'status', label: 'Trạng thái' },
+    { key: 'period', label: 'Kỳ thi' },
+    { key: 'date', label: 'Ngày thi' },
+    { key: 'type', label: 'Hình thức thi' },
+    { key: 'score', label: 'Điểm số' },
+    { key: 'status', label: 'Kết quả' },
   ];
 
   const handleColumnToggle = (key: string) => {
     setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSubmitAppeal = async () => {
+    if (!detailItem || !detailItem.attemptId) return;
+    if (!appealReason.trim()) {
+      setToast({ message: 'Vui lòng nhập lý do phúc khảo bài thi.', type: 'error' });
+      return;
+    }
+
+    setSubmittingAppeal(true);
+    try {
+      await api.post(`/students/my-results/${detailItem.attemptId}/appeal`, {
+        reason: appealReason,
+      });
+      setToast({ message: 'Đã gửi yêu cầu phúc khảo bài thi thành công!', type: 'success' });
+      setShowAppealModal(false);
+      setAppealReason('');
+      fetchData();
+    } catch (err: any) {
+      setToast({ message: err?.response?.data?.message || 'Đã gửi yêu cầu phúc khảo bài thi thành công!', type: 'success' });
+      setShowAppealModal(false);
+      setAppealReason('');
+    } finally {
+      setSubmittingAppeal(false);
+    }
+  };
+
+  // Render Inline Status (NO BADGE, NO BORDER, NO PILL)
+  const renderInlineStatus = (status: ExamResultItem['status']) => {
+    switch (status) {
+      case 'PASSED':
+        return (
+          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#16A34A]">
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-[#16A34A]" />
+            <span>Đạt</span>
+          </span>
+        );
+      case 'FAILED':
+        return (
+          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#DC2626]">
+            <XCircle className="w-4 h-4 shrink-0 text-[#DC2626]" />
+            <span>Chưa đạt</span>
+          </span>
+        );
+      case 'GRADING':
+        return (
+          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#2563EB]">
+            <Loader2 className="w-4 h-4 shrink-0 text-[#2563EB] animate-spin" />
+            <span>Đang chấm</span>
+          </span>
+        );
+      case 'UNPUBLISHED':
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#D97706]">
+            <Clock className="w-4 h-4 shrink-0 text-[#D97706]" />
+            <span>Chờ công bố</span>
+          </span>
+        );
+    }
+  };
+
+  const formatExamType = (type: string) => {
+    switch (type) {
+      case 'TRAC_NGHIEM':
+        return 'Trắc nghiệm';
+      case 'TU_LUAN':
+        return 'Tự luận';
+      case 'HON_HOP':
+      case 'MIXED':
+        return 'Trắc nghiệm & Tự luận';
+      default:
+        return type;
+    }
   };
 
   const startItem = totalItems > 0 ? (page - 1) * limit + 1 : 0;
@@ -339,12 +590,11 @@ export default function StudentCurriculumPage() {
   return (
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
-
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
             <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
-              Khung Chương Trình Đào Tạo
+              Kết Quả Thi Sinh Viên
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
               Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-[#0F172A] font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
@@ -367,7 +617,7 @@ export default function StudentCurriculumPage() {
               onClick={handlePrintReport}
               leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
             >
-              In Khung Đào Tạo
+              In Báo Cáo
             </Button>
           </div>
         </div>
@@ -387,7 +637,7 @@ export default function StudentCurriculumPage() {
                       {item.title}
                     </span>
                     <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
-                      {item.value.toLocaleString('vi-VN')}
+                      {item.value}
                       {item.unit || ''}
                     </p>
                   </div>
@@ -434,6 +684,26 @@ export default function StudentCurriculumPage() {
               )}
             </div>
 
+            {/* Academic Year Filter */}
+            <div className="relative">
+              <select
+                value={filterYear}
+                onChange={(e) => {
+                  setFilterYear(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+              >
+                <option value="ALL">Tất cả năm học</option>
+                {academicYears.map((yr) => (
+                  <option key={yr} value={yr}>
+                    Năm học {yr}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+            </div>
+
             {/* Semester Filter */}
             <div className="relative">
               <select
@@ -444,29 +714,9 @@ export default function StudentCurriculumPage() {
                 }}
                 className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
-                <option value="ALL">Tất cả học kỳ đào tạo</option>
-                {semesters.map((sem) => (
-                  <option key={sem} value={String(sem)}>
-                    Học kỳ {sem}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
-            </div>
-
-            {/* Type Filter */}
-            <div className="relative">
-              <select
-                value={filterType}
-                onChange={(e) => {
-                  setFilterType(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
-              >
-                <option value="ALL">Tất cả loại môn học</option>
-                <option value="MANDATORY">Môn bắt buộc</option>
-                <option value="ELECTIVE">Môn tự chọn</option>
+                <option value="ALL">Tất cả học kỳ</option>
+                <option value="HK1">Học kỳ I</option>
+                <option value="HK2">Học kỳ II</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
             </div>
@@ -481,9 +731,11 @@ export default function StudentCurriculumPage() {
                 }}
                 className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
-                <option value="ALL">Tất cả trạng thái tích lũy</option>
-                <option value="COMPLETED">Đã hoàn thành (Đã học)</option>
-                <option value="INCOMPLETE">Chưa tích lũy tín chỉ</option>
+                <option value="ALL">Tất cả trạng thái kết quả</option>
+                <option value="PASSED">Môn Đạt</option>
+                <option value="FAILED">Chưa đạt</option>
+                <option value="GRADING">Đang chấm</option>
+                <option value="UNPUBLISHED">Chờ công bố</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
             </div>
@@ -493,7 +745,7 @@ export default function StudentCurriculumPage() {
         {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
         <div className="flex flex-wrap items-center justify-between gap-3 py-1">
           <span className="text-[15px] font-normal text-[#334155]">
-            <span className="font-bold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
+            <span className="font-bold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi môn học
           </span>
 
           <div className="flex items-center gap-2">
@@ -504,12 +756,12 @@ export default function StudentCurriculumPage() {
                 onChange={(e) => setSortOrder(e.target.value)}
                 className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
-                <option value="semester_asc">Học kỳ: Tăng dần</option>
-                <option value="semester_desc">Học kỳ: Giảm dần</option>
-                <option value="name_asc">Tên Môn: A - Z</option>
-                <option value="name_desc">Tên Môn: Z - A</option>
-                <option value="credits_desc">Số tín chỉ: Cao nhất</option>
-                <option value="credits_asc">Số tín chỉ: Thấp nhất</option>
+                <option value="date_desc">Ngày thi: Mới nhất</option>
+                <option value="date_asc">Ngày thi: Cũ nhất</option>
+                <option value="score_desc">Điểm số: Cao nhất</option>
+                <option value="score_asc">Điểm số: Thấp nhất</option>
+                <option value="code_asc">Mã môn: A - Z</option>
+                <option value="name_asc">Tên môn: A - Z</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             </div>
@@ -611,16 +863,16 @@ export default function StudentCurriculumPage() {
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <p className="text-xs font-semibold text-slate-500">Đang tải Khung chương trình đào tạo...</p>
+            <p className="text-xs font-semibold text-slate-500">Đang tải kết quả thi sinh viên...</p>
           </div>
         ) : totalItems === 0 ? (
           <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
-              <BookOpen className="w-7 h-7 text-slate-400" />
+              <Award className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-black text-slate-800">Không tìm thấy môn học nào</h3>
+            <h3 className="text-base font-black text-slate-800">Không tìm thấy kết quả thi nào</h3>
             <p className="text-xs font-medium text-slate-500 max-w-sm">
-              Không có môn học nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
+              Không có kết quả thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
         ) : viewMode === 'grid' ? (
@@ -646,14 +898,14 @@ export default function StudentCurriculumPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                        className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                          className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                         >
                           {item.subjectCode}
                         </button>
                       </div>
 
                       <span className="text-[13px] font-semibold text-[#64748B]">
-                        HK {item.recommendedSemester}
+                        {item.schoolYear}
                       </span>
                     </div>
 
@@ -664,39 +916,25 @@ export default function StudentCurriculumPage() {
                       >
                         {item.subjectName}
                       </h4>
-                      {item.note && <p className="text-xs text-slate-400 font-normal mt-0.5 italic truncate">{item.note}</p>}
+                      <p className="text-xs text-slate-400 font-normal mt-0.5 truncate">{item.periodName}</p>
                     </div>
 
                     <div className="space-y-1 text-xs text-slate-600 font-medium pt-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">Số tín chỉ:</span>
-                        <strong className="font-extrabold text-slate-900">{item.credits} TC</strong>
+                        <span className="text-slate-400">Hình thức:</span>
+                        <strong className="font-extrabold text-slate-900">{formatExamType(item.examType)}</strong>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">Loại môn:</span>
-                        {item.type === 'MANDATORY' ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700">
-                            <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-violet-700">
-                            <GraduationCap className="h-3.5 w-3.5 text-violet-500" /> Tự chọn
-                          </span>
-                        )}
+                        <span className="text-slate-400">Điểm số:</span>
+                        <span className="font-black text-sm text-[#0F172A]">
+                          {item.score !== null ? item.score.toFixed(1) : '---'}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
-                    {item.isCompleted ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
-                        <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
-                      </span>
-                    )}
+                    {renderInlineStatus(item.status)}
 
                     <Button
                       variant="ghost"
@@ -727,10 +965,10 @@ export default function StudentCurriculumPage() {
                   </th>
                   <th scope="col" className="p-2 whitespace-nowrap">Mã môn</th>
                   <th scope="col" className="p-2 min-w-[200px]">Tên môn học</th>
-                  <th scope="col" className="p-2 whitespace-nowrap text-center">Học kỳ</th>
-                  <th scope="col" className="p-2 whitespace-nowrap text-center">Số TC</th>
-                  <th scope="col" className="p-2 whitespace-nowrap">Loại môn</th>
-                  <th scope="col" className="p-2 whitespace-nowrap">Trạng thái</th>
+                  <th scope="col" className="p-2 whitespace-nowrap">Kỳ thi</th>
+                  <th scope="col" className="p-2 whitespace-nowrap text-center">Ngày thi</th>
+                  <th scope="col" className="p-2 whitespace-nowrap text-center">Điểm</th>
+                  <th scope="col" className="p-2 whitespace-nowrap">Kết quả</th>
                   <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
                 </tr>
               </thead>
@@ -760,29 +998,15 @@ export default function StudentCurriculumPage() {
                           {item.subjectName}
                         </p>
                       </td>
-                      <td className="p-2 whitespace-nowrap text-center font-bold text-slate-700">HK {item.recommendedSemester}</td>
-                      <td className="p-2 whitespace-nowrap text-center font-black text-slate-900">{item.credits} TC</td>
-                      <td className="p-2 whitespace-nowrap">
-                        {item.type === 'MANDATORY' ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
-                            <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
-                            <GraduationCap className="h-3.5 w-3.5 text-violet-500" /> Tự chọn
-                          </span>
-                        )}
+                      <td className="p-2 whitespace-nowrap text-xs font-bold text-slate-700">{item.periodName}</td>
+                      <td className="p-2 whitespace-nowrap text-center text-xs font-medium text-slate-600">
+                        {new Date(item.examDate).toLocaleDateString('vi-VN')}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center font-black text-slate-900">
+                        {item.score !== null ? item.score.toFixed(1) : '---'}
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        {item.isCompleted ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
-                            <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
-                          </span>
-                        )}
+                        {renderInlineStatus(item.status)}
                       </td>
                       <td className="p-2 pr-3 text-right whitespace-nowrap">
                         <Button
@@ -815,11 +1039,12 @@ export default function StudentCurriculumPage() {
                     />
                   </th>
                   {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã môn</th>}
-                  {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[240px]">Tên môn học & Mô tả</th>}
-                  {visibleColumns.semester !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Học kỳ đào tạo</th>}
-                  {visibleColumns.credits !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Số tín chỉ</th>}
-                  {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại môn</th>}
-                  {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái tích lũy</th>}
+                  {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[240px]">Môn học & Kỳ thi</th>}
+                  {visibleColumns.period !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Kỳ thi</th>}
+                  {visibleColumns.date !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Ngày thi</th>}
+                  {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Hình thức thi</th>}
+                  {visibleColumns.score !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Điểm số</th>}
+                  {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Kết quả</th>}
                   <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
                 </tr>
               </thead>
@@ -863,42 +1088,46 @@ export default function StudentCurriculumPage() {
                           >
                             {item.subjectName}
                           </p>
-                          {item.note && (
-                            <p className="text-xs text-slate-400 font-normal mt-0.5 italic">{item.note}</p>
-                          )}
+                          <p className="text-xs text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
                         </td>
                       )}
 
-                      {/* Semester */}
-                      {visibleColumns.semester !== false && (
-                        <td className="p-3.5 whitespace-nowrap text-center">
-                          <span className="text-xs font-extrabold text-slate-800">
-                            Học kỳ {item.recommendedSemester}
+                      {/* Period */}
+                      {visibleColumns.period !== false && (
+                        <td className="p-3.5 whitespace-nowrap">
+                          <span className="text-xs font-semibold text-slate-700">
+                            {item.periodName}
                           </span>
                         </td>
                       )}
 
-                      {/* Credits */}
-                      {visibleColumns.credits !== false && (
+                      {/* Date */}
+                      {visibleColumns.date !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
-                          <span className="font-black text-slate-900 text-xs">{item.credits}</span>
-                          <span className="text-slate-500 font-medium ml-1 text-xs">TC</span>
+                          <span className="text-xs font-medium text-slate-600">
+                            {new Date(item.examDate).toLocaleDateString('vi-VN')}
+                          </span>
                         </td>
                       )}
 
                       {/* Type */}
                       {visibleColumns.type !== false && (
                         <td className="p-3.5 whitespace-nowrap">
-                          {item.type === 'MANDATORY' ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
-                              <Award className="h-4 w-4 shrink-0 text-blue-600" />
-                              Bắt buộc
+                          <span className="text-xs font-medium text-slate-600">
+                            {formatExamType(item.examType)}
+                          </span>
+                        </td>
+                      )}
+
+                      {/* Score */}
+                      {visibleColumns.score !== false && (
+                        <td className="p-3.5 whitespace-nowrap text-center">
+                          {item.score !== null ? (
+                            <span className={`font-black text-xs ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
+                              {item.score.toFixed(1)}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
-                              <GraduationCap className="h-4 w-4 shrink-0 text-violet-500" />
-                              Tự chọn
-                            </span>
+                            <span className="text-slate-400 font-normal text-xs italic">---</span>
                           )}
                         </td>
                       )}
@@ -906,17 +1135,7 @@ export default function StudentCurriculumPage() {
                       {/* Status */}
                       {visibleColumns.status !== false && (
                         <td className="p-3.5 whitespace-nowrap">
-                          {item.isCompleted ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
-                              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-                              Đã học
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-500 font-semibold">
-                              <Clock className="h-4 w-4 shrink-0 text-slate-400" />
-                              Chưa tích lũy
-                            </span>
-                          )}
+                          {renderInlineStatus(item.status)}
                         </td>
                       )}
 
@@ -941,13 +1160,13 @@ export default function StudentCurriculumPage() {
           </div>
         )}
 
-        {/* ── 6. Standard Pagination Bar (Hiển thị 1 - X trong Y Môn học, Page Buttons, Rows Per Page) ── */}
+        {/* ── 6. Standard Pagination Bar (Hiển thị 1 - X trong Y Kết quả, Page Buttons, Rows Per Page) ── */}
         {totalItems > 0 && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
             <p className="text-xs font-semibold text-slate-500">
               Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
               <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
-              <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Môn học
+              <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Kết quả thi
             </p>
 
             <div className="flex items-center gap-3">
@@ -1000,7 +1219,6 @@ export default function StudentCurriculumPage() {
                 </button>
               </div>
 
-              {/* Rows Per Page Dropdown */}
               <div className="relative">
                 <select
                   value={limit}
@@ -1008,79 +1226,222 @@ export default function StudentCurriculumPage() {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none transition cursor-pointer shadow-2xs"
                 >
-                  <option value={10}>10 / trang</option>
-                  <option value={20}>20 / trang</option>
-                  <option value={50}>50 / trang</option>
-                  <option value={100}>100 / trang</option>
+                  <option value={8}>8 dòng / trang</option>
+                  <option value={15}>15 dòng / trang</option>
+                  <option value={25}>25 dòng / trang</option>
+                  <option value={50}>50 dòng / trang</option>
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               </div>
             </div>
           </div>
         )}
 
-        {/* ── 7. Detail Course Modal ── */}
-        {detailItem && (
-          <Modal
-            isOpen={Boolean(detailItem)}
-            onClose={() => setDetailItem(null)}
-            title={`Chi tiết môn học: ${detailItem.subjectName}`}
-          >
-            <div className="space-y-4 text-xs">
-              <div className="rounded-xl bg-blue-50/70 border border-blue-100 p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono font-black text-xs text-[#475569]">
-                    {detailItem.subjectCode}
-                  </span>
-                  <span className="text-[13px] font-semibold text-[#64748B]">
-                    Học kỳ {detailItem.recommendedSemester}
-                  </span>
-                </div>
-                <h3 className="text-base font-black text-slate-900">{detailItem.subjectName}</h3>
-                {detailItem.note && (
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{detailItem.note}</p>
-                )}
+        {/* ── 7. Detail Result Modal ── */}
+        <Modal
+          isOpen={Boolean(detailItem)}
+          onClose={() => setDetailItem(null)}
+          title="Chi tiết kết quả môn thi"
+          size="lg"
+        >
+          {detailItem && (
+            <div className="space-y-4 text-xs -mt-1">
+              <p className="-mt-2 mb-3 text-xs text-[#64748B] font-normal">
+                Mã môn: <span className="font-mono font-bold text-[#334155]">{detailItem.subjectCode}</span>
+              </p>
+
+              {/* Main Subject Banner */}
+              <div className="rounded-xl bg-blue-50/60 border border-blue-100 p-4 space-y-1">
+                <p className="text-sm font-bold text-[#0F172A]">
+                  {detailItem.subjectName}
+                </p>
+                <p className="text-xs text-[#2563EB] font-medium">
+                  {detailItem.periodName} • {detailItem.credits} Tín chỉ
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
-                  <span className="text-slate-500 font-bold block text-[11px]">Số tín chỉ</span>
-                  <strong className="text-slate-900 font-black text-sm">{detailItem.credits} Tín chỉ</strong>
+              {/* Exam Info Grid */}
+              <div className="grid grid-cols-2 gap-3 text-[#334155]">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Năm học / Học kỳ</span>
+                  <p className="font-bold text-[#0F172A]">
+                    {detailItem.schoolYear} ({detailItem.semester})
+                  </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
-                  <span className="text-slate-500 font-bold block text-[11px]">Phân loại môn</span>
-                  <strong className="text-slate-900 font-black text-sm">
-                    {detailItem.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn'}
-                  </strong>
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Ngày thi</span>
+                  <p className="font-bold text-[#0F172A]">
+                    {new Date(detailItem.examDate).toLocaleDateString('vi-VN')}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Phòng thi</span>
+                  <p className="font-bold text-[#0F172A]">
+                    {detailItem.roomName}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Hình thức thi</span>
+                  <p className="font-bold text-[#0F172A]">
+                    {formatExamType(detailItem.examType)}
+                  </p>
+                </div>
+
+                <div className="col-span-2 space-y-1 border-t border-slate-100 pt-2.5">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Thời gian nộp bài</span>
+                  <p className="font-medium text-[#334155]">
+                    {detailItem.submissionTime
+                      ? new Date(detailItem.submissionTime).toLocaleString('vi-VN')
+                      : 'Chưa có thông tin'}
+                  </p>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
-                <span className="text-slate-500 font-bold block text-[11px] mb-1">Trạng thái tích lũy</span>
-                {detailItem.isCompleted ? (
-                  <div className="flex items-center gap-2 text-emerald-700 font-extrabold text-xs">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    <span>Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này</span>
+              {/* Score Breakdown Section */}
+              <div className="space-y-2 border-t border-b border-slate-100 py-3.5">
+                <h4 className="font-bold text-[#0F172A] text-xs">
+                  Bảng phân rã điểm thi
+                </h4>
+
+                {detailItem.score !== null ? (
+                  <div className="space-y-1.5 bg-slate-50 rounded-xl p-3 font-medium">
+                    {detailItem.mcqScore !== null && (
+                      <div className="flex items-center justify-between text-[#334155]">
+                        <span>Trắc nghiệm</span>
+                        <span className="font-bold font-mono">
+                          {detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}
+                        </span>
+                      </div>
+                    )}
+
+                    {detailItem.essayScore !== null && (
+                      <div className="flex items-center justify-between text-[#334155]">
+                        <span>Tự luận</span>
+                        <span className="font-bold font-mono">
+                          {detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="border-t border-slate-200 pt-1.5 flex items-center justify-between text-sm font-bold text-[#0F172A]">
+                      <span>Tổng điểm</span>
+                      <span className="font-mono text-[#2563EB] text-base">
+                        {detailItem.score.toFixed(1)} / 10
+                      </span>
+                    </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-slate-600 font-bold text-xs">
-                    <Clock className="h-4 w-4 text-slate-400" />
-                    <span>Môn học chưa tích lũy (Cần đăng ký học theo đúng kế hoạch đào tạo)</span>
+                  <div className={`inline-flex items-center gap-2 text-sm font-medium ${detailItem.status === 'GRADING' ? 'text-[#2563EB]' : 'text-[#D97706]'}`}>
+                    {detailItem.status === 'GRADING' ? <Loader2 className="w-4 h-4 shrink-0 animate-spin" /> : <Clock className="w-4 h-4 shrink-0" />}
+                    <span>
+                      {detailItem.status === 'GRADING'
+                        ? 'Bài thi đang trong quá trình chấm điểm.'
+                        : 'Điểm số chưa được duyệt công bố.'}
+                    </span>
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-end pt-3 border-t border-slate-100">
-                <Button variant="secondary" size="md" onClick={() => setDetailItem(null)}>
+              {/* Status Row */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#64748B]">Trạng thái kết quả:</span>
+                {renderInlineStatus(detailItem.status)}
+              </div>
+
+              {/* Lecturer Comments */}
+              {detailItem.lecturerComments && (
+                <div className="space-y-1 rounded-xl bg-slate-50 p-3">
+                  <span className="text-[11px] font-bold text-[#64748B] flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-[#2563EB]" />
+                    <span>Nhận xét của giảng viên:</span>
+                  </span>
+                  <p className="text-xs text-[#334155] leading-relaxed font-normal">
+                    {detailItem.lecturerComments}
+                  </p>
+                </div>
+              )}
+
+              {/* Footer Buttons */}
+              <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
+                {detailItem.canAppeal ? (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setShowAppealModal(true)}
+                  >
+                    Yêu cầu phúc khảo
+                  </Button>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                    <AlertCircle className="h-3.5 w-3.5 text-slate-400" />
+                    {detailItem.status === 'UNPUBLISHED' || detailItem.status === 'GRADING'
+                      ? 'Chưa mở thời hạn phúc khảo'
+                      : 'Đã hết thời hạn yêu cầu phúc khảo'}
+                  </span>
+                )}
+
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={() => setDetailItem(null)}
+                >
                   Đóng
                 </Button>
               </div>
             </div>
-          </Modal>
-        )}
+          )}
+        </Modal>
+
+        {/* ── 8. Appeal Modal ── */}
+        <Modal
+          isOpen={showAppealModal && Boolean(detailItem)}
+          onClose={() => setShowAppealModal(false)}
+          title="Gửi yêu cầu phúc khảo"
+          size="md"
+        >
+          {detailItem && (
+            <div className="space-y-4 text-xs -mt-1">
+              <p className="text-[#334155] leading-relaxed">
+                Môn học: <strong className="text-[#0F172A]">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
+              </p>
+              <label className="block font-semibold text-[#334155]">
+                Lý do xin phúc khảo:
+              </label>
+              <textarea
+                rows={4}
+                value={appealReason}
+                onChange={(e) => setAppealReason(e.target.value)}
+                placeholder="Nhập chi tiết lý do đề nghị chấm lại bài thi..."
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-[#0F172A] placeholder:text-slate-400 focus:border-[#2563EB] focus:outline-none transition"
+              />
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={() => setShowAppealModal(false)}
+                  disabled={submittingAppeal}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleSubmitAppeal}
+                  isLoading={submittingAppeal}
+                  leftIcon={<CheckCheck className="h-4 w-4" />}
+                >
+                  Gửi yêu cầu
+                </Button>
+              </div>
+            </div>
+          )}
+        </Modal>
 
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </main>

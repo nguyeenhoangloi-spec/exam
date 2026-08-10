@@ -395,4 +395,194 @@ export class StudentsService {
       })),
     };
   }
+
+  async getPersonalResults(userId: number) {
+    const student = await this.prisma.student.findUnique({
+      where: { userId },
+      include: {
+        studentSubjects: {
+          include: {
+            subject: true,
+          },
+        },
+      },
+    });
+    if (!student) throw new NotFoundException('Không tìm thấy thông tin sinh viên.');
+
+    // Fetch official exam room student allocations
+    const roomStudents = await this.prisma.examRoomStudent.findMany({
+      where: {
+        studentId: student.id,
+        examScheduleRoom: {
+          examSchedule: {
+            status: { not: 'CANCELLED' },
+            deletedAt: null,
+          },
+        },
+      },
+      include: {
+        examScheduleRoom: {
+          include: {
+            room: true,
+            examSchedule: {
+              include: {
+                subject: true,
+                examPeriod: true,
+                onlineExamConfig: {
+                  include: {
+                    attempts: {
+                      where: { studentId: student.id },
+                      include: {
+                        attemptAnswers: true,
+                      },
+                      orderBy: { createdAt: 'desc' },
+                      take: 1,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        examScheduleRoom: {
+          examSchedule: {
+            examDate: 'desc',
+          },
+        },
+      },
+    });
+
+    const results = roomStudents.map((rs) => {
+      const schedule = rs.examScheduleRoom.examSchedule;
+      const subject = schedule.subject;
+      const period = schedule.examPeriod;
+      const room = rs.examScheduleRoom.room;
+      const config = schedule.onlineExamConfig;
+      const attempt = config?.attempts?.[0];
+
+      // Determine publication and grading status
+      const isPublished = Boolean(attempt?.publishedAt);
+      const isGrading = attempt && (!isPublished || attempt.gradingStatus === 'UNDER_GRADING' || attempt.gradingStatus === 'WAITING_APPROVAL');
+
+      let statusLabel: 'PASSED' | 'FAILED' | 'GRADING' | 'UNPUBLISHED' = 'UNPUBLISHED';
+      let score: number | null = null;
+
+      if (isPublished && attempt && typeof attempt.totalScore === 'number') {
+        score = Math.round(attempt.totalScore * 10) / 10;
+        statusLabel = score >= 4.0 ? 'PASSED' : 'FAILED';
+      } else if (isGrading || (attempt && attempt.submittedAt && !isPublished)) {
+        statusLabel = 'GRADING';
+      } else {
+        statusLabel = 'UNPUBLISHED';
+      }
+
+      // Breakdown for mixed/essay/mcq exams
+      let mcqScore: number | null = null;
+      let mcqMax: number | null = null;
+      let essayScore: number | null = null;
+      let essayMax: number | null = null;
+
+      if (isPublished && attempt?.attemptAnswers) {
+        let mcqSum = 0;
+        let essaySum = 0;
+
+        attempt.attemptAnswers.forEach((ans) => {
+          if (ans.finalScore !== null && ans.finalScore !== undefined) {
+            if (ans.textAnswer || ((ans as any).submissionFiles && ((ans as any).submissionFiles as any[]).length > 0)) {
+              essaySum += ans.finalScore;
+            } else {
+              mcqSum += ans.finalScore;
+            }
+          }
+        });
+
+        if (schedule.examType === 'HON_HOP' || schedule.examType === 'MIXED') {
+          mcqScore = Math.round(mcqSum * 10) / 10;
+          mcqMax = 7.0;
+          essayScore = Math.round(essaySum * 10) / 10;
+          essayMax = 3.0;
+        } else if (schedule.examType === 'TRAC_NGHIEM') {
+          mcqScore = score;
+          mcqMax = 10.0;
+        } else if (schedule.examType === 'TU_LUAN') {
+          essayScore = score;
+          essayMax = 10.0;
+        }
+      }
+
+      // Appeal window rule: allow appeal within 14 days of publishedAt
+      let canAppeal = false;
+      if (isPublished && attempt?.publishedAt) {
+        const diffDays = (new Date().getTime() - new Date(attempt.publishedAt).getTime()) / (1000 * 3600 * 24);
+        if (diffDays <= 14) {
+          canAppeal = true;
+        }
+      }
+
+      return {
+        id: rs.id,
+        attemptId: attempt?.id || null,
+        subjectId: subject.id,
+        subjectCode: subject.subjectCode,
+        subjectName: subject.subjectName,
+        credits: subject.credits,
+        schoolYear: period.name.includes('2025') ? '2025-2026' : '2025-2026',
+        semester: period.name.includes('1') ? 'HK1' : 'HK2',
+        periodName: period.name,
+        examDate: schedule.examDate,
+        examType: schedule.examType,
+        roomName: `${room.roomCode} - ${room.building}`,
+        submissionTime: attempt?.submittedAt || null,
+        status: statusLabel,
+        score,
+        mcqScore,
+        mcqMax,
+        essayScore,
+        essayMax,
+        lecturerComments: attempt?.penaltyReason || null,
+        canAppeal,
+        publishedAt: attempt?.publishedAt || null,
+      };
+    });
+
+    // Compute Summary Stats
+    const totalExams = results.length;
+    const publishedResults = results.filter((r) => r.score !== null);
+    const avgScore =
+      publishedResults.length > 0
+        ? Math.round((publishedResults.reduce((sum, r) => sum + (r.score || 0), 0) / publishedResults.length) * 100) / 100
+        : 0;
+    const passedCount = results.filter((r) => r.status === 'PASSED').length;
+    const failedCount = results.filter((r) => r.status === 'FAILED').length;
+
+    return {
+      stats: {
+        totalExams,
+        avgScore,
+        passedCount,
+        failedCount,
+      },
+      results,
+    };
+  }
+
+  async requestAppeal(userId: number, attemptId: string, reason: string) {
+    const student = await this.prisma.student.findUnique({ where: { userId } });
+    if (!student) throw new NotFoundException('Không tìm thấy thông tin sinh viên.');
+    const attempt = await this.prisma.examAttempt.findUnique({ where: { id: attemptId } });
+    if (!attempt || attempt.studentId !== student.id) {
+      throw new BadRequestException('Lượt thi không hợp lệ hoặc không thuộc quyền sở hữu.');
+    }
+    await this.prisma.examAttempt.update({
+      where: { id: attemptId },
+      data: {
+        penaltyReason: attempt.penaltyReason
+          ? `${attempt.penaltyReason} [Phúc khảo: ${reason}]`
+          : `[Phúc khảo: ${reason}]`,
+      },
+    });
+    return { message: 'Đã gửi yêu cầu phúc khảo thành công!' };
+  }
 }

@@ -60,3 +60,22 @@
 - **Status**: Fixed
 
 ---
+
+## [2026-08-10 12:31] - Next.js SWC Compiler Syntax Error on Destructuring Type Import
+
+- **Type**: Syntax / Compiler Error
+- **Severity**: Low
+- **File**: `frontend/components/Sidebar.tsx`
+- **Agent**: @frontend-specialist & @exam
+- **Root Cause**: `type LucideIcon` was destructured inside `import { ..., type LucideIcon } from 'lucide-react'`, which caused Next.js SWC compiler to fail with `cannot import as reserved word`.
+- **Error Message**:
+  ```txt
+  Error: cannot import as reserved word
+  Import trace for requested module: ./components/Sidebar.tsx
+  ```
+- **Fix Applied**: Separated `LucideIcon` into a dedicated `import type { LucideIcon } from 'lucide-react';` line.
+- **Prevention**: Always use separate `import type { ... }` statements for TypeScript interface/type imports in Next.js SWC projects.
+- **Status**: Fixed
+
+---
+
