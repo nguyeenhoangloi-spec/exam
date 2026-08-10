@@ -288,6 +288,17 @@ export default function StudentResultsPage() {
     }
   }, []);
 
+  const [myAppeals, setMyAppeals] = useState<any[]>([]);
+
+  const fetchMyAppeals = useCallback(async () => {
+    try {
+      const res = await api.get('/grade-appeals/my-appeals');
+      setMyAppeals(res.data || []);
+    } catch {
+      // fallback silent
+    }
+  }, []);
+
   useEffect(() => {
     const u = getAuthUser();
     if (!u) {
@@ -295,7 +306,43 @@ export default function StudentResultsPage() {
       return;
     }
     fetchData();
-  }, [router, fetchData]);
+    fetchMyAppeals();
+  }, [router, fetchData, fetchMyAppeals]);
+
+  const handleSubmitAppeal = async () => {
+    if (!detailItem || !detailItem.attemptId) {
+      setToast({ message: 'Không thể gửi đơn do không tìm thấy thông tin lượt thi.', type: 'error' });
+      return;
+    }
+    if (!appealReason.trim()) {
+      setToast({ message: 'Vui lòng nhập chi tiết lý do xin phúc khảo.', type: 'error' });
+      return;
+    }
+
+    try {
+      setSubmittingAppeal(true);
+      await api.post('/grade-appeals', {
+        attemptId: detailItem.attemptId,
+        reason: appealReason.trim(),
+      });
+
+      setToast({
+        message: 'Gửi yêu cầu phúc khảo thành công! Đơn của bạn đã được chuyển đến Giảng viên / Trưởng bộ môn.',
+        type: 'success',
+      });
+      setShowAppealModal(false);
+      setAppealReason('');
+      fetchData();
+      fetchMyAppeals();
+    } catch (err: any) {
+      setToast({
+        message: err.response?.data?.message || 'Không thể gửi yêu cầu phúc khảo. Vui lòng thử lại sau.',
+        type: 'error',
+      });
+    } finally {
+      setSubmittingAppeal(false);
+    }
+  };
 
   const academicYears = useMemo(() => {
     const years = Array.from(new Set(results.map((r) => r.schoolYear)));
@@ -496,31 +543,6 @@ export default function StudentResultsPage() {
 
   const handleColumnToggle = (key: string) => {
     setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handleSubmitAppeal = async () => {
-    if (!detailItem || !detailItem.attemptId) return;
-    if (!appealReason.trim()) {
-      setToast({ message: 'Vui lòng nhập lý do phúc khảo bài thi.', type: 'error' });
-      return;
-    }
-
-    setSubmittingAppeal(true);
-    try {
-      await api.post(`/students/my-results/${detailItem.attemptId}/appeal`, {
-        reason: appealReason,
-      });
-      setToast({ message: 'Đã gửi yêu cầu phúc khảo bài thi thành công!', type: 'success' });
-      setShowAppealModal(false);
-      setAppealReason('');
-      fetchData();
-    } catch (err: any) {
-      setToast({ message: err?.response?.data?.message || 'Đã gửi yêu cầu phúc khảo bài thi thành công!', type: 'success' });
-      setShowAppealModal(false);
-      setAppealReason('');
-    } finally {
-      setSubmittingAppeal(false);
-    }
   };
 
   // Render Inline Status (NO BADGE, NO BORDER, NO PILL)

@@ -25,6 +25,8 @@ import { EssayModule } from './essay/essay.module';
 import { AiModule } from './ai/ai.module';
 import { TrashModule } from './trash/trash.module';
 import { PracticeModule } from './practice/practice.module';
+import { GradeAppealsModule } from './grade-appeals/grade-appeals.module';
+import { ExamReportsModule } from './exam-reports/exam-reports.module';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { PracticeModule } from './practice/practice.module';
     AiModule,
     TrashModule,
     PracticeModule,
+    GradeAppealsModule,
+    ExamReportsModule,
   ],
 })
 export class AppModule {}

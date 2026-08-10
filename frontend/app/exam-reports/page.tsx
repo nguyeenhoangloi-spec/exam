@@ -6,6 +6,7 @@ import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { downloadCsv } from '../../lib/export-csv';
+import { exportToFormattedExcel } from '../../lib/export-excel';
 import { Toast } from '../../components/Toast';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -15,6 +16,7 @@ import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle
 
 import { ExamReportHeader } from '../../components/exam-reports/ExamReportHeader';
 import { ExamReportKPICards } from '../../components/exam-reports/ExamReportKPICards';
+import { ExamReportFiltersCard } from '../../components/exam-reports/ExamReportFiltersCard';
 import { ExamReportTableToolbar } from '../../components/exam-reports/ExamReportTableToolbar';
 import { ExamReportTable, CandidateReport } from '../../components/exam-reports/ExamReportTable';
 import { ExamReportPaginationBar } from '../../components/exam-reports/ExamReportPaginationBar';
@@ -41,6 +43,42 @@ interface GradeReportResponse {
     passRate: number;
   };
   candidates: CandidateReport[];
+}
+
+interface SummaryResponse {
+  stats: {
+    totalExams: number;
+    totalSchedules: number;
+    totalAssigned: number;
+    totalSubmitted: number;
+    totalAbsent: number;
+    totalUngraded: number;
+    totalFlagged: number;
+    passCount: number;
+    passRate: number;
+    avgScore: number;
+  };
+  schedules: Array<{
+    id: number;
+    periodName: string;
+    subjectCode: string;
+    subjectName: string;
+    departmentName: string;
+    examDate: string;
+    assigned: number;
+    submitted: number;
+    absent: number;
+    ungraded: number;
+    flagged: number;
+    passCount: number;
+    avgScore: number;
+  }>;
+  options?: {
+    classes: Array<{ id: number; name: string }>;
+    periods: Array<{ id: number; name: string }>;
+    subjects: Array<{ id: number; code: string; name: string }>;
+    departments: Array<{ id: number; name: string }>;
+  };
 }
 
 function escapeHtml(str: string) {
@@ -177,6 +215,9 @@ export default function ExamReportsPage() {
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
   const [report, setReport] = useState<GradeReportResponse | null>(null);
+  const [summary, setSummary] = useState<SummaryResponse | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryFilters, setSummaryFilters] = useState({ examPeriodId: 'ALL', subjectId: 'ALL', departmentId: 'ALL', classId: 'ALL', fromDate: '', toDate: '' });
   const [loadingSchedules, setLoadingSchedules] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
@@ -286,6 +327,26 @@ export default function ExamReportsPage() {
   const [selected, setSelected] = useState<number[]>([]);
   const [drawerCandidate, setDrawerCandidate] = useState<CandidateReport | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const fetchSummary = useCallback(async () => {
+    setSummaryLoading(true);
+    try {
+      const params = new URLSearchParams();
+      Object.entries(summaryFilters).forEach(([key, value]) => {
+        if (value && value !== 'ALL') params.set(key, value);
+      });
+      const response = await api.get<SummaryResponse>(`/exam-reports/summary?${params.toString()}`);
+      setSummary(response.data);
+    } catch (error: any) {
+      setToast({ message: error.message || 'Không tải được thống kê tổng hợp.', type: 'error' });
+    } finally {
+      setSummaryLoading(false);
+    }
+  }, [summaryFilters]);
+
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
 
   const fetchSchedules = useCallback(async () => {
     setLoadingSchedules(true);
@@ -421,6 +482,53 @@ export default function ExamReportsPage() {
     setToast({ message: 'Đã xuất file Bảng điểm CSV thành công!', type: 'success' });
   };
 
+  const exportSummaryExcel = () => {
+    if (!summary) {
+      setToast({ message: 'Chưa có dữ liệu tổng hợp để xuất.', type: 'error' });
+      return;
+    }
+    exportToFormattedExcel({
+      filename: `Bao_Cao_Tong_Hop_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'BÁO CÁO THỐNG KÊ KẾT QUẢ THI',
+      subtitle: `Kỳ thi: ${summary.stats.totalExams} · Ca thi: ${summary.stats.totalSchedules}`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Kỳ thi', width: 28 },
+        { header: 'Mã môn', width: 14 },
+        { header: 'Môn học', width: 28 },
+        { header: 'Khoa', width: 24 },
+        { header: 'Ngày thi', align: 'center', width: 14 },
+        { header: 'Được gán', align: 'center', width: 14 },
+        { header: 'Đã nộp', align: 'center', width: 14 },
+        { header: 'Vắng', align: 'center', width: 14 },
+        { header: 'Chưa chấm', align: 'center', width: 14 },
+        { header: 'Bất thường', align: 'center', width: 14 },
+        { header: 'Điểm TB', align: 'center', width: 14 },
+      ],
+      rows: summary.schedules.map((row, index) => [
+        index + 1, row.periodName, row.subjectCode, row.subjectName, row.departmentName,
+        new Date(row.examDate).toLocaleDateString('vi-VN'), row.assigned, row.submitted,
+        row.absent, row.ungraded, row.flagged, row.avgScore,
+      ]),
+    });
+    setToast({ message: 'Đã xuất báo cáo Excel thành công.', type: 'success' });
+  };
+
+  const exportSummaryCsv = () => {
+    if (!summary) {
+      setToast({ message: 'Chưa có dữ liệu tổng hợp để xuất.', type: 'error' });
+      return;
+    }
+    const headers = ['STT', 'Kỳ thi', 'Mã môn', 'Môn học', 'Khoa', 'Ngày thi', 'Được gán', 'Đã nộp', 'Vắng', 'Chưa chấm', 'Bất thường', 'Điểm TB'];
+    const rows = summary.schedules.map((row, index) => [
+      index + 1, row.periodName, row.subjectCode, row.subjectName, row.departmentName,
+      new Date(row.examDate).toLocaleDateString('vi-VN'), row.assigned, row.submitted,
+      row.absent, row.ungraded, row.flagged, row.avgScore,
+    ].map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','));
+    downloadCsv(`Bao_Cao_Tong_Hop_${new Date().toISOString().slice(0, 10)}.csv`, `${headers.join(',')}\n${rows.join('\n')}`);
+    setToast({ message: 'Đã xuất báo cáo CSV thành công.', type: 'success' });
+  };
+
   // Official Print Report
   const printOfficialReport = () => {
     if (!report) return;
@@ -495,89 +603,45 @@ export default function ExamReportsPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
         <ExamReportHeader
-          onExport={exportCsv}
+          onExport={exportSummaryCsv}
+          onExportExcel={exportSummaryExcel}
           onPrint={printOfficialReport}
         />
 
-        {/* Schedule Selector Toolbar - Chuẩn Edu (Giáo dục / Khảo thí) */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-blue-600 shrink-0" />
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                Ca Thi / Lịch Thi Xem Báo Cáo
-              </h2>
-            </div>
 
-            <button
-              type="button"
-              disabled={loadingSchedules}
-              onClick={() => setShowSchedulePicker(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-blue-700 hover:shadow-xs active:scale-95 transition cursor-pointer disabled:opacity-60 shrink-0"
-            >
-              <Calendar className="h-3.5 w-3.5 text-blue-100" />
-              <span>Đổi ca thi khác</span>
-            </button>
-          </div>
+        <ExamReportKPICards
+          totalExams={summary?.stats.totalExams ?? 0}
+          totalSchedules={summary?.stats.totalSchedules ?? 0}
+          totalAssigned={summary?.stats.totalAssigned ?? kpiData.totalAssigned}
+          totalSubmitted={summary?.stats.totalSubmitted ?? kpiData.totalSubmitted}
+          totalAbsent={summary?.stats.totalAbsent ?? kpiData.totalAbsent}
+          totalUngraded={summary?.stats.totalUngraded ?? 0}
+          totalFlagged={summary?.stats.totalFlagged ?? 0}
+          avgScore={summary?.stats.avgScore ?? kpiData.avgScore}
+          passRate={summary?.stats.passRate ?? kpiData.passRate}
+          passCount={summary?.stats.passCount ?? kpiData.passCount}
+        />
 
-          {/* Active Schedule Info Bar: Chuẩn Edu (Đơn sắc Blue/Slate chuyên nghiệp, ngày giờ định dạng chuẩn 06/08/2026) */}
-          {report?.schedule ? (
-            (() => {
-              const activeSched = schedules.find((x) => String(x.id) === selectedScheduleId);
-              const fmt = activeSched ? getExamFormatBadge(activeSched) : null;
-              const typeBadge = activeSched ? getScheduleTypeBadge(activeSched) : null;
+        {/* ── 3. Integrated Filters & Active Schedule Card ── */}
+        {(() => {
+          const activeSched = schedules.find((x) => String(x.id) === selectedScheduleId);
+          const typeBadge = activeSched ? getScheduleTypeBadge(activeSched) : null;
+          const fmtBadge = activeSched ? getExamFormatBadge(activeSched) : null;
 
-              let formattedDate = report.schedule.examDate || '';
-              if (formattedDate.includes('T')) {
-                formattedDate = formattedDate.split('T')[0];
-              }
-              if (formattedDate.includes('-')) {
-                const parts = formattedDate.split('-');
-                if (parts.length === 3) {
-                  formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-                }
-              }
-
-              return (
-                <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-3.5 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="px-2.5 py-0.5 rounded bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
-                      {typeBadge?.label || 'Chính thức'}
-                    </span>
-                    <span className="text-xs font-bold text-slate-900">
-                      {report.schedule.subjectName}
-                    </span>
-                    <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded">
-                      {report.schedule.subjectCode}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-xs text-slate-600 flex-wrap">
-                    {fmt && (
-                      <div>
-                        <span className="text-slate-400">Hình thức: </span>
-                        <strong className="text-slate-800 font-semibold">{fmt.label}</strong>
-                      </div>
-                    )}
-                    <div>
-                      <span className="text-slate-400">Kỳ thi: </span>
-                      <strong className="text-slate-800 font-semibold">{report.schedule.periodName}</strong>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Thời gian: </span>
-                      <strong className="text-slate-900 font-bold">
-                        {report.schedule.startTime} – {report.schedule.endTime} ({formattedDate})
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()
-          ) : (
-            <div className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 font-medium">
-              {loadingSchedules ? 'Đang tải dữ liệu ca thi...' : 'Vui lòng nhấn "Đổi ca thi khác" để chọn lịch thi cần xem.'}
-            </div>
-          )}
+          return (
+            <ExamReportFiltersCard
+              summaryFilters={summaryFilters}
+              setSummaryFilters={setSummaryFilters}
+              summaryOptions={summary?.options}
+              summaryLoading={summaryLoading}
+              reportSchedule={report?.schedule}
+              activeTypeBadge={typeBadge}
+              activeFormatBadge={fmtBadge}
+              loadingSchedules={loadingSchedules}
+              onOpenSchedulePicker={() => setShowSchedulePicker(true)}
+            />
+          );
+        })()}
 
           {/* Modal popup */}
           {showSchedulePicker && (
@@ -790,22 +854,11 @@ export default function ExamReportsPage() {
                   </div>
                 </>
               )}
-        </div>
 
-        {/* Dynamic KPI Cards Row calculated from REAL API data */}
-        <ExamReportKPICards
-          totalAssigned={kpiData.totalAssigned}
-          totalSubmitted={kpiData.totalSubmitted}
-          totalAbsent={kpiData.totalAbsent}
-          avgScore={kpiData.avgScore}
-          passRate={kpiData.passRate}
-          passCount={kpiData.passCount}
-        />
-
-        {/* Filter Card */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
-          <div className="relative flex-1 min-w-[260px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        {/* Search & Status Filter Row (Standard Edu Layout) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-1">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
               placeholder="Tìm theo Mã SV, Họ tên, Lớp sinh viên..."
@@ -814,7 +867,7 @@ export default function ExamReportsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
             {search && (
               <button
@@ -830,8 +883,8 @@ export default function ExamReportsPage() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500">Lọc theo trạng thái:</span>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <span className="text-xs font-bold text-slate-500">Trạng thái:</span>
             <div className="relative">
               <select
                 value={statusFilter}
@@ -839,7 +892,7 @@ export default function ExamReportsPage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
                 <option value="ALL">Tất cả Thí sinh</option>
                 <option value="SUBMITTED">Đã tham gia / Nộp bài</option>

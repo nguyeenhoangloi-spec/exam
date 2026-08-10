@@ -1,18 +1,22 @@
 'use client';
 
 import React from 'react';
-import { Download, Printer } from 'lucide-react';
+import { FileSpreadsheet, Printer } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface ExamReportHeaderProps {
   onExport?: () => void;
+  onExportExcel?: () => void;
   onPrint?: () => void;
 }
 
 export function ExamReportHeader({
   onExport,
+  onExportExcel,
   onPrint,
 }: ExamReportHeaderProps) {
+  const handleExport = onExportExcel || onExport;
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
@@ -25,15 +29,17 @@ export function ExamReportHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-2.5">
-        <Button
-          type="button"
-          variant="secondary"
-          size="md"
-          onClick={onExport}
-          leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
-        >
-          Xuất File CSV
-        </Button>
+        {handleExport && (
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={handleExport}
+            leftIcon={<FileSpreadsheet className="h-4 w-4 text-[#15803D]" />}
+          >
+            Xuất Excel
+          </Button>
+        )}
 
         {onPrint && (
           <Button
@@ -50,4 +56,3 @@ export function ExamReportHeader({
     </div>
   );
 }
-

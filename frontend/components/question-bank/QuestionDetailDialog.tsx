@@ -157,8 +157,8 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <div
                   key={o.id || o.order}
                   className={`rounded-xl border p-3.5 transition flex items-start gap-3 ${o.isCorrect
-                      ? 'border-emerald-300 bg-emerald-50/90 text-emerald-950 font-medium'
-                      : 'border-slate-200 bg-slate-50 text-[#334155]'
+                    ? 'border-emerald-300 bg-emerald-50/90 text-emerald-950 font-medium'
+                    : 'border-slate-200 bg-slate-50 text-[#334155]'
                     }`}
                 >
                   <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[13px] font-bold ${o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-[#0F172A]'

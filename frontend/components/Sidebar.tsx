@@ -158,6 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
         { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
+        { name: 'Xử lý Phúc khảo', href: '/teacher/regrade', icon: FileCheck },
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },

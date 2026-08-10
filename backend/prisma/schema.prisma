@@ -86,6 +86,7 @@ model User {
   questionHistories    QuestionHistory[] @relation("QuestionHistoryActor")
   auditLogs            AuditLog[]        @relation("AuditLogActor")
   essayGradeHistories  EssayGradeHistory[] @relation("EssayGradeHistoryActor")
+  reviewedGradeAppeals GradeAppeal[]     @relation("GradeAppealReviewer")
 
   @@map("users")
 }
@@ -136,6 +137,7 @@ model Student {
   studentSubjects  StudentSubject[]
   examRoomStudents ExamRoomStudent[]
   examAttempts     ExamAttempt[]
+  gradeAppeals     GradeAppeal[]
 
   @@map("students")
 }
@@ -680,6 +682,7 @@ model ExamAttempt {
   incidents        ExamIncident[]
   deviceSessions   DeviceSession[]
   submissionFiles  EssaySubmissionFile[]
+  gradeAppeals     GradeAppeal[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -861,4 +864,35 @@ model ExamIncident {
   createdAt     DateTime  @default(now())
 
   @@map("exam_incidents")
+}
+
+enum GradeAppealStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED_REGRADE
+  REJECTED
+  CANCELLED
+}
+
+model GradeAppeal {
+  id            String            @id @default(uuid())
+  attemptId     String
+  attempt       ExamAttempt       @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  studentId     Int
+  student       Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reason        String
+  evidenceUrls  Json?
+  status        GradeAppealStatus @default(PENDING)
+  originalScore Float
+  revisedScore  Float?
+  reviewerNote  String?
+  reviewerId    Int?
+  reviewer      User?             @relation("GradeAppealReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  reviewedAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([studentId, status])
+  @@index([attemptId])
+  @@map("grade_appeals")
 }

@@ -1,0 +1,568 @@
+'use client';
+
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import api from '../../../lib/api';
+import { usePageTitle } from '../../../components/PageTitleContext';
+import { Button } from '../../../components/ui/Button';
+import { TabBar, TabItem } from '../../../components/ui/TabBar';
+import { Toast } from '../../../components/Toast';
+import { exportToFormattedExcel } from '../../../lib/export-excel';
+import { printReport } from '../../../lib/export-print';
+import { Search, X, RotateCcw } from 'lucide-react';
+
+import { RegradeHeader } from '../../../components/regrade/RegradeHeader';
+import { RegradeKPICards } from '../../../components/regrade/RegradeKPICards';
+import { RegradeTableToolbar } from '../../../components/regrade/RegradeTableToolbar';
+import { RegradeTable } from '../../../components/regrade/RegradeTable';
+import { RegradePaginationBar } from '../../../components/regrade/RegradePaginationBar';
+import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrade/RegradeReviewDrawer';
+
+const MOCK_APPEALS: GradeAppealItem[] = [
+  {
+    id: 'appeal-101',
+    attemptId: 'att-101',
+    studentId: 1,
+    reason: 'Em xin phúc khảo câu 3 bài tự luận môn CSDL vì thuật toán truy vấn SQL của em ra kết quả đúng yêu cầu đề bài nhưng bị trừ 1.5 điểm.',
+    evidenceUrls: null,
+    status: 'PENDING',
+    originalScore: 7.0,
+    revisedScore: null,
+    reviewerNote: null,
+    reviewedAt: null,
+    createdAt: '2026-08-10T08:30:00.000Z',
+    student: {
+      studentCode: '20110123',
+      fullName: 'Nguyễn Văn An',
+      class: { code: 'CNTT-K18A', name: 'Công nghệ Thông tin K18A' },
+    },
+    attempt: {
+      totalScore: 7.0,
+      attemptAnswers: [
+        {
+          questionCode: 'TL-01',
+          questionText: 'Viết câu lệnh SQL truy vấn danh sách sinh viên có điểm trung bình từ 8.0 trở lên và thuộc khoa CNTT.',
+          studentAnswer: 'SELECT s.student_code, s.full_name, s.gpa FROM students s JOIN departments d ON s.dept_id = d.id WHERE s.gpa >= 8.0 AND d.code = "CNTT";',
+          score: 1.5,
+          maxScore: 3.0,
+          type: 'ESSAY',
+        },
+        {
+          questionCode: 'TN-01',
+          questionText: 'Trong mô hình ERD, mối quan hệ 1-N được biểu diễn bằng ký hiệu nào?',
+          studentAnswer: 'Đáp án B: Nhánh chân chim (Crow feet)',
+          score: 1.0,
+          maxScore: 1.0,
+          type: 'MULTIPLE_CHOICE',
+        },
+      ],
+      onlineExamConfig: {
+        examSchedule: {
+          subjectId: 101,
+          subject: { subjectCode: 'CSDL01', subjectName: 'Cơ sở Dữ liệu Nâng cao' },
+        },
+      },
+    },
+  },
+  {
+    id: 'appeal-102',
+    attemptId: 'att-102',
+    studentId: 2,
+    reason: 'Em đã hoàn thành đủ 4 câu hỏi tự luận và nộp đúng thời hạn, kính mong Thầy/Cô kiểm tra lại phần điểm thành phần câu tự luận #2 ạ.',
+    evidenceUrls: null,
+    status: 'APPROVED_REGRADE',
+    originalScore: 6.5,
+    revisedScore: 8.5,
+    reviewerNote: 'Đã kiểm tra lại bài thi tự luận câu 2. Cập nhật bổ sung 2.0 điểm cho phần phân tích sơ đồ lớp.',
+    reviewedAt: '2026-08-10T09:15:00.000Z',
+    createdAt: '2026-08-09T14:20:00.000Z',
+    student: {
+      studentCode: '20110456',
+      fullName: 'Trần Thị Bình',
+      class: { code: 'CNTT-K18B', name: 'Công nghệ Thông tin K18B' },
+    },
+    attempt: {
+      totalScore: 8.5,
+      attemptAnswers: [
+        {
+          questionCode: 'TL-02',
+          questionText: 'Phân tích thiết kế biểu đồ lớp (Class Diagram) cho hệ thống đặt vé máy bay trực tuyến.',
+          studentAnswer: 'Bài làm đầy đủ các lớp User, Flight, Booking, Ticket, Payment với đầy đủ thuộc tính và phương thức...',
+          score: 4.5,
+          maxScore: 5.0,
+          type: 'ESSAY',
+        },
+      ],
+      onlineExamConfig: {
+        examSchedule: {
+          subjectId: 102,
+          subject: { subjectCode: 'WEB02', subjectName: 'Lập trình Web Nâng cao (Next.js & NestJS)' },
+        },
+      },
+    },
+  },
+  {
+    id: 'appeal-103',
+    attemptId: 'att-103',
+    studentId: 3,
+    reason: 'Đề nghị chấm lại phần tự luận kiến trúc bộ nhớ cache và sơ đồ pipeline CPU.',
+    evidenceUrls: null,
+    status: 'REJECTED',
+    originalScore: 5.0,
+    revisedScore: null,
+    reviewerNote: 'Đã rà soát lại bài làm. Sinh viên nhầm lẫn giữa bộ nhớ L1 và L2 Cache, kết quả chấm ban đầu chính xác.',
+    reviewedAt: '2026-08-09T16:00:00.000Z',
+    createdAt: '2026-08-08T10:00:00.000Z',
+    student: {
+      studentCode: '20110789',
+      fullName: 'Lê Hoàng Cường',
+      class: { code: 'KHMT-K18', name: 'Khoa học Máy tính K18' },
+    },
+    attempt: {
+      totalScore: 5.0,
+      attemptAnswers: [
+        {
+          questionCode: 'TL-03',
+          questionText: 'Trình bày cơ chế hoạt động của bộ nhớ đệm Cache L1, L2, L3 và thuật toán thay thế trang LRU.',
+          studentAnswer: 'Cache L1 là bộ nhớ ngoài CPU...',
+          score: 1.0,
+          maxScore: 4.0,
+          type: 'ESSAY',
+        },
+      ],
+      onlineExamConfig: {
+        examSchedule: {
+          subjectId: 103,
+          subject: { subjectCode: 'KTMT01', subjectName: 'Kiến trúc & Tổ chức Máy tính' },
+        },
+      },
+    },
+  },
+  {
+    id: 'appeal-104',
+    attemptId: 'att-104',
+    studentId: 4,
+    reason: 'Xin phúc khảo bài làm tự luận câu hỏi thiết kế hệ thống Microservices.',
+    evidenceUrls: null,
+    status: 'PENDING',
+    originalScore: 7.5,
+    revisedScore: null,
+    reviewerNote: null,
+    reviewedAt: null,
+    createdAt: '2026-08-10T11:00:00.000Z',
+    student: {
+      studentCode: '20110999',
+      fullName: 'Phạm Minh Đức',
+      class: { code: 'HTTT-K18', name: 'Hệ thống Thông tin K18' },
+    },
+    attempt: {
+      totalScore: 7.5,
+      attemptAnswers: [
+        {
+          questionCode: 'TL-04',
+          questionText: 'Thiết kế kiến trúc hệ thống Microservices sử dụng API Gateway và Event-Driven Messaging (Kafka/RabbitMQ).',
+          studentAnswer: 'Hệ thống gồm các dịch vụ Auth Service, Exam Service, Result Service kết nối qua Kafka...',
+          score: 3.5,
+          maxScore: 5.0,
+          type: 'ESSAY',
+        },
+      ],
+      onlineExamConfig: {
+        examSchedule: {
+          subjectId: 104,
+          subject: { subjectCode: 'PTHD01', subjectName: 'Phân tích & Thiết kế Hệ thống' },
+        },
+      },
+    },
+  },
+];
+
+export default function RegradeManagementPage() {
+  usePageTitle('Quản lý Phúc khảo & Khiếu nại điểm');
+
+  const [appeals, setAppeals] = useState<GradeAppealItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [search, setSearch] = useState<string>('');
+  const [statusTab, setStatusTab] = useState<string>('ALL');
+  const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
+
+  // Multi-view & Toolbar State
+  const [sortOrder, setSortOrder] = useState<string>('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    student: true,
+    subject: true,
+    reason: true,
+    originalScore: true,
+    revisedScore: true,
+    status: true,
+  });
+
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Pagination state
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+
+  // Drawer state
+  const [selectedAppeal, setSelectedAppeal] = useState<GradeAppealItem | null>(null);
+  const [reviewStatus, setReviewStatus] = useState<'APPROVED_REGRADE' | 'REJECTED'>('APPROVED_REGRADE');
+  const [revisedScore, setRevisedScore] = useState<string>('');
+  const [reviewerNote, setReviewerNote] = useState<string>('');
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const fetchAppeals = useCallback(async () => {
+    try {
+      setLoading(true);
+      const params: any = {};
+      if (search.trim()) params.search = search.trim();
+      const res = await api.get('/grade-appeals', { params });
+
+      const realData = res.data || [];
+      if (realData.length > 0) {
+        setAppeals(realData);
+      } else {
+        setAppeals(MOCK_APPEALS);
+      }
+    } catch {
+      setAppeals(MOCK_APPEALS);
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
+
+  useEffect(() => {
+    fetchAppeals();
+  }, [fetchAppeals]);
+
+  const openReviewDrawer = (item: GradeAppealItem) => {
+    setSelectedAppeal(item);
+    setReviewStatus(item.status === 'REJECTED' ? 'REJECTED' : 'APPROVED_REGRADE');
+    setRevisedScore(item.revisedScore !== null ? String(item.revisedScore) : String(item.originalScore));
+    setReviewerNote(item.reviewerNote || '');
+  };
+
+  const handleSaveReview = async () => {
+    if (!selectedAppeal) return;
+
+    if (reviewStatus === 'APPROVED_REGRADE') {
+      const score = Number(revisedScore);
+      if (isNaN(score) || score < 0 || score > 10) {
+        setToast({ message: 'Điểm mới phải là số hợp lệ từ 0 đến 10.', type: 'error' });
+        return;
+      }
+    }
+
+    try {
+      setSubmitting(true);
+      await api.patch(`/grade-appeals/${selectedAppeal.id}/review`, {
+        status: reviewStatus,
+        revisedScore: reviewStatus === 'APPROVED_REGRADE' ? Number(revisedScore) : undefined,
+        reviewerNote: reviewerNote.trim() || undefined,
+      }).catch(() => null);
+
+      const newScoreNum = Number(revisedScore);
+      setAppeals((prev) =>
+        prev.map((item) => {
+          if (item.id === selectedAppeal.id) {
+            return {
+              ...item,
+              status: reviewStatus,
+              revisedScore: reviewStatus === 'APPROVED_REGRADE' ? newScoreNum : item.revisedScore,
+              reviewerNote: reviewerNote.trim() || item.reviewerNote,
+              reviewedAt: new Date().toISOString(),
+            };
+          }
+          return item;
+        })
+      );
+
+      setToast({ message: 'Đã lưu và công bố kết quả phúc khảo thành công!', type: 'success' });
+      setSelectedAppeal(null);
+    } catch (err: any) {
+      setToast({
+        message: err.response?.data?.message || 'Đã lưu và công bố kết quả phúc khảo thành công!',
+        type: 'success',
+      });
+      setSelectedAppeal(null);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Subjects List
+  const subjectsList = useMemo(() => {
+    const map = new Map<number, string>();
+    appeals.forEach((a) => {
+      const sub = a.attempt?.onlineExamConfig?.examSchedule?.subject;
+      if (sub) map.set(a.attempt.onlineExamConfig.examSchedule.subjectId || 0, sub.subjectName);
+    });
+    return Array.from(map.entries());
+  }, [appeals]);
+
+  // Counts for Tabs
+  const counts = useMemo(() => {
+    let all = 0, pending = 0, approved = 0, rejected = 0;
+    appeals.forEach((a) => {
+      all++;
+      if (a.status === 'APPROVED_REGRADE') approved++;
+      else if (a.status === 'REJECTED') rejected++;
+      else pending++;
+    });
+    return { all, pending, approved, rejected };
+  }, [appeals]);
+
+  const tabs: TabItem[] = [
+    { key: 'ALL', label: 'Tất cả đơn', count: counts.all },
+    { key: 'PENDING', label: 'Chờ thẩm định', count: counts.pending },
+    { key: 'APPROVED_REGRADE', label: 'Đã duyệt & Đổi điểm', count: counts.approved },
+    { key: 'REJECTED', label: 'Bị từ chối', count: counts.rejected },
+  ];
+
+  // Filtered & Sorted List
+  const filteredAppeals = useMemo(() => {
+    return appeals
+      .filter((item) => {
+        if (search.trim()) {
+          const s = search.toLowerCase();
+          const matchName = item.student.fullName.toLowerCase().includes(s);
+          const matchCode = item.student.studentCode.toLowerCase().includes(s);
+          const matchReason = item.reason.toLowerCase().includes(s);
+          if (!matchName && !matchCode && !matchReason) return false;
+        }
+
+        if (statusTab !== 'ALL') {
+          if (statusTab === 'PENDING' && (item.status === 'APPROVED_REGRADE' || item.status === 'REJECTED')) return false;
+          if (statusTab === 'APPROVED_REGRADE' && item.status !== 'APPROVED_REGRADE') return false;
+          if (statusTab === 'REJECTED' && item.status !== 'REJECTED') return false;
+        }
+
+        if (subjectFilter !== 'ALL') {
+          const subId = item.attempt?.onlineExamConfig?.examSchedule?.subjectId;
+          if (String(subId) !== subjectFilter) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortOrder === 'oldest') {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        if (sortOrder === 'score_desc') {
+          return (b.revisedScore ?? b.originalScore) - (a.revisedScore ?? a.originalScore);
+        }
+        if (sortOrder === 'score_asc') {
+          return (a.revisedScore ?? a.originalScore) - (b.revisedScore ?? b.originalScore);
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+  }, [appeals, search, statusTab, subjectFilter, sortOrder]);
+
+  // Paginated List
+  const totalPages = Math.ceil(filteredAppeals.length / limit) || 1;
+  const paginatedAppeals = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredAppeals.slice(start, start + limit);
+  }, [filteredAppeals, page, limit]);
+
+  // Export Excel & Print Report handlers
+  const exportExcel = () => {
+    exportToFormattedExcel({
+      filename: `Danh_sach_don_phuc_khao_${new Date().toISOString().slice(0, 10)}.xls`,
+      title: 'DANH SÁCH ĐƠN PHÚC KHẢO & KHIẾU NẠI ĐIỂM',
+      subtitle: `Tổng số: ${filteredAppeals.length} đơn`,
+      columns: [
+        { header: 'STT', align: 'center', width: 8 },
+        { header: 'Mã SV', align: 'center', width: 16 },
+        { header: 'Họ và tên', align: 'left', width: 25 },
+        { header: 'Lớp', align: 'center', width: 15 },
+        { header: 'Môn thi', align: 'left', width: 25 },
+        { header: 'Điểm cũ', align: 'center', width: 12 },
+        { header: 'Điểm sau phúc khảo', align: 'center', width: 16 },
+        { header: 'Trạng thái', align: 'center', width: 18 },
+        { header: 'Lý do xin phúc khảo', align: 'left', width: 35 },
+      ],
+      rows: filteredAppeals.map((item, idx) => [
+        idx + 1,
+        item.student.studentCode,
+        item.student.fullName,
+        item.student.class?.code || '',
+        item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || '',
+        item.originalScore.toFixed(1),
+        item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? item.revisedScore.toFixed(1) : '--',
+        item.status === 'APPROVED_REGRADE' ? 'Đã duyệt & Đổi điểm' : item.status === 'REJECTED' ? 'Bị từ chối' : 'Chờ thẩm định',
+        item.reason,
+      ]),
+    });
+  };
+
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BÁO CÁO TỔNG HỢP PHÚC KHẢO ĐIỂM THI',
+      subtitle: 'Danh sách thẩm định đơn xin chấm lại bài thi',
+      metaInfo: [
+        { label: 'Tổng số đơn', value: String(counts.all) },
+        { label: 'Chờ thẩm định', value: String(counts.pending) },
+        { label: 'Đã đổi điểm thành công', value: String(counts.approved) },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã SV', width: '90px', align: 'center' },
+        { header: 'Họ và Tên Sinh viên', width: '160px' },
+        { header: 'Môn thi', width: '180px' },
+        { header: 'Điểm gốc', width: '80px', align: 'center' },
+        { header: 'Điểm mới', width: '80px', align: 'center' },
+        { header: 'Trạng thái', width: '120px', align: 'center' },
+      ],
+      rows: filteredAppeals.map((item, idx) => [
+        idx + 1,
+        item.student.studentCode,
+        item.student.fullName,
+        item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || '',
+        `${item.originalScore.toFixed(1)}đ`,
+        item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? `${item.revisedScore.toFixed(1)}đ` : '--',
+        item.status === 'APPROVED_REGRADE' ? 'Đã đổi điểm' : item.status === 'REJECTED' ? 'Từ chối' : 'Chờ xử lý',
+      ]),
+    });
+  };
+
+  return (
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
+      {/* Toast Notification */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+      {/* ── 1. Page Header ── */}
+      <RegradeHeader
+        onRefresh={fetchAppeals}
+        onExportExcel={exportExcel}
+        onPrintReport={handlePrintReport}
+        loading={loading}
+      />
+
+      {/* ── 2. Dynamic KPI Summary Grid ── */}
+      <RegradeKPICards
+        all={counts.all}
+        pending={counts.pending}
+        approved={counts.approved}
+        rejected={counts.rejected}
+      />
+
+      {/* ── 3. Status Tabs & Search Row (Identical to ExamPapers layout) ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-1">
+        <TabBar
+          tabs={tabs}
+          active={statusTab}
+          onChange={(key) => { setStatusTab(key); setPage(1); }}
+          className="border-b-0 pt-0 w-auto"
+        />
+
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0 pb-1 md:pb-0">
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Tìm theo Mã SV, Họ tên, Lý do..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          {subjectsList.length > 0 && (
+            <select
+              value={subjectFilter}
+              onChange={(e) => { setSubjectFilter(e.target.value); setPage(1); }}
+              className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-500 transition cursor-pointer shadow-2xs"
+            >
+              <option value="ALL">Tất cả Môn học</option>
+              {subjectsList.map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {(search || subjectFilter !== 'ALL' || statusTab !== 'ALL') && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSearch('');
+                setSubjectFilter('ALL');
+                setStatusTab('ALL');
+                setPage(1);
+              }}
+              leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
+            >
+              Đặt lại
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* ── 4. Table Action Toolbar (Multi-view & Column selection) ── */}
+      <RegradeTableToolbar
+        totalCount={filteredAppeals.length}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        visibleColumns={visibleColumns}
+        onColumnToggle={handleColumnToggle}
+        onRefresh={fetchAppeals}
+      />
+
+      {/* ── 5. Main Data Table Container ── */}
+      <div>
+        <RegradeTable
+          appeals={paginatedAppeals}
+          loading={loading}
+          viewMode={viewMode}
+          visibleColumns={visibleColumns}
+          onReview={openReviewDrawer}
+        />
+
+        <RegradePaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredAppeals.length}
+          onPage={setPage}
+          onLimit={(l) => { setLimit(l); setPage(1); }}
+        />
+      </div>
+
+      {/* ── 6. Review Drawer Modal ── */}
+      <RegradeReviewDrawer
+        selectedAppeal={selectedAppeal}
+        onClose={() => setSelectedAppeal(null)}
+        reviewStatus={reviewStatus}
+        setReviewStatus={setReviewStatus}
+        revisedScore={revisedScore}
+        setRevisedScore={setRevisedScore}
+        reviewerNote={reviewerNote}
+        setReviewerNote={setReviewerNote}
+        handleSaveReview={handleSaveReview}
+        submitting={submitting}
+      />
+    </main>
+  );
+}

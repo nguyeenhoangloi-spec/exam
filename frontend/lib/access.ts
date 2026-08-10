@@ -26,6 +26,8 @@ const routeAccess: Array<{ prefix: string; roles: Role[] }> = [
   { prefix: '/teacher/assignments', roles: ['TEACHER'] },
   { prefix: '/teacher/essay-grading', roles: ['ADMIN', 'TEACHER'] },
   { prefix: '/admin/essay-review', roles: ['ADMIN'] },
+  { prefix: '/teacher/regrade', roles: ['ADMIN', 'TEACHER'] },
+  { prefix: '/admin/grade-appeals', roles: ['ADMIN'] },
   { prefix: '/teacher/proctor', roles: ['ADMIN', 'TEACHER'] },
   { prefix: '/student/exam-schedule', roles: ['STUDENT'] },
   { prefix: '/student/results', roles: ['STUDENT'] },
