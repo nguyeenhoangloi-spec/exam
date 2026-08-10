@@ -9,7 +9,7 @@ export const QuestionStatusBadge = ({ status }: { status: string }) => {
 export const QuestionDifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   const label = DIFFICULTY_LABELS[difficulty] || (difficulty === 'EASY' ? 'Dễ' : difficulty === 'MEDIUM' ? 'Trung bình' : difficulty === 'HARD' ? 'Khó' : difficulty);
   return (
-    <span className="text-[13px] font-semibold text-[#334155]">
+    <span className="text-[13px] font-semibold text-[#334155] dark:text-slate-300">
       {label}
     </span>
   );
@@ -26,7 +26,7 @@ const QUESTION_TYPE_SHORT_LABELS: Record<string, string> = {
 export const QuestionTypeBadge = ({ type }: { type: string }) => {
   const label = QUESTION_TYPE_SHORT_LABELS[type] || QUESTION_TYPE_LABELS[type] || 'Trắc nghiệm';
   return (
-    <span className="text-[13px] font-semibold text-[#334155]">
+    <span className="text-[13px] font-semibold text-[#334155] dark:text-slate-300">
       {label}
     </span>
   );

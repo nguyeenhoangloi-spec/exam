@@ -275,6 +275,14 @@ export class EssayService {
       },
     });
 
+    const attemptsWithEssay = attempts.filter((a) => {
+      const snap = a.snapshot?.snapshotData;
+      if (Array.isArray(snap)) {
+        return (snap as any[]).some((q) => q.type === 'ESSAY');
+      }
+      return a.onlineExamConfig?.essayEnabled !== false;
+    });
+
     try {
       const scheduleWhere = actor.role === 'ADMIN'
         ? {}
@@ -283,6 +291,7 @@ export class EssayService {
       const onlineConfigs = await this.prisma.onlineExamConfig.findMany({
         where: {
           examSchedule: scheduleWhere,
+          essayEnabled: true,
         },
         include: {
           examSchedule: {
@@ -302,7 +311,7 @@ export class EssayService {
       });
 
       const existingStudentAttemptKeys = new Set(
-        attempts.map((a) => `${a.studentId}-${a.onlineExamConfigId}`),
+        attemptsWithEssay.map((a) => `${a.studentId}-${a.onlineExamConfigId}`),
       );
 
       const virtualAttempts: any[] = [];
@@ -339,9 +348,9 @@ export class EssayService {
         }
       }
 
-      return [...attempts, ...virtualAttempts];
+      return [...attemptsWithEssay, ...virtualAttempts];
     } catch (e) {
-      return attempts;
+      return attemptsWithEssay;
     }
   }
 
@@ -412,7 +421,7 @@ export class EssayService {
     }
 
     const processedQuestions = await Promise.all(
-      snapshot.map(async (q) => {
+      essayQuestions.map(async (q) => {
         let questionRubric = rubricByQuestion.get(q.questionId) || [];
         if (!questionRubric.length && q.type === 'ESSAY') {
           const maxSc = Number(q.score || 1);

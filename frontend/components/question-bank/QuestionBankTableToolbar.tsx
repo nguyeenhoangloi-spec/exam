@@ -47,8 +47,8 @@ export function QuestionBankTableToolbar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
       {/* Left Total Count text */}
-      <span className="text-xs font-semibold text-slate-600">
-        <span className="font-bold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
+      <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+        <span className="font-bold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> kết quả
       </span>
 
       {/* Right Controls */}
@@ -58,7 +58,7 @@ export function QuestionBankTableToolbar({
           <select
             value={sortOrder}
             onChange={(e) => onSortChange?.(e.target.value)}
-            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="h-9 appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] pl-3 pr-8 text-xs font-bold text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
@@ -72,7 +72,7 @@ export function QuestionBankTableToolbar({
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] px-3 text-xs font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 shadow-2xs cursor-pointer active:scale-95"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
             <span>Chọn cột</span>
@@ -82,11 +82,11 @@ export function QuestionBankTableToolbar({
           {/* Dropdown Menu Popover */}
           {openColumnMenu && (
             <div
-              className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+            className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] p-3 shadow-xl text-xs space-y-2"
               onMouseLeave={() => setOpenColumnMenu(false)}
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span className="font-bold text-slate-900 text-xs">Hiển thị cột</span>
+                <span className="font-bold text-slate-900 dark:text-slate-100 text-xs">Hiển thị cột</span>
                 <span className="text-[11px] text-slate-400 font-normal">Click để ẩn/hiện</span>
               </div>
 
@@ -96,7 +96,7 @@ export function QuestionBankTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition text-xs"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-semibold text-slate-700 dark:text-slate-200 select-none transition text-xs"
                     >
                       <span className="flex items-center gap-2">
                         <input

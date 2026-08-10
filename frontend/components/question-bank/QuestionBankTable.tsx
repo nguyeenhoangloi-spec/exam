@@ -234,9 +234,9 @@ export function QuestionBankTable({
   // 2. Dạng Thu Gọn (Compact View Mode)
   if (viewMode === 'compact') {
     return (
-      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
-          <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-[#0F172A] shadow-2xs">
+        <table className="w-full text-left text-[15px] text-[#334155] dark:text-slate-300 border-collapse">
+          <thead className="bg-slate-50 dark:bg-[#1E293B] text-[14px] font-semibold uppercase tracking-wider text-[#475569] dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th scope="col" className="p-2 pl-3 text-center w-8">
                 <input
@@ -254,7 +254,7 @@ export function QuestionBankTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-normal">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-normal">
             {questions.map((q) => {
               const isChecked = selected.includes(q.id);
               const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
@@ -336,7 +336,7 @@ export function QuestionBankTable({
               return (
                 <tr
                   key={q.id}
-                  className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''
+                  className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/70 ${isChecked ? 'bg-blue-50/50 dark:bg-blue-950/50' : ''
                     }`}
                 >
                   {/* Checkbox */}
@@ -355,7 +355,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                        className="font-mono text-[14px] font-bold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
                       >
                         {codeText}
                       </button>
@@ -368,7 +368,7 @@ export function QuestionBankTable({
                       <div className="space-y-1.5">
                         {/* Câu hỏi */}
                         <p
-                          className="text-[15px] font-medium text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2"
+                          className="text-[15px] font-medium text-[#0F172A] dark:text-slate-100 leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2"
                           onClick={() => onDetail(q)}
                           title={q.content}
                         >
@@ -469,7 +469,7 @@ export function QuestionBankTable({
 
                   {/* Môn học */}
                   {visibleColumns.subject !== false && (
-                    <td className="p-3.5 whitespace-nowrap text-[15px] font-normal text-[#334155] align-top pt-4">
+                    <td className="p-3.5 whitespace-nowrap text-[15px] font-normal text-[#334155] dark:text-slate-300 align-top pt-4">
                       {subjectName}
                     </td>
                   )}
@@ -490,7 +490,7 @@ export function QuestionBankTable({
 
                   {/* Điểm số */}
                   <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                    <span className="text-[15px] font-medium text-[#0F172A]">
+                    <span className="text-[15px] font-medium text-[#0F172A] dark:text-slate-100">
                       {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
                     </span>
                   </td>
@@ -505,8 +505,8 @@ export function QuestionBankTable({
                   {/* Người tạo */}
                   {visibleColumns.creator !== false && (
                     <td className="p-3.5 whitespace-nowrap align-top pt-4">
-                      <div className="flex items-center gap-1.5 text-[15px] font-normal text-[#334155]">
-                        <div className="h-5 w-5 rounded-full bg-slate-100 text-[#475569] flex items-center justify-center font-semibold text-[13px] border border-slate-200">
+                      <div className="flex items-center gap-1.5 text-[15px] font-normal text-[#334155] dark:text-slate-300">
+                        <div className="h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-[#475569] dark:text-slate-300 flex items-center justify-center font-semibold text-[13px] border border-slate-200 dark:border-slate-600">
                           {creatorName.charAt(0).toUpperCase()}
                         </div>
                         <span>{creatorName}</span>
@@ -516,7 +516,7 @@ export function QuestionBankTable({
 
                   {/* Ngày tạo */}
                   {visibleColumns.createdAt !== false && (
-                    <td className="p-3.5 whitespace-nowrap text-[14px] text-[#64748B] font-normal align-top pt-4">
+                    <td className="p-3.5 whitespace-nowrap text-[14px] text-[#64748B] dark:text-slate-400 font-normal align-top pt-4">
                       {formatDate(q.createdAt)}
                     </td>
                   )}
