@@ -163,7 +163,7 @@ export function QuestionImportWizard({
           type: meta.defaultType,
           difficulty: meta.defaultDifficulty,
           bloomLevel: meta.defaultBloomLevel,
-          count: 100,
+          count: 500,
           prompt: `${instruction}\n\n${extracted.data?.text || ''}`,
           isExtractionOnly: true,
           images: extracted.data?.images || [],
@@ -176,7 +176,8 @@ export function QuestionImportWizard({
           if (cleanContent.includes('","score"') || cleanContent.includes('","explanation"') || cleanContent.includes('","options"')) {
             cleanContent = cleanContent.replace(/","(score|explanation|keywords|options|fillBlankAnswers|imageIndexes)":[\s\S]*/gi, '');
           }
-          cleanContent = cleanContent.replace(/^["']?\s*content["']?\s*:\s*["']?/i, '').replace(/^[{["]+|[}\]"]+$/g, '').trim();
+          cleanContent = cleanContent.replace(/^["']?\s*content["']?\s*:\s*["']?/i, '').replace(/^[{["]+/g, '').replace(/["]+$/g, '').trim();
+          cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
 
           return {
             row: i + 1,

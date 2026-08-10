@@ -315,6 +315,7 @@ export class QuestionQueryDto {
   @IsDateString()
   fromDate?: string;
 
+
   @IsOptional()
   @Transform(({ value }) => (value === '' || value === null ? undefined : String(value)))
   @IsDateString()
@@ -398,6 +399,7 @@ export class ImportConfirmDto {
   @IsOptional() @IsString() @MaxLength(500000) overrides?: string;
 }
 
+
 export class ImportPreviewDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) subjectId?: number;
   @IsOptional() @IsUUID() chapterId?: string;
@@ -407,6 +409,7 @@ export class ImportPreviewDto {
   @IsOptional() @Type(() => Number) @IsNumber() @Min(0.01) @Max(100) defaultScore?: number;
   @IsOptional() @IsBoolean() applyDefaultsToMissingOnly?: boolean;
 }
+
 
 export class GenerateAiQuestionsDto {
   @Type(() => Number)
@@ -431,7 +434,7 @@ export class GenerateAiQuestionsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(100)
+  @Max(500)
   count: number;
 
   @IsOptional()
@@ -455,7 +458,7 @@ export class GenerateAiQuestionsDto {
 export class SaveAiQuestionsDto {
   @IsArray()
   @ArrayMinSize(1)
-  @ArrayMaxSize(200)
+  @ArrayMaxSize(500)
   @ValidateNested({ each: true })
   @Type(() => CreateQuestionDto)
   questions: CreateQuestionDto[];
