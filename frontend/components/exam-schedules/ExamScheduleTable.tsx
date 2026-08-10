@@ -6,6 +6,7 @@ import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { ExamSchedule } from '../../types';
 
 import { StatusBadge } from '../common/StatusBadge';
+import { formatExamType } from '../../lib/enum-labels';
 
 export interface ExamScheduleItemExtended {
   id: number;
@@ -423,7 +424,7 @@ export function ExamScheduleTable({
                         {periodName}
                       </p>
                       <p className="text-[14px] font-normal text-[#64748B]">
-                        {s.examType === 'DIEN_LO' || s.examType === 'FILL_BLANK' ? 'Điền khuyết' : s.examType === 'TU_LUAN' ? 'Tự luận' : 'Trắc nghiệm'}
+                        {formatExamType(s.examType)}
                       </p>
                     </div>
                   </td>

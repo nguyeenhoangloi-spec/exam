@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical, Calendar, KeyRound } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { StatusBadge } from '../common/StatusBadge';
+import { formatExamType } from '../../lib/enum-labels';
 import { ExamPaper } from '../../types';
 
 const statusStyle: Record<string, { label: string; className: string }> = {
@@ -314,7 +315,7 @@ export function ExamPaperTable({
                         Mã {p.paperCode}
                       </button>
                       <p className="text-[11px] font-semibold text-slate-400">
-                        {examType === 'TU_LUAN' ? 'Tự luận' : examType === 'DIEN_LO' ? 'Điền lỗ' : 'Trắc nghiệm'}
+                        {formatExamType(examType)}
                       </p>
                     </div>
                   </td>

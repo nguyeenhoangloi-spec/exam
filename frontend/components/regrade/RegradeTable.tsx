@@ -48,7 +48,7 @@ export function RegradeTable({
   // 1. Grid View Mode
   if (viewMode === 'grid') {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {appeals.map((item) => {
           const subjectName = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Không xác định';
           const subjectCode = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectCode || '';
@@ -57,30 +57,30 @@ export function RegradeTable({
           return (
             <div
               key={item.id}
-              className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-blue-400 transition-all duration-200 space-y-3"
+              className="rounded-2xl border border-slate-200/90 bg-white p-4.5 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-blue-400 transition-all duration-200 space-y-3.5"
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
                       {item.student.fullName.slice(0, 1).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-extrabold text-slate-900 text-xs">{item.student.fullName}</p>
-                      <p className="text-[11px] font-mono text-slate-400">{item.student.studentCode}</p>
+                      <p className="font-extrabold text-[#0F172A] text-sm leading-snug">{item.student.fullName}</p>
+                      <p className="text-xs font-mono font-medium text-slate-400">{item.student.studentCode}</p>
                     </div>
                   </div>
                   <StatusBadge status={badgeStatus} className="text-xs" />
                 </div>
 
-                <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-100 space-y-0.5">
-                  <p className="font-bold text-slate-900 text-xs">{subjectName}</p>
-                  <p className="text-[11px] font-mono text-slate-400">{subjectCode}</p>
+                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-0.5">
+                  <p className="font-bold text-[#0F172A] text-xs">{subjectName}</p>
+                  {subjectCode && <p className="text-xs font-mono font-semibold text-blue-600">{subjectCode}</p>}
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-normal">{item.reason}</p>
-                  <span className="text-[11px] text-slate-400 block font-normal">
+                  <p className="text-xs text-slate-700 line-clamp-2 leading-relaxed font-normal">{item.reason}</p>
+                  <span className="text-xs text-slate-400 block font-normal">
                     {new Date(item.createdAt).toLocaleString('vi-VN')}
                   </span>
                 </div>
@@ -89,9 +89,9 @@ export function RegradeTable({
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                 <div className="text-xs font-semibold text-slate-700">
                   <span>Điểm ban đầu: </span>
-                  <strong className="text-slate-900">{item.originalScore.toFixed(1)} đ</strong>
+                  <strong className="text-slate-900 font-black">{item.originalScore.toFixed(1)} đ</strong>
                   {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null && (
-                    <span className="ml-2 font-bold text-emerald-600">→ {item.revisedScore.toFixed(1)} đ</span>
+                    <span className="ml-2 font-black text-emerald-600">→ {item.revisedScore.toFixed(1)} đ</span>
                   )}
                 </div>
 
@@ -100,7 +100,7 @@ export function RegradeTable({
                   size="xs"
                   onClick={() => onReview(item)}
                   leftIcon={<Edit3 className="h-3.5 w-3.5 text-blue-600" />}
-                  className="h-7 px-2.5 text-xs font-bold text-blue-600 border-slate-200 hover:bg-blue-50"
+                  className="h-8 px-3 text-xs font-bold text-blue-600 bg-white border border-slate-200 hover:bg-blue-50 shadow-2xs"
                 >
                   Thẩm định & Chấm lại
                 </Button>
@@ -116,57 +116,57 @@ export function RegradeTable({
   if (viewMode === 'compact') {
     return (
       <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-slate-700 border-collapse">
-          <thead className="bg-slate-50/80 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200/90">
+        <table className="w-full text-left text-[14px] text-[#334155] border-collapse">
+          <thead className="bg-slate-50 text-[13px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
             <tr>
-              <th scope="col" className="py-2.5 px-3 whitespace-nowrap">Sinh viên</th>
-              <th scope="col" className="py-2.5 px-3 min-w-[180px]">Môn học</th>
-              <th scope="col" className="py-2.5 px-3 min-w-[220px]">Nội dung xin phúc khảo</th>
-              <th scope="col" className="py-2.5 px-3 whitespace-nowrap text-center">Điểm ban đầu</th>
-              <th scope="col" className="py-2.5 px-3 whitespace-nowrap text-center">Điểm sau phúc khảo</th>
-              <th scope="col" className="py-2.5 px-3 whitespace-nowrap text-center">Trạng thái</th>
-              <th scope="col" className="py-2.5 px-3 pr-4 text-right whitespace-nowrap">Thao tác</th>
+              <th scope="col" className="p-2.5 pl-3.5 whitespace-nowrap">Sinh viên</th>
+              <th scope="col" className="p-2.5 min-w-[180px]">Môn học</th>
+              <th scope="col" className="p-2.5 min-w-[220px]">Nội dung xin phúc khảo</th>
+              <th scope="col" className="p-2.5 whitespace-nowrap text-center">Điểm ban đầu</th>
+              <th scope="col" className="p-2.5 whitespace-nowrap text-center">Điểm sau phúc khảo</th>
+              <th scope="col" className="p-2.5 whitespace-nowrap text-center">Trạng thái</th>
+              <th scope="col" className="p-2.5 pr-3.5 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-normal">
+          <tbody className="divide-y divide-slate-100 font-medium">
             {appeals.map((item) => {
               const subjectName = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Không xác định';
               const badgeStatus = item.status === 'APPROVED_REGRADE' ? 'APPROVED' : item.status === 'REJECTED' ? 'REJECTED' : 'PENDING';
 
               return (
                 <tr key={item.id} className="transition hover:bg-blue-50/40">
-                  <td className="py-2.5 px-3 whitespace-nowrap font-medium">
-                    <span className="font-bold text-slate-900 text-xs">{item.student.fullName}</span>
-                    <span className="text-[11px] font-mono text-slate-400 ml-1.5">({item.student.studentCode})</span>
+                  <td className="p-2.5 pl-3.5 whitespace-nowrap">
+                    <span className="font-bold text-[#0F172A] text-xs">{item.student.fullName}</span>
+                    <span className="text-xs font-mono font-medium text-slate-400 ml-1.5">({item.student.studentCode})</span>
                   </td>
-                  <td className="py-2.5 px-3 min-w-[180px]">
-                    <p className="truncate font-bold text-slate-900 text-xs">{subjectName}</p>
+                  <td className="p-2.5 min-w-[180px]">
+                    <p className="truncate font-bold text-[#0F172A] text-xs">{subjectName}</p>
                   </td>
-                  <td className="py-2.5 px-3 min-w-[220px]">
-                    <p className="truncate text-slate-600 text-xs font-normal">{item.reason}</p>
+                  <td className="p-2.5 min-w-[220px]">
+                    <p className="truncate text-slate-700 text-xs font-normal">{item.reason}</p>
                   </td>
-                  <td className="py-2.5 px-3 whitespace-nowrap text-center font-semibold text-slate-800 text-xs">
+                  <td className="p-2.5 whitespace-nowrap text-center font-bold text-slate-900 text-xs">
                     {item.originalScore.toFixed(1)} đ
                   </td>
-                  <td className="py-2.5 px-3 whitespace-nowrap text-center text-xs">
+                  <td className="p-2.5 whitespace-nowrap text-center text-xs">
                     {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
-                      <span className="font-bold text-emerald-600">{item.revisedScore.toFixed(1)} đ</span>
+                      <span className="font-black text-emerald-600">{item.revisedScore.toFixed(1)} đ</span>
                     ) : (
                       <span className="text-slate-300 font-normal">--</span>
                     )}
                   </td>
-                  <td className="py-2.5 px-3 whitespace-nowrap text-center">
+                  <td className="p-2.5 whitespace-nowrap text-center">
                     <div className="flex justify-center">
                       <StatusBadge status={badgeStatus} className="text-xs" />
                     </div>
                   </td>
-                  <td className="py-2.5 px-3 pr-4 text-right whitespace-nowrap">
+                  <td className="p-2.5 pr-3.5 text-right whitespace-nowrap">
                     <Button
                       variant="secondary"
                       size="xs"
                       onClick={() => onReview(item)}
                       leftIcon={<Edit3 className="h-3.5 w-3.5 text-blue-600" />}
-                      className="h-7 px-2.5 text-xs font-bold text-blue-600 border-slate-200 hover:bg-blue-50"
+                      className="h-7 px-2.5 text-xs font-bold text-blue-600 border-slate-200 hover:bg-blue-50 shadow-2xs"
                     >
                       Chấm lại
                     </Button>
@@ -180,19 +180,19 @@ export function RegradeTable({
     );
   }
 
-  // 3. Default List View Mode
+  // 3. Default List View Mode (Matching ExamReportTable 100%)
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="w-full text-left text-xs text-slate-700 border-collapse">
-        <thead className="bg-slate-50/80 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200/90">
+      <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
+        <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
           <tr>
-            {visibleColumns.student !== false && <th scope="col" className="py-3 px-4 whitespace-nowrap">Sinh viên</th>}
-            {visibleColumns.subject !== false && <th scope="col" className="py-3 px-4 min-w-[200px]">Môn học</th>}
-            {visibleColumns.reason !== false && <th scope="col" className="py-3 px-4 min-w-[260px]">Nội dung xin phúc khảo</th>}
-            {visibleColumns.originalScore !== false && <th scope="col" className="py-3 px-4 whitespace-nowrap text-center">Điểm ban đầu</th>}
-            {visibleColumns.revisedScore !== false && <th scope="col" className="py-3 px-4 whitespace-nowrap text-center">Điểm sau phúc khảo</th>}
-            {visibleColumns.status !== false && <th scope="col" className="py-3 px-4 whitespace-nowrap text-center">Trạng thái</th>}
-            <th scope="col" className="py-3 px-4 text-right whitespace-nowrap">Thao tác</th>
+            {visibleColumns.student !== false && <th scope="col" className="p-3.5 pl-4 whitespace-nowrap">Sinh viên</th>}
+            {visibleColumns.subject !== false && <th scope="col" className="p-3.5 min-w-[200px]">Môn học</th>}
+            {visibleColumns.reason !== false && <th scope="col" className="p-3.5 min-w-[280px]">Nội dung xin phúc khảo</th>}
+            {visibleColumns.originalScore !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Điểm ban đầu</th>}
+            {visibleColumns.revisedScore !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Điểm sau phúc khảo</th>}
+            {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Trạng thái</th>}
+            <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 font-medium">
@@ -202,17 +202,17 @@ export function RegradeTable({
             const badgeStatus = item.status === 'APPROVED_REGRADE' ? 'APPROVED' : item.status === 'REJECTED' ? 'REJECTED' : 'PENDING';
 
             return (
-              <tr key={item.id} className="transition hover:bg-blue-50/30">
+              <tr key={item.id} className="transition hover:bg-blue-50/40">
                 {/* Sinh viên */}
                 {visibleColumns.student !== false && (
-                  <td className="py-3 px-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
+                  <td className="p-3.5 pl-4 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
                         {item.student.fullName.slice(0, 1).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 text-xs">{item.student.fullName}</p>
-                        <p className="text-[11px] font-mono text-slate-400 mt-0.5">
+                        <p className="font-extrabold text-[#0F172A] text-sm leading-snug">{item.student.fullName}</p>
+                        <p className="text-xs font-mono font-medium text-slate-400 mt-0.5">
                           {item.student.studentCode} {item.student.class ? `• ${item.student.class.code}` : ''}
                         </p>
                       </div>
@@ -222,10 +222,10 @@ export function RegradeTable({
 
                 {/* Môn học */}
                 {visibleColumns.subject !== false && (
-                  <td className="py-3 px-4 min-w-[200px]">
-                    <p className="font-bold text-slate-900 text-xs">{subjectName}</p>
+                  <td className="p-3.5 min-w-[200px]">
+                    <p className="font-bold text-[#0F172A] text-sm">{subjectName}</p>
                     {subjectCode && (
-                      <span className="inline-block font-mono text-[11px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/60 mt-0.5">
+                      <span className="inline-block font-mono text-xs font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/80 mt-1">
                         {subjectCode}
                       </span>
                     )}
@@ -234,9 +234,9 @@ export function RegradeTable({
 
                 {/* Nội dung xin phúc khảo */}
                 {visibleColumns.reason !== false && (
-                  <td className="py-3 px-4 min-w-[260px] max-w-xs">
+                  <td className="p-3.5 min-w-[280px] max-w-sm">
                     <p className="line-clamp-2 text-slate-700 leading-relaxed text-xs font-normal">{item.reason}</p>
-                    <span className="text-[11px] font-normal text-slate-400 block mt-1">
+                    <span className="text-xs font-medium text-slate-400 block mt-1">
                       {new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}{' '}
                       {new Date(item.createdAt).toLocaleDateString('vi-VN')}
                     </span>
@@ -245,27 +245,27 @@ export function RegradeTable({
 
                 {/* Điểm ban đầu */}
                 {visibleColumns.originalScore !== false && (
-                  <td className="py-3 px-4 text-center font-bold text-slate-800 text-xs whitespace-nowrap">
+                  <td className="p-3.5 text-center font-black text-slate-900 text-sm whitespace-nowrap">
                     {item.originalScore !== null ? `${item.originalScore.toFixed(1)} đ` : '0.0 đ'}
                   </td>
                 )}
 
-                {/* Điểm sau phúc khảo - Chữ màu xanh lá không khung bọc */}
+                {/* Điểm sau phúc khảo */}
                 {visibleColumns.revisedScore !== false && (
-                  <td className="py-3 px-4 text-center whitespace-nowrap text-xs">
+                  <td className="p-3.5 text-center whitespace-nowrap text-sm">
                     {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
-                      <span className="font-bold text-emerald-600 text-xs">
+                      <span className="font-black text-emerald-600 text-sm">
                         {item.revisedScore.toFixed(1)} đ
                       </span>
                     ) : (
-                      <span className="text-slate-300 font-normal">--</span>
+                      <span className="text-slate-300 font-normal text-sm">--</span>
                     )}
                   </td>
                 )}
 
                 {/* Trạng thái */}
                 {visibleColumns.status !== false && (
-                  <td className="py-3 px-4 text-center whitespace-nowrap">
+                  <td className="p-3.5 text-center whitespace-nowrap">
                     <div className="flex justify-center">
                       <StatusBadge status={badgeStatus} className="text-xs" />
                     </div>
@@ -273,11 +273,11 @@ export function RegradeTable({
                 )}
 
                 {/* Thao tác */}
-                <td className="py-3 px-4 text-right whitespace-nowrap">
+                <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                   <Button
                     variant="secondary"
-                    size="xs"
-                    className="h-7 px-2.5 text-xs font-bold text-blue-600 border-slate-200 hover:bg-blue-50 hover:border-blue-300 whitespace-nowrap inline-flex items-center shadow-2xs"
+                    size="md"
+                    className="h-8 px-3 text-xs font-bold text-blue-600 bg-white border border-slate-200 hover:bg-blue-50 hover:border-blue-300 whitespace-nowrap inline-flex items-center shadow-2xs cursor-pointer"
                     onClick={() => onReview(item)}
                     leftIcon={<Edit3 className="h-3.5 w-3.5 text-blue-600" />}
                   >

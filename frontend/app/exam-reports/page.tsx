@@ -172,6 +172,13 @@ function getExamFormatBadge(s: any) {
       badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
     };
   }
+  if (raw === 'DIEN_LO' || raw === 'DIEN_KHUYES' || raw === 'DIEN_KHUYET' || raw === 'FILL_BLANK' || raw.includes('ĐIỀN') || raw.includes('BLANK')) {
+    return {
+      label: 'Điền khuyết',
+      key: 'FILL_BLANK',
+      badgeClass: 'bg-slate-100 text-slate-700 border border-slate-200',
+    };
+  }
   if (raw === 'HON_HOP' || raw.includes('HỖN HỢP') || (raw.includes('TRẮC NGHIỆM') && raw.includes('TỰ LUẬN'))) {
     return {
       label: 'Hỗn hợp',
@@ -228,7 +235,7 @@ export default function ExamReportsPage() {
   // Modal filter states for schedule picker
   const [modalSearch, setModalSearch] = useState('');
   const [modalModeFilter, setModalModeFilter] = useState<'ALL' | 'OFFICIAL' | 'MOCK' | 'RETAKE'>('ALL');
-  const [modalFormatFilter, setModalFormatFilter] = useState<'ALL' | 'TRAC_NGHIEM' | 'TU_LUAN' | 'HON_HOP' | 'THUC_HANH'>('ALL');
+  const [modalFormatFilter, setModalFormatFilter] = useState<'ALL' | 'TRAC_NGHIEM' | 'TU_LUAN' | 'FILL_BLANK' | 'HON_HOP' | 'THUC_HANH'>('ALL');
   const [modalSubjectFilter, setModalSubjectFilter] = useState<string>('ALL');
   const [modalStatusFilter, setModalStatusFilter] = useState<'ALL' | 'UPCOMING' | 'ONGOING' | 'COMPLETED'>('ALL');
 
@@ -259,20 +266,22 @@ export default function ExamReportsPage() {
     return { all: schedules.length, official, mock, retake };
   }, [schedules]);
 
-  // Compute counts for exam formats (Trắc nghiệm, Tự luận...)
+  // Compute counts for exam formats (Trắc nghiệm, Tự luận, Điền khuyết...)
   const formatCounts = useMemo(() => {
     let tracNghiem = 0;
     let tuLuan = 0;
+    let dienKhuyet = 0;
     let honHop = 0;
     let thucHanh = 0;
     schedules.forEach((s: any) => {
       const fmt = getExamFormatBadge(s);
       if (fmt.key === 'TU_LUAN') tuLuan++;
+      else if (fmt.key === 'FILL_BLANK') dienKhuyet++;
       else if (fmt.key === 'HON_HOP') honHop++;
       else if (fmt.key === 'THUC_HANH') thucHanh++;
       else tracNghiem++;
     });
-    return { all: schedules.length, tracNghiem, tuLuan, honHop, thucHanh };
+    return { all: schedules.length, tracNghiem, tuLuan, dienKhuyet, honHop, thucHanh };
   }, [schedules]);
 
   // Modal filtered schedules
@@ -712,7 +721,9 @@ export default function ExamReportsPage() {
                             <option value="ALL">Hình thức: Tất cả</option>
                             <option value="TRAC_NGHIEM">Hình thức: Trắc nghiệm</option>
                             <option value="TU_LUAN">Hình thức: Tự luận</option>
+                            <option value="FILL_BLANK">Hình thức: Điền khuyết</option>
                             <option value="HON_HOP">Hình thức: Hỗn hợp</option>
+                            <option value="THUC_HANH">Hình thức: Thực hành</option>
                           </select>
 
                           <select

@@ -33,15 +33,15 @@ export function RegradeKPICards({
       unit: 'đơn',
       subtext: 'Cần xử lý & chấm lại bài',
       icon: Clock,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      iconBg: 'bg-amber-50 text-amber-600 border-amber-100',
     },
     {
       title: 'Đã duyệt & Đổi điểm',
       value: approved,
       unit: 'đơn',
-      subtext: `Tỷ lệ đổi điểm ${approveRate}%`,
+      subtext: `Tỷ lệ đổi điểm thành công ${approveRate}%`,
       icon: CheckCircle2,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100',
     },
     {
       title: 'Từ chối phúc khảo',
@@ -49,7 +49,7 @@ export function RegradeKPICards({
       unit: 'đơn',
       subtext: 'Giữ nguyên điểm số ban đầu',
       icon: XCircle,
-      iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
+      iconBg: 'bg-rose-50 text-rose-600 border-rose-100',
     },
   ];
 
@@ -60,7 +60,7 @@ export function RegradeKPICards({
         return (
           <div
             key={item.title}
-            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4.5 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer overflow-hidden"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
@@ -74,7 +74,7 @@ export function RegradeKPICards({
               </div>
 
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-transform duration-200 group-hover:scale-110`}
               >
                 <IconComponent className="h-5 w-5" />
               </div>

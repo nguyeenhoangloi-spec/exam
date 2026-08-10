@@ -14,6 +14,7 @@ import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { Student, ClassItem, User } from '../../types';
 import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar, BookOpen, Clock, FileText, CheckCircle2, ChevronRight } from 'lucide-react';
+import { formatExamType } from '../../lib/enum-labels';
 
 import { StudentHeader } from '../../components/students/StudentHeader';
 import { StudentKPICards } from '../../components/students/StudentKPICards';
@@ -771,7 +772,7 @@ export default function StudentsPage() {
                               </span>
                             </div>
                             <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-100">
-                              {sched.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : sched.examType === 'TU_LUAN' ? 'Tự luận' : sched.examType || 'Thi'}
+                              {formatExamType(sched.examType)}
                             </span>
                           </div>
                           <div className="p-4 space-y-3">

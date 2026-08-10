@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Download, Plus, Printer } from 'lucide-react';
+import { Download, Plus, Printer, FileSpreadsheet } from 'lucide-react';
 import { Button } from '../ui';
 
 interface SubjectHeaderProps {
@@ -34,7 +34,7 @@ export function SubjectHeader({
           variant="secondary"
           size="md"
           onClick={onExport}
-          leftIcon={<Download className="h-4 w-4 text-slate-500" />}
+          leftIcon={<FileSpreadsheet className="h-4 w-4 text-[#15803D]" />}
         >
           Xuất Excel
         </Button>
