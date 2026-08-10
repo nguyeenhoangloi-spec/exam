@@ -476,8 +476,7 @@ export default function StudentResultsPage() {
         (r) =>
           `"${r.subjectCode}","${r.subjectName}","${r.periodName}","${new Date(r.examDate).toLocaleDateString(
             'vi-VN',
-          )}","${r.examType}","${r.score !== null ? r.score : 'N/A'}","${
-            r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố'
+          )}","${r.examType}","${r.score !== null ? r.score : 'N/A'}","${r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố'
           }"`,
       )
       .join('\n');
@@ -600,7 +599,7 @@ export default function StudentResultsPage() {
               Kết Quả Thi Sinh Viên
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
-              Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Tra cứu bảng điểm môn học, lịch sử tích lũy & gửi yêu cầu phúc khảo
+              Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-[#0F172A] font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
             </p>
           </div>
 
@@ -1202,8 +1201,8 @@ export default function StudentResultsPage() {
                       type="button"
                       onClick={() => setPage(pNum)}
                       className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-bold transition cursor-pointer shadow-2xs ${isCurrent
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
                     >
                       {pNum}
@@ -1243,162 +1242,146 @@ export default function StudentResultsPage() {
         )}
 
         {/* ── 7. Detail Result Modal ── */}
-        <Modal
-          isOpen={Boolean(detailItem)}
-          onClose={() => setDetailItem(null)}
-          title="Chi tiết kết quả môn thi"
-          size="lg"
-        >
-          {detailItem && (
-            <div className="space-y-4 text-xs -mt-1">
-              <p className="-mt-2 mb-3 text-xs text-[#64748B] font-normal">
-                Mã môn: <span className="font-mono font-bold text-[#334155]">{detailItem.subjectCode}</span>
-              </p>
+        {detailItem && (
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm animate-in fade-in duration-150"
+            role="presentation"
+            onMouseDown={() => setDetailItem(null)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              onMouseDown={(e) => e.stopPropagation()}
+              className="relative my-auto flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xl shadow-slate-950/20"
+            >
+              {/* ── Gradient Header ── */}
+              <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 px-5 py-4">
+                <button
+                  type="button"
+                  onClick={() => setDetailItem(null)}
+                  className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-lg bg-white/15 text-white hover:bg-white/25 transition cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
 
-              {/* Main Subject Banner */}
-              <div className="rounded-xl bg-blue-50/60 border border-blue-100 p-4 space-y-1">
-                <p className="text-sm font-bold text-[#0F172A]">
-                  {detailItem.subjectName}
-                </p>
-                <p className="text-xs text-[#2563EB] font-medium">
-                  {detailItem.periodName} • {detailItem.credits} Tín chỉ
-                </p>
-              </div>
-
-              {/* Exam Info Grid */}
-              <div className="grid grid-cols-2 gap-3 text-[#334155]">
-                <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Năm học / Học kỳ</span>
-                  <p className="font-bold text-[#0F172A]">
-                    {detailItem.schoolYear} ({detailItem.semester})
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Ngày thi</span>
-                  <p className="font-bold text-[#0F172A]">
-                    {new Date(detailItem.examDate).toLocaleDateString('vi-VN')}
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Phòng thi</span>
-                  <p className="font-bold text-[#0F172A]">
-                    {detailItem.roomName}
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Hình thức thi</span>
-                  <p className="font-bold text-[#0F172A]">
-                    {formatExamType(detailItem.examType)}
-                  </p>
-                </div>
-
-                <div className="col-span-2 space-y-1 border-t border-slate-100 pt-2.5">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase">Thời gian nộp bài</span>
-                  <p className="font-medium text-[#334155]">
-                    {detailItem.submissionTime
-                      ? new Date(detailItem.submissionTime).toLocaleString('vi-VN')
-                      : 'Chưa có thông tin'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Score Breakdown Section */}
-              <div className="space-y-2 border-t border-b border-slate-100 py-3.5">
-                <h4 className="font-bold text-[#0F172A] text-xs">
-                  Bảng phân rã điểm thi
-                </h4>
-
-                {detailItem.score !== null ? (
-                  <div className="space-y-1.5 bg-slate-50 rounded-xl p-3 font-medium">
-                    {detailItem.mcqScore !== null && (
-                      <div className="flex items-center justify-between text-[#334155]">
-                        <span>Trắc nghiệm</span>
-                        <span className="font-bold font-mono">
-                          {detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}
-                        </span>
-                      </div>
-                    )}
-
-                    {detailItem.essayScore !== null && (
-                      <div className="flex items-center justify-between text-[#334155]">
-                        <span>Tự luận</span>
-                        <span className="font-bold font-mono">
-                          {detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="border-t border-slate-200 pt-1.5 flex items-center justify-between text-sm font-bold text-[#0F172A]">
-                      <span>Tổng điểm</span>
-                      <span className="font-mono text-[#2563EB] text-base">
-                        {detailItem.score.toFixed(1)} / 10
+                <div className="flex items-center gap-3 pr-10">
+                  {/* Avatar */}
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white font-black text-base">
+                    {detailItem.subjectCode.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-white leading-tight truncate">{detailItem.subjectName}</h3>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span className="inline-flex items-center rounded-md bg-white/20 px-2 py-0.5 text-[11px] font-semibold text-white">
+                        {detailItem.periodName}
                       </span>
+                      <span className="text-[11px] text-blue-200 font-mono">Mã môn: {detailItem.subjectCode}</span>
                     </div>
                   </div>
-                ) : (
-                  <div className={`inline-flex items-center gap-2 text-sm font-medium ${detailItem.status === 'GRADING' ? 'text-[#2563EB]' : 'text-[#D97706]'}`}>
-                    {detailItem.status === 'GRADING' ? <Loader2 className="w-4 h-4 shrink-0 animate-spin" /> : <Clock className="w-4 h-4 shrink-0" />}
-                    <span>
-                      {detailItem.status === 'GRADING'
-                        ? 'Bài thi đang trong quá trình chấm điểm.'
-                        : 'Điểm số chưa được duyệt công bố.'}
+                </div>
+              </div>
+
+              {/* ── Body ── */}
+              <div className="min-h-0 overflow-y-auto">
+                {/* Info rows */}
+                <div className="px-5 pt-4 pb-2 space-y-0 divide-y divide-slate-100">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider pb-2">Thông tin chi tiết</p>
+
+                  {[
+                    { icon: <BookOpen className="h-4 w-4 text-slate-400" />, label: 'Môn thi', value: detailItem.subjectName },
+                    { icon: <GraduationCap className="h-4 w-4 text-slate-400" />, label: 'Mã môn', value: detailItem.subjectCode },
+                    { icon: <Calendar className="h-4 w-4 text-slate-400" />, label: 'Kỳ thi', value: `${detailItem.schoolYear} — ${detailItem.semester}` },
+                    { icon: <Calendar className="h-4 w-4 text-slate-400" />, label: 'Ngày thi', value: new Date(detailItem.examDate).toLocaleDateString('vi-VN') },
+                    { icon: <Clock className="h-4 w-4 text-slate-400" />, label: 'Hình thức thi', value: formatExamType(detailItem.examType) },
+                    { icon: <BookOpen className="h-4 w-4 text-slate-400" />, label: 'Phòng thi', value: detailItem.roomName },
+                  ].map(({ icon, label, value }) => (
+                    <div key={label} className="flex items-center justify-between py-2.5 gap-4">
+                      <span className="flex items-center gap-2 text-xs text-slate-500 font-medium shrink-0">
+                        {icon} {label}:
+                      </span>
+                      <span className="text-xs font-bold text-slate-900 text-right">{value}</span>
+                    </div>
+                  ))}
+
+                  {/* Submission time */}
+                  <div className="flex items-center justify-between py-2.5 gap-4">
+                    <span className="flex items-center gap-2 text-xs text-slate-500 font-medium shrink-0">
+                      <Clock className="h-4 w-4 text-slate-400" /> Thời gian nộp:
+                    </span>
+                    <span className="text-xs font-bold text-slate-900 text-right">
+                      {detailItem.submissionTime ? new Date(detailItem.submissionTime).toLocaleString('vi-VN') : '---'}
                     </span>
                   </div>
-                )}
-              </div>
-
-              {/* Status Row */}
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#64748B]">Trạng thái kết quả:</span>
-                {renderInlineStatus(detailItem.status)}
-              </div>
-
-              {/* Lecturer Comments */}
-              {detailItem.lecturerComments && (
-                <div className="space-y-1 rounded-xl bg-slate-50 p-3">
-                  <span className="text-[11px] font-bold text-[#64748B] flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-[#2563EB]" />
-                    <span>Nhận xét của giảng viên:</span>
-                  </span>
-                  <p className="text-xs text-[#334155] leading-relaxed font-normal">
-                    {detailItem.lecturerComments}
-                  </p>
                 </div>
-              )}
 
-              {/* Footer Buttons */}
-              <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
-                {detailItem.canAppeal ? (
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => setShowAppealModal(true)}
-                  >
-                    Yêu cầu phúc khảo
-                  </Button>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                    <AlertCircle className="h-3.5 w-3.5 text-slate-400" />
-                    {detailItem.status === 'UNPUBLISHED' || detailItem.status === 'GRADING'
-                      ? 'Chưa mở thời hạn phúc khảo'
-                      : 'Đã hết thời hạn yêu cầu phúc khảo'}
-                  </span>
+                {/* Score Section */}
+                <div className="px-5 pt-3 pb-2">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Kết quả & Điểm số</p>
+                  {detailItem.score !== null ? (
+                    <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2">
+                      {detailItem.mcqScore !== null && (
+                        <div className="flex items-center justify-between text-xs text-slate-700">
+                          <span className="font-medium">Trắc nghiệm</span>
+                          <span className="font-bold font-mono">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
+                        </div>
+                      )}
+                      {detailItem.essayScore !== null && (
+                        <div className="flex items-center justify-between text-xs text-slate-700">
+                          <span className="font-medium">Tự luận</span>
+                          <span className="font-bold font-mono">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
+                        </div>
+                      )}
+                      <div className="border-t border-slate-200 pt-2 flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800">Tổng điểm</span>
+                        <span className="font-mono text-blue-600 font-black text-base">{detailItem.score.toFixed(1)} / 10</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={`flex items-center gap-2 text-xs font-medium rounded-xl p-3 ${detailItem.status === 'GRADING' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'}`}>
+                      {detailItem.status === 'GRADING' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clock className="w-4 h-4" />}
+                      {detailItem.status === 'GRADING' ? 'Bài thi đang trong quá trình chấm điểm.' : 'Điểm số chưa được duyệt công bố.'}
+                    </div>
+                  )}
+
+                  {/* Status */}
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-xs font-semibold text-slate-500">Trạng thái kết quả:</span>
+                    {renderInlineStatus(detailItem.status)}
+                  </div>
+                </div>
+
+                {/* Lecturer comments */}
+                {detailItem.lecturerComments && (
+                  <div className="px-5 pb-3">
+                    <div className="rounded-xl bg-slate-50 border border-slate-100 p-3 space-y-1.5">
+                      <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5 text-blue-500" /> Nhận xét của giảng viên
+                      </span>
+                      <p className="text-xs text-slate-700 leading-relaxed font-normal">{detailItem.lecturerComments}</p>
+                    </div>
+                  </div>
                 )}
 
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={() => setDetailItem(null)}
-                >
-                  Đóng
-                </Button>
+                {/* Footer */}
+                <div className="flex items-center justify-between px-5 py-4 border-t border-slate-100 bg-slate-50/70">
+                  {detailItem.canAppeal ? (
+                    <Button variant="primary" size="sm" onClick={() => setShowAppealModal(true)}>
+                      Yêu cầu phúc khảo
+                    </Button>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                      <AlertCircle className="h-3.5 w-3.5" />
+                      {detailItem.status === 'UNPUBLISHED' || detailItem.status === 'GRADING'
+                        ? 'Chưa mở thời hạn phúc khảo'
+                        : 'Đã hết thời hạn phúc khảo'}
+                    </span>
+                  )}
+                  <Button variant="secondary" size="md" onClick={() => setDetailItem(null)}>Đóng</Button>
+                </div>
               </div>
             </div>
-          )}
-        </Modal>
+          </div>
+        )}
 
         {/* ── 8. Appeal Modal ── */}
         <Modal
