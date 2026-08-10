@@ -3,6 +3,7 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { KeyRound, Eye, EyeOff, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 import { Modal } from '../Modal';
+import { Button } from '../ui';
 import { ExamPaper } from '../../types';
 
 interface ChangeExamPasswordModalProps {
@@ -161,31 +162,24 @@ export function ChangeExamPasswordModal({
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={onClose}
             disabled={submitting}
-            className="h-9 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
           >
             Hủy
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            disabled={submitting}
-            className="h-9 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 text-xs font-bold text-white shadow-md hover:bg-blue-700 transition cursor-pointer disabled:opacity-50"
+            variant="primary"
+            size="md"
+            isLoading={submitting}
+            leftIcon={<ShieldCheck className="h-4 w-4" />}
           >
-            {submitting ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                <span>Đang lưu...</span>
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="h-3.5 w-3.5" />
-                <span>Cập nhật mật khẩu</span>
-              </>
-            )}
-          </button>
+            Cập nhật mật khẩu
+          </Button>
         </div>
       </form>
     </Modal>

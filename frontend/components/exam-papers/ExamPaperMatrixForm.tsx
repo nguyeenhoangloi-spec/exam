@@ -452,13 +452,14 @@ export function ExamPaperMatrixForm({
 
                   {/* Footer */}
                   <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="md"
                       onClick={() => setShowPanel(false)}
-                      className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                     >
                       Đóng
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
