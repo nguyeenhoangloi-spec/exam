@@ -802,79 +802,84 @@ export default function StudentExamTakePage() {
 
       {/* Submit Confirmation Modal */}
       {showSubmitModal && (
-        <div className="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="bg-white border border-slate-200/90 rounded-2xl max-w-sm w-full my-auto overflow-hidden shadow-2xl space-y-4 p-6">
-            <div className="flex items-center space-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 shrink-0">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-2xl max-w-md w-full my-auto overflow-hidden shadow-2xl space-y-0">
+            {/* Header */}
+            <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800 shrink-0 shadow-2xs">
                 <Send className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-[20px] font-semibold text-[#0F172A] tracking-tight">Xác Nhận Nộp Bài Thi</h3>
-                <p className="text-[#64748B] text-[13px] font-normal">Kết thúc và chuyển sang màn hình kết quả</p>
+                <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase">Xác Nhận Nộp Bài Thi</h3>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Kết thúc và chuyển sang màn hình kết quả</p>
               </div>
             </div>
 
             {/* Statistics Summary */}
-            <div className="bg-slate-50/80 p-4 rounded-xl space-y-2 text-[15px] font-medium border border-slate-100">
-              <div className="flex justify-between text-[#64748B]">
-                <span>Tổng số câu hỏi:</span>
-                <span className="font-semibold text-[#0F172A]">{totalCount}</span>
+            <div className="p-5 space-y-3.5">
+              <div className="bg-slate-50/90 dark:bg-slate-800/60 p-4 rounded-xl space-y-2 text-xs font-bold border border-slate-200/70 dark:border-slate-700">
+                <div className="flex justify-between text-slate-500 dark:text-slate-400">
+                  <span>Tổng số câu hỏi:</span>
+                  <span className="font-extrabold text-slate-900 dark:text-slate-100">{totalCount}</span>
+                </div>
+                <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+                  <span>Số câu đã trả lời:</span>
+                  <span className="font-extrabold">{answeredCount}</span>
+                </div>
+                <div className="flex justify-between text-amber-600 dark:text-amber-400">
+                  <span>Số câu chưa trả lời:</span>
+                  <span className="font-extrabold">{totalCount - answeredCount}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-emerald-600">
-                <span>Số câu đã trả lời:</span>
-                <span className="font-semibold">{answeredCount}</span>
-              </div>
-              <div className="flex justify-between text-amber-600">
-                <span>Số câu chưa trả lời:</span>
-                <span className="font-semibold">{totalCount - answeredCount}</span>
-              </div>
-            </div>
 
-            <div className="flex items-center justify-end space-x-2.5 pt-2">
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={() => setShowSubmitModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-[#0F172A] text-[15px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
-              >
-                Tiếp tục làm bài
-              </button>
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={handleSubmitExam}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[15px] font-medium rounded-xl shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
-              >
-                {submitting ? 'Đang nộp bài...' : 'Đồng Ý Nộp Bài'}
-              </button>
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  disabled={submitting}
+                  onClick={() => setShowSubmitModal(false)}
+                  className="h-9 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer"
+                >
+                  Tiếp tục làm bài
+                </button>
+                <button
+                  type="button"
+                  disabled={submitting}
+                  onClick={handleSubmitExam}
+                  className="h-9 px-5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+                >
+                  {submitting ? 'Đang nộp bài...' : 'Đồng Ý Nộp Bài'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
       {/* Modal Báo cáo Sự cố Kỹ thuật Khẩn cấp */}
       {showIncidentModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/65 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-white rounded-2xl border border-amber-200 shadow-2xl p-6 space-y-4">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-amber-200/90 dark:border-amber-900/60 shadow-2xl overflow-hidden space-y-0">
+            {/* Header */}
+            <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-amber-100/80 dark:border-amber-900/40 flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200/80 dark:border-amber-800 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400 shadow-2xs">
+                <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-[20px] font-semibold text-[#0F172A] tracking-tight">Báo Cáo Sự Cố Kỹ Thuật Khi Thi</h3>
-                <p className="text-[#64748B] text-[13px] font-normal">Gửi thông tin gián đoạn tới Giám thị phòng thi</p>
+                <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase">Báo Cáo Sự Cố Kỹ Thuật Khi Thi</h3>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Gửi thông tin gián đoạn tới Giám thị phòng thi</p>
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="p-5 space-y-3.5">
               <div>
-                <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Chọn nhanh loại sự cố:</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Chọn nhanh loại sự cố:</label>
                 <div className="grid grid-cols-2 gap-2">
                   {['Sự cố mất mạng / gián đoạn Wifi', 'Màn hình bị đơ / không phản hồi', 'Không hiển thị ảnh / media', 'Sự cố thiết bị cá nhân'].map((quickMsg) => (
                     <button
                       key={quickMsg}
                       type="button"
                       onClick={() => setIncidentText(quickMsg)}
-                      className="p-2 rounded-xl text-left text-[13px] font-semibold border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-[#0F172A] transition cursor-pointer"
+                      className="p-2.5 rounded-xl text-left text-xs font-bold border border-slate-200 bg-slate-50/80 hover:bg-amber-50 hover:border-amber-300 text-slate-800 transition cursor-pointer"
                     >
                       {quickMsg}
                     </button>
@@ -883,40 +888,40 @@ export default function StudentExamTakePage() {
               </div>
 
               <div>
-                <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Mô tả chi tiết sự cố:</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Mô tả chi tiết sự cố:</label>
                 <textarea
                   rows={3}
                   value={incidentText}
                   onChange={(e) => setIncidentText(e.target.value)}
                   placeholder="Mô tả sự cố bạn đang gặp phải..."
-                  className="w-full rounded-xl border border-slate-200 p-3 text-[15px] font-medium text-[#0F172A] focus:border-amber-500 focus:outline-none transition resize-none"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:border-amber-500 focus:outline-none transition resize-none"
                 />
               </div>
 
               {incidentMsg && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-[15px] font-medium text-center">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold text-center">
                   {incidentMsg}
                 </div>
               )}
-            </div>
 
-            <div className="flex items-center justify-end space-x-2.5 pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                disabled={sendingIncident}
-                onClick={() => setShowIncidentModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-[#0F172A] text-[15px] font-medium shadow-2xs transition cursor-pointer"
-              >
-                Hủy bỏ
-              </button>
-              <button
-                type="button"
-                disabled={sendingIncident || !incidentText.trim()}
-                onClick={handleSendIncident}
-                className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black rounded-xl shadow-xs transition cursor-pointer disabled:opacity-50"
-              >
-                {sendingIncident ? 'Đang gửi...' : 'Gửi Báo Cáo Cho Giám Thị'}
-              </button>
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  disabled={sendingIncident}
+                  onClick={() => setShowIncidentModal(false)}
+                  className="h-9 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition cursor-pointer"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="button"
+                  disabled={sendingIncident || !incidentText.trim()}
+                  onClick={handleSendIncident}
+                  className="h-9 px-5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer disabled:opacity-50 active:scale-95"
+                >
+                  {sendingIncident ? 'Đang gửi...' : 'Gửi Báo Cáo Cho Giám Thị'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -924,56 +929,59 @@ export default function StudentExamTakePage() {
 
       {/* ── MODAL 1: CẢNH BÁO VI PHẠM NỘI QUY THI ── */}
       {violationModal.isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-amber-200 dark:border-amber-900 shadow-2xl overflow-hidden p-6 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400">
-                <AlertTriangle className="h-6 w-6 animate-pulse" />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-amber-200/90 dark:border-amber-900/60 shadow-2xl overflow-hidden space-y-0">
+            {/* Header */}
+            <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-amber-100/80 dark:border-amber-900/40 flex items-center gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 shadow-2xs">
+                <AlertTriangle className="h-5 w-5 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-[20px] font-semibold text-amber-900 dark:text-amber-200 uppercase tracking-tight">
-                  Cảnh báo vi phạm quy chế thi!
+                <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase">
+                  CẢNH BÁO VI PHẠM QUY CHẾ THI!
                 </h3>
-                <p className="text-[13px] font-semibold text-amber-700 dark:text-amber-400 mt-0.5">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
                   Hệ thống giám sát thi trực tuyến
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 p-4 border border-amber-200/80 dark:border-amber-800/50 space-y-2 text-xs">
-              <p className="font-extrabold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
-                <span>⚠️ Hành vi vi phạm vừa phát hiện:</span>
-              </p>
-              <p className="font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed">
-                {violationModal.reason}
-              </p>
-              <div className="flex items-center justify-between pt-1">
-                <span className="font-bold text-slate-600 dark:text-slate-300">Lần vi phạm:</span>
-                <span className="rounded-md bg-amber-200 dark:bg-amber-800 px-2.5 py-0.5 font-black text-amber-900 dark:text-amber-100">
-                  {violationModal.violationCount} / {violationModal.maxAllowed} lần
-                </span>
+            <div className="p-5 space-y-3.5">
+              <div className="rounded-xl bg-amber-50/80 dark:bg-amber-950/30 p-3.5 border border-amber-200/80 dark:border-amber-800/50 space-y-2 text-xs">
+                <p className="font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                  <span>⚠️ Hành vi vi phạm vừa phát hiện:</span>
+                </p>
+                <p className="font-bold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/80 p-2.5 rounded-lg border border-amber-200/60 dark:border-amber-700/60 leading-relaxed shadow-2xs">
+                  {violationModal.reason}
+                </p>
+                <div className="flex items-center justify-between pt-1">
+                  <span className="font-bold text-slate-600 dark:text-slate-300">Lần vi phạm:</span>
+                  <span className="rounded-lg bg-amber-100 dark:bg-amber-900/60 border border-amber-300/80 dark:border-amber-700 px-3 py-1 font-black text-amber-900 dark:text-amber-100 text-xs shadow-2xs">
+                    {violationModal.violationCount} / {violationModal.maxAllowed} lần
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <p className="text-[11.5px] font-semibold text-rose-600 dark:text-rose-400 leading-relaxed bg-rose-50 dark:bg-rose-950/30 p-2.5 rounded-xl border border-rose-200">
-              🚨 <strong>CẢNH BÁO HẬU QUẢ:</strong> Nếu tiếp tục tái phạm thêm {Math.max(0, violationModal.maxAllowed - violationModal.violationCount)} lần nữa, hệ thống sẽ <strong>TỰ ĐỘNG KHÓA VÀ NỘP BÀI THI</strong> của bạn ngay lập tức!
-            </p>
+              <p className="text-xs font-medium text-rose-800 dark:text-rose-300 leading-relaxed bg-rose-50/90 dark:bg-rose-950/40 p-3 rounded-xl border border-rose-200 dark:border-rose-800/60">
+                🚨 <strong className="font-bold">CẢNH BÁO HẬU QUẢ:</strong> Nếu tiếp tục tái phạm thêm {Math.max(0, violationModal.maxAllowed - violationModal.violationCount)} lần nữa, hệ thống sẽ <strong className="font-bold">TỰ ĐỘNG KHÓA VÀ NỘP BÀI THI</strong> của bạn ngay lập tức!
+              </p>
 
-            <div className="flex justify-end pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setViolationModal((prev) => ({ ...prev, isOpen: false }));
-                  if (attemptData?.config?.requireFullscreen && !document.fullscreenElement) {
-                    try {
-                      document.documentElement.requestFullscreen();
-                    } catch {}
-                  }
-                }}
-                className="w-full rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs py-3 shadow-md transition cursor-pointer active:scale-95 text-center"
-              >
-                Tôi đã hiểu & Cam kết không tái phạm
-              </button>
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViolationModal((prev) => ({ ...prev, isOpen: false }));
+                    if (attemptData?.config?.requireFullscreen && !document.fullscreenElement) {
+                      try {
+                        document.documentElement.requestFullscreen();
+                      } catch {}
+                    }
+                  }}
+                  className="w-full h-10 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-xs shadow-md transition cursor-pointer active:scale-95 text-center flex items-center justify-center gap-2"
+                >
+                  Tôi đã hiểu & Cam kết không tái phạm
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -981,46 +989,49 @@ export default function StudentExamTakePage() {
 
       {/* ── MODAL 2: TỰ ĐỘNG KHÓA & NỘP BÀI THI DO VI PHẠM ── */}
       {violationSubmittedModal.isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-rose-200 dark:border-rose-900 shadow-2xl overflow-hidden p-6 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400">
-                <AlertTriangle className="h-6 w-6 animate-bounce" />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-rose-200/90 dark:border-rose-900/60 shadow-2xl overflow-hidden space-y-0">
+            {/* Header */}
+            <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-rose-100/80 dark:border-rose-900/40 flex items-center gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                <AlertTriangle className="h-5 w-5 animate-bounce" />
               </div>
               <div>
-                <h3 className="text-[20px] font-semibold text-rose-900 dark:text-rose-200 uppercase tracking-tight">
-                  Bài thi đã bị khóa & Nộp tự động!
+                <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase">
+                  BÀI THI ĐÃ BỊ KHÓA & NỘP TỰ ĐỘNG!
                 </h3>
-                <p className="text-[13px] font-semibold text-rose-700 dark:text-rose-400 mt-0.5">
+                <p className="text-xs font-semibold text-rose-600 dark:text-rose-400 mt-0.5">
                   Vi phạm quy chế thi vượt quá giới hạn
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl bg-rose-50 dark:bg-rose-950/30 p-4 border border-rose-200 dark:border-rose-800 space-y-2 text-xs text-rose-900 dark:text-rose-100">
-              <p className="font-extrabold flex items-center gap-1.5">
-                🛑 Lý do ngắt bài thi:
-              </p>
-              <p className="font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-rose-200 leading-relaxed">
-                Bạn đã vi phạm quy chế thi vượt quá {violationSubmittedModal.maxAllowed} lần cho phép ({violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed} lần).
-              </p>
-              <p className="font-semibold text-slate-600 dark:text-slate-300 text-[11px]">
-                Hệ thống đã ghi lại toàn bộ nhật ký vi phạm và gửi bài làm về cho Giám thị phòng thi.
-              </p>
-            </div>
+            <div className="p-5 space-y-3.5">
+              <div className="rounded-xl bg-rose-50/80 dark:bg-rose-950/30 p-3.5 border border-rose-200/80 dark:border-rose-800/50 space-y-2 text-xs text-rose-900 dark:text-rose-100">
+                <p className="font-extrabold flex items-center gap-1.5">
+                  🛑 Lý do ngắt bài thi:
+                </p>
+                <p className="font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-rose-200 dark:border-rose-700/60 leading-relaxed shadow-2xs">
+                  Bạn đã vi phạm quy chế thi vượt quá {violationSubmittedModal.maxAllowed} lần cho phép ({violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed} lần).
+                </p>
+                <p className="font-medium text-slate-600 dark:text-slate-300 text-xs">
+                  Hệ thống đã ghi lại toàn bộ nhật ký vi phạm và gửi bài làm về cho Giám thị phòng thi.
+                </p>
+              </div>
 
-            <div className="flex justify-end pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  sessionStorage.removeItem('attemptToken');
-                  router.push(`/student/online-exam/${violationSubmittedModal.attemptId || attemptData?.attemptId}/result`);
-                }}
-                className="w-full rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs py-3 shadow-md transition cursor-pointer active:scale-95 text-center flex items-center justify-center gap-2"
-              >
-                <span>Xem kết quả bài thi</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    sessionStorage.removeItem('attemptToken');
+                    router.push(`/student/online-exam/${violationSubmittedModal.attemptId || attemptData?.attemptId}/result`);
+                  }}
+                  className="w-full h-10 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs shadow-md transition cursor-pointer active:scale-95 text-center flex items-center justify-center gap-2"
+                >
+                  <span>Xem kết quả bài thi</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

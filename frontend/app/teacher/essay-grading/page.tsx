@@ -35,6 +35,8 @@ function TeacherEssayGradingContent() {
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
   const [dateFilter, setDateFilter] = useState<string>('ALL');
   const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -308,13 +310,13 @@ function TeacherEssayGradingContent() {
   };
 
   const handleBatchAiGradeAll = async () => {
-    if (!rows.length) return;
+    if (!paginatedRows.length) return;
     setBatchAiLoading(true);
-    setMessage('Đang tiến hành AI chấm bài hàng loạt cho các bài thi đã nộp...');
+    setMessage(`Đang tiến hành AI chấm bài tự luận cho các bài thi trên Trang ${page}...`);
     try {
       let count = 0;
-      for (const row of rows) {
-        // CHỈ CHẤM CÁC BÀI ĐÃ NỘP BÀI THẬT SỰ (bỏ qua sinh viên chưa làm hoặc chưa nộp)
+      for (const row of paginatedRows) {
+        // CHỈ CHẤM CÁC BÀI ĐÃ NỘP BÀI THẬT SỰ TRÊN TRANG HIỆN TẠI (bỏ qua sinh viên chưa làm hoặc chưa nộp)
         if (row.id && !row.id.startsWith('virtual-') && !isNotSubmitted(row) && row.submittedAt) {
           try {
             await api.get(`/essay/grading/attempts/${row.id}`, { params: { noCache: true } });
@@ -325,16 +327,16 @@ function TeacherEssayGradingContent() {
         }
       }
       const msg = count > 0
-        ? `Hoàn tất AI chấm tự động hàng loạt cho ${count} bài thi đã nộp!`
-        : 'Không có bài thi mới nào đã nộp cần AI chấm điểm.';
+        ? `Hoàn tất AI chấm tự động cho ${count} bài thi trên Trang ${page}!`
+        : `Không có bài thi mới nào đã nộp cần AI chấm trên Trang ${page}.`;
       setMessage(msg);
-      showResultPopup('AI Chấm Hàng Loạt', msg, count > 0 ? 'success' : 'info');
+      showResultPopup(`AI Chấm Trang ${page}`, msg, count > 0 ? 'success' : 'info');
       await loadAssignments();
       if (selected?.id) {
         await openAttempt(selected.id);
       }
     } catch (e: any) {
-      setMessage('Không thể chấm bài hàng loạt.');
+      setMessage('Không thể chấm bài trên trang này.');
     } finally {
       setBatchAiLoading(false);
     }
@@ -359,12 +361,12 @@ function TeacherEssayGradingContent() {
 
     setConfirmModal({
       isOpen: true,
-      title: isAdmin ? 'Duyệt bài thi tự luận' : 'Hoàn tất & Gửi duyệt',
+      title: isAdmin ? 'Duyệt bài thi tự luận' : 'Gửi duyệt',
       message: isAdmin
-        ? `Hệ thống sẽ tự động lưu điểm và thực hiện duyệt bài thi cho thí sinh ${selected.student?.fullName}. Bạn có chắc chắn?`
-        : `Hệ thống sẽ tự động lưu toàn bộ điểm và gửi bài thi của thí sinh ${selected.student?.fullName} tới ADMIN duyệt. Bạn có chắc chắn?`,
+        ? `Hệ thống sẽ lưu điểm và thực hiện duyệt bài thi cho thí sinh ${selected.student?.fullName}. Bạn có chắc chắn?`
+        : `Hệ thống sẽ lưu toàn bộ điểm và gửi bài thi của thí sinh ${selected.student?.fullName} tới ADMIN duyệt. Bạn có chắc chắn?`,
       type: 'success',
-      confirmText: isAdmin ? 'Tự động lưu & Duyệt bài' : 'Tự động lưu & Gửi duyệt',
+      confirmText: isAdmin ? 'Duyệt bài' : 'Gửi duyệt',
       cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -510,6 +512,17 @@ function TeacherEssayGradingContent() {
     });
   }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery, isNotSubmitted]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+
+  const paginatedRows = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredRows.slice(start, start + pageSize);
+  }, [filteredRows, page, pageSize]);
+
   const currentIndex = useMemo(() => {
     if (!selected) return -1;
     return filteredRows.findIndex((r) => r.id === selected.id);
@@ -561,10 +574,11 @@ function TeacherEssayGradingContent() {
               variant="primary"
               size="md"
               onClick={handleBatchAiGradeAll}
-              disabled={batchAiLoading || loading}
+              disabled={batchAiLoading || loading || !paginatedRows.length}
               isLoading={batchAiLoading}
+              title="Chỉ thực hiện AI chấm cho các bài thi trên trang hiện tại"
             >
-              {batchAiLoading ? 'Đang AI chấm...' : 'AI chấm bài'}
+              {batchAiLoading ? 'Đang chấm...' : 'Mẫu chấm AI'}
             </Button>
 
             <Button
@@ -705,48 +719,79 @@ function TeacherEssayGradingContent() {
                   Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[64vh] overflow-y-auto pr-1">
-                  {filteredRows.map((row) => {
-                    const isSel = selected?.id === row.id;
-                    const dateStr = row.onlineExamConfig?.examSchedule?.examDate
-                      ? new Date(row.onlineExamConfig.examSchedule.examDate).toLocaleDateString('vi-VN')
-                      : row.submittedAt
-                      ? new Date(row.submittedAt).toLocaleDateString('vi-VN')
-                      : null;
-                    const schedCode = row.onlineExamConfig?.examSchedule?.code;
-                    return (
-                      <button
-                        key={row.id}
-                        type="button"
-                        onClick={() => openAttempt(row.id)}
-                        className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
-                          isSel
-                            ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
-                            : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center gap-2">
-                          <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
-                          <StatusBadge status={row.gradingStatus} />
-                        </div>
-                        <p className="text-[13px] text-[#64748B] font-normal font-mono">
-                          Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
-                        </p>
-                        <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
-                          <span className="truncate flex-1 font-medium text-[#334155]">
-                            Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
-                            {schedCode ? ` (${schedCode})` : ''}
-                          </span>
-                          {dateStr && (
-                            <span className="shrink-0 text-[13px] font-semibold text-[#0F172A] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
-                              {dateStr}
+                <>
+                  <div className="space-y-2 max-h-[58vh] overflow-y-auto pr-1">
+                    {paginatedRows.map((row) => {
+                      const isSel = selected?.id === row.id;
+                      const dateStr = row.onlineExamConfig?.examSchedule?.examDate
+                        ? new Date(row.onlineExamConfig.examSchedule.examDate).toLocaleDateString('vi-VN')
+                        : row.submittedAt
+                        ? new Date(row.submittedAt).toLocaleDateString('vi-VN')
+                        : null;
+                      const schedCode = row.onlineExamConfig?.examSchedule?.code;
+                      return (
+                        <button
+                          key={row.id}
+                          type="button"
+                          onClick={() => openAttempt(row.id)}
+                          className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
+                            isSel
+                              ? 'border-blue-500 bg-blue-50/50 border-l-4 shadow-2xs'
+                              : 'border-slate-200/90 bg-white hover:bg-slate-50/80 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="flex justify-between items-center gap-2">
+                            <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
+                            <StatusBadge status={row.gradingStatus} />
+                          </div>
+                          <p className="text-[13px] text-[#64748B] font-normal font-mono">
+                            Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
+                          </p>
+                          <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
+                            <span className="truncate flex-1 font-medium text-[#334155]">
+                              Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
+                              {schedCode ? ` (${schedCode})` : ''}
                             </span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                            {dateStr && (
+                              <span className="shrink-0 text-[13px] font-semibold text-[#0F172A] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+                                {dateStr}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Pagination Footer */}
+                  {filteredRows.length > 0 && (
+                    <div className="flex items-center justify-between border-t border-slate-200/80 pt-3 text-xs font-bold text-slate-600">
+                      <span>
+                        Trang {page} / {totalPages} ({filteredRows.length} bài)
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          disabled={page <= 1}
+                          onClick={() => setPage((p) => Math.max(1, p - 1))}
+                          className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer flex items-center justify-center"
+                          title="Trang trước"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={page >= totalPages}
+                          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                          className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer flex items-center justify-center"
+                          title="Trang sau"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
