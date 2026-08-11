@@ -825,52 +825,56 @@ export default function BackupsPage() {
           title={`Chi tiết Snapshot (${detailJob.snapshotId})`}
           size="lg"
         >
-          <div className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Mã Snapshot ID</span>
-              <span className="font-mono font-bold text-[#0F172A]">{detailJob.snapshotId}</span>
+          <div className="space-y-4 text-sm font-medium text-slate-800">
+            {/* Overview Metadata Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 pb-3 border-b border-slate-100">
+              <div className="space-y-0.5">
+                <span className="text-xs font-semibold text-[#64748B] block">Loại Backup</span>
+                <span className="text-sm font-bold text-[#0F172A] block">{detailJob.type}</span>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-xs font-semibold text-[#64748B] block">Dung lượng tổng</span>
+                <span className="text-sm font-bold text-[#0F172A] block">{formatBytes(detailJob.sizeBytes)}</span>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-xs font-semibold text-[#64748B] block">Người khởi tạo</span>
+                <span className="text-sm font-bold text-[#0F172A] block">
+                  {detailJob.initiatedBy ? detailJob.initiatedBy.username : 'Hệ thống (Cron)'}
+                </span>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-xs font-semibold text-[#64748B] block">Thời gian khởi tạo</span>
+                <span className="text-sm font-bold text-[#0F172A] block">{formatDate(detailJob.createdAt)}</span>
+              </div>
+              <div className="space-y-0.5 sm:col-span-2">
+                <span className="text-xs font-semibold text-[#64748B] block">Thời gian hoàn thành</span>
+                <span className="text-sm font-bold text-[#0F172A] block">{formatDate(detailJob.completedAt)}</span>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Loại Backup</span>
-              <span className="font-bold text-[#0F172A]">{detailJob.type}</span>
+            {/* Long Technical Identifiers */}
+            <div className="space-y-3 pb-3 border-b border-slate-100">
+              <div className="space-y-0.5">
+                <span className="text-xs font-semibold text-[#64748B] block">Mã Snapshot ID</span>
+                <span className="font-mono text-sm font-bold text-[#0F172A] break-all block">{detailJob.snapshotId}</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-semibold text-[#64748B] block">Prisma Migration Version</span>
+                  <span className="font-mono text-sm font-bold text-[#0F172A] break-all block">{detailJob.migration || 'Không xác định'}</span>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-xs font-semibold text-[#64748B] block">App Commit Hash</span>
+                  <span className="font-mono text-xs font-bold text-[#0F172A] break-all block">{detailJob.appCommit || 'Latest HEAD'}</span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Dung lượng tổng</span>
-              <span className="font-bold text-[#0F172A]">{formatBytes(detailJob.sizeBytes)}</span>
-            </div>
-
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Người khởi tạo</span>
-              <span className="font-bold text-[#0F172A]">
-                {detailJob.initiatedBy ? detailJob.initiatedBy.username : 'Hệ thống (Cron)'}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Thời gian khởi tạo</span>
-              <span className="font-bold text-[#0F172A]">{formatDate(detailJob.createdAt)}</span>
-            </div>
-
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Thời gian hoàn thành</span>
-              <span className="font-bold text-[#0F172A]">{formatDate(detailJob.completedAt)}</span>
-            </div>
-
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">Prisma Migration Version</span>
-              <span className="font-mono font-bold text-[#0F172A]">{detailJob.migration || 'Không xác định'}</span>
-            </div>
-
-            <div className="flex items-center justify-between py-3">
-              <span className="font-semibold text-[#64748B]">App Commit Hash</span>
-              <span className="font-mono font-bold text-[#0F172A]">{detailJob.appCommit || 'Latest HEAD'}</span>
-            </div>
-
-            <div className="py-3 space-y-1">
+            {/* SHA-256 Checksum */}
+            <div className="space-y-1 pt-1">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-[#64748B]">Mã băm SHA-256 Checksum</span>
+                <span className="text-xs font-semibold text-[#64748B]">Mã băm SHA-256 Checksum</span>
                 {detailJob.checksum && (
                   <button
                     type="button"
@@ -881,19 +885,19 @@ export default function BackupsPage() {
                   </button>
                 )}
               </div>
-              <p className="font-mono text-xs font-semibold text-slate-800 break-all leading-relaxed pt-1">
+              <p className="font-mono text-xs font-semibold text-slate-800 break-all leading-relaxed pt-0.5">
                 {detailJob.checksum || 'Chưa có checksum'}
               </p>
             </div>
 
             {detailJob.errorMessage && (
-              <div className="py-3 space-y-1 text-rose-700">
-                <span className="font-semibold text-rose-900">Chi tiết nhật ký lỗi:</span>
+              <div className="pt-2 space-y-1 text-rose-700">
+                <span className="text-xs font-semibold text-rose-900 block">Chi tiết nhật ký lỗi:</span>
                 <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap">{detailJob.errorMessage}</p>
               </div>
             )}
 
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end pt-4 border-t border-slate-100">
               <Button variant="secondary" size="md" onClick={() => setDetailJob(null)}>
                 Đóng
               </Button>
@@ -906,7 +910,7 @@ export default function BackupsPage() {
       <Modal isOpen={restoreOpen} onClose={() => !actionLoading && setRestoreOpen(false)} title="Tạo yêu cầu khôi phục dữ liệu" size="md">
         <div className="space-y-4 py-1">
           {/* Frameless Notice */}
-          <div className="flex items-start gap-2 text-xs font-medium text-amber-800">
+          <div className="flex items-start gap-2 text-xs font-medium text-amber-800 pb-1 border-b border-slate-100">
             <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
             <span>
               <strong className="font-bold text-amber-900">Lưu ý an toàn:</strong> Khôi phục dữ liệu sẽ ghi đè dữ liệu trên môi trường được chọn. Hãy chọn đúng môi trường và nhập lý do rõ ràng.
@@ -914,19 +918,19 @@ export default function BackupsPage() {
           </div>
 
           {/* Frameless Selected Snapshot Info */}
-          <div className="space-y-0.5 pt-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Snapshot đã chọn</span>
-            <p className="font-mono text-xs font-black text-slate-900">{selectedJob?.snapshotId}</p>
-            <p className="text-xs font-semibold text-slate-500">
+          <div className="space-y-0.5 pb-2 border-b border-slate-100">
+            <span className="text-xs font-semibold text-[#64748B] block">Snapshot đã chọn</span>
+            <p className="font-mono text-sm font-bold text-[#0F172A] break-all">{selectedJob?.snapshotId}</p>
+            <p className="text-xs font-semibold text-slate-500 mt-0.5">
               {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
             </p>
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-700">Môi trường đích:</label>
+            <label className="block text-sm font-semibold text-[#64748B]">Môi trường đích:</label>
             <FilterSelect
               size="md"
-              className="w-full"
+              className="w-full text-sm font-semibold text-slate-900"
               containerClassName="w-full"
               value={target}
               onChange={(e) => setTarget(e.target.value as RestoreTarget)}
@@ -937,7 +941,7 @@ export default function BackupsPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-700">
+            <label className="block text-sm font-semibold text-[#64748B]">
               Lý do khôi phục <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -946,7 +950,7 @@ export default function BackupsPage() {
               onChange={(e) => setReason(e.target.value)}
               maxLength={500}
               placeholder="Mô tả cụ thể sự cố cần phục hồi hoặc mục đích thử nghiệm..."
-              className="w-full rounded-xl border border-slate-200 bg-white p-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+              className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
             />
           </div>
 
@@ -989,44 +993,44 @@ export default function BackupsPage() {
 
           {/* Section 1: Retention Policy */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-blue-950 flex items-center gap-2">
+            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <Clock className="h-4 w-4 text-blue-600 shrink-0" />
-              <span className="text-blue-900 font-bold">Thời gian lưu trữ dữ liệu (Retention Policy)</span>
+              <span>Thời gian lưu trữ dữ liệu (Retention Policy)</span>
             </h4>
             <p className="text-xs text-slate-600 leading-relaxed pl-6">
               Hệ thống tự động thực hiện sao lưu định kỳ và dọn dẹp các bản ghi snapshot cũ theo chính sách:
             </p>
             <ul className="text-xs space-y-1.5 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
-              <li><strong>Bản sao lưu Hàng ngày (Daily):</strong> Lưu trữ <strong className="text-blue-700 font-bold">{overview?.retention?.daily || 14} ngày</strong> gần nhất.</li>
-              <li><strong>Bản sao lưu Hàng tuần (Weekly):</strong> Lưu trữ <strong className="text-blue-700 font-bold">{overview?.retention?.weekly || 8} tuần</strong> liên tiếp.</li>
-              <li><strong>Bản sao lưu Hàng tháng (Monthly):</strong> Lưu trữ <strong className="text-blue-700 font-bold">{overview?.retention?.monthly || 12} tháng</strong> chính thức.</li>
+              <li><strong>Bản sao lưu Hàng ngày (Daily):</strong> Lưu trữ <strong>{overview?.retention?.daily || 14} ngày</strong> gần nhất.</li>
+              <li><strong>Bản sao lưu Hàng tuần (Weekly):</strong> Lưu trữ <strong>{overview?.retention?.weekly || 8} tuần</strong> liên tiếp.</li>
+              <li><strong>Bản sao lưu Hàng tháng (Monthly):</strong> Lưu trữ <strong>{overview?.retention?.monthly || 12} tháng</strong> chính thức.</li>
             </ul>
           </div>
 
           {/* Section 2: Restore Security Policy */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-blue-950 flex items-center gap-2">
+            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
-              <span className="text-blue-900 font-bold">Quy định An toàn & Khôi phục (Security Policy)</span>
+              <span>Quy định An toàn & Khôi phục (Security Policy)</span>
             </h4>
             <ul className="text-xs space-y-2 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
               <li>
-                <strong className="text-blue-900">Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
+                <strong>Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
               </li>
               <li>
-                <strong className="text-blue-900">Snapshot An toàn (Safety Snapshot):</strong> Ngay trước khi tiến hành ghi đè dữ liệu, hệ thống sẽ tự động tạo một bản snapshot an toàn phòng trường hợp cần khôi phục lại trạng thái trước đó.
+                <strong>Snapshot An toàn (Safety Snapshot):</strong> Ngay trước khi tiến hành ghi đè dữ liệu, hệ thống sẽ tự động tạo một bản snapshot an toàn phòng trường hợp cần khôi phục lại trạng thái trước đó.
               </li>
               <li>
-                <strong className="text-blue-900">Xác nhận Cụm từ ngẫu nhiên:</strong> Mỗi lượt khôi phục yêu cầu nhập đúng cụm từ xác minh tĩnh/động được cấp để loại bỏ rủi ro bấm nhầm nút.
+                <strong>Xác nhận Cụm từ ngẫu nhiên:</strong> Mỗi lượt khôi phục yêu cầu nhập đúng cụm từ xác minh tĩnh/động được cấp để loại bỏ rủi ro bấm nhầm nút.
               </li>
             </ul>
           </div>
 
           {/* Section 3: Configuration Guide */}
           <div className="space-y-2">
-            <h4 className="text-sm font-bold text-blue-950 flex items-center gap-2">
+            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
-              <span className="text-blue-900 font-bold">Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
+              <span>Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
             </h4>
             <p className="text-xs text-slate-600 leading-relaxed pl-6">
               Các thông số thiết lập trong tập tin cấu hình môi trường server:
