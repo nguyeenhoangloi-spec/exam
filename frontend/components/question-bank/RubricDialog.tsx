@@ -146,7 +146,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
               <HelpCircle className="w-5 h-5 text-white" />
               Thiết Lập Rubric Chấm Điểm Tự Luận
             </h2>
-            <p className="text-[13px] font-medium text-blue-100 font-mono mt-0.5">
+            <p className="text-[13px] font-medium text-blue-100 font-sans tabular-nums mt-0.5">
               Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-white font-extrabold">{expectedScore}đ</strong>
             </p>
           </div>
@@ -183,7 +183,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
               {isMatched ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
               {isMatched ? 'Tổng điểm Rubric đã khớp hoàn hảo với điểm câu hỏi' : 'Tổng điểm Rubric CHƯA khớp với điểm câu hỏi'}
             </span>
-            <span className="font-mono text-sm font-black">
+            <span className="font-sans tabular-nums text-sm font-black">
               {totalRubricScore} / {expectedScore}đ
             </span>
           </div>
@@ -227,7 +227,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                         max={100}
                         value={c.maxScore}
                         onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] text-[#0F172A] font-semibold font-mono focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] text-[#0F172A] font-semibold font-sans tabular-nums focus:outline-none focus:border-blue-500"
                       />
                     </div>
                     <div className="col-span-3 flex justify-between items-end">

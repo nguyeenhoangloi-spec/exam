@@ -75,7 +75,7 @@ export function ChangeExamPasswordModal({
         {/* Info card */}
         <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-black text-slate-900 dark:text-slate-100">
+            <span className="font-sans tabular-nums text-xs font-black text-slate-900 dark:text-slate-100">
               Mã đề: {paper.paperCode}
             </span>
             <span

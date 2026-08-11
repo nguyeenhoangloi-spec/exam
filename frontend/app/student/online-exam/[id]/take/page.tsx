@@ -9,6 +9,7 @@ import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { Toast } from '@/components/Toast';
 import { FillBlankQuestionRenderer } from '@/components/question-bank/FillBlankQuestionRenderer';
 import { QuestionMediaPlayer } from '@/components/exam/QuestionMediaPlayer';
+import { DynamicImage } from '@/components/ui/DynamicImage';
 
 export default function StudentExamTakePage() {
   const router = useRouter();
@@ -513,7 +514,7 @@ export default function StudentExamTakePage() {
 
           {/* Countdown Clock Box - Ô đếm ngược thời gian tinh tế */}
           <div
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl font-mono text-sm sm:text-base font-black transition-all ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl font-sans tabular-nums text-sm sm:text-base font-black transition-all ${
               remainingSeconds < 300
                 ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-950/40'
                 : 'bg-white/15 text-white backdrop-blur-xs'
@@ -558,7 +559,7 @@ export default function StudentExamTakePage() {
                   <span className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
                     {currentIdx + 1}
                   </span>
-                  <span className="text-xs font-bold font-mono text-slate-500">
+                  <span className="text-xs font-bold font-sans tabular-nums text-slate-500">
                     Mã: {currentQ.code}
                   </span>
                   <span className="text-xs font-bold text-[#475569]">
@@ -643,7 +644,7 @@ export default function StudentExamTakePage() {
                           className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1.5 transition hover:border-blue-600 hover:shadow-md"
                           title="Bấm vào để xem ảnh phóng to"
                         >
-                          <img
+                          <DynamicImage
                             src={fullUrl}
                             alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
                             className="max-h-52 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"

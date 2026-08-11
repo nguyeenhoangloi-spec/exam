@@ -66,7 +66,7 @@ export function SubjectTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {s.subjectCode}
                     </button>
@@ -168,7 +168,7 @@ export function SubjectTable({
                     />
                   </td>
                   <td className="p-2 whitespace-nowrap font-bold text-blue-600">
-                    <button type="button" onClick={() => onDetail(s)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
+                    <button type="button" onClick={() => onDetail(s)} className="font-sans tabular-nums hover:text-blue-800 hover:underline transition cursor-pointer">
                       {s.subjectCode}
                     </button>
                   </td>
@@ -240,7 +240,7 @@ export function SubjectTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {s.subjectCode}
                     </button>

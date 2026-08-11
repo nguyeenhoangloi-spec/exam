@@ -91,7 +91,7 @@ export function PendingQuestionList({
                 const difficultyInfo = difficultyBadge[q.difficulty as keyof typeof difficultyBadge] || difficultyBadge['MEDIUM'];
                 return (
                   <tr key={q.id} className="hover:bg-slate-50/60 transition">
-                    <td className="py-3 px-3 whitespace-nowrap font-mono font-bold text-slate-900">
+                    <td className="py-3 px-3 whitespace-nowrap font-sans tabular-nums font-bold text-slate-900">
                       {q.code}
                     </td>
                     <td className="py-3 px-3 font-medium text-slate-900 max-w-xs truncate">

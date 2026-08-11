@@ -118,7 +118,7 @@ export default function TeacherAssignmentsPage() {
         <head>
           <title>BẢNG ĐIỂM DANH THÍ SINH PHÒNG THI ${data.room.roomCode}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 30px; font-size: 13px; color: #1e293b; }
+            body { font-family: 'Times New Roman', Times, serif; margin: 30px; font-size: 13px; color: #1e293b; }
             .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
             .header h2 { margin: 0; font-size: 18px; text-transform: uppercase; }
             .header p { margin: 4px 0 0 0; font-size: 13px; font-weight: bold; }
@@ -358,7 +358,7 @@ export default function TeacherAssignmentsPage() {
                   <div className="space-y-3.5">
                     {/* Card top badges */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono font-black text-xs text-[#475569]">
+                      <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                         {item.subjectCode}
                       </span>
                       <div className="flex items-center gap-1.5">

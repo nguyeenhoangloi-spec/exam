@@ -376,7 +376,7 @@ export default function ForgotPasswordPage() {
                         value={otpCode}
                         onChange={(e) => { setOtpCode(e.target.value); if (error) setError(''); }}
                         placeholder="123456"
-                        className={[inputCls, 'font-mono text-center text-base tracking-widest'].join(' ')}
+                        className={[inputCls, 'font-sans tabular-nums text-center text-base tracking-widest'].join(' ')}
                       />
                     </div>
                   </div>

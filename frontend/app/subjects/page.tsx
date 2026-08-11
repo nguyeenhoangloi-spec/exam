@@ -681,7 +681,7 @@ export default function SubjectsPage() {
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerSubject.subjectName}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">
                       Mã môn: {drawerSubject.subjectCode} • {drawerSubject.credits} Tín chỉ
                     </p>
                   </div>

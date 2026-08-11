@@ -378,7 +378,7 @@ export default function ExamArrangementPage() {
       <tr>
         <td style="text-align:center;">${idx + 1}</td>
         <td style="text-align:center;font-weight:bold;">${escapeHtml(st.examNumber || `SBD-${idx + 1}`)}</td>
-        <td style="text-align:center;font-family:monospace;">${escapeHtml(st.studentCode)}</td>
+        <td style="text-align:center;font-family:inherit;">${escapeHtml(st.studentCode)}</td>
         <td style="font-weight:bold;">${escapeHtml(st.fullName)}</td>
         <td style="text-align:center;">${escapeHtml(st.className || 'CNTT-K65')}</td>
         <td style="text-align:center;font-weight:bold;">Ghế #${st.seatNumber}</td>
@@ -531,7 +531,7 @@ export default function ExamArrangementPage() {
       const rows = students.map((st, i) => `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:center;font-weight:bold;">SBN-${String(i + 1).padStart(3, '0')}</td><td style="font-weight:bold;color:#1e3a8a;">${escapeHtml(st.studentCode)}</td><td style="font-weight:bold;">${escapeHtml(st.fullName)}</td><td>${escapeHtml(st.className)}</td><td style="text-align:center;font-weight:bold;color:#1d4ed8;">Ghế #${st.seatNumber}</td></tr>`).join('');
       return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;"><div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;"><h2 style="margin:0;font-size:18px;text-transform:uppercase;color:#0f172a;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2><h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:900;">PHÒNG THI: ${escapeHtml(roomInfo?.roomName || roomCode)} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1><p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(currentSched?.subject?.subjectName)}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(currentSched?.examDate || Date.now()).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p></div><table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6"><thead><tr style="background:#f1f5f9;color:#0f172a;text-align:left;"><th style="width:40px;text-align:center;">STT</th><th style="width:70px;text-align:center;">MÃ SBN</th><th style="width:100px;">MÃ SV</th><th>HỌ VÀ TÊN</th><th style="width:90px;">LỚP SH</th><th style="width:70px;text-align:center;">VỊ TRÍ</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:20px;display:flex;justify-content:space-between;font-size:12px;"><div>Tổng số thí sinh: <strong>${students.length}</strong> / ${roomInfo?.capacity ?? 0} chỗ</div><div>Cán bộ coi thi ký tên: ....................</div></div></div>`;
     }).join('');
-    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Danh sách dán cửa</title><style>body{font-family:Arial,sans-serif;margin:20px;color:#0f172a}@media print{body{margin:0}}</style></head><body>${pages}<script>window.onload=()=>window.print();</script></body></html>`);
+    printable.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Danh sách dán cửa</title><style>body{font-family:'Times New Roman',Times,serif;margin:20px;color:#0f172a}@media print{body{margin:0}}</style></head><body>${pages}<script>window.onload=()=>window.print();</script></body></html>`);
     printable.document.close();
   };
 
@@ -1077,7 +1077,7 @@ export default function ExamArrangementPage() {
                                           <span className="font-medium text-slate-400">{st.className}</span>
                                         </div>
                                         <p className="font-bold text-slate-900 text-xs truncate" title={st.fullName}>{st.fullName}</p>
-                                        <p className="text-[11px] font-semibold text-slate-500 font-mono">{st.studentCode}</p>
+                                        <p className="text-[11px] font-semibold text-slate-500 font-sans tabular-nums">{st.studentCode}</p>
                                         {(st.requirementLabel || st.departmentName) && (
                                           <div className="pt-0.5">
                                             <p className="font-bold text-slate-800 text-xs truncate" title={st.requirementLabel || st.departmentName}>
@@ -1114,7 +1114,7 @@ export default function ExamArrangementPage() {
                                   <td className="p-3.5 font-medium text-[#0F172A]">{st.roomName || st.roomCode}</td>
                                   <td className="p-3.5 text-center font-bold text-[#2563EB]">Ghế #{st.seatNumber}</td>
                                   <td className="p-3.5">
-                                    <span className="font-mono font-bold text-[14px] text-[#0F172A]">
+                                    <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
                                       {st.studentCode}
                                     </span>
                                   </td>

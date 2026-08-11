@@ -663,7 +663,7 @@ export default function ExamSupervisorsPage() {
                   Môn: <strong className="font-black text-slate-900">{selectedSchedule.subject?.subjectName}</strong>
                 </p>
                 <p className="font-medium text-slate-600">
-                  Mã môn: <span className="font-mono font-black text-slate-900">{selectedSchedule.subject?.subjectCode}</span>
+                  Mã môn: <span className="font-sans tabular-nums font-black text-slate-900">{selectedSchedule.subject?.subjectCode}</span>
                 </p>
                 <p className="font-medium text-slate-600">
                   Ngày thi: <span className="font-bold text-slate-900">{selectedSchedule.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'}</span>
@@ -838,7 +838,7 @@ export default function ExamSupervisorsPage() {
                         return (
                           <tr key={sup.id} className="hover:bg-blue-50/40 transition">
                             <td className="p-3.5 pl-4 whitespace-nowrap">
-                              <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                              <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
                                 {sup.teacher?.teacherCode}
                               </span>
                             </td>

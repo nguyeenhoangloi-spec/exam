@@ -923,7 +923,7 @@ export default function StudentResultsPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                          className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                         >
                           {item.subjectCode}
                         </button>
@@ -1011,7 +1011,7 @@ export default function StudentResultsPage() {
                         />
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <span className="font-mono font-black text-xs text-[#475569]">
+                        <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                           {item.subjectCode}
                         </span>
                       </td>
@@ -1097,7 +1097,7 @@ export default function StudentResultsPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                            className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                           >
                             {item.subjectCode}
                           </button>
@@ -1294,18 +1294,18 @@ export default function StudentResultsPage() {
                       {detailItem.mcqScore !== null && (
                         <div className="flex items-center justify-between text-[13px] text-slate-700">
                           <span className="font-medium">Trắc nghiệm</span>
-                          <span className="font-bold font-mono">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
+                          <span className="font-bold font-sans tabular-nums">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
                         </div>
                       )}
                       {detailItem.essayScore !== null && (
                         <div className="flex items-center justify-between text-[13px] text-slate-700">
                           <span className="font-medium">Tự luận</span>
-                          <span className="font-bold font-mono">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
+                          <span className="font-bold font-sans tabular-nums">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
                         </div>
                       )}
                       <div className="border-t border-slate-200 pt-2 flex items-center justify-between">
                         <span className="text-[13px] font-bold text-slate-800">Tổng điểm</span>
-                        <span className={`font-mono font-black text-lg ${detailItem.score >= 4.0 ? 'text-blue-600' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10</span>
+                        <span className={`font-sans tabular-nums font-black text-lg ${detailItem.score >= 4.0 ? 'text-blue-600' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10</span>
                       </div>
                     </div>
                   ) : (

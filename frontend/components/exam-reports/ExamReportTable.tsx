@@ -84,7 +84,7 @@ export function ExamReportTable({
                         onChange={(e) => onSelect(c.studentId, e.target.checked)}
                         className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
-                      <span className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200">
+                      <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
                         {c.studentCode}
                       </span>
                     </div>
@@ -184,7 +184,7 @@ export function ExamReportTable({
                       />
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className="font-mono font-bold text-[14px] text-[#0F172A]">
+                      <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
                         {c.studentCode}
                       </span>
                     </td>
@@ -280,7 +280,7 @@ export function ExamReportTable({
 
                   {visibleColumns.studentCode !== false && (
                     <td className="p-3.5 whitespace-nowrap">
-                      <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                      <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
                         {c.studentCode}
                       </span>
                     </td>

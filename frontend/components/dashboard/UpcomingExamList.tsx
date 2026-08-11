@@ -62,7 +62,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
               {list.map((exam) => (
                 <tr key={exam.id} className="hover:bg-slate-50/60 transition">
                   <td className="py-2.5 px-2.5 whitespace-nowrap">
-                    <span className="font-mono font-bold text-[14px] text-[#0F172A]">
+                    <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
                       {exam.code}
                     </span>
                   </td>

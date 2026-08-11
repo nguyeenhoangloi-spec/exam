@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { DynamicImage } from './ui/DynamicImage';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -362,7 +363,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {/* Avatar — luôn cố định, không dịch chuyển */}
           {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover" />
+            <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover" />
           ) : (
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-black text-[15px]">
               {displayName.charAt(0).toUpperCase()}

@@ -594,7 +594,7 @@ export default function TeachersPage() {
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerTeacher.fullName}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-mono">
+                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-sans tabular-nums">
                       Mã cán bộ: {drawerTeacher.teacherCode}
                     </p>
                   </div>
@@ -768,7 +768,7 @@ export default function TeachersPage() {
                     <Building2 className="w-8 h-8" />
                   </div>
                   <h3 className="text-[20px] font-semibold text-[#0F172A]">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
-                  <p className="text-[13px] font-semibold text-blue-600 font-mono">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
+                  <p className="text-[13px] font-semibold text-blue-600 font-sans tabular-nums">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
                 </div>
               )}
             </div>

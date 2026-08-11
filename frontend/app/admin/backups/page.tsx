@@ -677,12 +677,12 @@ export default function BackupsPage() {
                     <button
                       type="button"
                       onClick={() => setDetailJob(job)}
-                      className="font-mono text-xs font-black text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
+                      className="font-sans tabular-nums text-xs font-black text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
                     >
                       {job.snapshotId}
                     </button>
                     {job.checksum && (
-                      <div className="mt-0.5 text-[11px] font-mono text-slate-500">
+                      <div className="mt-0.5 text-[11px] font-sans tabular-nums text-slate-500">
                         SHA-256: {job.checksum.slice(0, 12)}…
                       </div>
                     )}
@@ -765,9 +765,6 @@ export default function BackupsPage() {
         <div className="space-y-3 pt-2">
           {/* Section header — edu-section-title với warning indicator */}
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-warning-50 border border-warning-200 text-warning-600">
-              <Clock3 className="h-4 w-4" />
-            </div>
             <div className="flex items-center gap-2.5 flex-1 min-w-0">
               <h2 className="edu-section-title text-[#0F172A]">
                 Yêu cầu khôi phục đang chờ xử lý
@@ -800,7 +797,7 @@ export default function BackupsPage() {
                   return (
                     <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
                       {/* Snapshot ID */}
-                      <td className="px-4 py-3.5 font-mono text-[13px] font-bold text-[#0F172A] whitespace-nowrap">
+                      <td className="px-4 py-3.5 font-sans tabular-nums text-[15px] font-bold text-[#0F172A] whitespace-nowrap">
                         {request.backupJob.snapshotId}
                       </td>
 
@@ -910,17 +907,17 @@ export default function BackupsPage() {
             <div className="space-y-3 pb-3 border-b border-slate-100">
               <div className="space-y-0.5">
                 <span className="text-xs font-semibold text-[#64748B] block">Mã Snapshot ID</span>
-                <span className="font-mono text-sm font-bold text-[#0F172A] break-all block">{detailJob.snapshotId}</span>
+                <span className="font-sans tabular-nums text-sm font-bold text-[#0F172A] break-all block">{detailJob.snapshotId}</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                 <div className="space-y-0.5">
                   <span className="text-xs font-semibold text-[#64748B] block">Prisma Migration Version</span>
-                  <span className="font-mono text-sm font-bold text-[#0F172A] break-all block">{detailJob.migration || 'Không xác định'}</span>
+                  <span className="font-sans tabular-nums text-sm font-bold text-[#0F172A] break-all block">{detailJob.migration || 'Không xác định'}</span>
                 </div>
                 <div className="space-y-0.5">
                   <span className="text-xs font-semibold text-[#64748B] block">App Commit Hash</span>
-                  <span className="font-mono text-xs font-bold text-[#0F172A] break-all block">{detailJob.appCommit || 'Latest HEAD'}</span>
+                  <span className="font-sans tabular-nums text-xs font-bold text-[#0F172A] break-all block">{detailJob.appCommit || 'Latest HEAD'}</span>
                 </div>
               </div>
             </div>
@@ -939,7 +936,7 @@ export default function BackupsPage() {
                   </button>
                 )}
               </div>
-              <p className="font-mono text-xs font-semibold text-slate-800 break-all leading-relaxed pt-0.5">
+              <p className="font-sans tabular-nums text-xs font-semibold text-slate-800 break-all leading-relaxed pt-0.5">
                 {detailJob.checksum || 'Chưa có checksum'}
               </p>
             </div>
@@ -947,7 +944,7 @@ export default function BackupsPage() {
             {detailJob.errorMessage && (
               <div className="pt-2 space-y-1 text-rose-700">
                 <span className="text-xs font-semibold text-rose-900 block">Chi tiết nhật ký lỗi:</span>
-                <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap">{detailJob.errorMessage}</p>
+                <p className="font-sans tabular-nums text-xs leading-relaxed whitespace-pre-wrap">{detailJob.errorMessage}</p>
               </div>
             )}
 
@@ -974,7 +971,7 @@ export default function BackupsPage() {
           {/* Frameless Selected Snapshot Info */}
           <div className="space-y-0.5 pb-2 border-b border-slate-100">
             <span className="text-xs font-semibold text-[#64748B] block">Snapshot đã chọn</span>
-            <p className="font-mono text-sm font-bold text-[#0F172A] break-all">{selectedJob?.snapshotId}</p>
+            <p className="font-sans tabular-nums text-sm font-bold text-[#0F172A] break-all">{selectedJob?.snapshotId}</p>
             <p className="text-xs font-semibold text-slate-500 mt-0.5">
               {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
             </p>
@@ -1091,7 +1088,7 @@ export default function BackupsPage() {
               Các thông số thiết lập trong tập tin cấu hình môi trường server:
             </p>
             <div className="pl-6 pt-1">
-              <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] leading-relaxed overflow-x-auto border-l-4 border-blue-500">
+              <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-sans tabular-nums text-[11px] leading-relaxed overflow-x-auto border-l-4 border-blue-500">
                 {`BACKUP_WORKER_ENABLED="true"       # Bật/tắt tiến trình tự động
 BACKUP_SCHEDULE="02:00"             # Khung giờ chạy sao lưu hàng ngày
 BACKUP_TIMEZONE="Asia/Ho_Chi_Minh"  # Múi giờ hệ thống

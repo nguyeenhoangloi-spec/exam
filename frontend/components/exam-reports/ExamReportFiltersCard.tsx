@@ -90,7 +90,7 @@ export function ExamReportFiltersCard({
               <h3 className="text-xs font-bold text-slate-900 truncate">
                 {reportSchedule.subjectName}
               </h3>
-              <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80 shrink-0">
+              <span className="text-[11px] font-sans tabular-nums font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80 shrink-0">
                 {reportSchedule.subjectCode}
               </span>
               <span className="text-xs text-slate-500 font-medium hidden xl:inline-block">

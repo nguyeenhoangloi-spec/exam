@@ -614,7 +614,7 @@ export default function StudentsPage() {
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerStudent.fullName}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-mono">
+                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-sans tabular-nums">
                       MSSV: {drawerStudent.studentCode} • Lớp: {drawerStudent.class?.name || 'Chưa xếp lớp'}
                     </p>
                   </div>

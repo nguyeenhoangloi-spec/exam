@@ -67,9 +67,9 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
   });
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
       {/* Header & Dropdown */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
         <h3 className="text-[17px] font-bold text-slate-900">Thống kê trạng thái câu hỏi</h3>
 
         <FilterSelect
@@ -84,9 +84,9 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       </div>
 
       {/* Donut & Legend side by side */}
-      <div className="flex-1 flex flex-row items-center justify-between gap-4 py-4 min-w-0 my-auto">
+      <div className="flex-1 flex flex-row items-center justify-between gap-3 py-2 min-w-0 my-auto">
         {/* Donut Canvas */}
-        <div className="relative h-44 w-44 shrink-0">
+        <div className="relative h-36 w-36 shrink-0">
           {mounted ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -94,8 +94,8 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                   data={chartData}
                   dataKey="count"
                   nameKey="label"
-                  innerRadius={50}
-                  outerRadius={75}
+                  innerRadius={40}
+                  outerRadius={62}
                   paddingAngle={2}
                   stroke="none"
                 >

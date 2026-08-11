@@ -659,7 +659,7 @@ export default function StudentCurriculumPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                          className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                         >
                           {item.subjectCode}
                         </button>
@@ -761,7 +761,7 @@ export default function StudentCurriculumPage() {
                         />
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <span className="font-mono font-black text-xs text-[#475569]">
+                        <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                           {item.subjectCode}
                         </span>
                       </td>
@@ -860,7 +860,7 @@ export default function StudentCurriculumPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="font-mono font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                            className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                           >
                             {item.subjectCode}
                           </button>

@@ -9,6 +9,7 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
+import { DynamicImage } from '../../components/ui/DynamicImage';
 import {
   User,
   Mail,
@@ -261,7 +262,7 @@ export default function ProfilePage() {
             <div className="relative group shrink-0">
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 font-black text-white text-3xl shadow-xl overflow-hidden">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                  <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                 ) : (
                   displayName.charAt(0).toUpperCase()
                 )}
@@ -450,7 +451,7 @@ export default function ProfilePage() {
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-bold text-blue-600 text-2xl shadow-xs overflow-hidden shrink-0">
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                    <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                   ) : (
                     displayName.charAt(0).toUpperCase()
                   )}

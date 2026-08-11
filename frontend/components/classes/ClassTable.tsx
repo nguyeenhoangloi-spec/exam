@@ -66,7 +66,7 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {c.code}
                     </button>
@@ -243,7 +243,7 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {c.code}
                     </button>

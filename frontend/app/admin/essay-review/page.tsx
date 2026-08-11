@@ -542,7 +542,7 @@ export default function AdminEssayReviewPage() {
                         <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
                         <StatusBadge status={row.gradingStatus} />
                       </div>
-                      <p className="text-[13px] text-[#64748B] font-mono font-normal">
+                      <p className="text-[13px] text-[#64748B] font-sans tabular-nums font-normal">
                         Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
                       </p>
                       <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
@@ -576,12 +576,12 @@ export default function AdminEssayReviewPage() {
               <div className="flex justify-between items-start border-b border-slate-100 pb-4 flex-wrap gap-2">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900">{selected.student?.fullName}</h2>
-                  <p className="text-xs text-slate-500 font-mono">
+                  <p className="text-xs text-slate-500 font-sans tabular-nums">
                     Mã SV: {selected.student?.studentCode} · Lớp: {selected.student?.className || 'N/A'}
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-mono font-black text-slate-900">
+                  <span className="text-2xl font-sans tabular-nums font-black text-slate-900">
                     {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-bold">/ {selected.maxScore || 10}đ</span>
                   </span>
                   {selected.penaltyPoints > 0 && (
@@ -598,7 +598,7 @@ export default function AdminEssayReviewPage() {
                     <div key={q.questionId || idx} className="rounded-xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
                       <div className="flex justify-between font-bold text-xs text-slate-900 border-b border-slate-200 pb-2">
                         <span>Câu {idx + 1}: {q.content}</span>
-                        <span className="text-slate-900 font-mono font-black">{ans?.finalScore ?? '--'} / {q.score}đ</span>
+                        <span className="text-slate-900 font-sans tabular-nums font-black">{ans?.finalScore ?? '--'} / {q.score}đ</span>
                       </div>
 
                       {/* Student Answer */}
@@ -642,7 +642,7 @@ export default function AdminEssayReviewPage() {
                                   <span className="font-bold text-slate-800">{r.label}: </span>
                                   <span className="text-slate-600">{g?.comment || 'Không có nhận xét'}</span>
                                 </div>
-                                <span className="font-mono font-bold text-slate-700">{g?.score ?? 0} / {r.maxScore}đ</span>
+                                <span className="font-sans tabular-nums font-bold text-slate-700">{g?.score ?? 0} / {r.maxScore}đ</span>
                               </div>
                             );
                           })}

@@ -194,7 +194,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-sans tabular-nums text-xs font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -317,7 +317,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -406,7 +406,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition cursor-pointer"
+                      className="font-sans tabular-nums text-[13px] font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
                     >
                       {codeText}
                     </button>

@@ -822,7 +822,7 @@ export default function ExamReportsPage() {
                                 <div className="flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-2">
                                     <span className="text-xs font-bold text-slate-900">{name}</span>
-                                    <span className="text-[10.5px] font-mono font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                                    <span className="text-[10.5px] font-sans tabular-nums font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
                                       {code}
                                     </span>
                                   </div>

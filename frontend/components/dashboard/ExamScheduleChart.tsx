@@ -29,9 +29,9 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
   const totalExams = chartData.reduce((sum, item) => sum + (item.count || 0), 0);
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3 h-full flex flex-col justify-between">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-2 h-full flex flex-col justify-between">
       {/* Header & Dropdown Filter */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
         <h3 className="text-[17px] font-bold text-slate-900">Lịch thi trong 7 ngày tới</h3>
 
         <FilterSelect
@@ -45,13 +45,12 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
         </FilterSelect>
       </div>
 
-
       {/* Subheader badge */}
-      <div className="flex items-center gap-2.5 pt-1">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
-          <Calendar className="h-4 w-4" />
+      <div className="flex items-center gap-2 pt-0.5">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
+          <Calendar className="h-3.5 w-3.5" />
         </div>
-        <span className="text-sm font-bold text-slate-900">{totalExams} kỳ thi sắp diễn ra</span>
+        <span className="text-xs font-bold text-slate-900">{totalExams} kỳ thi sắp diễn ra</span>
       </div>
 
       {/* Y-axis label */}
@@ -60,7 +59,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
       </div>
 
       {/* Chart Canvas */}
-      <div className="h-52 w-full min-w-0">
+      <div className="h-40 w-full min-w-0">
         {mounted ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 20, right: 15, left: -25, bottom: 0 }}>

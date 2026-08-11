@@ -69,7 +69,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {d.code}
                     </button>
@@ -188,7 +188,7 @@ export function DepartmentTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-mono font-black text-slate-900">
+                  <td className="p-2 whitespace-nowrap font-sans tabular-nums font-black text-slate-900">
                     <button type="button" onClick={() => onDetail(d)} className="hover:text-blue-600">
                       {d.code}
                     </button>
@@ -265,7 +265,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {d.code}
                     </button>

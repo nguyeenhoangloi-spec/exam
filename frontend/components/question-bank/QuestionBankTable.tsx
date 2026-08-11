@@ -14,6 +14,7 @@ import { getImageUrl, cleanMediaFileName } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { VideoLightboxModal } from '../VideoLightboxModal';
 import { AudioLightboxModal } from '../AudioLightboxModal';
+import { DynamicImage } from '../ui/DynamicImage';
 
 interface QuestionBankTableProps {
   questions: Question[];
@@ -101,7 +102,7 @@ export function QuestionBankTable({
                     <button
                       type="button"
                       onClick={() => onDetail(q)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer shrink-0"
+                      className="rounded-md bg-blue-50 px-2 py-0.5 font-sans tabular-nums text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer shrink-0"
                     >
                       {codeText}
                     </button>
@@ -355,7 +356,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="font-mono text-[14px] font-bold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
+                        className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
                       >
                         {codeText}
                       </button>
@@ -409,7 +410,7 @@ export function QuestionBankTable({
                                 className="group relative h-9 w-12 overflow-hidden rounded-md border border-slate-200 bg-slate-50 hover:border-blue-400 hover:shadow-md transition cursor-zoom-in shrink-0"
                                 title="Bấm để xem ảnh"
                               >
-                                <img
+                                <DynamicImage
                                   src={getImageUrl(m.url)}
                                   alt={m.altText || m.fileName || 'Ảnh'}
                                   className="h-full w-full object-cover transition group-hover:scale-110"

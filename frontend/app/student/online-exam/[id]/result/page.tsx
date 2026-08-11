@@ -156,7 +156,7 @@ export default function StudentExamResultPage() {
               {result.totalScore !== undefined && result.totalScore !== null ? (
                 <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-[18px]">
                   <span className="text-[#0F172A] font-semibold">Điểm số đạt được:</span>
-                  <span className="text-emerald-600 text-2xl font-bold font-mono">
+                  <span className="text-emerald-600 text-2xl font-bold font-sans tabular-nums">
                     {result.totalScore} / {result.maxScore || 10} điểm
                   </span>
                 </div>

@@ -9,6 +9,7 @@ import { VideoLightboxModal } from '../VideoLightboxModal';
 import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle, Hash, Award, Brain } from 'lucide-react';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
 import { Button } from '../ui/Button';
+import { DynamicImage } from '../ui/DynamicImage';
 
 export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
   const [mounted, setMounted] = useState(false);
@@ -79,7 +80,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                   <h2 className="truncate text-[20px] font-bold leading-[28px] text-white">
                     Chi tiết Câu hỏi
                   </h2>
-                  <span className="font-mono text-xs font-bold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
+                  <span className="font-sans tabular-nums text-xs font-bold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
                     {codeText}
                   </span>
                 </div>
@@ -157,7 +158,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                       className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
                       title="Bấm để xem phóng to"
                     >
-                      <img
+                      <DynamicImage
                         src={fullUrl}
                         alt={media.altText || media.fileName}
                         className="max-h-48 max-w-full rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
@@ -209,7 +210,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             {question.explanation && (
               <div className="rounded-xl bg-blue-50/80 border border-blue-200/80 p-4 text-xs text-slate-800 space-y-1">
                 <h5 className="font-bold text-slate-900">Giải thích đáp án / Hướng dẫn chấm:</h5>
-                <p className="font-mono text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">{question.explanation}</p>
+                <p className="font-sans tabular-nums text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">{question.explanation}</p>
               </div>
             )}
           </div>
@@ -223,7 +224,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                   <Hash className="h-3.5 w-3.5 text-blue-600" /> Mã câu hỏi
                 </span>
-                <p className="font-mono font-bold text-slate-900">{codeText}</p>
+                <p className="font-sans tabular-nums font-bold text-slate-900">{codeText}</p>
               </div>
 
               {/* Môn học */}

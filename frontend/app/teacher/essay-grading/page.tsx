@@ -744,7 +744,7 @@ function TeacherEssayGradingContent() {
                             <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
                             <StatusBadge status={row.gradingStatus} />
                           </div>
-                          <p className="text-[13px] text-[#64748B] font-normal font-mono">
+                          <p className="text-[13px] text-[#64748B] font-normal font-sans tabular-nums">
                             Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
                           </p>
                           <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
@@ -815,7 +815,7 @@ function TeacherEssayGradingContent() {
                         <h2 className="text-base font-bold text-slate-900">{selected.student?.fullName}</h2>
                         <StatusBadge status={selected.gradingStatus} />
                       </div>
-                      <p className="text-xs text-slate-500 font-mono mt-0.5">
+                      <p className="text-xs text-slate-500 font-sans tabular-nums mt-0.5">
                         Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong>
                       </p>
                     </div>
@@ -823,7 +823,7 @@ function TeacherEssayGradingContent() {
 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <span className="text-xl font-mono font-black text-slate-900">
+                      <span className="text-xl font-sans tabular-nums font-black text-slate-900">
                         {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
                       </span>
                       {selected.penaltyPoints > 0 && (
@@ -844,7 +844,7 @@ function TeacherEssayGradingContent() {
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </button>
-                      <span className="text-[11px] font-bold font-mono text-slate-500 px-1">
+                      <span className="text-[11px] font-bold font-sans tabular-nums text-slate-500 px-1">
                         {currentIndex >= 0 ? `${currentIndex + 1}/${filteredRows.length}` : ''}
                       </span>
                       <button
@@ -898,7 +898,7 @@ function TeacherEssayGradingContent() {
                                 <Sliders className="h-4 w-4 text-[#64748B]" />
                                 <span>Sửa Rubric</span>
                               </button>
-                              <span className="text-[#0F172A] font-mono text-[18px] font-bold">
+                              <span className="text-[#0F172A] font-sans tabular-nums text-[18px] font-bold">
                                 {ans?.finalScore !== undefined && ans?.finalScore !== null
                                   ? ans.finalScore
                                   : (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] || 0), 0)} / {q.score}đ
@@ -947,7 +947,7 @@ function TeacherEssayGradingContent() {
                                         <span className="font-semibold text-[#0F172A]">{r.label}</span>
                                         {r.description && <p className="text-[13px] text-[#64748B] mt-0.5 font-normal">{r.description}</p>}
                                       </div>
-                                      <span className="font-mono text-[15px] font-semibold text-[#64748B] shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
+                                      <span className="font-sans tabular-nums text-[15px] font-semibold text-[#64748B] shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
                                     </div>
 
                                     <div className="flex gap-2 items-center flex-wrap">
@@ -959,7 +959,7 @@ function TeacherEssayGradingContent() {
                                         placeholder="Điểm"
                                         value={scores[r.id] ?? 0}
                                         onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
-                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium font-mono text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
+                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium font-sans tabular-nums text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
                                       />
 
                                       {/* Quick Score Chips */}

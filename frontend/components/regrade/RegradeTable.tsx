@@ -67,7 +67,7 @@ export function RegradeTable({
                     </div>
                     <div>
                       <p className="font-extrabold text-[#0F172A] text-sm leading-snug">{item.student.fullName}</p>
-                      <p className="text-xs font-mono font-medium text-slate-400">{item.student.studentCode}</p>
+                      <p className="text-xs font-sans tabular-nums font-medium text-slate-400">{item.student.studentCode}</p>
                     </div>
                   </div>
                   <StatusBadge status={badgeStatus} className="text-xs" />
@@ -75,7 +75,7 @@ export function RegradeTable({
 
                 <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-0.5">
                   <p className="font-bold text-[#0F172A] text-xs">{subjectName}</p>
-                  {subjectCode && <p className="text-xs font-mono font-semibold text-blue-600">{subjectCode}</p>}
+                  {subjectCode && <p className="text-xs font-sans tabular-nums font-semibold text-blue-600">{subjectCode}</p>}
                 </div>
 
                 <div className="space-y-1">
@@ -137,7 +137,7 @@ export function RegradeTable({
                 <tr key={item.id} className="transition hover:bg-blue-50/40">
                   <td className="p-2.5 pl-3.5 whitespace-nowrap">
                     <span className="font-bold text-[#0F172A] text-xs">{item.student.fullName}</span>
-                    <span className="text-xs font-mono font-medium text-slate-400 ml-1.5">({item.student.studentCode})</span>
+                    <span className="text-xs font-sans tabular-nums font-medium text-slate-400 ml-1.5">({item.student.studentCode})</span>
                   </td>
                   <td className="p-2.5 min-w-[180px]">
                     <p className="truncate font-bold text-[#0F172A] text-xs">{subjectName}</p>
@@ -212,7 +212,7 @@ export function RegradeTable({
                       </div>
                       <div>
                         <p className="font-extrabold text-[#0F172A] text-sm leading-snug">{item.student.fullName}</p>
-                        <p className="text-xs font-mono font-medium text-slate-400 mt-0.5">
+                        <p className="text-xs font-sans tabular-nums font-medium text-slate-400 mt-0.5">
                           {item.student.studentCode} {item.student.class ? `• ${item.student.class.code}` : ''}
                         </p>
                       </div>
@@ -225,7 +225,7 @@ export function RegradeTable({
                   <td className="p-3.5 min-w-[200px]">
                     <p className="font-bold text-[#0F172A] text-sm">{subjectName}</p>
                     {subjectCode && (
-                      <span className="inline-block font-mono text-xs font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/80 mt-1">
+                      <span className="inline-block font-sans tabular-nums text-xs font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/80 mt-1">
                         {subjectCode}
                       </span>
                     )}

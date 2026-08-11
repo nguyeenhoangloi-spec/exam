@@ -902,6 +902,16 @@ export class OnlineExamsService {
       ? attempt.gradingStatus === 'PUBLISHED'
       : Boolean(config?.showResultImmediately) || isExamEnded || attempt.status === 'GRADED';
 
+    // Student score visibility and answer-review visibility are separate policies.
+    // A score may be visible while the answer key is still withheld.
+    const canStudentReview = Boolean(config?.allowReview)
+      && canShowScore
+      && (
+        Boolean(config?.showResultImmediately)
+        || Boolean(attempt.publishedAt)
+        || attempt.gradingStatus === 'PUBLISHED'
+      );
+
     return {
       attemptId: attempt.id,
       status: attempt.status,
@@ -909,6 +919,7 @@ export class OnlineExamsService {
       totalScore: canShowScore ? (attempt.totalScore ?? 0) : null,
       maxScore: attempt.maxScore ?? 10,
       showResultImmediately: canShowScore,
+      allowReview: canStudentReview,
       gradingStatus: attempt.gradingStatus,
       isExamEnded,
       examEndTime: examEndTimeStr,
@@ -959,6 +970,30 @@ export class OnlineExamsService {
     const isAdminOrTeacher = ['ADMIN', 'TEACHER'].includes(user?.role);
     if (!isAdminOrTeacher && attempt.student.userId !== user?.id) {
       throw new ForbiddenException('Bạn không có quyền xem bài làm của thí sinh này');
+    }
+
+    // Never expose the answer key to students before the review is explicitly
+    // released. This is enforced server-side; hiding a UI button is not enough.
+    const config = attempt.onlineExamConfig;
+    const hasEssay = attempt.gradingStatus !== 'NOT_SUBMITTED';
+    const isExamEnded = hasEssay
+      ? attempt.gradingStatus === 'PUBLISHED'
+      : Boolean(attempt.submittedAt)
+        && (
+          Boolean(config?.showResultImmediately)
+          || attempt.status === 'GRADED'
+          || Boolean(attempt.publishedAt)
+        );
+    const canStudentReview = Boolean(config?.allowReview)
+      && isExamEnded
+      && (
+        Boolean(config?.showResultImmediately)
+        || Boolean(attempt.publishedAt)
+        || attempt.gradingStatus === 'PUBLISHED'
+      );
+
+    if (!isAdminOrTeacher && !canStudentReview) {
+      throw new ForbiddenException('Phần đáp án và review chưa được công bố cho sinh viên');
     }
 
     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];

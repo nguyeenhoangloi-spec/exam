@@ -557,7 +557,7 @@ export default function ClassesPage() {
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerClass.name}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">
                       Mã lớp: {drawerClass.code}
                     </p>
                   </div>
@@ -737,7 +737,7 @@ export default function ClassesPage() {
                               </div>
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                                  <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
                                     {sub.subjectCode}
                                   </span>
                                   <span className="text-[13px] font-normal text-[#64748B]">{sub.credits} tín chỉ</span>

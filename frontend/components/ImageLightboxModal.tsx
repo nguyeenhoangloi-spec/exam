@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Download, Maximize2, Minimize2, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { getImageUrl } from '../lib/media-utils';
+import { DynamicImage } from './ui/DynamicImage';
 
 interface ImageLightboxModalProps {
   imageUrl: string | null;
@@ -134,7 +135,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
         className="relative max-h-[85vh] max-w-[90vw] overflow-auto flex items-center justify-center p-2 rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <img
+        <DynamicImage
           src={fullUrl}
           alt={altText}
           style={{ transform: `scale(${zoom})`, transition: 'transform 0.15s ease-out' }}

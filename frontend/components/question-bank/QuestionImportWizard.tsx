@@ -7,6 +7,7 @@ import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
 import { FileSpreadsheet, FileText, Download, X, Sparkles, UploadCloud } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { DynamicImage } from '../ui/DynamicImage';
 
 type Mode = 'table' | 'document' | 'ai_generate';
 
@@ -757,7 +758,7 @@ export function QuestionImportWizard({
                     {Array.isArray(q.sourceImages) && q.sourceImages.length > 0 && (
                       <div className="flex flex-wrap gap-2 rounded-xl border border-blue-200 bg-blue-50 p-2">
                         {q.sourceImages.map((image: any, index: number) => (
-                          <img
+                          <DynamicImage
                             key={index}
                             src={`data:${image.mimeType};base64,${image.data}`}
                             alt={`Hình minh họa ${index + 1}`}

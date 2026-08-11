@@ -37,6 +37,8 @@ import { Toast } from '@/components/Toast';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/Button';
 
+const EMPTY_STUDENTS: any[] = [];
+
 /* ─── helpers ─── */
 function statusMeta(att: any) {
   if (!att) return { label: 'Chưa bắt đầu', cls: 'text-slate-500 font-semibold' };
@@ -230,7 +232,7 @@ export default function ProctorDashboardPage() {
     }
   };
 
-  const students = data?.students || [];
+  const students = data?.students ?? EMPTY_STUDENTS;
 
   // Filtered & Sorted student list
   const filteredStudents = useMemo(() => {
@@ -794,7 +796,7 @@ export default function ProctorDashboardPage() {
                         onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
                         className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
-                      <span className="font-mono font-black text-slate-900 text-xs">
+                      <span className="font-sans tabular-nums font-black text-slate-900 text-xs">
                         {s.examNumber}
                       </span>
                     </div>
@@ -812,7 +814,7 @@ export default function ProctorDashboardPage() {
                       {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
                     </div>
 
-                    <span className="font-mono font-black text-[11px] text-[#475569] inline-block mt-1">
+                    <span className="font-sans tabular-nums font-black text-[11px] text-[#475569] inline-block mt-1">
                       {s.student.studentCode}
                     </span>
                   </div>
@@ -900,7 +902,7 @@ export default function ProctorDashboardPage() {
                       />
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className="font-mono font-black text-slate-900 text-xs">{s.examNumber}</span>
+                      <span className="font-sans tabular-nums font-black text-slate-900 text-xs">{s.examNumber}</span>
                       <span className="ml-1 text-slate-500 font-bold text-xs">G:{s.seatNumber}</span>
                     </td>
                     <td className="p-2 min-w-[180px]">
@@ -910,7 +912,7 @@ export default function ProctorDashboardPage() {
                       </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className="font-mono font-black text-xs text-[#475569]">
+                      <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                         {s.student.studentCode}
                       </span>
                     </td>
@@ -996,7 +998,7 @@ export default function ProctorDashboardPage() {
                     {/* SBD / Seat */}
                     {visibleColumns.seat !== false && (
                       <td className="p-3.5 whitespace-nowrap">
-                        <span className="font-mono font-black text-slate-900 text-xs">{s.examNumber}</span>
+                        <span className="font-sans tabular-nums font-black text-slate-900 text-xs">{s.examNumber}</span>
                         <span className="ml-1.5 text-slate-500 font-bold text-xs">G:{s.seatNumber}</span>
                       </td>
                     )}
@@ -1014,7 +1016,7 @@ export default function ProctorDashboardPage() {
                     {/* Student code */}
                     {visibleColumns.code !== false && (
                       <td className="p-3.5 whitespace-nowrap">
-                        <span className="font-mono font-black text-xs text-[#475569]">
+                        <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                           {s.student.studentCode}
                         </span>
                       </td>
@@ -1209,7 +1211,7 @@ export default function ProctorDashboardPage() {
               {/* Student info */}
               <div className="mx-6 mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 flex items-center justify-between">
                 <span>Thí sinh: <strong className="text-slate-900 font-extrabold">{selectedStudent.student.fullName}</strong></span>
-                <span className="font-mono font-black text-xs text-[#475569]">
+                <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                   {selectedStudent.student.studentCode}
                 </span>
               </div>

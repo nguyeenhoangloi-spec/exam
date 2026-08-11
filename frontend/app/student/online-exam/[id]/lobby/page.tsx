@@ -290,7 +290,7 @@ export default function StudentExamLobbyPage() {
 
                   <div className="space-y-1">
                     <span className="text-[#64748B] font-semibold block text-[13px]">Mã sinh viên</span>
-                    <span className="font-mono font-semibold text-[#0F172A] text-[15px] block">
+                    <span className="font-sans tabular-nums font-semibold text-[#0F172A] text-[15px] block">
                       {studentCode}
                     </span>
                   </div>

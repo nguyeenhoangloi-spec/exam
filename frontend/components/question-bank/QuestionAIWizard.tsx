@@ -7,6 +7,7 @@ import { Subject } from '../../types';
 import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
 import { Button } from '../ui/Button';
+import { DynamicImage } from '../ui/DynamicImage';
 
 export function QuestionAIWizard({
   open,
@@ -347,7 +348,7 @@ export function QuestionAIWizard({
                   {q.sourceImages?.length > 0 && (
                     <div className="flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
                       {q.sourceImages.map((image: any, imageIdx: number) => (
-                        <img
+                        <DynamicImage
                           key={imageIdx}
                           src={`data:${image.mimeType};base64,${image.data}`}
                           alt={image.altText || `Hình minh họa ${imageIdx + 1}`}

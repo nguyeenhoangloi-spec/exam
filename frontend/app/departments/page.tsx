@@ -616,7 +616,7 @@ export default function DepartmentsPage() {
                     {curriculumList.map((item) => (
                       <tr key={item.id} className="transition hover:bg-blue-50/40">
                         <td className="p-3">
-                          <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                          <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
                             {item.subject?.subjectCode}
                           </span>
                         </td>
@@ -676,14 +676,14 @@ export default function DepartmentsPage() {
             <div className="bg-[#2563EB] p-5 text-white shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-mono font-bold text-base text-white border border-white/15">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-sans tabular-nums font-bold text-base text-white border border-white/15">
                     {drawerDepartment.code.substring(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1 pr-2">
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerDepartment.name}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono">
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">
                       Mã Khoa: {drawerDepartment.code}
                     </p>
                   </div>

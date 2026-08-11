@@ -84,7 +84,7 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p.id)}
-                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-sans tabular-nums text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       Mã đề: {p.paperCode}
                     </button>
@@ -96,7 +96,7 @@ export function ExamPaperTable({
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {subCode && (
-                      <span className="text-[13px] font-semibold text-[#475569] font-mono">
+                      <span className="text-[13px] font-semibold text-[#475569] font-sans tabular-nums">
                         {subCode}
                       </span>
                     )}
@@ -221,7 +221,7 @@ export function ExamPaperTable({
                     />
                   </td>
                   <td className="p-2 whitespace-nowrap">
-                    <span className="font-mono font-bold text-[14px] text-[#0F172A]">
+                    <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
                       {p.paperCode}
                     </span>
                   </td>
@@ -310,7 +310,7 @@ export function ExamPaperTable({
                       <button
                         type="button"
                         onClick={() => onDetail(p.id)}
-                        className="font-mono text-xs font-extrabold text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                        className="font-sans tabular-nums text-xs font-extrabold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                       >
                         Mã {p.paperCode}
                       </button>
@@ -326,7 +326,7 @@ export function ExamPaperTable({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {subCode && (
-                          <span className="font-mono font-bold text-slate-900 text-xs">
+                          <span className="font-sans tabular-nums font-bold text-slate-900 text-xs">
                             [{subCode}]
                           </span>
                         )}

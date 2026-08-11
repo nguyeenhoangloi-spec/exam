@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
+import { DynamicImage } from './ui/DynamicImage';
 import api from '../lib/api';
 import { ConfirmModal } from './ConfirmModal';
 import { SearchModal } from './SearchModal';
@@ -390,7 +391,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 {/* Avatar Circle */}
                 {avatarUrl ? (
-                  <img
+                  <DynamicImage
                     src={avatarUrl}
                     alt={displayName}
                     className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"

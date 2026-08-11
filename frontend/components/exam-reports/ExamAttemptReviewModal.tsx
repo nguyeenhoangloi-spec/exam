@@ -126,7 +126,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
         </div>
         <div className="flex items-center gap-2.5 shrink-0">
           <span
-            className={`text-xs font-extrabold font-mono ${
+            className={`text-xs font-extrabold font-sans tabular-nums ${
               showAnswer && q.type !== 'ESSAY'
                 ? isCorrect
                   ? 'text-emerald-700'
@@ -208,7 +208,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
           {q.type === 'ESSAY' && (
             <div className="space-y-2">
               <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Bài làm tự luận của sinh viên:</p>
-              <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed min-h-[60px] font-mono">
+              <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed min-h-[60px] font-sans tabular-nums">
                 {sel?.textAnswer || <span className="italic font-normal text-slate-400 font-sans">Sinh viên không nộp câu tự luận này</span>}
               </div>
               {showAnswer && sel?.teacherComment && (
@@ -294,7 +294,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                     Xem Lại Chi Tiết Bài Thi
                   </h2>
                   {data?.paper?.paperCode && (
-                    <span className="font-mono text-xs font-bold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
+                    <span className="font-sans tabular-nums text-xs font-bold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
                       Mã đề: {data.paper.paperCode}
                     </span>
                   )}

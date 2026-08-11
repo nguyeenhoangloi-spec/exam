@@ -78,7 +78,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {t.teacherCode}
                     </button>
@@ -195,7 +195,7 @@ export function TeacherTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 font-bold text-slate-700 font-mono whitespace-nowrap">{t.teacherCode}</td>
+                  <td className="p-2 font-bold text-slate-700 font-sans tabular-nums whitespace-nowrap">{t.teacherCode}</td>
                   <td className="p-2 min-w-[160px]">
                     <span
                       onClick={() => onDetail(t)}
@@ -274,7 +274,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="font-mono text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {t.teacherCode}
                     </button>

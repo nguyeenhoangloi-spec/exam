@@ -87,7 +87,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="font-mono text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-sans tabular-nums text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -204,9 +204,13 @@ export function ExamRoomTable({
 
                 {visibleColumns.code !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-mono font-black text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                    <button
+                      type="button"
+                      onClick={() => onDetail(r)}
+                      className="font-sans tabular-nums text-[14px] font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                    >
                       {codeText}
-                    </span>
+                    </button>
                   </td>
                 )}
 

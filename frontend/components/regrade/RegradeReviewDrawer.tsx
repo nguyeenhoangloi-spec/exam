@@ -227,12 +227,12 @@ export function RegradeReviewDrawer({
                         <span className="font-bold text-slate-900 text-xs">
                           Câu {idx + 1} ({ans.questionCode || 'Tự luận'}):
                         </span>
-                        <span className="font-mono font-extrabold text-blue-600 text-xs">
+                        <span className="font-sans tabular-nums font-extrabold text-blue-600 text-xs">
                           {ans.score !== undefined ? `${ans.score} / ${ans.maxScore || 10} điểm` : ''}
                         </span>
                       </div>
                       <p className="font-medium text-slate-700 leading-relaxed text-xs">{ans.questionText}</p>
-                      <div className="rounded-xl bg-white p-3 border border-slate-200 text-slate-900 font-mono text-[11.5px] leading-relaxed">
+                      <div className="rounded-xl bg-white p-3 border border-slate-200 text-slate-900 font-sans tabular-nums text-[11.5px] leading-relaxed">
                         {ans.studentAnswer}
                       </div>
                     </div>

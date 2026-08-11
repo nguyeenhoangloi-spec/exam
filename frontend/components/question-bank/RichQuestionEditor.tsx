@@ -74,7 +74,7 @@ export function RichQuestionEditor({
         </div>
 
         <span className="text-[13px] font-normal text-[#64748B]">
-          Công thức: nhập giữa <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-mono text-[13px]">\(...\)</code> hoặc <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-mono text-[13px]">$$...$$</code>
+          Công thức: nhập giữa <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-sans tabular-nums text-[13px]">\(...\)</code> hoặc <code className="bg-slate-200/60 px-1 py-0.5 rounded text-slate-700 font-sans tabular-nums text-[13px]">$$...$$</code>
         </span>
       </div>
 

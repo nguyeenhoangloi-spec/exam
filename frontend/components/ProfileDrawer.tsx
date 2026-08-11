@@ -58,7 +58,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       </span>
                     ))}
                   </div>
-                  {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 font-mono">{subtitle}</p>}
+                  {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">{subtitle}</p>}
                 </div>
               </div>
 

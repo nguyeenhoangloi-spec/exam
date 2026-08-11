@@ -309,7 +309,7 @@ export default function StudentExamSchedulePage() {
                 <div className="space-y-3.5">
                   {/* Card top badges */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-black text-xs text-[#475569]">
+                    <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
                       {item.subjectCode}
                     </span>
                     <div className="flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function StudentExamSchedulePage() {
                         <Ticket className="w-3.5 h-3.5 text-blue-500" />
                         SBD / Ghế:
                       </span>
-                      <span className="font-mono font-bold text-slate-800">
+                      <span className="font-sans tabular-nums font-bold text-slate-800">
                         <strong className="text-blue-700">{item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}</strong>
                         <span className="text-slate-400 mx-1">·</span>
                         Ghế #{item.seatNumber || 'Chưa xếp'}
@@ -382,7 +382,7 @@ export default function StudentExamSchedulePage() {
                           <Award className="w-3.5 h-3.5 text-emerald-600" />
                           Điểm công bố:
                         </span>
-                        <span className={`font-mono font-black text-xs ${(item as any).attempt.totalScore === 0
+                        <span className={`font-sans tabular-nums font-black text-xs ${(item as any).attempt.totalScore === 0
                             ? 'text-[#DC2626]'
                             : 'text-[#15803D]'
                           }`}>

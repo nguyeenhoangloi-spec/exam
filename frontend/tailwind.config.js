@@ -7,6 +7,16 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Keep Tailwind's `font-sans` aligned with the application-wide Inter stack.
+        sans: [
+          'var(--font-inter)',
+          'Inter',
+          'ui-sans-serif',
+          'system-ui',
+          'sans-serif',
+        ],
+      },
       colors: {
         primary: {
           50: '#eff6ff',

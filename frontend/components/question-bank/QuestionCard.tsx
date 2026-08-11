@@ -4,6 +4,7 @@ import { Question } from '../../types';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
 import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
+import { DynamicImage } from '../ui/DynamicImage';
 
 export function QuestionCard({
   question: q,
@@ -44,7 +45,7 @@ export function QuestionCard({
             onChange={(e) => onSelect(e.target.checked)}
             className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
           />
-          <b className="text-[#2563EB] font-mono text-[14px] font-bold">{q.code}</b>
+          <b className="text-[#2563EB] font-sans tabular-nums text-[14px] font-bold">{q.code}</b>
           {q.subject?.subjectName && (
             <span className="rounded-[8px] bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[13px] font-medium text-[#2563EB] h-6 inline-flex items-center">
               {q.subject.subjectName}
@@ -199,7 +200,7 @@ export function QuestionCard({
                   title="Bấm vào để xem ảnh phóng to"
                 >
                   <div className="relative flex items-center justify-center">
-                    <img
+                    <DynamicImage
                       src={fullUrl}
                       alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
                       className="h-20 w-32 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"

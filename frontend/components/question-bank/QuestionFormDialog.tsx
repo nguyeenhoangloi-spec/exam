@@ -15,6 +15,7 @@ import {
 } from '../../lib/enum-labels';
 import { getImageUrl } from '../../lib/media-utils';
 import { ImageIcon, Trash2, Video, Volume2 } from 'lucide-react';
+import { DynamicImage } from '../ui/DynamicImage';
 
 const option = z.object({
   label: z.string().min(1),
@@ -322,7 +323,7 @@ export function QuestionFormDialog({
                 return (
                   <div key={media.id} className="relative group rounded-xl border border-blue-200 bg-blue-50/50 overflow-hidden shadow-2xs" title={media.fileName || 'Ảnh đã tải lên'}>
                     {mime.startsWith('image/') && (
-                      <img src={fullUrl} alt={media.altText || media.fileName} className="h-20 w-28 object-cover" />
+                      <DynamicImage src={fullUrl} alt={media.altText || media.fileName} className="h-20 w-28 object-cover" />
                     )}
                     {mime.startsWith('video/') && (
                       <div className="flex flex-col items-center justify-center h-20 w-28 bg-slate-800 gap-1">
@@ -364,7 +365,7 @@ export function QuestionFormDialog({
               {mediaFiles.map((file, idx) => (
                 <div key={idx} className="relative group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden shadow-2xs">
                   {file.type.startsWith('image/') && (
-                    <img src={mediaUrls[idx]} alt={file.name} className="h-20 w-28 object-cover" />
+                    <DynamicImage src={mediaUrls[idx]} alt={file.name} className="h-20 w-28 object-cover" />
                   )}
                   {file.type.startsWith('video/') && (
                     <video src={mediaUrls[idx]} controls className="h-20 w-36 object-cover bg-black" />
