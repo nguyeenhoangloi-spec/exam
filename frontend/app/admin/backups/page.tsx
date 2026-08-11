@@ -690,15 +690,14 @@ export default function BackupsPage() {
 
                   <td className="p-3.5 whitespace-nowrap">
                     <span
-                      className={`font-bold text-xs px-2.5 py-1 rounded-lg ${
-                        job.type === 'FULL'
+                      className={`font-bold text-xs px-2.5 py-1 rounded-lg ${job.type === 'FULL'
                           ? 'bg-blue-600 text-white shadow-2xs'
                           : job.type === 'DATABASE'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
-                          : job.type === 'UPLOADS'
-                          ? 'bg-sky-50 text-sky-700 border border-sky-200/80'
-                          : 'bg-amber-50 text-amber-700 border border-amber-200/80'
-                      }`}
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
+                            : job.type === 'UPLOADS'
+                              ? 'bg-sky-50 text-sky-700 border border-sky-200/80'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200/80'
+                        }`}
                     >
                       {job.type}
                     </span>
@@ -763,44 +762,99 @@ export default function BackupsPage() {
 
       {/* Pending Restore Requests Table */}
       {restoreRequests.length > 0 && (
-        <div className="space-y-3 pt-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-extrabold text-slate-900">Yêu cầu khôi phục đang chờ xử lý ({restoreRequests.length})</h2>
+        <div className="space-y-3 pt-2">
+          {/* Section header — edu-section-title với warning indicator */}
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-warning-50 border border-warning-200 text-warning-600">
+              <Clock3 className="h-4 w-4" />
+            </div>
+            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+              <h2 className="edu-section-title text-[#0F172A]">
+                Yêu cầu khôi phục đang chờ xử lý
+              </h2>
+              <span className="inline-flex items-center justify-center h-6 min-w-[24px] px-2 rounded-full bg-warning-600 text-white text-[12px] font-bold leading-none">
+                {restoreRequests.length}
+              </span>
+            </div>
+            <p className="edu-helper text-[#64748B] hidden sm:block shrink-0">
+              Các yêu cầu chờ Admin thứ hai phê duyệt
+            </p>
           </div>
-          <div className="overflow-x-auto rounded-2xl border border-amber-200/90 bg-white shadow-2xs">
-            <table className="w-full text-left border-collapse text-[15px] text-[#334155]">
-              <thead className="bg-amber-50/70 text-[14px] font-semibold uppercase tracking-wider text-amber-950 border-b border-amber-200">
-                <tr>
-                  <th scope="col" className="p-3.5 pl-4">Snapshot ID</th>
-                  <th scope="col" className="p-3.5 whitespace-nowrap">Môi trường</th>
-                  <th scope="col" className="p-3.5">Lý do khôi phục</th>
-                  <th scope="col" className="p-3.5 whitespace-nowrap">Người tạo yêu cầu</th>
-                  <th scope="col" className="p-3.5 whitespace-nowrap">Thời hạn</th>
-                  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
+
+          {/* Table */}
+          <div className="ui-table-wrap border-warning-200/80">
+            <table className="ui-table">
+              <thead>
+                <tr className="bg-warning-50 border-b border-warning-200/70">
+                  <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Snapshot ID</th>
+                  <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Môi trường</th>
+                  <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937]">Lý do khôi phục</th>
+                  <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Người tạo yêu cầu</th>
+                  <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Thời hạn</th>
+                  <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] text-right whitespace-nowrap">Thao tác</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-amber-100 font-medium">
+              <tbody>
                 {restoreRequests.map((request) => {
                   const selfBlocked = isSelfApprovalBlocked(request);
                   return (
-                    <tr key={request.id} className="transition hover:bg-amber-50/40">
-                      <td className="p-3.5 pl-4 font-mono text-xs font-extrabold text-slate-900">{request.backupJob.snapshotId}</td>
-                      <td className="p-3.5 whitespace-nowrap">
-                        <span className={`px-2.5 py-1 text-xs font-bold rounded-lg border ${request.target === 'PRODUCTION' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-amber-100 text-amber-800 border-amber-200'}`}>
-                          {request.target}
+                    <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
+                      {/* Snapshot ID */}
+                      <td className="px-4 py-3.5 font-mono text-[13px] font-bold text-[#0F172A] whitespace-nowrap">
+                        {request.backupJob.snapshotId}
+                      </td>
+
+                      {/* Environment badge */}
+                      <td className="px-4 py-3.5 whitespace-nowrap">
+                        {request.target === 'PRODUCTION' ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-danger-50 border border-danger-200 text-danger-600 text-[12px] font-bold">
+                            <ShieldAlert className="h-3 w-3 shrink-0" />
+                            PRODUCTION
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-warning-50 border border-warning-200 text-warning-600 text-[12px] font-bold">
+                            <Server className="h-3 w-3 shrink-0" />
+                            STAGING
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Reason */}
+                      <td className="px-4 py-3.5">
+                        <p className="edu-secondary text-[#1F2937] max-w-[240px] line-clamp-2">{request.reason}</p>
+                      </td>
+
+                      {/* Requested by */}
+                      <td className="px-4 py-3.5 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5 edu-secondary font-semibold text-[#1F2937]">
+                          <UserIcon className="h-3.5 w-3.5 text-[#64748B] shrink-0" />
+                          {request.requestedBy?.username || 'admin'}
                         </span>
                       </td>
-                      <td className="p-3.5 text-xs font-semibold text-slate-700">{request.reason}</td>
-                      <td className="p-3.5 whitespace-nowrap text-xs font-bold text-slate-800">{request.requestedBy?.username || 'admin'}</td>
-                      <td className="p-3.5 whitespace-nowrap text-xs font-semibold text-slate-600">{formatDate(request.expiresAt)}</td>
-                      <td className="p-3.5 pr-4 text-right whitespace-nowrap">
+
+                      {/* Expires at */}
+                      <td className="px-4 py-3.5 whitespace-nowrap edu-secondary text-[#475569]">
+                        {formatDate(request.expiresAt)}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-4 py-3.5 text-right whitespace-nowrap">
                         {request.status === 'PENDING_APPROVAL' ? (
                           selfBlocked ? (
-                            <span className="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 inline-block" title="Cần Admin thứ 2 phê duyệt">
+                            <span
+                              title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[#475569] text-[12px] font-semibold cursor-default select-none"
+                            >
+                              <LockKeyhole className="h-3 w-3 shrink-0" />
                               Cần Admin khác phê duyệt
                             </span>
                           ) : (
-                            <Button size="sm" variant="warning" onClick={() => openCriticalApproveModal(request)} leftIcon={<LockKeyhole className="h-3.5 w-3.5" />}>
+                            <Button
+                              size="sm"
+                              variant="warning"
+                              onClick={() => openCriticalApproveModal(request)}
+                              leftIcon={<LockKeyhole className="h-3.5 w-3.5" />}
+                            >
                               Phê duyệt an toàn
                             </Button>
                           )
@@ -1038,7 +1092,7 @@ export default function BackupsPage() {
             </p>
             <div className="pl-6 pt-1">
               <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] leading-relaxed overflow-x-auto border-l-4 border-blue-500">
-{`BACKUP_WORKER_ENABLED="true"       # Bật/tắt tiến trình tự động
+                {`BACKUP_WORKER_ENABLED="true"       # Bật/tắt tiến trình tự động
 BACKUP_SCHEDULE="02:00"             # Khung giờ chạy sao lưu hàng ngày
 BACKUP_TIMEZONE="Asia/Ho_Chi_Minh"  # Múi giờ hệ thống
 BACKUP_RETENTION_DAILY="14"         # Số ngày lưu trữ
