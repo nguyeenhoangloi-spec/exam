@@ -658,7 +658,7 @@ export default function ActivityLogsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200/80 bg-slate-50/80 text-[14px] font-semibold text-slate-600">
+                <tr className="border-b border-slate-200/80 bg-slate-50/80 text-[15px] font-semibold leading-5 text-slate-600">
                   <th className="py-3.5 px-4 w-10 text-center">
                     <input
                       type="checkbox"
