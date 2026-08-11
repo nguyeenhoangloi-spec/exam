@@ -64,7 +64,7 @@ export const AudioLightboxModal: React.FC<AudioLightboxModalProps> = ({ audioUrl
 
       {/* Audio Card Player Container */}
       <div
-        className="relative w-full max-w-sm rounded-3xl bg-slate-900/90 border border-slate-800 p-6 shadow-2xl backdrop-blur-xl flex flex-col items-center gap-5"
+        className="relative w-full max-w-sm rounded-2xl bg-slate-900/90 border border-slate-800 p-6 shadow-2xl backdrop-blur-xl flex flex-col items-center gap-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Animated Disc / Music Icon */}

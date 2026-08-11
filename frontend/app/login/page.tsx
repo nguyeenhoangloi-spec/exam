@@ -311,7 +311,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex-1 flex items-center justify-center p-6 overflow-y-auto">
           <div
             className={[
-              'w-full max-w-[460px] rounded-3xl border transition-all duration-300 overflow-hidden',
+              'w-full max-w-[460px] rounded-2xl border transition-all duration-300 overflow-hidden',
               isDark
                 ? 'bg-slate-900 border-slate-800 shadow-2xl shadow-black/50'
                 : 'bg-white border-slate-100 shadow-xl shadow-slate-900/5',
