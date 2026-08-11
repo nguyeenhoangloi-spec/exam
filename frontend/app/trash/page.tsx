@@ -300,86 +300,94 @@ function TrashPageContent() {
         </div>
       </div>
 
-      {/* 4 Thẻ Thống Kê KPI Card (Tất cả dùng duy nhất Màu Chủ Đạo Xanh Dương Blue) */}
+      {/* 4 Thẻ Thống Kê KPI Card (Đồng bộ 100% kích thước 40x40 và vị trí góc trên bên phải) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Lịch thi đã xóa */}
         <button
           type="button"
           onClick={() => setActiveCategory('schedules')}
-          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'schedules'
+          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'schedules'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
         >
-          <div className="space-y-1">
-            <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">LỊCH THI ĐÃ XÓA</p>
-            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
-            <p className="text-[13px] font-normal text-[#64748B]">Lịch thi khảo thí</p>
+          <div className="flex items-start justify-between gap-3 w-full">
+            <div className="space-y-1">
+              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">LỊCH THI ĐÃ XÓA</span>
+              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
+            </div>
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+              }`}>
+              <CalendarCheck className="w-5 h-5" />
+            </div>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
-            }`}>
-            <CalendarCheck className="w-5 h-5" />
-          </div>
+          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Lịch thi khảo thí</span>
         </button>
 
         {/* Card 2: Đề thi đã xóa */}
         <button
           type="button"
           onClick={() => setActiveCategory('papers')}
-          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'papers'
+          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'papers'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
         >
-          <div className="space-y-1">
-            <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">ĐỀ THI ĐÃ XÓA</p>
-            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{stats.papers}</p>
-            <p className="text-[13px] font-normal text-[#64748B]">Bộ đề thi trắc nghiệm / tự luận</p>
+          <div className="flex items-start justify-between gap-3 w-full">
+            <div className="space-y-1">
+              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">ĐỀ THI ĐÃ XÓA</span>
+              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.papers}</p>
+            </div>
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+              }`}>
+              <FileText className="w-5 h-5" />
+            </div>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
-            }`}>
-            <FileText className="w-5 h-5" />
-          </div>
+          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Bộ đề thi trắc nghiệm / tự luận</span>
         </button>
 
         {/* Card 3: Ngân hàng câu hỏi */}
         <button
           type="button"
           onClick={() => setActiveCategory('questions')}
-          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${activeCategory === 'questions'
+          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'questions'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
         >
-          <div className="space-y-1">
-            <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">CÂU HỎI ĐÃ XÓA</p>
-            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{stats.questions}</p>
-            <p className="text-[13px] font-normal text-[#64748B]">Ngân hàng câu hỏi</p>
+          <div className="flex items-start justify-between gap-3 w-full">
+            <div className="space-y-1">
+              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">CÂU HỎI ĐÃ XÓA</span>
+              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.questions}</p>
+            </div>
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+              }`}>
+              <HelpCircle className="w-5 h-5" />
+            </div>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
-            }`}>
-            <HelpCircle className="w-5 h-5" />
-          </div>
+          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Ngân hàng câu hỏi</span>
         </button>
 
         {/* Card 4: Tài khoản / Khác */}
         <button
           type="button"
           onClick={() => setActiveCategory('users')}
-          className={`group p-5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between shadow-2xs ${['users', 'subjects', 'classes'].includes(activeCategory)
+          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${['users', 'subjects', 'classes'].includes(activeCategory)
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
               : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
             }`}
         >
-          <div className="space-y-1">
-            <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">TÀI KHOẢN / KHÁC</p>
-            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
-            <p className="text-[13px] font-normal text-[#64748B]">Người dùng, Môn học, Lớp</p>
+          <div className="flex items-start justify-between gap-3 w-full">
+            <div className="space-y-1">
+              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">TÀI KHOẢN / KHÁC</span>
+              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
+            </div>
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+              }`}>
+              <Users className="w-5 h-5" />
+            </div>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
-            }`}>
-            <Users className="w-5 h-5" />
-          </div>
+          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Người dùng, Môn học, Lớp</span>
         </button>
       </div>
 

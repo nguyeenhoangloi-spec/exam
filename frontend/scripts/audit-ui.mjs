@@ -19,6 +19,8 @@ const kpiBoldFiles = new Set([
   'components/students/StudentKPICards.tsx',
   'components/subjects/SubjectKPICards.tsx',
   'components/teachers/TeacherKPICards.tsx',
+  'app/admin/activity-logs/page.tsx',
+  'app/trash/page.tsx',
 ]);
 
 async function collectFiles(directory) {

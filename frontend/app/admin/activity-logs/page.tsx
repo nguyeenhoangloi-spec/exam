@@ -128,6 +128,25 @@ const MOCK_AUDIT_LOGS: AuditLogRecord[] = [
   },
 ];
 
+function ActionCode({ action }: { action: string }) {
+  const normalized = action.toUpperCase();
+  const meta = normalized.includes('LOGIN')
+    ? { Icon: CheckCircle2, className: 'text-emerald-700' }
+    : normalized.includes('BACKUP')
+      ? { Icon: Database, className: 'text-slate-700' }
+      : normalized.includes('APPEAL') || normalized.includes('REGRADE')
+        ? { Icon: AlertCircle, className: 'text-amber-700' }
+        : { Icon: ShieldCheck, className: 'text-blue-700' };
+  const Icon = meta.Icon;
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 font-sans text-[14px] font-medium ${meta.className}`}>
+      <Icon className="h-3.5 w-3.5 shrink-0" />
+      {action}
+    </span>
+  );
+}
+
 export default function ActivityLogsPage() {
   usePageTitle('Nhật ký hoạt động hệ thống');
   const router = useRouter();
@@ -431,7 +450,7 @@ export default function ActivityLogsPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-10 pr-8 text-[15px] font-medium text-slate-800 transition focus:border-blue-500 focus:bg-white focus:outline-none"
           />
           {search && (
             <button
@@ -445,12 +464,12 @@ export default function ActivityLogsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500">Thực thể:</span>
+          <span className="text-[13px] font-medium text-slate-500">Thực thể:</span>
           <div className="relative">
             <select
               value={entityFilter}
               onChange={(e) => { setEntityFilter(e.target.value); setPage(1); }}
-              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[14px] font-medium text-slate-700 shadow-2xs transition hover:border-slate-300 focus:outline-none"
             >
               <option value="">Tất cả các thực thể</option>
               {entityTypes.map((et) => (
@@ -464,7 +483,7 @@ export default function ActivityLogsPage() {
 
       {/* ── 4. Table Action Toolbar ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-        <span className="text-xs font-semibold text-slate-600">
+        <span className="text-[14px] font-medium text-slate-600">
           <span className="font-semibold text-slate-900">{filteredLogs.length.toLocaleString('vi-VN')}</span> kết quả
         </span>
 
@@ -474,7 +493,7 @@ export default function ActivityLogsPage() {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[14px] font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 focus:outline-none"
             >
               <option value="newest">Sắp xếp: Mới nhất</option>
               <option value="oldest">Sắp xếp: Cũ nhất</option>
@@ -487,7 +506,7 @@ export default function ActivityLogsPage() {
             <button
               type="button"
               onClick={() => setOpenColumnMenu(!openColumnMenu)}
-              className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+              className="flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[14px] font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95"
               title="Chọn cột hiển thị"
             >
               <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" />
@@ -498,8 +517,8 @@ export default function ActivityLogsPage() {
             {openColumnMenu && (
               <>
                 <div className="fixed inset-0 z-20" onClick={() => setOpenColumnMenu(false)} />
-                <div className="absolute right-0 top-full mt-1.5 z-30 w-48 rounded-xl border border-slate-200 bg-white p-2 shadow-xl animate-fade-in space-y-1 text-xs">
-                  <div className="px-2 py-1 font-bold text-slate-400 uppercase text-[10px] tracking-wider">
+                <div className="absolute right-0 top-full z-30 mt-1.5 w-48 space-y-1 rounded-xl border border-slate-200 bg-white p-2 text-[13px] shadow-xl animate-fade-in">
+                  <div className="px-2 py-1 text-[12px] font-semibold text-slate-500">
                     Hiển thị các cột
                   </div>
                   <div className="h-px bg-slate-100 my-1" />
@@ -517,7 +536,7 @@ export default function ActivityLogsPage() {
                       className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 font-medium text-slate-700 hover:bg-slate-100 transition cursor-pointer"
                     >
                       <span>{col.label}</span>
-                      {visibleColumns[col.key] && <Check className="h-3.5 w-3.5 text-blue-600 font-bold" />}
+                      {visibleColumns[col.key] && <Check className="h-3.5 w-3.5 text-blue-600" />}
                     </button>
                   ))}
                 </div>
@@ -573,7 +592,7 @@ export default function ActivityLogsPage() {
 
       {/* Bulk Action Bar */}
       {selectedIds.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between text-xs font-semibold text-blue-900 shadow-2xs">
+        <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50 p-3 text-[14px] font-medium text-blue-900 shadow-2xs">
           <span>Đã chọn <strong className="text-blue-700">{selectedIds.length}</strong> dòng nhật ký</span>
           <div className="flex items-center gap-2">
             <Button variant="secondary" size="xs" onClick={() => setSelectedIds([])}>
@@ -600,21 +619,19 @@ export default function ActivityLogsPage() {
           {paginatedLogs.map((item) => (
             <div key={item.id} className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3 hover:shadow-md transition">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <span className="text-xs font-semibold text-slate-700">{new Date(item.createdAt).toLocaleString('vi-VN')}</span>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                  {item.action}
-                </span>
+                <span className="text-[14px] font-medium text-slate-700">{new Date(item.createdAt).toLocaleString('vi-VN')}</span>
+                <ActionCode action={item.action} />
               </div>
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-[12px] font-medium text-slate-700">
                   {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900 text-xs">{item.actor?.username || 'Hệ thống'}</p>
-                  <p className="text-[10.5px] text-slate-400">{item.actor?.email}</p>
+                  <p className="text-[15px] font-semibold text-slate-900">{item.actor?.username || 'Hệ thống'}</p>
+                  <p className="text-[13px] font-normal text-slate-500">{item.actor?.email}</p>
                 </div>
               </div>
-              <p className="text-xs text-slate-700 leading-relaxed">{item.description}</p>
+              <p className="text-[14px] font-normal leading-relaxed text-slate-700">{item.description}</p>
               <div className="pt-2 flex justify-end gap-1">
                 <button
                   type="button"
@@ -641,7 +658,7 @@ export default function ActivityLogsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11.5px] font-extrabold uppercase tracking-wider text-slate-500">
+                <tr className="border-b border-slate-200/80 bg-slate-50/80 text-[14px] font-semibold text-slate-600">
                   <th className="py-3.5 px-4 w-10 text-center">
                     <input
                       type="checkbox"
@@ -658,7 +675,7 @@ export default function ActivityLogsPage() {
                   <th className="py-3.5 px-4 text-right whitespace-nowrap">Thao tác</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-900">
+              <tbody className="divide-y divide-slate-100 text-[15px] font-normal text-slate-900">
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="py-12 px-4 text-center text-slate-500">
@@ -692,7 +709,7 @@ export default function ActivityLogsPage() {
 
                       {/* Thời gian - Exact Student Table Font Style */}
                       {visibleColumns.createdAt && (
-                        <td className="py-3.5 px-4 whitespace-nowrap text-xs font-semibold text-slate-800">
+                        <td className="whitespace-nowrap px-4 py-3.5 text-[15px] font-medium text-slate-800">
                           {new Date(item.createdAt).toLocaleString('vi-VN')}
                         </td>
                       )}
@@ -701,12 +718,12 @@ export default function ActivityLogsPage() {
                       {visibleColumns.actor && (
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200/90 shrink-0">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 text-[12px] font-medium text-slate-700">
                               {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-bold text-slate-900 text-xs">{item.actor?.username || 'Hệ thống'}</p>
-                              <p className="text-[11px] text-slate-400 flex items-center gap-1">
+                              <p className="text-[15px] font-semibold text-slate-900">{item.actor?.username || 'Hệ thống'}</p>
+                              <p className="flex items-center gap-1 text-[13px] font-normal text-slate-500">
                                 <Mail className="h-3 w-3 text-slate-300 inline-block" />
                                 {item.actor?.email || 'system@exam.edu.vn'}
                               </p>
@@ -718,16 +735,13 @@ export default function ActivityLogsPage() {
                       {/* Hành động */}
                       {visibleColumns.action && (
                         <td className="py-3.5 px-4 whitespace-nowrap">
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">
-                            <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
-                            {item.action}
-                          </span>
+                          <ActionCode action={item.action} />
                         </td>
                       )}
 
                       {/* Đối tượng */}
                       {visibleColumns.entity && (
-                        <td className="py-3.5 px-4 whitespace-nowrap text-xs">
+                        <td className="whitespace-nowrap px-4 py-3.5 text-[15px]">
                           <span className="font-semibold text-slate-900 flex items-center gap-1">
                             <Building className="h-3.5 w-3.5 text-slate-400 inline-block" />
                             {item.entityType}
@@ -854,7 +868,7 @@ export default function ActivityLogsPage() {
                   setLimit(Number(e.target.value));
                   setPage(1);
                 }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[14px] font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 focus:outline-none"
               >
                 <option value={10}>10 / trang</option>
                 <option value={20}>20 / trang</option>
@@ -878,20 +892,20 @@ export default function ActivityLogsPage() {
 
           {/* Drawer Container */}
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
+            <div className="relative flex h-full w-full max-w-lg flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300">
               
               {/* Header - Solid Flat Blue #2563EB matching Student/Teacher/Department Drawer */}
-              <div className="bg-[#2563EB] p-5 text-white shrink-0">
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0 flex-1">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-sm text-white border border-white/15 shadow-xs">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 font-mono text-sm font-medium text-blue-700 shadow-xs">
                       LOG
                     </div>
                     <div className="min-w-0 flex-1 pr-2">
-                      <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+                      <h2 className="break-words text-[18px] font-semibold leading-[26px] text-slate-900">
                         Chi tiết Nhật ký #{selectedLog.id}
                       </h2>
-                      <p className="text-[13px] font-medium text-blue-100 mt-1 font-mono tabular-nums">
+                      <p className="mt-0.5 font-mono text-[13px] font-normal tabular-nums text-slate-500">
                         Thời gian: {new Date(selectedLog.createdAt).toLocaleString('vi-VN')}
                       </p>
                     </div>
@@ -900,7 +914,7 @@ export default function ActivityLogsPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedLog(null)}
-                    className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/15 hover:text-white transition cursor-pointer"
+                    className="shrink-0 cursor-pointer rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
                     title="Đóng"
                   >
                     <X className="h-5 w-5" />
@@ -909,32 +923,30 @@ export default function ActivityLogsPage() {
               </div>
 
               {/* Content Body */}
-              <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 space-y-5 text-xs">
+              <div className="flex-1 space-y-5 overflow-y-auto bg-slate-50/50 p-6 text-[15px]">
                 
                 {/* Card 1: Thông tin chung */}
-                <div className="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-3.5 shadow-2xs">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
+                <div className="space-y-3.5 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+                  <h3 className="border-b border-slate-100 pb-2 text-[13px] font-semibold text-slate-700">
                     Thông tin định danh
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-0.5">
+                      <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
                         Mã hành động
                       </span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">
-                        {selectedLog.action}
-                      </span>
+                      <span className="font-sans text-[14px] font-medium text-blue-700">{selectedLog.action}</span>
                     </div>
 
                     <div>
-                      <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-0.5">
+                      <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
                         Tài khoản thực hiện
                       </span>
-                      <p className="font-bold text-slate-900 text-xs">
+                      <p className="text-[15px] font-semibold text-slate-900">
                         {selectedLog.actor?.username || 'Hệ thống'}
                       </p>
-                      <p className="text-[11px] text-slate-400 font-medium">
+                      <p className="text-[13px] font-normal text-slate-500">
                         {selectedLog.actor?.email || 'N/A'} ({selectedLog.actor?.role || 'SYSTEM'})
                       </p>
                     </div>
@@ -942,19 +954,19 @@ export default function ActivityLogsPage() {
 
                   <div className="border-t border-slate-100 pt-3 grid grid-cols-2 gap-4">
                     <div>
-                      <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-0.5">
+                      <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
                         Thực thể tác động
                       </span>
-                      <p className="font-bold text-slate-800 text-xs">
+                      <p className="text-[15px] font-semibold text-slate-800">
                         {selectedLog.entityType}
                       </p>
                     </div>
 
                     <div>
-                      <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-0.5">
+                      <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
                         ID Thực thể
                       </span>
-                      <p className="font-mono font-bold text-slate-700 text-xs">
+                      <p className="font-mono text-[14px] font-medium tabular-nums text-slate-700">
                         #{selectedLog.entityId || 'N/A'}
                       </p>
                     </div>
@@ -962,19 +974,19 @@ export default function ActivityLogsPage() {
                 </div>
 
                 {/* Card 2: Nội dung mô tả */}
-                <div className="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-2 shadow-2xs">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
+                <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+                  <h3 className="border-b border-slate-100 pb-2 text-[13px] font-semibold text-slate-700">
                     Nội dung thao tác chi tiết
                   </h3>
-                  <div className="rounded-xl bg-slate-50 p-3.5 text-xs text-slate-800 font-medium leading-relaxed border border-slate-100">
+                  <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-[15px] font-normal leading-relaxed text-slate-700">
                     {selectedLog.description}
                   </div>
                 </div>
 
                 {/* Card 3: Data Metadata JSON */}
-                <div className="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-3 shadow-2xs">
+                <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <h3 className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
                       <Code className="h-4 w-4 text-blue-600" />
                       <span>Dữ liệu Metadata JSON</span>
                     </h3>
@@ -988,14 +1000,14 @@ export default function ActivityLogsPage() {
                           setTimeout(() => setCopied(false), 2000);
                         });
                       }}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                      className="flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[13px] font-medium text-slate-700 transition hover:bg-slate-50"
                     >
                       {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                       <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>
                     </button>
                   </div>
 
-                  <pre className="rounded-xl bg-slate-900 text-emerald-400 p-4 text-[11.5px] font-mono overflow-x-auto border border-slate-800 leading-relaxed shadow-inner">
+                  <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900 p-4 font-mono text-[13px] leading-relaxed text-emerald-400 shadow-inner">
                     {JSON.stringify(selectedLog.metadata || { note: 'Không có dữ liệu bổ sung' }, null, 2)}
                   </pre>
                 </div>
