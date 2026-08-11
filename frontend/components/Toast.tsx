@@ -36,7 +36,11 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
       <button
         type="button"
         aria-label="Đóng thông báo"
-        onClick={onClose}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClose();
+        }}
         className="ml-2 rounded-lg p-1 hover:bg-white/20 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 shrink-0 cursor-pointer text-white"
       >
         <X className="w-4 h-4 text-white" />

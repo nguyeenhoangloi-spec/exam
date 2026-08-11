@@ -136,6 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       group: 'DANH MỤC HỆ THỐNG',
       items: [
         { name: 'Quản lý Khoa', href: '/departments', icon: Building2 },
+        { name: 'Sao lưu & khôi phục', href: '/admin/backups', icon: DatabaseBackup },
         { name: 'Quản lý Lớp học', href: '/classes', icon: School },
         { name: 'Quản lý Môn học', href: '/subjects', icon: BookOpen },
         { name: 'Quản lý Giảng viên', href: '/teachers', icon: GraduationCap },
@@ -152,7 +153,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             { name: 'Môn học & Lớp học', href: '/trash?type=subjects' },
           ],
         },
-        { name: 'Sao lưu & khôi phục', href: '/admin/backups', icon: DatabaseBackup },
       ],
     },
   ];

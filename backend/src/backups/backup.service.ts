@@ -8,6 +8,7 @@ import {
 import { BackupJobStatus, BackupJobType, BackupRestoreStatus, BackupRestoreTarget, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { spawn } from 'node:child_process';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
@@ -35,8 +36,20 @@ export class BackupService {
     };
   }
 
+  private checkToolAvailable(cmd: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      try {
+        const child = spawn(cmd, ['--version'], { windowsHide: true });
+        child.on('error', () => resolve(false));
+        child.on('close', (code) => resolve(code === 0));
+      } catch {
+        resolve(false);
+      }
+    });
+  }
+
   async overview() {
-    const [latest, running, failed24h, totalBytes, pendingRestores] = await Promise.all([
+    const [latest, running, failed24h, totalBytes, pendingRestores, lastFailedJob, pgDumpOk, pgRestoreOk] = await Promise.all([
       this.prisma.backupJob.findFirst({ where: { status: BackupJobStatus.SUCCEEDED }, orderBy: { completedAt: 'desc' } }),
       this.prisma.backupJob.count({ where: { status: { in: [BackupJobStatus.QUEUED, BackupJobStatus.RUNNING, BackupJobStatus.VERIFYING] } } }),
       this.prisma.backupJob.count({
@@ -47,10 +60,19 @@ export class BackupService {
       }),
       this.prisma.backupJob.aggregate({ where: { status: BackupJobStatus.SUCCEEDED }, _sum: { sizeBytes: true } }),
       this.prisma.backupRestoreRequest.count({ where: { status: { in: [BackupRestoreStatus.PENDING_APPROVAL, BackupRestoreStatus.APPROVED, BackupRestoreStatus.RUNNING] } } }),
+      this.prisma.backupJob.findFirst({
+        where: { status: { in: [BackupJobStatus.FAILED, BackupJobStatus.VERIFY_FAILED] } },
+        orderBy: { createdAt: 'desc' },
+        select: { errorMessage: true, createdAt: true },
+      }),
+      this.checkToolAvailable('pg_dump'),
+      this.checkToolAvailable('pg_restore'),
     ]);
 
     const ageHours = latest?.completedAt ? (Date.now() - latest.completedAt.getTime()) / 3_600_000 : Infinity;
     const status = failed24h > 0 || ageHours > 26 ? 'WARNING' : latest ? 'HEALTHY' : 'ERROR';
+    const isWorkerEnabled = process.env.BACKUP_WORKER_ENABLED === 'true';
+    const isLocal = !process.env.BACKUP_STORAGE_BUCKET;
 
     return {
       status,
@@ -61,6 +83,22 @@ export class BackupService {
         weekly: Number(process.env.BACKUP_RETENTION_WEEKLY || 8),
         monthly: Number(process.env.BACKUP_RETENTION_MONTHLY || 12),
       },
+      worker: {
+        enabled: isWorkerEnabled,
+        schedule: process.env.BACKUP_SCHEDULE || '02:00',
+        lastError: lastFailedJob?.errorMessage || null,
+        lastErrorAt: lastFailedJob?.createdAt ? lastFailedJob.createdAt.toISOString() : null,
+      },
+      storage: {
+        provider: isLocal ? 'LOCAL' : 'S3',
+        isLocal,
+        bucketName: process.env.BACKUP_STORAGE_BUCKET || null,
+        warning: isLocal ? 'Backup hiện chỉ lưu trên máy local, chưa có bản sao offsite.' : null,
+      },
+      tools: {
+        pgDumpAvailable: pgDumpOk,
+        pgRestoreAvailable: pgRestoreOk,
+      },
       latest: latest ? this.serializeJob(latest) : null,
       running,
       failed24h,
@@ -69,10 +107,46 @@ export class BackupService {
     };
   }
 
-  async listJobs(page = 1, limit = 20, status?: BackupJobStatus) {
-    const safePage = Math.max(1, Number(page) || 1);
-    const safeLimit = Math.min(100, Math.max(1, Number(limit) || 20));
-    const where = status ? { status } : {};
+  async listJobs(options: {
+    page?: number;
+    limit?: number;
+    type?: BackupJobType;
+    status?: BackupJobStatus;
+    isScheduled?: boolean;
+    fromDate?: string;
+    toDate?: string;
+    search?: string;
+  } = {}) {
+    const safePage = Math.max(1, Number(options.page) || 1);
+    const safeLimit = Math.min(100, Math.max(1, Number(options.limit) || 20));
+    
+    const where: Prisma.BackupJobWhereInput = {};
+
+    if (options.status) where.status = options.status;
+    if (options.type) where.type = options.type;
+
+    if (options.isScheduled !== undefined) {
+      if (options.isScheduled) {
+        where.initiatedById = null;
+      } else {
+        where.initiatedById = { not: null };
+      }
+    }
+
+    if (options.fromDate || options.toDate) {
+      where.createdAt = {};
+      if (options.fromDate) where.createdAt.gte = new Date(options.fromDate);
+      if (options.toDate) where.createdAt.lte = new Date(options.toDate);
+    }
+
+    if (options.search?.trim()) {
+      const q = options.search.trim();
+      where.OR = [
+        { snapshotId: { contains: q, mode: 'insensitive' } },
+        { errorMessage: { contains: q, mode: 'insensitive' } },
+      ];
+    }
+
     const [items, total] = await Promise.all([
       this.prisma.backupJob.findMany({
         where,

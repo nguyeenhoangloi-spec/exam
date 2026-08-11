@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Query, Request, UseGuards, Body } from '@nestjs/common';
-import { BackupJobStatus } from '@prisma/client';
+import { BackupJobStatus, BackupJobType } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -18,8 +18,26 @@ export class BackupController {
   }
 
   @Get('jobs')
-  listJobs(@Query('page') page?: string, @Query('limit') limit?: string, @Query('status') status?: BackupJobStatus) {
-    return this.backupService.listJobs(Number(page || 1), Number(limit || 20), status);
+  listJobs(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('type') type?: BackupJobType,
+    @Query('status') status?: BackupJobStatus,
+    @Query('isScheduled') isScheduled?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.backupService.listJobs({
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+      type,
+      status,
+      isScheduled: isScheduled !== undefined && isScheduled !== '' ? isScheduled === 'true' : undefined,
+      fromDate,
+      toDate,
+      search,
+    });
   }
 
   @Get('jobs/:id')
