@@ -211,4 +211,6 @@ Không đổi font thương hiệu, màu sắc, khoảng cách tổng thể ho�
 - Tăng độ tương phản chữ phụ trên nền sáng: `slate-400` → `slate-500`, `slate-500`/`#64748B` → `#475569`.
 - Đổi body sang subpixel antialiasing để nét chữ không bị mảnh trên màn hình hiện tại; dark theme giữ palette riêng.
 - Làm rõ Sidebar riêng: menu chính dùng màu `#334155`, icon `#475569`, nhóm điều hướng dùng `#64748B`/bold và thông tin phụ tối thiểu 12px.
+- Rà các item trạng thái trong danh sách ca thi; bỏ `opacity-60` trên container nội dung để tránh làm mờ cả chữ, dùng màu phụ để thể hiện trạng thái thay thế.
+- Chuẩn hóa các utility màu chữ có alpha thấp trên nền sáng để không tạo thêm cấp chữ mờ ngoài quy định.
 - Frontend production build đã chạy thành công; các cảnh báo còn lại là cảnh báo sẵn có về `<img>`, font page-level và dependency hook.

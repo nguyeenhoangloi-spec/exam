@@ -121,6 +121,16 @@ html:not(.dark) .text-\[\#94A3B8\] {
   color: rgb(100 116 139) !important;
 }
 
+/* Do not let alpha text utilities make ordinary metadata look disabled. */
+html:not(.dark) .text-slate-400\/70,
+html:not(.dark) .text-slate-400\/80,
+html:not(.dark) .text-slate-500\/70,
+html:not(.dark) .text-slate-500\/80,
+html:not(.dark) .text-\[\#64748B\]\/70,
+html:not(.dark) .text-\[\#64748B\]\/80 {
+  color: rgb(71 85 105) !important;
+}
+
 html.dark .text-\[\#64748B\] {
   color: rgb(148 163 184) !important;
 }

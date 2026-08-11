@@ -524,7 +524,7 @@ export default function ExamSupervisorsPage() {
                                         return (
                                           <button key={s.id} type="button"
                                             onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
-                                            className={`w-full text-left px-4 py-2.5 border-b border-slate-100 opacity-60 hover:opacity-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600 opacity-100' : ''}`}
+                                            className={`w-full text-left px-4 py-2.5 border-b border-slate-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600' : ''}`}
                                           >
                                             <div className="flex items-center justify-between gap-1">
                                               <p className="text-[11px] font-bold text-slate-600 truncate">
@@ -611,7 +611,7 @@ export default function ExamSupervisorsPage() {
                                         return (
                                           <button key={s.id} type="button"
                                             onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
-                                            className={`w-full text-left px-4 py-2.5 border-b border-slate-100 opacity-60 hover:opacity-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600 opacity-100' : ''}`}
+                                          className={`w-full text-left px-4 py-2.5 border-b border-slate-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600' : ''}`}
                                           >
                                             <div className="flex items-center justify-between gap-1">
                                               <p className="text-[11px] font-bold text-slate-600 truncate flex-1">

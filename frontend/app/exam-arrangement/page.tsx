@@ -732,7 +732,7 @@ export default function ExamArrangementPage() {
                                       {expiredArrangement.map((s: any) => (
                                         <div
                                           key={s.id}
-                                          className="w-full text-left px-4 py-2.5 border-b border-slate-100 bg-slate-50/80 opacity-60 cursor-not-allowed select-none"
+                                          className="w-full text-left px-4 py-2.5 border-b border-slate-100 bg-slate-50/80 cursor-not-allowed select-none"
                                         >
                                           <div className="flex items-center justify-between gap-1">
                                             <p className="text-xs font-extrabold text-slate-600 truncate">
