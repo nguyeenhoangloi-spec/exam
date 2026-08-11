@@ -197,12 +197,13 @@ export function TeacherTable({
                   </td>
                   <td className="p-2 font-bold text-slate-700 font-sans tabular-nums whitespace-nowrap">{t.teacherCode}</td>
                   <td className="p-2 min-w-[160px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(t)}
                       className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                     >
                       {t.fullName}
-                    </span>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap">
                     <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
@@ -283,12 +284,13 @@ export function TeacherTable({
 
                 {visibleColumns.fullName !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(t)}
                       className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition leading-tight text-[15px]"
                     >
                       {t.fullName}
-                    </span>
+                    </button>
                   </td>
                 )}
 

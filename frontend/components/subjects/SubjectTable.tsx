@@ -249,12 +249,13 @@ export function SubjectTable({
 
                 {visibleColumns.subjectName !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(s)}
                       className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition text-[15px]"
                     >
                       {s.subjectName}
-                    </span>
+                    </button>
                   </td>
                 )}
 

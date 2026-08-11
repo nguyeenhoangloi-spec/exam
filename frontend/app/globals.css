@@ -78,6 +78,21 @@ html.dark {
   button:not(:disabled), [role='button']:not([aria-disabled='true']) {
     -webkit-tap-highlight-color: transparent;
   }
+
+  :where(button, a, input, select, textarea, [role='button']):not(.no-focus-ring):focus-visible {
+    outline: 2px solid rgb(37 99 235);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .no-focus-ring,
+  .no-focus-ring:focus,
+  .no-focus-ring:focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+  }
 }
 
 @layer components {

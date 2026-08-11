@@ -182,12 +182,13 @@ export function StudentTable({
                   </td>
                   <td className="p-2 font-bold text-slate-700 font-sans tabular-nums whitespace-nowrap">{s.studentCode}</td>
                   <td className="p-2 min-w-[160px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(s)}
                       className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                     >
                       {s.fullName}
-                    </span>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap text-slate-600">{s.gender || 'Nam'}</td>
                   <td className="p-2 text-slate-700 min-w-[120px]">{s.class?.name || '---'}</td>
@@ -263,12 +264,13 @@ export function StudentTable({
 
                 {visibleColumns.fullName !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(s)}
                       className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition leading-tight text-[15px]"
                     >
                       {s.fullName}
-                    </span>
+                    </button>
                   </td>
                 )}
 

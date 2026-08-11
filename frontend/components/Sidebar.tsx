@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [{ name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard }],
     },
     {
-      group: 'QUẢN LÝ KHẢO THÍ',
+      group: 'TỔ CHỨC KỲ THI',
       items: [
         { name: 'Quản lý Kỳ thi', href: '/exam-periods', icon: CalendarDays },
         { name: 'Quản lý Lịch thi', href: '/exam-schedules', icon: CalendarCheck },
@@ -128,20 +128,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
+      ],
+    },
+    {
+      group: 'CHẤM THI & KẾT QUẢ',
+      items: [
         { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
         { name: 'Duyệt bài Tự luận', href: '/admin/essay-review', icon: ShieldCheck },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
       ],
     },
     {
-      group: 'DANH MỤC HỆ THỐNG',
+      group: 'DANH MỤC',
       items: [
         { name: 'Quản lý Khoa', href: '/departments', icon: Building2 },
-        { name: 'Sao lưu & khôi phục', href: '/admin/backups', icon: DatabaseBackup },
         { name: 'Quản lý Lớp học', href: '/classes', icon: School },
         { name: 'Quản lý Môn học', href: '/subjects', icon: BookOpen },
         { name: 'Quản lý Giảng viên', href: '/teachers', icon: GraduationCap },
         { name: 'Quản lý Sinh viên', href: '/students', icon: Users },
+      ],
+    },
+    {
+      group: 'HỆ THỐNG',
+      items: [
+        { name: 'Sao lưu & Khôi phục', href: '/admin/backups', icon: DatabaseBackup },
         {
           name: 'Thùng rác hệ thống',
           href: '/trash',
@@ -160,13 +170,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const teacherGroups: NavGroup[] = [
     {
-      group: 'NGHIỆP VỤ GIẢNG VIÊN',
+      group: 'TỔ CHỨC KỲ THI',
       items: [
         { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
-        { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
-        { name: 'Xử lý Phúc khảo', href: '/teacher/regrade', icon: FileCheck },
+      ],
+    },
+    {
+      group: 'NGÂN HÀNG & ĐỀ THI',
+      items: [
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
         { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
+      ],
+    },
+    {
+      group: 'CHẤM THI & KẾT QUẢ',
+      items: [
+        { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
+        { name: 'Xử lý Phúc khảo', href: '/teacher/regrade', icon: FileCheck },
         { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
       ],
     },
@@ -186,10 +206,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const rawGroups = role === 'ADMIN' ? adminGroups : role === 'TEACHER' ? teacherGroups : studentGroups;
 
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
-    'QUẢN LÝ KHẢO THÍ': true,
+    'TỔ CHỨC KỲ THI': true,
     'NGÂN HÀNG & ĐỀ THI': true,
-    'DANH MỤC HỆ THỐNG': true,
-    'NGHIỆP VỤ GIẢNG VIÊN': true,
+    'CHẤM THI & KẾT QUẢ': true,
+    'DANH MỤC': true,
+    'HỆ THỐNG': true,
     'DÀNH CHO SINH VIÊN': true,
   });
 
@@ -234,7 +255,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ) : (
         <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-[#E2E8F0] dark:border-slate-800 px-4 py-1.5 bg-white dark:bg-[#0F172A]">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white shadow-md shadow-blue-500/20">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
@@ -297,12 +318,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`relative w-full flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold transition-colors ${isActive
-                              ? 'bg-[#EFF6FF] dark:bg-blue-950/70 text-[#2563EB] dark:text-blue-400 font-bold'
-                              : 'text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white'
-                              }`}
+                            className={`relative w-full flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white transition-colors`}
                           >
-                            <Icon className={`absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#475569] dark:text-slate-300'}`} />
+                            <Icon className="absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#475569] dark:text-slate-300" />
                             <span className={`ml-8 truncate flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>{item.name}</span>
                             <ChevronDown className={`h-4 w-4 text-[#64748B] dark:text-slate-300 transition-all duration-200 shrink-0 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100'} ${isSubOpen ? 'rotate-180' : ''}`} />
                           </button>
@@ -316,8 +334,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                   <Link
                                     key={sub.href}
                                     href={sub.href}
-                                    className={`block rounded-lg px-3 py-2 text-[13px] font-semibold transition-all ${isSubActive
-                                      ? 'bg-blue-100/70 dark:bg-blue-900/40 text-[#2563EB] dark:text-blue-400 font-bold'
+                                    className={`block rounded-xl px-3.5 py-2 text-[13px] font-bold transition-all ${isSubActive
+                                      ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
                                       : 'text-[#475569] dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                                       }`}
                                   >
@@ -337,12 +355,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         href={item.href}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`relative flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold transition-colors group ${isActive
-                          ? 'bg-[#EFF6FF] dark:bg-blue-950/70 text-[#2563EB] dark:text-blue-400 font-bold shadow-xs'
-                          : 'text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white'
+                        className={`relative flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-bold transition-colors group ${isActive
+                          ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
+                          : 'text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white font-semibold'
                           }`}
                       >
-                        <Icon className={`absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 transition-transform group-hover:scale-105 ${isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#475569] dark:text-slate-300'}`} />
+                        <Icon className={`absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-[#475569] dark:text-slate-300'}`} />
                         <span className={`ml-8 truncate overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>{item.name}</span>
                       </Link>
                     );
@@ -395,7 +413,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Header profile info item */}
               <div className="flex items-center justify-between rounded-xl p-2 bg-slate-50/70 dark:bg-slate-800/50 mb-1">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white font-bold text-xs shadow-xs">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">

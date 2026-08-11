@@ -293,7 +293,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tìm kiếm trang, chức năng..."
             autoFocus
-            className="w-full text-sm font-semibold text-slate-900 dark:text-slate-100 placeholder-slate-400 bg-transparent focus:outline-none"
+            style={{ outline: 'none', boxShadow: 'none' }}
+            className="w-full text-sm font-semibold text-slate-900 dark:text-slate-100 placeholder-slate-400 bg-transparent no-focus-ring"
           />
           {query ? (
             <button

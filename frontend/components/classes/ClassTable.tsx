@@ -252,12 +252,13 @@ export function ClassTable({
 
                 {visibleColumns.name !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(c)}
                       className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition text-[15px]"
                     >
                       {c.name}
-                    </span>
+                    </button>
                   </td>
                 )}
 

@@ -216,12 +216,13 @@ export function ExamRoomTable({
 
                 {visibleColumns.name !== false && (
                   <td className="p-3.5 min-w-[180px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(r)}
                       className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
                     >
                       {nameText}
-                    </span>
+                    </button>
                   </td>
                 )}
 

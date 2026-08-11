@@ -184,7 +184,7 @@ export default function LoginPage() {
                 <GraduationCap className="w-7 h-7 text-white" />
               </div>
               <div>
-                <p className="text-[11px] font-bold tracking-[0.2em] text-blue-200 uppercase">EXAM SYSTEM</p>
+                <p className="text-[12px] font-bold tracking-[0.2em] text-blue-200 uppercase">EXAM SYSTEM</p>
                 <h1 className="text-sm font-extrabold text-white leading-tight tracking-tight uppercase">
                   HỆ THỐNG QUẢN LÝ KHẢO THÍ
                 </h1>
@@ -192,7 +192,7 @@ export default function LoginPage() {
             </div>
 
             {/* 2. Academic Term Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-bold tracking-wider uppercase backdrop-blur-md">
               <CalendarDays className="w-3.5 h-3.5 text-blue-200" />
               <span>NĂM HỌC 2025 – 2026 &nbsp;•&nbsp; HỌC KỲ II</span>
             </div>
@@ -222,7 +222,7 @@ export default function LoginPage() {
                 <ShieldCheck className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-xs font-bold text-white leading-tight">Xác thực an toàn</h3>
-              <p className="text-[11px] text-blue-100/75 mt-1 leading-snug font-normal">
+              <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Đăng nhập bằng Google bảo mật và tin cậy
               </p>
             </div>
@@ -232,7 +232,7 @@ export default function LoginPage() {
                 <Users className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-xs font-bold text-white leading-tight">Phân quyền tự động</h3>
-              <p className="text-[11px] text-blue-100/75 mt-1 leading-snug font-normal">
+              <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Hệ thống tự động xác định vai trò và quyền truy cập
               </p>
             </div>
@@ -242,14 +242,14 @@ export default function LoginPage() {
                 <Zap className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-xs font-bold text-white leading-tight">Truy cập nhanh</h3>
-              <p className="text-[11px] text-blue-100/75 mt-1 leading-snug font-normal">
+              <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Một lần đăng nhập, sử dụng mọi tính năng
               </p>
             </div>
           </div>
 
           {/* 5. Left Panel Footer */}
-          <div className="pt-3 border-t border-white/15 flex flex-col gap-1 text-[11px] text-blue-200/80 font-medium">
+          <div className="pt-3 border-t border-white/15 flex flex-col gap-1 text-[12px] text-blue-200/80 font-medium">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
               Bảo mật &nbsp;•&nbsp; Tin cậy &nbsp;•&nbsp; Hiệu quả
@@ -277,7 +277,7 @@ export default function LoginPage() {
             </div>
             <div>
               <p className="text-xs font-black text-slate-900 dark:text-white leading-tight">EXAM SYSTEM</p>
-              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Hệ thống khảo thí</p>
+              <p className="text-[12px] font-bold text-blue-600 uppercase tracking-wider">Hệ thống khảo thí</p>
             </div>
           </div>
           <div className="ml-auto">

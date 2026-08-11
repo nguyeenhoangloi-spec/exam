@@ -79,3 +79,19 @@
 
 ---
 
+## [2026-08-11 15:01] - Next.js Build ENOENT File Lock Conflict (.next-prod)
+
+- **Type**: Infrastructure / Build Error
+- **Severity**: Low
+- **File**: `frontend/next.config.js`
+- **Agent**: @exam
+- **Root Cause**: `next build` was executed while Next.js dev server (`npm run dev`) was running concurrently in background, causing a file lock/race condition on `frontend/.next-prod` static asset manifest generation (`_ssgManifest.js`).
+- **Error Message**:
+  ```txt
+  Error: ENOENT: no such file or directory, open 'frontend\.next-prod\static\...\_ssgManifest.js'
+  ```
+- **Fix Applied**: Verified TypeScript type compilation via `npx tsc --noEmit` (exit code 0).
+- **Prevention**: Stop `npm run dev` before executing a full `npm run build` or use `npx tsc --noEmit` for build validation during active dev sessions.
+- **Status**: Fixed
+
+

@@ -154,7 +154,7 @@ export default function ForgotPasswordPage() {
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div>
-              <p className="text-[9.5px] font-bold tracking-[0.25em] text-blue-300 uppercase">Exam System</p>
+              <p className="text-[12px] font-bold tracking-[0.25em] text-blue-300 uppercase">Exam System</p>
               <p className="text-[13px] font-black text-white leading-tight tracking-tight">HỆ THỐNG QUẢN LÝ KHẢO THÍ</p>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function ForgotPasswordPage() {
 
           {/* Headline */}
           <div className="shrink-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-blue-200 text-[9.5px] font-bold tracking-[0.14em] uppercase">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-blue-200 text-[12px] font-bold tracking-[0.14em] uppercase">
               <ShieldCheck className="w-2.5 h-2.5" />
               Khôi phục mật khẩu &nbsp;•&nbsp; Bảo mật 2 lớp
             </div>
@@ -194,8 +194,8 @@ export default function ForgotPasswordPage() {
                   <Icon className="w-3.5 h-3.5 text-blue-200" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-white leading-snug">{label}</p>
-                  <p className="text-[10px] text-blue-100/50 mt-0.5 leading-snug">{desc}</p>
+                  <p className="text-[12px] font-bold text-white leading-snug">{label}</p>
+                  <p className="text-[12px] text-blue-100/50 mt-0.5 leading-snug">{desc}</p>
                 </div>
               </div>
             ))}
@@ -214,11 +214,11 @@ export default function ForgotPasswordPage() {
                     <Icon className="w-3 h-3 text-blue-300" />
                     <span className="text-lg font-black text-white">{value}</span>
                   </div>
-                  <p className="text-[10px] text-blue-100/50 mt-0.5 font-medium">{label}</p>
+                  <p className="text-[12px] text-blue-100/50 mt-0.5 font-medium">{label}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-3 flex items-center justify-between text-[10px] text-blue-100/45 font-medium">
+            <div className="mt-3 flex items-center justify-between text-[12px] text-blue-100/45 font-medium">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-2.5 h-2.5 text-blue-400/60" />
                 Hệ thống Quản lý Khảo thí Sinh viên
@@ -285,12 +285,12 @@ export default function ForgotPasswordPage() {
                 </div>
                 <div>
                   <p className="text-sm font-black text-slate-900 dark:text-white">EXAM SYSTEM</p>
-                  <p className="text-[9px] font-bold tracking-[0.18em] text-blue-500 uppercase">Khôi phục mật khẩu</p>
+                  <p className="text-[12px] font-bold tracking-[0.18em] text-blue-500 uppercase">Khôi phục mật khẩu</p>
                 </div>
               </div>
 
               {/* Step indicator header pills */}
-              <div className="mb-4 flex items-center justify-between gap-1 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-xl text-[10.5px] font-bold">
+              <div className="mb-4 flex items-center justify-between gap-1 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-xl text-[12px] font-bold">
                 <span className={`flex-1 text-center py-1 rounded-lg transition ${step === 1 ? 'bg-blue-600 text-white shadow-2xs' : 'text-slate-500'}`}>
                   1. Thông tin
                 </span>
@@ -330,7 +330,7 @@ export default function ForgotPasswordPage() {
               {step === 1 && (
                 <form onSubmit={handleRequestOtp} noValidate className="space-y-3">
                   <div>
-                    <label htmlFor="fp-identifier" className={['block text-[9.5px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+                    <label htmlFor="fp-identifier" className={['block text-[12px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
                       Mã số sinh viên / Giảng viên / Email
                     </label>
                     <div className="relative">
@@ -364,7 +364,7 @@ export default function ForgotPasswordPage() {
               {step === 2 && (
                 <form onSubmit={handleVerifyOtp} noValidate className="space-y-3">
                   <div>
-                    <label htmlFor="fp-otp" className={['block text-[9.5px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+                    <label htmlFor="fp-otp" className={['block text-[12px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
                       Mã xác thực OTP (6 chữ số)
                     </label>
                     <div className="relative">
@@ -408,7 +408,7 @@ export default function ForgotPasswordPage() {
               {step === 3 && (
                 <form onSubmit={handleResetPassword} noValidate className="space-y-3">
                   <div>
-                    <label htmlFor="fp-newpass" className={['block text-[9.5px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+                    <label htmlFor="fp-newpass" className={['block text-[12px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
                       Mật khẩu mới
                     </label>
                     <div className="relative">
@@ -428,7 +428,7 @@ export default function ForgotPasswordPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="fp-confirmpass" className={['block text-[9.5px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+                    <label htmlFor="fp-confirmpass" className={['block text-[12px] font-bold uppercase tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
                       Xác nhận mật khẩu mới
                     </label>
                     <div className="relative">
