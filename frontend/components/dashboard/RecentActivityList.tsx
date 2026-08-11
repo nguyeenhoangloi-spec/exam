@@ -87,12 +87,12 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
     <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3.5 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[17px] font-bold text-slate-900">Hoạt động gần đây</h3>
+        <h3 className="text-[17px] font-semibold text-slate-900">Hoạt động gần đây</h3>
 
         <button
           type="button"
           onClick={() => router.push('/admin/activity-logs')}
-          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -112,7 +112,7 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
                   </div>
                   <div className="min-w-0 leading-tight">
                     <p className="font-semibold text-slate-900 truncate">
-                      {item.actorName} <span className="font-bold text-slate-500 uppercase">{item.actionTag}</span>
+                      {item.actorName} <span className="font-semibold text-slate-500 uppercase">{item.actionTag}</span>
                     </p>
                     <p className="text-[11px] font-medium text-slate-400 truncate mt-0.5">
                       {item.targetInfo}
