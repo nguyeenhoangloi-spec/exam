@@ -692,8 +692,8 @@ export default function StudentCurriculumPage() {
                             <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-violet-700">
-                            <GraduationCap className="h-3.5 w-3.5 text-violet-500" /> Tự chọn
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700">
+                            <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
                           </span>
                         )}
                       </div>
@@ -782,7 +782,7 @@ export default function StudentCurriculumPage() {
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
-                            <GraduationCap className="h-3.5 w-3.5 text-violet-500" /> Tự chọn
+                            <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
                           </span>
                         )}
                       </td>
@@ -909,7 +909,7 @@ export default function StudentCurriculumPage() {
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
-                              <GraduationCap className="h-4 w-4 shrink-0 text-violet-500" />
+                              <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
                               Tự chọn
                             </span>
                           )}

@@ -436,59 +436,6 @@ html.dark .app-shell-main .group:hover .group-hover\:bg-slate-50 {
   background-color: rgb(30 41 59) !important;
 }
 
-/* Purple/violet used to be sprinkled across older admin screens for ordinary
-   actions. They are now aliases of the single primary blue brand color. */
-.app-shell-main .bg-purple-50,
-.app-shell-main .bg-violet-50 { background-color: rgb(239 246 255) !important; }
-.app-shell-main .bg-purple-100,
-.app-shell-main .bg-violet-100 { background-color: rgb(219 234 254) !important; }
-.app-shell-main .bg-purple-600,
-.app-shell-main .bg-violet-600 { background-color: rgb(37 99 235) !important; }
-.app-shell-main .bg-purple-700,
-.app-shell-main .bg-violet-700 { background-color: rgb(29 78 216) !important; }
-.app-shell-main .text-purple-600,
-.app-shell-main .text-purple-700,
-.app-shell-main .text-purple-800,
-.app-shell-main .text-purple-900,
-.app-shell-main .text-purple-950,
-.app-shell-main .text-violet-600,
-.app-shell-main .text-violet-700,
-.app-shell-main .text-violet-800,
-.app-shell-main .text-violet-900 { color: rgb(29 78 216) !important; }
-.app-shell-main .border-purple-200,
-.app-shell-main .border-purple-300,
-.app-shell-main .border-violet-200,
-.app-shell-main .border-violet-300 { border-color: rgb(191 219 254) !important; }
-.app-shell-main .hover\:bg-purple-700:hover,
-.app-shell-main .hover\:bg-violet-700:hover { background-color: rgb(29 78 216) !important; }
-.app-shell-main .from-purple-500,
-.app-shell-main .from-purple-600,
-.app-shell-main .from-violet-500,
-.app-shell-main .from-violet-600 {
-  --tw-gradient-from: rgb(37 99 235) var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: rgb(37 99 235 / 0) var(--tw-gradient-to-position) !important;
-}
-.app-shell-main .to-purple-500,
-.app-shell-main .to-purple-600,
-.app-shell-main .to-violet-500,
-.app-shell-main .to-violet-600 {
-  --tw-gradient-to: rgb(59 130 246) var(--tw-gradient-to-position) !important;
-}
-
-html.dark .app-shell-main .bg-purple-50,
-html.dark .app-shell-main .bg-purple-100,
-html.dark .app-shell-main .bg-violet-50,
-html.dark .app-shell-main .bg-violet-100 { background-color: rgb(23 48 92 / 0.62) !important; }
-html.dark .app-shell-main .text-purple-600,
-html.dark .app-shell-main .text-purple-700,
-html.dark .app-shell-main .text-purple-800,
-html.dark .app-shell-main .text-purple-900,
-html.dark .app-shell-main .text-purple-950,
-html.dark .app-shell-main .text-violet-600,
-html.dark .app-shell-main .text-violet-700,
-html.dark .app-shell-main .text-violet-800,
-html.dark .app-shell-main .text-violet-900 { color: rgb(147 197 253) !important; }
-
 html.dark .app-shell-main .hover\:text-slate-900:hover,
 html.dark .app-shell-main .hover\:text-slate-800:hover,
 html.dark .app-shell-main .hover\:text-slate-700:hover {

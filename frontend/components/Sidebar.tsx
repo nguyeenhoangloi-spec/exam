@@ -365,7 +365,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {avatarUrl ? (
             <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover" />
           ) : (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-black text-[15px]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-black text-[15px]">
               {displayName.charAt(0).toUpperCase()}
             </div>
           )}

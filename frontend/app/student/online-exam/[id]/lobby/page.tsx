@@ -195,7 +195,7 @@ export default function StudentExamLobbyPage() {
       <div className="w-full max-w-3xl space-y-5">
 
         {/* ── Banner Header Xanh Đậm Sắc Nét ── */}
-        <div className="rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 p-6 sm:p-7 text-white shadow-md shadow-blue-900/15 relative overflow-hidden">
+        <div className="rounded-2xl bg-gradient-to-r from-blue-700 via-blue-700 to-blue-800 p-6 sm:p-7 text-white shadow-md shadow-blue-900/15 relative overflow-hidden">
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
@@ -429,7 +429,7 @@ export default function StudentExamLobbyPage() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Modal - Gradient Xanh */}
-            <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 px-6 py-4 text-white flex items-center justify-between">
+            <div className="bg-gradient-to-r from-blue-700 via-blue-700 to-blue-800 px-6 py-4 text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md">
                   <Lock className="h-5 w-5 text-white" />

@@ -68,7 +68,7 @@ export const AudioLightboxModal: React.FC<AudioLightboxModalProps> = ({ audioUrl
         onClick={(e) => e.stopPropagation()}
       >
         {/* Animated Disc / Music Icon */}
-        <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-xl shadow-blue-500/20">
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-blue-500 shadow-xl shadow-blue-500/20">
           <Music className="h-10 w-10 text-white animate-pulse" />
           <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-ping opacity-25 pointer-events-none" />
         </div>
