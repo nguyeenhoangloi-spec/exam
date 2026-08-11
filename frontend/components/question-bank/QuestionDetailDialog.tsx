@@ -71,21 +71,21 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
         <div className="bg-[#2563EB] p-5 text-white shrink-0">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3.5 min-w-0 flex-1">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-white border border-white/20 shadow-xs">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-white border border-white/20 shadow-xs">
                 <HelpCircle className="h-6 w-6 text-white" />
               </div>
 
               <div className="min-w-0 flex-1 pr-2">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <h2 className="truncate text-[20px] font-bold leading-[28px] text-white">
+                  <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white">
                     Chi tiết Câu hỏi
                   </h2>
-                  <span className="font-sans tabular-nums text-xs font-bold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
+                  <span className="font-mono tabular-nums text-xs font-semibold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
                     {codeText}
                   </span>
                 </div>
                 <p className="truncate text-[13px] font-medium text-blue-100 mt-1">
-                  Môn học: <strong className="font-extrabold text-white">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
+                  Môn học: <strong className="font-semibold text-white">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
                 </p>
               </div>
             </div>
@@ -106,7 +106,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           {/* Card 1: Trạng thái & Nội dung câu hỏi */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-2xs">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Nội dung câu hỏi</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Nội dung câu hỏi</h3>
               <QuestionStatusBadge status={question.status || 'APPROVED'} />
             </div>
 
@@ -118,7 +118,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           {/* Card 2: Media Attachments (if available) */}
           {question.media?.length ? (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-2xs">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Media đính kèm</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Media đính kèm</h3>
               <div className="flex flex-wrap gap-3">
                 {question.media.map((media) => {
                   const fullUrl = getImageUrl(media.url);
@@ -185,7 +185,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
           {/* Card 3: Options & Correct Answer / Explanation */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Danh sách đáp án</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Danh sách đáp án</h3>
             {question.options && question.options.length > 0 ? (
               <div className="space-y-2.5">
                 {question.options.map((o) => (
@@ -196,14 +196,14 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                       : 'border-slate-200 bg-slate-50/80 text-slate-800'
                       }`}
                   >
-                    <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-900'
+                    <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-semibold ${o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-900'
                       }`}>
                       {o.label}
                     </div>
                     <div className="flex-1 min-w-0 pt-0.5 text-xs font-normal leading-normal">
                       <p className="font-medium text-slate-900 text-xs">{o.content}</p>
                       {o.isCorrect && (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 mt-1">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 mt-1">
                           <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đáp án chính xác
                         </span>
                       )}
@@ -217,22 +217,22 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
             {question.explanation && (
               <div className="rounded-xl bg-blue-50/80 border border-blue-200/80 p-4 text-xs text-slate-800 space-y-1">
-                <h5 className="font-bold text-slate-900">Giải thích đáp án / Hướng dẫn chấm:</h5>
-                <p className="font-sans tabular-nums text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">{question.explanation}</p>
+                <h5 className="font-semibold text-slate-900">Giải thích đáp án / Hướng dẫn chấm:</h5>
+                <p className="font-mono tabular-nums text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">{question.explanation}</p>
               </div>
             )}
           </div>
 
           {/* Card 4: Metadata Grid */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Thông tin chi tiết</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Thông tin chi tiết</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
               {/* Mã câu hỏi */}
               <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
                 <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                   <Hash className="h-3.5 w-3.5 text-blue-600" /> Mã câu hỏi
                 </span>
-                <p className="font-sans tabular-nums font-bold text-slate-900">{codeText}</p>
+                <p className="font-mono tabular-nums font-medium text-slate-900">{codeText}</p>
               </div>
 
               {/* Môn học */}
@@ -240,7 +240,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                   <BookOpen className="h-3.5 w-3.5 text-blue-600" /> Môn học
                 </span>
-                <p className="font-bold text-slate-900 truncate" title={question.subject?.subjectName}>
+                <p className="font-semibold text-slate-900 truncate" title={question.subject?.subjectName}>
                   {question.subject?.subjectName || 'Chưa gán'}
                 </p>
               </div>
@@ -250,7 +250,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                   <Award className="h-3.5 w-3.5 text-blue-600" /> Điểm số
                 </span>
-                <p className="font-extrabold text-blue-600">{scoreText}</p>
+                <p className="font-semibold text-blue-600">{scoreText}</p>
               </div>
 
               {/* Độ khó */}
@@ -278,7 +278,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                   <Brain className="h-3.5 w-3.5 text-blue-600" /> Mức độ tư duy
                 </span>
-                <p className="font-bold text-slate-900">{getBloomLabel(question.bloomLevel)}</p>
+                <p className="font-semibold text-slate-900">{getBloomLabel(question.bloomLevel)}</p>
               </div>
 
               {/* Chủ đề */}
@@ -294,7 +294,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                   <User className="h-3.5 w-3.5 text-blue-600" /> Người tạo
                 </span>
-                <p className="font-bold text-slate-900 truncate" title={creatorName}>{creatorName}</p>
+                <p className="font-semibold text-slate-900 truncate" title={creatorName}>{creatorName}</p>
               </div>
 
               {/* Ngày tạo */}

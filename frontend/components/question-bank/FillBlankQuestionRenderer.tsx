@@ -56,7 +56,7 @@ export function FillBlankQuestionRenderer({
 
             if (readOnly) {
               return (
-                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 rounded-lg border border-slate-200 bg-slate-50 font-bold text-slate-900">
+                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 rounded-lg border border-slate-200 bg-slate-50 font-semibold text-slate-900">
                   <span className="text-xs text-slate-400">[{blankIndex}]</span>
                   <span>{currentVal || '____'}</span>
                   {showCorrect && correctObj && (
@@ -76,7 +76,7 @@ export function FillBlankQuestionRenderer({
                   onChange={(e) => onChange?.(blankIndex, e.target.value)}
                   placeholder={`[Ô #${blankIndex}]...`}
                   style={{ width: `${Math.max(120, (currentVal.length + 4) * 11)}px` }}
-                  className="inline-block px-3 py-1.5 text-sm font-bold text-slate-900 bg-white border-2 border-blue-400 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
+                  className="inline-block px-3 py-1.5 text-sm font-semibold text-slate-900 bg-white border-2 border-blue-400 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
                 />
               </span>
             );
@@ -100,7 +100,7 @@ export function FillBlankQuestionRenderer({
       {!readOnly && (
         <div className="mt-4 p-4 rounded-2xl border border-blue-100 bg-blue-50/50 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700">
+            <span className="text-xs font-semibold text-slate-700">
               Nhập đáp án cho từng chỗ trống ({allIndices.length} ô):
             </span>
           </div>
@@ -109,7 +109,7 @@ export function FillBlankQuestionRenderer({
               const val = answers.find((a) => a.blankIndex === bIndex)?.value || '';
               return (
                 <div key={bIndex} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition">
-                  <span className="text-xs font-black text-blue-600 px-2 py-1 bg-blue-50 rounded-lg shrink-0">
+                  <span className="text-xs font-semibold text-blue-600 px-2 py-1 bg-blue-50 rounded-lg shrink-0">
                     Ô #{bIndex}
                   </span>
                   <input
@@ -117,7 +117,7 @@ export function FillBlankQuestionRenderer({
                     value={val}
                     onChange={(e) => onChange?.(bIndex, e.target.value)}
                     placeholder={`Nhập câu trả lời cho Ô #${bIndex}...`}
-                    className="w-full text-xs font-bold text-slate-900 bg-transparent outline-none"
+                    className="w-full text-xs font-semibold text-slate-900 bg-transparent outline-none"
                   />
                 </div>
               );

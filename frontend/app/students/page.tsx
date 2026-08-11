@@ -394,12 +394,12 @@ export default function StudentsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-500">Lớp:</span>
+            <span className="text-xs font-semibold text-slate-500">Lớp:</span>
             <div className="relative">
               <select
                 value={selectedClassId}
                 onChange={(e) => { setSelectedClassId(e.target.value); setPage(1); }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
               >
                 <option value="">Tất cả các lớp</option>
                 {classes.map((cls) => (
@@ -431,7 +431,7 @@ export default function StudentsPage() {
             ))}
           </div>
         ) : !paginatedStudents.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy Sinh viên phù hợp.
           </div>
         ) : (
@@ -473,7 +473,7 @@ export default function StudentsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Sinh viên</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Mã Sinh viên</label>
             <input
               type="text"
               required
@@ -484,7 +484,7 @@ export default function StudentsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Họ và tên</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Họ và tên</label>
             <input
               type="text"
               required
@@ -496,7 +496,7 @@ export default function StudentsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Giới tính</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Giới tính</label>
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
@@ -507,7 +507,7 @@ export default function StudentsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Lớp học</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Lớp học</label>
               <select
                 required
                 value={formData.classId}
@@ -524,7 +524,7 @@ export default function StudentsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Email Sinh viên</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Email Sinh viên</label>
               <input
                 type="email"
                 required
@@ -534,7 +534,7 @@ export default function StudentsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Số điện thoại</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Số điện thoại</label>
               <input
                 type="text"
                 value={formData.phone}
@@ -607,14 +607,14 @@ export default function StudentsPage() {
             <div className="bg-[#2563EB] p-5 text-white shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
                     {drawerStudent.fullName.trim().split(' ').pop()?.charAt(0).toUpperCase() || 'SV'}
                   </div>
                   <div className="min-w-0 flex-1 pr-2">
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerStudent.fullName}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-sans tabular-nums">
+                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-mono tabular-nums">
                       MSSV: {drawerStudent.studentCode} • Lớp: {drawerStudent.class?.name || 'Chưa xếp lớp'}
                     </p>
                   </div>
@@ -661,7 +661,7 @@ export default function StudentsPage() {
               {drawerTab === 'info' && (
                 <div className="space-y-6">
                   <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-4 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">Thông tin cá nhân</h3>
+                    <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">Thông tin cá nhân</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <span className="block text-xs font-semibold text-slate-500 mb-1">Mã sinh viên</span>
@@ -685,7 +685,7 @@ export default function StudentsPage() {
                   </div>
 
                   <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-4 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">Thông tin học tập</h3>
+                    <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">Thông tin học tập</h3>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm">
                         <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -722,18 +722,18 @@ export default function StudentsPage() {
                     <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl border border-blue-100 p-4">
                       <div className="flex items-center gap-2 text-blue-600 mb-2">
                         <BookOpen className="h-4 w-4" />
-                        <span className="text-xs font-bold uppercase">Môn đăng ký</span>
+                        <span className="text-xs font-semibold uppercase">Môn đăng ký</span>
                       </div>
-                      <p className="text-2xl font-black text-blue-900">
+                      <p className="text-2xl font-semibold text-blue-900">
                         {drawerSubjects ? drawerSubjects.length : '--'}
                       </p>
                     </div>
                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-100 p-4">
                       <div className="flex items-center gap-2 text-blue-600 mb-2">
                         <Clock className="h-4 w-4" />
-                        <span className="text-xs font-bold uppercase">Lịch thi</span>
+                        <span className="text-xs font-semibold uppercase">Lịch thi</span>
                       </div>
-                      <p className="text-2xl font-black text-blue-900">
+                      <p className="text-2xl font-semibold text-blue-900">
                         {drawerSchedule ? drawerSchedule.length : '--'}
                       </p>
                     </div>
@@ -756,7 +756,7 @@ export default function StudentsPage() {
                     <>
                       <div className="flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3 border border-blue-100 text-sm">
                         <span className="font-semibold text-blue-900">Tổng quan:</span>
-                        <span className="font-bold text-blue-700">
+                        <span className="font-semibold text-blue-700">
                           {drawerSubjects.length} môn / {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
                         </span>
                       </div>
@@ -769,17 +769,17 @@ export default function StudentsPage() {
                                 <BookOpen className="h-5 w-5 text-blue-600" />
                               </div>
                               <div className="flex-1">
-                                <h4 className="text-sm font-bold text-slate-800">{sub.subjectName || sub.name}</h4>
-                                <p className="text-xs text-slate-500 font-medium mt-0.5">Mã môn: <span className="font-bold text-slate-700">{sub.subjectCode || sub.code}</span></p>
+                                <h4 className="text-sm font-semibold text-slate-800">{sub.subjectName || sub.name}</h4>
+                                <p className="text-xs text-slate-500 font-medium mt-0.5">Mã môn: <span className="font-semibold text-slate-700">{sub.subjectCode || sub.code}</span></p>
                                 {sub.department?.name && (
                                   <p className="text-xs text-slate-400 mt-0.5">{sub.department.name}</p>
                                 )}
                               </div>
                               <div className="text-right">
-                                <span className="inline-block px-2.5 py-1 bg-slate-50 text-slate-600 border border-slate-200 rounded-lg text-xs font-bold">
+                                <span className="inline-block px-2.5 py-1 bg-slate-50 text-slate-600 border border-slate-200 rounded-lg text-xs font-semibold">
                                   {sub.credits} TC
                                 </span>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">{item.semester} • {item.schoolYear || item.year || ''}</p>
+                                <p className="text-[10px] font-semibold text-slate-400 mt-1 uppercase">{item.semester} • {item.schoolYear || item.year || ''}</p>
                               </div>
                             </div>
                           );
@@ -808,31 +808,31 @@ export default function StudentsPage() {
                           <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-blue-600" />
-                              <span className="text-xs font-bold text-slate-700">
+                              <span className="text-xs font-semibold text-slate-700">
                                 {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
                               </span>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-100">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-blue-50 text-blue-700 border border-blue-100">
                               {formatExamType(sched.examType)}
                             </span>
                           </div>
                           <div className="p-4 space-y-3">
                             <div>
-                              <h4 className="text-sm font-bold text-slate-900">{sched.subjectName || 'Môn thi'}</h4>
+                              <h4 className="text-sm font-semibold text-slate-900">{sched.subjectName || 'Môn thi'}</h4>
                               <p className="text-xs font-medium text-slate-500 mt-0.5">Mã môn: {sched.subjectCode}</p>
                             </div>
                             <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <School className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>Phòng: <span className="font-bold text-slate-800">{sched.roomCode || sched.roomName} ({sched.building})</span></span>
+                                <span>Phòng: <span className="font-semibold text-slate-800">{sched.roomCode || sched.roomName} ({sched.building})</span></span>
                               </div>
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>SBD: <span className="font-bold text-blue-600">{sched.examNumber || '---'}</span></span>
+                                <span>SBD: <span className="font-semibold text-blue-600">{sched.examNumber || '---'}</span></span>
                               </div>
                               <div className="flex items-center gap-1.5 text-slate-600">
                                 <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>Số ghế: <span className="font-bold text-blue-600">{sched.seatNumber || '--'}</span></span>
+                                <span>Số ghế: <span className="font-semibold text-blue-600">{sched.seatNumber || '--'}</span></span>
                               </div>
                               {sched.periodName && (
                                 <div className="flex items-center gap-1.5 text-slate-600">

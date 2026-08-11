@@ -431,7 +431,7 @@ export default function DepartmentsPage() {
             ))}
           </div>
         ) : !paginatedDepartments.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy Khoa phù hợp.
           </div>
         ) : (
@@ -476,7 +476,7 @@ export default function DepartmentsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Khoa</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Mã Khoa</label>
             <input
               type="text"
               required
@@ -488,7 +488,7 @@ export default function DepartmentsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tên Khoa Đào tạo</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tên Khoa Đào tạo</label>
             <input
               type="text"
               required
@@ -528,7 +528,7 @@ export default function DepartmentsPage() {
         <div className="space-y-5">
           {currentUser?.role === 'ADMIN' && (
             <form onSubmit={handleAddCurriculum} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3">
-              <span className="text-xs font-extrabold uppercase text-slate-700 tracking-wider">Thêm Môn học vào Khung CTDT</span>
+              <span className="text-xs font-semibold uppercase text-slate-700 tracking-wider">Thêm Môn học vào Khung CTDT</span>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                 <div className="sm:col-span-2">
                   <select
@@ -582,7 +582,7 @@ export default function DepartmentsPage() {
                 />
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 text-xs font-extrabold transition cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 text-xs font-semibold transition cursor-pointer shadow-2xs"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Thêm vào Khung</span>
@@ -592,7 +592,7 @@ export default function DepartmentsPage() {
           )}
 
           <div className="space-y-2">
-            <span className="text-xs font-extrabold uppercase text-slate-500">Danh sách Môn học trong Khung</span>
+            <span className="text-xs font-semibold uppercase text-slate-500">Danh sách Môn học trong Khung</span>
             {loadingCurriculum ? (
               <div className="p-8 text-center text-xs text-slate-500 font-semibold">Đang tải danh sách môn học...</div>
             ) : curriculumList.length === 0 ? (
@@ -616,29 +616,29 @@ export default function DepartmentsPage() {
                     {curriculumList.map((item) => (
                       <tr key={item.id} className="transition hover:bg-blue-50/40">
                         <td className="p-3">
-                          <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
+                          <span className="font-mono tabular-nums text-[13px] font-semibold text-blue-600">
                             {item.subject?.subjectCode}
                           </span>
                         </td>
-                        <td className="p-3 font-extrabold text-slate-900">{item.subject?.subjectName}</td>
+                        <td className="p-3 font-semibold text-slate-900">{item.subject?.subjectName}</td>
                         <td className="p-3 text-center font-semibold text-slate-700">
-                          <span className="font-black text-slate-800">{item.subject?.credits}</span>
+                          <span className="font-semibold text-slate-800">{item.subject?.credits}</span>
                           <span className="text-slate-400 font-semibold ml-0.5">TC</span>
                         </td>
                         <td className="p-3 text-center">
                           {item.type === 'MANDATORY' ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
                               <Award className="h-4 w-4 shrink-0 text-blue-600" />
                               Bắt buộc
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
                               <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
                               Tự chọn
                             </span>
                           )}
                         </td>
-                        <td className="p-3 text-center font-bold text-slate-800">HK {item.recommendedSemester}</td>
+                        <td className="p-3 text-center font-semibold text-slate-800">HK {item.recommendedSemester}</td>
                         {currentUser?.role === 'ADMIN' && (
                           <td className="p-3 text-right">
                             <button
@@ -676,14 +676,14 @@ export default function DepartmentsPage() {
             <div className="bg-[#2563EB] p-5 text-white shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-sans tabular-nums font-bold text-base text-white border border-white/15">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-mono tabular-nums font-medium text-base text-white border border-white/15">
                     {drawerDepartment.code.substring(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1 pr-2">
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerDepartment.name}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono tabular-nums">
                       Mã Khoa: {drawerDepartment.code}
                     </p>
                   </div>
@@ -745,7 +745,7 @@ export default function DepartmentsPage() {
                             </div>
                             <div>
                               <p className="text-[13px] font-semibold text-[#64748B]">Môn học</p>
-                              <p className="text-[18px] font-bold text-[#0F172A]">{drawerDetail.subjects?.length || 0}</p>
+                              <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.subjects?.length || 0}</p>
                             </div>
                           </div>
 
@@ -755,7 +755,7 @@ export default function DepartmentsPage() {
                             </div>
                             <div>
                               <p className="text-[13px] font-semibold text-[#64748B]">Lớp học</p>
-                              <p className="text-[18px] font-bold text-[#0F172A]">{drawerDetail.classes?.length || 0}</p>
+                              <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.classes?.length || 0}</p>
                             </div>
                           </div>
 
@@ -765,7 +765,7 @@ export default function DepartmentsPage() {
                             </div>
                             <div>
                               <p className="text-[13px] font-semibold text-[#64748B]">Giảng viên</p>
-                              <p className="text-[18px] font-bold text-[#0F172A]">{drawerDetail.teachers?.length || 0}</p>
+                              <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.teachers?.length || 0}</p>
                             </div>
                           </div>
 
@@ -775,7 +775,7 @@ export default function DepartmentsPage() {
                             </div>
                             <div>
                               <p className="text-[13px] font-semibold text-[#64748B]">Sinh viên</p>
-                              <p className="text-[18px] font-bold text-[#0F172A]">{drawerDetail.students?.length || drawerDetail._count?.students || 0}</p>
+                              <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.students?.length || drawerDetail._count?.students || 0}</p>
                             </div>
                           </div>
                         </div>

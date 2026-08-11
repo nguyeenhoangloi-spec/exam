@@ -540,7 +540,7 @@ export default function ExamArrangementPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
         <div className="space-y-1">
-          <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+          <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
             Xếp Phòng Thi Tự Động
           </h1>
           <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
@@ -589,7 +589,7 @@ export default function ExamArrangementPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
                     <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">{item.title}</span>
-                    <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">{item.value}</p>
+                    <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">{item.value}</p>
                   </div>
                   <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
                     <IconComponent className="h-5 w-5" />
@@ -618,22 +618,22 @@ export default function ExamArrangementPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
             {/* Left Column: Parameter Selection & Room Availability */}
             <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5 lg:sticky lg:top-5 self-start">
-              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 THAM SỐ THUẬT TOÁN
               </h3>
 
               <form onSubmit={runPreview} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
 
                   {/* Custom popup trigger */}
                   <button
                     type="button"
                     onClick={() => setShowSchedulePicker(true)}
                     disabled={schedules.length === 0}
-                    className="w-full flex items-center justify-between gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-xs font-extrabold text-left text-slate-800 hover:bg-white hover:border-blue-400 transition cursor-pointer disabled:opacity-60 shadow-2xs"
+                    className="w-full flex items-center justify-between gap-2.5 rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-xs font-semibold text-left text-slate-800 hover:bg-white hover:border-blue-400 transition cursor-pointer disabled:opacity-60 shadow-2xs"
                   >
-                    <span className={selectedScheduleId ? 'text-slate-800 truncate font-extrabold' : 'text-slate-400 font-medium'}>
+                    <span className={selectedScheduleId ? 'text-slate-800 truncate font-semibold' : 'text-slate-400 font-medium'}>
                       {selectedScheduleId
                         ? (() => { const s = schedules.find((x) => x.id.toString() === selectedScheduleId); return s ? `[${s.subject?.subjectCode}] ${s.subject?.subjectName} \u00b7 ${s.startTime}\u2013${s.endTime}` : '-- Chọn ca thi --'; })()
                         : schedules.length === 0 ? '(Chưa có ca thi nào)' : '-- Chọn ca thi --'}
@@ -691,7 +691,7 @@ export default function ExamArrangementPage() {
                                 {/* LEFT: Chưa xếp phòng */}
                                 <div>
                                   <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                                       Chưa xếp phòng ({pendingArrangement.length})
                                     </span>
                                   </div>
@@ -708,7 +708,7 @@ export default function ExamArrangementPage() {
                                           className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
                                             }`}
                                         >
-                                          <p className={`text-xs font-black truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
+                                          <p className={`text-xs font-semibold truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
                                             {s.mode === 'MOCK' ? '[THI THỬ] ' : '[CHÍNH THỨC] '}
                                             {s.subject?.subjectName}
                                           </p>
@@ -725,7 +725,7 @@ export default function ExamArrangementPage() {
                                   {expiredArrangement.length > 0 && (
                                     <div className="border-t border-slate-200 bg-slate-100/50 pt-2">
                                       <div className="px-4 py-1.5 bg-slate-200/60">
-                                        <span className="text-[9.5px] font-black text-slate-500 uppercase tracking-wider">
+                                        <span className="text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider">
                                           📁 Đã quá hạn / Đã kết thúc ({expiredArrangement.length})
                                         </span>
                                       </div>
@@ -735,10 +735,10 @@ export default function ExamArrangementPage() {
                                           className="w-full text-left px-4 py-2.5 border-b border-slate-100 bg-slate-50/80 cursor-not-allowed select-none"
                                         >
                                           <div className="flex items-center justify-between gap-1">
-                                            <p className="text-xs font-extrabold text-slate-600 truncate">
+                                            <p className="text-xs font-semibold text-slate-600 truncate">
                                               {s.subject?.subjectName}
                                             </p>
-                                            <span className="shrink-0 rounded-md bg-amber-100 text-amber-800 text-[9px] font-black px-1.5 py-0.5">
+                                            <span className="shrink-0 rounded-md bg-amber-100 text-amber-800 text-[9px] font-semibold px-1.5 py-0.5">
                                               Đã quá hạn
                                             </span>
                                           </div>
@@ -755,7 +755,7 @@ export default function ExamArrangementPage() {
                                 {/* RIGHT: Đã xếp phòng */}
                                 <div>
                                   <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                                       Đã xếp phòng ({createdArrangement.length})
                                     </span>
                                   </div>
@@ -774,10 +774,10 @@ export default function ExamArrangementPage() {
                                             }`}
                                         >
                                           <div className="flex items-center gap-2">
-                                            <p className={`text-xs font-black truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
+                                            <p className={`text-xs font-semibold truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
                                               {s.subject?.subjectName}
                                             </p>
-                                            <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black px-1.5 py-0.5">
+                                            <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[9px] font-semibold px-1.5 py-0.5">
                                               {roomCount} phòng
                                             </span>
                                           </div>
@@ -810,7 +810,7 @@ export default function ExamArrangementPage() {
                     if ((current as any)?.mode === 'MOCK') {
                       return (
                         <div className="mt-3 p-3.5 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 font-medium space-y-1 shadow-2xs">
-                          <p className="font-bold text-blue-950">Ca Thi Thử (MOCK)</p>
+                          <p className="font-semibold text-blue-950">Ca Thi Thử (MOCK)</p>
                           <p className="leading-relaxed text-blue-800">
                             Ca thi này áp dụng hình thức thi thử trực tuyến tự do. Sinh viên có thể tham gia thi trực tuyến mà không bắt buộc phải xếp phòng thi máy hay chia số báo danh.
                           </p>
@@ -822,7 +822,7 @@ export default function ExamArrangementPage() {
 
                   {schedules.length === 0 && (
                     <div className="mt-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 shadow-2xs">
-                      <p className="font-bold flex items-center gap-1.5 text-amber-800">
+                      <p className="font-semibold flex items-center gap-1.5 text-amber-800">
                         <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
                         Kỳ thi này hiện chưa có ca thi nào
                       </p>
@@ -832,7 +832,7 @@ export default function ExamArrangementPage() {
                       <button
                         type="button"
                         onClick={() => router.push('/exam-schedules?action=create')}
-                        className="mt-2 text-[11px] font-bold text-blue-700 hover:text-blue-900 underline"
+                        className="mt-2 text-[11px] font-semibold text-blue-700 hover:text-blue-900 underline"
                       >
                         + Chuyển đến Quản lý Lịch thi để tạo ca thi
                       </button>
@@ -842,8 +842,8 @@ export default function ExamArrangementPage() {
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-bold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
-                    <button type="button" onClick={selectAvailableOnly} className="text-[11px] font-extrabold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
+                    <label className="block text-xs font-semibold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
+                    <button type="button" onClick={selectAvailableOnly} className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
                       Chọn phòng trống ({availableCount})
                     </button>
                   </div>
@@ -861,18 +861,18 @@ export default function ExamArrangementPage() {
                             !r.isAvailable
                               ? 'border-slate-200/60 bg-slate-50 text-slate-400 cursor-not-allowed opacity-75'
                               : isSelected
-                                ? 'border-blue-500 bg-blue-50/90 text-blue-950 font-extrabold shadow-2xs cursor-pointer'
-                                : 'border-slate-200/90 bg-white hover:border-slate-300 text-slate-800 font-extrabold cursor-pointer'
+                                ? 'border-blue-500 bg-blue-50/90 text-blue-950 font-semibold shadow-2xs cursor-pointer'
+                                : 'border-slate-200/90 bg-white hover:border-slate-300 text-slate-800 font-semibold cursor-pointer'
                           }`}
                           title={!r.isAvailable ? (r.busyReason || 'Phòng không khả dụng') : undefined}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-slate-700' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
-                            <span className="truncate font-extrabold">{r.roomName || r.roomCode}</span>
+                            <span className="truncate font-semibold">{r.roomName || r.roomCode}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-xs font-extrabold text-slate-900">{r.capacity} chỗ</span>
-                            <span className={`text-xs font-extrabold ${
+                            <span className="text-xs font-semibold text-slate-900">{r.capacity} chỗ</span>
+                            <span className={`text-xs font-semibold ${
                               !r.isAvailable
                                 ? 'text-rose-600'
                                 : r.isAssignedToCurrent
@@ -920,14 +920,14 @@ export default function ExamArrangementPage() {
               <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs min-h-[500px] flex flex-col justify-between">
                 <div>
                   <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-800 flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-blue-600" /> Kết quả & Ma trận Chỗ ngồi
                     </h3>
 
                     {result && (
                       <div className="flex flex-wrap items-center gap-2">
                         {/* View Switcher */}
-                        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-1 text-xs font-bold">
+                        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-1 text-xs font-semibold">
                           <button
                             type="button"
                             onClick={() => setViewMode('matrix')}
@@ -948,7 +948,7 @@ export default function ExamArrangementPage() {
                         <button
                           type="button"
                           onClick={printDoorList}
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
                         >
                           <Printer className="h-3.5 w-3.5 text-blue-600" /> In dán cửa (A4)
                         </button>
@@ -966,7 +966,7 @@ export default function ExamArrangementPage() {
                       {/* Summary Banner */}
                       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 text-xs font-semibold">
                         <div>
-                          <p className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <p className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
                             <CheckCircle2 className="h-4 w-4 text-emerald-600" /> {result.message}
                           </p>
                           <p className="mt-1 text-slate-600 font-medium">
@@ -1025,11 +1025,11 @@ export default function ExamArrangementPage() {
                       {/* Filter by Room */}
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-500">Lọc theo Phòng:</span>
+                          <span className="text-xs font-semibold text-slate-500">Lọc theo Phòng:</span>
                           <select
                             value={filterRoomCode}
                             onChange={(e) => setFilterRoomCode(e.target.value)}
-                            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-800 focus:bg-white cursor-pointer"
+                            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-800 focus:bg-white cursor-pointer"
                           >
                             <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
                             {roomSummaries.map((rm) => (
@@ -1055,11 +1055,11 @@ export default function ExamArrangementPage() {
                                   <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
                                     <div className="flex items-center gap-2">
                                       <DoorOpen className="h-4 w-4 text-blue-600" />
-                                      <h4 className="font-extrabold text-slate-900 text-sm">
+                                      <h4 className="font-semibold text-slate-900 text-sm">
                                         PHÒNG {room.roomName || room.roomCode} ({room.building})
                                       </h4>
                                     </div>
-                                    <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                                    <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full">
                                       {studentsInRoom.length} / {roomObj?.capacity || 40} Ghế đã xếp
                                     </span>
                                   </div>
@@ -1071,16 +1071,16 @@ export default function ExamArrangementPage() {
                                         className="rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-2xs hover:border-blue-300 transition text-left space-y-1"
                                       >
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <span className="font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
+                                          <span className="font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">
                                             Ghế #{st.seatNumber}
                                           </span>
                                           <span className="font-medium text-slate-400">{st.className}</span>
                                         </div>
-                                        <p className="font-bold text-slate-900 text-xs truncate" title={st.fullName}>{st.fullName}</p>
-                                        <p className="text-[11px] font-semibold text-slate-500 font-sans tabular-nums">{st.studentCode}</p>
+                                        <p className="font-semibold text-slate-900 text-xs truncate" title={st.fullName}>{st.fullName}</p>
+                                        <p className="text-[11px] font-semibold text-slate-500 font-mono tabular-nums">{st.studentCode}</p>
                                         {(st.requirementLabel || st.departmentName) && (
                                           <div className="pt-0.5">
-                                            <p className="font-bold text-slate-800 text-xs truncate" title={st.requirementLabel || st.departmentName}>
+                                            <p className="font-semibold text-slate-800 text-xs truncate" title={st.requirementLabel || st.departmentName}>
                                               {(st.requirementLabel || st.departmentName || '').split(/[•\.\·]/)[0].trim()}
                                             </p>
                                           </div>
@@ -1112,9 +1112,9 @@ export default function ExamArrangementPage() {
                               {filteredDetails.map((st, dIdx) => (
                                 <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50/60 transition">
                                   <td className="p-3.5 font-medium text-[#0F172A]">{st.roomName || st.roomCode}</td>
-                                  <td className="p-3.5 text-center font-bold text-[#2563EB]">Ghế #{st.seatNumber}</td>
+                                  <td className="p-3.5 text-center font-semibold text-[#2563EB]">Ghế #{st.seatNumber}</td>
                                   <td className="p-3.5">
-                                    <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
+                                    <span className="font-mono tabular-nums font-medium text-[14px] text-[#0F172A]">
                                       {st.studentCode}
                                     </span>
                                   </td>
@@ -1177,18 +1177,18 @@ export default function ExamArrangementPage() {
                     historyLogs.map((log: any, lIdx: number) => {
                       const actInfo = (() => {
                         const act = log.action || '';
-                        if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls: 'bg-emerald-50 text-emerald-700 font-black' };
-                        if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls: 'bg-rose-50 text-rose-700 font-black' };
-                        if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls: 'bg-rose-50 text-rose-700 font-black' };
-                        if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls: 'bg-blue-50 text-blue-700 font-black' };
-                        if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls: 'bg-blue-50 text-blue-700 font-black' };
-                        if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls: 'bg-blue-50 text-blue-700 font-black' };
-                        if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls: 'bg-emerald-50 text-emerald-700 font-black' };
-                        if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls: 'bg-amber-50 text-amber-700 font-black' };
-                        if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls: 'bg-slate-100 text-slate-700 font-bold' };
+                        if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls: 'bg-emerald-50 text-emerald-700 font-semibold' };
+                        if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls: 'bg-rose-50 text-rose-700 font-semibold' };
+                        if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls: 'bg-rose-50 text-rose-700 font-semibold' };
+                        if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls: 'bg-blue-50 text-blue-700 font-semibold' };
+                        if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls: 'bg-blue-50 text-blue-700 font-semibold' };
+                        if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls: 'bg-blue-50 text-blue-700 font-semibold' };
+                        if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls: 'bg-emerald-50 text-emerald-700 font-semibold' };
+                        if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls: 'bg-amber-50 text-amber-700 font-semibold' };
+                        if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls: 'bg-slate-100 text-slate-700 font-semibold' };
 
                         const formatted = act.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
-                        return { label: formatted, cls: 'bg-slate-100 text-slate-700 font-bold' };
+                        return { label: formatted, cls: 'bg-slate-100 text-slate-700 font-semibold' };
                       })();
 
                       const roleLabel = log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role === 'TEACHER' ? 'Giảng viên' : log.actor?.role === 'STUDENT' ? 'Sinh viên' : (log.actor?.role || 'Quản trị viên');
@@ -1199,7 +1199,7 @@ export default function ExamArrangementPage() {
                           <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
                             {new Date(log.createdAt).toLocaleString('vi-VN')}
                           </td>
-                          <td className="p-3.5 font-bold text-slate-800 whitespace-nowrap">
+                          <td className="p-3.5 font-semibold text-slate-800 whitespace-nowrap">
                             {username} <span className="text-slate-400 font-semibold text-[11px]">({roleLabel})</span>
                           </td>
                           <td className="p-3.5 whitespace-nowrap">

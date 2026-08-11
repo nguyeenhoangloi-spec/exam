@@ -276,7 +276,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 ml-1" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 ml-1" aria-label="Breadcrumb">
               <button
                 type="button"
                 className="cursor-pointer text-slate-400/80 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
@@ -289,7 +289,7 @@ export const Header: React.FC<HeaderProps> = ({
                 Trang chủ
               </button>
               <span className="text-slate-700 dark:text-slate-600">/</span>
-              <span className="font-extrabold text-slate-900 dark:text-slate-100">
+              <span className="font-medium text-slate-900 dark:text-slate-100">
                 {title === 'Hệ thống Quản lý Khảo thí' ? 'Tổng quan' : title}
               </span>
             </nav>
@@ -308,7 +308,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-bold text-white shadow-xs leading-none">
+                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-semibold text-white shadow-xs leading-none">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
                   </span>
                 )}
@@ -406,15 +406,15 @@ export const Header: React.FC<HeaderProps> = ({
                     className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2563EB] font-bold text-white text-xs tracking-tight">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2563EB] font-semibold text-white text-xs tracking-tight">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-tight">
-                  <span className="block text-[13px] font-bold text-[#0F172A] dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[11px] font-semibold text-[#2563EB]">
+                  <span className="block text-[13px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
+                  <span className="block text-[11px] font-medium text-[#2563EB]">
                     {displayRoleLabel}
                   </span>
                 </div>
@@ -446,10 +446,10 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/profile');
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
                       <UserIcon className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                      <span className="text-xs font-medium text-slate-800 dark:text-slate-100">
                         Hồ sơ cá nhân
                       </span>
                     </button>
@@ -462,10 +462,10 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/settings');
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
                       <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                      <span className="text-xs font-medium text-slate-800 dark:text-slate-100">
                         Cài đặt tài khoản
                       </span>
                     </button>
@@ -478,10 +478,10 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/change-password');
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
                       <Lock className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                      <span className="text-xs font-medium text-slate-800 dark:text-slate-100">
                         Đổi mật khẩu
                       </span>
                     </button>
@@ -497,11 +497,11 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-rose-600 font-bold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
                         <LogOut className="h-4 w-4 text-rose-600 group-hover:scale-105 transition-transform" />
-                        <span className="text-xs font-bold text-rose-600">Đăng xuất</span>
+                        <span className="text-xs font-semibold text-rose-600">Đăng xuất</span>
                       </div>
                     </button>
                   </div>

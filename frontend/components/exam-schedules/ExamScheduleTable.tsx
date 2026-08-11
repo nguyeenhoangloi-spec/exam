@@ -194,7 +194,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-sans tabular-nums text-xs font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                      className="font-mono tabular-nums text-xs font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -233,7 +233,7 @@ export function ExamScheduleTable({
               </div>
 
               {/* Actions Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(s)}
@@ -317,7 +317,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-semibold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -406,7 +406,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-sans tabular-nums text-[13px] font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                      className="font-mono tabular-nums text-[13px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -419,7 +419,7 @@ export function ExamScheduleTable({
                     <div className="space-y-0.5">
                       <button
                         type="button"
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
+                        className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
                         onClick={() => onDetail(s)}
                       >
                         {periodName}
@@ -444,14 +444,14 @@ export function ExamScheduleTable({
                     {roomName === 'Chưa xếp phòng' || !roomName ? (
                       <span className="font-medium text-slate-500">Chưa xếp phòng</span>
                     ) : (
-                      <span className="font-extrabold text-slate-900">{roomName}</span>
+                      <span className="font-semibold text-slate-900">{roomName}</span>
                     )}
                   </td>
                 )}
 
                 {/* Ngày thi */}
                 {visibleColumns.date !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-extrabold text-slate-900 text-xs">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-xs">
                     {formatDate(s.examDate)}
                   </td>
                 )}
@@ -472,7 +472,7 @@ export function ExamScheduleTable({
 
                 {/* Số TS */}
                 {visibleColumns.students !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-extrabold text-slate-900 text-xs">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-xs">
                     {studentCount}
                   </td>
                 )}

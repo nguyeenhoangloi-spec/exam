@@ -62,7 +62,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
               {list.map((exam) => (
                 <tr key={exam.id} className="hover:bg-slate-50/60 transition">
                   <td className="py-2.5 px-2.5 whitespace-nowrap">
-                    <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
+                    <span className="font-mono tabular-nums font-medium text-[14px] text-[#0F172A]">
                       {exam.code}
                     </span>
                   </td>
@@ -70,7 +70,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
                   <td className="py-2.5 px-2 text-center whitespace-nowrap font-normal text-[#64748B]">{exam.date}</td>
                   <td className="py-2.5 px-2 text-center whitespace-nowrap font-normal text-[#64748B]">{exam.time}</td>
                   <td className="py-2.5 px-2 text-center font-medium text-[#334155] whitespace-nowrap">{exam.rooms}</td>
-                  <td className="py-2.5 px-2 text-center font-bold text-[#0F172A] whitespace-nowrap">{exam.students}</td>
+                  <td className="py-2.5 px-2 text-center font-semibold text-[#0F172A] whitespace-nowrap">{exam.students}</td>
                   <td className="py-2.5 px-2 text-center whitespace-nowrap">
                     <StatusBadge status={exam.status} />
                   </td>
@@ -110,7 +110,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
           </button>
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold bg-blue-600 text-white"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-semibold bg-blue-600 text-white"
           >
             1
           </button>

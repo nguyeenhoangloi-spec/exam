@@ -267,7 +267,7 @@ function TrashPageContent() {
       {/* Page Header Động Theo Đúng Mục Đang Chọn */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
+          <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
             {currentCategoryInfo.title}
             <span className="text-[13px] font-semibold text-[#64748B]">
               {items.length} mục
@@ -313,7 +313,7 @@ function TrashPageContent() {
         >
           <div className="space-y-1">
             <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">LỊCH THI ĐÃ XÓA</p>
-            <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
+            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Lịch thi khảo thí</p>
           </div>
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -333,7 +333,7 @@ function TrashPageContent() {
         >
           <div className="space-y-1">
             <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">ĐỀ THI ĐÃ XÓA</p>
-            <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.papers}</p>
+            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{stats.papers}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Bộ đề thi trắc nghiệm / tự luận</p>
           </div>
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -353,7 +353,7 @@ function TrashPageContent() {
         >
           <div className="space-y-1">
             <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">CÂU HỎI ĐÃ XÓA</p>
-            <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.questions}</p>
+            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{stats.questions}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Ngân hàng câu hỏi</p>
           </div>
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -373,7 +373,7 @@ function TrashPageContent() {
         >
           <div className="space-y-1">
             <p className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">TÀI KHOẢN / KHÁC</p>
-            <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
+            <p className="text-[32px] font-semibold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
             <p className="text-[13px] font-normal text-[#64748B]">Người dùng, Môn học, Lớp</p>
           </div>
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -426,7 +426,7 @@ function TrashPageContent() {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
                 <option value="newest">Sắp xếp: Mới nhất</option>
                 <option value="oldest">Sắp xếp: Cũ nhất</option>
@@ -440,7 +440,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+                className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
               >
                 <SlidersHorizontal className="h-4 w-4 text-[#2563EB]" />
                 <span>Chọn cột</span>

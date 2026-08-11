@@ -332,7 +332,7 @@ export default function ExamPeriodsPage() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Học kỳ */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500">Học kỳ:</span>
+              <span className="text-xs font-semibold text-slate-500">Học kỳ:</span>
               <FilterSelect
                 size="sm"
                 value={selectedSemester}
@@ -351,7 +351,7 @@ export default function ExamPeriodsPage() {
             {/* Năm học */}
             {schoolYearsList.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-500">Năm học:</span>
+                <span className="text-xs font-semibold text-slate-500">Năm học:</span>
                 <FilterSelect
                   size="sm"
                   value={selectedSchoolYear}
@@ -372,7 +372,7 @@ export default function ExamPeriodsPage() {
 
             {/* Trạng thái */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500">Trạng thái:</span>
+              <span className="text-xs font-semibold text-slate-500">Trạng thái:</span>
               <FilterSelect
                 size="sm"
                 value={selectedStatus}
@@ -412,7 +412,7 @@ export default function ExamPeriodsPage() {
             ))}
           </div>
         ) : !paginatedPeriods.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy kỳ thi phù hợp.
           </div>
         ) : (
@@ -456,7 +456,7 @@ export default function ExamPeriodsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tên Kỳ thi</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tên Kỳ thi</label>
             <input
               type="text"
               required
@@ -469,7 +469,7 @@ export default function ExamPeriodsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Học kỳ</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Học kỳ</label>
               <select
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
@@ -481,7 +481,7 @@ export default function ExamPeriodsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Năm học</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Năm học</label>
               <input
                 type="text"
                 required
@@ -495,7 +495,7 @@ export default function ExamPeriodsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ngày bắt đầu</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Ngày bắt đầu</label>
               <input
                 type="date"
                 required
@@ -505,7 +505,7 @@ export default function ExamPeriodsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Ngày kết thúc</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Ngày kết thúc</label>
               <input
                 type="date"
                 required

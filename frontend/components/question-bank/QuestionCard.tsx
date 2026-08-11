@@ -45,7 +45,7 @@ export function QuestionCard({
             onChange={(e) => onSelect(e.target.checked)}
             className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
           />
-          <b className="text-[#2563EB] font-sans tabular-nums text-[14px] font-bold">{q.code}</b>
+          <b className="text-[#2563EB] font-mono tabular-nums text-[14px] font-semibold">{q.code}</b>
           {q.subject?.subjectName && (
             <span className="rounded-[8px] bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[13px] font-medium text-[#2563EB] h-6 inline-flex items-center">
               {q.subject.subjectName}
@@ -264,7 +264,7 @@ export function QuestionCard({
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <span
-                        className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 px-1.5 text-[13px] font-bold text-[#0F172A]"
+                        className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 px-1.5 text-[13px] font-semibold text-[#0F172A]"
                       >
                         {label}
                       </span>

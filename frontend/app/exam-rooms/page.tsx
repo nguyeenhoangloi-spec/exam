@@ -340,7 +340,7 @@ export default function ExamRoomsPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500">Loại phòng:</span>
+              <span className="text-xs font-semibold text-slate-500">Loại phòng:</span>
               <div className="relative">
                 <select
                   value={selectedType}
@@ -348,7 +348,7 @@ export default function ExamRoomsPage() {
                     setSelectedType(e.target.value);
                     setPage(1);
                   }}
-                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
                 >
                   <option value="">Tất cả loại phòng</option>
                   <option value="COMPUTER_LAB">Phòng Máy tính</option>
@@ -360,7 +360,7 @@ export default function ExamRoomsPage() {
 
             {buildingList.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-500">Tòa nhà:</span>
+                <span className="text-xs font-semibold text-slate-500">Tòa nhà:</span>
                 <div className="relative">
                   <select
                     value={selectedBuilding}
@@ -368,7 +368,7 @@ export default function ExamRoomsPage() {
                       setSelectedBuilding(e.target.value);
                       setPage(1);
                     }}
-                    className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+                    className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
                   >
                     <option value="">Tất cả tòa nhà</option>
                     {buildingList.map((b) => (
@@ -404,7 +404,7 @@ export default function ExamRoomsPage() {
             ))}
           </div>
         ) : !paginatedRooms.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy phòng thi phù hợp.
           </div>
         ) : (
@@ -448,7 +448,7 @@ export default function ExamRoomsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Phòng thi</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Mã Phòng thi</label>
             <input
               type="text"
               required
@@ -460,7 +460,7 @@ export default function ExamRoomsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tên Phòng thi</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tên Phòng thi</label>
             <input
               type="text"
               required
@@ -473,7 +473,7 @@ export default function ExamRoomsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
               <input
                 type="number"
                 required
@@ -483,7 +483,7 @@ export default function ExamRoomsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Tòa nhà / Vị trí</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tòa nhà / Vị trí</label>
               <input
                 type="text"
                 required
@@ -497,7 +497,7 @@ export default function ExamRoomsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Loại phòng</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Loại phòng</label>
               <select
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
@@ -508,7 +508,7 @@ export default function ExamRoomsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Trạng thái</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Trạng thái</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}

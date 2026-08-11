@@ -26,7 +26,7 @@ export function DashboardWelcome({
     <div className="rounded-2xl bg-[#1E40AF] border border-white/10 px-6 py-5 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       {/* Text */}
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-white tracking-tight leading-tight">
+        <h2 className="text-xl font-semibold text-white tracking-tight leading-tight">
           Xin chào, <span className="text-blue-200">{username}</span>! 👋
         </h2>
         <p className="text-xs font-medium text-blue-100/80 leading-relaxed">

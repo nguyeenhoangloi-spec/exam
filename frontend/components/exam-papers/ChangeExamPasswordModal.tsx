@@ -75,7 +75,7 @@ export function ChangeExamPasswordModal({
         {/* Info card */}
         <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
           <div className="flex items-center justify-between">
-            <span className="font-sans tabular-nums text-xs font-black text-slate-900 dark:text-slate-100">
+            <span className="font-mono tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100">
               Mã đề: {paper.paperCode}
             </span>
             <span
@@ -96,7 +96,7 @@ export function ChangeExamPasswordModal({
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs font-bold text-rose-700 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300">
+          <div className="flex items-center gap-2 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs font-semibold text-rose-700 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -104,7 +104,7 @@ export function ChangeExamPasswordModal({
 
         {/* Input new password */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Mật khẩu thi mới <span className="text-rose-500">*</span>
           </label>
           <div className="relative">
@@ -130,7 +130,7 @@ export function ChangeExamPasswordModal({
 
         {/* Confirm password */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Xác nhận mật khẩu mới <span className="text-rose-500">*</span>
           </label>
           <input
@@ -147,7 +147,7 @@ export function ChangeExamPasswordModal({
 
         {/* Reason */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Lý do cập nhật mật khẩu <span className="text-slate-400 font-normal">(Tùy chọn)</span>
           </label>
           <input

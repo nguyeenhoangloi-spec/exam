@@ -325,7 +325,7 @@ export default function RegradeManagementPage() {
             <select
               value={subjectFilter}
               onChange={(e) => { setSubjectFilter(e.target.value); setPage(1); }}
-              className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-500 transition cursor-pointer shadow-2xs"
+              className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-500 transition cursor-pointer shadow-2xs"
             >
               <option value="ALL">Tất cả Môn học</option>
               {subjectsList.map(([id, name]) => (

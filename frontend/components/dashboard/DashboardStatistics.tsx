@@ -119,7 +119,7 @@ export function DashboardStatistics({
           >
             {/* Top row: Icon */}
             <div className="flex items-center justify-between gap-2">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl font-bold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${spec.iconBg} ${spec.iconColor}`}>
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${spec.iconBg} ${spec.iconColor}`}>
                 <Icon className="h-5 w-5 stroke-[2.2]" />
               </div>
             </div>

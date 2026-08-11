@@ -760,7 +760,7 @@ export default function ExamPapersPage() {
             ))}
           </div>
         ) : !paginatedPapers.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy Đề thi phù hợp.
           </div>
         ) : (
@@ -821,7 +821,7 @@ export default function ExamPapersPage() {
                 <button
                   type="button"
                   onClick={() => setShowAnswers(!showAnswers)}
-                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition cursor-pointer ${showAnswers
+                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition cursor-pointer ${showAnswers
                     ? 'bg-amber-500 text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
@@ -833,7 +833,7 @@ export default function ExamPapersPage() {
                 <button
                   type="button"
                   onClick={() => exportExamPaperToWord(formatPaperForExport(selectedPaper), showAnswers)}
-                  className="flex items-center gap-1.5 rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 text-xs font-extrabold transition cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 text-xs font-semibold transition cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5" />
                   <span>Tải Word (.doc)</span>
@@ -850,13 +850,13 @@ export default function ExamPapersPage() {
                 return (
                   <div key={detail.id || index} className="py-4 space-y-2 border-b border-slate-100 last:border-0">
                     {/* Hàng 1: Nội dung câu hỏi chiếm trọn 100% bề ngang */}
-                    <div className="text-xs font-black text-slate-900 leading-relaxed break-words">
+                    <div className="text-xs font-semibold text-slate-900 leading-relaxed break-words">
                       Câu {index + 1}: {q.content}
                     </div>
 
                     {/* Hàng 2: Thanh phụ chứa loại câu hỏi & nút bấm hành động */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                      <span className="text-[11px] font-extrabold text-blue-600">
+                      <span className="text-[11px] font-semibold text-blue-600">
                         {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'FILL_BLANK' ? 'ĐIỀN KHUYẾT' : q.type === 'TRUE_FALSE' ? 'ĐÚNG/SAI' : 'TRẮC NGHIỆM'} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
                       </span>
 
@@ -865,7 +865,7 @@ export default function ExamPapersPage() {
                           <button
                             type="button"
                             onClick={() => openSwapModal(index, q)}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-xs font-bold transition cursor-pointer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-xs font-semibold transition cursor-pointer"
                             title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
                           >
                             <RotateCcw className="w-3.5 h-3.5 text-blue-600" /> Đổi câu hỏi
@@ -875,7 +875,7 @@ export default function ExamPapersPage() {
                           <button
                             type="button"
                             onClick={() => setRubricQuestion({ id: q.id || detail.questionId || detail.id, code: q.code || `Câu ${index + 1}`, content: q.content, score: detail.score || 1 })}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-xs font-bold transition cursor-pointer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-xs font-semibold transition cursor-pointer"
                             title="Cấu hình thang điểm chi tiết (Rubric) cho câu tự luận"
                           >
                             <Award className="w-3.5 h-3.5 text-blue-600" /> Cấu hình Rubric
@@ -893,14 +893,14 @@ export default function ExamPapersPage() {
                             <div
                               key={c.label}
                               className={`rounded-xl border p-2.5 font-medium transition ${showAnswers && isCorrect
-                                ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-extrabold'
+                                ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
                                 : 'border-slate-200 bg-slate-50/70 text-slate-700'
                                 }`}
                             >
-                              <span className="font-black text-slate-900 mr-1.5">{c.label}.</span>
+                              <span className="font-semibold text-slate-900 mr-1.5">{c.label}.</span>
                               <span>{c.text}</span>
                               {showAnswers && isCorrect && (
-                                <span className="ml-2 inline-flex items-center text-emerald-700 font-black text-[10.5px]">
+                                <span className="ml-2 inline-flex items-center text-emerald-700 font-semibold text-[10.5px]">
                                   ✓ Đáp án đúng
                                 </span>
                               )}
@@ -913,13 +913,13 @@ export default function ExamPapersPage() {
                       <div className="text-xs pt-1 space-y-2">
                         {showAnswers ? (
                           <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
-                            <p className="font-black text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                            <p className="font-semibold text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
                               <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Đáp án chính xác cho các chỗ trống:
                             </p>
                             <div className="flex flex-wrap gap-2 pt-1">
                               {(q.fillBlankAnswers || (q as any).answers || []).length > 0 ? (
                                 (q.fillBlankAnswers || (q as any).answers).map((ans: any, idx: number) => (
-                                  <span key={idx} className="rounded-lg bg-emerald-100/90 px-2.5 py-1 text-xs font-bold text-emerald-900 border border-emerald-300">
+                                  <span key={idx} className="rounded-lg bg-emerald-100/90 px-2.5 py-1 text-xs font-semibold text-emerald-900 border border-emerald-300">
                                     Ô #{ans.blankIndex || idx + 1}: {ans.answer || ans.text || 'đáp án đúng'} {ans.score ? `(${ans.score}đ)` : ''}
                                   </span>
                                 ))
@@ -939,7 +939,7 @@ export default function ExamPapersPage() {
                       <div className="text-xs pt-1 space-y-2">
                         {showAnswers ? (
                           <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
-                            <p className="font-black text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                            <p className="font-semibold text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
                               <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án & Thang điểm Tự luận:
                             </p>
                             <p className="font-semibold whitespace-pre-wrap leading-relaxed">
@@ -1042,11 +1042,11 @@ export default function ExamPapersPage() {
         >
           <div className="space-y-4">
             <div className="rounded-xl bg-blue-50 p-3 border border-blue-200 text-xs text-blue-900">
-              <p className="font-bold">Câu hỏi hiện tại đang bị thay thế:</p>
+              <p className="font-semibold">Câu hỏi hiện tại đang bị thay thế:</p>
               <p className="mt-1 font-semibold text-slate-700 italic border-l-2 border-blue-400 pl-2">
                 &quot;{swapModal.targetQuestion?.content}&quot;
               </p>
-              <p className="mt-1 text-[11px] text-blue-700 font-bold">
+              <p className="mt-1 text-[11px] text-blue-700 font-semibold">
                 Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'Trắc nghiệm'}) & độ khó tương đương từ Ngân hàng đề.
               </p>
             </div>
@@ -1065,20 +1065,20 @@ export default function ExamPapersPage() {
                 {swapModal.alternatives.map((altQ: any) => (
                   <div key={altQ.id} className="rounded-2xl border border-slate-200 bg-white p-3.5 space-y-2 hover:border-blue-300 transition shadow-2xs">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-xs font-extrabold text-slate-900 leading-snug">
+                      <p className="text-xs font-semibold text-slate-900 leading-snug">
                         {altQ.content}
                       </p>
                       <button
                         type="button"
                         onClick={() => handleSelectSwapQuestion(altQ)}
-                        className="shrink-0 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-3 py-1.5 shadow-2xs transition cursor-pointer"
+                        className="shrink-0 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3 py-1.5 shadow-2xs transition cursor-pointer"
                       >
                         Chọn câu này
                       </button>
                     </div>
 
                     <div className="flex items-center gap-2 text-[10.5px] font-semibold text-slate-500">
-                      <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-slate-700 font-bold">
+                      <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-slate-700 font-semibold">
                         Mã câu: #{altQ.id}
                       </span>
                       <span>Độ khó: {altQ.difficulty || 'TRUNG BÌNH'}</span>
@@ -1092,7 +1092,7 @@ export default function ExamPapersPage() {
               <button
                 type="button"
                 onClick={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Đóng
               </button>

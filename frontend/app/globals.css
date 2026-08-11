@@ -204,7 +204,7 @@ html.dark {
   .edu-helper {
     font-size: var(--fs-helper);
     line-height: var(--lh-helper);
-    @apply font-medium text-[#1F2937];
+    @apply font-normal text-[#1F2937];
   }
 
   .edu-badge {
@@ -221,7 +221,7 @@ html.dark {
   .edu-label {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
-    @apply font-semibold text-[#1F2937];
+    @apply font-medium text-[#1F2937];
   }
 
   .edu-control {
@@ -290,29 +290,7 @@ html:not(.dark) :is(.text-slate-400,
   .text-gray-700,
   .text-\[\#64748B\],
   .text-\[\#475569\],
-  .text-\[\#334155\]).font-bold,
-html:not(.dark) :is(.text-slate-400,
-  .text-slate-500,
-  .text-slate-600,
-  .text-slate-700,
-  .text-gray-400,
-  .text-gray-500,
-  .text-gray-600,
-  .text-gray-700,
-  .text-\[\#64748B\],
-  .text-\[\#475569\],
-  .text-\[\#334155\]).font-extrabold,
-html:not(.dark) :is(.text-slate-400,
-  .text-slate-500,
-  .text-slate-600,
-  .text-slate-700,
-  .text-gray-400,
-  .text-gray-500,
-  .text-gray-600,
-  .text-gray-700,
-  .text-\[\#64748B\],
-  .text-\[\#475569\],
-  .text-\[\#334155\]).font-black {
+  .text-\[\#334155\]).font-bold {
   color: rgb(15 23 42) !important;
 }
 
@@ -343,11 +321,6 @@ html.dark .text-\[\#64748B\] {
 /* Inter is intentionally loaded only at 400–700. Keep the visual weight
    inside that range instead of asking the browser to synthesize 800/900. */
 @layer utilities {
-
-  .font-extrabold,
-  .font-black {
-    font-weight: 700 !important;
-  }
 
   /* Keep dense admin metadata readable. Decorative one-line labels can still
      opt into a smaller local style, but normal application content should not

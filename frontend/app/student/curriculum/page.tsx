@@ -356,7 +356,7 @@ export default function StudentCurriculumPage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+            <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
               Khung Chương Trình Đào Tạo
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
@@ -399,7 +399,7 @@ export default function StudentCurriculumPage() {
                     <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">
                       {item.title}
                     </span>
-                    <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
+                    <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
                       {item.value.toLocaleString('vi-VN')}
                       {item.unit || ''}
                     </p>
@@ -506,7 +506,7 @@ export default function StudentCurriculumPage() {
         {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
         <div className="flex flex-wrap items-center justify-between gap-3 py-1">
           <span className="text-[15px] font-normal text-[#334155]">
-            <span className="font-bold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
+            <span className="font-semibold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
           </span>
 
           <div className="flex items-center gap-2">
@@ -515,7 +515,7 @@ export default function StudentCurriculumPage() {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
                 <option value="semester_asc">Học kỳ: Tăng dần</option>
                 <option value="semester_desc">Học kỳ: Giảm dần</option>
@@ -532,7 +532,7 @@ export default function StudentCurriculumPage() {
               <button
                 type="button"
                 onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
                 <span>Chọn cột</span>
@@ -545,7 +545,7 @@ export default function StudentCurriculumPage() {
                   onMouseLeave={() => setOpenColumnMenu(false)}
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                    <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
+                    <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
                     <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
                   </div>
 
@@ -555,7 +555,7 @@ export default function StudentCurriculumPage() {
                       return (
                         <label
                           key={col.key}
-                          className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 select-none transition"
+                          className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition"
                         >
                           <span className="flex items-center gap-2">
                             <input
@@ -631,7 +631,7 @@ export default function StudentCurriculumPage() {
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
               <BookOpen className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-black text-slate-800">Không tìm thấy môn học nào</h3>
+            <h3 className="text-base font-semibold text-slate-800">Không tìm thấy môn học nào</h3>
             <p className="text-xs font-medium text-slate-500 max-w-sm">
               Không có môn học nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
@@ -659,7 +659,7 @@ export default function StudentCurriculumPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                          className="font-mono tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                         >
                           {item.subjectCode}
                         </button>
@@ -673,7 +673,7 @@ export default function StudentCurriculumPage() {
                     <div>
                       <h4
                         onClick={() => setDetailItem(item)}
-                        className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                        className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
                       >
                         {item.subjectName}
                       </h4>
@@ -683,16 +683,16 @@ export default function StudentCurriculumPage() {
                     <div className="space-y-1 text-xs text-slate-600 font-medium pt-1">
                       <div className="flex items-center justify-between">
                         <span className="text-slate-400">Số tín chỉ:</span>
-                        <strong className="font-extrabold text-slate-900">{item.credits} TC</strong>
+                        <strong className="font-semibold text-slate-900">{item.credits} TC</strong>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-slate-400">Loại môn:</span>
                         {item.type === 'MANDATORY' ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700">
                             <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700">
                             <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
                           </span>
                         )}
@@ -702,7 +702,7 @@ export default function StudentCurriculumPage() {
 
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
                     {item.isCompleted ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
                       </span>
                     ) : (
@@ -761,34 +761,34 @@ export default function StudentCurriculumPage() {
                         />
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
+                        <span className="font-mono tabular-nums font-medium text-xs text-[#475569]">
                           {item.subjectCode}
                         </span>
                       </td>
                       <td className="p-2 min-w-[200px]">
                         <p
-                          className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600"
+                          className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600"
                           onClick={() => setDetailItem(item)}
                         >
                           {item.subjectName}
                         </p>
                       </td>
-                      <td className="p-2 whitespace-nowrap text-center font-bold text-slate-700">HK {item.recommendedSemester}</td>
-                      <td className="p-2 whitespace-nowrap text-center font-black text-slate-900">{item.credits} TC</td>
+                      <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-700">HK {item.recommendedSemester}</td>
+                      <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-900">{item.credits} TC</td>
                       <td className="p-2 whitespace-nowrap">
                         {item.type === 'MANDATORY' ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
                             <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
                             <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
                           </span>
                         )}
                       </td>
                       <td className="p-2 whitespace-nowrap">
                         {item.isCompleted ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-700">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
                             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
                           </span>
                         ) : (
@@ -860,7 +860,7 @@ export default function StudentCurriculumPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                            className="font-mono tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                           >
                             {item.subjectCode}
                           </button>
@@ -872,7 +872,7 @@ export default function StudentCurriculumPage() {
                         <td className="p-3.5 min-w-[240px]">
                           <p
                             onClick={() => setDetailItem(item)}
-                            className="font-extrabold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
+                            className="font-semibold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
                           >
                             {item.subjectName}
                           </p>
@@ -885,7 +885,7 @@ export default function StudentCurriculumPage() {
                       {/* Semester */}
                       {visibleColumns.semester !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
-                          <span className="text-xs font-extrabold text-slate-800">
+                          <span className="text-xs font-semibold text-slate-800">
                             Học kỳ {item.recommendedSemester}
                           </span>
                         </td>
@@ -894,7 +894,7 @@ export default function StudentCurriculumPage() {
                       {/* Credits */}
                       {visibleColumns.credits !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
-                          <span className="font-black text-slate-900 text-xs">{item.credits}</span>
+                          <span className="font-semibold text-slate-900 text-xs">{item.credits}</span>
                           <span className="text-slate-500 font-medium ml-1 text-xs">TC</span>
                         </td>
                       )}
@@ -903,12 +903,12 @@ export default function StudentCurriculumPage() {
                       {visibleColumns.type !== false && (
                         <td className="p-3.5 whitespace-nowrap">
                           {item.type === 'MANDATORY' ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
                               <Award className="h-4 w-4 shrink-0 text-blue-600" />
                               Bắt buộc
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
                               <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
                               Tự chọn
                             </span>
@@ -920,7 +920,7 @@ export default function StudentCurriculumPage() {
                       {visibleColumns.status !== false && (
                         <td className="p-3.5 whitespace-nowrap">
                           {item.isCompleted ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-bold">
+                            <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
                               <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                               Đã học
                             </span>
@@ -958,9 +958,9 @@ export default function StudentCurriculumPage() {
         {totalItems > 0 && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
             <p className="text-xs font-semibold text-slate-500">
-              Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
-              <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
-              <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Môn học
+              Hiển thị <span className="font-semibold text-slate-900">{startItem}</span> -{' '}
+              <span className="font-semibold text-slate-900">{endItem}</span> trong{' '}
+              <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Môn học
             </p>
 
             <div className="flex items-center gap-3">
@@ -978,7 +978,7 @@ export default function StudentCurriculumPage() {
                 {paginationPages.map((p, idx) => {
                   if (p === '...') {
                     return (
-                      <span key={`dots-${idx}`} className="px-1 text-xs font-bold text-slate-400">
+                      <span key={`dots-${idx}`} className="px-1 text-xs font-semibold text-slate-400">
                         ...
                       </span>
                     );
@@ -992,7 +992,7 @@ export default function StudentCurriculumPage() {
                       key={pNum}
                       type="button"
                       onClick={() => setPage(pNum)}
-                      className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-bold transition cursor-pointer shadow-2xs ${isCurrent
+                      className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-semibold transition cursor-pointer shadow-2xs ${isCurrent
                         ? 'bg-blue-600 text-white shadow-xs'
                         : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
@@ -1021,7 +1021,7 @@ export default function StudentCurriculumPage() {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
                 >
                   <option value={8}>8 dòng / trang</option>
                   <option value={15}>15 dòng / trang</option>
@@ -1060,7 +1060,7 @@ export default function StudentCurriculumPage() {
                 <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
                   <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
                   <div>
-                    <p className="text-[13px] font-bold text-emerald-800">Đã hoàn thành</p>
+                    <p className="text-[13px] font-semibold text-emerald-800">Đã hoàn thành</p>
                     <p className="text-[12px] text-emerald-600 font-medium mt-0.5">Sinh viên đã tích lũy đủ tín chỉ môn học này</p>
                   </div>
                 </div>
@@ -1068,7 +1068,7 @@ export default function StudentCurriculumPage() {
                 <div className="flex items-center gap-2.5 rounded-xl bg-slate-50 border border-slate-200 p-3">
                   <Clock className="h-5 w-5 text-slate-400 shrink-0" />
                   <div>
-                    <p className="text-[13px] font-bold text-slate-700">Chưa tích lũy</p>
+                    <p className="text-[13px] font-semibold text-slate-700">Chưa tích lũy</p>
                     <p className="text-[12px] text-slate-500 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo</p>
                   </div>
                 </div>

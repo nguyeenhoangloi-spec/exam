@@ -44,7 +44,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           <div className="bg-[#2563EB] p-5 text-white shrink-0">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0 flex-1">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
                   {shortAvatar}
                 </div>
                 <div className="min-w-0 flex-1 pr-2">
@@ -58,7 +58,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       </span>
                     ))}
                   </div>
-                  {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">{subtitle}</p>}
+                  {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 font-mono tabular-nums">{subtitle}</p>}
                 </div>
               </div>
 
@@ -102,7 +102,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               <div className="space-y-4">
                 {extraSections.map((sec, i) => (
                   <div key={i} className="rounded-2xl border border-slate-200 p-4 space-y-3">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">{sec.title}</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">{sec.title}</h3>
                     <div>{sec.content}</div>
                   </div>
                 ))}

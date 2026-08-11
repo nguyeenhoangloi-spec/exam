@@ -44,7 +44,7 @@ export function ExamPeriodTableToolbar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
       <span className="text-xs font-semibold text-slate-600">
-        <span className="font-bold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
+        <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
       </span>
 
       <div className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export function ExamPeriodTableToolbar({
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
             <span>Chọn cột</span>
@@ -79,7 +79,7 @@ export function ExamPeriodTableToolbar({
               onMouseLeave={() => setOpenColumnMenu(false)}
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span className="font-bold text-slate-900 text-xs">Hiển thị cột</span>
+                <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
                 <span className="text-[11px] text-slate-400 font-normal">Click để ẩn/hiện</span>
               </div>
 
@@ -118,7 +118,7 @@ export function ExamPeriodTableToolbar({
             onClick={() => onViewModeChange?.('list')}
             className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'list'
-                ? 'bg-blue-50 text-blue-600 font-bold border border-blue-200'
+                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
             title="Dạng danh sách"
@@ -131,7 +131,7 @@ export function ExamPeriodTableToolbar({
             onClick={() => onViewModeChange?.('grid')}
             className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'grid'
-                ? 'bg-blue-50 text-blue-600 font-bold border border-blue-200'
+                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
             title="Dạng lưới"
@@ -144,7 +144,7 @@ export function ExamPeriodTableToolbar({
             onClick={() => onViewModeChange?.('compact')}
             className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'compact'
-                ? 'bg-blue-50 text-blue-600 font-bold border border-blue-200'
+                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
             title="Dạng thu gọn"

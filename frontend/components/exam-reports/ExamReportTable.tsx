@@ -84,7 +84,7 @@ export function ExamReportTable({
                         onChange={(e) => onSelect(c.studentId, e.target.checked)}
                         className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
-                      <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
+                      <span className="font-mono tabular-nums text-[13px] font-semibold text-blue-600">
                         {c.studentCode}
                       </span>
                     </div>
@@ -95,7 +95,7 @@ export function ExamReportTable({
                   <div>
                     <h4
                       onClick={() => onDetail(c)}
-                      className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                      className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
                     >
                       {c.fullName}
                     </h4>
@@ -106,21 +106,21 @@ export function ExamReportTable({
 
                   <div className="flex items-center justify-between pt-1">
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">Điểm số thi</span>
-                      <span className={`text-lg font-black ${c.status === 'ABSENT' ? 'text-rose-600' : isPassed ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      <span className="text-[10px] text-slate-400 font-semibold uppercase">Điểm số thi</span>
+                      <span className={`text-lg font-semibold ${c.status === 'ABSENT' ? 'text-rose-600' : isPassed ? 'text-emerald-600' : 'text-rose-600'}`}>
                         {c.status === 'ABSENT' ? 'Vắng thi' : `${c.totalScore} / 10`}
                       </span>
                     </div>
 
                     {c.violationCount > 0 && (
-                      <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">
                         <AlertTriangle className="h-3.5 w-3.5 text-rose-600" /> {c.violationCount} vi phạm
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-semibold">
                   <button
                     type="button"
                     onClick={() => onDetail(c)}
@@ -184,7 +184,7 @@ export function ExamReportTable({
                       />
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
+                      <span className="font-mono tabular-nums font-medium text-[14px] text-[#0F172A]">
                         {c.studentCode}
                       </span>
                     </td>
@@ -197,7 +197,7 @@ export function ExamReportTable({
                     <td className="p-2 whitespace-nowrap">
                       <StatusBadge status={c.status} />
                     </td>
-                    <td className={`p-2 whitespace-nowrap text-center font-bold ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    <td className={`p-2 whitespace-nowrap text-center font-semibold ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {c.status === 'ABSENT' ? 'Vắng' : c.totalScore}
                     </td>
                     <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -280,7 +280,7 @@ export function ExamReportTable({
 
                   {visibleColumns.studentCode !== false && (
                     <td className="p-3.5 whitespace-nowrap">
-                      <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
+                      <span className="font-mono tabular-nums text-[13px] font-semibold text-blue-600">
                         {c.studentCode}
                       </span>
                     </td>
@@ -291,7 +291,7 @@ export function ExamReportTable({
                       <button
                         type="button"
                         onClick={() => onDetail(c)}
-                        className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+                        className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                       >
                         {c.fullName}
                       </button>
@@ -311,12 +311,12 @@ export function ExamReportTable({
                   )}
 
                   {visibleColumns.totalScore !== false && (
-                    <td className="p-3.5 whitespace-nowrap text-center font-black">
+                    <td className="p-3.5 whitespace-nowrap text-center font-semibold">
                       {c.status === 'ABSENT' ? (
                         <StatusBadge status="ABSENT" customLabel="Vắng thi" />
                       ) : (
                         <span
-                          className={`text-sm ${c.totalScore >= 5 ? 'text-emerald-600 font-extrabold' : 'text-rose-600 font-extrabold'
+                          className={`text-sm ${c.totalScore >= 5 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'
                             }`}
                         >
                           {c.totalScore}
@@ -341,7 +341,7 @@ export function ExamReportTable({
                   {visibleColumns.violationCount !== false && (
                     <td className="p-3.5 whitespace-nowrap text-center">
                       {c.violationCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-extrabold text-rose-700 border border-rose-200">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-700 border border-rose-200">
                           <AlertTriangle className="h-3 w-3 text-rose-600" /> {c.violationCount}
                         </span>
                       ) : (
@@ -356,7 +356,7 @@ export function ExamReportTable({
                         <button
                           type="button"
                           onClick={() => setReviewAttemptId(c.attemptId!)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[10.5px] font-bold transition cursor-pointer"
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[10.5px] font-semibold transition cursor-pointer"
                           title="Xem chi tiết bài làm"
                         >
                           <Eye className="h-3.5 w-3.5" />

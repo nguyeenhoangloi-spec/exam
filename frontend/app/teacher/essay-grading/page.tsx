@@ -561,7 +561,7 @@ function TeacherEssayGradingContent() {
       {/* Page Header (Match System Standard Header Layout) */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+            <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
               Chấm Bài Thi Tự Luận
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
@@ -596,7 +596,7 @@ function TeacherEssayGradingContent() {
         {message && (
           <div className="rounded-lg border border-slate-300 bg-white p-3.5 text-xs font-medium text-slate-800 flex items-center justify-between shadow-xs">
             <span>{message}</span>
-            <button onClick={() => setMessage('')} className="text-slate-400 hover:text-slate-600 font-bold ml-4">
+            <button onClick={() => setMessage('')} className="text-slate-400 hover:text-slate-600 font-semibold ml-4">
               Đóng
             </button>
           </div>
@@ -607,7 +607,7 @@ function TeacherEssayGradingContent() {
           <div className="lg:col-span-4 space-y-4">
             <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
                   Danh sách bài làm ({filteredRows.length}/{rows.length})
                 </span>
                 {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
@@ -744,8 +744,8 @@ function TeacherEssayGradingContent() {
                             <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
                             <StatusBadge status={row.gradingStatus} />
                           </div>
-                          <p className="text-[13px] text-[#64748B] font-normal font-sans tabular-nums">
-                            Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
+                          <p className="text-[13px] text-[#64748B] font-normal font-mono tabular-nums">
+                            Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
                           </p>
                           <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
                             <span className="truncate flex-1 font-medium text-[#334155]">
@@ -765,7 +765,7 @@ function TeacherEssayGradingContent() {
 
                   {/* Pagination Footer */}
                   {filteredRows.length > 0 && (
-                    <div className="flex items-center justify-between border-t border-slate-200/80 pt-3 text-xs font-bold text-slate-600">
+                    <div className="flex items-center justify-between border-t border-slate-200/80 pt-3 text-xs font-semibold text-slate-600">
                       <span>
                         Trang {page} / {totalPages} ({filteredRows.length} bài)
                       </span>
@@ -807,15 +807,15 @@ function TeacherEssayGradingContent() {
                 {/* Header Information & Fast Student Navigation */}
                 <div className="flex justify-between items-center border-b border-slate-100 pb-4 flex-wrap gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center font-semibold text-sm shrink-0">
                       {selected.student?.fullName?.charAt(0) || 'S'}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-base font-bold text-slate-900">{selected.student?.fullName}</h2>
+                        <h2 className="text-base font-semibold text-slate-900">{selected.student?.fullName}</h2>
                         <StatusBadge status={selected.gradingStatus} />
                       </div>
-                      <p className="text-xs text-slate-500 font-sans tabular-nums mt-0.5">
+                      <p className="text-xs text-slate-500 font-mono tabular-nums mt-0.5">
                         Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong>
                       </p>
                     </div>
@@ -823,7 +823,7 @@ function TeacherEssayGradingContent() {
 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <span className="text-xl font-sans tabular-nums font-black text-slate-900">
+                      <span className="text-xl font-mono tabular-nums font-medium text-slate-900">
                         {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
                       </span>
                       {selected.penaltyPoints > 0 && (
@@ -844,7 +844,7 @@ function TeacherEssayGradingContent() {
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </button>
-                      <span className="text-[11px] font-bold font-sans tabular-nums text-slate-500 px-1">
+                      <span className="text-[11px] font-semibold font-mono tabular-nums text-slate-500 px-1">
                         {currentIndex >= 0 ? `${currentIndex + 1}/${filteredRows.length}` : ''}
                       </span>
                       <button
@@ -866,7 +866,7 @@ function TeacherEssayGradingContent() {
                     <div className="w-12 h-12 rounded-full bg-amber-100 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
                       <AlertCircle className="h-6 w-6" />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-800">
+                    <h3 className="text-sm font-semibold text-slate-800">
                       {!(selected.questions || []).filter((q: any) => q.type === 'ESSAY').length && !isNotSubmitted(selected)
                         ? 'Đề thi chỉ gồm Trắc nghiệm / Điền khuyết (Đã tự động chấm)'
                         : 'Thí sinh chưa nộp bài hoặc chưa làm bài thi tự luận'}
@@ -885,9 +885,9 @@ function TeacherEssayGradingContent() {
                       return (
                         <div key={q.questionId || idx} className="rounded-xl border border-slate-200/90 p-4 bg-slate-50/50 space-y-4">
                           {/* Question Title & Actions */}
-                          <div className="flex justify-between items-start font-bold text-xs text-slate-900 border-b border-slate-200/60 pb-2">
+                          <div className="flex justify-between items-start font-semibold text-xs text-slate-900 border-b border-slate-200/60 pb-2">
                             <div className="pr-4">
-                              <span className="text-slate-700 font-bold">Câu {idx + 1} (Tự luận):</span> {q.content}
+                              <span className="text-slate-700 font-semibold">Câu {idx + 1} (Tự luận):</span> {q.content}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               <button
@@ -898,7 +898,7 @@ function TeacherEssayGradingContent() {
                                 <Sliders className="h-4 w-4 text-[#64748B]" />
                                 <span>Sửa Rubric</span>
                               </button>
-                              <span className="text-[#0F172A] font-sans tabular-nums text-[18px] font-bold">
+                              <span className="text-[#0F172A] font-mono tabular-nums text-[18px] font-semibold">
                                 {ans?.finalScore !== undefined && ans?.finalScore !== null
                                   ? ans.finalScore
                                   : (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] || 0), 0)} / {q.score}đ
@@ -947,7 +947,7 @@ function TeacherEssayGradingContent() {
                                         <span className="font-semibold text-[#0F172A]">{r.label}</span>
                                         {r.description && <p className="text-[13px] text-[#64748B] mt-0.5 font-normal">{r.description}</p>}
                                       </div>
-                                      <span className="font-sans tabular-nums text-[15px] font-semibold text-[#64748B] shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
+                                      <span className="font-mono tabular-nums text-[15px] font-semibold text-[#64748B] shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
                                     </div>
 
                                     <div className="flex gap-2 items-center flex-wrap">
@@ -959,7 +959,7 @@ function TeacherEssayGradingContent() {
                                         placeholder="Điểm"
                                         value={scores[r.id] ?? 0}
                                         onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
-                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium font-sans tabular-nums text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
+                                        className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium font-mono tabular-nums text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
                                       />
 
                                       {/* Quick Score Chips */}
@@ -998,7 +998,7 @@ function TeacherEssayGradingContent() {
                               <button
                                 type="button"
                                 onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: [] })}
-                                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition cursor-pointer shadow-2xs"
+                                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition cursor-pointer shadow-2xs"
                               >
                                 Cấu hình Rubric ngay
                               </button>
@@ -1007,7 +1007,7 @@ function TeacherEssayGradingContent() {
 
                           {/* Overall Teacher Comment */}
                           <div className="space-y-1 pt-1">
-                            <label className="text-[10px] font-bold uppercase text-slate-500">Nhận xét tổng quát câu hỏi:</label>
+                            <label className="text-[10px] font-semibold uppercase text-slate-500">Nhận xét tổng quát câu hỏi:</label>
                             <input
                               type="text"
                               placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."
@@ -1100,7 +1100,7 @@ function TeacherEssayGradingContent() {
 
 export default function TeacherEssayGradingPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[400px] text-xs font-bold text-slate-500">Đang tải trang chấm bài tự luận...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[400px] text-xs font-semibold text-slate-500">Đang tải trang chấm bài tự luận...</div>}>
       <TeacherEssayGradingContent />
     </Suspense>
   );

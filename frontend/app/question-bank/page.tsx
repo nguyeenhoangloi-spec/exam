@@ -504,14 +504,14 @@ export default function QuestionBankPage() {
               ))}
             </div>
           ) : error ? (
-            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700 font-bold">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700 font-semibold">
               {error}
               <button onClick={load} className="ml-3 underline cursor-pointer">
                 Thử lại
               </button>
             </div>
           ) : !questions.length ? (
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
               Không tìm thấy câu hỏi phù hợp.
             </div>
           ) : (

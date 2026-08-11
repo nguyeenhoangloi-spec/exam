@@ -31,6 +31,7 @@ import {
   FileCheck,
   Award,
   DatabaseBackup,
+  Activity,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -151,6 +152,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       group: 'HỆ THỐNG',
       items: [
+        { name: 'Nhật ký hoạt động', href: '/admin/activity-logs', icon: Activity },
         { name: 'Sao lưu & Khôi phục', href: '/admin/backups', icon: DatabaseBackup },
         {
           name: 'Thùng rác hệ thống',
@@ -259,7 +261,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[16px] font-bold tracking-tight text-[#0F172A] dark:text-slate-100 leading-tight">
+              <h1 className="truncate text-[16px] font-semibold tracking-tight text-[#0F172A] dark:text-slate-100 leading-tight">
                 EXAM SYSTEM
               </h1>
               <h2 className="truncate text-[12px] font-semibold tracking-tight text-[#475569] dark:text-slate-300 leading-tight mt-0.5">
@@ -291,7 +293,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-bold tracking-[0.03em] text-[#64748B] dark:text-slate-300 hover:text-[#334155] dark:hover:text-white transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#64748B] dark:text-slate-300 hover:text-[#334155] dark:hover:text-white transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                     }`}
                 >
                   <span className="truncate">{group.group}</span>
@@ -334,7 +336,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                   <Link
                                     key={sub.href}
                                     href={sub.href}
-                                    className={`block rounded-xl px-3.5 py-2 text-[13px] font-bold transition-all ${isSubActive
+                                    className={`block rounded-xl px-3.5 py-2 text-[13px] font-semibold transition-all ${isSubActive
                                       ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
                                       : 'text-[#475569] dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                                       }`}
@@ -355,7 +357,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         href={item.href}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`relative flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-bold transition-colors group ${isActive
+                        className={`relative flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold transition-colors group ${isActive
                           ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
                           : 'text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white font-semibold'
                           }`}
@@ -383,14 +385,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {avatarUrl ? (
             <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 shrink-0 rounded-full object-cover" />
           ) : (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-black text-[15px]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-[15px]">
               {displayName.charAt(0).toUpperCase()}
             </div>
           )}
 
           {/* Text — ẩn bằng overflow-hidden, không xóa khỏi DOM */}
           <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <p className="truncate text-[14px] font-bold text-[#0F172A] dark:text-slate-100 leading-snug whitespace-nowrap">{displayName}</p>
+            <p className="truncate text-[14px] font-semibold text-[#0F172A] dark:text-slate-100 leading-snug whitespace-nowrap">{displayName}</p>
             <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug whitespace-nowrap">
               {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
             </p>
@@ -413,11 +415,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Header profile info item */}
               <div className="flex items-center justify-between rounded-xl p-2 bg-slate-50/70 dark:bg-slate-800/50 mb-1">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white font-bold text-xs shadow-xs">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white font-semibold text-xs shadow-xs">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-slate-900 dark:text-slate-100">{displayName}</p>
+                    <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
                     <p className="truncate text-xs font-medium text-slate-500 dark:text-slate-400">
                       {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
                     </p>
@@ -462,7 +464,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   setShowUserMenu(false);
                   setShowLogoutConfirm(true);
                 }}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-rose-600 font-bold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer group"
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer group"
               >
                 <div className="flex items-center gap-2.5">
                   <LogOut className="h-4 w-4 text-rose-600" />

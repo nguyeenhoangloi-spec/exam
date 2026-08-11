@@ -154,7 +154,7 @@ export default function StudentExamLobbyPage() {
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/20 border-t-blue-500"></div>
           <ShieldCheck className="w-6 h-6 text-blue-400 absolute" />
         </div>
-        <h3 className="mt-4 text-base font-bold text-slate-200">Hệ thống Giám thị đang xác thực điều kiện...</h3>
+        <h3 className="mt-4 text-base font-semibold text-slate-200">Hệ thống Giám thị đang xác thực điều kiện...</h3>
         <p className="text-xs text-slate-400 mt-1">Vui lòng chờ trong giây lát</p>
       </div>
     );
@@ -213,7 +213,7 @@ export default function StudentExamLobbyPage() {
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight leading-snug">
                 {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}
               </h1>
 
@@ -228,7 +228,7 @@ export default function StudentExamLobbyPage() {
               <Clock className="w-6 h-6 text-blue-200" />
               <div>
                 <span className="text-[13px] font-semibold text-blue-200 uppercase tracking-wider block">Thời gian làm bài</span>
-                <span className="text-xl font-bold text-white">{durationMinutes} phút</span>
+                <span className="text-xl font-semibold text-white">{durationMinutes} phút</span>
               </div>
             </div>
           </div>
@@ -290,7 +290,7 @@ export default function StudentExamLobbyPage() {
 
                   <div className="space-y-1">
                     <span className="text-[#64748B] font-semibold block text-[13px]">Mã sinh viên</span>
-                    <span className="font-sans tabular-nums font-semibold text-[#0F172A] text-[15px] block">
+                    <span className="font-mono tabular-nums font-medium text-[#0F172A] text-[15px] block">
                       {studentCode}
                     </span>
                   </div>

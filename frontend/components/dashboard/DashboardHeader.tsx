@@ -45,7 +45,7 @@ export function DashboardHeader({
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       {/* Title & Subtitle */}
       <div className="space-y-1">
-        <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+        <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
           Tổng quan hệ thống
         </h1>
         <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">

@@ -66,7 +66,7 @@ export function SubjectTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {s.subjectCode}
                     </button>
@@ -167,18 +167,18 @@ export function SubjectTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">
-                    <button type="button" onClick={() => onDetail(s)} className="font-sans tabular-nums hover:text-blue-800 hover:underline transition cursor-pointer">
+                  <td className="p-2 whitespace-nowrap font-medium text-blue-600">
+                    <button type="button" onClick={() => onDetail(s)} className="font-mono tabular-nums hover:text-blue-800 hover:underline transition cursor-pointer">
                       {s.subjectCode}
                     </button>
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(s)}>
+                    <p className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(s)}>
                       {s.subjectName}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-700">{s.credits} TC</td>
-                  <td className="p-2 min-w-[180px] font-semibold text-slate-700">{deptName}</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-slate-700">{s.credits} TC</td>
+                  <td className="p-2 min-w-[180px] font-normal text-slate-700">{deptName}</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
                       <Eye className="h-3.5 w-3.5" />
@@ -240,7 +240,7 @@ export function SubjectTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {s.subjectCode}
                     </button>
@@ -277,7 +277,7 @@ export function SubjectTable({
                     <button
                       type="button"
                       onClick={() => onEnroll(s)}
-                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-bold transition cursor-pointer shadow-2xs"
+                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-medium transition cursor-pointer shadow-2xs"
                       title="Gán Sinh viên đăng ký môn học"
                     >
                       <UserPlus className="h-3.5 w-3.5 text-slate-500" />

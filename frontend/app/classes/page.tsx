@@ -361,7 +361,7 @@ export default function ClassesPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500">Khoa trực thuộc:</span>
+            <span className="text-xs font-semibold text-slate-500">Khoa trực thuộc:</span>
             <div className="relative">
               <select
                 value={selectedDeptId}
@@ -369,7 +369,7 @@ export default function ClassesPage() {
                   setSelectedDeptId(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
               >
                 <option value="">Tất cả các Khoa</option>
                 {departments.map((d) => (
@@ -403,7 +403,7 @@ export default function ClassesPage() {
             ))}
           </div>
         ) : !paginatedClasses.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy lớp học phù hợp.
           </div>
         ) : (
@@ -550,14 +550,14 @@ export default function ClassesPage() {
             <div className="bg-blue-600 p-5 text-white shrink-0 border-b border-blue-700">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
                     {drawerClass.code.substring(0, 3).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1 pr-2">
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerClass.name}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-sans tabular-nums">
+                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono tabular-nums">
                       Mã lớp: {drawerClass.code}
                     </p>
                   </div>
@@ -669,7 +669,7 @@ export default function ClassesPage() {
                         )
                         .map((sv: any) => (
                           <div key={sv.id} className="p-3 rounded-xl border border-slate-100 hover:border-blue-200 bg-slate-50 hover:bg-blue-50/30 transition-colors flex gap-3">
-                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0">
+                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold shrink-0">
                               {sv.fullName?.charAt(0) || 'U'}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -732,12 +732,12 @@ export default function ClassesPage() {
                         <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs hover:border-emerald-300 transition-all">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-3">
-                              <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs shrink-0 border border-blue-100">
+                              <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-semibold text-xs shrink-0 border border-blue-100">
                                 <BookOpen className="h-5 w-5" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-sans tabular-nums text-[13px] font-bold text-blue-600">
+                                  <span className="font-mono tabular-nums text-[13px] font-semibold text-blue-600">
                                     {sub.subjectCode}
                                   </span>
                                   <span className="text-[13px] font-normal text-[#64748B]">{sub.credits} tín chỉ</span>

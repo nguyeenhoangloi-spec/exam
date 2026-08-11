@@ -266,21 +266,21 @@ export default function ContactSupportPage() {
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/login" className="flex items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white font-black text-lg shadow-md group-hover:scale-105 transition">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white font-semibold text-lg shadow-md group-hover:scale-105 transition">
               <GraduationCap className="h-6 w-6" />
             </div>
             <div>
-              <span className="block text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+              <span className="block text-base font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
                 EXAM SUPPORT CENTER
               </span>
-              <span className="block text-[11px] font-bold text-blue-600 dark:text-blue-400 leading-tight">
+              <span className="block text-[11px] font-semibold text-blue-600 dark:text-blue-400 leading-tight">
                 Trung tâm Hỗ trợ Khảo thí
               </span>
             </div>
           </Link>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-[6px] text-xs font-bold text-slate-600 dark:text-slate-300">
+            <div className="hidden sm:flex items-center gap-[6px] text-xs font-semibold text-slate-600 dark:text-slate-300">
               <Globe className="h-3.5 w-3.5 text-blue-600" />
               <span>Tiếng Việt</span>
             </div>
@@ -288,7 +288,7 @@ export default function ContactSupportPage() {
             <button
               type="button"
               onClick={() => router.push('/login')}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-black shadow-xs transition active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold shadow-xs transition active:scale-95 cursor-pointer"
             >
               <LogIn className="h-4 w-4" />
               <span>Đăng nhập</span>
@@ -301,12 +301,12 @@ export default function ContactSupportPage() {
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-10 space-y-10">
         {/* Search Hero Section */}
         <div className="text-center space-y-6 max-w-3xl mx-auto pt-4">
-          <div className="inline-flex items-center gap-[6px] text-xs font-extrabold text-blue-700 dark:text-blue-300">
+          <div className="inline-flex items-center gap-[6px] text-xs font-semibold text-blue-700 dark:text-blue-300">
             <Sparkles className="h-3.5 w-3.5 text-blue-600" />
             <span>Hệ thống giải đáp sự cố thi tự động 24/7</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
             Chúng tôi có thể giúp gì cho bạn?
           </h1>
 
@@ -337,7 +337,7 @@ export default function ContactSupportPage() {
             {/* Autocomplete Search Suggestions Dropdown */}
             {(isSearchFocused || searchQuery.trim().length > 0) && (
               <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-2xl space-y-2 text-left animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between px-2 text-[11px] font-black uppercase text-slate-400 tracking-wider">
+                <div className="flex items-center justify-between px-2 text-[11px] font-semibold uppercase text-slate-400 tracking-wider">
                   <span>{searchQuery.trim() ? 'Gợi ý bài viết phù hợp' : 'Tìm kiếm phổ biến nhất'}</span>
                   <span>{searchSuggestions.length} kết quả</span>
                 </div>
@@ -352,10 +352,10 @@ export default function ContactSupportPage() {
                       >
                         <div className="space-y-0.5 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="shrink-0 text-[11px] font-extrabold text-[#475569] dark:text-slate-300">
+                            <span className="shrink-0 text-[11px] font-semibold text-[#475569] dark:text-slate-300">
                               {art.categoryLabel}
                             </span>
-                            <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
+                            <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
                               {art.title}
                             </h4>
                           </div>
@@ -373,13 +373,13 @@ export default function ContactSupportPage() {
 
                 {/* Tag Pills */}
                 <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center gap-1.5 flex-wrap px-1">
-                  <span className="text-[10px] font-bold text-slate-400 shrink-0">Từ khóa hot:</span>
+                  <span className="text-[10px] font-semibold text-slate-400 shrink-0">Từ khóa hot:</span>
                   {popularSearchTags.map((tag) => (
                     <button
                       key={tag}
                       type="button"
                       onMouseDown={() => setSearchQuery(tag)}
-                      className="rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[11px] font-bold px-2 py-1 transition cursor-pointer"
+                      className="rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[11px] font-semibold px-2 py-1 transition cursor-pointer"
                     >
                       #{tag}
                     </button>
@@ -395,17 +395,17 @@ export default function ContactSupportPage() {
               Trang chủ
             </span>
             <ChevronRight className="h-3 w-3" />
-            <span className="font-bold text-slate-900 dark:text-slate-100">Trung tâm Hỗ trợ</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">Trung tâm Hỗ trợ</span>
           </div>
         </div>
 
         {/* Featured Big Category Box matching OpenAI ChatGPT Help Center Card */}
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white font-black text-2xl shadow-lg">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white font-semibold text-2xl shadow-lg">
             <GraduationCap className="h-8 w-8 text-blue-400" />
           </div>
           <div className="space-y-1 min-w-0 flex-1">
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
               Hệ thống Quản lý Khảo thí
             </h2>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -426,28 +426,28 @@ export default function ContactSupportPage() {
         {/* Support Direct Contacts Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold">
               <Phone className="h-5 w-5" />
             </div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-white">Tổng đài Hỗ trợ 24/7</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Tổng đài Hỗ trợ 24/7</h3>
             <p className="text-xs text-slate-500 font-semibold">1800-EXAM-HELP (1800-3926-4357)</p>
             <p className="text-[11px] text-slate-400">Miễn phí cước gọi từ mọi mạng điện thoại</p>
           </div>
 
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold">
               <Mail className="h-5 w-5" />
             </div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-white">Email Tiếp nhận Sự cố</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Email Tiếp nhận Sự cố</h3>
             <p className="text-xs text-slate-500 font-semibold">support@exam.edu.vn</p>
             <p className="text-[11px] text-slate-400">Thời gian phản hồi trung bình: 15 phút</p>
           </div>
 
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold">
               <Building2 className="h-5 w-5" />
             </div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
             <p className="text-xs text-slate-500 font-semibold">Tầng 3, Tòa nhà A1 - Trung tâm Khảo thí</p>
             <p className="text-[11px] text-slate-400">Giờ làm việc: 07:30 - 17:00 (Thứ 2 - Thứ 6)</p>
           </div>
@@ -456,7 +456,7 @@ export default function ContactSupportPage() {
         {/* FAQs List Matching OpenAI Expandable List items */}
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <h2 className="text-lg font-black text-slate-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               Câu hỏi & Hướng dẫn thường gặp (FAQs)
             </h2>
 
@@ -473,7 +473,7 @@ export default function ContactSupportPage() {
                   key={pill.id}
                   type="button"
                   onClick={() => setActiveCategory(pill.id)}
-                  className={`rounded-full px-3 py-1 text-xs font-extrabold transition cursor-pointer ${
+                  className={`rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${
                     activeCategory === pill.id
                       ? 'bg-blue-600 text-white shadow-2xs'
                       : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300'
@@ -498,12 +498,12 @@ export default function ContactSupportPage() {
                     >
                       <div className="flex items-center gap-3">
                         <HelpCircle className="h-4.5 w-4.5 text-blue-600 shrink-0" />
-                        <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100">
                           {faq.title}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="hidden sm:inline-block text-[11px] font-bold text-slate-500">
+                        <span className="hidden sm:inline-block text-[11px] font-semibold text-slate-500">
                           {faq.categoryLabel}
                         </span>
                         <ChevronRight
@@ -527,7 +527,7 @@ export default function ContactSupportPage() {
                           <button
                             type="button"
                             onClick={() => setSelectedArticle(faq)}
-                            className="font-bold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
+                            className="font-semibold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
                           >
                             <span>Xem chi tiết bài viết</span>
                             <ExternalLink className="h-3 w-3" />
@@ -549,7 +549,7 @@ export default function ContactSupportPage() {
         {/* Submit Support Ticket Form Section */}
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm space-y-6">
           <div className="space-y-1">
-            <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
               <Headphones className="h-5 w-5 text-blue-600" />
               <span>Gửi yêu cầu hỗ trợ trực tiếp đến Quản trị viên</span>
             </h2>
@@ -561,7 +561,7 @@ export default function ContactSupportPage() {
           <form onSubmit={handleSendSupportForm} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="block text-xs font-black text-slate-800 dark:text-slate-200">
+                <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
                   Họ và tên người gửi
                 </label>
                 <input
@@ -575,7 +575,7 @@ export default function ContactSupportPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-black text-slate-800 dark:text-slate-200">
+                <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
                   Email liên hệ
                 </label>
                 <input
@@ -589,7 +589,7 @@ export default function ContactSupportPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-black text-slate-800 dark:text-slate-200">
+                <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
                   Vai trò hệ thống
                 </label>
                 <select
@@ -605,7 +605,7 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-black text-slate-800 dark:text-slate-200">
+              <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
                 Nội dung cần hỗ trợ chi tiết
               </label>
               <textarea
@@ -658,18 +658,18 @@ export default function ContactSupportPage() {
                 className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-blue-50/50 hover:border-blue-200 transition cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-black text-[#475569]">
+                  <span className="text-[11px] font-semibold text-[#475569]">
                     {art.categoryLabel}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
                     <Clock className="h-3 w-3" /> {art.readTime}
                   </span>
                 </div>
-                <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-blue-600 transition">
+                <h4 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition">
                   {art.title}
                 </h4>
                 <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">{art.summary}</p>
-                <div className="pt-1 flex items-center justify-between text-xs font-bold text-blue-600">
+                <div className="pt-1 flex items-center justify-between text-xs font-semibold text-blue-600">
                   <span className="flex items-center gap-1">
                     <FileText className="h-3.5 w-3.5" /> Đọc bài viết
                   </span>
@@ -690,10 +690,10 @@ export default function ContactSupportPage() {
         {selectedArticle && (
           <div className="space-y-5">
             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                <span className="text-xs font-black text-[#475569]">
+                <span className="text-xs font-semibold text-[#475569]">
                 {selectedArticle.categoryLabel}
               </span>
-              <div className="flex items-center gap-3 text-xs font-bold text-slate-400">
+              <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
                 <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {selectedArticle.readTime}</span>
                 <span>Cập nhật: {selectedArticle.updatedAt}</span>
               </div>
@@ -704,7 +704,7 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="space-y-3 text-xs font-medium text-slate-700 leading-relaxed">
-              <h5 className="font-extrabold text-slate-900 text-sm">Nội dung chi tiết hướng dẫn:</h5>
+              <h5 className="font-semibold text-slate-900 text-sm">Nội dung chi tiết hướng dẫn:</h5>
               <div className="space-y-2.5 pl-2 border-l-2 border-blue-500">
                 {selectedArticle.content.map((paragraph, idx) => (
                   <p key={idx} className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-slate-800">
@@ -715,9 +715,9 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="flex items-center gap-1.5 flex-wrap pt-2">
-              <span className="text-xs font-bold text-slate-400">Thẻ liên quan:</span>
+              <span className="text-xs font-semibold text-slate-400">Thẻ liên quan:</span>
               {selectedArticle.tags.map((t) => (
-                <span key={t} className="text-[11px] font-bold text-slate-600">
+                <span key={t} className="text-[11px] font-semibold text-slate-600">
                   #{t}
                 </span>
               ))}
@@ -727,7 +727,7 @@ export default function ContactSupportPage() {
               <button
                 type="button"
                 onClick={() => setSelectedArticle(null)}
-                className="px-5 py-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 text-xs font-extrabold transition cursor-pointer"
+                className="px-5 py-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 text-xs font-semibold transition cursor-pointer"
               >
                 Đóng bài viết
               </button>
@@ -752,11 +752,11 @@ export default function ContactSupportPage() {
             {/* Widget Header */}
             <div className="bg-slate-900 p-4 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-semibold text-xs">
                   AI
                 </div>
                 <div>
-                  <h4 className="text-xs font-black">Hỗ trợ Khảo thí Nhanh</h4>
+                  <h4 className="text-xs font-semibold">Hỗ trợ Khảo thí Nhanh</h4>
                   <p className="text-[10px] text-blue-300 font-semibold flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                     Trực tuyến

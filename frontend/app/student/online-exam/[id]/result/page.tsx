@@ -73,7 +73,7 @@ export default function StudentExamResultPage() {
       <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center p-6">
         <div className="bg-white border border-slate-200 p-8 rounded-2xl max-w-md text-center shadow-xl">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Không Thể Tải Kết Quả</h2>
+          <h2 className="text-xl font-semibold mb-2">Không Thể Tải Kết Quả</h2>
           <p className="text-slate-600 text-sm mb-6">{error}</p>
           <Button
             variant="primary"
@@ -95,7 +95,7 @@ export default function StudentExamResultPage() {
       <div className="min-h-screen bg-slate-50/50 p-6 md:p-12 text-slate-900 flex items-center justify-center">
         <div className="mx-auto max-w-xl rounded-2xl border border-slate-200/90 bg-white p-8 text-center shadow-2xs space-y-4">
           <CheckCircle2 className="mx-auto h-12 w-12 text-blue-600" />
-          <h1 className="text-xl font-black text-slate-900">Bài đã nộp, đang chờ chấm điểm</h1>
+          <h1 className="text-xl font-semibold text-slate-900">Bài đã nộp, đang chờ chấm điểm</h1>
           <p className="text-xs font-semibold text-slate-500 max-w-md mx-auto">
             Điểm tự luận sẽ hiển thị sau khi giảng viên hoàn tất chấm bài và ban quản trị duyệt công bố kết quả.
           </p>
@@ -127,7 +127,7 @@ export default function StudentExamResultPage() {
               </div>
             )}
 
-            <h1 className="text-[28px] font-bold text-[#0F172A] mb-1">
+            <h1 className="text-[28px] font-semibold text-[#0F172A] mb-1">
               {isUnderReview ? 'Bài Thi Cần Được Xem Xét' : 'Hoàn Thành Bài Thi Trực Tuyến'}
             </h1>
             <p className="text-[#64748B] text-[15px] font-normal">
@@ -156,7 +156,7 @@ export default function StudentExamResultPage() {
               {result.totalScore !== undefined && result.totalScore !== null ? (
                 <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-[18px]">
                   <span className="text-[#0F172A] font-semibold">Điểm số đạt được:</span>
-                  <span className="text-emerald-600 text-2xl font-bold font-sans tabular-nums">
+                  <span className="text-emerald-600 text-2xl font-semibold font-mono tabular-nums">
                     {result.totalScore} / {result.maxScore || 10} điểm
                   </span>
                 </div>

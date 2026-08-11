@@ -157,7 +157,7 @@ export function QuestionAIWizard({
               <select
                 value={form.subjectId}
                 onChange={(e) => set('subjectId', e.target.value)}
-                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="">-- Chọn môn học --</option>
                 {subjects.map((s) => (
@@ -174,7 +174,7 @@ export function QuestionAIWizard({
               <select
                 value={form.type}
                 onChange={(e) => set('type', e.target.value)}
-                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="SINGLE_CHOICE">Trắc nghiệm chọn 1 đáp án</option>
                 <option value="FILL_BLANK">Điền vào chỗ trống</option>
@@ -188,7 +188,7 @@ export function QuestionAIWizard({
               <select
                 value={form.difficulty}
                 onChange={(e) => set('difficulty', e.target.value)}
-                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="EASY">Dễ (Cơ bản)</option>
                 <option value="MEDIUM">Trung bình (Vừa phải)</option>
@@ -202,7 +202,7 @@ export function QuestionAIWizard({
               <select
                 value={form.bloomLevel}
                 onChange={(e) => set('bloomLevel', e.target.value)}
-                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="REMEMBER">Nhận biết (Remember)</option>
                 <option value="UNDERSTAND">Thông hiểu (Understand)</option>

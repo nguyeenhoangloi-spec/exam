@@ -79,7 +79,7 @@ export function QuestionBankSidebar({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[20px] font-bold text-[#0F172A] leading-tight">
+              <span className="text-[20px] font-semibold text-[#0F172A] leading-tight">
                 {total.toLocaleString('vi-VN')}
               </span>
               <span className="text-[13px] font-normal text-[#64748B]">Tổng câu hỏi</span>
@@ -158,7 +158,7 @@ export function QuestionBankSidebar({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[18px] font-bold text-[#0F172A] leading-tight">
+              <span className="text-[18px] font-semibold text-[#0F172A] leading-tight">
                 {total.toLocaleString('vi-VN')}
               </span>
               <span className="text-[13px] font-normal text-[#64748B]">Tổng</span>

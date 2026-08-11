@@ -142,7 +142,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
             <button
               type="button"
               onClick={downloadTemplate}
-              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
             >
               <Download className="h-4 w-4" />
               <span>Tải mẫu</span>
@@ -153,7 +153,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           <div className="relative rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 p-6 text-center transition">
             <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
             <Upload className="mx-auto h-8 w-8 text-blue-600" />
-            <p className="mt-2 text-sm font-bold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp (.csv / .xlsx)'}</p>
+            <p className="mt-2 text-sm font-semibold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp (.csv / .xlsx)'}</p>
             <p className="text-xs font-semibold text-slate-400 mt-1">Dung lượng tối đa 5 MB. Dữ liệu chỉ được lưu sau khi bấm Xác nhận nhập.</p>
           </div>
 

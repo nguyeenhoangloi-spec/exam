@@ -33,14 +33,14 @@ export function AILoadingProgress({
             <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white" />
           </div>
           <div>
-            <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
               {title}
             </h4>
             <p className="text-xs text-slate-500 font-medium">{message}</p>
           </div>
         </div>
         <div className="text-right">
-          <span className="text-2xl font-black tracking-tight text-blue-700 font-sans tabular-nums">
+          <span className="text-2xl font-semibold tracking-tight text-blue-700 font-mono tabular-nums">
             {Math.min(100, Math.max(0, Math.round(percent)))}%
           </span>
         </div>

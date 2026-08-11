@@ -93,7 +93,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${iconConfig.bg} shadow-2xs shrink-0`}>
               {iconConfig.icon}
             </div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-snug">{title}</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">{title}</h3>
           </div>
           <button
             type="button"
@@ -107,11 +107,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-5 space-y-3">
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed">{message}</p>
 
           {requireReason && (
             <div className="space-y-1.5 pt-1">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">Lý do thực hiện:</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200">Lý do thực hiện:</label>
               <textarea
                 rows={3}
                 value={reason}
@@ -122,7 +122,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 placeholder={reasonPlaceholder}
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-xs font-medium focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
               />
-              {reasonError && <p className="text-xs font-bold text-rose-600">{reasonError}</p>}
+              {reasonError && <p className="text-xs font-medium text-rose-600">{reasonError}</p>}
             </div>
           )}
         </div>

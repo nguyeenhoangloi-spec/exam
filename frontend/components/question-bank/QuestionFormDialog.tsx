@@ -206,10 +206,10 @@ export function QuestionFormDialog({
         <div className="grid gap-3 md:grid-cols-2">
           {/* Môn */}
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">
               Môn học / Học phần <span className="text-rose-500">*</span>
             </label>
-            <select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {subjects.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.subjectName}
@@ -220,10 +220,10 @@ export function QuestionFormDialog({
 
           {/* Loại câu hỏi */}
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">
               Loại câu hỏi <span className="text-rose-500">*</span>
             </label>
-            <select {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -234,10 +234,10 @@ export function QuestionFormDialog({
 
           {/* Độ khó */}
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">
               Mức độ khó <span className="text-rose-500">*</span>
             </label>
-            <select {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -248,10 +248,10 @@ export function QuestionFormDialog({
 
           {/* Mức độ Bloom */}
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">
               Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
             </label>
-            <select {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <select {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(BLOOM_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -262,7 +262,7 @@ export function QuestionFormDialog({
 
           {/* Điểm số */}
           <div className="md:col-span-2">
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">
               Điểm số mặc định câu hỏi <span className="text-rose-500">*</span>
             </label>
             <input
@@ -270,14 +270,14 @@ export function QuestionFormDialog({
               step="0.25"
               {...register('score', { valueAsNumber: true })}
               placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-extrabold text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
         </div>
 
         {/* Nội dung câu hỏi */}
         <div>
-          <label className="block text-xs font-bold uppercase text-slate-500 mb-1">
+          <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">
             Nội dung câu hỏi <span className="text-rose-500">*</span>
           </label>
           <input type="hidden" {...register('content')} />
@@ -298,8 +298,8 @@ export function QuestionFormDialog({
         {/* Media Upload Section */}
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase text-slate-500">Đính kèm media (Tùy chọn)</span>
-            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
+            <span className="text-xs font-semibold uppercase text-slate-500">Đính kèm media (Tùy chọn)</span>
+            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
               <input
                 type="file"
                 multiple
@@ -348,7 +348,7 @@ export function QuestionFormDialog({
                     <button
                       type="button"
                       onClick={() => media.id && removeExistingMedia(media.id)}
-                      className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-extrabold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                      className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-semibold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
                       title="Xóa ảnh này"
                     >
                       <Trash2 className="h-3 w-3" />
@@ -379,7 +379,7 @@ export function QuestionFormDialog({
                   <button
                     type="button"
                     onClick={() => removeMediaFile(idx)}
-                    className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-extrabold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                    className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-semibold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
                   >
                     ×
                   </button>
@@ -418,18 +418,18 @@ export function QuestionFormDialog({
                   />
                   <input
                     {...register(`options.${i}.label`)}
-                    className="w-10 rounded-lg border border-slate-200 bg-white p-2 text-center text-xs font-black text-slate-900 shrink-0"
+                    className="w-10 rounded-lg border border-slate-200 bg-white p-2 text-center text-xs font-semibold text-slate-900 shrink-0"
                   />
                   <input
                     {...register(`options.${i}.content`)}
-                    className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800 focus:border-blue-500 focus:outline-none"
+                    className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none"
                     placeholder={`Nội dung đáp án ${field.label}...`}
                   />
                   <button
                     type="button"
                     onClick={() => i > 0 && move(i, i - 1)}
                     disabled={i === 0}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 font-extrabold cursor-pointer rounded-lg hover:bg-slate-200/60"
+                    className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 font-semibold cursor-pointer rounded-lg hover:bg-slate-200/60"
                     title="Di chuyển lên"
                   >
                     ↑
@@ -437,7 +437,7 @@ export function QuestionFormDialog({
                   <button
                     type="button"
                     onClick={() => remove(i)}
-                    className="p-1.5 text-rose-500 hover:text-rose-700 font-extrabold cursor-pointer rounded-lg hover:bg-rose-50"
+                    className="p-1.5 text-rose-500 hover:text-rose-700 font-semibold cursor-pointer rounded-lg hover:bg-rose-50"
                     title="Xóa đáp án"
                   >
                     ×
@@ -456,7 +456,7 @@ export function QuestionFormDialog({
                   order: fields.length,
                 })
               }
-              className="inline-flex items-center gap-1.5 text-xs font-extrabold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer pt-1"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer pt-1"
             >
               + Thêm lựa chọn đáp án
             </button>
@@ -465,15 +465,15 @@ export function QuestionFormDialog({
 
         {type === 'FILL_BLANK' && (
           <div className="space-y-3 border-t border-slate-100 pt-4">
-            <div className="rounded-xl bg-blue-50/80 p-3 text-xs leading-5 text-blue-900 font-bold border border-blue-100">
+            <div className="rounded-xl bg-blue-50/80 p-3 text-xs leading-5 text-blue-900 font-semibold border border-blue-100">
               Đặt chỗ trống trong nội dung theo mẫu <b>{'{{blank_1}}'}</b>, <b>{'{{blank_2}}'}</b>. Tổng điểm các ô phải bằng điểm của câu hỏi.
             </div>
             {fillBlankFields.fields.map((field, index) => (
               <div key={field.id} className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[70px_1fr_100px_auto]">
-                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-lg border bg-slate-50 p-2 text-xs font-bold text-center" />
+                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-lg border bg-slate-50 p-2 text-xs font-semibold text-center" />
                 <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-lg border p-2 text-xs font-semibold" />
-                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-lg border p-2 text-xs font-bold" />
-                <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600 font-bold">×</button>
+                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-lg border p-2 text-xs font-semibold" />
+                <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600 font-semibold">×</button>
                 <input {...register(`fillBlankAnswers.${index}.acceptedAnswersText`)} placeholder="Đáp án chấp nhận thêm, ngăn cách bằng dấu phẩy" className="md:col-span-4 rounded-lg border p-2 text-xs" />
               </div>
             ))}
@@ -483,13 +483,13 @@ export function QuestionFormDialog({
               fillBlankFields.append({ blankIndex: index, answer: '', acceptedAnswersText: '', score: index === 1 ? currentScore : 0, ignoreWhitespace: true, caseSensitive: false, ignoreVietnameseTone: false });
               const raw = watch('contentRich')?.html || watch('content') || '';
               if (!raw.includes(`{{blank_${index}}}`)) setValue('contentRich', { html: `${raw}${raw ? ' ' : ''}{{blank_${index}}}` });
-            }} className="text-xs font-extrabold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
+            }} className="text-xs font-semibold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
           </div>
         )}
 
         <div className="grid gap-3 md:grid-cols-2 pt-3 border-t border-slate-100">
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
             <input
               {...register('keywords')}
               placeholder="Ví dụ: RSA, ma hoa, security..."
@@ -498,7 +498,7 @@ export function QuestionFormDialog({
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
             <textarea
               {...register('explanation')}
               rows={2}
@@ -510,7 +510,7 @@ export function QuestionFormDialog({
 
         {Object.keys(errors).length > 0 && (
           <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 space-y-1">
-            <p className="text-xs font-bold text-rose-700">
+            <p className="text-xs font-semibold text-rose-700">
               Vui lòng kiểm tra các thông tin sau trước khi lưu câu hỏi:
             </p>
             <ul className="list-disc list-inside text-xs font-medium text-rose-600 space-y-0.5">

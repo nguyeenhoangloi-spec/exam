@@ -101,7 +101,7 @@ export default function PracticePage() {
               <BookOpen className="w-3.5 h-3.5" />
               Luyện Tập Kiến Thức
             </div>
-            <h1 className="text-[28px] font-bold text-[#0F172A] tracking-tight">
+            <h1 className="text-[28px] font-semibold text-[#0F172A] tracking-tight">
               Luyện tập tự do
             </h1>
             <p className="text-[15px] font-normal text-[#64748B]">
@@ -194,9 +194,9 @@ export default function PracticePage() {
         {result && (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-8 text-center max-w-xl mx-auto shadow-2xs space-y-3">
             <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" />
-            <h2 className="text-[28px] font-bold text-[#0F172A]">Hoàn thành bài luyện tập</h2>
+            <h2 className="text-[28px] font-semibold text-[#0F172A]">Hoàn thành bài luyện tập</h2>
             <p className="text-[15px] font-medium text-[#334155]">
-              Điểm số: <strong className="text-emerald-700 font-bold text-xl">{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}
+              Điểm số: <strong className="text-emerald-700 font-semibold text-xl">{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}
             </p>
             <button
               type="button"

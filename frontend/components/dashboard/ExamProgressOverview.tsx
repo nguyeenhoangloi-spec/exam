@@ -31,11 +31,11 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[17px] font-bold text-slate-900">Tiến độ tổ chức kỳ thi</h3>
+        <h3 className="text-[17px] font-semibold text-slate-900">Tiến độ tổ chức kỳ thi</h3>
         <button
           type="button"
           onClick={() => router.push('/exam-periods')}
-          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem chi tiết</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -48,9 +48,9 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
             <div key={item.code} className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-slate-800 truncate pr-2">
-                  <span className="font-bold text-slate-900">{item.code}</span> - {item.name}
+                  <span className="font-semibold text-slate-900">{item.code}</span> - {item.name}
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 shrink-0">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 shrink-0">
                   <PieChart className="h-3.5 w-3.5 text-blue-500" />
                   {item.progress}%
                 </span>

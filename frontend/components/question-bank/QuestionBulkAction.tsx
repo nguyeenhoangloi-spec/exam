@@ -39,7 +39,7 @@ export function QuestionBulkAction({
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[95vw] bg-white/95 border border-slate-200/90 shadow-2xl rounded-2xl p-2.5 px-4 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 animate-in slide-in-from-bottom-5 duration-300">
       {/* Left side counter & clear buttons */}
       <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3">
-        <span className="flex h-9 items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200/80 px-3 text-xs font-bold text-blue-600 select-none">
+        <span className="flex h-9 items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200/80 px-3 text-xs font-semibold text-blue-600 select-none">
           <CheckSquare className="h-3.5 w-3.5" />
           <span>Đã chọn {selectedCount} / {totalCount}</span>
         </span>
@@ -47,7 +47,7 @@ export function QuestionBulkAction({
         <button
           type="button"
           onClick={onToggleAll}
-          className="h-9 px-3 text-xs font-bold text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
+          className="h-9 px-3 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
         >
           {allSelected ? 'Bỏ chọn' : 'Chọn tất cả'}
         </button>
@@ -55,7 +55,7 @@ export function QuestionBulkAction({
         <button
           type="button"
           onClick={onClear}
-          className="h-9 px-3 text-xs font-bold text-rose-600 hover:text-rose-700 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 cursor-pointer select-none"
+          className="h-9 px-3 text-xs font-semibold text-rose-600 hover:text-rose-700 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 cursor-pointer select-none"
         >
           <X className="h-3.5 w-3.5" /> Hủy chọn
         </button>
@@ -63,7 +63,7 @@ export function QuestionBulkAction({
 
       {/* Right side bulk action buttons */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-slate-400 text-xs font-bold uppercase tracking-wider mr-1 hidden sm:inline select-none">
+        <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider mr-1 hidden sm:inline select-none">
           THAO TÁC:
         </span>
 
@@ -71,7 +71,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('SUBMIT')}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 text-xs font-bold shadow-2xs transition cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
           >
             <Send className="h-3.5 w-3.5" /> Gửi duyệt ({selectedCount})
           </button>
@@ -81,7 +81,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('APPROVE')}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 text-xs font-bold shadow-2xs transition cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
           >
             <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt ({selectedCount})
           </button>
@@ -91,7 +91,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('RESTORE')}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 text-xs font-bold shadow-2xs transition cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
           >
             <RotateCcw className="h-3.5 w-3.5" /> Khôi phục ({selectedCount})
           </button>
@@ -101,7 +101,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('REJECT')}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 text-xs font-bold shadow-2xs transition cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
           >
             <XCircle className="h-3.5 w-3.5" /> Từ chối ({selectedCount})
           </button>
@@ -111,7 +111,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('ARCHIVE')}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 text-xs font-bold shadow-2xs transition cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
           >
             <Archive className="h-3.5 w-3.5 text-blue-600" /> Lưu trữ
           </button>
@@ -121,7 +121,7 @@ export function QuestionBulkAction({
           <button
             type="button"
             onClick={() => onAction('DELETE')}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3.5 text-xs font-bold shadow-2xs transition cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
           >
             <Trash2 className="h-3.5 w-3.5" /> Xóa ({selectedCount})
           </button>

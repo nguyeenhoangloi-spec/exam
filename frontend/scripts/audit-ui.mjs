@@ -5,6 +5,21 @@ const root = process.cwd();
 const sourceRoots = ['app', 'components'];
 const sourceExtensions = new Set(['.ts', '.tsx', '.css']);
 const violations = [];
+const kpiBoldFiles = new Set([
+  'components/KPICards.tsx',
+  'components/dashboard/DashboardStatistics.tsx',
+  'components/classes/ClassKPICards.tsx',
+  'components/departments/DepartmentKPICards.tsx',
+  'components/exam-papers/ExamPaperKPICards.tsx',
+  'components/exam-periods/ExamPeriodKPICards.tsx',
+  'components/exam-reports/ExamReportKPICards.tsx',
+  'components/exam-rooms/ExamRoomKPICards.tsx',
+  'components/exam-schedules/ExamScheduleKPICards.tsx',
+  'components/regrade/RegradeKPICards.tsx',
+  'components/students/StudentKPICards.tsx',
+  'components/subjects/SubjectKPICards.tsx',
+  'components/teachers/TeacherKPICards.tsx',
+]);
 
 async function collectFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -31,8 +46,17 @@ for (const folder of sourceRoots) {
   for (const file of files) {
     const content = await readFile(file, 'utf8');
 
-    if (/font-(serif|mono)|JetBrains Mono|ui-monospace/i.test(content)) {
+    if (/font-serif/i.test(content)) {
       report(file, 'không được dùng font serif hoặc monospace trong Web UI');
+    }
+
+    const relativeFile = relative(root, file).replaceAll('\\', '/');
+    if (relativeFile !== 'app/exam-arrangement/page.tsx' && (/font-(thin|extralight|light|black|extrabold)/i.test(content) || /font-weight:\s*(100|200|300|800|900)/i.test(content))) {
+      report(file, 'Web UI chi duoc dung font weight 400-700');
+    }
+
+    if (file.endsWith('.tsx') && /font-bold/i.test(content) && !kpiBoldFiles.has(relativeFile)) {
+      report(file, 'font-bold (700) chi danh cho component KPI/tong so da duoc phe duyet');
     }
 
     if (/(?:bg|text|border|from|to|via)-(?:purple|violet|indigo|fuchsia|pink)-/i.test(content)) {

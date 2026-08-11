@@ -69,7 +69,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {d.code}
                     </button>
@@ -97,15 +97,15 @@ export function DepartmentTable({
                 <div className="grid grid-cols-3 gap-2 text-[14px] font-normal text-[#475569] pt-1">
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
                     <span className="text-[12px] text-[#64748B] uppercase font-semibold">Môn học</span>
-                    <span className="text-[16px] font-bold text-[#0F172A]">{subjectsCount}</span>
+                    <span className="text-[16px] font-semibold text-[#0F172A]">{subjectsCount}</span>
                   </div>
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
                     <span className="text-[12px] text-[#64748B] uppercase font-semibold">Lớp học</span>
-                    <span className="text-[16px] font-bold text-[#0F172A]">{classesCount}</span>
+                    <span className="text-[16px] font-semibold text-[#0F172A]">{classesCount}</span>
                   </div>
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
                     <span className="text-[12px] text-[#64748B] uppercase font-semibold">Giảng viên</span>
-                    <span className="text-[16px] font-bold text-[#0F172A]">{teachersCount}</span>
+                    <span className="text-[16px] font-semibold text-[#0F172A]">{teachersCount}</span>
                   </div>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export function DepartmentTable({
               <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+        <tbody className="divide-y divide-slate-100 font-normal">
             {departments.map((d) => {
               const isChecked = selected.includes(d.id);
               const subjectsCount = Math.max((d as any).subjectsCount || 0, (d as any)._count?.majorSubjects || 0, (d as any)._count?.subjects || 0, (d as any).subjects?.length || 0);
@@ -188,19 +188,19 @@ export function DepartmentTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-sans tabular-nums font-black text-slate-900">
+                  <td className="p-2 whitespace-nowrap font-mono tabular-nums font-medium text-slate-900">
                     <button type="button" onClick={() => onDetail(d)} className="hover:text-blue-600">
                       {d.code}
                     </button>
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <button type="button" className="block truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(d)}>
+                    <button type="button" className="block truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(d)}>
                       {d.name}
                     </button>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{subjectsCount} môn</td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{classesCount} lớp</td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{teachersCount} GV</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-slate-700">{subjectsCount} môn</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-slate-800">{classesCount} lớp</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-slate-800">{teachersCount} GV</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(d)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
                       <Eye className="h-3.5 w-3.5" />
@@ -265,7 +265,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {d.code}
                     </button>
@@ -308,7 +308,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onOpenCurriculum(d)}
-                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-bold transition cursor-pointer shadow-2xs"
+                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-medium transition cursor-pointer shadow-2xs"
                       title="Quản lý Khung Chương trình Đào tạo"
                     >
                       <Sparkles className="h-3.5 w-3.5 text-slate-500" />

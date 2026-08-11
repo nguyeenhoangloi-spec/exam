@@ -56,14 +56,14 @@ export function PendingQuestionList({
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[17px] font-bold text-slate-900">
-          Câu hỏi chờ duyệt <span className="text-blue-600 font-bold">({count})</span>
+        <h3 className="text-[17px] font-semibold text-slate-900">
+          Câu hỏi chờ duyệt <span className="text-blue-600 font-semibold">({count})</span>
         </h3>
 
         <button
           type="button"
           onClick={() => router.push('/question-bank?status=PENDING')}
-          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -91,7 +91,7 @@ export function PendingQuestionList({
                 const difficultyInfo = difficultyBadge[q.difficulty as keyof typeof difficultyBadge] || difficultyBadge['MEDIUM'];
                 return (
                   <tr key={q.id} className="hover:bg-slate-50/60 transition">
-                    <td className="py-3 px-3 whitespace-nowrap font-sans tabular-nums font-bold text-slate-900">
+                    <td className="py-3 px-3 whitespace-nowrap font-mono tabular-nums font-medium text-slate-900">
                       {q.code}
                     </td>
                     <td className="py-3 px-3 font-medium text-slate-900 max-w-xs truncate">

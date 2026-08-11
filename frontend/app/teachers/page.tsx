@@ -354,7 +354,7 @@ export default function TeachersPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500">Khoa trực thuộc:</span>
+            <span className="text-xs font-semibold text-slate-500">Khoa trực thuộc:</span>
             <div className="relative">
               <select
                 value={selectedDeptId}
@@ -362,7 +362,7 @@ export default function TeachersPage() {
                   setSelectedDeptId(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
               >
                 <option value="">Tất cả các Khoa</option>
                 {departments.map((d) => (
@@ -396,7 +396,7 @@ export default function TeachersPage() {
             ))}
           </div>
         ) : !paginatedTeachers.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy Giảng viên phù hợp.
           </div>
         ) : (
@@ -452,7 +452,7 @@ export default function TeachersPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Mã Giảng viên</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Mã Giảng viên</label>
               <input
                 type="text"
                 required
@@ -462,7 +462,7 @@ export default function TeachersPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Học vị / Học hàm</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Học vị / Học hàm</label>
               <select
                 value={formData.degree}
                 onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
@@ -476,7 +476,7 @@ export default function TeachersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Họ và tên</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Họ và tên</label>
             <input
               type="text"
               required
@@ -487,7 +487,7 @@ export default function TeachersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Khoa trực thuộc</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Khoa trực thuộc</label>
             <select
               required
               value={formData.departmentId}
@@ -503,7 +503,7 @@ export default function TeachersPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Email Công vụ</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Email Công vụ</label>
               <input
                 type="email"
                 required
@@ -513,7 +513,7 @@ export default function TeachersPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Số điện thoại</label>
+              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Số điện thoại</label>
               <input
                 type="text"
                 value={formData.phone}
@@ -587,14 +587,14 @@ export default function TeachersPage() {
             <div className="bg-[#2563EB] p-5 text-white shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
                     {drawerTeacher.fullName.trim().split(' ').pop()?.charAt(0).toUpperCase() || 'GV'}
                   </div>
                   <div className="min-w-0 flex-1 pr-2">
                     <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
                       {drawerTeacher.fullName}
                     </h2>
-                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-sans tabular-nums">
+                    <p className="text-[13px] font-semibold text-blue-100 mt-1 font-mono tabular-nums">
                       Mã cán bộ: {drawerTeacher.teacherCode}
                     </p>
                   </div>
@@ -768,7 +768,7 @@ export default function TeachersPage() {
                     <Building2 className="w-8 h-8" />
                   </div>
                   <h3 className="text-[20px] font-semibold text-[#0F172A]">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
-                  <p className="text-[13px] font-semibold text-blue-600 font-sans tabular-nums">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
+                  <p className="text-[13px] font-semibold text-blue-600 font-mono tabular-nums">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
                 </div>
               )}
             </div>

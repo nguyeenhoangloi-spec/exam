@@ -108,7 +108,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
         {/* Play Counter Badge */}
         {!isUnlimited ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold ${
+            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold ${
               isLimitReached
                 ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800'
                 : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800'
@@ -120,7 +120,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
               </>
             ) : (
               <>
-                Lượt xem: <span className="font-extrabold text-blue-900 dark:text-blue-100">{playsCount}/{maxPlays}</span>
+                Lượt xem: <span className="font-semibold text-blue-900 dark:text-blue-100">{playsCount}/{maxPlays}</span>
               </>
             )}
           </span>
@@ -162,7 +162,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
             <div className="mb-2 rounded-full bg-rose-500/20 p-2.5 border border-rose-500/40">
               <Lock className="h-6 w-6 text-rose-400" />
             </div>
-            <p className="text-xs font-bold text-white">Đã hết số lần phát cho phép ({maxPlays} lần)</p>
+            <p className="text-xs font-semibold text-white">Đã hết số lần phát cho phép ({maxPlays} lần)</p>
             <p className="mt-1 text-[11px] text-slate-400">Bạn đã phát đủ số lần nghe cho câu hỏi này.</p>
           </div>
         )}

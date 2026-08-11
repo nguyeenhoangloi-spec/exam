@@ -102,11 +102,11 @@ export function QuestionBankTable({
                     <button
                       type="button"
                       onClick={() => onDetail(q)}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 font-sans tabular-nums text-xs font-black text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer shrink-0"
+                      className="rounded-md bg-blue-50 px-2 py-0.5 font-mono tabular-nums text-xs font-semibold text-blue-600 border border-blue-200 hover:bg-blue-100 transition cursor-pointer shrink-0"
                     >
                       {codeText}
                     </button>
-                    <span className="truncate rounded-md bg-slate-100 px-2 py-0.5 text-[10.5px] font-bold text-slate-700 max-w-[110px]">
+                    <span className="truncate rounded-md bg-slate-100 px-2 py-0.5 text-[10.5px] font-semibold text-slate-700 max-w-[110px]">
                       {subjectName}
                     </span>
                   </div>
@@ -168,7 +168,7 @@ export function QuestionBankTable({
                   <button
                     type="button"
                     onClick={() => onDetail(q)}
-                    className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                    className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 transition cursor-pointer"
                   >
                     <Eye className="h-3.5 w-3.5" />
                     <span>Xem</span>
@@ -185,7 +185,7 @@ export function QuestionBankTable({
 
                     {activeMenuId === q.id && (
                       <div
-                        className="absolute right-0 bottom-full z-20 mb-1 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-bold text-slate-700 space-y-0.5 text-left"
+                        className="absolute right-0 bottom-full z-20 mb-1 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-xs font-semibold text-slate-700 space-y-0.5 text-left"
                         onMouseLeave={() => setActiveMenuId(null)}
                       >
                         <button
@@ -270,7 +270,7 @@ export function QuestionBankTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">
+                  <td className="p-2 whitespace-nowrap font-semibold text-blue-600">
                     <button type="button" onClick={() => onDetail(q)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
                       {codeText}
                     </button>
@@ -357,7 +357,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
+                        className="font-mono tabular-nums text-[14px] font-semibold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
                       >
                         {codeText}
                       </button>
@@ -389,9 +389,9 @@ export function QuestionBankTable({
                             optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10.5px] font-bold text-slate-700"
+                                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10.5px] font-semibold text-slate-700"
                               >
-                                <span className="font-extrabold text-slate-500">{opt.label}.</span>
+                                <span className="font-semibold text-slate-500">{opt.label}.</span>
                                 <span className="truncate max-w-[120px]">{opt.content}</span>
                               </span>
                             ))

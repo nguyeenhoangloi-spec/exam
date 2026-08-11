@@ -8,6 +8,8 @@ import {
   FileText,
   Activity,
   AlertCircle,
+  ShieldCheck,
+  Database,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
@@ -22,6 +24,7 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
         if (actionStr.includes('LOGIN')) icon = LogIn;
         else if (actionStr.includes('CREATE')) icon = PlusCircle;
         else if (actionStr.includes('APPEAL') || actionStr.includes('GRADE')) icon = AlertCircle;
+        else if (actionStr.includes('BACKUP')) icon = Database;
 
         return {
           id: act.id || String(idx),
@@ -42,53 +45,53 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
           id: '1',
           actorName: 'admin',
           actionTag: 'LOGIN',
-          targetInfo: 'Đã đăng nhập bằng Google (Quản trị viên)',
+          targetInfo: 'Đã đăng nhập vào hệ thống (Quản trị viên)',
           time: 'Vừa xong',
           icon: LogIn,
         },
         {
           id: '2',
           actorName: 'admin',
-          actionTag: 'CREATE',
-          targetInfo: 'Đã tạo câu hỏi 0002733',
-          time: 'Vừa xong',
+          actionTag: 'CREATE_QUESTION',
+          targetInfo: 'Đã thêm mới câu hỏi trắc nghiệm vào ngân hàng đề',
+          time: '10 phút trước',
           icon: PlusCircle,
         },
         {
           id: '3',
           actorName: 'admin',
-          actionTag: 'CREATE',
-          targetInfo: 'Đã tạo câu hỏi 0002732',
-          time: 'Vừa xong',
-          icon: PlusCircle,
+          actionTag: 'BACKUP_QUEUED',
+          targetInfo: 'Đã khởi tạo bản sao lưu snapshot cơ sở dữ liệu',
+          time: '35 phút trước',
+          icon: Database,
         },
         {
           id: '4',
           actorName: 'admin',
-          actionTag: 'LOGIN',
-          targetInfo: 'Đã đăng nhập bằng Google (Quản trị viên)',
-          time: 'Vừa xong',
-          icon: LogIn,
+          actionTag: 'APPROVE_QUESTION',
+          targetInfo: 'Phê duyệt câu hỏi thi trắc nghiệm',
+          time: '1 giờ trước',
+          icon: ShieldCheck,
         },
         {
           id: '5',
           actorName: 'sv048',
           actionTag: 'CREATE_GRADE_APPEAL',
-          targetInfo: 'Sinh viên gửi đơn phúc khảo cho lượt thi...',
-          time: 'Vừa xong',
+          targetInfo: 'Sinh viên gửi đơn xin phúc khảo điểm thi',
+          time: '2 giờ trước',
           icon: AlertCircle,
         },
       ];
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3.5 h-fit">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3.5 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 className="text-[17px] font-bold text-slate-900">Hoạt động gần đây</h3>
 
         <button
           type="button"
-          onClick={() => router.push('/reports')}
+          onClick={() => router.push('/admin/activity-logs')}
           className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem tất cả</span>
@@ -105,7 +108,7 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
               <div key={item.id} className="flex items-start justify-between gap-2.5 text-xs">
                 <div className="flex items-start gap-2.5 min-w-0">
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 border border-slate-200/80 text-slate-600 mt-0.5">
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-3.5 w-3.5 text-blue-600" />
                   </div>
                   <div className="min-w-0 leading-tight">
                     <p className="font-semibold text-slate-900 truncate">

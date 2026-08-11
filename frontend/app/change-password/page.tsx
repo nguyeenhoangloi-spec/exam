@@ -113,7 +113,7 @@ export default function ChangePasswordPage() {
               <Lock className="h-7 w-7 text-white" />
             </div>
             <div>
-              <h1 className="text-[28px] font-bold leading-[36px] text-white tracking-tight">Đổi mật khẩu tài khoản</h1>
+              <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">Đổi mật khẩu tài khoản</h1>
               <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Cập nhật mật khẩu để bảo vệ tài khoản khỏi truy cập trái phép</p>
             </div>
           </div>
@@ -153,13 +153,13 @@ export default function ChangePasswordPage() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Form: 7 cols */}
         <form onSubmit={handleSubmit} className="md:col-span-7 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-4">
-          <h2 className="text-sm font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
             <KeyRound className="h-4.5 w-4.5 text-blue-600" />
             <span>Biểu mẫu cập nhật mật khẩu</span>
           </h2>
 
           {error && (
-            <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs font-bold text-rose-700 flex items-start gap-2">
+            <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs font-semibold text-rose-700 flex items-start gap-2">
               <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -167,7 +167,7 @@ export default function ChangePasswordPage() {
 
           {/* Current Password */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-black text-slate-800">Mật khẩu hiện tại</label>
+            <label className="block text-xs font-semibold text-slate-800">Mật khẩu hiện tại</label>
             <div className="relative">
               <input
                 type={showCurrent ? 'text' : 'password'}
@@ -189,7 +189,7 @@ export default function ChangePasswordPage() {
 
           {/* New Password */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-black text-slate-800">Mật khẩu mới</label>
+            <label className="block text-xs font-semibold text-slate-800">Mật khẩu mới</label>
             <div className="relative">
               <input
                 type={showNew ? 'text' : 'password'}
@@ -211,7 +211,7 @@ export default function ChangePasswordPage() {
             {/* Password Strength Indicator */}
             {newPassword.length > 0 && (
               <div className="space-y-1 pt-1">
-                <div className="flex items-center justify-between text-[11px] font-bold">
+                <div className="flex items-center justify-between text-[11px] font-semibold">
                   <span className="text-slate-500">Độ mạnh mật khẩu:</span>
                   <span className={strength.text}>{strength.label}</span>
                 </div>
@@ -227,7 +227,7 @@ export default function ChangePasswordPage() {
 
           {/* Confirm Password */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-black text-slate-800">Xác nhận mật khẩu mới</label>
+            <label className="block text-xs font-semibold text-slate-800">Xác nhận mật khẩu mới</label>
             <div className="relative">
               <input
                 type={showConfirm ? 'text' : 'password'}
@@ -263,7 +263,7 @@ export default function ChangePasswordPage() {
 
         {/* Right Info Box: 5 cols */}
         <div className="md:col-span-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 space-y-4">
-          <h3 className="text-xs font-black text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
+          <h3 className="text-xs font-semibold text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
             <ShieldCheck className="h-4 w-4 text-blue-600" />
             <span>Quy tắc bảo mật mật khẩu</span>
           </h3>

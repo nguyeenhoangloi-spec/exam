@@ -83,7 +83,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
 
               {/* Right count, priority badge, arrow */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[15px] font-bold text-[#0F172A] dark:text-slate-200">{task.count}</span>
+                <span className="text-[15px] font-semibold text-[#0F172A] dark:text-slate-200">{task.count}</span>
                 <Badge tone={task.tone} size="xs">
                   {task.priority}
                 </Badge>
@@ -99,7 +99,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
         <button
           type="button"
           onClick={() => router.push('/question-bank?status=PENDING')}
-          className="text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           Xem tất cả công việc cần xử lý →
         </button>

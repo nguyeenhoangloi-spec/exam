@@ -104,13 +104,13 @@ export function RegradeReviewDrawer({
           <div className="bg-[#2563EB] p-5 text-white shrink-0">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/20 shadow-xs">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/20 shadow-xs">
                   {shortAvatar}
                 </div>
 
                 <div className="min-w-0 flex-1 pr-2">
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <h2 className="truncate text-[20px] font-bold leading-[28px] text-white" title={selectedAppeal.student.fullName}>
+                    <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white" title={selectedAppeal.student.fullName}>
                       Thẩm định Đơn Phúc khảo
                     </h2>
                     <span className="shrink-0 rounded-lg bg-white/15 px-2.5 py-0.5 text-xs font-semibold text-white border border-white/20">
@@ -118,7 +118,7 @@ export function RegradeReviewDrawer({
                     </span>
                   </div>
                   <p className="truncate text-[13px] font-medium text-blue-100 mt-1">
-                    Sinh viên: <strong className="font-extrabold text-white">{selectedAppeal.student.fullName}</strong>
+                    Sinh viên: <strong className="font-semibold text-white">{selectedAppeal.student.fullName}</strong>
                     {selectedAppeal.student.class?.code ? ` (${selectedAppeal.student.class.code})` : ''}
                   </p>
                 </div>
@@ -140,7 +140,7 @@ export function RegradeReviewDrawer({
             {/* Card 1: Thông tin tổng quan đơn & Nút xem bài thi trực tiếp */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                <h3 className="text-[14px] font-bold text-slate-900">Thông tin chi tiết</h3>
+                <h3 className="text-[14px] font-semibold text-slate-900">Thông tin chi tiết</h3>
                 <StatusBadge status={badgeStatus} className="text-xs" />
               </div>
 
@@ -150,7 +150,7 @@ export function RegradeReviewDrawer({
                     <BookOpen className="h-4 w-4 text-slate-400" />
                     Môn thi:
                   </span>
-                  <span className="font-bold text-slate-900 text-right">
+                  <span className="font-semibold text-slate-900 text-right">
                     {subjectName} {subjectCode ? `(${subjectCode})` : ''}
                   </span>
                 </div>
@@ -160,7 +160,7 @@ export function RegradeReviewDrawer({
                     <Award className="h-4 w-4 text-slate-400" />
                     Điểm thi ban đầu:
                   </span>
-                  <span className="font-extrabold text-blue-600 text-sm">
+                  <span className="font-semibold text-blue-600 text-sm">
                     {selectedAppeal.originalScore.toFixed(1)} điểm
                   </span>
                 </div>
@@ -196,7 +196,7 @@ export function RegradeReviewDrawer({
                     size="sm"
                     onClick={() => setViewingAttemptModal(true)}
                     leftIcon={<Eye className="h-4 w-4" />}
-                    className="w-full justify-center text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-2xs py-2.5"
+                    className="w-full justify-center text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-2xs py-2.5"
                   >
                     Xem bài làm chi tiết & Đáp án từng câu
                   </Button>
@@ -206,7 +206,7 @@ export function RegradeReviewDrawer({
 
             {/* Card 2: Nội dung & Lý do xin phúc khảo */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-2.5 shadow-2xs">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Nội dung & Lý do xin phúc khảo
               </h3>
               <div className="rounded-xl bg-amber-50/80 border border-amber-200/80 p-3.5 text-slate-900 leading-relaxed font-normal text-xs">
@@ -217,22 +217,22 @@ export function RegradeReviewDrawer({
             {/* Card 3: Bài làm sinh viên (Chi tiết các câu tự luận nếu có) */}
             {selectedAppeal.attempt?.attemptAnswers && selectedAppeal.attempt.attemptAnswers.length > 0 && (
               <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Xem nhanh câu trả lời ({selectedAppeal.attempt.attemptAnswers.length} câu)
                 </h3>
                 <div className="space-y-3">
                   {selectedAppeal.attempt.attemptAnswers.map((ans: any, idx: number) => (
                     <div key={idx} className="rounded-xl border border-slate-200/90 bg-slate-50/70 p-4 space-y-2.5">
                       <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                        <span className="font-bold text-slate-900 text-xs">
+                        <span className="font-semibold text-slate-900 text-xs">
                           Câu {idx + 1} ({ans.questionCode || 'Tự luận'}):
                         </span>
-                        <span className="font-sans tabular-nums font-extrabold text-blue-600 text-xs">
+                        <span className="font-mono tabular-nums font-medium text-blue-600 text-xs">
                           {ans.score !== undefined ? `${ans.score} / ${ans.maxScore || 10} điểm` : ''}
                         </span>
                       </div>
                       <p className="font-medium text-slate-700 leading-relaxed text-xs">{ans.questionText}</p>
-                      <div className="rounded-xl bg-white p-3 border border-slate-200 text-slate-900 font-sans tabular-nums text-[11.5px] leading-relaxed">
+                      <div className="rounded-xl bg-white p-3 border border-slate-200 text-slate-900 font-mono tabular-nums text-[11.5px] leading-relaxed">
                         {ans.studentAnswer}
                       </div>
                     </div>
@@ -243,7 +243,7 @@ export function RegradeReviewDrawer({
 
             {/* Card 4: Quyết định thẩm định & Chấm lại */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Quyết định thẩm định & Chấm lại
               </h3>
 
@@ -251,7 +251,7 @@ export function RegradeReviewDrawer({
                 <button
                   type="button"
                   onClick={() => setReviewStatus('APPROVED_REGRADE')}
-                  className={`flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-bold border transition cursor-pointer ${
+                  className={`flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-semibold border transition cursor-pointer ${
                     reviewStatus === 'APPROVED_REGRADE'
                       ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-2 ring-emerald-500/20 shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
@@ -264,7 +264,7 @@ export function RegradeReviewDrawer({
                 <button
                   type="button"
                   onClick={() => setReviewStatus('REJECTED')}
-                  className={`flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-bold border transition cursor-pointer ${
+                  className={`flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-semibold border transition cursor-pointer ${
                     reviewStatus === 'REJECTED'
                       ? 'border-rose-500 bg-rose-50 text-rose-700 ring-2 ring-rose-500/20 shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
@@ -277,7 +277,7 @@ export function RegradeReviewDrawer({
 
               {reviewStatus === 'APPROVED_REGRADE' && (
                 <div className="space-y-1.5 pt-1">
-                  <label className="block text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-semibold text-slate-700">
                     Điểm số mới sau phúc khảo (Thang điểm 10):
                   </label>
                   <input
@@ -287,14 +287,14 @@ export function RegradeReviewDrawer({
                     max="10"
                     value={revisedScore}
                     onChange={(e) => setRevisedScore(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
                     placeholder="Nhập điểm mới..."
                   />
                 </div>
               )}
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-700">
+                <label className="block text-xs font-semibold text-slate-700">
                   Ghi chú & Nhận xét của CB Thẩm định:
                 </label>
                 <textarea

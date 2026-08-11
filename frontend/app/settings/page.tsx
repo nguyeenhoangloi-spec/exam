@@ -120,7 +120,7 @@ export default function SettingsPage() {
               <Settings className="h-7 w-7 text-white" />
             </div>
             <div>
-              <h1 className="text-[28px] font-bold leading-[36px] text-white tracking-tight">Cài đặt tài khoản</h1>
+              <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">Cài đặt tài khoản</h1>
               <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Tùy chỉnh thông báo, giao diện theme và bảo mật cá nhân</p>
             </div>
           </div>

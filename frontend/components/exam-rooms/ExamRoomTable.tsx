@@ -87,7 +87,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="font-sans tabular-nums text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-mono tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -99,7 +99,7 @@ export function ExamRoomTable({
                 <div className="flex items-center justify-between gap-2">
                   <h4
                     onClick={() => onDetail(r)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                    className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
                   >
                     {nameText}
                   </h4>
@@ -114,7 +114,7 @@ export function ExamRoomTable({
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                    <span>Sức chứa: <strong className="font-extrabold text-slate-900">{r.capacity} thí sinh</strong></span>
+                    <span>Sức chứa: <strong className="font-semibold text-slate-900">{r.capacity} thí sinh</strong></span>
                   </div>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export function ExamRoomTable({
                 <button
                   type="button"
                   onClick={() => onDetail(r)}
-                  className="flex items-center gap-1 font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+                  className="flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" /> Chi tiết
                 </button>
@@ -207,7 +207,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -219,7 +219,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
+                      className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
                     >
                       {nameText}
                     </button>
@@ -228,7 +228,7 @@ export function ExamRoomTable({
 
                 {visibleColumns.capacity !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center text-xs">
-                    <span className="font-extrabold text-slate-900">{r.capacity} chỗ</span>
+                    <span className="font-semibold text-slate-900">{r.capacity} chỗ</span>
                   </td>
                 )}
 

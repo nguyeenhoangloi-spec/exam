@@ -66,7 +66,7 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {c.code}
                     </button>
@@ -168,18 +168,18 @@ export function ClassTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-blue-600">
+                  <td className="p-2 whitespace-nowrap font-medium text-blue-600">
                     <button type="button" onClick={() => onDetail(c)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
                       {c.code}
                     </button>
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(c)}>
+                    <p className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(c)}>
                       {c.name}
                     </p>
                   </td>
-                  <td className="p-2 min-w-[180px] font-semibold text-slate-700">{deptName}</td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-600">{studentCount} SV</td>
+                  <td className="p-2 min-w-[180px] font-normal text-slate-700">{deptName}</td>
+                  <td className="p-2 whitespace-nowrap font-medium text-slate-600">{studentCount} SV</td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
                     <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
                       <Eye className="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {c.code}
                     </button>

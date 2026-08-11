@@ -178,7 +178,7 @@ export default function StudentExamSchedulePage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+            <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
               Lịch Thi Cá Nhân Sinh Viên
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
@@ -219,7 +219,7 @@ export default function StudentExamSchedulePage() {
                   <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">
                     {label}
                   </span>
-                  <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
+                  <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
                     {value}
                   </p>
                 </div>
@@ -294,7 +294,7 @@ export default function StudentExamSchedulePage() {
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
               <BookMarked className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-black text-slate-800">Không tìm thấy lịch thi nào</h3>
+            <h3 className="text-base font-semibold text-slate-800">Không tìm thấy lịch thi nào</h3>
             <p className="text-xs font-medium text-slate-500 max-w-sm">
               Không có ca thi nào phù hợp với bộ lọc hiện tại.
             </p>
@@ -309,7 +309,7 @@ export default function StudentExamSchedulePage() {
                 <div className="space-y-3.5">
                   {/* Card top badges */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
+                    <span className="font-mono tabular-nums font-medium text-xs text-[#475569]">
                       {item.subjectCode}
                     </span>
                     <div className="flex items-center gap-2">
@@ -329,7 +329,7 @@ export default function StudentExamSchedulePage() {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base font-black text-slate-900 group-hover:text-blue-700 transition line-clamp-1">
+                  <h3 className="text-base font-semibold text-slate-900 group-hover:text-blue-700 transition line-clamp-1">
                     {item.subjectName}
                   </h3>
 
@@ -340,7 +340,7 @@ export default function StudentExamSchedulePage() {
                         <Calendar className="w-3.5 h-3.5 text-blue-500" />
                         Ngày thi:
                       </span>
-                      <strong className="text-slate-800 font-bold">
+                      <strong className="text-slate-800 font-semibold">
                         {new Date(item.examDate).toLocaleDateString('vi-VN')}
                       </strong>
                     </div>
@@ -350,7 +350,7 @@ export default function StudentExamSchedulePage() {
                         <Clock className="w-3.5 h-3.5 text-blue-500" />
                         Khung giờ:
                       </span>
-                      <strong className="text-blue-700 font-bold">
+                      <strong className="text-blue-700 font-semibold">
                         {item.startTime} - {item.endTime}
                       </strong>
                     </div>
@@ -360,7 +360,7 @@ export default function StudentExamSchedulePage() {
                         <MapPin className="w-3.5 h-3.5 text-slate-400" />
                         Phòng thi:
                       </span>
-                      <strong className="text-slate-700 font-bold">
+                      <strong className="text-slate-700 font-semibold">
                         {item.roomName || item.roomCode || 'Tự do'} {item.building ? `(${item.building})` : ''}
                       </strong>
                     </div>
@@ -370,7 +370,7 @@ export default function StudentExamSchedulePage() {
                         <Ticket className="w-3.5 h-3.5 text-blue-500" />
                         SBD / Ghế:
                       </span>
-                      <span className="font-sans tabular-nums font-bold text-slate-800">
+                      <span className="font-mono tabular-nums font-medium text-slate-800">
                         <strong className="text-blue-700">{item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}</strong>
                         <span className="text-slate-400 mx-1">·</span>
                         Ghế #{item.seatNumber || 'Chưa xếp'}
@@ -378,11 +378,11 @@ export default function StudentExamSchedulePage() {
                     </div>
                     {(item as any).attempt?.gradingStatus === 'PUBLISHED' && (
                       <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
-                        <span className="flex items-center gap-2 text-slate-500 font-bold">
+                        <span className="flex items-center gap-2 text-slate-500 font-semibold">
                           <Award className="w-3.5 h-3.5 text-emerald-600" />
                           Điểm công bố:
                         </span>
-                        <span className={`font-sans tabular-nums font-black text-xs ${(item as any).attempt.totalScore === 0
+                        <span className={`font-mono tabular-nums font-medium text-xs ${(item as any).attempt.totalScore === 0
                             ? 'text-[#DC2626]'
                             : 'text-[#15803D]'
                           }`}>

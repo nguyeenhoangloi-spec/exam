@@ -114,7 +114,7 @@ export function ExamPeriodTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p)}
-                      className="font-sans tabular-nums text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-mono tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       {codeText}
                     </button>
@@ -125,7 +125,7 @@ export function ExamPeriodTable({
                 <div>
                   <h4
                     onClick={() => onDetail(p)}
-                    className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                    className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
                   >
                     {p.name}
                   </h4>
@@ -134,7 +134,7 @@ export function ExamPeriodTable({
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
                     <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                    <span>Học kỳ: <strong className="font-bold text-slate-800">{p.semester}</strong></span>
+                    <span>Học kỳ: <strong className="font-semibold text-slate-800">{p.semester}</strong></span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
                     <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
@@ -147,7 +147,7 @@ export function ExamPeriodTable({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(p)}
@@ -227,7 +227,7 @@ export function ExamPeriodTable({
                       {p.name}
                     </button>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{p.semester}</td>
+                  <td className="p-2 whitespace-nowrap font-semibold text-slate-800">{p.semester}</td>
                   <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{p.schoolYear}</td>
                   <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
                   <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status, p)}</td>
@@ -290,7 +290,7 @@ export function ExamPeriodTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p)}
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+                      className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                     >
                       {p.name}
                     </button>
@@ -298,20 +298,20 @@ export function ExamPeriodTable({
                 )}
 
                 {visibleColumns.semester !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-800">
                     {p.semester}
                   </td>
                 )}
 
 
                 {visibleColumns.schoolYear !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-900">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900">
                     {p.schoolYear}
                   </td>
                 )}
 
                 {visibleColumns.dateRange !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-800">
                     {formatDate(p.startDate)} - {formatDate(p.endDate)}
                   </td>
                 )}

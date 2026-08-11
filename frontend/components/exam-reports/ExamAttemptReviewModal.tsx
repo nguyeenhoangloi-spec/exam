@@ -43,14 +43,14 @@ function OptionItem({
   showAnswer: boolean;
 }) {
   let cls = 'border-slate-200 bg-slate-50/70 text-slate-700';
-  if (showAnswer && isCorrect && isSelected) cls = 'border-emerald-400 bg-emerald-50/90 text-emerald-900 font-bold shadow-2xs';
+  if (showAnswer && isCorrect && isSelected) cls = 'border-emerald-400 bg-emerald-50/90 text-emerald-900 font-semibold shadow-2xs';
   else if (showAnswer && isCorrect && !isSelected) cls = 'border-emerald-300 bg-emerald-50/50 text-emerald-800 font-medium';
   else if (showAnswer && !isCorrect && isSelected) cls = 'border-rose-300 bg-rose-50/90 text-rose-800 font-medium shadow-2xs';
-  else if (isSelected && !showAnswer) cls = 'border-blue-400 bg-blue-50/90 text-blue-900 font-bold shadow-2xs';
+  else if (isSelected && !showAnswer) cls = 'border-blue-400 bg-blue-50/90 text-blue-900 font-semibold shadow-2xs';
 
   return (
     <div className={`flex items-start gap-2.5 rounded-xl border p-3 text-xs transition ${cls}`}>
-      <span className="font-bold shrink-0">{label}.</span>
+      <span className="font-semibold shrink-0">{label}.</span>
       <span className="flex-1 leading-relaxed">{text}</span>
       <span className="shrink-0 pt-0.5">
         {showAnswer && isCorrect && isSelected && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
@@ -120,13 +120,13 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
           <span className={`shrink-0 mt-0.5 ${statusColor}`}>
             <StatusIcon className="w-4 h-4" />
           </span>
-          <p className="flex-1 min-w-0 text-xs font-bold text-slate-900 leading-relaxed">
+          <p className="flex-1 min-w-0 text-xs font-semibold text-slate-900 leading-relaxed">
             Câu {idx + 1}: {q.content}
           </p>
         </div>
         <div className="flex items-center gap-2.5 shrink-0">
           <span
-            className={`text-xs font-extrabold font-sans tabular-nums ${
+            className={`text-xs font-semibold font-mono tabular-nums ${
               showAnswer && q.type !== 'ESSAY'
                 ? isCorrect
                   ? 'text-emerald-700'
@@ -145,7 +145,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
       {expanded && (
         <div className="border-t border-slate-100 p-4 pt-3.5 space-y-3 bg-slate-50/30 text-xs">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="rounded-md bg-slate-100 text-slate-700 px-2.5 py-0.5 text-xs font-bold border border-slate-200">
+            <span className="rounded-md bg-slate-100 text-slate-700 px-2.5 py-0.5 text-xs font-semibold border border-slate-200">
               {typeLabel}
             </span>
             <span className="rounded-md bg-slate-100 text-slate-700 px-2.5 py-0.5 text-xs font-semibold border border-slate-200">
@@ -170,7 +170,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
 
           {q.type === 'FILL_BLANK' && (
             <div className="space-y-2 bg-slate-50/80 border border-slate-200 p-3.5 rounded-xl">
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Bài làm điền khuyết của sinh viên:
               </p>
               <div className="space-y-2">
@@ -186,15 +186,15 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
                         className="flex flex-wrap items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl text-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-blue-600">Ô #{bIdx}:</span>
-                          <span className="font-bold text-slate-900">
+                          <span className="font-semibold text-blue-600">Ô #{bIdx}:</span>
+                          <span className="font-semibold text-slate-900">
                             {studentVal || <span className="italic font-normal text-slate-400">Bỏ trống</span>}
                           </span>
                         </div>
                         {showAnswer && (
-                          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700">
+                          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
                             <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-                            Đáp án đúng: <span className="font-extrabold text-emerald-800">{correctVal || '---'}</span>
+                            Đáp án đúng: <span className="font-semibold text-emerald-800">{correctVal || '---'}</span>
                           </div>
                         )}
                       </div>
@@ -207,13 +207,13 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
 
           {q.type === 'ESSAY' && (
             <div className="space-y-2">
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Bài làm tự luận của sinh viên:</p>
-              <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed min-h-[60px] font-sans tabular-nums">
+              <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Bài làm tự luận của sinh viên:</p>
+              <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed min-h-[60px] font-mono tabular-nums">
                 {sel?.textAnswer || <span className="italic font-normal text-slate-400 font-sans">Sinh viên không nộp câu tự luận này</span>}
               </div>
               {showAnswer && sel?.teacherComment && (
                 <div className="rounded-xl border border-blue-200 bg-blue-50/80 p-3.5 space-y-1">
-                  <p className="text-xs font-bold text-blue-800 uppercase tracking-wider">Nhận xét của Giảng viên:</p>
+                  <p className="text-xs font-semibold text-blue-800 uppercase tracking-wider">Nhận xét của Giảng viên:</p>
                   <p className="text-xs text-blue-900 leading-relaxed whitespace-pre-wrap">{sel.teacherComment}</p>
                 </div>
               )}
@@ -222,7 +222,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
 
           {showAnswer && q.explanation && (
             <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-3.5 space-y-1">
-              <p className="text-xs font-bold text-blue-900 uppercase tracking-wider">Giải thích đáp án:</p>
+              <p className="text-xs font-semibold text-blue-900 uppercase tracking-wider">Giải thích đáp án:</p>
               <p className="text-xs text-slate-700 leading-relaxed font-normal">{q.explanation}</p>
             </div>
           )}
@@ -284,24 +284,24 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
         <div className="bg-[#2563EB] p-5 text-white shrink-0">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3.5 min-w-0 flex-1">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-white border border-white/20 shadow-xs">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-white border border-white/20 shadow-xs">
                 <FileText className="h-6 w-6 text-white" />
               </div>
 
               <div className="min-w-0 flex-1 pr-2">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <h2 className="truncate text-[20px] font-bold leading-[28px] text-white">
+                  <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white">
                     Xem Lại Chi Tiết Bài Thi
                   </h2>
                   {data?.paper?.paperCode && (
-                    <span className="font-sans tabular-nums text-xs font-bold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
+                    <span className="font-mono tabular-nums text-xs font-semibold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
                       Mã đề: {data.paper.paperCode}
                     </span>
                   )}
                 </div>
                 {data && (
                   <p className="truncate text-[13px] font-medium text-blue-100 mt-1">
-                    Sinh viên: <strong className="font-extrabold text-white">{data.student?.fullName}</strong> ({data.student?.studentCode})
+                    Sinh viên: <strong className="font-semibold text-white">{data.student?.fullName}</strong> ({data.student?.studentCode})
                     {data.paper?.subjectName ? ` • Môn: ${data.paper.subjectName}` : ''}
                   </p>
                 )}
@@ -324,18 +324,18 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           {loading && (
             <div className="flex flex-col items-center justify-center gap-3 py-20">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-              <p className="text-xs font-bold text-slate-500">Đang tải bài làm chi tiết sinh viên...</p>
+              <p className="text-xs font-semibold text-slate-500">Đang tải bài làm chi tiết sinh viên...</p>
             </div>
           )}
 
           {error && (
             <div className="flex flex-col items-center justify-center gap-3 py-20">
               <AlertTriangle className="w-10 h-10 text-rose-500" />
-              <p className="text-xs font-bold text-rose-600">{error}</p>
+              <p className="text-xs font-semibold text-rose-600">{error}</p>
               <button
                 type="button"
                 onClick={load}
-                className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
               >
                 Thử lại ngay
               </button>
@@ -348,35 +348,35 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="rounded-2xl bg-blue-50/80 border border-blue-200/80 p-4 text-center space-y-1 shadow-2xs">
                   <Award className="w-5 h-5 text-blue-600 mx-auto" />
-                  <p className="text-xl font-black text-blue-700">
+                  <p className="text-xl font-semibold text-blue-700">
                     {data.attemptInfo?.totalScore ?? '--'}{' '}
-                    <span className="text-xs font-bold text-blue-500">/ {data.attemptInfo?.maxScore ?? 10}</span>
+                    <span className="text-xs font-semibold text-blue-500">/ {data.attemptInfo?.maxScore ?? 10}</span>
                   </p>
-                  <p className="text-xs font-bold text-blue-600">Tổng điểm</p>
+                  <p className="text-xs font-semibold text-blue-600">Tổng điểm</p>
                 </div>
 
                 <div className="rounded-2xl bg-emerald-50/80 border border-emerald-200/80 p-4 text-center space-y-1 shadow-2xs">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 mx-auto" />
-                  <p className="text-xl font-black text-emerald-700">{correct}</p>
-                  <p className="text-xs font-bold text-emerald-600">Câu đúng</p>
+                  <p className="text-xl font-semibold text-emerald-700">{correct}</p>
+                  <p className="text-xs font-semibold text-emerald-600">Câu đúng</p>
                 </div>
 
                 <div className="rounded-2xl bg-rose-50/80 border border-rose-200/80 p-4 text-center space-y-1 shadow-2xs">
                   <XCircle className="w-5 h-5 text-rose-600 mx-auto" />
-                  <p className="text-xl font-black text-rose-700">{wrong}</p>
-                  <p className="text-xs font-bold text-rose-600">Câu sai</p>
+                  <p className="text-xl font-semibold text-rose-700">{wrong}</p>
+                  <p className="text-xs font-semibold text-rose-600">Câu sai</p>
                 </div>
 
                 <div className="rounded-2xl bg-slate-100/80 border border-slate-200/80 p-4 text-center space-y-1 shadow-2xs">
                   <Minus className="w-5 h-5 text-slate-500 mx-auto" />
-                  <p className="text-xl font-black text-slate-700">{skipped}</p>
-                  <p className="text-xs font-bold text-slate-500">Bỏ qua</p>
+                  <p className="text-xl font-semibold text-slate-700">{skipped}</p>
+                  <p className="text-xs font-semibold text-slate-500">Bỏ qua</p>
                 </div>
               </div>
 
               {/* Sub-info Badges */}
               <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs">
-                <span className="flex items-center gap-1.5 font-bold text-slate-800">
+                <span className="flex items-center gap-1.5 font-semibold text-slate-800">
                   <User className="w-4 h-4 text-blue-600" />
                   {data.student?.className || data.student?.classCode || 'Chính quy'}
                 </span>
@@ -393,7 +393,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                 </span>
 
                 {data.attemptInfo?.isFlagged && (
-                  <span className="flex items-center gap-1.5 font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1">
+                  <span className="flex items-center gap-1.5 font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1">
                     <AlertTriangle className="w-4 h-4 text-amber-600" />
                     Cảnh báo vi phạm — Risk Score: {data.attemptInfo?.riskScore} điểm
                   </span>
@@ -402,14 +402,14 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
 
               {/* Questions List Header */}
               <div className="flex items-center justify-between pt-1">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700 flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-600" />
                   Chi tiết từng câu ({data.questions?.length ?? 0} câu)
                 </h3>
                 <button
                   type="button"
                   onClick={() => setShowAnswer(!showAnswer)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs ${
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shadow-2xs ${
                     showAnswer
                       ? 'bg-amber-500 text-white hover:bg-amber-600'
                       : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
@@ -439,7 +439,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
               {/* Incidents Warning Box */}
               {data.incidents?.length > 0 && (
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/90 p-4 space-y-2.5 shadow-2xs">
-                  <h4 className="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-2">
+                  <h4 className="text-xs font-semibold text-amber-900 uppercase tracking-wider flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-600" />
                     Sự cố & Vi phạm ghi nhận ({data.incidents.length})
                   </h4>
@@ -449,7 +449,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                         key={inc.id || i}
                         className="text-xs text-amber-900 bg-white rounded-xl border border-amber-200 p-3 leading-relaxed"
                       >
-                        <span className="font-bold text-amber-950">{inc.decision || 'Cảnh báo hệ thống'}:</span>{' '}
+                        <span className="font-semibold text-amber-950">{inc.decision || 'Cảnh báo hệ thống'}:</span>{' '}
                         {inc.reason}
                       </div>
                     ))}

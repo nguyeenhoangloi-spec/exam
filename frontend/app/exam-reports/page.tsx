@@ -203,13 +203,13 @@ function getExamFormatBadge(s: any) {
 function getScheduleStatusBadge(s: any) {
   const st = computeScheduleStatus(s);
   if (st === 'ONGOING') {
-    return { label: 'Đang diễn ra', key: 'ONGOING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-bold' };
+    return { label: 'Đang diễn ra', key: 'ONGOING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-semibold' };
   }
   if (st === 'UPCOMING') {
-    return { label: 'Sắp diễn ra', key: 'UPCOMING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-bold' };
+    return { label: 'Sắp diễn ra', key: 'UPCOMING', dotClass: 'bg-blue-500', textClass: 'text-blue-700 font-semibold' };
   }
   if (st === 'CANCELLED') {
-    return { label: 'Đã hủy', key: 'CANCELLED', dotClass: 'bg-rose-500', textClass: 'text-rose-700 font-bold' };
+    return { label: 'Đã hủy', key: 'CANCELLED', dotClass: 'bg-rose-500', textClass: 'text-rose-700 font-semibold' };
   }
   return { label: 'Đã kết thúc', key: 'COMPLETED', dotClass: 'bg-slate-300', textClass: 'text-slate-500 font-medium' };
 }
@@ -779,7 +779,7 @@ export default function ExamReportsPage() {
 
                         {modalFilteredSchedules.length === 0 ? (
                           <div className="py-12 text-center">
-                            <p className="text-xs font-bold text-slate-500">Không tìm thấy ca thi phù hợp với bộ lọc hiện tại.</p>
+                            <p className="text-xs font-semibold text-slate-500">Không tìm thấy ca thi phù hợp với bộ lọc hiện tại.</p>
                             <button
                               type="button"
                               onClick={() => {
@@ -789,7 +789,7 @@ export default function ExamReportsPage() {
                                 setModalSubjectFilter('ALL');
                                 setModalStatusFilter('ALL');
                               }}
-                              className="mt-2 text-xs font-black text-blue-600 hover:underline cursor-pointer"
+                              className="mt-2 text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
                             >
                               Xóa bộ lọc để xem tất cả
                             </button>
@@ -821,8 +821,8 @@ export default function ExamReportsPage() {
                               >
                                 <div className="flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold text-slate-900">{name}</span>
-                                    <span className="text-[10.5px] font-sans tabular-nums font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                                    <span className="text-xs font-semibold text-slate-900">{name}</span>
+                                    <span className="text-[10.5px] font-mono tabular-nums font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
                                       {code}
                                     </span>
                                   </div>
@@ -895,7 +895,7 @@ export default function ExamReportsPage() {
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
-            <span className="text-xs font-bold text-slate-500">Trạng thái:</span>
+            <span className="text-xs font-semibold text-slate-500">Trạng thái:</span>
             <div className="relative">
               <select
                 value={statusFilter}
@@ -903,7 +903,7 @@ export default function ExamReportsPage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
                 <option value="ALL">Tất cả Thí sinh</option>
                 <option value="SUBMITTED">Đã tham gia / Nộp bài</option>
@@ -935,7 +935,7 @@ export default function ExamReportsPage() {
             ))}
           </div>
         ) : !paginatedCandidates.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-bold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy thí sinh phù hợp trong ca thi này.
           </div>
         ) : (

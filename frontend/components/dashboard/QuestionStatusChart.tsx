@@ -70,7 +70,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
     <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
       {/* Header & Dropdown */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-        <h3 className="text-[17px] font-bold text-slate-900">Thống kê trạng thái câu hỏi</h3>
+        <h3 className="text-[17px] font-semibold text-slate-900">Thống kê trạng thái câu hỏi</h3>
 
         <FilterSelect
           size="sm"
@@ -122,7 +122,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
           {/* Center Text */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-[11px] font-medium text-slate-400">Tổng</span>
-            <span className="text-xl font-black text-slate-900 leading-tight my-0.5">
+            <span className="text-xl font-semibold text-slate-900 leading-tight my-0.5">
               {totalCount.toLocaleString('vi-VN')}
             </span>
             <span className="text-[11px] font-medium text-slate-400">câu hỏi</span>
@@ -140,7 +140,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                   <span className="font-semibold text-slate-700 whitespace-nowrap">{item.label}</span>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="font-extrabold text-slate-900">{item.count.toLocaleString('vi-VN')}</span>
+                  <span className="font-semibold text-slate-900">{item.count.toLocaleString('vi-VN')}</span>
                   <span className="w-12 text-right text-xs font-semibold text-slate-400">{item.percent}</span>
                 </div>
               </div>

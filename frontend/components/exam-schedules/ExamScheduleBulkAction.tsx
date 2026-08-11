@@ -31,13 +31,13 @@ export function ExamScheduleBulkAction({
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900 p-2.5 px-4 text-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-200">
       <div className="flex items-center gap-2 pr-3 border-r border-slate-700">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 font-extrabold text-xs">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 font-semibold text-xs">
           {selectedCount}
         </span>
-        <span className="text-xs font-extrabold">Đã chọn</span>
+        <span className="text-xs font-semibold">Đã chọn</span>
       </div>
 
-      <div className="flex items-center gap-2 text-xs font-bold">
+      <div className="flex items-center gap-2 text-xs font-semibold">
         {onAssignSupervisors && (
           <button
             type="button"

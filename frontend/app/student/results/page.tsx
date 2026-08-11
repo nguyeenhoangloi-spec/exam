@@ -550,21 +550,21 @@ export default function StudentResultsPage() {
     switch (status) {
       case 'PASSED':
         return (
-          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#16A34A]">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#16A34A]">
             <CheckCircle2 className="w-4 h-4 shrink-0 text-[#16A34A]" />
             <span>Đạt</span>
           </span>
         );
       case 'FAILED':
         return (
-          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#DC2626]">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#DC2626]">
             <XCircle className="w-4 h-4 shrink-0 text-[#DC2626]" />
             <span>Chưa đạt</span>
           </span>
         );
       case 'GRADING':
         return (
-          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#2563EB]">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#2563EB]">
             <Loader2 className="w-4 h-4 shrink-0 text-[#2563EB] animate-spin" />
             <span>Đang chấm</span>
           </span>
@@ -572,7 +572,7 @@ export default function StudentResultsPage() {
       case 'UNPUBLISHED':
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 font-bold text-xs text-[#D97706]">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#D97706]">
             <Clock className="w-4 h-4 shrink-0 text-[#D97706]" />
             <span>Chờ công bố</span>
           </span>
@@ -618,7 +618,7 @@ export default function StudentResultsPage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-1">
-            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+            <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
               Kết Quả Thi Sinh Viên
             </h1>
             <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
@@ -661,7 +661,7 @@ export default function StudentResultsPage() {
                     <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">
                       {item.title}
                     </span>
-                    <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
+                    <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
                       {item.value}
                       {item.unit || ''}
                     </p>
@@ -770,7 +770,7 @@ export default function StudentResultsPage() {
         {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
         <div className="flex flex-wrap items-center justify-between gap-3 py-1">
           <span className="text-[15px] font-normal text-[#334155]">
-            <span className="font-bold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi môn học
+            <span className="font-semibold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi môn học
           </span>
 
           <div className="flex items-center gap-2">
@@ -779,7 +779,7 @@ export default function StudentResultsPage() {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
               >
                 <option value="date_desc">Ngày thi: Mới nhất</option>
                 <option value="date_asc">Ngày thi: Cũ nhất</option>
@@ -796,7 +796,7 @@ export default function StudentResultsPage() {
               <button
                 type="button"
                 onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
                 <span>Chọn cột</span>
@@ -809,7 +809,7 @@ export default function StudentResultsPage() {
                   onMouseLeave={() => setOpenColumnMenu(false)}
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                    <span className="font-extrabold text-slate-900 text-xs">Hiển thị cột</span>
+                    <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
                     <span className="text-[10px] text-slate-400 font-medium">Click để ẩn/hiện</span>
                   </div>
 
@@ -819,7 +819,7 @@ export default function StudentResultsPage() {
                       return (
                         <label
                           key={col.key}
-                          className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 select-none transition"
+                          className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition"
                         >
                           <span className="flex items-center gap-2">
                             <input
@@ -895,7 +895,7 @@ export default function StudentResultsPage() {
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
               <Award className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-black text-slate-800">Không tìm thấy kết quả thi nào</h3>
+            <h3 className="text-base font-semibold text-slate-800">Không tìm thấy kết quả thi nào</h3>
             <p className="text-xs font-medium text-slate-500 max-w-sm">
               Không có kết quả thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
@@ -923,7 +923,7 @@ export default function StudentResultsPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                          className="font-mono tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                         >
                           {item.subjectCode}
                         </button>
@@ -937,7 +937,7 @@ export default function StudentResultsPage() {
                     <div>
                       <h4
                         onClick={() => setDetailItem(item)}
-                        className="text-sm font-extrabold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+                        className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
                       >
                         {item.subjectName}
                       </h4>
@@ -947,11 +947,11 @@ export default function StudentResultsPage() {
                     <div className="space-y-1 text-xs text-slate-600 font-medium pt-1">
                       <div className="flex items-center justify-between">
                         <span className="text-slate-400">Hình thức:</span>
-                        <strong className="font-extrabold text-slate-900">{formatExamType(item.examType)}</strong>
+                        <strong className="font-semibold text-slate-900">{formatExamType(item.examType)}</strong>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-slate-400">Điểm số:</span>
-                        <span className="font-black text-sm text-[#0F172A]">
+                        <span className="font-semibold text-sm text-[#0F172A]">
                           {item.score !== null ? item.score.toFixed(1) : '---'}
                         </span>
                       </div>
@@ -1011,23 +1011,23 @@ export default function StudentResultsPage() {
                         />
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <span className="font-sans tabular-nums font-black text-xs text-[#475569]">
+                        <span className="font-mono tabular-nums font-medium text-xs text-[#475569]">
                           {item.subjectCode}
                         </span>
                       </td>
                       <td className="p-2 min-w-[200px]">
                         <p
-                          className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600"
+                          className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600"
                           onClick={() => setDetailItem(item)}
                         >
                           {item.subjectName}
                         </p>
                       </td>
-                      <td className="p-2 whitespace-nowrap text-xs font-bold text-slate-700">{item.periodName}</td>
+                      <td className="p-2 whitespace-nowrap text-xs font-semibold text-slate-700">{item.periodName}</td>
                       <td className="p-2 whitespace-nowrap text-center text-xs font-medium text-slate-600">
                         {new Date(item.examDate).toLocaleDateString('vi-VN')}
                       </td>
-                      <td className="p-2 whitespace-nowrap text-center font-black text-slate-900">
+                      <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-900">
                         {item.score !== null ? item.score.toFixed(1) : '---'}
                       </td>
                       <td className="p-2 whitespace-nowrap">
@@ -1097,7 +1097,7 @@ export default function StudentResultsPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="font-sans tabular-nums font-black text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+                            className="font-mono tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
                           >
                             {item.subjectCode}
                           </button>
@@ -1109,7 +1109,7 @@ export default function StudentResultsPage() {
                         <td className="p-3.5 min-w-[240px]">
                           <p
                             onClick={() => setDetailItem(item)}
-                            className="font-extrabold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
+                            className="font-semibold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
                           >
                             {item.subjectName}
                           </p>
@@ -1148,7 +1148,7 @@ export default function StudentResultsPage() {
                       {visibleColumns.score !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
                           {item.score !== null ? (
-                            <span className={`font-black text-xs ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
+                            <span className={`font-semibold text-xs ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
                               {item.score.toFixed(1)}
                             </span>
                           ) : (
@@ -1189,9 +1189,9 @@ export default function StudentResultsPage() {
         {totalItems > 0 && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
             <p className="text-xs font-semibold text-slate-500">
-              Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
-              <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
-              <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Kết quả thi
+              Hiển thị <span className="font-semibold text-slate-900">{startItem}</span> -{' '}
+              <span className="font-semibold text-slate-900">{endItem}</span> trong{' '}
+              <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Kết quả thi
             </p>
 
             <div className="flex items-center gap-3">
@@ -1209,7 +1209,7 @@ export default function StudentResultsPage() {
                 {paginationPages.map((p, idx) => {
                   if (p === '...') {
                     return (
-                      <span key={`dots-${idx}`} className="px-1 text-xs font-bold text-slate-400">
+                      <span key={`dots-${idx}`} className="px-1 text-xs font-semibold text-slate-400">
                         ...
                       </span>
                     );
@@ -1223,7 +1223,7 @@ export default function StudentResultsPage() {
                       key={pNum}
                       type="button"
                       onClick={() => setPage(pNum)}
-                      className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-bold transition cursor-pointer shadow-2xs ${isCurrent
+                      className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-semibold transition cursor-pointer shadow-2xs ${isCurrent
                         ? 'bg-blue-600 text-white shadow-xs'
                         : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
@@ -1251,7 +1251,7 @@ export default function StudentResultsPage() {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-2 text-xs font-bold text-slate-700 focus:border-blue-500 focus:outline-none transition cursor-pointer shadow-2xs"
+                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none transition cursor-pointer shadow-2xs"
                 >
                   <option value={8}>8 dòng / trang</option>
                   <option value={15}>15 dòng / trang</option>
@@ -1294,18 +1294,18 @@ export default function StudentResultsPage() {
                       {detailItem.mcqScore !== null && (
                         <div className="flex items-center justify-between text-[13px] text-slate-700">
                           <span className="font-medium">Trắc nghiệm</span>
-                          <span className="font-bold font-sans tabular-nums">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
+                          <span className="font-semibold font-mono tabular-nums">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
                         </div>
                       )}
                       {detailItem.essayScore !== null && (
                         <div className="flex items-center justify-between text-[13px] text-slate-700">
                           <span className="font-medium">Tự luận</span>
-                          <span className="font-bold font-sans tabular-nums">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
+                          <span className="font-semibold font-mono tabular-nums">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
                         </div>
                       )}
                       <div className="border-t border-slate-200 pt-2 flex items-center justify-between">
-                        <span className="text-[13px] font-bold text-slate-800">Tổng điểm</span>
-                        <span className={`font-sans tabular-nums font-black text-lg ${detailItem.score >= 4.0 ? 'text-blue-600' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10</span>
+                        <span className="text-[13px] font-semibold text-slate-800">Tổng điểm</span>
+                        <span className={`font-mono tabular-nums font-medium text-lg ${detailItem.score >= 4.0 ? 'text-blue-600' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10</span>
                       </div>
                     </div>
                   ) : (

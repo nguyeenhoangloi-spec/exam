@@ -47,7 +47,7 @@ export function ExamReportTableToolbar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
       <span className="text-xs font-semibold text-slate-600">
-        <span className="font-bold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
+        <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
       </span>
 
       <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export function ExamReportTableToolbar({
           <select
             value={sortOrder}
             onChange={(e) => onSortChange?.(e.target.value)}
-            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="score_desc">Điểm thi: Cao xuống thấp</option>
             <option value="score_asc">Điểm thi: Thấp đến cao</option>
@@ -71,7 +71,7 @@ export function ExamReportTableToolbar({
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
             <span>Chọn cột</span>
@@ -84,7 +84,7 @@ export function ExamReportTableToolbar({
               onMouseLeave={() => setOpenColumnMenu(false)}
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span className="font-bold text-slate-900 text-xs">Hiển thị cột</span>
+                <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
                 <span className="text-[11px] text-slate-400 font-normal">Click để ẩn/hiện</span>
               </div>
 
@@ -123,7 +123,7 @@ export function ExamReportTableToolbar({
             onClick={() => onViewModeChange?.('list')}
             className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'list'
-                ? 'bg-blue-50 text-blue-600 font-bold border border-blue-200'
+                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
             title="Dạng danh sách"
@@ -136,7 +136,7 @@ export function ExamReportTableToolbar({
             onClick={() => onViewModeChange?.('grid')}
             className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'grid'
-                ? 'bg-blue-50 text-blue-600 font-bold border border-blue-200'
+                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
             title="Dạng lưới"
@@ -149,7 +149,7 @@ export function ExamReportTableToolbar({
             onClick={() => onViewModeChange?.('compact')}
             className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'compact'
-                ? 'bg-blue-50 text-blue-600 font-bold border border-blue-200'
+                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
             title="Dạng thu gọn"

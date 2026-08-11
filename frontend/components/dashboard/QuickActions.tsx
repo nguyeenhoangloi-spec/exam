@@ -101,7 +101,7 @@ export function QuickActions() {
         <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-50 text-blue-600">
           <Zap className="h-3.5 w-3.5 fill-blue-600" />
         </span>
-        <h3 className="text-sm font-black text-slate-900">Thao tác nhanh</h3>
+        <h3 className="text-sm font-semibold text-slate-900">Thao tác nhanh</h3>
       </div>
 
       {/* Grid 8 Buttons Horizontally across 8 cols on desktop */}
@@ -113,7 +113,7 @@ export function QuickActions() {
             onClick={() => router.push(route)}
             className="group flex flex-col items-center justify-center rounded-xl border border-slate-200/80 bg-white p-2.5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs hover:border-blue-300 hover:bg-blue-50/20 active:scale-98 cursor-pointer"
           >
-            <div className={`flex h-8 w-8 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-110 mb-1.5 ${iconBg} ${iconColor}`}>
+            <div className={`flex h-8 w-8 items-center justify-center rounded-xl font-semibold transition-transform group-hover:scale-110 mb-1.5 ${iconBg} ${iconColor}`}>
               <Icon className="h-4 w-4 stroke-[2.2]" />
             </div>
             <span className="text-[15px] font-semibold text-[#0F172A] group-hover:text-blue-700 leading-tight block truncate w-full">

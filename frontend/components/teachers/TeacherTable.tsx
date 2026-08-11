@@ -78,7 +78,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {t.teacherCode}
                     </button>
@@ -181,7 +181,7 @@ export function TeacherTable({
               <th className="p-2 pr-3 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-medium">
+        <tbody className="divide-y divide-slate-100 font-normal">
             {teachers.map((t) => {
               const isChecked = selected.includes(t.id);
               const degreeBadge = DEGREE_BADGE[t.degree] || 'bg-slate-50 text-slate-600 border-slate-200';
@@ -195,12 +195,12 @@ export function TeacherTable({
                       className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
-                  <td className="p-2 font-bold text-slate-700 font-sans tabular-nums whitespace-nowrap">{t.teacherCode}</td>
+                  <td className="p-2 font-medium text-slate-700 font-mono tabular-nums whitespace-nowrap">{t.teacherCode}</td>
                   <td className="p-2 min-w-[160px]">
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+                      className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                     >
                       {t.fullName}
                     </button>
@@ -275,7 +275,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="font-sans tabular-nums text-[14px] font-bold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+                      className="font-mono tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
                     >
                       {t.teacherCode}
                     </button>
@@ -295,7 +295,7 @@ export function TeacherTable({
                 )}
 
                 {visibleColumns.degree !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-xs font-bold text-slate-800">
+                  <td className="p-3.5 whitespace-nowrap text-xs font-medium text-slate-800">
                     {t.degree || 'TS'}
                   </td>
                 )}
@@ -304,7 +304,7 @@ export function TeacherTable({
                   <td className="p-3.5 min-w-[160px]">
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 font-semibold">{t.department?.name || '---'}</span>
+                      <span className="text-slate-700 font-normal">{t.department?.name || '---'}</span>
                     </div>
                   </td>
                 )}

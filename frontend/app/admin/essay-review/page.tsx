@@ -371,7 +371,7 @@ export default function AdminEssayReviewPage() {
       {/* Page Header matching system standards */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-1">
-          <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+          <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
             Duyệt & Quản Lý Bài Thi Tự Luận
           </h1>
           <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
@@ -393,7 +393,7 @@ export default function AdminEssayReviewPage() {
       {message && (
         <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5 text-xs font-semibold text-blue-800 flex items-center justify-between shadow-2xs">
           <span>{message}</span>
-          <button onClick={() => setMessage('')} className="text-blue-500 hover:text-blue-700 font-bold ml-4">
+          <button onClick={() => setMessage('')} className="text-blue-500 hover:text-blue-700 font-semibold ml-4">
             ✕
           </button>
         </div>
@@ -404,7 +404,7 @@ export default function AdminEssayReviewPage() {
         <div className="lg:col-span-4 space-y-4">
           <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Danh sách bài thi ({filteredRows.length}/{rows.length})
               </span>
               {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
@@ -542,8 +542,8 @@ export default function AdminEssayReviewPage() {
                         <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
                         <StatusBadge status={row.gradingStatus} />
                       </div>
-                      <p className="text-[13px] text-[#64748B] font-sans tabular-nums font-normal">
-                        Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-[#0F172A] font-bold">{row.totalScore ?? 'Chưa chấm'}</strong>
+                      <p className="text-[13px] text-[#64748B] font-mono tabular-nums font-normal">
+                        Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-[#0F172A] font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
                       </p>
                       <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
                         <span className="truncate flex-1 font-medium text-[#334155]">
@@ -575,17 +575,17 @@ export default function AdminEssayReviewPage() {
               {/* Attempt Meta */}
               <div className="flex justify-between items-start border-b border-slate-100 pb-4 flex-wrap gap-2">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">{selected.student?.fullName}</h2>
-                  <p className="text-xs text-slate-500 font-sans tabular-nums">
+                  <h2 className="text-lg font-semibold text-slate-900">{selected.student?.fullName}</h2>
+                  <p className="text-xs text-slate-500 font-mono tabular-nums">
                     Mã SV: {selected.student?.studentCode} · Lớp: {selected.student?.className || 'N/A'}
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-sans tabular-nums font-black text-slate-900">
-                    {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-bold">/ {selected.maxScore || 10}đ</span>
+                  <span className="text-2xl font-mono tabular-nums font-medium text-slate-900">
+                    {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-semibold">/ {selected.maxScore || 10}đ</span>
                   </span>
                   {selected.penaltyPoints > 0 && (
-                    <p className="text-xs font-bold text-rose-600">Phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})</p>
+                    <p className="text-xs font-semibold text-rose-600">Phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})</p>
                   )}
                 </div>
               </div>
@@ -596,14 +596,14 @@ export default function AdminEssayReviewPage() {
                   const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
                   return (
                     <div key={q.questionId || idx} className="rounded-xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
-                      <div className="flex justify-between font-bold text-xs text-slate-900 border-b border-slate-200 pb-2">
+                      <div className="flex justify-between font-semibold text-xs text-slate-900 border-b border-slate-200 pb-2">
                         <span>Câu {idx + 1}: {q.content}</span>
-                        <span className="text-slate-900 font-sans tabular-nums font-black">{ans?.finalScore ?? '--'} / {q.score}đ</span>
+                        <span className="text-slate-900 font-mono tabular-nums font-medium">{ans?.finalScore ?? '--'} / {q.score}đ</span>
                       </div>
 
                       {/* Student Answer */}
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase text-slate-400">Bài làm sinh viên:</p>
+                        <p className="text-[10px] font-semibold uppercase text-slate-400">Bài làm sinh viên:</p>
                         <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-800 whitespace-pre-wrap">
                           {ans?.textAnswer || <span className="italic text-slate-400">Không có văn bản</span>}
                         </div>
@@ -612,7 +612,7 @@ export default function AdminEssayReviewPage() {
                       {/* Files */}
                       {ans?.submissionFiles?.length > 0 && (
                         <div className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase text-slate-400">File đính kèm:</p>
+                          <p className="text-[10px] font-semibold uppercase text-slate-400">File đính kèm:</p>
                           <div className="flex gap-2 flex-wrap">
                             {ans.submissionFiles.map((f: any) => (
                               <a
@@ -620,7 +620,7 @@ export default function AdminEssayReviewPage() {
                                 href={f.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition"
                               >
                                 <Download className="w-3.5 h-3.5" />
                                 {f.fileName} ({(f.size / 1024 / 1024).toFixed(2)} MB)
@@ -633,16 +633,16 @@ export default function AdminEssayReviewPage() {
                       {/* Rubric Grades */}
                       {q.rubric?.length > 0 && (
                         <div className="space-y-2 pt-2 border-t border-slate-200">
-                          <p className="text-[10px] font-bold uppercase text-slate-400">Điểm theo Rubric:</p>
+                          <p className="text-[10px] font-semibold uppercase text-slate-400">Điểm theo Rubric:</p>
                           {q.rubric.map((r: any) => {
                             const g = (ans?.essayGrades || []).find((item: any) => item.criterionId === r.id);
                             return (
                               <div key={r.id} className="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
                                 <div>
-                                  <span className="font-bold text-slate-800">{r.label}: </span>
+                                  <span className="font-semibold text-slate-800">{r.label}: </span>
                                   <span className="text-slate-600">{g?.comment || 'Không có nhận xét'}</span>
                                 </div>
-                                <span className="font-sans tabular-nums font-bold text-slate-700">{g?.score ?? 0} / {r.maxScore}đ</span>
+                                <span className="font-mono tabular-nums font-medium text-slate-700">{g?.score ?? 0} / {r.maxScore}đ</span>
                               </div>
                             );
                           })}
@@ -652,7 +652,7 @@ export default function AdminEssayReviewPage() {
                       {/* AI Suggestion */}
                       {ans?.aiSuggestedScore !== undefined && ans?.aiSuggestedScore !== null && (
                         <div className="p-3 rounded-xl bg-blue-50/70 text-xs text-blue-900 space-y-1">
-                          <div className="flex justify-between font-bold">
+                          <div className="flex justify-between font-semibold">
                             <span className="flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-blue-600" /> AI Đề xuất: {ans.aiSuggestedScore}đ</span>
                             <span>Tin cậy: {Math.round((ans.aiConfidence || 0) * 100)}%</span>
                           </div>
@@ -663,7 +663,7 @@ export default function AdminEssayReviewPage() {
                       {/* Score History */}
                       {ans?.gradeHistories?.length > 0 && (
                         <div className="p-3 rounded-lg bg-slate-100 text-xs space-y-1">
-                          <p className="font-bold text-slate-600 flex items-center gap-1">
+                          <p className="font-semibold text-slate-600 flex items-center gap-1">
                             <History className="w-3.5 h-3.5" /> Lịch sử chỉnh điểm ({ans.gradeHistories.length})
                           </p>
                           {ans.gradeHistories.map((h: any) => (
@@ -795,9 +795,9 @@ export default function AdminEssayReviewPage() {
                           step={0.5}
                           value={penaltyInput}
                           onChange={(e) => setPenaltyInput(Number(e.target.value))}
-                          className="w-12 text-xs font-black text-center text-slate-900 focus:outline-none"
+                          className="w-12 text-xs font-semibold text-center text-slate-900 focus:outline-none"
                         />
-                        <span className="text-[11px] font-bold text-slate-800 ml-1">điểm</span>
+                        <span className="text-[11px] font-semibold text-slate-800 ml-1">điểm</span>
                       </div>
                     </div>
                     <Button

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
@@ -41,9 +41,9 @@ export function SubjectPaginationBar({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3">
       <p className="text-xs font-semibold text-slate-500">
-        Hiển thị <span className="font-extrabold text-slate-900">{startItem}</span> -{' '}
-        <span className="font-extrabold text-slate-900">{endItem}</span> trong{' '}
-        <span className="font-extrabold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Môn học
+        Hiển thị <span className="font-semibold text-slate-900">{startItem}</span> -{' '}
+        <span className="font-semibold text-slate-900">{endItem}</span> trong{' '}
+        <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Môn học
       </p>
 
       <div className="flex items-center gap-3">
@@ -61,7 +61,7 @@ export function SubjectPaginationBar({
           {pages.map((p, idx) => {
             if (p === '...') {
               return (
-                <span key={`dots-${idx}`} className="px-1 text-xs font-bold text-slate-400">
+                <span key={`dots-${idx}`} className="px-1 text-xs font-semibold text-slate-400">
                   ...
                 </span>
               );
@@ -75,7 +75,7 @@ export function SubjectPaginationBar({
                 key={pNum}
                 type="button"
                 onClick={() => onPage(pNum)}
-                className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-bold transition cursor-pointer shadow-2xs ${
+                className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-semibold transition cursor-pointer shadow-2xs ${
                   isCurrent
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -101,7 +101,7 @@ export function SubjectPaginationBar({
           <select
             value={limit}
             onChange={(e) => onLimit(Number(e.target.value))}
-            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-extrabold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value={10}>10 / trang</option>
             <option value={20}>20 / trang</option>

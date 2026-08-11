@@ -81,23 +81,23 @@ export function ExamReportFiltersCard({
       {/* ── 1. Integrated Active Schedule Banner ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
         <div className="flex items-center gap-2.5 flex-wrap min-w-0">
-          <span className="px-2.5 py-0.5 rounded-md bg-blue-600 text-white text-[11px] font-extrabold uppercase tracking-wider shrink-0">
+          <span className="px-2.5 py-0.5 rounded-md bg-blue-600 text-white text-[11px] font-semibold uppercase tracking-wider shrink-0">
             {activeTypeBadge?.label || 'Chính thức'}
           </span>
 
           {reportSchedule ? (
             <>
-              <h3 className="text-xs font-bold text-slate-900 truncate">
+              <h3 className="text-xs font-semibold text-slate-900 truncate">
                 {reportSchedule.subjectName}
               </h3>
-              <span className="text-[11px] font-sans tabular-nums font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80 shrink-0">
+              <span className="text-[11px] font-mono tabular-nums font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80 shrink-0">
                 {reportSchedule.subjectCode}
               </span>
               <span className="text-xs text-slate-500 font-medium hidden xl:inline-block">
                 • {reportSchedule.periodName}
               </span>
               <span className="text-xs text-slate-700 font-semibold shrink-0">
-                • Thời gian: <strong className="text-slate-900 font-extrabold">{reportSchedule.startTime} – {reportSchedule.endTime} ({formattedDate})</strong>
+                • Thời gian: <strong className="text-slate-900 font-semibold">{reportSchedule.startTime} – {reportSchedule.endTime} ({formattedDate})</strong>
               </span>
             </>
           ) : (
@@ -114,7 +114,7 @@ export function ExamReportFiltersCard({
           disabled={loadingSchedules}
           onClick={onOpenSchedulePicker}
           leftIcon={<Calendar className="h-3.5 w-3.5 text-blue-600" />}
-          className="h-8 px-3 text-xs font-bold text-blue-600 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 shrink-0 self-start md:self-auto shadow-2xs"
+          className="h-8 px-3 text-xs font-semibold text-blue-600 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 shrink-0 self-start md:self-auto shadow-2xs"
         >
           Đổi ca thi khác
         </Button>
@@ -124,7 +124,7 @@ export function ExamReportFiltersCard({
       <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100">
         <div className="flex items-center gap-2">
           <Filter className="h-3.5 w-3.5 text-blue-600" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
             Bộ lọc thống kê nâng cao
           </h2>
           {summaryLoading && <span className="text-xs font-semibold text-blue-600 ml-2">Đang cập nhật...</span>}
@@ -146,7 +146,7 @@ export function ExamReportFiltersCard({
       {/* ── 3. Filters Input Grid (Responsive 3 Columns) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
         <div>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Kỳ thi
           </label>
           <select
@@ -164,7 +164,7 @@ export function ExamReportFiltersCard({
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Môn học
           </label>
           <select
@@ -182,7 +182,7 @@ export function ExamReportFiltersCard({
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Khoa / Bộ môn
           </label>
           <select
@@ -200,7 +200,7 @@ export function ExamReportFiltersCard({
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Lớp học
           </label>
           <select
@@ -218,7 +218,7 @@ export function ExamReportFiltersCard({
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Từ ngày
           </label>
           <input
@@ -230,7 +230,7 @@ export function ExamReportFiltersCard({
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Đến ngày
           </label>
           <input

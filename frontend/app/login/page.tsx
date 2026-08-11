@@ -184,25 +184,25 @@ export default function LoginPage() {
                 <GraduationCap className="w-7 h-7 text-white" />
               </div>
               <div>
-                <p className="text-[12px] font-bold tracking-[0.2em] text-blue-200 uppercase">EXAM SYSTEM</p>
-                <h1 className="text-sm font-extrabold text-white leading-tight tracking-tight uppercase">
+                <p className="text-[12px] font-semibold tracking-[0.2em] text-blue-200 uppercase">EXAM SYSTEM</p>
+                <h1 className="text-sm font-semibold text-white leading-tight tracking-tight uppercase">
                   HỆ THỐNG QUẢN LÝ KHẢO THÍ
                 </h1>
               </div>
             </div>
 
             {/* 2. Academic Term Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-bold tracking-wider uppercase backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-semibold tracking-wider uppercase backdrop-blur-md">
               <CalendarDays className="w-3.5 h-3.5 text-blue-200" />
               <span>NĂM HỌC 2025 – 2026 &nbsp;•&nbsp; HỌC KỲ II</span>
             </div>
 
             {/* 3. Hero Titles & Subtitle */}
             <div className="space-y-2 pt-2">
-              <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
+              <h2 className="text-3xl xl:text-4xl font-semibold text-white leading-tight tracking-tight">
                 Quản lý khảo thí
               </h2>
-              <p className="text-xl xl:text-2xl font-bold text-blue-100/90 leading-snug">
+              <p className="text-xl xl:text-2xl font-semibold text-blue-100/90 leading-snug">
                 Đăng nhập tập trung, truy cập nhanh
               </p>
               <p className="text-xs xl:text-sm text-blue-100/80 leading-relaxed font-normal pt-1 max-w-md">
@@ -221,7 +221,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-2.5 shrink-0">
                 <ShieldCheck className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xs font-bold text-white leading-tight">Xác thực an toàn</h3>
+              <h3 className="text-xs font-semibold text-white leading-tight">Xác thực an toàn</h3>
               <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Đăng nhập bằng Google bảo mật và tin cậy
               </p>
@@ -231,7 +231,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-2.5 shrink-0">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xs font-bold text-white leading-tight">Phân quyền tự động</h3>
+              <h3 className="text-xs font-semibold text-white leading-tight">Phân quyền tự động</h3>
               <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Hệ thống tự động xác định vai trò và quyền truy cập
               </p>
@@ -241,7 +241,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-2.5 shrink-0">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xs font-bold text-white leading-tight">Truy cập nhanh</h3>
+              <h3 className="text-xs font-semibold text-white leading-tight">Truy cập nhanh</h3>
               <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Một lần đăng nhập, sử dụng mọi tính năng
               </p>
@@ -276,8 +276,8 @@ export default function LoginPage() {
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-xs font-black text-slate-900 dark:text-white leading-tight">EXAM SYSTEM</p>
-              <p className="text-[12px] font-bold text-blue-600 uppercase tracking-wider">Hệ thống khảo thí</p>
+              <p className="text-xs font-semibold text-slate-900 dark:text-white leading-tight">EXAM SYSTEM</p>
+              <p className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Hệ thống khảo thí</p>
             </div>
           </div>
           <div className="ml-auto">
@@ -325,7 +325,7 @@ export default function LoginPage() {
               <div className="mb-6 space-y-1.5">
                 <h2
                   className={[
-                    'text-2xl font-bold tracking-tight leading-tight',
+                    'text-2xl font-semibold tracking-tight leading-tight',
                     isDark ? 'text-white' : 'text-[#0F172A]',
                   ].join(' ')}
                 >
@@ -484,7 +484,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => router.push('/contact')}
-                    className="text-[#2563EB] hover:text-[#1D4ED8] font-bold transition cursor-pointer hover:underline"
+                    className="text-[#2563EB] hover:text-[#1D4ED8] font-semibold transition cursor-pointer hover:underline"
                   >
                     Liên hệ quản trị hệ thống
                   </button>

@@ -84,7 +84,7 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p.id)}
-                      className="font-sans tabular-nums text-xs font-black text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="font-mono tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       Mã đề: {p.paperCode}
                     </button>
@@ -96,7 +96,7 @@ export function ExamPaperTable({
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {subCode && (
-                      <span className="text-[13px] font-semibold text-[#475569] font-sans tabular-nums">
+                      <span className="text-[13px] font-semibold text-[#475569] font-mono tabular-nums">
                         {subCode}
                       </span>
                     )}
@@ -136,7 +136,7 @@ export function ExamPaperTable({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(p.id)}
@@ -221,7 +221,7 @@ export function ExamPaperTable({
                     />
                   </td>
                   <td className="p-2 whitespace-nowrap">
-                    <span className="font-sans tabular-nums font-bold text-[14px] text-[#0F172A]">
+                    <span className="font-mono tabular-nums font-medium text-[14px] text-[#0F172A]">
                       {p.paperCode}
                     </span>
                   </td>
@@ -237,7 +237,7 @@ export function ExamPaperTable({
                   <td className="p-2 whitespace-nowrap font-normal text-[#334155]">
                     {dateStr ? `${dateStr} (${timeStr || ''})` : `${p.durationMinutes} phút`}
                   </td>
-                  <td className="p-2 whitespace-nowrap text-[15px] font-bold text-[#0F172A]">
+                  <td className="p-2 whitespace-nowrap text-[15px] font-semibold text-[#0F172A]">
                     {p.totalScore}đ
                   </td>
                   <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -310,7 +310,7 @@ export function ExamPaperTable({
                       <button
                         type="button"
                         onClick={() => onDetail(p.id)}
-                        className="font-sans tabular-nums text-xs font-extrabold text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                        className="font-mono tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                       >
                         Mã {p.paperCode}
                       </button>
@@ -326,14 +326,14 @@ export function ExamPaperTable({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {subCode && (
-                          <span className="font-sans tabular-nums font-bold text-slate-900 text-xs">
+                          <span className="font-mono tabular-nums font-medium text-slate-900 text-xs">
                             [{subCode}]
                           </span>
                         )}
                         <button
                           type="button"
                           onClick={() => onDetail(p.id)}
-                          className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
+                          className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
                         >
                           {subName}
                         </button>
@@ -355,7 +355,7 @@ export function ExamPaperTable({
 
                 {visibleColumns.questionCount !== false && (
                   <td className="p-3.5 whitespace-nowrap text-xs">
-                    <span className="font-extrabold text-slate-900">{qCount} câu</span>
+                    <span className="font-semibold text-slate-900">{qCount} câu</span>
                   </td>
                 )}
 
@@ -364,7 +364,7 @@ export function ExamPaperTable({
                     <div className="space-y-0.5">
                       {dateStr ? (
                         <p className="text-xs">
-                          <span className="font-extrabold text-slate-900">{dateStr}</span>
+                          <span className="font-semibold text-slate-900">{dateStr}</span>
                           {timeStr && <span className="text-slate-500 ml-1.5 font-medium">({timeStr})</span>}
                         </p>
                       ) : (
@@ -381,7 +381,7 @@ export function ExamPaperTable({
 
                 {visibleColumns.totalScore !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center text-xs">
-                    <span className="font-extrabold text-slate-900">{p.totalScore}đ</span>
+                    <span className="font-semibold text-slate-900">{p.totalScore}đ</span>
                   </td>
                 )}
 
