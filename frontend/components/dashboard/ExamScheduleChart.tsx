@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { ChevronDown, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { FilterSelect } from '../ui/FilterSelect';
 
 export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChart'] }) {
   const [timeFilter, setTimeFilter] = useState('7 ngày tới');
@@ -33,19 +34,17 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 className="text-[17px] font-bold text-slate-900">Lịch thi trong 7 ngày tới</h3>
 
-        <div className="relative">
-          <select
-            value={timeFilter}
-            onChange={(e) => setTimeFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-          >
-            <option value="7 ngày tới">7 ngày tới</option>
-            <option value="14 ngày tới">14 ngày tới</option>
-            <option value="30 ngày tới">30 ngày tới</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-        </div>
+        <FilterSelect
+          size="sm"
+          value={timeFilter}
+          onChange={(e) => setTimeFilter(e.target.value)}
+        >
+          <option value="7 ngày tới">7 ngày tới</option>
+          <option value="14 ngày tới">14 ngày tới</option>
+          <option value="30 ngày tới">30 ngày tới</option>
+        </FilterSelect>
       </div>
+
 
       {/* Subheader badge */}
       <div className="flex items-center gap-2.5 pt-1">

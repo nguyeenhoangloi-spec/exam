@@ -30,7 +30,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative flex items-center w-full">
           {leftIcon && (
-            <div className="absolute left-3.5 text-[#94A3B8] pointer-events-none shrink-0 flex items-center justify-center">
+            <div className="absolute left-3.5 text-[#1F2937] pointer-events-none shrink-0 flex items-center justify-center">
               {leftIcon}
             </div>
           )}
@@ -39,7 +39,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             type={type}
-            className={`w-full h-10 rounded-[10px] border bg-white px-3.5 text-[15px] text-[#0F172A] placeholder:text-[#94A3B8] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
+            className={`w-full h-10 rounded-[10px] border bg-white px-3.5 text-[15px] text-[#0F172A] placeholder:text-[#1F2937] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
               leftIcon ? 'pl-10' : ''
             } ${rightIcon ? 'pr-10' : ''} ${
               error
@@ -49,7 +49,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
 
-          {rightIcon && <div className="absolute right-3.5 text-[#94A3B8] shrink-0 flex items-center justify-center">{rightIcon}</div>}
+          {rightIcon && <div className="absolute right-3.5 text-[#1F2937] shrink-0 flex items-center justify-center">{rightIcon}</div>}
         </div>
 
         {error ? (
@@ -79,7 +79,7 @@ export function PasswordInput({ className = '', ...props }: Omit<InputProps, 'ty
           type="button"
           tabIndex={-1}
           onClick={() => setShowPassword((prev) => !prev)}
-          className="text-[#94A3B8] hover:text-[#334155] cursor-pointer p-1"
+          className="text-[#1F2937] hover:text-[#0F172A] cursor-pointer p-1"
         >
           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
@@ -165,7 +165,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
-          className={`w-full rounded-[10px] border bg-white p-3.5 text-[15px] text-[#0F172A] placeholder:text-[#94A3B8] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
+          className={`w-full rounded-[10px] border bg-white p-3.5 text-[15px] text-[#0F172A] placeholder:text-[#1F2937] font-normal transition duration-150 focus:outline-none disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed ${
             error
               ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-2 focus:ring-red-500/20'
               : 'border-slate-200/90 focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'

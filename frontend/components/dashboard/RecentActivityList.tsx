@@ -126,11 +126,10 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
         </div>
       ) : (
         <div className="py-12 text-center my-auto space-y-2 text-slate-400">
-          <Activity className="w-8 h-8 mx-auto text-slate-300" />
+          <Activity className="w-8 h-8 mx-auto text-slate-700" />
           <p className="text-xs font-semibold text-slate-500">Chưa có hoạt động gần đây nào</p>
         </div>
       )}
     </div>
   );
 }
-

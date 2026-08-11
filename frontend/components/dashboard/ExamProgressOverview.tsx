@@ -66,7 +66,7 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
         </div>
       ) : (
         <div className="py-12 text-center my-auto space-y-2 text-slate-400">
-          <Layers className="w-8 h-8 mx-auto text-slate-300" />
+          <Layers className="w-8 h-8 mx-auto text-slate-700" />
           <p className="text-xs font-semibold text-slate-500">Chưa có tiến độ kỳ thi nào</p>
         </div>
       )}
@@ -89,4 +89,3 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
     </div>
   );
 }
-

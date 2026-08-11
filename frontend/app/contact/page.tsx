@@ -361,7 +361,7 @@ export default function ContactSupportPage() {
                           </div>
                           <p className="text-[11px] text-slate-500 line-clamp-1 font-medium">{art.summary}</p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0 mt-1" />
+                        <ChevronRight className="h-4 w-4 text-slate-700 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0 mt-1" />
                       </div>
                     ))
                   ) : (

@@ -326,8 +326,8 @@ export function QuestionFormDialog({
                     )}
                     {mime.startsWith('video/') && (
                       <div className="flex flex-col items-center justify-center h-20 w-28 bg-slate-800 gap-1">
-                        <Video className="h-6 w-6 text-slate-300" />
-                        <span className="text-[13px] text-slate-300 truncate max-w-[100px]">{media.fileName}</span>
+                        <Video className="h-6 w-6 text-slate-700" />
+                        <span className="text-[13px] text-slate-700 truncate max-w-[100px]">{media.fileName}</span>
                       </div>
                     )}
                     {mime.startsWith('audio/') && (

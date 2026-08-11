@@ -91,7 +91,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
         </div>
       ) : (
         <div className="py-12 text-center my-auto space-y-2 text-slate-400">
-          <CalendarX className="w-8 h-8 mx-auto text-slate-300" />
+          <CalendarX className="w-8 h-8 mx-auto text-slate-700" />
           <p className="text-xs font-semibold text-slate-500">Chưa có kỳ thi nào sắp diễn ra</p>
         </div>
       )}

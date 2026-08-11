@@ -20,8 +20,10 @@ import { ExamPeriodKPICards } from '../../components/exam-periods/ExamPeriodKPIC
 import { ExamPeriodTableToolbar } from '../../components/exam-periods/ExamPeriodTableToolbar';
 import { ExamPeriodTable, computePeriodStatus } from '../../components/exam-periods/ExamPeriodTable';
 import { ExamPeriodPaginationBar } from '../../components/exam-periods/ExamPeriodPaginationBar';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 
 export default function ExamPeriodsPage() {
+
   usePageTitle('Quản lý Kỳ thi');
   const router = useRouter();
 
@@ -329,71 +331,63 @@ export default function ExamPeriodsPage() {
             {/* Học kỳ */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-500">Học kỳ:</span>
-              <div className="relative">
-                <select
-                  value={selectedSemester}
-                  onChange={(e) => {
-                    setSelectedSemester(e.target.value);
-                    setPage(1);
-                  }}
-                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
-                >
-                  <option value="">Tất cả học kỳ</option>
-                  <option value="HK1">Học kỳ I</option>
-                  <option value="HK2">Học kỳ II</option>
-                  <option value="HK3">Học kỳ Hè</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-              </div>
+              <FilterSelect
+                size="sm"
+                value={selectedSemester}
+                onChange={(e) => {
+                  setSelectedSemester(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value="">Tất cả học kỳ</option>
+                <option value="HK1">Học kỳ I</option>
+                <option value="HK2">Học kỳ II</option>
+                <option value="HK3">Học kỳ Hè</option>
+              </FilterSelect>
             </div>
 
             {/* Năm học */}
             {schoolYearsList.length > 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500">Năm học:</span>
-                <div className="relative">
-                  <select
-                    value={selectedSchoolYear}
-                    onChange={(e) => {
-                      setSelectedSchoolYear(e.target.value);
-                      setPage(1);
-                    }}
-                    className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
-                  >
-                    <option value="">Tất cả năm học</option>
-                    {schoolYearsList.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                </div>
+                <FilterSelect
+                  size="sm"
+                  value={selectedSchoolYear}
+                  onChange={(e) => {
+                    setSelectedSchoolYear(e.target.value);
+                    setPage(1);
+                  }}
+                >
+                  <option value="">Tất cả năm học</option>
+                  {schoolYearsList.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </FilterSelect>
               </div>
             )}
 
             {/* Trạng thái */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-500">Trạng thái:</span>
-              <div className="relative">
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => {
-                    setSelectedStatus(e.target.value);
-                    setPage(1);
-                  }}
-                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
-                >
-                  <option value="">Tất cả trạng thái</option>
-                  <option value="UPCOMING">Sắp diễn ra</option>
-                  <option value="ONGOING">Đang diễn ra</option>
-                  <option value="COMPLETED">Đã hoàn thành</option>
-                  <option value="CANCELLED">Đã hủy</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-              </div>
+              <FilterSelect
+                size="sm"
+                value={selectedStatus}
+                onChange={(e) => {
+                  setSelectedStatus(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="UPCOMING">Sắp diễn ra</option>
+                <option value="ONGOING">Đang diễn ra</option>
+                <option value="COMPLETED">Đã hoàn thành</option>
+                <option value="CANCELLED">Đã hủy</option>
+              </FilterSelect>
             </div>
           </div>
+
         </div>
 
         {/* Dynamic Table Action Toolbar */}

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, RefreshCw, Check } from 'lucide-react';
+import { FilterSelect } from '../ui/FilterSelect';
 
 interface ExamPeriodTableToolbarProps {
   totalCount: number;
@@ -48,19 +49,17 @@ export function ExamPeriodTableToolbar({
 
       <div className="flex items-center gap-2">
         {/* Sort */}
-        <div className="relative">
-          <select
-            value={sortOrder}
-            onChange={(e) => onSortChange?.(e.target.value)}
-            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-          >
-            <option value="newest">Sắp xếp: Mới nhất</option>
-            <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="date_desc">Ngày bắt đầu: Mới nhất</option>
-            <option value="date_asc">Ngày bắt đầu: Xa nhất</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-        </div>
+        <FilterSelect
+          size="md"
+          value={sortOrder}
+          onChange={(e) => onSortChange?.(e.target.value)}
+        >
+          <option value="newest">Sắp xếp: Mới nhất</option>
+          <option value="oldest">Sắp xếp: Cũ nhất</option>
+          <option value="date_desc">Ngày bắt đầu: Mới nhất</option>
+          <option value="date_asc">Ngày bắt đầu: Xa nhất</option>
+        </FilterSelect>
+
 
         {/* Column Selector */}
         <div className="relative">

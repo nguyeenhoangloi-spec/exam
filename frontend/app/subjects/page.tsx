@@ -749,7 +749,7 @@ export default function SubjectsPage() {
                     <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
                   ) : drawerClassSummary.length === 0 ? (
                     <div className="py-12 text-center">
-                      <BookMarked className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                      <BookMarked className="h-8 w-8 text-slate-700 mx-auto mb-2" />
                       <p className="text-xs font-bold text-slate-400">Chưa có lớp nào được gán vào môn học này.</p>
                       {currentUser?.role === 'ADMIN' && (
                         <button onClick={() => openEnrollClassModal(drawerSubject!)}
@@ -814,7 +814,7 @@ export default function SubjectsPage() {
                     <div className="space-y-2">{[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}</div>
                   ) : drawerEnrollments.length === 0 ? (
                     <div className="py-12 text-center">
-                      <Users className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                      <Users className="h-8 w-8 text-slate-700 mx-auto mb-2" />
                       <p className="text-xs font-bold text-slate-400">Không có sinh viên nào phù hợp.</p>
                     </div>
                   ) : (

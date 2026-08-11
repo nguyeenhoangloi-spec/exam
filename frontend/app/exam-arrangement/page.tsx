@@ -867,7 +867,7 @@ export default function ExamArrangementPage() {
                           title={!r.isAvailable ? (r.busyReason || 'Phòng không khả dụng') : undefined}
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-slate-300' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
+                            <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-slate-700' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
                             <span className="truncate font-extrabold">{r.roomName || r.roomCode}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
@@ -958,7 +958,7 @@ export default function ExamArrangementPage() {
 
                   {!result ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center text-slate-400">
-                      <Sparkles className="h-12 w-12 text-slate-300 mb-3" />
+                      <Sparkles className="h-12 w-12 text-slate-700 mb-3" />
                       <p className="text-sm font-medium">Chọn Ca thi và các phòng trống bên trái, bấm &quot;Xem trước phương án&quot; để tạo ma trận chỗ ngồi tự động</p>
                     </div>
                   ) : (

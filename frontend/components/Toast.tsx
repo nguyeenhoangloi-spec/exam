@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 interface ToastProps {
@@ -8,6 +9,12 @@ interface ToastProps {
 }
 
 export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
@@ -15,7 +22,9 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       role="status"
       aria-live="polite"
@@ -32,6 +41,8 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
       >
         <X className="w-4 h-4 text-white" />
       </button>
-    </div>
+    </div>,
+    document.body
   );
 };
+

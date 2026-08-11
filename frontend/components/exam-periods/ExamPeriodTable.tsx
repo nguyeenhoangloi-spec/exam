@@ -72,8 +72,6 @@ export function ExamPeriodTable({
     if (!dateStr) return '---';
     try {
       const d = new Date(dateStr);
-      // `Invalid Date` does not throw; without this guard getDate/getMonth
-      // produce NaN and the table renders `NaN/NaN/NaN`.
       if (Number.isNaN(d.getTime())) return '---';
       const dd = String(d.getDate()).padStart(2, '0');
       const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -100,8 +98,9 @@ export function ExamPeriodTable({
           return (
             <div
               key={p.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              }`}
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
@@ -120,7 +119,7 @@ export function ExamPeriodTable({
                       {codeText}
                     </button>
                   </div>
-                  {getStatusBadge(p.status)}
+                  {getStatusBadge(p.status, p)}
                 </div>
 
                 <div>
@@ -135,7 +134,7 @@ export function ExamPeriodTable({
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
                     <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                    <span>Học kỳ: <strong>{p.semester}</strong></span>
+                    <span>Học kỳ: <strong className="font-bold text-slate-800">{p.semester}</strong></span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
                     <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
@@ -228,7 +227,7 @@ export function ExamPeriodTable({
                       {p.name}
                     </p>
                   </td>
-                  <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{p.semester}</td>
+                  <td className="p-2 whitespace-nowrap font-bold text-slate-800">{p.semester}</td>
                   <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{p.schoolYear}</td>
                   <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
                   <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status, p)}</td>
@@ -271,13 +270,11 @@ export function ExamPeriodTable({
         <tbody className="divide-y divide-slate-100 font-medium">
           {periods.map((p, index) => {
             const isChecked = selected.includes(p.id);
-            const isLastRow = index >= Math.floor(periods.length / 2);
 
             return (
               <tr
                 key={p.id}
-                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''
-                  }`}
+                className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}
               >
                 <td className="p-3.5 pl-4 text-center">
                   <input
@@ -301,11 +298,10 @@ export function ExamPeriodTable({
 
                 {visibleColumns.semester !== false && (
                   <td className="p-3.5 whitespace-nowrap font-bold text-slate-800">
-                    <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-xs text-slate-700">
-                      {p.semester}
-                    </span>
+                    {p.semester}
                   </td>
                 )}
+
 
                 {visibleColumns.schoolYear !== false && (
                   <td className="p-3.5 whitespace-nowrap font-bold text-slate-900">

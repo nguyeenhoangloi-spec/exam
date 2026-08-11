@@ -84,7 +84,7 @@ export const AudioLightboxModal: React.FC<AudioLightboxModalProps> = ({ audioUrl
       </div>
 
       {/* Bottom hint */}
-      <div className="absolute bottom-4 text-center text-xs text-slate-400 font-medium pointer-events-none">
+      <div className="absolute bottom-4 text-center text-xs text-slate-300 font-medium pointer-events-none">
         Bấm ngoài khung hoặc nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">Esc</kbd> để đóng
       </div>
     </div>

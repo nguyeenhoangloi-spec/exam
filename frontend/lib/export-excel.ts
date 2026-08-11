@@ -116,7 +116,7 @@ export function exportToFormattedExcel({
         </th>
       </tr>
       <tr>
-        <th colspan="${columns.length}" style="font-size:9.5pt; color:#64748B; text-align:center; padding-bottom:10px; height:22px;">
+        <th colspan="${columns.length}" style="font-size:9.5pt; color:#1F2937; text-align:center; padding-bottom:10px; height:22px;">
           ${escapeHtml(subtitle || `Thời điểm xuất file: ${nowStr} | Tổng số bản ghi: ${rows.length}`)}
         </th>
       </tr>

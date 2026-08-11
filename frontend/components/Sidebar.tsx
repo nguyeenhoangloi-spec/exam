@@ -29,6 +29,7 @@ import {
   Trash2,
   FileCheck,
   Award,
+  DatabaseBackup,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -151,6 +152,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             { name: 'Môn học & Lớp học', href: '/trash?type=subjects' },
           ],
         },
+        { name: 'Sao lưu & khôi phục', href: '/admin/backups', icon: DatabaseBackup },
       ],
     },
   ];

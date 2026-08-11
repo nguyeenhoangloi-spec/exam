@@ -24,7 +24,7 @@
   --ui-surface: #ffffff;
   --ui-surface-muted: #f1f5f9;
   --ui-text: #0f172a;
-  --ui-text-muted: #475569;
+  --ui-text-muted: #1f2937;
   --ui-border: #e2e8f0;
   --ui-primary: #2563eb;
   --ui-primary-hover: #1d4ed8;
@@ -77,9 +77,9 @@ html.dark {
   .ui-card-header { @apply border-b border-slate-100 px-5 py-4 dark:border-slate-800; }
   .ui-table-wrap { @apply overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900; }
   .ui-table { @apply min-w-full text-left text-[15px]; }
-  .ui-table thead { @apply bg-slate-50 text-[14px] font-semibold tracking-wide text-[#475569] dark:bg-slate-800 dark:text-slate-400; }
+  .ui-table thead { @apply bg-slate-50 text-[14px] font-semibold tracking-wide text-[#1F2937] dark:bg-slate-800 dark:text-slate-400; }
   .ui-table th { @apply whitespace-nowrap px-4 py-3.5; }
-  .ui-table td { @apply border-t border-slate-100 px-4 py-3.5 text-[#334155] dark:border-slate-800 dark:text-slate-200; }
+  .ui-table td { @apply border-t border-slate-100 px-4 py-3.5 text-[#1F2937] dark:border-slate-800 dark:text-slate-200; }
   .ui-table tbody tr { @apply transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40; }
 
   /* EDU Typography System Scale Classes */
@@ -87,48 +87,126 @@ html.dark {
   .edu-section-title { font-size: var(--fs-section-title); line-height: var(--lh-section-title); @apply font-semibold text-[#0F172A] tracking-tight; }
   .edu-card-title { font-size: var(--fs-card-title); line-height: var(--lh-card-title); @apply font-semibold text-[#0F172A]; }
   .edu-subheading { @apply text-[16px] font-semibold leading-[24px] text-[#0F172A]; }
-  .edu-body { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-normal text-[#334155]; }
-  .edu-body-medium { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium text-[#334155]; }
+  .edu-body { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-normal text-[#1F2937]; }
+  .edu-body-medium { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium text-[#1F2937]; }
   .edu-body-important { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium text-[#0F172A]; }
-  .edu-table-header { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-semibold text-[#475569] tracking-wider; }
-  .edu-table-content { font-size: var(--fs-body); line-height: 22px; @apply font-normal text-[#334155]; }
-  .edu-secondary { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-normal text-[#475569]; }
-  .edu-helper { font-size: var(--fs-helper); line-height: var(--lh-helper); @apply font-medium text-[#475569]; }
+  .edu-table-header { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-semibold text-[#1F2937] tracking-wider; }
+  .edu-table-content { font-size: var(--fs-body); line-height: 22px; @apply font-normal text-[#1F2937]; }
+  .edu-secondary { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-normal text-[#1F2937]; }
+  .edu-helper { font-size: var(--fs-helper); line-height: var(--lh-helper); @apply font-medium text-[#1F2937]; }
   .edu-badge { font-size: var(--fs-badge); line-height: var(--lh-badge); @apply font-semibold; }
   .edu-kpi { @apply text-[32px] font-bold leading-[38px] text-[#0F172A]; font-variant-numeric: tabular-nums; }
-  .edu-label { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-semibold text-[#334155]; }
+  .edu-label { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-semibold text-[#1F2937]; }
   .edu-control { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium; }
-  .edu-reading { @apply text-base font-normal leading-[26px] text-[#334155]; }
+  .edu-reading { @apply text-base font-normal leading-[26px] text-[#1F2937]; }
   .edu-numeric { font-variant-numeric: tabular-nums; }
 }
 
-/* Light-theme secondary text was frequently rendered in slate-400/500 or
-   #64748B, which is technically usable but visually faint on white cards.
-   Normalize the common legacy utilities across every page while preserving
-   the intentional dark-theme palette below. */
+/* Light-theme neutral text is intentionally black-forward. These selectors
+   normalize legacy Tailwind and hard-coded slate colors across existing
+   screens without changing semantic status or action colors. */
 html:not(.dark) .text-slate-400,
-html:not(.dark) .text-gray-400 {
-  color: rgb(100 116 139) !important;
-}
-
 html:not(.dark) .text-slate-500,
+html:not(.dark) .text-slate-600,
+html:not(.dark) .text-slate-700,
+html:not(.dark) .text-gray-400,
 html:not(.dark) .text-gray-500,
-html:not(.dark) .text-\[\#64748B\] {
-  color: rgb(71 85 105) !important;
-}
-
+html:not(.dark) .text-gray-600,
+html:not(.dark) .text-gray-700,
+html:not(.dark) .text-\[\#64748B\],
+html:not(.dark) .text-\[\#475569\],
+html:not(.dark) .text-\[\#334155\],
 html:not(.dark) .text-\[\#94A3B8\] {
-  color: rgb(100 116 139) !important;
+  color: rgb(31 41 55) !important;
 }
 
-/* Do not let alpha text utilities make ordinary metadata look disabled. */
+/* Bold neutral text uses the stronger black tier. */
+html:not(.dark) :is(
+  .text-slate-400,
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-700,
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700,
+  .text-\[\#64748B\],
+  .text-\[\#475569\],
+  .text-\[\#334155\]
+).font-medium,
+html:not(.dark) :is(
+  .text-slate-400,
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-700,
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700,
+  .text-\[\#64748B\],
+  .text-\[\#475569\],
+  .text-\[\#334155\]
+).font-semibold,
+html:not(.dark) :is(
+  .text-slate-400,
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-700,
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700,
+  .text-\[\#64748B\],
+  .text-\[\#475569\],
+  .text-\[\#334155\]
+).font-bold,
+html:not(.dark) :is(
+  .text-slate-400,
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-700,
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700,
+  .text-\[\#64748B\],
+  .text-\[\#475569\],
+  .text-\[\#334155\]
+).font-extrabold,
+html:not(.dark) :is(
+  .text-slate-400,
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-700,
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700,
+  .text-\[\#64748B\],
+  .text-\[\#475569\],
+  .text-\[\#334155\]
+).font-black {
+  color: rgb(15 23 42) !important;
+}
+
+/* Placeholder and alpha variants remain black-forward, with opacity used
+   only to communicate that the control is inactive or not yet filled. */
+html:not(.dark) .placeholder\:text-slate-400::placeholder,
+html:not(.dark) .placeholder\:text-slate-500::placeholder,
+html:not(.dark) .placeholder\:text-gray-400::placeholder,
+html:not(.dark) .placeholder\:text-\[\#94A3B8\]::placeholder {
+  color: rgb(31 41 55) !important;
+}
+
 html:not(.dark) .text-slate-400\/70,
 html:not(.dark) .text-slate-400\/80,
 html:not(.dark) .text-slate-500\/70,
 html:not(.dark) .text-slate-500\/80,
+html:not(.dark) .text-slate-600\/70,
+html:not(.dark) .text-slate-600\/80,
 html:not(.dark) .text-\[\#64748B\]\/70,
 html:not(.dark) .text-\[\#64748B\]\/80 {
-  color: rgb(71 85 105) !important;
+  color: rgb(31 41 55) !important;
 }
 
 html.dark .text-\[\#64748B\] {

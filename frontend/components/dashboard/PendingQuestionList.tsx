@@ -156,7 +156,7 @@ export function PendingQuestionList({
         </div>
       ) : (
         <div className="py-10 text-center space-y-1.5 text-slate-400 border border-slate-100 rounded-xl bg-slate-50/40">
-          <Inbox className="w-7 h-7 mx-auto text-slate-300 stroke-[1.5]" />
+          <Inbox className="w-7 h-7 mx-auto text-slate-700 stroke-[1.5]" />
           <p className="text-xs font-semibold text-slate-600">Không có câu hỏi nào đang chờ duyệt</p>
           <p className="text-[11px] text-slate-400">Toàn bộ câu hỏi trong ngân hàng đã được phê duyệt.</p>
         </div>
@@ -164,4 +164,3 @@ export function PendingQuestionList({
     </div>
   );
 }
-

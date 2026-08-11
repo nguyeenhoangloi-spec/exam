@@ -347,7 +347,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
                     </p>
                   </div>
 
-                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-[#2563EB] transition shrink-0" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-700 group-hover:text-[#2563EB] transition shrink-0" />
                 </button>
               );
             })

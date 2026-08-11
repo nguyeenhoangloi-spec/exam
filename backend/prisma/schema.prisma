@@ -88,6 +88,9 @@ model User {
   essayGradeHistories  EssayGradeHistory[] @relation("EssayGradeHistoryActor")
   reviewedGradeAppeals GradeAppeal[]     @relation("GradeAppealReviewer")
   authSessions         AuthSession[]
+  backupJobs            BackupJob[]
+  backupRestoreRequests BackupRestoreRequest[] @relation("BackupRestoreRequester")
+  backupRestoreApprovals BackupRestoreRequest[] @relation("BackupRestoreApprover")
 
   @@map("users")
 }
@@ -910,4 +913,87 @@ model GradeAppeal {
   @@index([studentId, status])
   @@index([attemptId])
   @@map("grade_appeals")
+}
+
+enum BackupJobType {
+  FULL
+  DATABASE
+  UPLOADS
+  SAFETY
+}
+
+enum BackupJobStatus {
+  QUEUED
+  RUNNING
+  VERIFYING
+  SUCCEEDED
+  FAILED
+  VERIFY_FAILED
+  CANCELLED
+}
+
+enum BackupRestoreTarget {
+  STAGING
+  PRODUCTION
+}
+
+enum BackupRestoreStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  EXPIRED
+}
+
+model BackupJob {
+  id              String          @id @default(uuid())
+  snapshotId      String          @unique
+  type            BackupJobType   @default(FULL)
+  status          BackupJobStatus @default(QUEUED)
+  storageKey      String?
+  manifestKey     String?
+  checksum        String?
+  sizeBytes       BigInt?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  appCommit       String?
+  migration       String?
+  errorMessage    String?
+  retained        Boolean         @default(true)
+  initiatedById   Int?
+  initiatedBy     User?           @relation(fields: [initiatedById], references: [id], onDelete: SetNull)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  restoreRequests BackupRestoreRequest[]
+
+  @@index([status, createdAt])
+  @@index([completedAt])
+  @@map("backup_jobs")
+}
+
+model BackupRestoreRequest {
+  id                String               @id @default(uuid())
+  backupJobId       String
+  backupJob         BackupJob            @relation(fields: [backupJobId], references: [id], onDelete: Restrict)
+  target            BackupRestoreTarget
+  status            BackupRestoreStatus  @default(PENDING_APPROVAL)
+  reason            String
+  confirmationHash  String?
+  requestedById     Int
+  requestedBy       User                 @relation("BackupRestoreRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  approvedById      Int?
+  approvedBy        User?                @relation("BackupRestoreApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  expiresAt         DateTime
+  startedAt         DateTime?
+  completedAt       DateTime?
+  errorMessage      String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@index([status, createdAt])
+  @@index([backupJobId])
+  @@map("backup_restore_requests")
 }

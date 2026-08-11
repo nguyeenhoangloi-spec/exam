@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { ChevronDown, CheckCircle2, Clock, XCircle, Pencil } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, Pencil } from 'lucide-react';
+import { FilterSelect } from '../ui/FilterSelect';
 
 export function QuestionStatusChart({ data }: { data?: DashboardOverview['questionStatus'] }) {
   const [filter, setFilter] = useState('Tất cả');
@@ -71,18 +72,15 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 className="text-[17px] font-bold text-slate-900">Thống kê trạng thái câu hỏi</h3>
 
-        <div className="relative">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 pr-7 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-          >
-            <option value="Tất cả">Tất cả</option>
-            <option value="Tháng này">Tháng này</option>
-            <option value="Học kỳ này">Học kỳ này</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-        </div>
+        <FilterSelect
+          size="sm"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <option value="Tất cả">Tất cả</option>
+          <option value="Tháng này">Tháng này</option>
+          <option value="Học kỳ này">Học kỳ này</option>
+        </FilterSelect>
       </div>
 
       {/* Donut & Legend side by side */}

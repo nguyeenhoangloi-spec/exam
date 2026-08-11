@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Calendar, Printer, RefreshCw } from 'lucide-react';
+import { FilterSelect } from '../ui/FilterSelect';
 
 export function DashboardHeader({
   onRefresh,
@@ -52,28 +53,26 @@ export function DashboardHeader({
         </p>
       </div>
 
-      {/* Right Controls: Period Selector & PDF Export Button above, Date Display below on the right */}
+      {/* Right Controls: Period Selector & PDF Export Button */}
       <div className="flex flex-col items-start lg:items-end gap-1.5 shrink-0">
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Semester / Exam Period Filter Selector */}
           {onPeriodChange && (
-            <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] shadow-2xs">
-              <Calendar className="w-4 h-4 text-[#64748B] shrink-0" />
-              <select
-                value={selectedPeriod}
-                onChange={(e) => onPeriodChange(e.target.value)}
-                className="bg-transparent font-medium text-[#0F172A] focus:outline-none cursor-pointer"
-              >
-                <option value="ALL">Tất cả đợt thi & Học kỳ</option>
-                <option value="HK2_2025_2026">Học kỳ 2 (2025 - 2026)</option>
-                <option value="HK1_2025_2026">Học kỳ 1 (2025 - 2026)</option>
-                <option value="HK_HE_2025">Học kỳ Hè (2024 - 2025)</option>
-              </select>
-            </div>
+            <FilterSelect
+              size="md"
+              leftIcon={<Calendar className="w-4 h-4" />}
+              value={selectedPeriod}
+              onChange={(e) => onPeriodChange(e.target.value)}
+            >
+              <option value="ALL">Tất cả đợt thi & Học kỳ</option>
+              <option value="HK2_2025_2026">Học kỳ 2 (2025 - 2026)</option>
+              <option value="HK1_2025_2026">Học kỳ 1 (2025 - 2026)</option>
+              <option value="HK_HE_2025">Học kỳ Hè (2024 - 2025)</option>
+            </FilterSelect>
           )}
         </div>
 
-        {/* Date & Timestamp Display (Right-aligned below buttons) */}
+        {/* Date & Timestamp Display */}
         {currentDateStr && (
           <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#64748B] select-none">
             <span className="font-semibold text-[#0F172A]">{currentDateStr}</span>
@@ -88,3 +87,4 @@ export function DashboardHeader({
     </div>
   );
 }
+

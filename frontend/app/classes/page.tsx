@@ -730,7 +730,7 @@ export default function ClassesPage() {
                     </div>
                   ) : (
                     <div className="py-12 text-center text-slate-400">
-                      <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-2" />
+                      <BookOpen className="h-10 w-10 text-slate-700 mx-auto mb-2" />
                       <p className="text-[15px] font-semibold text-[#0F172A]">Lớp chưa có sinh viên nào đăng ký môn.</p>
                       <p className="text-[13px] font-normal text-[#64748B] mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý Môn học.</p>
                       <button

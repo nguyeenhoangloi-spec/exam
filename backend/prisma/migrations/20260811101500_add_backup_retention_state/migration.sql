@@ -1,0 +1,1 @@
+ALTER TABLE "backup_jobs" ADD COLUMN "retained" BOOLEAN NOT NULL DEFAULT true;

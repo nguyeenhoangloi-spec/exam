@@ -286,7 +286,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 Trang chủ
               </span>
-              <span className="text-slate-300 dark:text-slate-600">/</span>
+              <span className="text-slate-700 dark:text-slate-600">/</span>
               <span className="font-extrabold text-slate-900 dark:text-slate-100">
                 {title === 'Hệ thống Quản lý Khảo thí' ? 'Tổng quan' : title}
               </span>
@@ -365,7 +365,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
                   ) : (
                     <div className="py-6 text-center space-y-2 text-slate-400 dark:text-slate-500">
-                      <Inbox className="w-8 h-8 mx-auto text-slate-300 dark:bg-slate-600" />
+                      <Inbox className="w-8 h-8 mx-auto text-slate-700 dark:bg-slate-600" />
                       <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Không có thông báo mới</p>
                       <p className="text-[10.5px] text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
                     </div>

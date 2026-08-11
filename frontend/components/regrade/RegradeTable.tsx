@@ -152,7 +152,7 @@ export function RegradeTable({
                     {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
                       <span className="font-black text-emerald-600">{item.revisedScore.toFixed(1)} đ</span>
                     ) : (
-                      <span className="text-slate-300 font-normal">--</span>
+                      <span className="text-slate-700 font-normal">--</span>
                     )}
                   </td>
                   <td className="p-2.5 whitespace-nowrap text-center">
@@ -258,7 +258,7 @@ export function RegradeTable({
                         {item.revisedScore.toFixed(1)} đ
                       </span>
                     ) : (
-                      <span className="text-slate-300 font-normal text-sm">--</span>
+                      <span className="text-slate-700 font-normal text-sm">--</span>
                     )}
                   </td>
                 )}

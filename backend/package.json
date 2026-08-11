@@ -17,6 +17,7 @@
     "prisma:migrate": "prisma migrate deploy",
     "migrate:sqlite": "node scripts/migrate-sqlite-to-postgres.mjs",
     "verify:migration": "node scripts/verify-sqlite-postgres.mjs",
+    "backup:worker": "node dist/src/backups/backup-worker-entry.js",
     "test": "jest --runInBand",
     "seed": "ts-node prisma/seed.ts"
   },
@@ -28,6 +29,7 @@
     "lodash": "^4.18.1"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1107.0",
     "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
@@ -42,6 +44,7 @@
     "exceljs": "^4.4.0",
     "mammoth": "^1.12.0",
     "multer": "^2.2.0",
+    "node-cron": "^4.6.0",
     "nodemailer": "^9.0.4",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

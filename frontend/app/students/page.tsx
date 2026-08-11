@@ -732,7 +732,7 @@ export default function StudentsPage() {
                     </div>
                   ) : !drawerSubjects || drawerSubjects.length === 0 ? (
                     <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-slate-200">
-                      <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                      <BookOpen className="h-10 w-10 text-slate-700 mx-auto mb-3" />
                       <p className="text-sm font-semibold text-slate-600">Sinh viên chưa đăng ký môn nào</p>
                     </div>
                   ) : (
@@ -781,7 +781,7 @@ export default function StudentsPage() {
                     </div>
                   ) : !drawerSchedule || drawerSchedule.length === 0 ? (
                     <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-slate-200">
-                      <Clock className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                      <Clock className="h-10 w-10 text-slate-700 mx-auto mb-3" />
                       <p className="text-sm font-semibold text-slate-600">Chưa có lịch thi nào</p>
                     </div>
                   ) : (
