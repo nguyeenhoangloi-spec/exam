@@ -21,6 +21,8 @@ interface CriticalConfirmModalProps {
   confirmPhrase: string; // E.g. "KHOA DIEM", "PHAT HANH DE THI", "KHOA KY THI"
   reasons?: string[];
   actionButtonText?: string;
+  /** Khi true, bắt buộc xác thực lại mật khẩu tài khoản trước thao tác nhạy cảm. */
+  passwordRequired?: boolean;
   /** Khi true, hiển thị thêm ô "Mật khẩu thi" bắt buộc (dùng cho phát hành đề thi chính thức) */
   examPasswordRequired?: boolean;
   onConfirm: (payload: CriticalConfirmPayload) => Promise<void> | void;
@@ -42,6 +44,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   confirmPhrase,
   reasons = DEFAULT_REASONS,
   actionButtonText = 'Xác nhận',
+  passwordRequired = false,
   examPasswordRequired = false,
   onConfirm,
 }) => {
@@ -93,6 +96,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   const isExamPasswordValid = examPasswordRequired
     ? examPassword.trim().length >= 4
     : true;
+  const isPasswordValid = passwordRequired ? password.trim().length > 0 : true;
 
   const handleQuickFillPhrase = () => {
     setInputPhrase(confirmPhrase);
@@ -110,6 +114,11 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
     if (!isPhraseMatched) {
       setErrorMsg(`Cụm từ xác nhận chưa chính xác. Vui lòng gõ "${targetPhrase}" (hoặc bấm nút Điền nhanh).`);
+      return;
+    }
+
+    if (passwordRequired && !isPasswordValid) {
+      setErrorMsg('Vui lòng nhập mật khẩu tài khoản Admin để xác thực thao tác.');
       return;
     }
 
@@ -259,18 +268,20 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             )}
           </div>
 
-          {/* Step 4: Account Password Verification (Optional if logged in) */}
+          {/* Step 4: Account Password Verification */}
           <div>
             <label className="block text-[15px] font-medium text-[#0F172A] mb-1 flex items-center justify-between">
               <span className="flex items-center gap-1">
                 <KeyRound className="w-4 h-4 text-[#64748B]" />
-                4. Mật khẩu tài khoản của bạn
+                4. Mật khẩu tài khoản của bạn {passwordRequired && <span className="text-rose-500">*</span>}
               </span>
-              <span className="text-[13px] text-[#64748B] font-normal">(Tùy chọn nếu đã đăng nhập)</span>
+              {!passwordRequired && <span className="text-[13px] text-[#64748B] font-normal">(Tùy chọn nếu đã đăng nhập)</span>}
             </label>
             <input
               type="password"
-              placeholder="Mật khẩu tài khoản (tùy chọn)"
+              required={passwordRequired}
+              autoComplete="current-password"
+              placeholder={passwordRequired ? 'Nhập mật khẩu Admin hiện tại' : 'Mật khẩu tài khoản (tùy chọn)'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition"

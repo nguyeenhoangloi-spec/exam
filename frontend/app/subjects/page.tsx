@@ -10,9 +10,10 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { Subject, Department } from '../../types';
-import { BookOpen, Building2, Search, X, Award, ChevronDown, Users, GraduationCap, BookMarked } from 'lucide-react';
+import { BookOpen, Building2, Search, X, Award, ChevronDown, Users, GraduationCap, BookMarked, FileSpreadsheet } from 'lucide-react';
 
 import { SubjectHeader } from '../../components/subjects/SubjectHeader';
 import { SubjectKPICards } from '../../components/subjects/SubjectKPICards';
@@ -63,6 +64,7 @@ export default function SubjectsPage() {
 
   // CRUD Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
   const [formData, setFormData] = useState({
     subjectCode: '',
@@ -513,25 +515,55 @@ export default function SubjectsPage() {
               </select>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-            >
-              Lưu Môn Học
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+            {!editingSubject ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+              >
+                {editingSubject ? 'Cập nhật Môn học' : 'Lưu Môn Học'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Import danh sách môn học từ Excel"
+        templateFileName="danh_sach_mon_hoc_mau.csv"
+        onImportSuccess={async () => {
+          await fetchData();
+          setToast({ message: 'Nhập danh sách môn học từ file thành công!', type: 'success' });
+        }}
+      />
 
       {/* Enroll by Class Modal */}
       <Modal

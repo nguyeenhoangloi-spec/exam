@@ -973,6 +973,7 @@ export default function BackupsPage() {
           title={`Xác thực khôi phục dữ liệu (${activeRestoreRequest.target})`}
           warningMessage={`Thao tác khôi phục sẽ GHI ĐÈ toàn bộ dữ liệu trên môi trường ${activeRestoreRequest.target} bằng bản snapshot ${activeRestoreRequest.backupJob.snapshotId}. Hãy nhập chính xác cụm từ xác nhận động bên dưới!`}
           confirmPhrase={dynamicPhrase}
+          passwordRequired
           actionButtonText="Phê duyệt & Khôi phục ngay"
           reasons={[
             activeRestoreRequest.reason || 'Khôi phục dữ liệu theo sự cố hệ thống',

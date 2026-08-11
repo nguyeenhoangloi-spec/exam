@@ -10,6 +10,7 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Button } from '../../components/ui/Button';
 import { ExamSchedule, ExamPeriod, ExamRoom } from '../../types';
@@ -22,7 +23,7 @@ import { ExamScheduleTableToolbar } from '../../components/exam-schedules/ExamSc
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
 import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeScheduleStatus } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
-import { Calendar, Clock, Building, Users, AlertTriangle } from 'lucide-react';
+import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet } from 'lucide-react';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
   if (!startTime) return '08:30';
@@ -85,6 +86,7 @@ export default function ExamSchedulesPage() {
   const [selected, setSelected] = useState<number[]>([]);
   const [drawerSchedule, setDrawerSchedule] = useState<ExamScheduleItemExtended | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<ExamScheduleItemExtended | null>(null);
 
   const [formData, setFormData] = useState({
@@ -733,26 +735,56 @@ export default function ExamSchedulesPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              disabled={isPastTime}
-            >
-              Lưu Lịch Thi
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+            {!editingSchedule ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={isPastTime}
+              >
+                {editingSchedule ? 'Cập nhật Lịch thi' : 'Lưu Lịch Thi'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Import danh sách lịch thi từ Excel"
+        templateFileName="danh_sach_lich_thi_mau.csv"
+        onImportSuccess={async () => {
+          await fetchInitialData();
+          setToast({ message: 'Nhập danh sách lịch thi từ file thành công!', type: 'success' });
+        }}
+      />
 
       {/* Quick View Profile Drawer */}
       <ProfileDrawer

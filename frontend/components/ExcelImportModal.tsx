@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Upload, FileSpreadsheet, Download, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { Upload, FileSpreadsheet, Download, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Modal } from './Modal';
 import { ConfirmModal } from './ConfirmModal';
+import { Button } from './ui';
 import { downloadCsv } from '../lib/export-csv';
 import api from '../lib/api';
 
@@ -15,9 +16,13 @@ interface ExcelImportModalProps {
   onImportSuccess: (data: any[]) => void | Promise<void>;
 }
 
-/** Generic CSV preview/import dialog. It never invents rows or reports success
- * before the parent has persisted the rows through the backend API. */
-export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onClose, title, templateFileName, onImportSuccess }) => {
+export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  templateFileName,
+  onImportSuccess,
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -49,8 +54,12 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
     }
     const reader = new FileReader();
     reader.onload = () => {
-      try { setPreviewData(parseCsv(String(reader.result || ''))); }
-      catch (error: any) { setPreviewData([]); setErrorMsg(error.message || 'Tệp không đúng định dạng dữ liệu. Vui lòng kiểm tra lại.'); }
+      try {
+        setPreviewData(parseCsv(String(reader.result || '')));
+      } catch (error: any) {
+        setPreviewData([]);
+        setErrorMsg(error.message || 'Tệp không đúng định dạng dữ liệu. Vui lòng kiểm tra lại.');
+      }
     };
     reader.onerror = () => setErrorMsg('Không thể đọc tệp đã chọn.');
     reader.readAsText(selected, 'UTF-8');
@@ -66,13 +75,13 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
 
   const handleConfirmImport = async () => {
     if (loading) return;
-    if (!file || previewData.length === 0) { setErrorMsg('Vui lòng chọn tệp CSV có dữ liệu.'); return; }
+    if (!file || previewData.length === 0) {
+      setErrorMsg('Vui lòng chọn tệp CSV/Excel có dữ liệu.');
+      return;
+    }
     setLoading(true);
     setErrorMsg('');
     try {
-      // The two legacy admin import dialogs are now backed by the same
-      // create endpoints used by the normal forms. No local/demo rows are
-      // accepted as a successful import.
       const isStudentImport = templateFileName.includes('sinh_vien');
       const isTeacherImport = templateFileName.includes('giang_vien');
       if (isStudentImport || isTeacherImport) {
@@ -81,59 +90,134 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
           const row = previewData[index];
           try {
             if (isStudentImport) {
-              await api.post('/students', { studentCode: row.studentCode || row.code, fullName: row.fullName || row.name, email: row.email, gender: row.gender || 'Nam', dateOfBirth: row.dateOfBirth || '2004-01-01', phone: row.phone || undefined, classId: Number(row.classId || row.class) });
+              await api.post('/students', {
+                studentCode: row.studentCode || row.code,
+                fullName: row.fullName || row.name,
+                email: row.email,
+                gender: row.gender || 'Nam',
+                dateOfBirth: row.dateOfBirth || '2004-01-01',
+                phone: row.phone || undefined,
+                classId: Number(row.classId || row.class),
+              });
             } else {
-              await api.post('/teachers', { teacherCode: row.teacherCode || row.code, fullName: row.fullName || row.name, degree: row.degree || 'ThS', email: row.email, phone: row.phone || undefined, departmentId: Number(row.departmentId || row.department) });
+              await api.post('/teachers', {
+                teacherCode: row.teacherCode || row.code,
+                fullName: row.fullName || row.name,
+                degree: row.degree || 'ThS',
+                email: row.email,
+                phone: row.phone || undefined,
+                departmentId: Number(row.departmentId || row.department),
+              });
             }
           } catch (error: any) {
             failures.push(`Dòng ${index + 2}: ${error?.response?.data?.message || error?.message || 'không hợp lệ'}`);
           }
         }
-        if (failures.length) throw new Error(`Đã lưu ${previewData.length - failures.length}/${previewData.length} dòng. ${failures.join('; ')}`);
+        if (failures.length) {
+          throw new Error(`Đã lưu ${previewData.length - failures.length}/${previewData.length} dòng. ${failures.join('; ')}`);
+        }
       }
       await onImportSuccess(previewData);
       onClose();
+    } catch (error: any) {
+      setErrorMsg(error?.response?.data?.message || error?.message || 'Không thể nhập dữ liệu.');
+    } finally {
+      setLoading(false);
     }
-    catch (error: any) { setErrorMsg(error?.response?.data?.message || error?.message || 'Không thể nhập dữ liệu.'); }
-    finally { setLoading(false); }
   };
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title={title}>
-        <div className="space-y-5">
-          <div className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/70 p-4">
-            <div className="flex items-center gap-3"><FileSpreadsheet className="h-5 w-5 text-blue-600" /><div><h4 className="text-sm font-bold text-slate-800">Tải tệp CSV mẫu</h4><p className="text-xs text-slate-500">Dùng đúng tên cột để hệ thống kiểm tra dữ liệu.</p></div></div>
-            <button type="button" onClick={downloadTemplate} className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700"><Download className="h-4 w-4" /> Tải mẫu</button>
+      <Modal isOpen={isOpen} onClose={onClose} title={title} size="lg">
+        <div className="space-y-4 py-1">
+          {/* Frameless Template Download Line */}
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <FileSpreadsheet className="h-5 w-5 text-blue-600 shrink-0" />
+              <div>
+                <h4 className="text-sm font-semibold text-[#0F172A]">Tải tệp mẫu (.csv / .xlsx)</h4>
+                <p className="text-xs font-semibold text-[#64748B]">Dùng đúng tên cột tiêu chuẩn để hệ thống tự động nhận diện.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={downloadTemplate}
+              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+            >
+              <Download className="h-4 w-4" />
+              <span>Tải mẫu</span>
+            </button>
           </div>
-          <div className="relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center">
+
+          {/* Upload Area */}
+          <div className="relative rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 p-6 text-center transition">
             <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
             <Upload className="mx-auto h-8 w-8 text-blue-600" />
-            <p className="mt-2 text-sm font-semibold text-slate-800">{file ? file.name : 'Chọn tệp CSV để xem trước'}</p>
-            <p className="text-xs text-slate-400">Tối đa 5 MB. Dữ liệu chỉ được lưu sau khi xác nhận.</p>
+            <p className="mt-2 text-sm font-bold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp (.csv / .xlsx)'}</p>
+            <p className="text-xs font-semibold text-slate-400 mt-1">Dung lượng tối đa 5 MB. Dữ liệu chỉ được lưu sau khi bấm Xác nhận nhập.</p>
           </div>
-          {previewData.length > 0 && <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700"><CheckCircle2 className="h-4 w-4" /> Đã đọc {previewData.length} dòng từ tệp.</div>}
-          {errorMsg && <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700"><AlertCircle className="h-4 w-4" /> {errorMsg}</div>}
-          {previewData.length > 0 && <div className="max-h-48 overflow-auto rounded-xl border border-slate-200"><table className="w-full text-left text-[15px] text-[#334155]"><thead className="sticky top-0 bg-slate-50 text-[14px] font-semibold text-[#475569] border-b border-slate-200"><tr>{Object.keys(previewData[0]).map((key) => <th key={key} className="px-3 py-2 font-semibold">{key}</th>)}</tr></thead><tbody className="font-normal text-[15px]">{previewData.slice(0, 20).map((row, index) => <tr key={index} className="border-t border-slate-100">{Object.keys(previewData[0]).map((key) => <td key={key} className="px-3 py-2">{row[key]}</td>)}</tr>)}</tbody></table></div>}
-          <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="h-9 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 text-xs font-bold transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-            >
+
+          {/* Frameless Alerts */}
+          {previewData.length > 0 && (
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+              <span>Đã đọc thành công {previewData.length} dòng dữ liệu từ tệp.</span>
+            </div>
+          )}
+
+          {errorMsg && (
+            <div className="flex items-center gap-2 text-xs font-semibold text-rose-700">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {/* Preview Table */}
+          {previewData.length > 0 && (
+            <div className="max-h-52 overflow-auto rounded-xl border border-slate-200">
+              <table className="w-full text-left text-sm text-[#0F172A]">
+                <thead className="sticky top-0 bg-slate-50 text-xs font-semibold text-[#64748B] border-b border-slate-200">
+                  <tr>
+                    {Object.keys(previewData[0]).map((key) => (
+                      <th key={key} className="px-3 py-2 font-semibold">
+                        {key}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="font-semibold text-xs divide-y divide-slate-100">
+                  {previewData.slice(0, 20).map((row, index) => (
+                    <tr key={index} className="hover:bg-slate-50/60">
+                      {Object.keys(previewData[0]).map((key) => (
+                        <td key={key} className="px-3 py-2">
+                          {row[key]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <Button variant="secondary" size="md" onClick={onClose}>
               Hủy
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
               disabled={loading || previewData.length === 0}
               onClick={() => setShowConfirm(true)}
-              className="h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white transition shadow-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              isLoading={loading}
             >
-              {loading ? 'Đang lưu...' : 'Xác nhận nhập'}
-            </button>
+              Xác nhận nhập
+            </Button>
           </div>
         </div>
       </Modal>
+
       <ConfirmModal
         isOpen={showConfirm}
         isLoading={loading}
@@ -144,7 +228,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({ isOpen, onCl
         }}
         title="Xác nhận nhập dữ liệu"
         message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
-        type="warning"
+        type="info"
         confirmText="Nhập dữ liệu"
         cancelText="Quay lại kiểm tra"
       />

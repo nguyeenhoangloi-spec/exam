@@ -58,3 +58,4 @@ node_modules
 # Local backup storage (never commit database dumps or uploaded files)
 /backup-runtime/
 /backup-staging-uploads/
+/database-backups/*.sql

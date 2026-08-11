@@ -10,10 +10,11 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExamPeriod } from '../../types';
-import { Calendar, Clock, Search, X, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Search, X, ChevronDown, FileSpreadsheet } from 'lucide-react';
 
 import { ExamPeriodHeader } from '../../components/exam-periods/ExamPeriodHeader';
 import { ExamPeriodKPICards } from '../../components/exam-periods/ExamPeriodKPICards';
@@ -55,6 +56,7 @@ export default function ExamPeriodsPage() {
   const [drawerPeriod, setDrawerPeriod] = useState<ExamPeriod | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingPeriod, setEditingPeriod] = useState<ExamPeriod | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -514,16 +516,46 @@ export default function ExamPeriodsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button variant="secondary" size="md" onClick={() => setIsModalOpen(false)}>
-              Hủy
-            </Button>
-            <Button variant="primary" size="md" type="submit">
-              Lưu Kỳ Thi
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            {!editingPeriod ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button variant="secondary" size="md" onClick={() => setIsModalOpen(false)}>
+                Hủy
+              </Button>
+              <Button variant="primary" size="md" type="submit">
+                {editingPeriod ? 'Cập nhật Kỳ thi' : 'Lưu Kỳ Thi'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Import danh sách kỳ thi từ Excel"
+        templateFileName="danh_sach_ky_thi_mau.csv"
+        onImportSuccess={async () => {
+          await fetchData();
+          setToast({ message: 'Nhập danh sách kỳ thi từ file thành công!', type: 'success' });
+        }}
+      />
 
       {/* Period Detail Profile Drawer */}
       <ProfileDrawer

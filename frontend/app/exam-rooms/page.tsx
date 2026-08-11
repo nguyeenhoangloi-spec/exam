@@ -10,10 +10,11 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Button } from '../../components/ui/Button';
 import { ExamRoom } from '../../types';
-import { DoorOpen, Monitor, Users, Building, Search, X, ChevronDown } from 'lucide-react';
+import { DoorOpen, Monitor, Users, Building, Search, X, ChevronDown, FileSpreadsheet } from 'lucide-react';
 
 import { ExamRoomHeader } from '../../components/exam-rooms/ExamRoomHeader';
 import { ExamRoomKPICards } from '../../components/exam-rooms/ExamRoomKPICards';
@@ -53,6 +54,7 @@ export default function ExamRoomsPage() {
   const [drawerRoom, setDrawerRoom] = useState<ExamRoom | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<ExamRoom | null>(null);
   const [formData, setFormData] = useState({
     code: '',
@@ -519,25 +521,55 @@ export default function ExamRoomsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-            >
-              Lưu Phòng Thi
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            {!editingRoom ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+              >
+                {editingRoom ? 'Cập nhật Phòng thi' : 'Lưu Phòng Thi'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Import danh sách phòng thi từ Excel"
+        templateFileName="danh_sach_phong_thi_mau.csv"
+        onImportSuccess={async () => {
+          await fetchData();
+          setToast({ message: 'Nhập danh sách phòng thi từ file thành công!', type: 'success' });
+        }}
+      />
 
       {/* Room Detail Profile Drawer */}
       <ProfileDrawer

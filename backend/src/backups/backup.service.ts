@@ -32,6 +32,9 @@ export class BackupService {
   private serializeRestore(request: any) {
     return {
       ...request,
+      // BackupJob.sizeBytes is a Prisma BigInt. Normalize the nested job too
+      // or JSON serialization makes GET /backups/restore-requests return 500.
+      backupJob: request.backupJob ? this.serializeJob(request.backupJob) : request.backupJob,
       confirmationPhrase: undefined,
     };
   }

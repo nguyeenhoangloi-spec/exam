@@ -1,14 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Download, Plus, Printer, FileSpreadsheet } from 'lucide-react';
+import { Download, Plus, Printer } from 'lucide-react';
 import { Button } from '../ui';
 
 interface TeacherHeaderProps {
   onAdd?: () => void;
   onExport?: () => void;
   onPrint?: () => void;
-  onImport?: () => void;
   isAdmin?: boolean;
 }
 
@@ -16,7 +15,6 @@ export function TeacherHeader({
   onAdd,
   onExport,
   onPrint,
-  onImport,
   isAdmin = true,
 }: TeacherHeaderProps) {
   return (
@@ -50,18 +48,6 @@ export function TeacherHeader({
             leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
           >
             In Báo cáo
-          </Button>
-        )}
-
-        {isAdmin && onImport && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onImport}
-            leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500" />}
-          >
-            Nhập Excel
           </Button>
         )}
 

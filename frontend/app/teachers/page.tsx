@@ -14,7 +14,7 @@ import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Teacher, Department, User } from '../../types';
-import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown } from 'lucide-react';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown, FileSpreadsheet } from 'lucide-react';
 
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
@@ -314,7 +314,6 @@ export default function TeachersPage() {
           onAdd={openAddModal}
           onExport={exportExcel}
           onPrint={handlePrintReport}
-          onImport={() => setIsImportModalOpen(true)}
           isAdmin={currentUser?.role === 'ADMIN'}
         />
 
@@ -524,22 +523,40 @@ export default function TeachersPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-            >
-              Lưu Giảng viên
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            {!editingTeacher ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+              >
+                {editingTeacher ? 'Cập nhật Giảng viên' : 'Lưu Giảng viên'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>

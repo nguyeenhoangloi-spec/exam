@@ -13,7 +13,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { Student, ClassItem, User } from '../../types';
-import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar, BookOpen, Clock, FileText, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar, BookOpen, Clock, FileText, CheckCircle2, ChevronRight, FileSpreadsheet } from 'lucide-react';
 import { formatExamType } from '../../lib/enum-labels';
 
 import { StudentHeader } from '../../components/students/StudentHeader';
@@ -357,7 +357,6 @@ export default function StudentsPage() {
           onAdd={openAddModal}
           onExport={exportExcel}
           onPrint={handlePrintReport}
-          onImport={() => setIsImportModalOpen(true)}
           isAdmin={currentUser?.role === 'ADMIN'}
         />
 
@@ -545,22 +544,40 @@ export default function StudentsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-            >
-              Lưu Sinh viên
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            {!editingStudent ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+              >
+                {editingStudent ? 'Cập nhật Sinh viên' : 'Lưu Sinh viên'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
@@ -628,8 +645,8 @@ export default function StudentsPage() {
                     key={t.id}
                     onClick={() => handleTabChange(t.id as any)}
                     className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${isActive
-                        ? 'border-blue-600 text-blue-600 font-semibold'
-                        : 'border-transparent text-slate-500 hover:text-slate-800'
+                      ? 'border-blue-600 text-blue-600 font-semibold'
+                      : 'border-transparent text-slate-500 hover:text-slate-800'
                       }`}
                   >
                     <Icon className="h-4 w-4" />

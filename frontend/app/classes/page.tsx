@@ -10,9 +10,10 @@ import { printReport } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
+import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { ClassItem, Department } from '../../types';
-import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen } from 'lucide-react';
+import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen, FileSpreadsheet } from 'lucide-react';
 
 import { ClassHeader } from '../../components/classes/ClassHeader';
 import { ClassKPICards } from '../../components/classes/ClassKPICards';
@@ -58,6 +59,7 @@ export default function ClassesPage() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
   const [formData, setFormData] = useState({
     code: '',
@@ -485,25 +487,55 @@ export default function ClassesPage() {
             </select>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-            >
-              Lưu Lớp Học
-            </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            {!editingClass ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsImportModalOpen(true);
+                }}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+              >
+                Import Excel
+              </Button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+              >
+                {editingClass ? 'Cập nhật Lớp học' : 'Lưu Lớp Học'}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
+
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Import danh sách lớp học từ Excel"
+        templateFileName="danh_sach_lop_hoc_mau.csv"
+        onImportSuccess={async () => {
+          await fetchData();
+          setToast({ message: 'Nhập danh sách lớp học từ file thành công!', type: 'success' });
+        }}
+      />
 
       {/* Custom Profile Drawer */}
       {drawerClass && (
