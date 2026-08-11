@@ -75,17 +75,27 @@ html.dark {
     font-family: inherit;
   }
 
-  button:not(:disabled), [role='button']:not([aria-disabled='true']) {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
     -webkit-tap-highlight-color: transparent;
   }
 
-  :where(button, a, input, select, textarea, [role='button']):not(.no-focus-ring):focus-visible {
-    outline: 2px solid rgb(37 99 235);
-    outline-offset: 2px;
+  /* System-wide modern thin focus ring design */
+  :where(input, select, textarea):not(.no-focus-ring):focus,
+  :where(input, select, textarea):not(.no-focus-ring):focus-visible {
+    outline: none !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+  }
+
+  :where(button, a, [role='button']):not(.no-focus-ring):focus-visible {
+    outline: 1.5px solid rgba(37, 99, 235, 0.7) !important;
+    outline-offset: 1px !important;
   }
 }
 
 @layer utilities {
+
   .no-focus-ring,
   .no-focus-ring:focus,
   .no-focus-ring:focus-visible {
@@ -96,34 +106,137 @@ html.dark {
 }
 
 @layer components {
-  .ui-page { @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100; }
-  .ui-card { @apply rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900; }
-  .ui-card-header { @apply border-b border-slate-100 px-5 py-4 dark:border-slate-800; }
-  .ui-table-wrap { @apply overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900; }
-  .ui-table { @apply min-w-full text-left text-[15px]; }
-  .ui-table thead { @apply bg-slate-50 text-[14px] font-semibold tracking-wide text-[#1F2937] dark:bg-slate-800 dark:text-slate-400; }
-  .ui-table th { @apply whitespace-nowrap px-4 py-3.5; }
-  .ui-table td { @apply border-t border-slate-100 px-4 py-3.5 text-[#1F2937] dark:border-slate-800 dark:text-slate-200; }
-  .ui-table tbody tr { @apply transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40; }
+  .ui-page {
+    @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+  }
+
+  .ui-card {
+    @apply rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900;
+  }
+
+  .ui-card-header {
+    @apply border-b border-slate-100 px-5 py-4 dark:border-slate-800;
+  }
+
+  .ui-table-wrap {
+    @apply overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-700 dark:bg-slate-900;
+  }
+
+  .ui-table {
+    @apply min-w-full text-left text-[15px];
+  }
+
+  .ui-table thead {
+    @apply bg-slate-50 text-[14px] font-semibold tracking-wide text-[#1F2937] dark:bg-slate-800 dark:text-slate-400;
+  }
+
+  .ui-table th {
+    @apply whitespace-nowrap px-4 py-3.5;
+  }
+
+  .ui-table td {
+    @apply border-t border-slate-100 px-4 py-3.5 text-[#1F2937] dark:border-slate-800 dark:text-slate-200;
+  }
+
+  .ui-table tbody tr {
+    @apply transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40;
+  }
 
   /* EDU Typography System Scale Classes */
-  .edu-page-title { font-size: var(--fs-page-title); line-height: var(--lh-page-title); @apply font-bold text-[#0F172A] tracking-tight; }
-  .edu-section-title { font-size: var(--fs-section-title); line-height: var(--lh-section-title); @apply font-semibold text-[#0F172A] tracking-tight; }
-  .edu-card-title { font-size: var(--fs-card-title); line-height: var(--lh-card-title); @apply font-semibold text-[#0F172A]; }
-  .edu-subheading { @apply text-[16px] font-semibold leading-[24px] text-[#0F172A]; }
-  .edu-body { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-normal text-[#1F2937]; }
-  .edu-body-medium { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium text-[#1F2937]; }
-  .edu-body-important { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium text-[#0F172A]; }
-  .edu-table-header { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-semibold text-[#1F2937] tracking-wider; }
-  .edu-table-content { font-size: var(--fs-body); line-height: 22px; @apply font-normal text-[#1F2937]; }
-  .edu-secondary { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-normal text-[#1F2937]; }
-  .edu-helper { font-size: var(--fs-helper); line-height: var(--lh-helper); @apply font-medium text-[#1F2937]; }
-  .edu-badge { font-size: var(--fs-badge); line-height: var(--lh-badge); @apply font-semibold; }
-  .edu-kpi { @apply text-[32px] font-bold leading-[38px] text-[#0F172A]; font-variant-numeric: tabular-nums; }
-  .edu-label { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); @apply font-semibold text-[#1F2937]; }
-  .edu-control { font-size: var(--fs-body); line-height: var(--lh-body); @apply font-medium; }
-  .edu-reading { @apply text-base font-normal leading-[26px] text-[#1F2937]; }
-  .edu-numeric { font-variant-numeric: tabular-nums; }
+  .edu-page-title {
+    font-size: var(--fs-page-title);
+    line-height: var(--lh-page-title);
+    @apply font-bold text-[#0F172A] tracking-tight;
+  }
+
+  .edu-section-title {
+    font-size: var(--fs-section-title);
+    line-height: var(--lh-section-title);
+    @apply font-semibold text-[#0F172A] tracking-tight;
+  }
+
+  .edu-card-title {
+    font-size: var(--fs-card-title);
+    line-height: var(--lh-card-title);
+    @apply font-semibold text-[#0F172A];
+  }
+
+  .edu-subheading {
+    @apply text-[16px] font-semibold leading-[24px] text-[#0F172A];
+  }
+
+  .edu-body {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    @apply font-normal text-[#1F2937];
+  }
+
+  .edu-body-medium {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    @apply font-medium text-[#1F2937];
+  }
+
+  .edu-body-important {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    @apply font-medium text-[#0F172A];
+  }
+
+  .edu-table-header {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+    @apply font-semibold text-[#1F2937] tracking-wider;
+  }
+
+  .edu-table-content {
+    font-size: var(--fs-body);
+    line-height: 22px;
+    @apply font-normal text-[#1F2937];
+  }
+
+  .edu-secondary {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+    @apply font-normal text-[#1F2937];
+  }
+
+  .edu-helper {
+    font-size: var(--fs-helper);
+    line-height: var(--lh-helper);
+    @apply font-medium text-[#1F2937];
+  }
+
+  .edu-badge {
+    font-size: var(--fs-badge);
+    line-height: var(--lh-badge);
+    @apply font-semibold;
+  }
+
+  .edu-kpi {
+    @apply text-[32px] font-bold leading-[38px] text-[#0F172A];
+    font-variant-numeric: tabular-nums;
+  }
+
+  .edu-label {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+    @apply font-semibold text-[#1F2937];
+  }
+
+  .edu-control {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    @apply font-medium;
+  }
+
+  .edu-reading {
+    @apply text-base font-normal leading-[26px] text-[#1F2937];
+  }
+
+  .edu-numeric {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* Light-theme neutral text is intentionally black-forward. These selectors
@@ -145,8 +258,7 @@ html:not(.dark) .text-\[\#94A3B8\] {
 }
 
 /* Bold neutral text uses the stronger black tier. */
-html:not(.dark) :is(
-  .text-slate-400,
+html:not(.dark) :is(.text-slate-400,
   .text-slate-500,
   .text-slate-600,
   .text-slate-700,
@@ -156,10 +268,8 @@ html:not(.dark) :is(
   .text-gray-700,
   .text-\[\#64748B\],
   .text-\[\#475569\],
-  .text-\[\#334155\]
-).font-medium,
-html:not(.dark) :is(
-  .text-slate-400,
+  .text-\[\#334155\]).font-medium,
+html:not(.dark) :is(.text-slate-400,
   .text-slate-500,
   .text-slate-600,
   .text-slate-700,
@@ -169,10 +279,8 @@ html:not(.dark) :is(
   .text-gray-700,
   .text-\[\#64748B\],
   .text-\[\#475569\],
-  .text-\[\#334155\]
-).font-semibold,
-html:not(.dark) :is(
-  .text-slate-400,
+  .text-\[\#334155\]).font-semibold,
+html:not(.dark) :is(.text-slate-400,
   .text-slate-500,
   .text-slate-600,
   .text-slate-700,
@@ -182,10 +290,8 @@ html:not(.dark) :is(
   .text-gray-700,
   .text-\[\#64748B\],
   .text-\[\#475569\],
-  .text-\[\#334155\]
-).font-bold,
-html:not(.dark) :is(
-  .text-slate-400,
+  .text-\[\#334155\]).font-bold,
+html:not(.dark) :is(.text-slate-400,
   .text-slate-500,
   .text-slate-600,
   .text-slate-700,
@@ -195,10 +301,8 @@ html:not(.dark) :is(
   .text-gray-700,
   .text-\[\#64748B\],
   .text-\[\#475569\],
-  .text-\[\#334155\]
-).font-extrabold,
-html:not(.dark) :is(
-  .text-slate-400,
+  .text-\[\#334155\]).font-extrabold,
+html:not(.dark) :is(.text-slate-400,
   .text-slate-500,
   .text-slate-600,
   .text-slate-700,
@@ -208,8 +312,7 @@ html:not(.dark) :is(
   .text-gray-700,
   .text-\[\#64748B\],
   .text-\[\#475569\],
-  .text-\[\#334155\]
-).font-black {
+  .text-\[\#334155\]).font-black {
   color: rgb(15 23 42) !important;
 }
 
@@ -240,6 +343,7 @@ html.dark .text-\[\#64748B\] {
 /* Inter is intentionally loaded only at 400–700. Keep the visual weight
    inside that range instead of asking the browser to synthesize 800/900. */
 @layer utilities {
+
   .font-extrabold,
   .font-black {
     font-weight: 700 !important;
@@ -457,13 +561,16 @@ html.dark .app-shell-main .hover\:text-slate-700:hover {
   color: rgb(248 250 252) !important;
 }
 
-html.dark .app-shell-main button:focus-visible,
-html.dark .app-shell-main a:focus-visible,
-html.dark .app-shell-main input:focus-visible,
-html.dark .app-shell-main select:focus-visible,
-html.dark .app-shell-main textarea:focus-visible {
-  outline: 2px solid rgb(96 165 250);
-  outline-offset: 2px;
+html.dark .app-shell-main :where(input, select, textarea):not(.no-focus-ring):focus,
+html.dark .app-shell-main :where(input, select, textarea):not(.no-focus-ring):focus-visible {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+}
+
+html.dark .app-shell-main :where(button, a, [role='button']):not(.no-focus-ring):focus-visible {
+  outline: 1.5px solid rgba(96, 165, 250, 0.8) !important;
+  outline-offset: 1px !important;
 }
 
 /* Native controls and browser autofill otherwise flash white in dark mode. */
@@ -495,6 +602,7 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

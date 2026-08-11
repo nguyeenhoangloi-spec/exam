@@ -85,7 +85,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const iconConfig = getIconConfig();
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
+    <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
       <div className="relative w-full max-w-sm my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-950/15 transition-all border border-slate-200/90 dark:border-slate-700">
         {/* Header Bar */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-5 py-3.5">

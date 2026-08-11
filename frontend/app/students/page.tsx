@@ -596,7 +596,7 @@ export default function StudentsPage() {
 
       {/* CUSTOM DRAWER: 3 TABS */}
       {drawerStudent && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
+        <div role="dialog" aria-modal="true" aria-label="Thông tin sinh viên" className="fixed inset-0 z-[100] flex justify-end">
           <div
             className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity"
             onClick={closeDrawer}

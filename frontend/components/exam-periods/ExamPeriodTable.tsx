@@ -223,9 +223,9 @@ export function ExamPeriodTable({
                     />
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p)}>
+                    <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p)}>
                       {p.name}
-                    </p>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{p.semester}</td>
                   <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{p.schoolYear}</td>
@@ -287,12 +287,13 @@ export function ExamPeriodTable({
 
                 {visibleColumns.name !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <p
+                    <button
+                      type="button"
                       onClick={() => onDetail(p)}
                       className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                     >
                       {p.name}
-                    </p>
+                    </button>
                   </td>
                 )}
 

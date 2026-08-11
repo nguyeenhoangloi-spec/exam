@@ -25,7 +25,7 @@ interface QuestionBankFiltersCardProps {
 }
 
 const selectCls =
-  'h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition cursor-pointer shadow-2xs';
+  'h-9 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-bold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition cursor-pointer shadow-2xs';
 
 const labelCls = 'block text-xs font-bold text-slate-500 mb-1';
 
@@ -102,7 +102,7 @@ export function QuestionBankFiltersCard({ filters, subjects, onChange, onReset }
               value={localSearch}
               onChange={(e) => { setLocalSearch(e.target.value); set('search', e.target.value); }}
               placeholder="Nội dung, mã câu hỏi..."
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-slate-300 transition placeholder:text-slate-400 placeholder:font-normal"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 hover:border-slate-300 transition placeholder:text-slate-400 placeholder:font-normal"
             />
             {localSearch ? (
               <button type="button" onClick={() => { setLocalSearch(''); set('search', ''); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition">

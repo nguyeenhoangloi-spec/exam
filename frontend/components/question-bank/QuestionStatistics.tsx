@@ -26,7 +26,15 @@ export function QuestionStatistics({
         return (
           <div
             key={item.key}
+            role="button"
+            tabIndex={0}
             onClick={() => onSelectStatus && onSelectStatus(item.key)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onSelectStatus?.(item.key);
+              }
+            }}
             className={`group rounded-2xl border p-4 shadow-2xs cursor-pointer transition duration-150 ${
               isActive
                 ? 'border-blue-500 bg-blue-50/80 ring-2 ring-blue-500/20 scale-[1.01]'

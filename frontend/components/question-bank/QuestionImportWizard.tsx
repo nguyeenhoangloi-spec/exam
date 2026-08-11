@@ -552,7 +552,7 @@ export function QuestionImportWizard({
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Dán nội dung Đề cương chi tiết hoặc yêu cầu cụ thể (Ví dụ: Tập trung vào nội dung SQL JOIN, Indexing, Transaction...)"
-                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-medium text-[#0F172A] placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
+                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-medium text-[#0F172A] placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none resize-none"
               />
             </div>
 

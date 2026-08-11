@@ -106,7 +106,15 @@ export function DashboardStatistics({
         return (
           <div
             key={spec.key}
+            role="button"
+            tabIndex={0}
             onClick={() => router.push(spec.route)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                router.push(spec.route);
+              }
+            }}
             className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
           >
             {/* Top row: Icon */}

@@ -91,7 +91,7 @@ export function RegradeReviewDrawer({
 
   const content = (
     <>
-      <div className="fixed inset-0 z-[100] overflow-hidden">
+      <div role="dialog" aria-modal="true" aria-label="Xử lý phúc khảo" className="fixed inset-0 z-[100] overflow-hidden">
         {/* Dark Blur Overlay Backdrop */}
         <div
           className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"

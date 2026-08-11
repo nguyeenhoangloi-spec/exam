@@ -271,7 +271,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
     ).length ?? 0;
 
   const content = (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
+    <div role="dialog" aria-modal="true" aria-label="Chi tiết bài làm" className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
       {/* Dark Blur Backdrop */}
       <div
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"

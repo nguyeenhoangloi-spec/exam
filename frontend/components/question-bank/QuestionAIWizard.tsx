@@ -249,6 +249,7 @@ export function QuestionAIWizard({
           </div>
 
           <input
+            id="question-ai-source-file"
             ref={fileInputRef}
             type="file"
             accept=".pdf,.docx,.txt,.md"
@@ -257,8 +258,8 @@ export function QuestionAIWizard({
             className="hidden"
           />
 
-          <div
-            onClick={() => fileInputRef.current?.click()}
+          <label
+            htmlFor="question-ai-source-file"
             className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-3.5 text-center cursor-pointer transition hover:border-blue-500"
           >
             {uploading ? (
@@ -275,7 +276,7 @@ export function QuestionAIWizard({
                 <p className="text-[13px] font-normal text-[#64748B]">Định dạng hỗ trợ: PDF, Word (.docx), TXT, Markdown (.md)</p>
               </div>
             )}
-          </div>
+          </label>
 
           {uploadStatus && !uploading && (
             <p className="mt-1.5 text-[13px] font-medium text-blue-700">
@@ -294,7 +295,7 @@ export function QuestionAIWizard({
             value={form.prompt}
             onChange={(e) => set('prompt', e.target.value)}
             placeholder="Ví dụ: Tập trung vào Chương 2 - Thuật toán sắp xếp nhanh (QuickSort), yêu cầu có câu hỏi phân tích độ phức tạp thời gian O(n log n)..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-[15px] font-medium text-[#0F172A] placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+            className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-[15px] font-medium text-[#0F172A] placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none transition"
           />
         </div>
 

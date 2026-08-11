@@ -575,7 +575,7 @@ export default function TeachersPage() {
 
       {/* Custom Profile Drawer with 3 Tabs */}
       {drawerTeacher && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
+        <div role="dialog" aria-modal="true" aria-label="Thông tin giảng viên" className="fixed inset-0 z-[100] flex justify-end">
           {/* Overlay */}
           <div
             className="absolute inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity"

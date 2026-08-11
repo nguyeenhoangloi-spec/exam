@@ -277,7 +277,8 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 ml-1" aria-label="Breadcrumb">
-              <span
+              <button
+                type="button"
                 className="cursor-pointer text-slate-400/80 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
                 onClick={() => {
                   if (user?.role === 'TEACHER') router.push('/teacher/assignments');
@@ -286,7 +287,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
               >
                 Trang chủ
-              </span>
+              </button>
               <span className="text-slate-700 dark:text-slate-600">/</span>
               <span className="font-extrabold text-slate-900 dark:text-slate-100">
                 {title === 'Hệ thống Quản lý Khảo thí' ? 'Tổng quan' : title}
@@ -341,7 +342,15 @@ export const Header: React.FC<HeaderProps> = ({
                           return (
                             <div
                               key={item.id}
+                              role="button"
+                              tabIndex={0}
                               onClick={() => handleNotificationClick(item)}
+                              onKeyDown={(event) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                  event.preventDefault();
+                                  handleNotificationClick(item);
+                                }
+                              }}
                               className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                                 }`}
                             >

@@ -31,6 +31,9 @@ export const AudioLightboxModal: React.FC<AudioLightboxModalProps> = ({ audioUrl
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Trình phát âm thanh"
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 animate-fade-in"
       onClick={onClose}
     >

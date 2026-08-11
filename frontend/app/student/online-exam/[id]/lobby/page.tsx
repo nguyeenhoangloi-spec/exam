@@ -421,6 +421,9 @@ export default function StudentExamLobbyPage() {
       {/* Popup Modal Nhập Mật khẩu Thi */}
       {showPasswordModal && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Xác thực mật khẩu đề thi"
           className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150"
           onClick={() => setShowPasswordModal(false)}
         >

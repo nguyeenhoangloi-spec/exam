@@ -194,9 +194,9 @@ export function DepartmentTable({
                     </button>
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(d)}>
+                    <button type="button" className="block truncate font-extrabold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(d)}>
                       {d.name}
-                    </p>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{subjectsCount} môn</td>
                   <td className="p-2 whitespace-nowrap font-bold text-slate-800">{classesCount} lớp</td>
@@ -274,12 +274,13 @@ export function DepartmentTable({
 
                 {visibleColumns.name !== false && (
                   <td className="p-3.5 min-w-[220px]">
-                    <span
+                    <button
+                      type="button"
                       onClick={() => onDetail(d)}
                       className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition text-[15px]"
                     >
                       {d.name}
-                    </span>
+                    </button>
                   </td>
                 )}
 

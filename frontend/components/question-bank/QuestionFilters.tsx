@@ -20,7 +20,7 @@ export function QuestionFilters({
 }) {
   const set = (key: keyof Filters, next: string) => onChange({ ...value, [key]: next });
 
-  const select = 'rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm font-medium text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-100 cursor-pointer';
+  const select = 'rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm font-medium text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/15 cursor-pointer';
 
   return (
     <div className="flex flex-wrap gap-2.5">

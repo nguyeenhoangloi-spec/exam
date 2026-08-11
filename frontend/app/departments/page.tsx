@@ -663,7 +663,7 @@ export default function DepartmentsPage() {
 
       {/* Custom Department Detail Drawer */}
       {drawerDepartment && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
+        <div role="dialog" aria-modal="true" aria-label="Thông tin khoa đào tạo" className="fixed inset-0 z-[100] flex justify-end">
           {/* Overlay */}
           <div
             className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm transition-opacity"

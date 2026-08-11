@@ -44,7 +44,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
   const topicText = (question as any).topic || (question as any).chapter?.chapterName || 'Chưa phân loại';
 
   const content = (
-    <div className="fixed inset-0 z-[100] overflow-hidden">
+    <div role="dialog" aria-modal="true" aria-label="Chi tiết câu hỏi" className="fixed inset-0 z-[100] overflow-hidden">
       {/* Dark Blur Overlay Backdrop */}
       <div
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
@@ -154,7 +154,15 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                   return (
                     <div
                       key={media.id || media.url}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setLightboxUrl(media.url)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setLightboxUrl(media.url);
+                        }
+                      }}
                       className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
                       title="Bấm để xem phóng to"
                     >

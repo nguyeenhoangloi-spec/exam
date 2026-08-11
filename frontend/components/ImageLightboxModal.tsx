@@ -69,6 +69,9 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
   return (
     <div
       ref={containerRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Xem ảnh phóng to"
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all animate-fade-in"
       onClick={onClose}
     >

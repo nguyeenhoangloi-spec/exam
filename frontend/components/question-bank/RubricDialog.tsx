@@ -137,7 +137,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
   if (!isOpen || !question) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+    <div role="dialog" aria-modal="true" aria-label="Quản lý rubric chấm điểm" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-6 py-4 bg-[#2563EB] text-white flex justify-between items-center shrink-0">

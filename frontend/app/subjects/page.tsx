@@ -667,7 +667,7 @@ export default function SubjectsPage() {
 
       {/* Subject Detail Drawer */}
       {drawerSubject && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
+        <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] flex justify-end">
           <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
           <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
             {/* Header - Solid Flat Color matching Department/Teacher/Student Drawer */}

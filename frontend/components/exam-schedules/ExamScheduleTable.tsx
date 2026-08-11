@@ -323,9 +323,9 @@ export function ExamScheduleTable({
                     </button>
                   </td>
                   <td className="p-2 min-w-[200px]">
-                    <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(s)}>
+                    <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(s)}>
                       {periodName}
-                    </p>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{shiftName}</td>
                   <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{roomName}</td>
@@ -417,12 +417,13 @@ export function ExamScheduleTable({
                 {visibleColumns.period !== false && (
                   <td className="p-3.5 min-w-[200px]">
                     <div className="space-y-0.5">
-                      <p
+                      <button
+                        type="button"
                         className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
                         onClick={() => onDetail(s)}
                       >
                         {periodName}
-                      </p>
+                      </button>
                       <p className="text-[14px] font-normal text-[#64748B]">
                         {formatExamType(s.examType)}
                       </p>

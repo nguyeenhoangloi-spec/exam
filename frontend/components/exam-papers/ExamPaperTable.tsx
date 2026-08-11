@@ -226,9 +226,9 @@ export function ExamPaperTable({
                     </span>
                   </td>
                   <td className="p-2 min-w-[180px]">
-                    <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p.id)}>
+                    <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p.id)}>
                       {subCode ? `[${subCode}] ` : ''}{subName}
-                    </p>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap">
                     <StatusBadge status={p.status} />
@@ -330,12 +330,13 @@ export function ExamPaperTable({
                             [{subCode}]
                           </span>
                         )}
-                        <span
+                        <button
+                          type="button"
                           onClick={() => onDetail(p.id)}
                           className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
                         >
                           {subName}
-                        </span>
+                        </button>
                       </div>
                       {periodName && (
                         <p className="text-[11px] font-medium text-slate-400 mt-0.5 truncate">

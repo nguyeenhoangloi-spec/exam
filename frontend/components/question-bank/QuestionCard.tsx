@@ -192,9 +192,18 @@ export function QuestionCard({
               return (
                 <div
                   key={mediaItem.id || idx}
+                  role="button"
+                  tabIndex={0}
                   onClick={(e) => {
                     e.stopPropagation();
                     setLightboxUrl(mediaItem.url);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setLightboxUrl(mediaItem.url);
+                    }
                   }}
                   className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
                   title="Bấm vào để xem ảnh phóng to"

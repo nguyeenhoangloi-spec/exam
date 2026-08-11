@@ -278,7 +278,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
+    <div role="dialog" aria-modal="true" aria-label="Tìm kiếm nhanh" className="fixed inset-0 z-[9999] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
       {/* Click outside backdrop */}
       <div className="fixed inset-0 -z-10" onClick={onClose} />
 

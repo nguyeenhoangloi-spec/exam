@@ -189,9 +189,9 @@ export function ExamReportTable({
                       </span>
                     </td>
                     <td className="p-2 min-w-[180px]">
-                      <p className="truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(c)}>
+                      <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(c)}>
                         {c.fullName}
-                      </p>
+                      </button>
                     </td>
                     <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{c.className}</td>
                     <td className="p-2 whitespace-nowrap">
@@ -288,12 +288,13 @@ export function ExamReportTable({
 
                   {visibleColumns.fullName !== false && (
                     <td className="p-3.5 min-w-[200px]">
-                      <span
+                      <button
+                        type="button"
                         onClick={() => onDetail(c)}
                         className="font-extrabold text-slate-900 cursor-pointer hover:text-blue-600 transition"
                       >
                         {c.fullName}
-                      </span>
+                      </button>
                     </td>
                   )}
 

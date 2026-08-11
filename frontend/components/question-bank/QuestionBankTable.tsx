@@ -118,13 +118,14 @@ export function QuestionBankTable({
                 </div>
 
                 {/* Content: Truncated 2 Lines */}
-                <p
-                  className="text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2 min-h-[34px]"
+                <button
+                  type="button"
+                  className="block w-full text-left text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2 min-h-[34px]"
                   onClick={() => onDetail(q)}
                   title={q.content}
                 >
                   {q.content}
-                </p>
+                </button>
 
                 {/* ESSAY vs MULTIPLE_CHOICE Display */}
                 {isEssay ? (
@@ -275,9 +276,9 @@ export function QuestionBankTable({
                     </button>
                   </td>
                   <td className="p-2 min-w-[280px]">
-                    <p className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(q)} title={q.content}>
+                    <button type="button" className="block truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(q)} title={q.content}>
                       {q.content}
-                    </p>
+                    </button>
                   </td>
                   <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{q.subject?.subjectName || 'Chưa gán môn'}</td>
                   <td className="p-2 whitespace-nowrap"><QuestionDifficultyBadge difficulty={q.difficulty || 'MEDIUM'} /></td>
@@ -368,13 +369,14 @@ export function QuestionBankTable({
                     <td className="p-3.5 min-w-[280px] align-top">
                       <div className="space-y-1.5">
                         {/* Câu hỏi */}
-                        <p
-                          className="text-[15px] font-medium text-[#0F172A] dark:text-slate-100 leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2"
+                        <button
+                          type="button"
+                          className="block w-full text-left text-[15px] font-medium text-[#0F172A] dark:text-slate-100 leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2"
                           onClick={() => onDetail(q)}
                           title={q.content}
                         >
                           {q.content}
-                        </p>
+                        </button>
 
                         {/* Đáp án + Media — gộp chung 1 hàng flex-wrap */}
                         <div className="flex flex-wrap items-center gap-1.5">

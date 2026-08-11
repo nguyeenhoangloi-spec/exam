@@ -31,7 +31,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   const shortAvatar = avatarText ? avatarText.trim().slice(0, 3).toUpperCase() : 'HD';
 
   return (
-    <div className="fixed inset-0 z-[70] overflow-hidden">
+    <div role="dialog" aria-modal="true" aria-label="Thông tin tài khoản" className="fixed inset-0 z-[70] overflow-hidden">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"

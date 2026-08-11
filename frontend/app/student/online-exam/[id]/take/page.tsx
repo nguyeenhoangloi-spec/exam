@@ -805,7 +805,7 @@ export default function StudentExamTakePage() {
 
       {/* Submit Confirmation Modal */}
       {showSubmitModal && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
+        <div role="dialog" aria-modal="true" aria-label="Xác nhận nộp bài" className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
           <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-2xl max-w-md w-full my-auto overflow-hidden shadow-2xl space-y-0">
             {/* Header */}
             <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
@@ -860,7 +860,7 @@ export default function StudentExamTakePage() {
 
       {/* Modal Báo cáo Sự cố Kỹ thuật Khẩn cấp */}
       {showIncidentModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+        <div role="dialog" aria-modal="true" aria-label="Báo cáo sự cố kỹ thuật" className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
           <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-amber-200/90 dark:border-amber-900/60 shadow-2xl overflow-hidden space-y-0">
             {/* Header */}
             <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-amber-100/80 dark:border-amber-900/40 flex items-center gap-3.5">
@@ -932,7 +932,7 @@ export default function StudentExamTakePage() {
 
       {/* ── MODAL 1: CẢNH BÁO VI PHẠM NỘI QUY THI ── */}
       {violationModal.isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+        <div role="dialog" aria-modal="true" aria-label="Cảnh báo vi phạm nội quy thi" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-amber-200/90 dark:border-amber-900/60 shadow-2xl overflow-hidden space-y-0">
             {/* Header */}
             <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-amber-100/80 dark:border-amber-900/40 flex items-center gap-3.5">
@@ -992,7 +992,7 @@ export default function StudentExamTakePage() {
 
       {/* ── MODAL 2: TỰ ĐỘNG KHÓA & NỘP BÀI THI DO VI PHẠM ── */}
       {violationSubmittedModal.isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
+        <div role="dialog" aria-modal="true" aria-label="Bài thi đã bị khóa" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
           <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-rose-200/90 dark:border-rose-900/60 shadow-2xl overflow-hidden space-y-0">
             {/* Header */}
             <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-rose-100/80 dark:border-rose-900/40 flex items-center gap-3.5">
