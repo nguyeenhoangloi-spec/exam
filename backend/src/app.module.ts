@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -27,6 +28,7 @@ import { TrashModule } from './trash/trash.module';
 import { PracticeModule } from './practice/practice.module';
 import { GradeAppealsModule } from './grade-appeals/grade-appeals.module';
 import { ExamReportsModule } from './exam-reports/exam-reports.module';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -59,5 +61,6 @@ import { ExamReportsModule } from './exam-reports/exam-reports.module';
     GradeAppealsModule,
     ExamReportsModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

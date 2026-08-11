@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, ImportPreviewDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
@@ -29,7 +29,13 @@ export class QuestionsService {
   private rich(v: unknown) {
     if (!v || typeof v !== 'object') return undefined;
     const html = typeof (v as any).html === 'string' ? (v as any).html : '';
-    return this.json({ html: html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '').replace(/javascript:/gi, '') });
+    const safeHtml = html
+      .replace(/<\/?(script|iframe|object|embed|form|base|meta|link)[^>]*>/gi, '')
+      .replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '')
+      .replace(/\s(?:href|src|action|formaction)\s*=\s*(['"])[\s]*javascript:[\s\S]*?\1/gi, '')
+      .replace(/\s(?:href|src|action|formaction)\s*=\s*(['"])[\s]*data:text\/html[\s\S]*?\1/gi, '')
+      .replace(/style\s*=\s*(['"])[\s\S]*?\1/gi, '');
+    return this.json({ html: safeHtml });
   }
   private async current(id: string) {
     const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include: { options: true, fillBlankAnswers: true, statistic: true } });
@@ -51,13 +57,12 @@ export class QuestionsService {
     if (file.mimetype === 'image/png' && b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) return true;
     if (file.mimetype === 'image/jpeg' && b.subarray(0, 3).equals(Buffer.from([255, 216, 255]))) return true;
     if (file.mimetype === 'image/webp' && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP') return true;
-    if (file.mimetype === 'image/svg+xml') return /<svg[\s>]/i.test(file.buffer.toString('utf8', 0, 4096));
     return false;
   }
   private validateMediaFile(file: Express.Multer.File) {
     const maxBytes = Number(process.env.QUESTION_MEDIA_MAX_BYTES || 50 * 1024 * 1024);
     if (!file || file.size > maxBytes) throw new BadRequestException('File vượt quá dung lượng cho phép (50 MB).');
-    const ALLOWED = /^(image\/(png|jpeg|webp|svg\+xml)|video\/(mp4|webm)|audio\/(mpeg|wav|ogg))$/;
+    const ALLOWED = /^(image\/(png|jpeg|webp)|video\/(mp4|webm)|audio\/(mpeg|wav|ogg))$/;
     if (!ALLOWED.test(file.mimetype)) throw new BadRequestException('Chỉ chấp nhận ảnh, video (mp4/webm) hoặc audio (mp3/wav/ogg).');
     // Chỉ sniff magic bytes với ảnh; video/audio bỏ qua vì header phức tạp
     if (file.mimetype.startsWith('image/') && !this.sniffImage(file)) throw new BadRequestException('File ảnh không hợp lệ.');
@@ -74,11 +79,9 @@ export class QuestionsService {
     const root = this.mediaRoot(); await mkdir(root, { recursive: true });
     const created: any[] = [];
     for (const [i, file] of files.entries()) {
-      const id = randomUUID(); const extension = extname(file.originalname).toLowerCase() || (file.mimetype === 'image/svg+xml' ? '.svg' : '.bin');
-      const stored = `${id}${extension}`; const bytes = file.mimetype === 'image/svg+xml'
-        ? Buffer.from(file.buffer.toString('utf8').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '').replace(/javascript:/gi, ''))
-        : file.buffer;
-      await writeFile(join(root, stored), bytes);
+      const id = randomUUID(); const extension = extname(file.originalname).toLowerCase() || '.bin';
+      const stored = `${id}${extension}`;
+      await writeFile(join(root, stored), file.buffer, { flag: 'wx' });
       const media = await this.prisma.questionMedia.create({ data: { id, questionId, optionId: optionId || null, url: `/uploads/questions/${stored}`, mimeType: file.mimetype, fileName: basename(file.originalname), sortOrder: i } });
       created.push(media);
     }
@@ -344,10 +347,20 @@ export class QuestionsService {
     const lines = file.buffer.toString('utf8').replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean); const headers = lines.shift()!.split(',');
     return lines.map((line, i) => ({ row: i + 2, data: Object.fromEntries(headers.map((h, x) => [h.trim(), line.match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]*))(?:,|$)/g)?.[x]?.replace(/^\"|\",?$|,$/g, '').replace(/\"\"/g, '"') || ''])) }));
   }
-  private rowsFromFile(file: Express.Multer.File) {
-    const workbook = XLSX.read(file.buffer, { type: 'buffer', raw: false });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const matrix = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1, defval: '' });
+  private async rowsFromFile(file: Express.Multer.File) {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(Buffer.from(file.buffer) as any);
+    const sheet = workbook.worksheets[0];
+    if (!sheet) return [];
+    const matrix: any[][] = [];
+    sheet.eachRow({ includeEmpty: false }, (row) => {
+      const values: any[] = [];
+      for (let column = 1; column <= sheet.columnCount; column += 1) {
+        const cell = row.getCell(column).value as any;
+        values.push(cell && typeof cell === 'object' && 'text' in cell ? cell.text : cell ?? '');
+      }
+      matrix.push(values);
+    });
     const aliases: Record<string, string> = {
       'Mã môn': 'subjectCode',
       'Mã chương': 'chapterCode',
@@ -388,7 +401,7 @@ export class QuestionsService {
     };
   }
   async importPreview(a: Actor, file: Express.Multer.File, meta: ImportPreviewDto = new ImportPreviewDto()) {
-    this.access(a); let rows = this.rowsFromFile(file); if (!rows.length || rows.length > 1000) throw new BadRequestException('File phải có 1-1000 dòng.');
+    this.access(a); let rows = await this.rowsFromFile(file); if (!rows.length || rows.length > 1000) throw new BadRequestException('File phải có 1-1000 dòng.');
     rows = rows.map(row => ({ ...row, data: this.resolveImport(row.data, meta) }));
     const out = [];
     for (const row of rows) {

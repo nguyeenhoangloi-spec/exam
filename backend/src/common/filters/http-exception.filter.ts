@@ -12,6 +12,12 @@ import { Request, Response } from 'express';
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger('HTTP-ERROR');
 
+  private safeUrl(url: string) {
+    return url
+      .replace(/([?&](?:token|code|access_token|id_token|google_token)=)[^&]+/gi, '$1[redacted]')
+      .replace(/\/attempt\/[^/]+/gi, '/attempt/[redacted]');
+  }
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -32,7 +38,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? JSON.stringify(exceptionResponse)
         : exceptionResponse;
 
-    const logMessage = `\x1b[31m[${request.method}] ${request.url} - Status ${status} - Error: ${errorMessage}\x1b[0m`;
+    const logMessage = `\x1b[31m[${request.method}] ${this.safeUrl(request.originalUrl || request.url)} - Status ${status} - Error: ${errorMessage}\x1b[0m`;
 
     if (status >= 500) {
       const stack = exception instanceof Error ? exception.stack : '';
@@ -41,15 +47,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.warn(logMessage);
     }
 
+    const safeResponse = status >= 500
+      ? { statusCode: status, message: 'Hệ thống đang gặp sự cố. Vui lòng thử lại sau.' }
+      : exceptionResponse;
     response.status(status).json(
-      typeof exceptionResponse === 'object'
-        ? exceptionResponse
-        : {
-          statusCode: status,
-          timestamp: new Date().toISOString(),
-          path: request.url,
-          message: exceptionResponse,
-        },
+      typeof safeResponse === 'object'
+        ? safeResponse
+        : { statusCode: status, timestamp: new Date().toISOString(), path: this.safeUrl(request.originalUrl || request.url), message: safeResponse },
     );
   }
 }

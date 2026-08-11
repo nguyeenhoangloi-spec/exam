@@ -219,8 +219,10 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleLogout = () => {
-    removeAuth();
-    router.replace('/login');
+    void api.post('/auth/logout').finally(() => {
+      removeAuth();
+      router.replace('/login');
+    });
   };
 
   return (

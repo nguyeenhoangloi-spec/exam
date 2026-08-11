@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { AuditService } from '../audit/audit.service';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class StudentsService {
       where,
       include: {
         class: { include: { department: true } },
-        user: true,
+        user: { select: { id: true, username: true, email: true, role: true, status: true } },
       },
       orderBy: { studentCode: 'asc' },
     });
@@ -53,7 +53,7 @@ export class StudentsService {
       where: { id },
       include: {
         class: { include: { department: true } },
-        user: true,
+        user: { select: { id: true, username: true, email: true, role: true, status: true } },
         studentSubjects: { include: { subject: true } },
       },
     });
@@ -155,7 +155,7 @@ export class StudentsService {
           classId: data.classId,
           userId: user.id,
         },
-        include: { class: true, user: true },
+        include: { class: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } },
       });
     });
   }
@@ -199,7 +199,7 @@ export class StudentsService {
           phone: data.phone,
           classId: data.classId,
         },
-        include: { class: true, user: true },
+        include: { class: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } },
       });
     });
   }

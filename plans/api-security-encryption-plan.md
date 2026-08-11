@@ -279,3 +279,32 @@ Trước khi bật production:
 6. Chốt xử lý dependency vulnerability nào bắt buộc trước release.
 
 Mặc định khuyến nghị: reverse proxy terminate TLS, access token ngắn hạn, refresh token HttpOnly, attempt token không nằm trong URL, file private, không mã hóa toàn bộ JSON, và chỉ mã hóa database sau khi xác định rõ field cùng yêu cầu khôi phục.
+
+## 10. Trạng thái triển khai
+
+Đã triển khai trong workspace:
+
+- JWT guard global và decorator `@Public()`; các endpoint mới mặc định cần xác thực.
+- Access token ngắn hạn, refresh token opaque được hash trong bảng `auth_sessions`, rotation/revoke/logout và cookie HttpOnly.
+- Google OAuth không còn truyền access token/user qua query string.
+- CORS allowlist, security headers, request ID, rate limit cơ bản và lỗi 5xx không lộ nội dung nội bộ.
+- Redact response/log credential; loại password hash khỏi các truy vấn user/student/teacher nhạy cảm.
+- Attempt token dùng `X-Exam-Attempt-Token`; URL frontend chỉ còn attempt id.
+- File upload có giới hạn, kiểm tra signature cơ bản và file URL có chữ ký HMAC thời hạn ngắn.
+- HTML rich content được lọc nguy hiểm ở backend/frontend; SVG bị loại khỏi media upload.
+- Frontend không còn lưu access token trong localStorage; cache loại trừ dữ liệu nhạy cảm và tự refresh phiên.
+- Thay `xlsx` bằng `exceljs`, thay `bcrypt` native bằng `bcryptjs`, override Multer/Lodash và khóa lockfile.
+- Migration `20260811090000_add_auth_sessions` đã áp dụng cho PostgreSQL local.
+
+Đã kiểm chứng:
+
+- Backend build thành công.
+- Frontend build thành công, chỉ còn các warning hiệu năng/lint đã có từ trước.
+- 16 test suites, 48 tests backend đều pass.
+- Login → refresh cookie → profile hoạt động; profile không chứa `password`.
+- Logout làm refresh token bị từ chối.
+- File unsigned bị trả `401`, signed file hợp lệ trả `200`.
+- CORS chỉ trả allow-origin cho frontend được cấu hình.
+- `npm audit --omit=dev --audit-level=high` không còn high/critical; còn 9 moderate phụ thuộc chủ yếu vào Nest/Express/ExcelJS và cần xử lý khi nâng major tương thích.
+
+Việc còn phụ thuộc môi trường production: cài TLS ở reverse proxy, đặt `COOKIE_SECURE=true`, cấu hình `CORS_ORIGINS`/`FRONTEND_URL` bằng HTTPS, tạo `FILE_SIGNING_SECRET` riêng và chạy `prisma migrate deploy` trong pipeline.

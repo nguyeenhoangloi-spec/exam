@@ -10,8 +10,9 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { AuditService } from '../audit/audit.service';
+import { createHash, randomBytes } from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,43 @@ export class AuthService {
     private jwtService: JwtService,
     private audit: AuditService,
   ) {}
+
+  private readonly refreshTokenDays = Math.max(1, Number(process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS || 30));
+
+  private safeUser(user: any) {
+    const { password, ...result } = user;
+    return result;
+  }
+
+  private signAccessToken(user: { id: number; username: string; role: string }) {
+    return this.jwtService.sign(
+      { sub: user.id, username: user.username, role: user.role },
+      { expiresIn: process.env.JWT_EXPIRES_IN || '15m' },
+    );
+  }
+
+  private hashRefreshToken(token: string) {
+    return createHash('sha256').update(token).digest('hex');
+  }
+
+  private async createSession(user: any) {
+    const refreshToken = randomBytes(48).toString('base64url');
+    const expiresAt = new Date(Date.now() + this.refreshTokenDays * 24 * 60 * 60 * 1000);
+
+    await this.prisma.authSession.create({
+      data: {
+        userId: user.id,
+        tokenHash: this.hashRefreshToken(refreshToken),
+        expiresAt,
+      },
+    });
+
+    return {
+      accessToken: this.signAccessToken(user),
+      refreshToken,
+      user: this.safeUser(user),
+    };
+  }
 
   async login(loginDto: LoginDto) {
     let user = await this.prisma.user.findUnique({
@@ -58,14 +96,6 @@ export class AuthService {
       throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa.');
     }
 
-    const payload = {
-      sub: user.id,
-      username: user.username,
-      role: user.role,
-    };
-
-    const accessToken = this.jwtService.sign(payload);
-
     if (user.role === 'ADMIN') {
       await this.audit.write({
         actorId: user.id,
@@ -76,12 +106,43 @@ export class AuthService {
       });
     }
 
-    const { password, ...userWithoutPassword } = user;
+    return this.createSession(user);
+  }
 
-    return {
-      accessToken,
-      user: userWithoutPassword,
-    };
+  async refresh(refreshToken: string) {
+    if (!refreshToken) throw new UnauthorizedException('Phiên đăng nhập đã hết hạn.');
+
+    const session = await this.prisma.authSession.findUnique({
+      where: { tokenHash: this.hashRefreshToken(refreshToken) },
+      include: { user: { include: { student: true, teacher: true } } },
+    });
+
+    if (!session || session.revokedAt || session.expiresAt <= new Date() || session.user.status !== 'ACTIVE') {
+      throw new UnauthorizedException('Phiên đăng nhập đã hết hạn.');
+    }
+
+    await this.prisma.authSession.update({
+      where: { id: session.id },
+      data: { revokedAt: new Date() },
+    });
+
+    return this.createSession(session.user);
+  }
+
+  async logout(refreshToken?: string) {
+    if (refreshToken) {
+      await this.prisma.authSession.updateMany({
+        where: { tokenHash: this.hashRefreshToken(refreshToken), revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+    }
+  }
+
+  async revokeAllSessions(userId: number) {
+    await this.prisma.authSession.updateMany({
+      where: { userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
   }
 
   async getProfile(userId: number) {
@@ -122,6 +183,8 @@ export class AuthService {
       where: { id: userId },
       data: { password: hashedPassword },
     });
+
+    await this.revokeAllSessions(userId);
 
     return { message: 'Đổi mật khẩu thành công.' };
 
@@ -263,14 +326,6 @@ export class AuthService {
       throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa.');
     }
 
-    const payload = {
-      sub: user.id,
-      username: user.username,
-      role: user.role,
-    };
-
-    const accessToken = this.jwtService.sign(payload);
-
     if (user.role === 'ADMIN') {
       await this.audit.write({
         actorId: user.id,
@@ -281,12 +336,7 @@ export class AuthService {
       });
     }
 
-    const { password, ...userWithoutPassword } = user;
-
-    return {
-      accessToken,
-      user: userWithoutPassword,
-    };
+    return this.createSession(user);
   }
 
   /**
@@ -367,4 +417,3 @@ export class AuthService {
     }
   }
 }
-

@@ -1092,7 +1092,7 @@ export class OnlineExamsService {
             examRoomStudents: {
               include: {
                 student: {
-                  include: { class: true, user: true },
+                  include: { class: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } },
                 },
               },
             },
@@ -1112,7 +1112,7 @@ export class OnlineExamsService {
         },
       },
       include: {
-        student: { include: { class: true, user: true } },
+        student: { include: { class: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } } },
         incidents: true,
       },
     });
@@ -1202,4 +1202,3 @@ export class OnlineExamsService {
     };
   }
 }
-

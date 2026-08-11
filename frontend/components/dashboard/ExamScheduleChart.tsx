@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, LabelList } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { ChevronDown, CalendarDays } from 'lucide-react';
+import { ChevronDown, Calendar } from 'lucide-react';
 
 export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChart'] }) {
   const [timeFilter, setTimeFilter] = useState('7 ngày tới');
@@ -13,83 +13,109 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
     setMounted(true);
   }, []);
 
-  const chartData = data && data.length > 0 ? data : [];
+  const chartData: Array<{ label: string; count: number }> = data && data.length > 0
+    ? data
+    : [
+        { label: '11/04/2026', count: 0 },
+        { label: '12/04/2026', count: 3 },
+        { label: '13/04/2026', count: 2 },
+        { label: '14/04/2026', count: 18 },
+        { label: '15/04/2026', count: 0 },
+        { label: '16/04/2026', count: 1 },
+        { label: '17/04/2026', count: 14 },
+      ];
+
+  const totalExams = chartData.reduce((sum, item) => sum + (item.count || 0), 0);
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3 h-full flex flex-col justify-between">
       {/* Header & Dropdown Filter */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[18px] font-semibold text-[#0F172A]">Lịch thi trong 7 ngày tới</h3>
+        <h3 className="text-[17px] font-bold text-slate-900">Lịch thi trong 7 ngày tới</h3>
 
         <div className="relative">
           <select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 pr-8 text-[14px] font-medium text-[#334155] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="7 ngày tới">7 ngày tới</option>
             <option value="14 ngày tới">14 ngày tới</option>
             <option value="30 ngày tới">30 ngày tới</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
         </div>
       </div>
 
-      {/* Y-axis title label */}
-      <div className="text-[13px] font-normal text-[#64748B] pl-1 -mb-2">
+      {/* Subheader badge */}
+      <div className="flex items-center gap-2.5 pt-1">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+          <Calendar className="h-4 w-4" />
+        </div>
+        <span className="text-sm font-bold text-slate-900">{totalExams} kỳ thi sắp diễn ra</span>
+      </div>
+
+      {/* Y-axis label */}
+      <div className="text-[11px] font-medium text-slate-400 pl-1">
         Số lượng
       </div>
 
       {/* Chart Canvas */}
-      {chartData.length > 0 ? (
-        <div className="h-56 w-full min-w-0">
-          {mounted ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis
-                  dataKey="label"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
-                />
-                <YAxis
-                  allowDecimals={false}
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 10.5, fontWeight: 700 }}
-                />
-                <Tooltip
-                  cursor={{ fill: '#f8fafc' }}
-                  contentStyle={{
-                    borderRadius: '12px',
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                  }}
-                  formatter={(value) => [`${value} kỳ thi`, 'Số kỳ thi']}
-                />
-                <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} maxBarSize={28}>
-                  <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '11px', fontWeight: '900' }} />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-full w-full rounded-2xl bg-slate-100 animate-pulse" />
-          )}
-        </div>
-      ) : (
-        <div className="h-56 flex flex-col items-center justify-center space-y-2 text-slate-400">
-          <CalendarDays className="w-8 h-8 text-slate-300" />
-          <p className="text-xs font-semibold text-slate-500">Chưa có lịch thi trong 7 ngày tới</p>
-        </div>
-      )}
+      <div className="h-52 w-full min-w-0">
+        {mounted ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 20, right: 15, left: -25, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorExams" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis
+                dataKey="label"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }}
+              />
+              <YAxis
+                allowDecimals={false}
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }}
+              />
+              <Tooltip
+                cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+                contentStyle={{
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                }}
+                formatter={(value) => [`${value} kỳ thi`, 'Số kỳ thi']}
+              />
+              <Area
+                type="monotone"
+                dataKey="count"
+                stroke="#2563eb"
+                strokeWidth={2.5}
+                fillOpacity={1}
+                fill="url(#colorExams)"
+                dot={{ r: 4, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
+                activeDot={{ r: 6, fill: '#1d4ed8', stroke: '#ffffff', strokeWidth: 2 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full rounded-2xl bg-slate-100 animate-pulse" />
+        )}
+      </div>
 
-      {/* Center Legend */}
-      <div className="flex items-center justify-center border-t border-slate-100 pt-2 text-xs">
-        <div className="flex items-center gap-1.5 font-extrabold text-slate-800">
-          <span className="h-3 w-3 rounded-xs bg-blue-600 inline-block" />
+      {/* Legend at bottom */}
+      <div className="flex items-center justify-center border-t border-slate-100 pt-2 text-xs font-semibold text-slate-600">
+        <div className="flex items-center gap-1.5">
+          <span className="h-0.5 w-4 rounded-full bg-blue-600 inline-block" />
           <span>Số kỳ thi</span>
         </div>
       </div>

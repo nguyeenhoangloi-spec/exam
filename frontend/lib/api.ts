@@ -1,16 +1,20 @@
 import axios, { AxiosAdapter } from 'axios';
-import { getAuthToken, removeAuth } from './auth';
+import { getAuthToken, removeAuth, setAuthToken } from './auth';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Fast in-memory cache for GET requests (30-second TTL)
 const cache = new Map<string, { timestamp: number; data: any }>();
 let isWarmedUp = false;
+let refreshPromise: Promise<string> | null = null;
+
+const shouldNeverCache = (url?: string) => /profile|attempt|exam-paper|question|result|report|appeal|proctor|essay|student|teacher|user|dashboard/i.test(url || '');
 
 export function clearApiCache() {
   cache.clear();
@@ -39,7 +43,7 @@ api.interceptors.request.use(
     }
 
     // Return cached response if fresh (less than 30 seconds old)
-    if (config.method?.toLowerCase() === 'get' && config.url && !config.params?.noCache) {
+    if (config.method?.toLowerCase() === 'get' && config.url && !config.params?.noCache && !shouldNeverCache(config.url)) {
       const cacheKey = `${config.url}?${new URLSearchParams(config.params || {}).toString()}`;
       const cached = cache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < 30000) {
@@ -64,17 +68,36 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    if (response.config.method?.toLowerCase() === 'get' && response.config.url) {
+    if (response.config.method?.toLowerCase() === 'get' && response.config.url && !shouldNeverCache(response.config.url)) {
       const cacheKey = `${response.config.url}?${new URLSearchParams(response.config.params || {}).toString()}`;
       cache.set(cacheKey, { timestamp: Date.now(), data: response.data });
     }
     return response;
   },
-  (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
-        removeAuth();
-        window.location.href = '/login';
+  async (error) => {
+    if (error.response?.status === 401 && error.config && !String(error.config.url || '').includes('/auth/refresh') && !String(error.config.url || '').includes('/auth/login')) {
+      const original = error.config as typeof error.config & { _authRetry?: boolean };
+      if (!original._authRetry) {
+        original._authRetry = true;
+        try {
+          refreshPromise ||= api.post('/auth/refresh').then((refreshResponse) => {
+            const { accessToken, user } = refreshResponse.data || {};
+            if (!accessToken || !user) throw new Error('Phiên đăng nhập không hợp lệ.');
+            setAuthToken(accessToken, user);
+            return accessToken;
+          }).finally(() => {
+            refreshPromise = null;
+          });
+          const token = await refreshPromise;
+          original.headers = original.headers || {};
+          original.headers.Authorization = `Bearer ${token}`;
+          return api(original);
+        } catch {
+          removeAuth(false);
+          if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+            window.location.href = '/login';
+          }
+        }
       }
     }
 
@@ -155,6 +178,20 @@ export const warmupGlobalCache = (role?: string) => {
   setTimeout(() => {
     void Promise.allSettled(endpoints.map((url) => api.get(url)));
   }, 100);
+};
+
+export const restoreAuthSession = async () => {
+  if (getAuthToken()) return true;
+  try {
+    const response = await api.post('/auth/refresh');
+    const { accessToken, user } = response.data || {};
+    if (!accessToken || !user) return false;
+    setAuthToken(accessToken, user);
+    return true;
+  } catch {
+    removeAuth(false);
+    return false;
+  }
 };
 
 export default api;

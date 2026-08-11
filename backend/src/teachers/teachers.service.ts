@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { AuditService } from '../audit/audit.service';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class TeachersService {
     return this.prisma.teacher.findMany({
       include: {
         department: true,
-        user: true,
+        user: { select: { id: true, username: true, email: true, role: true, status: true } },
       },
       orderBy: { teacherCode: 'asc' },
     });
@@ -31,7 +31,7 @@ export class TeachersService {
       where: { id },
       include: {
         department: true,
-        user: true,
+        user: { select: { id: true, username: true, email: true, role: true, status: true } },
         supervisors: {
           include: {
             examScheduleRoom: {
@@ -88,7 +88,7 @@ export class TeachersService {
           departmentId: data.departmentId,
           userId: user.id,
         },
-        include: { department: true, user: true },
+        include: { department: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } },
       });
     });
   }
@@ -121,7 +121,7 @@ export class TeachersService {
         if (existingUser) throw new BadRequestException('Email đã được sử dụng.');
         await tx.user.update({ where: { id: teacher.userId }, data: { email: data.email } });
       }
-      return tx.teacher.update({ where: { id }, data, include: { department: true, user: true } });
+      return tx.teacher.update({ where: { id }, data, include: { department: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } } });
     });
   }
 
@@ -243,8 +243,8 @@ export class TeachersService {
             },
             examRoomStudents: {
               include: {
-                student: {
-                  include: { class: true, user: true },
+                  student: {
+                  include: { class: true, user: { select: { id: true, username: true, email: true, role: true, status: true } } },
                 },
               },
               orderBy: { seatNumber: 'asc' },

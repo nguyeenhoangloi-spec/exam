@@ -61,7 +61,7 @@ const docUpload = FileInterceptor('file', {
 });
 
 const ALLOWED_MEDIA_MIME =
-  /^(image\/(jpeg|png|gif|webp|svg\+xml)|video\/(mp4|webm)|audio\/(mpeg|wav|ogg))$/;
+  /^(image\/(jpeg|png|gif|webp)|video\/(mp4|webm)|audio\/(mpeg|wav|ogg))$/;
 
 const mediaUpload = FilesInterceptor('files', 10, {
   limits: { fileSize: 50 * 1024 * 1024 },

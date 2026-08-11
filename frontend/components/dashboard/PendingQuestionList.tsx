@@ -56,14 +56,14 @@ export function PendingQuestionList({
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[18px] font-semibold text-[#0F172A]">
-          Câu hỏi chờ duyệt <span className="text-[#2563EB] font-semibold">({count})</span>
+        <h3 className="text-[17px] font-bold text-slate-900">
+          Câu hỏi chờ duyệt <span className="text-blue-600 font-bold">({count})</span>
         </h3>
 
         <button
           type="button"
           onClick={() => router.push('/question-bank?status=PENDING')}
-          className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           <span>Xem tất cả</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -73,8 +73,8 @@ export function PendingQuestionList({
       {/* Table Container */}
       {list.length > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-slate-200/80">
-          <table className="w-full text-left text-[15px] min-w-[760px] text-[#334155] border-collapse">
-            <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
+          <table className="w-full text-left text-xs min-w-[760px] text-slate-700 border-collapse">
+            <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
               <tr>
                 <th className="py-3 px-3 whitespace-nowrap">Mã câu hỏi</th>
                 <th className="py-3 px-3">Nội dung câu hỏi</th>
@@ -86,39 +86,36 @@ export function PendingQuestionList({
                 <th className="py-3 px-3 text-center whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-normal text-[15px]">
+            <tbody className="divide-y divide-slate-100 font-normal text-xs">
               {list.map((q) => {
                 const difficultyInfo = difficultyBadge[q.difficulty as keyof typeof difficultyBadge] || difficultyBadge['MEDIUM'];
                 return (
                   <tr key={q.id} className="hover:bg-slate-50/60 transition">
-                    <td className="py-3 px-3 whitespace-nowrap">
-                      <span className="font-mono font-bold text-[14px] text-[#0F172A]">
-                        {q.code}
-                      </span>
+                    <td className="py-3 px-3 whitespace-nowrap font-mono font-bold text-slate-900">
+                      {q.code}
                     </td>
-                    <td className="py-3 px-3 font-medium text-[#0F172A] max-w-xs truncate">
+                    <td className="py-3 px-3 font-medium text-slate-900 max-w-xs truncate">
                       {q.content}
                     </td>
-                    <td className="py-3 px-3 font-medium text-[#0F172A] whitespace-nowrap">
+                    <td className="py-3 px-3 font-medium text-slate-900 whitespace-nowrap">
                       {q.subjectName}
                     </td>
-                    <td className="py-3 px-3 text-[#64748B] font-normal whitespace-nowrap">
+                    <td className="py-3 px-3 text-slate-500 font-normal whitespace-nowrap">
                       {q.chapter}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
-                      <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[13px] font-medium ${difficultyInfo[1]}`}>
+                      <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${difficultyInfo[1]}`}>
                         {difficultyInfo[0]}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-slate-700 font-semibold whitespace-nowrap">
                       {q.creator}
                     </td>
-                    <td className="py-3 px-3 text-slate-500 font-medium whitespace-nowrap">
+                    <td className="py-3 px-3 text-slate-400 font-medium whitespace-nowrap">
                       {q.createdAt}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1.5">
-                        {/* Approve Button */}
                         <Button
                           type="button"
                           variant="success"
@@ -130,8 +127,6 @@ export function PendingQuestionList({
                         >
                           Duyệt
                         </Button>
-
-                        {/* Reject Button */}
                         <Button
                           type="button"
                           variant="danger"
@@ -142,8 +137,6 @@ export function PendingQuestionList({
                         >
                           Từ chối
                         </Button>
-
-                        {/* View Details Button */}
                         <Button
                           type="button"
                           variant="ghost"
@@ -162,12 +155,13 @@ export function PendingQuestionList({
           </table>
         </div>
       ) : (
-        <div className="py-12 text-center space-y-2 text-slate-400 border border-slate-100 rounded-xl bg-slate-50/50">
-          <Inbox className="w-8 h-8 mx-auto text-slate-300" />
-          <p className="text-xs font-semibold text-slate-500">Không có câu hỏi nào đang chờ duyệt</p>
-          <p className="text-[10.5px] text-slate-400">Toàn bộ câu hỏi trong ngân hàng đã được phê duyệt.</p>
+        <div className="py-10 text-center space-y-1.5 text-slate-400 border border-slate-100 rounded-xl bg-slate-50/40">
+          <Inbox className="w-7 h-7 mx-auto text-slate-300 stroke-[1.5]" />
+          <p className="text-xs font-semibold text-slate-600">Không có câu hỏi nào đang chờ duyệt</p>
+          <p className="text-[11px] text-slate-400">Toàn bộ câu hỏi trong ngân hàng đã được phê duyệt.</p>
         </div>
       )}
     </div>
   );
 }
+

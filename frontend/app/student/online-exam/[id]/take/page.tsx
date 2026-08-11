@@ -13,7 +13,9 @@ import { QuestionMediaPlayer } from '@/components/exam/QuestionMediaPlayer';
 export default function StudentExamTakePage() {
   const router = useRouter();
   const params = useParams();
-  const tokenFromUrl = params?.id as string;
+  // The URL contains only the opaque attempt id. The bearer attempt credential stays in sessionStorage
+  // and is sent through X-Exam-Attempt-Token, never as a path segment.
+  const tokenFromUrl = typeof window !== 'undefined' ? sessionStorage.getItem('attemptToken') : null;
 
   const [attemptData, setAttemptData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

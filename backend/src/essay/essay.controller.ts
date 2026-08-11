@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Headers, Param, ParseUUIDPipe, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -6,10 +6,17 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { EssayService } from './essay.service';
 import { ActionReasonDto, GradeAnswerDto, RubricDto } from './dto/essay.dto';
 
+const ESSAY_ALLOWED_MIME = /^(application\/pdf|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|image\/(jpeg|png))$/;
+
 @Controller('essay')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class EssayController {
   constructor(private readonly essay: EssayService) {}
+
+  private attemptCredential(pathValue: string, headerValue?: string) {
+    if (headerValue?.trim()) return headerValue.trim();
+    throw new BadRequestException('Attempt token phải được gửi qua header bảo mật.');
+  }
 
   @Get('questions/:questionId/rubric')
   @Roles('ADMIN', 'TEACHER')
@@ -92,13 +99,20 @@ export class EssayController {
 
   @Post('attempt/:token/answers/:questionId/files')
   @Roles('STUDENT')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    limits: { fileSize: 20 * 1024 * 1024, files: 1 },
+    fileFilter: (_req, file, callback) => {
+      const accepted = ESSAY_ALLOWED_MIME.test(file.mimetype);
+      callback(accepted ? null : new BadRequestException('Loại file không được hỗ trợ.'), accepted);
+    },
+  }))
   upload(
     @Request() req: any,
     @Param('token') token: string,
+    @Headers('x-exam-attempt-token') attemptHeader: string,
     @Param('questionId', ParseUUIDPipe) questionId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.essay.uploadFile(req.user.id, token, questionId, file);
+    return this.essay.uploadFile(req.user.id, this.attemptCredential(token, attemptHeader), questionId, file);
   }
 }

@@ -3,10 +3,13 @@ import { clearApiCache } from './api';
 
 const TOKEN_KEY = 'exam_app_token';
 const USER_KEY = 'exam_app_user';
+let accessToken: string | null = null;
 
 export const setAuthToken = (token: string, user: User) => {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(TOKEN_KEY, token);
+    accessToken = token;
+    // Remove tokens persisted by older builds. Access tokens stay in memory only.
+    localStorage.removeItem(TOKEN_KEY);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
     clearApiCache();
     window.dispatchEvent(new Event('auth-change'));
@@ -14,10 +17,7 @@ export const setAuthToken = (token: string, user: User) => {
 };
 
 export const getAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(TOKEN_KEY);
-  }
-  return null;
+  return typeof window !== 'undefined' ? accessToken : null;
 };
 
 export const getAuthUser = (): User | null => {
@@ -34,12 +34,12 @@ export const getAuthUser = (): User | null => {
   return null;
 };
 
-export const removeAuth = () => {
+export const removeAuth = (notify = true) => {
   if (typeof window !== 'undefined') {
+    accessToken = null;
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     clearApiCache();
-    window.dispatchEvent(new Event('auth-change'));
+    if (notify) window.dispatchEvent(new Event('auth-change'));
   }
 };
-

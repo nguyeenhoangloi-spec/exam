@@ -10,6 +10,7 @@ import {
   Headers,
   Ip,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { OnlineExamsService } from './online-exams.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -25,6 +26,12 @@ import { SubmitAppealDto } from './dto/appeal.dto';
 @Controller('online-exams')
 export class OnlineExamsController {
   constructor(private readonly onlineExamsService: OnlineExamsService) {}
+
+  private attemptCredential(pathValue: string, headerValue?: string) {
+    if (headerValue?.trim()) return headerValue.trim();
+    if (pathValue !== 'current') throw new BadRequestException('Attempt token phải được gửi qua header bảo mật.');
+    throw new BadRequestException('Thiếu attempt token.');
+  }
 
   /**
    * GET /online-exams/schedule/:scheduleId/check-eligibility
@@ -77,8 +84,8 @@ export class OnlineExamsController {
    * Lấy danh sách câu hỏi và trạng thái bài thi
    */
   @Get('attempt/:token/questions')
-  getAttemptQuestions(@Request() req: any, @Param('token') token: string) {
-    return this.onlineExamsService.getAttemptQuestions(req.user.id, token);
+  getAttemptQuestions(@Request() req: any, @Param('token') token: string, @Headers('x-exam-attempt-token') attemptHeader?: string) {
+    return this.onlineExamsService.getAttemptQuestions(req.user.id, this.attemptCredential(token, attemptHeader));
   }
 
   /**
@@ -90,8 +97,9 @@ export class OnlineExamsController {
     @Request() req: any,
     @Param('token') token: string,
     @Body() dto: SaveAnswersBatchDto,
+    @Headers('x-exam-attempt-token') attemptHeader?: string,
   ) {
-    return this.onlineExamsService.saveAnswers(req.user.id, token, dto);
+    return this.onlineExamsService.saveAnswers(req.user.id, this.attemptCredential(token, attemptHeader), dto);
   }
 
   /**
@@ -99,8 +107,8 @@ export class OnlineExamsController {
    * Giữ kết nối và cập nhật thời gian còn lại
    */
   @Post('attempt/:token/heartbeat')
-  heartbeat(@Request() req: any, @Param('token') token: string) {
-    return this.onlineExamsService.heartbeat(req.user.id, token);
+  heartbeat(@Request() req: any, @Param('token') token: string, @Headers('x-exam-attempt-token') attemptHeader?: string) {
+    return this.onlineExamsService.heartbeat(req.user.id, this.attemptCredential(token, attemptHeader));
   }
 
   /**
@@ -112,8 +120,9 @@ export class OnlineExamsController {
     @Request() req: any,
     @Param('token') token: string,
     @Body() dto: ProctoringEventsBatchDto,
+    @Headers('x-exam-attempt-token') attemptHeader?: string,
   ) {
-    return this.onlineExamsService.recordEvents(req.user.id, token, dto);
+    return this.onlineExamsService.recordEvents(req.user.id, this.attemptCredential(token, attemptHeader), dto);
   }
 
   /**
@@ -121,8 +130,8 @@ export class OnlineExamsController {
    * Nộp bài thi chủ động
    */
   @Post('attempt/:token/submit')
-  submitAttempt(@Request() req: any, @Param('token') token: string) {
-    return this.onlineExamsService.submitAttempt(req.user.id, token, false);
+  submitAttempt(@Request() req: any, @Param('token') token: string, @Headers('x-exam-attempt-token') attemptHeader?: string) {
+    return this.onlineExamsService.submitAttempt(req.user.id, this.attemptCredential(token, attemptHeader), false);
   }
 
   /**

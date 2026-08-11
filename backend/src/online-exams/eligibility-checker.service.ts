@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 
 // ===================================================================
@@ -116,7 +116,7 @@ export class EligibilityCheckerService {
     const student = await this.prisma.student.findUnique({
       where: { userId: studentUserId },
       include: {
-        user: true,
+        user: { select: { id: true, username: true, email: true, role: true, status: true } },
         studentSubjects: true,
       },
     });

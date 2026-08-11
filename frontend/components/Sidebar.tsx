@@ -34,6 +34,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
 import { canAccessPath } from '../lib/access';
 import { removeAuth } from '../lib/auth';
+import api from '../lib/api';
 import { ConfirmModal } from './ConfirmModal';
 
 interface SidebarProps {
@@ -99,8 +100,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, []);
 
   const handleLogout = () => {
-    removeAuth();
-    router.replace('/login');
+    void api.post('/auth/logout').finally(() => {
+      removeAuth();
+      router.replace('/login');
+    });
   };
 
   // Master Navigation Items

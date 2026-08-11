@@ -20,6 +20,7 @@ export interface ProctoringEventItem {
 }
 
 export const onlineExamService = {
+  attemptHeaders: (token: string) => ({ headers: { 'X-Exam-Attempt-Token': token } }),
   // --- STUDENT API ---
   async checkEligibility(scheduleId: number) {
     const res = await api.get(`/online-exams/schedule/${scheduleId}/check-eligibility`, {
@@ -47,38 +48,36 @@ export const onlineExamService = {
   },
 
   async getAttemptQuestions(token: string) {
-    const res = await api.get(`/online-exams/attempt/${token}/questions`, {
-      params: { noCache: true },
-    });
+    const res = await api.get('/online-exams/attempt/current/questions', { params: { noCache: true }, ...onlineExamService.attemptHeaders(token) });
     return res.data;
   },
 
   async saveAnswers(token: string, answers: AnswerItem[]) {
-    const res = await api.post(`/online-exams/attempt/${token}/answers/save`, { answers });
+    const res = await api.post('/online-exams/attempt/current/answers/save', { answers }, onlineExamService.attemptHeaders(token));
     return res.data;
   },
 
   async uploadEssayFile(token: string, questionId: string, file: File) {
     const form = new FormData();
     form.append('file', file);
-    const res = await api.post(`/essay/attempt/${token}/answers/${questionId}/files`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    const res = await api.post(`/essay/attempt/current/answers/${questionId}/files`, form, {
+      headers: { 'Content-Type': 'multipart/form-data', ...onlineExamService.attemptHeaders(token).headers },
     });
     return res.data;
   },
 
   async heartbeat(token: string) {
-    const res = await api.post(`/online-exams/attempt/${token}/heartbeat`);
+    const res = await api.post('/online-exams/attempt/current/heartbeat', undefined, onlineExamService.attemptHeaders(token));
     return res.data;
   },
 
   async recordEvents(token: string, events: ProctoringEventItem[]) {
-    const res = await api.post(`/online-exams/attempt/${token}/events`, { events });
+    const res = await api.post('/online-exams/attempt/current/events', { events }, onlineExamService.attemptHeaders(token));
     return res.data;
   },
 
   async submitAttempt(token: string) {
-    const res = await api.post(`/online-exams/attempt/${token}/submit`);
+    const res = await api.post('/online-exams/attempt/current/submit', undefined, onlineExamService.attemptHeaders(token));
     return res.data;
   },
 

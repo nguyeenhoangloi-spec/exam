@@ -72,6 +72,9 @@ export function ExamPeriodTable({
     if (!dateStr) return '---';
     try {
       const d = new Date(dateStr);
+      // `Invalid Date` does not throw; without this guard getDate/getMonth
+      // produce NaN and the table renders `NaN/NaN/NaN`.
+      if (Number.isNaN(d.getTime())) return '---';
       const dd = String(d.getDate()).padStart(2, '0');
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const yyyy = d.getFullYear();

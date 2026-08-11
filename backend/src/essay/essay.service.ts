@@ -27,6 +27,17 @@ export class EssayService {
     private readonly aiService: AiService,
   ) {}
 
+  private validFileSignature(file: Express.Multer.File) {
+    const buffer = file?.buffer || Buffer.alloc(0);
+    if (file.mimetype === 'application/pdf') return buffer.subarray(0, 5).toString('ascii') === '%PDF-';
+    if (file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      return buffer.subarray(0, 2).toString('ascii') === 'PK';
+    }
+    if (file.mimetype === 'image/png') return buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    if (file.mimetype === 'image/jpeg') return buffer.subarray(0, 3).equals(Buffer.from([255, 216, 255]));
+    return false;
+  }
+
   private async teacherCanAccessSchedule(userId: number, scheduleId: number) {
     return Boolean(
       await this.prisma.examScheduleRoom.findFirst({
@@ -1181,7 +1192,7 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
   }
 
   async uploadFile(actorId: number, token: string, questionId: string, file: Express.Multer.File) {
-    if (!file || !ALLOWED_MIME.has(file.mimetype) || file.size > MAX_BYTES) {
+    if (!file || !ALLOWED_MIME.has(file.mimetype) || file.size > MAX_BYTES || !this.validFileSignature(file)) {
       throw new BadRequestException('File đính kèm không hợp lệ hoặc vượt quá dung lượng tối đa 20 MB (Chấp nhận PDF, DOCX, JPG, PNG).');
     }
     const attempt = await this.prisma.examAttempt.findUnique({

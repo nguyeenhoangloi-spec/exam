@@ -56,7 +56,7 @@ export default function StudentExamLobbyPage() {
       if (attempt) {
         if (['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes(attempt.status)) {
           sessionStorage.setItem('attemptToken', attempt.attemptToken);
-          router.push(`/student/online-exam/${attempt.attemptToken}/take`);
+          router.push(`/student/online-exam/${attempt.id}/take`);
           return;
         } else if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(attempt.status)) {
           router.push(`/student/online-exam/${attempt.id}/result`);
@@ -136,7 +136,7 @@ export default function StudentExamLobbyPage() {
         accessCode.trim() || undefined,
       );
       sessionStorage.setItem('attemptToken', res.attemptToken);
-      router.push(`/student/online-exam/${res.attemptToken}/take`);
+      router.push(`/student/online-exam/${res.attemptId}/take`);
     } catch (err: any) {
       const msg = err.response?.data?.message || err.message || 'Không thể bắt đầu làm bài thi. Vui lòng kiểm tra lại mật khẩu/mã truy cập.';
       setError(msg);

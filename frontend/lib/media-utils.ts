@@ -17,7 +17,30 @@ export function getImageUrl(url?: string | null): string {
 export function fixHtmlImageUrls(html?: string): string {
   if (!html) return '';
   const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  return html.replace(/src=["'](\/uploads\/[^"']+)["']/g, `src="${apiBase}$1"`);
+  if (typeof window === 'undefined') {
+    return html
+      .replace(/<\/?(script|iframe|object|embed|form|base|meta|link)[^>]*>/gi, '')
+      .replace(/\son[a-z]+\s*=\s*(["']).*?\1/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/data:text\/html/gi, '')
+      .replace(/src=["'](\/uploads\/[^"']+)["']/g, `src="${apiBase}$1"`);
+  }
+
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script,iframe,object,embed,form,base,meta,link').forEach((node) => node.remove());
+  doc.querySelectorAll('*').forEach((node) => {
+    Array.from(node.attributes).forEach((attribute) => {
+      if (/^on/i.test(attribute.name) || /^(style|srcdoc)$/i.test(attribute.name)) node.removeAttribute(attribute.name);
+      if (/^(href|src|action|formaction)$/i.test(attribute.name) && /^(javascript:|data:text\/html)/i.test(attribute.value.trim())) {
+        node.removeAttribute(attribute.name);
+      }
+    });
+  });
+  doc.querySelectorAll('[src]').forEach((node) => {
+    const value = node.getAttribute('src') || '';
+    if (value.startsWith('/uploads/')) node.setAttribute('src', `${apiBase}${value}`);
+  });
+  return doc.body.innerHTML;
 }
 
 /**

@@ -46,8 +46,9 @@ export default function LoginPage() {
     // Xử lý kết quả trả về từ Google OAuth Redirect
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      const googleToken = urlParams.get('google_token');
-      const googleUserStr = urlParams.get('google_user');
+      const googleToken = null;
+      const googleUserStr = null;
+      const googleSuccess = urlParams.get('google') === 'success';
       const googleError = urlParams.get('google_error');
 
       if (googleError) {
@@ -58,7 +59,21 @@ export default function LoginPage() {
         return;
       }
 
-      if (googleToken && googleUserStr) {
+      if (googleSuccess) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        api.post('/auth/refresh').then((res) => {
+          const { accessToken, user } = res.data || {};
+          if (!accessToken || !user) throw new Error('Invalid Google session');
+          setAuthToken(accessToken, user);
+          setToast({ message: 'Đăng nhập bằng Google thành công!', type: 'success' });
+          const destination = user.role === 'ADMIN' ? '/dashboard' : user.role === 'TEACHER' ? '/teacher/assignments' : '/student/exam-schedule';
+          router.replace(destination);
+        }).catch(() => setError('Không thể hoàn tất phiên đăng nhập Google.'));
+        return;
+      }
+
+      // Legacy query-token flow is intentionally disabled; tokens must never be accepted from the URL.
+      if (false && googleToken && googleUserStr) {
         try {
           const userObj = JSON.parse(decodeURIComponent(googleUserStr));
           setAuthToken(decodeURIComponent(googleToken), userObj);
@@ -484,5 +499,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-

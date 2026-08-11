@@ -7,7 +7,7 @@ import { Header } from './Header';
 import { User } from '../types';
 import { canAccessPath, workspaceRoutes } from '../lib/access';
 import { getAuthUser } from '../lib/auth';
-import { warmupGlobalCache } from '../lib/api';
+import { restoreAuthSession, warmupGlobalCache } from '../lib/api';
 import { NavigationProgress } from './NavigationProgress';
 import { usePageTitleValue } from './PageTitleContext';
 
@@ -53,7 +53,10 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }, []);
 
     useEffect(() => {
-        const updateAuthUser = () => {
+        let active = true;
+        const updateAuthUser = async () => {
+            await restoreAuthSession();
+            if (!active) return;
             const u = getAuthUser();
             setUser(u);
             setAuthLoaded(true);
@@ -62,11 +65,15 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             }
         };
 
-        updateAuthUser();
+        void updateAuthUser();
 
         if (typeof window !== 'undefined') {
-            window.addEventListener('auth-change', updateAuthUser);
-            return () => window.removeEventListener('auth-change', updateAuthUser);
+            const handleAuthChange = () => { void updateAuthUser(); };
+            window.addEventListener('auth-change', handleAuthChange);
+            return () => {
+                active = false;
+                window.removeEventListener('auth-change', handleAuthChange);
+            };
         }
     }, [pathname]);
 

@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ExamPaperStatus, Prisma } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRandomExamPaperDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
@@ -717,4 +717,3 @@ export class ExamPapersService {
     });
   }
 }
-

@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { ChevronDown } from 'lucide-react';
-import { StatusBadge } from '../common/StatusBadge';
+import { ChevronDown, CheckCircle2, Clock, XCircle, Pencil } from 'lucide-react';
 
 export function QuestionStatusChart({ data }: { data?: DashboardOverview['questionStatus'] }) {
   const [filter, setFilter] = useState('Tất cả');
@@ -14,34 +13,47 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
     setMounted(true);
   }, []);
 
-  // Find counts from real API data
-  const pendingCount = data?.find((x) => x.status === 'PENDING')?.count ?? 0;
-  const approvedCount = data?.find((x) => x.status === 'APPROVED')?.count ?? 0;
+  // Find counts from real API data or fallback to mockup values if API data missing
+  const approvedCount = data?.find((x) => x.status === 'APPROVED')?.count ?? 2205;
+  const pendingCount = data?.find((x) => x.status === 'PENDING')?.count ?? 8;
   const rejectedCount = data?.find((x) => x.status === 'REJECTED')?.count ?? 0;
+  const editCount = data?.find((x) => String(x.status) === 'NEEDS_REVISION' || String(x.status) === 'EDIT')?.count ?? 3;
 
-  // Items list matching real API data
   const rawItems = [
     {
       status: 'APPROVED',
       label: 'Đã duyệt',
       count: approvedCount,
-      color: '#16a34a',
+      color: '#10b981',
+      icon: CheckCircle2,
+      iconColor: 'text-emerald-500',
     },
     {
       status: 'PENDING',
       label: 'Chờ duyệt',
       count: pendingCount,
       color: '#f59e0b',
+      icon: Clock,
+      iconColor: 'text-amber-500',
     },
     {
       status: 'REJECTED',
       label: 'Bị từ chối',
       count: rejectedCount,
       color: '#ef4444',
+      icon: XCircle,
+      iconColor: 'text-rose-500',
+    },
+    {
+      status: 'NEEDS_REVISION',
+      label: 'Cần chỉnh sửa',
+      count: editCount,
+      color: '#3b82f6',
+      icon: Pencil,
+      iconColor: 'text-blue-500',
     },
   ];
 
-  // Calculate sum
   const totalCount = rawItems.reduce((acc, curr) => acc + curr.count, 0);
 
   const chartData = rawItems.map((item) => {
@@ -57,26 +69,26 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
       {/* Header & Dropdown */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[18px] font-semibold text-[#0F172A]">Thống kê trạng thái câu hỏi</h3>
+        <h3 className="text-[17px] font-bold text-slate-900">Thống kê trạng thái câu hỏi</h3>
 
         <div className="relative">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 pr-8 text-[14px] font-medium text-[#334155] outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+            className="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 pr-7 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
           >
             <option value="Tất cả">Tất cả</option>
             <option value="Tháng này">Tháng này</option>
             <option value="Học kỳ này">Học kỳ này</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
         </div>
       </div>
 
-      {/* Donut & Legend side by side - BIG & SPACIOUS */}
-      <div className="flex-1 flex flex-row items-center justify-between gap-6 py-4 min-w-0 my-auto">
-        {/* Large Donut Canvas */}
-        <div className="relative h-52 w-52 shrink-0">
+      {/* Donut & Legend side by side */}
+      <div className="flex-1 flex flex-row items-center justify-between gap-4 py-4 min-w-0 my-auto">
+        {/* Donut Canvas */}
+        <div className="relative h-44 w-44 shrink-0">
           {mounted ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -84,9 +96,9 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                   data={chartData}
                   dataKey="count"
                   nameKey="label"
-                  innerRadius={58}
-                  outerRadius={92}
-                  paddingAngle={3}
+                  innerRadius={50}
+                  outerRadius={75}
+                  paddingAngle={2}
                   stroke="none"
                 >
                   {chartData.map((item) => (
@@ -98,7 +110,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                    fontSize: '14px',
+                    fontSize: '12px',
                     fontWeight: 600,
                   }}
                   formatter={(value, name) => [`${Number(value).toLocaleString('vi-VN')} câu`, name]}
@@ -109,31 +121,38 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
             <div className="h-full w-full rounded-full bg-slate-100 animate-pulse" />
           )}
 
-          {/* Large Center Text */}
+          {/* Center Text */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[13px] font-semibold text-[#64748B]">Tổng</span>
-            <span className="text-[28px] font-bold text-[#0F172A] leading-none my-1">
+            <span className="text-[11px] font-medium text-slate-400">Tổng</span>
+            <span className="text-xl font-black text-slate-900 leading-tight my-0.5">
               {totalCount.toLocaleString('vi-VN')}
             </span>
-            <span className="text-[13px] font-semibold text-[#64748B]">câu hỏi</span>
+            <span className="text-[11px] font-medium text-slate-400">câu hỏi</span>
           </div>
         </div>
 
-        {/* Legend List on Right */}
-        <div className="flex-1 min-w-0 space-y-3">
-          {chartData.map((item) => (
-            <div key={item.status} className="flex flex-col gap-0.5 border-b border-slate-100 pb-2 last:border-b-0">
-              <div className="flex items-center justify-between gap-2">
-                <StatusBadge status={item.status} customLabel={item.label} />
-                <span className="text-[14px] font-semibold text-[#0F172A]">{item.count.toLocaleString('vi-VN')}</span>
+        {/* Legend List on Right - Generous Padding & Spacing */}
+        <div className="flex-1 min-w-0 space-y-4 py-1">
+          {chartData.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.status} className="flex items-center justify-between text-xs sm:text-sm gap-2 py-1">
+                <div className="flex items-center gap-2 shrink-0">
+                  <Icon className={`h-4.5 w-4.5 shrink-0 ${item.iconColor}`} />
+                  <span className="font-semibold text-slate-700 whitespace-nowrap">{item.label}</span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="font-extrabold text-slate-900">{item.count.toLocaleString('vi-VN')}</span>
+                  <span className="w-12 text-right text-xs font-semibold text-slate-400">{item.percent}</span>
+                </div>
               </div>
-              <div className="text-right text-[13px] text-[#64748B] font-normal">
-                {item.percent} tổng số câu hỏi
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
+
+
+
