@@ -42,6 +42,22 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
     this.scheduledTask?.stop();
   }
 
+  private toolPath(tool: 'pg_dump' | 'pg_restore') {
+    const configured = process.env[tool === 'pg_dump' ? 'BACKUP_PG_DUMP_PATH' : 'BACKUP_PG_RESTORE_PATH'];
+    return configured?.trim() || tool;
+  }
+
+  // Prisma accepts `schema=...` in DATABASE_URL; libpq tools do not.
+  private cliDatabaseUrl(databaseUrl: string) {
+    try {
+      const url = new URL(databaseUrl);
+      url.searchParams.delete('schema');
+      return url.toString();
+    } catch {
+      return databaseUrl;
+    }
+  }
+
   private async tick() {
     if (this.running) return;
     this.running = true;
@@ -98,9 +114,9 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
       const databaseUrl = process.env.DATABASE_URL;
       if (!databaseUrl) throw new Error('Thiếu DATABASE_URL để thực hiện backup.');
       const dumpPath = join(workDir, 'database.dump');
-      await this.runCommand('pg_dump', ['--format=custom', '--file', dumpPath, '--dbname', databaseUrl]);
+      await this.runCommand(this.toolPath('pg_dump'), ['--format=custom', '--file', dumpPath, '--dbname', this.cliDatabaseUrl(databaseUrl)]);
       await this.backup.markJobVerifying(job.id);
-      await this.runCommand('pg_restore', ['--list', dumpPath]);
+      await this.runCommand(this.toolPath('pg_restore'), ['--list', dumpPath]);
 
       const entries = await this.collectUploads();
       const snapshotPrefix = this.storage.key('snapshots', job.snapshotId);
@@ -159,7 +175,7 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
         const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as { entries: ManifestEntry[] };
         const databaseUrl = request.target === BackupRestoreTarget.STAGING ? process.env.STAGING_DATABASE_URL : process.env.DATABASE_URL;
         if (!databaseUrl) throw new Error(`Thiếu database URL cho môi trường ${request.target}.`);
-        await this.runCommand('pg_restore', ['--clean', '--if-exists', '--no-owner', '--exit-on-error', '--dbname', databaseUrl, dumpPath]);
+        await this.runCommand(this.toolPath('pg_restore'), ['--clean', '--if-exists', '--no-owner', '--exit-on-error', '--dbname', this.cliDatabaseUrl(databaseUrl), dumpPath]);
         const targetRoot = request.target === BackupRestoreTarget.STAGING
           ? (process.env.BACKUP_STAGING_UPLOADS_ROOT || join(process.cwd(), 'backup-staging-uploads'))
           : this.uploadRoot();

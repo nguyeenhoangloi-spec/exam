@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   AlertCircle,
   AlertTriangle,
+  BookOpen,
   Calendar,
   CheckCircle2,
   Clock,
@@ -130,6 +131,9 @@ export default function BackupsPage() {
   usePageTitle('Sao lưu & khôi phục');
   const router = useRouter();
   const currentUser = getAuthUser();
+  // Keep this dependency primitive. getAuthUser() creates a new object on
+  // every render, which otherwise causes the data-loading effect to loop.
+  const currentUserRole = currentUser?.role;
 
   const [overview, setOverview] = useState<Overview | null>(null);
   const [jobs, setJobs] = useState<BackupJob[]>([]);
@@ -143,6 +147,7 @@ export default function BackupsPage() {
   const [filterType, setFilterType] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [filterMode, setFilterMode] = useState<string>(''); // 'ALL' | 'MANUAL' | 'SCHEDULED'
+  const [filterTimeRange, setFilterTimeRange] = useState<string>('');
   const [fromDate, setFromDate] = useState<string>('');
   const [toDate, setToDate] = useState<string>('');
 
@@ -150,7 +155,8 @@ export default function BackupsPage() {
   const [detailJob, setDetailJob] = useState<BackupJob | null>(null);
   const [copiedChecksum, setCopiedChecksum] = useState(false);
 
-  // Restore Modal State
+  // Modal & Policy States
+  const [policyOpen, setPolicyOpen] = useState(false);
   const [restoreOpen, setRestoreOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<BackupJob | null>(null);
   const [target, setTarget] = useState<RestoreTarget>('STAGING');
@@ -196,12 +202,12 @@ export default function BackupsPage() {
   }, [router, filterType, filterStatus, filterMode, fromDate, toDate, search]);
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'ADMIN') {
+    if (currentUserRole !== 'ADMIN') {
       router.replace('/dashboard');
       return;
     }
     void fetchData();
-  }, [fetchData, router, currentUser]);
+  }, [fetchData, router, currentUserRole]);
 
   useEffect(() => {
     if (!overview?.running) return;
@@ -209,7 +215,17 @@ export default function BackupsPage() {
     return () => window.clearInterval(timer);
   }, [overview?.running, fetchData]);
 
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+
   const verifiedJobs = useMemo(() => jobs.filter((job) => job.status === 'SUCCEEDED' && job.retained !== false), [jobs]);
+
+  const sortedJobs = useMemo(() => {
+    return [...jobs].sort((a, b) => {
+      const tA = new Date(a.createdAt).getTime();
+      const tB = new Date(b.createdAt).getTime();
+      return sortOrder === 'newest' ? tB - tA : tA - tB;
+    });
+  }, [jobs, sortOrder]);
 
   const createBackup = async (type: BackupJobType = 'FULL') => {
     setActionLoading(true);
@@ -323,30 +339,34 @@ export default function BackupsPage() {
   };
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+    <div className="w-full px-6 py-6 space-y-5">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* Header matching standard page header across all management pages */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-1">
-          <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
-            Sao lưu & khôi phục dữ liệu
-          </h1>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-[28px] font-bold leading-[36px] text-[#0F172A] tracking-tight">
+              Sao lưu & khôi phục dữ liệu
+            </h1>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-bold shadow-xs">
+              <ShieldCheck className="h-3.5 w-3.5" /> Hệ thống bảo vệ
+            </span>
+          </div>
           <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
             Màn hình vận hành an toàn database, file upload và các snapshot hệ thống khảo thí
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex items-center gap-2.5">
           <Button
             type="button"
             variant="secondary"
             size="md"
-            onClick={() => void fetchData(true)}
-            isLoading={refreshing}
-            leftIcon={<RefreshCw className="h-4 w-4 text-[#64748B]" />}
+            onClick={() => setPolicyOpen(true)}
+            leftIcon={<BookOpen className="h-4 w-4 text-slate-600" />}
           >
-            Làm mới
+            Chính sách & Hướng dẫn
           </Button>
 
           <Button
@@ -359,23 +379,25 @@ export default function BackupsPage() {
           >
             Backup ngay
           </Button>
+
+          <button
+            type="button"
+            onClick={() => void fetchData(true)}
+            disabled={refreshing}
+            className="flex h-9 w-9 items-center justify-center text-slate-500 hover:text-slate-800 transition active:scale-95 cursor-pointer select-none disabled:opacity-50"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin text-blue-600' : ''}`} />
+          </button>
         </div>
       </div>
 
-      {/* Local Storage Warning Banner */}
+      {/* Local Storage Notice (Frameless) */}
       {overview?.storage?.isLocal && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-amber-900 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-bold leading-snug">{overview.storage.warning}</p>
-              <p className="text-xs font-medium text-amber-800/90 mt-0.5">
-                Các bản snapshot được lưu ở thư mục cục bộ của máy chủ backend. Khuyên dùng Amazon S3 / MinIO đối với môi trường Production chính thức.
-              </p>
-            </div>
-          </div>
-          <span className="shrink-0 rounded-xl bg-amber-200/70 px-3 py-1 text-xs font-bold text-amber-900 border border-amber-300/80">
-            LOCAL STORAGE
+        <div className="flex items-center gap-2 text-xs font-medium text-amber-700 py-0.5">
+          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+          <span>
+            <strong className="font-bold">{overview.storage.warning}</strong> — Các bản snapshot được lưu ở thư mục cục bộ. Khuyên dùng Amazon S3 / MinIO đối với môi trường Production chính thức.
           </span>
         </div>
       )}
@@ -545,38 +567,82 @@ export default function BackupsPage() {
               <option value="SCHEDULED">Tự động (Cron)</option>
             </FilterSelect>
           </div>
+
+          {/* Filter Time Range */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-500">Khoảng thời gian:</span>
+            <FilterSelect
+              size="sm"
+              value={filterTimeRange}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFilterTimeRange(val);
+                if (!val) {
+                  setFromDate('');
+                } else if (val === '24h') {
+                  setFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+                } else if (val === '7d') {
+                  setFromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+                } else if (val === '30d') {
+                  setFromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+                } else if (val === '90d') {
+                  setFromDate(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString());
+                }
+              }}
+            >
+              <option value="">Tất cả thời gian</option>
+              <option value="24h">24 giờ qua</option>
+              <option value="7d">7 ngày qua</option>
+              <option value="30d">30 ngày qua</option>
+              <option value="90d">90 ngày qua</option>
+            </FilterSelect>
+          </div>
         </div>
       </div>
 
       {/* Table Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 py-1">
         <span className="text-xs font-semibold text-slate-600">
-          Hiển thị <span className="font-bold text-slate-900">{jobs.length.toLocaleString('vi-VN')}</span> bản snapshot
+          Hiển thị <span className="font-bold text-slate-900">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
         </span>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-          <span>Thời gian lưu trữ: <strong>{overview?.retention?.daily || 14} ngày / {overview?.retention?.weekly || 8} tuần / {overview?.retention?.monthly || 12} tháng</strong></span>
-          <span>·</span>
-          <span className="font-bold text-slate-800">{verifiedJobs.length} bản hợp lệ</span>
+        <div className="flex items-center gap-2">
+          <FilterSelect
+            size="sm"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
+          >
+            <option value="newest">Sắp xếp: Mới nhất</option>
+            <option value="oldest">Sắp xếp: Cũ nhất</option>
+          </FilterSelect>
+
+          <button
+            type="button"
+            onClick={() => void fetchData(true)}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition cursor-pointer active:scale-95 shadow-2xs select-none"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
       {/* Main Snapshot Table */}
-      {jobs.length === 0 ? (
-        /* Empty State with Configuration Guide per Requirement 3 */
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-8 shadow-2xs text-center space-y-6">
+      {sortedJobs.length === 0 ? (
+        /* Empty State */
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-12 shadow-2xs text-center space-y-5">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100">
             <DatabaseBackup className="h-8 w-8" />
           </div>
 
-          <div className="max-w-md mx-auto space-y-2">
+          <div className="max-w-md mx-auto space-y-1.5">
             <h3 className="text-lg font-extrabold text-slate-900">Chưa có bản sao lưu snapshot nào</h3>
             <p className="text-xs font-medium text-slate-600 leading-relaxed">
-              Hệ thống chưa ghi nhận bản snapshot nào. Nguyên nhân có thể do Worker chưa được kích hoạt (`BACKUP_WORKER_ENABLED="true"`) hoặc chưa đến khung giờ chạy tự động ({overview?.schedule || '02:00'}).
+              Hệ thống chưa ghi nhận bản snapshot nào. Bạn có thể bấm nút tạo bên dưới để thực hiện sao lưu dữ liệu ngay lập tức.
             </p>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center pt-1">
             <Button
               type="button"
               variant="primary"
@@ -587,28 +653,6 @@ export default function BackupsPage() {
             >
               Tạo bản Backup ngay
             </Button>
-          </div>
-
-          {/* Local Configuration Guide Box */}
-          <div className="max-w-xl mx-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
-              <FileCode className="h-4 w-4 text-blue-600" />
-              <span>Cấu hình file môi trường `backend/.env` mẫu:</span>
-            </div>
-            <pre className="p-3 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] leading-relaxed overflow-x-auto">
-{`BACKUP_WORKER_ENABLED="true"
-BACKUP_SCHEDULE="02:00"
-BACKUP_TIMEZONE="Asia/Ho_Chi_Minh"
-BACKUP_RETENTION_DAILY="14"
-BACKUP_RETENTION_WEEKLY="8"
-BACKUP_RETENTION_MONTHLY="12"
-BACKUP_LOCAL_ROOT="./backup-runtime"
-DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
-            </pre>
-            <p className="text-[11px] font-semibold text-amber-700 flex items-center gap-1.5 pt-1">
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-              Lưu ý: Backup trên local chưa phải là offsite backup. Cần sao lưu định kỳ ra thiết bị lưu trữ bên ngoài.
-            </p>
           </div>
         </div>
       ) : (
@@ -627,10 +671,16 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {jobs.map((job) => (
-                <tr key={job.id} className="transition hover:bg-blue-50/40">
+              {sortedJobs.map((job) => (
+                <tr key={job.id} className="transition hover:bg-slate-50/60">
                   <td className="p-3.5 pl-4 min-w-[200px]">
-                    <div className="font-mono text-xs font-extrabold text-slate-900">{job.snapshotId}</div>
+                    <button
+                      type="button"
+                      onClick={() => setDetailJob(job)}
+                      className="font-mono text-xs font-black text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
+                    >
+                      {job.snapshotId}
+                    </button>
                     {job.checksum && (
                       <div className="mt-0.5 text-[11px] font-mono text-slate-500">
                         SHA-256: {job.checksum.slice(0, 12)}…
@@ -639,7 +689,17 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
                   </td>
 
                   <td className="p-3.5 whitespace-nowrap">
-                    <span className="font-bold text-xs px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200">
+                    <span
+                      className={`font-bold text-xs px-2.5 py-1 rounded-lg ${
+                        job.type === 'FULL'
+                          ? 'bg-blue-600 text-white shadow-2xs'
+                          : job.type === 'DATABASE'
+                          ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
+                          : job.type === 'UPLOADS'
+                          ? 'bg-sky-50 text-sky-700 border border-sky-200/80'
+                          : 'bg-amber-50 text-amber-700 border border-amber-200/80'
+                      }`}
+                    >
                       {job.type}
                     </span>
                   </td>
@@ -757,7 +817,7 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
         </div>
       )}
 
-      {/* Snapshot Details Drawer (Requirement 5) */}
+      {/* Snapshot Details Modal */}
       {detailJob && (
         <Modal
           isOpen={Boolean(detailJob)}
@@ -765,73 +825,75 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
           title={`Chi tiết Snapshot (${detailJob.snapshotId})`}
           size="lg"
         >
-          <div className="space-y-4 pt-1 text-xs font-semibold text-slate-800">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-              <div>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Snapshot ID</p>
-                <p className="font-mono font-extrabold text-slate-900 mt-0.5 text-xs">{detailJob.snapshotId}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Loại Backup</p>
-                <p className="font-bold text-slate-900 mt-0.5">{detailJob.type}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Dung lượng tổng</p>
-                <p className="font-bold text-slate-900 mt-0.5">{formatBytes(detailJob.sizeBytes)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Người khởi tạo</p>
-                <p className="font-bold text-slate-900 mt-0.5">{detailJob.initiatedBy ? detailJob.initiatedBy.username : 'Hệ thống (Cron)'}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Thời gian khởi tạo</p>
-                <p className="font-medium text-slate-700 mt-0.5">{formatDate(detailJob.createdAt)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Thời gian hoàn thành</p>
-                <p className="font-medium text-slate-700 mt-0.5">{formatDate(detailJob.completedAt)}</p>
-              </div>
+          <div className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Mã Snapshot ID</span>
+              <span className="font-mono font-bold text-[#0F172A]">{detailJob.snapshotId}</span>
             </div>
 
-            {/* Checksum & Migration Info */}
-            <div className="space-y-2">
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Loại Backup</span>
+              <span className="font-bold text-[#0F172A]">{detailJob.type}</span>
+            </div>
+
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Dung lượng tổng</span>
+              <span className="font-bold text-[#0F172A]">{formatBytes(detailJob.sizeBytes)}</span>
+            </div>
+
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Người khởi tạo</span>
+              <span className="font-bold text-[#0F172A]">
+                {detailJob.initiatedBy ? detailJob.initiatedBy.username : 'Hệ thống (Cron)'}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Thời gian khởi tạo</span>
+              <span className="font-bold text-[#0F172A]">{formatDate(detailJob.createdAt)}</span>
+            </div>
+
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Thời gian hoàn thành</span>
+              <span className="font-bold text-[#0F172A]">{formatDate(detailJob.completedAt)}</span>
+            </div>
+
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">Prisma Migration Version</span>
+              <span className="font-mono font-bold text-[#0F172A]">{detailJob.migration || 'Không xác định'}</span>
+            </div>
+
+            <div className="flex items-center justify-between py-3">
+              <span className="font-semibold text-[#64748B]">App Commit Hash</span>
+              <span className="font-mono font-bold text-[#0F172A]">{detailJob.appCommit || 'Latest HEAD'}</span>
+            </div>
+
+            <div className="py-3 space-y-1">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-700">Mã băm SHA-256 Checksum:</span>
+                <span className="font-semibold text-[#64748B]">Mã băm SHA-256 Checksum</span>
                 {detailJob.checksum && (
                   <button
                     type="button"
                     onClick={() => handleCopyChecksum(detailJob.checksum)}
-                    className="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
+                    className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition cursor-pointer"
                   >
-                    <Copy className="h-3 w-3" /> {copiedChecksum ? 'Đã sao chép!' : 'Sao chép hash'}
+                    <Copy className="h-3.5 w-3.5" /> {copiedChecksum ? 'Đã sao chép!' : 'Sao chép hash'}
                   </button>
                 )}
               </div>
-              <pre className="p-3 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] break-all leading-relaxed">
+              <p className="font-mono text-xs font-semibold text-slate-800 break-all leading-relaxed pt-1">
                 {detailJob.checksum || 'Chưa có checksum'}
-              </pre>
-            </div>
-
-            {/* Additional Metadata */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="p-3 rounded-xl border border-slate-200 bg-white space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase">Prisma Migration Version:</span>
-                <p className="font-mono text-xs font-bold text-slate-800 truncate">{detailJob.migration || 'Không xác định'}</p>
-              </div>
-              <div className="p-3 rounded-xl border border-slate-200 bg-white space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase">App Commit Hash:</span>
-                <p className="font-mono text-xs font-bold text-slate-800 truncate">{detailJob.appCommit || 'Latest HEAD'}</p>
-              </div>
+              </p>
             </div>
 
             {detailJob.errorMessage && (
-              <div className="p-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 space-y-1">
-                <span className="font-bold text-xs">Chi tiết nhật ký lỗi:</span>
-                <pre className="text-[11px] font-mono whitespace-pre-wrap">{detailJob.errorMessage}</pre>
+              <div className="py-3 space-y-1 text-rose-700">
+                <span className="font-semibold text-rose-900">Chi tiết nhật ký lỗi:</span>
+                <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap">{detailJob.errorMessage}</p>
               </div>
             )}
 
-            <div className="flex justify-end pt-2 border-t border-slate-100">
+            <div className="flex justify-end pt-4">
               <Button variant="secondary" size="md" onClick={() => setDetailJob(null)}>
                 Đóng
               </Button>
@@ -842,18 +904,20 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
 
       {/* Initial Restore Creation Modal */}
       <Modal isOpen={restoreOpen} onClose={() => !actionLoading && setRestoreOpen(false)} title="Tạo yêu cầu khôi phục dữ liệu" size="md">
-        <div className="space-y-4 pt-1">
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-xs font-semibold text-amber-800">
-            <div className="flex gap-2">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
-              <span>Khôi phục dữ liệu sẽ ghi đè dữ liệu trên môi trường được chọn. Hãy chọn đúng môi trường và nhập lý do rõ ràng.</span>
-            </div>
+        <div className="space-y-4 py-1">
+          {/* Frameless Notice */}
+          <div className="flex items-start gap-2 text-xs font-medium text-amber-800">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+            <span>
+              <strong className="font-bold text-amber-900">Lưu ý an toàn:</strong> Khôi phục dữ liệu sẽ ghi đè dữ liệu trên môi trường được chọn. Hãy chọn đúng môi trường và nhập lý do rõ ràng.
+            </span>
           </div>
 
-          <div className="rounded-xl bg-slate-50 p-3.5 border border-slate-100">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Snapshot đã chọn</p>
-            <p className="mt-1 font-mono text-xs font-extrabold text-slate-900">{selectedJob?.snapshotId}</p>
-            <p className="mt-0.5 text-xs font-semibold text-slate-500">
+          {/* Frameless Selected Snapshot Info */}
+          <div className="space-y-0.5 pt-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Snapshot đã chọn</span>
+            <p className="font-mono text-xs font-black text-slate-900">{selectedJob?.snapshotId}</p>
+            <p className="text-xs font-semibold text-slate-500">
               {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
             </p>
           </div>
@@ -886,7 +950,7 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
             />
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
             <Button variant="secondary" size="md" onClick={() => setRestoreOpen(false)} disabled={actionLoading}>
               Hủy bỏ
             </Button>
@@ -915,6 +979,79 @@ DATABASE_URL="postgresql://postgres:password@localhost:5432/exam_db"`}
           onConfirm={handleCriticalConfirmApprove}
         />
       )}
-    </main>
+      {/* Backup Policy & Operating Guidelines Modal */}
+      <Modal
+        isOpen={policyOpen}
+        onClose={() => setPolicyOpen(false)}
+        title="Chính sách Sao lưu & Hướng dẫn Vận hành"
+      >
+        <div className="space-y-5 py-2 text-slate-700">
+
+          {/* Section 1: Retention Policy */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-bold text-blue-950 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-blue-600 shrink-0" />
+              <span className="text-blue-900 font-bold">Thời gian lưu trữ dữ liệu (Retention Policy)</span>
+            </h4>
+            <p className="text-xs text-slate-600 leading-relaxed pl-6">
+              Hệ thống tự động thực hiện sao lưu định kỳ và dọn dẹp các bản ghi snapshot cũ theo chính sách:
+            </p>
+            <ul className="text-xs space-y-1.5 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
+              <li><strong>Bản sao lưu Hàng ngày (Daily):</strong> Lưu trữ <strong className="text-blue-700 font-bold">{overview?.retention?.daily || 14} ngày</strong> gần nhất.</li>
+              <li><strong>Bản sao lưu Hàng tuần (Weekly):</strong> Lưu trữ <strong className="text-blue-700 font-bold">{overview?.retention?.weekly || 8} tuần</strong> liên tiếp.</li>
+              <li><strong>Bản sao lưu Hàng tháng (Monthly):</strong> Lưu trữ <strong className="text-blue-700 font-bold">{overview?.retention?.monthly || 12} tháng</strong> chính thức.</li>
+            </ul>
+          </div>
+
+          {/* Section 2: Restore Security Policy */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-bold text-blue-950 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
+              <span className="text-blue-900 font-bold">Quy định An toàn & Khôi phục (Security Policy)</span>
+            </h4>
+            <ul className="text-xs space-y-2 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
+              <li>
+                <strong className="text-blue-900">Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
+              </li>
+              <li>
+                <strong className="text-blue-900">Snapshot An toàn (Safety Snapshot):</strong> Ngay trước khi tiến hành ghi đè dữ liệu, hệ thống sẽ tự động tạo một bản snapshot an toàn phòng trường hợp cần khôi phục lại trạng thái trước đó.
+              </li>
+              <li>
+                <strong className="text-blue-900">Xác nhận Cụm từ ngẫu nhiên:</strong> Mỗi lượt khôi phục yêu cầu nhập đúng cụm từ xác minh tĩnh/động được cấp để loại bỏ rủi ro bấm nhầm nút.
+              </li>
+            </ul>
+          </div>
+
+          {/* Section 3: Configuration Guide */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-bold text-blue-950 flex items-center gap-2">
+              <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
+              <span className="text-blue-900 font-bold">Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
+            </h4>
+            <p className="text-xs text-slate-600 leading-relaxed pl-6">
+              Các thông số thiết lập trong tập tin cấu hình môi trường server:
+            </p>
+            <div className="pl-6 pt-1">
+              <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] leading-relaxed overflow-x-auto border-l-4 border-blue-500">
+{`BACKUP_WORKER_ENABLED="true"       # Bật/tắt tiến trình tự động
+BACKUP_SCHEDULE="02:00"             # Khung giờ chạy sao lưu hàng ngày
+BACKUP_TIMEZONE="Asia/Ho_Chi_Minh"  # Múi giờ hệ thống
+BACKUP_RETENTION_DAILY="14"         # Số ngày lưu trữ
+BACKUP_RETENTION_WEEKLY="8"          # Số tuần lưu trữ
+BACKUP_RETENTION_MONTHLY="12"       # Số tháng lưu trữ
+DATABASE_URL="postgresql://..."     # Chuỗi kết nối cơ sở dữ liệu`}
+              </pre>
+            </div>
+          </div>
+
+          {/* Footer actions */}
+          <div className="flex justify-end pt-3 border-t border-slate-100">
+            <Button variant="primary" size="md" onClick={() => setPolicyOpen(false)}>
+              Đã hiểu
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
   );
 }

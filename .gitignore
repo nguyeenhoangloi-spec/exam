@@ -54,3 +54,7 @@ node_modules
 /backend/prisma/dev.db
 /backend/prisma/*.sqlite-backup
 /backend/prisma/data-export/
+
+# Local backup storage (never commit database dumps or uploaded files)
+/backup-runtime/
+/backup-staging-uploads/

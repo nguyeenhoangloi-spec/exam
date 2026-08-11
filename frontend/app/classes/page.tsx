@@ -514,8 +514,8 @@ export default function ClassesPage() {
           />
 
           <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
-            {/* Header - Solid Flat Color matching Department/Teacher/Student/Subject Drawer */}
-            <div className="bg-slate-900 p-5 text-white shrink-0 border-b border-slate-800">
+            {/* Header - Brand Blue Color matching system standard */}
+            <div className="bg-blue-600 p-5 text-white shrink-0 border-b border-blue-700">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-bold text-base text-white border border-white/15">

@@ -36,10 +36,15 @@ export class BackupService {
     };
   }
 
-  private checkToolAvailable(cmd: string): Promise<boolean> {
+  private toolPath(tool: 'pg_dump' | 'pg_restore') {
+    const configured = process.env[tool === 'pg_dump' ? 'BACKUP_PG_DUMP_PATH' : 'BACKUP_PG_RESTORE_PATH'];
+    return configured?.trim() || tool;
+  }
+
+  private checkToolAvailable(tool: 'pg_dump' | 'pg_restore'): Promise<boolean> {
     return new Promise((resolve) => {
       try {
-        const child = spawn(cmd, ['--version'], { windowsHide: true });
+        const child = spawn(this.toolPath(tool), ['--version'], { windowsHide: true });
         child.on('error', () => resolve(false));
         child.on('close', (code) => resolve(code === 0));
       } catch {
