@@ -35,6 +35,10 @@ node_modules
 /frontend/.next/
 /frontend/.next-dev/
 /frontend/.next-prod/
+/frontend/.next-verify/
+/frontend/.next-verify-2/
+/frontend/.next-verify-final/
+/frontend/.next-audit/
 
 # Generated backend artifacts
 /backend/dist/
