@@ -23,7 +23,7 @@ import { ExamRoomTable } from '../../components/exam-rooms/ExamRoomTable';
 import { ExamRoomPaginationBar } from '../../components/exam-rooms/ExamRoomPaginationBar';
 
 export default function ExamRoomsPage() {
-  usePageTitle('Quản lý Phòng thi');
+  usePageTitle('Quản lý phòng thi');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -217,7 +217,7 @@ export default function ExamRoomsPage() {
     const item = rooms.find((r) => r.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa Phòng thi',
+      title: 'Xóa phòng thi',
       message: `Bạn có chắc chắn muốn xóa phòng ${item?.roomName || item?.name || ''}?`,
       type: 'danger',
       onConfirm: async () => {
@@ -316,7 +316,7 @@ export default function ExamRoomsPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm theo Mã phòng, Tên phòng, Tòa nhà..."
+              placeholder="Tìm theo mã phòng, tên phòng, tòa nhà..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -448,7 +448,7 @@ export default function ExamRoomsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Mã Phòng thi</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Mã phòng thi</label>
             <input
               type="text"
               required
@@ -460,7 +460,7 @@ export default function ExamRoomsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tên Phòng thi</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Phòng thi</label>
             <input
               type="text"
               required
@@ -473,7 +473,7 @@ export default function ExamRoomsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
               <input
                 type="number"
                 required
@@ -483,7 +483,7 @@ export default function ExamRoomsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tòa nhà / Vị trí</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Tòa nhà / Vị trí</label>
               <input
                 type="text"
                 required
@@ -497,7 +497,7 @@ export default function ExamRoomsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Loại phòng</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Loại phòng</label>
               <select
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
@@ -508,7 +508,7 @@ export default function ExamRoomsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Trạng thái</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Trạng thái</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}

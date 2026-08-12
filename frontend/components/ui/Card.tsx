@@ -79,7 +79,7 @@ export function StatisticCard({ title, value, icon, trend, description, badge, c
     <Card className={`group flex flex-col justify-between transition hover:shadow-md ${className}`}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</span>
+          <span className="text-xs font-semibold tracking-wider text-slate-500">{title}</span>
           <div className="text-2xl font-semibold text-slate-900 tracking-tight">{value}</div>
         </div>
         {icon && (

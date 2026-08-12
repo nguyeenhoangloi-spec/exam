@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Hệ thống Quản lý Khảo thí Sinh viên',
+  title: 'Hệ thống quản lý khảo thí sinh viên',
   description: 'Quản lý lịch thi, phòng thi, ngân hàng câu hỏi, đề thi tự động',
 };
 

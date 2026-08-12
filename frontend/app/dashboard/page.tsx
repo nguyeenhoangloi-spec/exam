@@ -284,7 +284,7 @@ export default function DashboardPage() {
               }`}
             />
             {reasonError && (
-              <p className="mt-1 text-[11px] font-semibold text-rose-600 flex items-center gap-1">
+              <p className="mt-1 text-[12px] font-semibold text-rose-600 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3 shrink-0" />
                 {reasonError}
               </p>

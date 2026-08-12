@@ -65,7 +65,7 @@ export default function ContactSupportPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'bot' | 'user'; text: string }>>([
     {
       sender: 'bot',
-      text: 'Xin chào! Bạn cần trợ giúp gì về Hệ thống Quản lý Khảo thí hôm nay?',
+      text: 'Xin chào! Bạn cần trợ giúp gì về hệ thống quản lý khảo thí hôm nay?',
     },
   ]);
   const [chatInput, setChatInput] = useState('');
@@ -98,8 +98,8 @@ export default function ContactSupportPage() {
       tags: ['Lịch thi', 'Số báo danh', 'Phòng thi'],
       updatedAt: '05/08/2026',
       content: [
-        '1. Đăng nhập vào Hệ thống Quản lý Khảo thí bằng tài khoản sinh viên do nhà trường cấp.',
-        '2. Trên menu bên trái, chọn mục "Quản lý Lịch thi" ➔ "Lịch thi cá nhân".',
+        '1. Đăng nhập vào hệ thống quản lý khảo thí bằng tài khoản sinh viên do nhà trường cấp.',
+        '2. Trên menu bên trái, chọn mục "Quản lý lịch thi" ➔ "Lịch thi cá nhân".',
         '3. Tại đây hiển thị đầy đủ danh sách các môn thi trong kỳ, Ca thi, Giờ bắt đầu, Số báo danh và Phòng thi chi tiết.',
         '4. Bạn có thể bấm nút "Xuất file lịch thi" hoặc "In báo cáo" để lưu lịch thi về điện thoại/máy tính.',
       ],
@@ -163,7 +163,7 @@ export default function ContactSupportPage() {
       updatedAt: '02/08/2026',
       content: [
         '1. Người dùng có thể tự khôi phục mật khẩu qua liên kết "Quên mật khẩu?" tại trang Đăng nhập.',
-        '2. Trong trường hợp khẩn cấp, Quản trị viên vào mục "Quản lý Người dùng", chọn tài khoản và bấm "Reset Mật khẩu".',
+        '2. Trong trường hợp khẩn cấp, quản trị viên vào mục "Quản lý người dùng", chọn tài khoản và bấm "Reset mật khẩu".',
         '3. Mật khẩu tạm thời sẽ được tự động gửi về Email đăng ký của người dùng.',
       ],
     },
@@ -273,7 +273,7 @@ export default function ContactSupportPage() {
               <span className="block text-base font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
                 EXAM SUPPORT CENTER
               </span>
-              <span className="block text-[11px] font-semibold text-blue-600 dark:text-blue-400 leading-tight">
+              <span className="block text-[12px] font-semibold text-blue-600 dark:text-blue-400 leading-tight">
                 Trung tâm Hỗ trợ Khảo thí
               </span>
             </div>
@@ -337,7 +337,7 @@ export default function ContactSupportPage() {
             {/* Autocomplete Search Suggestions Dropdown */}
             {(isSearchFocused || searchQuery.trim().length > 0) && (
               <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-2xl space-y-2 text-left animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between px-2 text-[11px] font-semibold uppercase text-slate-400 tracking-wider">
+                <div className="flex items-center justify-between px-2 text-[12px] font-semibold text-slate-400 tracking-wider">
                   <span>{searchQuery.trim() ? 'Gợi ý bài viết phù hợp' : 'Tìm kiếm phổ biến nhất'}</span>
                   <span>{searchSuggestions.length} kết quả</span>
                 </div>
@@ -352,14 +352,14 @@ export default function ContactSupportPage() {
                       >
                         <div className="space-y-0.5 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="shrink-0 text-[11px] font-semibold text-[#475569] dark:text-slate-300">
+                            <span className="shrink-0 text-[12px] font-semibold text-[#475569] dark:text-slate-300">
                               {art.categoryLabel}
                             </span>
                             <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
                               {art.title}
                             </h4>
                           </div>
-                          <p className="text-[11px] text-slate-500 line-clamp-1 font-medium">{art.summary}</p>
+                          <p className="text-[12px] text-slate-500 line-clamp-1 font-medium">{art.summary}</p>
                         </div>
                         <ChevronRight className="h-4 w-4 text-slate-700 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0 mt-1" />
                       </div>
@@ -373,13 +373,13 @@ export default function ContactSupportPage() {
 
                 {/* Tag Pills */}
                 <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center gap-1.5 flex-wrap px-1">
-                  <span className="text-[10px] font-semibold text-slate-400 shrink-0">Từ khóa hot:</span>
+                  <span className="text-[12px] font-semibold text-slate-400 shrink-0">Từ khóa hot:</span>
                   {popularSearchTags.map((tag) => (
                     <button
                       key={tag}
                       type="button"
                       onMouseDown={() => setSearchQuery(tag)}
-                      className="rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[11px] font-semibold px-2 py-1 transition cursor-pointer"
+                      className="rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[12px] font-semibold px-2 py-1 transition cursor-pointer"
                     >
                       #{tag}
                     </button>
@@ -406,7 +406,7 @@ export default function ContactSupportPage() {
           </div>
           <div className="space-y-1 min-w-0 flex-1">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-              Hệ thống Quản lý Khảo thí
+              Hệ thống quản lý khảo thí
             </h2>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
               Tổng hợp toàn bộ tài liệu hướng dẫn, quy chế phòng thi, xử lý sự cố kỹ thuật và liên hệ Quản trị viên dành cho Sinh viên & Giảng viên.
@@ -429,9 +429,9 @@ export default function ContactSupportPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold">
               <Phone className="h-5 w-5" />
             </div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Tổng đài Hỗ trợ 24/7</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Tổng đài hỗ trợ 24/7</h3>
             <p className="text-xs text-slate-500 font-semibold">1800-EXAM-HELP (1800-3926-4357)</p>
-            <p className="text-[11px] text-slate-400">Miễn phí cước gọi từ mọi mạng điện thoại</p>
+            <p className="text-[12px] text-slate-400">Miễn phí cước gọi từ mọi mạng điện thoại</p>
           </div>
 
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
@@ -440,7 +440,7 @@ export default function ContactSupportPage() {
             </div>
             <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Email Tiếp nhận Sự cố</h3>
             <p className="text-xs text-slate-500 font-semibold">support@exam.edu.vn</p>
-            <p className="text-[11px] text-slate-400">Thời gian phản hồi trung bình: 15 phút</p>
+            <p className="text-[12px] text-slate-400">Thời gian phản hồi trung bình: 15 phút</p>
           </div>
 
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-2">
@@ -449,7 +449,7 @@ export default function ContactSupportPage() {
             </div>
             <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
             <p className="text-xs text-slate-500 font-semibold">Tầng 3, Tòa nhà A1 - Trung tâm Khảo thí</p>
-            <p className="text-[11px] text-slate-400">Giờ làm việc: 07:30 - 17:00 (Thứ 2 - Thứ 6)</p>
+            <p className="text-[12px] text-slate-400">Giờ làm việc: 07:30 - 17:00 (Thứ 2 - Thứ 6)</p>
           </div>
         </div>
 
@@ -503,7 +503,7 @@ export default function ContactSupportPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="hidden sm:inline-block text-[11px] font-semibold text-slate-500">
+                        <span className="hidden sm:inline-block text-[12px] font-semibold text-slate-500">
                           {faq.categoryLabel}
                         </span>
                         <ChevronRight
@@ -522,7 +522,7 @@ export default function ContactSupportPage() {
                             <p key={i}>{paragraph}</p>
                           ))}
                         </div>
-                        <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400">
+                        <div className="pt-2 flex items-center justify-between text-[12px] text-slate-400">
                           <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {faq.readTime}</span>
                           <button
                             type="button"
@@ -638,7 +638,7 @@ export default function ContactSupportPage() {
       <Modal
         isOpen={isAllArticlesModalOpen}
         onClose={() => setIsAllArticlesModalOpen(false)}
-        title="Danh mục Tất cả Bài viết & Hướng dẫn Quản lý Khảo thí"
+        title="Danh mục tất cả bài viết & hướng dẫn quản lý khảo thí"
       >
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-100">
@@ -658,10 +658,10 @@ export default function ContactSupportPage() {
                 className="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-blue-50/50 hover:border-blue-200 transition cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold text-[#475569]">
+                  <span className="text-[12px] font-semibold text-[#475569]">
                     {art.categoryLabel}
                   </span>
-                  <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+                  <span className="text-[12px] font-semibold text-slate-400 flex items-center gap-1">
                     <Clock className="h-3 w-3" /> {art.readTime}
                   </span>
                 </div>
@@ -717,7 +717,7 @@ export default function ContactSupportPage() {
             <div className="flex items-center gap-1.5 flex-wrap pt-2">
               <span className="text-xs font-semibold text-slate-400">Thẻ liên quan:</span>
               {selectedArticle.tags.map((t) => (
-                <span key={t} className="text-[11px] font-semibold text-slate-600">
+                <span key={t} className="text-[12px] font-semibold text-slate-600">
                   #{t}
                 </span>
               ))}
@@ -757,7 +757,7 @@ export default function ContactSupportPage() {
                 </div>
                 <div>
                   <h4 className="text-xs font-semibold">Hỗ trợ Khảo thí Nhanh</h4>
-                  <p className="text-[10px] text-blue-300 font-semibold flex items-center gap-1">
+                  <p className="text-[12px] text-blue-300 font-semibold flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                     Trực tuyến
                   </p>

@@ -313,7 +313,7 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">LỊCH THI ĐÃ XÓA</span>
+              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Lịch thi đã xóa</span>
               <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
             </div>
             <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -335,7 +335,7 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">ĐỀ THI ĐÃ XÓA</span>
+              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Đề thi đã xóa</span>
               <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.papers}</p>
             </div>
             <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -357,7 +357,7 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">CÂU HỎI ĐÃ XÓA</span>
+              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Câu hỏi đã xóa</span>
               <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.questions}</p>
             </div>
             <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -379,7 +379,7 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider block">TÀI KHOẢN / KHÁC</span>
+              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Tài khoản / khác</span>
               <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
             </div>
             <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
@@ -399,7 +399,7 @@ function TrashPageContent() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Tìm theo Mã, Nội dung, Tên dữ liệu đã xóa..."
+            placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-[15px] font-normal text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:border-[#2563EB] transition"
           />
         </div>
@@ -622,7 +622,7 @@ function TrashPageContent() {
           <div className="bg-white border border-slate-200/80 rounded-2xl shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
-                <thead className="bg-slate-50 text-[14px] font-semibold uppercase tracking-wider text-[#475569] border-b border-slate-200">
+                <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
                   <tr>
                     <th className={`px-5 w-10 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>
                       <input

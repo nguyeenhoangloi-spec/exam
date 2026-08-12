@@ -18,7 +18,7 @@ import { RegradePaginationBar } from '../../../components/regrade/RegradePaginat
 import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrade/RegradeReviewDrawer';
 
 export default function RegradeManagementPage() {
-  usePageTitle('Quản lý Phúc khảo & Khiếu nại điểm');
+  usePageTitle('Quản lý phúc khảo & khiếu nại điểm');
 
   const [appeals, setAppeals] = useState<GradeAppealItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

@@ -20,7 +20,7 @@ export function ClassKPICards({
 }: ClassKPICardsProps) {
   const items = [
     {
-      title: 'Tổng số Lớp học',
+      title: 'Tổng số lớp học',
       value: total,
       subtext: 'Lớp sinh viên',
       icon: GraduationCap,
@@ -35,7 +35,7 @@ export function ClassKPICards({
       unit: ' khoa',
     },
     {
-      title: 'Tổng Sinh viên',
+      title: 'Tổng sinh viên',
       value: totalStudents,
       subtext: 'Sinh viên đã vào lớp',
       icon: Users,

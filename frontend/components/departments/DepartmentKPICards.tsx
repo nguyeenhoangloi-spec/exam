@@ -20,14 +20,14 @@ export function DepartmentKPICards({
 }: DepartmentKPICardsProps) {
   const items = [
     {
-      title: 'Tổng số Khoa',
+      title: 'Tổng số khoa',
       value: total,
       subtext: 'Khoa đào tạo',
       icon: Building2,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Môn học thuộc Khoa',
+      title: 'Môn học thuộc khoa',
       value: totalSubjects,
       subtext: 'Danh mục môn học',
       icon: BookOpen,
@@ -48,7 +48,7 @@ export function DepartmentKPICards({
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Khung CT Đào tạo',
+      title: 'Khung CT đào tạo',
       value: curriculumCount,
       subtext: 'Khung môn học đã lập',
       icon: Sparkles,

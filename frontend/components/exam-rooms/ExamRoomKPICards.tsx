@@ -27,14 +27,14 @@ export function ExamRoomKPICards({
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Phòng Máy tính',
+      title: 'Phòng máy tính',
       value: labCount,
       subtext: 'Thi trắc nghiệm máy',
       icon: Monitor,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Phòng Lý thuyết',
+      title: 'Phòng lý thuyết',
       value: theoryCount,
       subtext: 'Thi viết & tự luận',
       icon: BookOpen,

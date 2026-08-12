@@ -13,28 +13,28 @@ interface StudentKPICardsProps {
 export function StudentKPICards({ total, withClass, totalClasses, filtered }: StudentKPICardsProps) {
   const items = [
     {
-      title: 'Tổng Sinh viên',
+      title: 'Tổng sinh viên',
       value: total,
       subtext: 'Chính quy trong hệ thống',
       icon: Users,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Đã phân Lớp',
+      title: 'Đã phân lớp',
       value: withClass,
       subtext: 'Sinh viên đã được xếp lớp',
       icon: CheckCircle2,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Số Lớp học',
+      title: 'Số lớp học',
       value: totalClasses,
       subtext: 'Lớp đào tạo chuyên ngành',
       icon: School,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Đang Hiển thị',
+      title: 'Đang hiển thị',
       value: filtered,
       subtext: 'Theo bộ lọc hiện tại',
       icon: Award,
@@ -53,7 +53,7 @@ export function StudentKPICards({ total, withClass, totalClasses, filtered }: St
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[14px] font-semibold text-[#64748B] uppercase tracking-wider">
+                <span className="text-[14px] font-semibold text-[#64748B] tracking-wider">
                   {item.title}
                 </span>
                 <p className="text-[32px] font-bold text-[#0F172A] leading-tight">

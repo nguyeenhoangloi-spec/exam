@@ -121,11 +121,11 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
 
           {/* Center Text */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[11px] font-medium text-slate-400">Tổng</span>
+            <span className="text-[12px] font-medium text-slate-400">Tổng</span>
             <span className="text-xl font-semibold text-slate-900 leading-tight my-0.5">
               {totalCount.toLocaleString('vi-VN')}
             </span>
-            <span className="text-[11px] font-medium text-slate-400">câu hỏi</span>
+            <span className="text-[12px] font-medium text-slate-400">câu hỏi</span>
           </div>
         </div>
 

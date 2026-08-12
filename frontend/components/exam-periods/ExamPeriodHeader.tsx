@@ -22,7 +22,7 @@ export function ExamPeriodHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
         <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
-          Quản lý Kỳ thi
+          Quản lý kỳ thi
         </h1>
         <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
           Quản lý các kỳ thi, thời gian tổ chức, học kỳ và năm học trong hệ thống

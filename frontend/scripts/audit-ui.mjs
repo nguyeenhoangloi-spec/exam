@@ -52,6 +52,22 @@ for (const folder of sourceRoots) {
       report(file, 'không được dùng font serif hoặc monospace trong Web UI');
     }
 
+    if (/font-mono/i.test(content)) {
+      report(file, 'Web UI phải dùng Inter; không dùng class font-mono');
+    }
+
+    if (file.endsWith('.tsx') && /(?:className|class)\s*=\s*["'`][^"'`]*\buppercase\b/i.test(content)) {
+      report(file, 'Web UI dùng sentence case; không dùng utility uppercase');
+    }
+
+    if (/text-\[(?:9|9\.5|10|10\.5|11|11\.5)px\]/i.test(content)) {
+      report(file, 'cỡ chữ Web UI không được thấp hơn 12px');
+    }
+
+    if (/text-transform\s*:\s*;/i.test(content)) {
+      report(file, 'không được để lại khai báo text-transform rỗng');
+    }
+
     const relativeFile = relative(root, file).replaceAll('\\', '/');
     if (relativeFile !== 'app/exam-arrangement/page.tsx' && (/font-(thin|extralight|light|black|extrabold)/i.test(content) || /font-weight:\s*(100|200|300|800|900)/i.test(content))) {
       report(file, 'Web UI chi duoc dung font weight 400-700');

@@ -115,42 +115,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [{ name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard }],
     },
     {
-      group: 'TỔ CHỨC KỲ THI',
+      group: 'Tổ chức kỳ thi',
       items: [
-        { name: 'Quản lý Kỳ thi', href: '/exam-periods', icon: CalendarDays },
-        { name: 'Quản lý Lịch thi', href: '/exam-schedules', icon: CalendarCheck },
-        { name: 'Quản lý Phòng thi', href: '/exam-rooms', icon: Building2 },
+        { name: 'Quản lý kỳ thi', href: '/exam-periods', icon: CalendarDays },
+        { name: 'Quản lý lịch thi', href: '/exam-schedules', icon: CalendarCheck },
+        { name: 'Quản lý phòng thi', href: '/exam-rooms', icon: Building2 },
         { name: 'Xếp phòng thi', href: '/exam-arrangement', icon: Users },
-        { name: 'Phân công Giám thị', href: '/exam-supervisors', icon: ShieldCheck },
+        { name: 'Phân công giám thị', href: '/exam-supervisors', icon: ShieldCheck },
       ],
     },
     {
-      group: 'NGÂN HÀNG & ĐỀ THI',
+      group: 'Ngân hàng & đề thi',
       items: [
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
-        { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
+        { name: 'Quản lý đề thi', href: '/exam-papers', icon: FileText },
       ],
     },
     {
-      group: 'CHẤM THI & KẾT QUẢ',
+      group: 'Chấm thi & kết quả',
       items: [
-        { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
-        { name: 'Duyệt bài Tự luận', href: '/admin/essay-review', icon: ShieldCheck },
-        { name: 'Báo cáo Điểm thi', href: '/exam-reports', icon: BarChart3 },
+        { name: 'Chấm bài tự luận', href: '/teacher/essay-grading', icon: FileCheck },
+        { name: 'Duyệt bài tự luận', href: '/admin/essay-review', icon: ShieldCheck },
+        { name: 'Báo cáo điểm thi', href: '/exam-reports', icon: BarChart3 },
       ],
     },
     {
-      group: 'DANH MỤC',
+      group: 'Danh mục',
       items: [
-        { name: 'Quản lý Khoa', href: '/departments', icon: Building2 },
-        { name: 'Quản lý Lớp học', href: '/classes', icon: School },
-        { name: 'Quản lý Môn học', href: '/subjects', icon: BookOpen },
-        { name: 'Quản lý Giảng viên', href: '/teachers', icon: GraduationCap },
-        { name: 'Quản lý Sinh viên', href: '/students', icon: Users },
+        { name: 'Quản lý khoa', href: '/departments', icon: Building2 },
+        { name: 'Quản lý lớp học', href: '/classes', icon: School },
+        { name: 'Quản lý môn học', href: '/subjects', icon: BookOpen },
+        { name: 'Quản lý giảng viên', href: '/teachers', icon: GraduationCap },
+        { name: 'Quản lý sinh viên', href: '/students', icon: Users },
       ],
     },
     {
-      group: 'HỆ THỐNG',
+      group: 'Hệ thống',
       items: [
         { name: 'Nhật ký hoạt động', href: '/admin/activity-logs', icon: Activity },
         { name: 'Sao lưu & Khôi phục', href: '/admin/backups', icon: DatabaseBackup },
@@ -172,20 +172,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const teacherGroups: NavGroup[] = [
     {
-      group: 'TỔ CHỨC KỲ THI',
+      group: 'Tổ chức kỳ thi',
       items: [
         { name: 'Lịch coi thi cá nhân', href: '/teacher/assignments', icon: ShieldCheck },
       ],
     },
     {
-      group: 'NGÂN HÀNG & ĐỀ THI',
+      group: 'Ngân hàng & đề thi',
       items: [
         { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
-        { name: 'Quản lý Đề thi', href: '/exam-papers', icon: FileText },
+        { name: 'Quản lý đề thi', href: '/exam-papers', icon: FileText },
       ],
     },
     {
-      group: 'CHẤM THI & KẾT QUẢ',
+      group: 'Chấm thi & kết quả',
       items: [
         { name: 'Chấm bài Tự luận', href: '/teacher/essay-grading', icon: FileCheck },
         { name: 'Xử lý Phúc khảo', href: '/teacher/regrade', icon: FileCheck },
@@ -196,7 +196,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const studentGroups: NavGroup[] = [
     {
-      group: 'DÀNH CHO SINH VIÊN',
+      group: 'Dành cho sinh viên',
       items: [
         { name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: BookMarked },
         { name: 'Kết quả thi', href: '/student/results', icon: Award },
@@ -208,12 +208,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const rawGroups = role === 'ADMIN' ? adminGroups : role === 'TEACHER' ? teacherGroups : studentGroups;
 
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
-    'TỔ CHỨC KỲ THI': true,
-    'NGÂN HÀNG & ĐỀ THI': true,
-    'CHẤM THI & KẾT QUẢ': true,
-    'DANH MỤC': true,
-    'HỆ THỐNG': true,
-    'DÀNH CHO SINH VIÊN': true,
+    'Tổ chức kỳ thi': true,
+    'Ngân hàng & đề thi': true,
+    'Chấm thi & kết quả': true,
+    'Danh mục': true,
+    'Hệ thống': true,
+    'Dành cho sinh viên': true,
   });
 
   const toggleAccordionGroup = (groupName: string) => {

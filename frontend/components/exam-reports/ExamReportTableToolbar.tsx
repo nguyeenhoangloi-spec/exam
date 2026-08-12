@@ -35,7 +35,7 @@ export function ExamReportTableToolbar({
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
 
   const columnsList = [
-    { key: 'studentCode', label: 'Mã Sinh viên' },
+    { key: 'studentCode', label: 'Mã sinh viên' },
     { key: 'fullName', label: 'Họ và Tên' },
     { key: 'className', label: 'Lớp sinh viên' },
     { key: 'status', label: 'Trạng thái nộp bài' },
@@ -85,7 +85,7 @@ export function ExamReportTableToolbar({
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
                 <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
-                <span className="text-[11px] text-slate-400 font-normal">Click để ẩn/hiện</span>
+                <span className="text-[12px] text-slate-400 font-normal">Click để ẩn/hiện</span>
               </div>
 
               <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">

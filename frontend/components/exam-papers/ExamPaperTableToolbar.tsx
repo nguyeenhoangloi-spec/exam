@@ -34,7 +34,7 @@ export function ExamPaperTableToolbar({
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
 
   const columnsList = [
-    { key: 'paperCode', label: 'Mã Đề thi' },
+    { key: 'paperCode', label: 'Mã đề thi' },
     { key: 'subjectName', label: 'Tên Môn học' },
     { key: 'status', label: 'Trạng thái phát hành' },
     { key: 'questionCount', label: 'Số câu hỏi' },
@@ -58,7 +58,7 @@ export function ExamPaperTableToolbar({
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="code_asc">Mã Đề: Thấp đến cao</option>
+            <option value="code_asc">Mã đề: thấp đến cao</option>
             <option value="questions_desc">Số câu: Nhiều nhất</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
@@ -83,7 +83,7 @@ export function ExamPaperTableToolbar({
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
                 <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
-                <span className="text-[11px] text-slate-400 font-normal">Click để ẩn/hiện</span>
+                <span className="text-[12px] text-slate-400 font-normal">Click để ẩn/hiện</span>
               </div>
 
               <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">

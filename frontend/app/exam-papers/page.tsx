@@ -447,7 +447,7 @@ export default function ExamPapersPage() {
 
       setConfirmModal({
         isOpen: true,
-        title: variantCount > 1 ? `Tạo ${variantCount} Mã Đề Thi Đảo Câu` : 'Xác nhận tạo đề thi',
+        title: variantCount > 1 ? `Tạo ${variantCount} mã đề thi đảo câu` : 'Xác nhận tạo đề thi',
         message: `Hệ thống sẽ sinh ${variantCount > 1 ? `${variantCount} mã đề thi khác nhau` : `1 đề thi mã số ${paperCode}`} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
         type: 'info',
         onConfirm: async () => {
@@ -719,7 +719,7 @@ export default function ExamPapersPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm theo Mã đề, Tên môn học..."
+              placeholder="Tìm theo mã đề, tên môn học..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -801,7 +801,7 @@ export default function ExamPapersPage() {
         <Modal
           isOpen={Boolean(selectedPaper)}
           onClose={() => setSelectedPaper(null)}
-          title={`Đề Thi Mã Số: ${selectedPaper.paperCode} - ${(selectedPaper as any).subjectName || (selectedPaper.examSchedule as any)?.subjectName || (selectedPaper.examSchedule?.subject as any)?.subjectName || 'Chi tiết Đề thi'}`}
+          title={`Đề thi mã số: ${selectedPaper.paperCode} - ${(selectedPaper as any).subjectName || (selectedPaper.examSchedule as any)?.subjectName || (selectedPaper.examSchedule?.subject as any)?.subjectName || 'Chi tiết đề thi'}`}
         >
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
@@ -856,7 +856,7 @@ export default function ExamPapersPage() {
 
                     {/* Hàng 2: Thanh phụ chứa loại câu hỏi & nút bấm hành động */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                      <span className="text-[11px] font-semibold text-blue-600">
+                      <span className="text-[12px] font-semibold text-blue-600">
                         {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'FILL_BLANK' ? 'ĐIỀN KHUYẾT' : q.type === 'TRUE_FALSE' ? 'ĐÚNG/SAI' : 'TRẮC NGHIỆM'} · {q.difficulty || 'TRUNG BÌNH'} · {detail.score || (selectedPaper.totalScore / (((selectedPaper as any).details || selectedPaper.questions || []).length || 1)).toFixed(2)}đ
                       </span>
 
@@ -900,7 +900,7 @@ export default function ExamPapersPage() {
                               <span className="font-semibold text-slate-900 mr-1.5">{c.label}.</span>
                               <span>{c.text}</span>
                               {showAnswers && isCorrect && (
-                                <span className="ml-2 inline-flex items-center text-emerald-700 font-semibold text-[10.5px]">
+                                <span className="ml-2 inline-flex items-center text-emerald-700 font-semibold text-[12px]">
                                   ✓ Đáp án đúng
                                 </span>
                               )}
@@ -913,7 +913,7 @@ export default function ExamPapersPage() {
                       <div className="text-xs pt-1 space-y-2">
                         {showAnswers ? (
                           <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
-                            <p className="font-semibold text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                            <p className="font-semibold text-emerald-800 text-[12px] tracking-wider flex items-center gap-1.5">
                               <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Đáp án chính xác cho các chỗ trống:
                             </p>
                             <div className="flex flex-wrap gap-2 pt-1">
@@ -929,7 +929,7 @@ export default function ExamPapersPage() {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-[11px] italic font-semibold text-slate-400">
+                          <p className="text-[12px] italic font-semibold text-slate-400">
                             (Bấm &quot;Hiện Đáp án&quot; để xem đáp án các ô điền khuyết)
                           </p>
                         )}
@@ -939,7 +939,7 @@ export default function ExamPapersPage() {
                       <div className="text-xs pt-1 space-y-2">
                         {showAnswers ? (
                           <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 space-y-1 text-emerald-900">
-                            <p className="font-semibold text-emerald-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                            <p className="font-semibold text-emerald-800 text-[12px] tracking-wider flex items-center gap-1.5">
                               <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án & Thang điểm Tự luận:
                             </p>
                             <p className="font-semibold whitespace-pre-wrap leading-relaxed">
@@ -947,7 +947,7 @@ export default function ExamPapersPage() {
                             </p>
                           </div>
                         ) : (
-                          <p className="text-[11px] italic font-semibold text-slate-400">
+                          <p className="text-[12px] italic font-semibold text-slate-400">
                             (Bấm &quot;Hiện Đáp án&quot; để xem đáp án gợi ý &amp; thang điểm)
                           </p>
                         )}
@@ -1046,7 +1046,7 @@ export default function ExamPapersPage() {
               <p className="mt-1 font-semibold text-slate-700 italic border-l-2 border-blue-400 pl-2">
                 &quot;{swapModal.targetQuestion?.content}&quot;
               </p>
-              <p className="mt-1 text-[11px] text-blue-700 font-semibold">
+              <p className="mt-1 text-[12px] text-blue-700 font-semibold">
                 Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'Trắc nghiệm'}) & độ khó tương đương từ Ngân hàng đề.
               </p>
             </div>
@@ -1077,7 +1077,7 @@ export default function ExamPapersPage() {
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-2 text-[10.5px] font-semibold text-slate-500">
+                    <div className="flex items-center gap-2 text-[12px] font-semibold text-slate-500">
                       <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-slate-700 font-semibold">
                         Mã câu: #{altQ.id}
                       </span>

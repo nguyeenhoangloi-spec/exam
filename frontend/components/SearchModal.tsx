@@ -56,7 +56,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'exam-periods',
-    title: 'Quản lý Kỳ thi',
+    title: 'Quản lý kỳ thi',
     desc: 'Tạo và quản lý các đợt thi học kỳ, thi phụ',
     href: '/exam-periods',
     icon: CalendarDays,
@@ -65,7 +65,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'exam-schedules',
-    title: 'Quản lý Lịch thi',
+    title: 'Quản lý lịch thi',
     desc: 'Lên lịch ca thi, môn thi và thời gian thi',
     href: '/exam-schedules',
     icon: CalendarCheck,
@@ -74,7 +74,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'exam-rooms',
-    title: 'Quản lý Phòng thi',
+    title: 'Quản lý phòng thi',
     desc: 'Danh sách phòng thi, sức chứa & thiết bị',
     href: '/exam-rooms',
     icon: Building2,
@@ -92,7 +92,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'exam-supervisors',
-    title: 'Phân công Giám thị',
+    title: 'Phân công giám thị',
     desc: 'Phân công cán bộ coi thi theo ca thi',
     href: '/exam-supervisors',
     icon: ShieldCheck,
@@ -110,7 +110,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'exam-papers',
-    title: 'Quản lý Đề thi',
+    title: 'Quản lý đề thi',
     desc: 'Soạn thảo, tạo đề ngẫu nhiên & phê duyệt đề',
     href: '/exam-papers',
     icon: FileText,
@@ -119,7 +119,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'exam-reports',
-    title: 'Báo cáo Điểm thi',
+    title: 'Báo cáo điểm thi',
     desc: 'Thống kê kết quả, xuất báo cáo điểm thi',
     href: '/exam-reports',
     icon: BarChart3,
@@ -128,7 +128,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'departments',
-    title: 'Quản lý Khoa',
+    title: 'Quản lý khoa',
     desc: 'Danh mục Khoa / Viện đào tạo',
     href: '/departments',
     icon: Building2,
@@ -137,7 +137,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'classes',
-    title: 'Quản lý Lớp học',
+    title: 'Quản lý lớp học',
     desc: 'Danh sách lớp hành chính & niên khóa',
     href: '/classes',
     icon: School,
@@ -146,7 +146,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'subjects',
-    title: 'Quản lý Môn học',
+    title: 'Quản lý môn học',
     desc: 'Danh mục môn học, số tín chỉ',
     href: '/subjects',
     icon: BookOpen,
@@ -155,7 +155,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'teachers',
-    title: 'Quản lý Giảng viên',
+    title: 'Quản lý giảng viên',
     desc: 'Danh sách cán bộ & giảng viên',
     href: '/teachers',
     icon: GraduationCap,
@@ -164,7 +164,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'students',
-    title: 'Quản lý Sinh viên',
+    title: 'Quản lý sinh viên',
     desc: 'Danh sách sinh viên toàn trường',
     href: '/students',
     icon: Users,
@@ -314,7 +314,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         {/* Search Results List */}
         <div className="p-3 max-h-96 overflow-y-auto space-y-1 text-[15px]">
           {!query && (
-            <p className="px-3 py-1.5 text-[13px] font-semibold text-[#64748B] dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <p className="px-3 py-1.5 text-[13px] font-semibold text-[#64748B] dark:text-slate-400 tracking-wider flex items-center gap-1.5">
               <Compass className="w-4 h-4 text-[#2563EB]" />
               <span>Đoạn chat & điều hướng gần đây</span>
             </p>

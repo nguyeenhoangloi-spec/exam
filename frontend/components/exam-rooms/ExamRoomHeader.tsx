@@ -21,7 +21,7 @@ export function ExamRoomHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
         <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
-          Quản lý Phòng thi
+          Quản lý phòng thi
         </h1>
         <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
           Quản lý danh mục phòng thi, sức chứa và phân loại phòng máy tính / lý thuyết

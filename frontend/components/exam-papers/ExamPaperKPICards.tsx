@@ -20,7 +20,7 @@ export function ExamPaperKPICards({
 }: ExamPaperKPICardsProps) {
   const items = [
     {
-      title: 'Tổng số Đề thi',
+      title: 'Tổng số đề thi',
       value: total,
       subtext: 'Danh mục đề thi',
       icon: FileText,

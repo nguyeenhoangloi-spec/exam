@@ -330,7 +330,7 @@ export default function ProfilePage() {
       {/* 4 KPI Statistic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">Hồ sơ cá nhân</span>
+          <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">Hồ sơ cá nhân</span>
           <div className="text-[20px] font-semibold text-[#0F172A]">{profileCompletion}% Hoàn tất</div>
           <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" /> {profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm thông tin để hoàn tất hồ sơ'}
@@ -338,19 +338,19 @@ export default function ProfilePage() {
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">Vai trò hệ thống</span>
+          <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">Vai trò hệ thống</span>
           <div className="text-[20px] font-semibold text-blue-600">{roleName}</div>
           <span className="text-[13px] font-normal text-[#64748B]">Quyền hạn truy cập chuẩn</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">Đơn vị quản lý</span>
+          <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">Đơn vị quản lý</span>
           <div className="text-[20px] font-semibold text-[#0F172A] truncate">{deptOrClass}</div>
           <span className="text-[13px] font-normal text-[#64748B]">Hệ thống khảo thí</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">Bảo mật tài khoản</span>
+          <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">Bảo mật tài khoản</span>
           <div className="text-[20px] font-semibold text-emerald-700">An toàn</div>
           <span className="text-[13px] font-normal text-[#64748B]">JWT Token mã hóa 256-bit</span>
         </div>

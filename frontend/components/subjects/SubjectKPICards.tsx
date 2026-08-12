@@ -20,14 +20,14 @@ export function SubjectKPICards({
 }: SubjectKPICardsProps) {
   const items = [
     {
-      title: 'Tổng số Môn học',
+      title: 'Tổng số môn học',
       value: total,
       subtext: 'Danh mục môn học',
       icon: BookOpen,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Tổng số Tín chỉ',
+      title: 'Tổng số tín chỉ',
       value: totalCredits,
       subtext: 'Tổng số TC tích lũy',
       icon: Award,
@@ -35,7 +35,7 @@ export function SubjectKPICards({
       unit: ' TC',
     },
     {
-      title: 'Khoa Đào tạo',
+      title: 'Khoa đào tạo',
       value: totalDepartments,
       subtext: 'Khu vực chuyên ngành',
       icon: Building2,
@@ -43,14 +43,14 @@ export function SubjectKPICards({
       unit: ' khoa',
     },
     {
-      title: 'Môn 3 Tín chỉ',
+      title: 'Môn 3 tín chỉ',
       value: threeCreditCount,
       subtext: 'Phổ biến nhất',
       icon: BookMarked,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Đã có Đề / Câu hỏi',
+      title: 'Đã có đề / câu hỏi',
       value: questionCount,
       subtext: 'Ngân hàng dữ liệu',
       icon: HelpCircle,
@@ -69,7 +69,7 @@ export function SubjectKPICards({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[14px] font-semibold text-[#64748B] uppercase tracking-wider">
+                <span className="text-[14px] font-semibold text-[#64748B] tracking-wider">
                   {item.title}
                 </span>
                 <p className="text-[32px] font-bold text-[#0F172A] leading-tight">

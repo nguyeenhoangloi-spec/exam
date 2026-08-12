@@ -21,7 +21,7 @@ export function ClassHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
         <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
-          Quản lý Lớp học
+          Quản lý lớp học
         </h1>
         <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
           Quản lý danh mục các lớp sinh viên, khoa trực thuộc và số lượng sinh viên theo lớp
@@ -66,4 +66,3 @@ export function ClassHeader({
     </div>
   );
 }
-

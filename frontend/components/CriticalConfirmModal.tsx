@@ -176,7 +176,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <div className="rounded-xl bg-rose-50/90 p-4 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
             <div className="text-xs text-rose-900 space-y-1">
-              <p className="font-semibold uppercase">CẢNH BÁO HẬU QUẢ:</p>
+              <p className="font-semibold ">CẢNH BÁO HẬU QUẢ:</p>
               <p className="leading-relaxed font-medium">{warningMessage}</p>
             </div>
           </div>
@@ -189,7 +189,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 1: Select Reason */}
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-600 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               1. Lý do thực hiện thao tác <span className="text-rose-500">*</span>
             </label>
             <select
@@ -217,7 +217,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 2: Optional Note */}
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-600 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               2. Ghi chú chi tiết (Tùy chọn)
             </label>
             <textarea

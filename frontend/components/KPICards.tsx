@@ -68,7 +68,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ items }) => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{item.title}</p>
+                <p className="text-xs font-semibold tracking-wider text-slate-500">{item.title}</p>
                 <h3 className="mt-1 text-2xl font-bold text-slate-900">{item.value}</h3>
                 {item.subtext && <p className="mt-1 text-xs text-slate-500 font-medium">{item.subtext}</p>}
                 {item.trend && <span className="mt-1.5 block text-xs font-medium text-slate-500">{item.trend}</span>}

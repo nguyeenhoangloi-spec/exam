@@ -22,866 +22,866 @@ import { SubjectTable } from '../../components/subjects/SubjectTable';
 import { SubjectPaginationBar } from '../../components/subjects/SubjectPaginationBar';
 
 export default function SubjectsPage() {
-  usePageTitle('Quản lý Môn học');
-  const router = useRouter();
+ usePageTitle('Quản lý môn học');
+ const router = useRouter();
 
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [classes, setClasses] = useState<any[]>([]);
-  const [search, setSearch] = useState('');
-  const [selectedDeptId, setSelectedDeptId] = useState('');
-  const [filterCredits, setFilterCredits] = useState('');
-  const [filterHasStudents, setFilterHasStudents] = useState('');
-  const [loading, setLoading] = useState(true);
+ const [currentUser, setCurrentUser] = useState<any>(null);
+ const [subjects, setSubjects] = useState<Subject[]>([]);
+ const [departments, setDepartments] = useState<Department[]>([]);
+ const [classes, setClasses] = useState<any[]>([]);
+ const [search, setSearch] = useState('');
+ const [selectedDeptId, setSelectedDeptId] = useState('');
+ const [filterCredits, setFilterCredits] = useState('');
+ const [filterHasStudents, setFilterHasStudents] = useState('');
+ const [loading, setLoading] = useState(true);
 
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
-  const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
-  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
-    subjectCode: true,
-    subjectName: true,
-    credits: true,
-    department: true,
-  });
+ const [page, setPage] = useState(1);
+ const [limit, setLimit] = useState(8);
+ const [sortOrder, setSortOrder] = useState('newest');
+ const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+ const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+ subjectCode: true,
+ subjectName: true,
+ credits: true,
+ department: true,
+ });
 
-  const handleColumnToggle = (key: string) => {
-    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+ const handleColumnToggle = (key: string) => {
+ setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+ };
 
-  const [selected, setSelected] = useState<number[]>([]);
+ const [selected, setSelected] = useState<number[]>([]);
 
-  // Drawer state
-  const [drawerSubject, setDrawerSubject] = useState<Subject | null>(null);
-  const [drawerTab, setDrawerTab] = useState<'info' | 'classes' | 'students'>('info');
-  const [drawerEnrollments, setDrawerEnrollments] = useState<any[]>([]);
-  const [drawerClassSummary, setDrawerClassSummary] = useState<any[]>([]);
-  const [drawerLoading, setDrawerLoading] = useState(false);
-  const [drawerFilterClass, setDrawerFilterClass] = useState('');
-  const [drawerFilterSemester, setDrawerFilterSemester] = useState('');
-  const [drawerFilterYear, setDrawerFilterYear] = useState('');
+ // Drawer state
+ const [drawerSubject, setDrawerSubject] = useState<Subject | null>(null);
+ const [drawerTab, setDrawerTab] = useState<'info' | 'classes' | 'students'>('info');
+ const [drawerEnrollments, setDrawerEnrollments] = useState<any[]>([]);
+ const [drawerClassSummary, setDrawerClassSummary] = useState<any[]>([]);
+ const [drawerLoading, setDrawerLoading] = useState(false);
+ const [drawerFilterClass, setDrawerFilterClass] = useState('');
+ const [drawerFilterSemester, setDrawerFilterSemester] = useState('');
+ const [drawerFilterYear, setDrawerFilterYear] = useState('');
 
-  // CRUD Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
-  const [formData, setFormData] = useState({
-    subjectCode: '',
-    subjectName: '',
-    credits: '3',
-    departmentId: '',
-  });
+ // CRUD Modal State
+ const [isModalOpen, setIsModalOpen] = useState(false);
+ const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+ const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
+ const [formData, setFormData] = useState({
+ subjectCode: '',
+ subjectName: '',
+ credits: '3',
+ departmentId: '',
+ });
 
-  // Enroll by Class Modal State
-  const [enrollClassSubject, setEnrollClassSubject] = useState<Subject | null>(null);
-  const [enrollClassData, setEnrollClassData] = useState({ classId: '', semester: 'HK1', schoolYear: '2025-2026' });
-  const [enrollClassPreview, setEnrollClassPreview] = useState<any>(null);
-  const [enrollClassLoading, setEnrollClassLoading] = useState(false);
-  const [previewLoading, setPreviewLoading] = useState(false);
+ // Enroll by Class Modal State
+ const [enrollClassSubject, setEnrollClassSubject] = useState<Subject | null>(null);
+ const [enrollClassData, setEnrollClassData] = useState({ classId: '', semester: 'HK1', schoolYear: '2025-2026' });
+ const [enrollClassPreview, setEnrollClassPreview] = useState<any>(null);
+ const [enrollClassLoading, setEnrollClassLoading] = useState(false);
+ const [previewLoading, setPreviewLoading] = useState(false);
 
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [confirmModal, setConfirmModal] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: 'danger' | 'warning' | 'info' | 'success';
-    onConfirm: () => void;
-  }>({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: 'danger',
-    onConfirm: () => { },
-  });
+ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+ const [confirmModal, setConfirmModal] = useState<{
+ isOpen: boolean;
+ title: string;
+ message: string;
+ type: 'danger' | 'warning' | 'info' | 'success';
+ onConfirm: () => void;
+ }>({
+ isOpen: false,
+ title: '',
+ message: '',
+ type: 'danger',
+ onConfirm: () => { },
+ });
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [resSubjects, resDepts, resClasses] = await Promise.all([
-        api.get('/subjects').catch(() => ({ data: [] })),
-        api.get('/departments').catch(() => ({ data: [] })),
-        api.get('/classes').catch(() => ({ data: [] })),
-      ]);
-      setSubjects(resSubjects.data || []);
-      setDepartments(resDepts.data || []);
-      setClasses(resClasses.data || []);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải danh sách môn học', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+ const fetchData = useCallback(async () => {
+ setLoading(true);
+ try {
+ const [resSubjects, resDepts, resClasses] = await Promise.all([
+ api.get('/subjects').catch(() => ({ data: [] })),
+ api.get('/departments').catch(() => ({ data: [] })),
+ api.get('/classes').catch(() => ({ data: [] })),
+ ]);
+ setSubjects(resSubjects.data || []);
+ setDepartments(resDepts.data || []);
+ setClasses(resClasses.data || []);
+ } catch (err: any) {
+ setToast({ message: err.message || 'Lỗi tải danh sách môn học', type: 'error' });
+ } finally {
+ setLoading(false);
+ }
+ }, []);
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
-      return;
-    }
-    setCurrentUser(u);
-    fetchData();
-  }, [fetchData, router]);
+ useEffect(() => {
+ const u = getAuthUser();
+ if (!u) {
+ router.push('/login');
+ return;
+ }
+ setCurrentUser(u);
+ fetchData();
+ }, [fetchData, router]);
 
-  // Load drawer data when subject or tab changes
-  useEffect(() => {
-    if (!drawerSubject) return;
-    if (drawerTab === 'info') return;
-    setDrawerLoading(true);
-    if (drawerTab === 'classes') {
-      api.get(`/subjects/${drawerSubject.id}/enrollments/summary`)
-        .then((r) => setDrawerClassSummary(r.data || []))
-        .catch(() => setDrawerClassSummary([]))
-        .finally(() => setDrawerLoading(false));
-    } else if (drawerTab === 'students') {
-      const params: any = {};
-      if (drawerFilterClass) params.classId = drawerFilterClass;
-      if (drawerFilterSemester) params.semester = drawerFilterSemester;
-      if (drawerFilterYear) params.schoolYear = drawerFilterYear;
-      api.get(`/subjects/${drawerSubject.id}/enrollments`, { params })
-        .then((r) => setDrawerEnrollments(r.data || []))
-        .catch(() => setDrawerEnrollments([]))
-        .finally(() => setDrawerLoading(false));
-    }
-  }, [drawerSubject, drawerTab, drawerFilterClass, drawerFilterSemester, drawerFilterYear]);
+ // Load drawer data when subject or tab changes
+ useEffect(() => {
+ if (!drawerSubject) return;
+ if (drawerTab === 'info') return;
+ setDrawerLoading(true);
+ if (drawerTab === 'classes') {
+ api.get(`/subjects/${drawerSubject.id}/enrollments/summary`)
+ .then((r) => setDrawerClassSummary(r.data || []))
+ .catch(() => setDrawerClassSummary([]))
+ .finally(() => setDrawerLoading(false));
+ } else if (drawerTab === 'students') {
+ const params: any = {};
+ if (drawerFilterClass) params.classId = drawerFilterClass;
+ if (drawerFilterSemester) params.semester = drawerFilterSemester;
+ if (drawerFilterYear) params.schoolYear = drawerFilterYear;
+ api.get(`/subjects/${drawerSubject.id}/enrollments`, { params })
+ .then((r) => setDrawerEnrollments(r.data || []))
+ .catch(() => setDrawerEnrollments([]))
+ .finally(() => setDrawerLoading(false));
+ }
+ }, [drawerSubject, drawerTab, drawerFilterClass, drawerFilterSemester, drawerFilterYear]);
 
-  const openDrawer = (s: Subject) => {
-    setDrawerSubject(s);
-    setDrawerTab('info');
-    setDrawerEnrollments([]);
-    setDrawerClassSummary([]);
-    setDrawerFilterClass('');
-    setDrawerFilterSemester('');
-    setDrawerFilterYear('');
-  };
+ const openDrawer = (s: Subject) => {
+ setDrawerSubject(s);
+ setDrawerTab('info');
+ setDrawerEnrollments([]);
+ setDrawerClassSummary([]);
+ setDrawerFilterClass('');
+ setDrawerFilterSemester('');
+ setDrawerFilterYear('');
+ };
 
-  const kpiData = useMemo(() => {
-    const total = subjects.length;
-    const totalCredits = subjects.reduce((acc, curr) => acc + (curr.credits || 0), 0);
-    const setDept = new Set(subjects.map((s) => s.departmentId).filter(Boolean));
-    const threeCreditCount = subjects.filter((s) => s.credits === 3).length;
-    const questionCount = subjects.filter((s: any) => (s._count?.questions || 0) > 0).length;
-    return { total, totalCredits, totalDepartments: setDept.size || departments.length, threeCreditCount, questionCount };
-  }, [subjects, departments]);
+ const kpiData = useMemo(() => {
+ const total = subjects.length;
+ const totalCredits = subjects.reduce((acc, curr) => acc + (curr.credits || 0), 0);
+ const setDept = new Set(subjects.map((s) => s.departmentId).filter(Boolean));
+ const threeCreditCount = subjects.filter((s) => s.credits === 3).length;
+ const questionCount = subjects.filter((s: any) => (s._count?.questions || 0) > 0).length;
+ return { total, totalCredits, totalDepartments: setDept.size || departments.length, threeCreditCount, questionCount };
+ }, [subjects, departments]);
 
-  const filteredSubjects = useMemo(() => {
-    return subjects
-      .filter((s: any) => {
-        const matchSearch =
-          s.subjectName.toLowerCase().includes(search.toLowerCase()) ||
-          s.subjectCode.toLowerCase().includes(search.toLowerCase());
-        const matchDept = selectedDeptId ? String(s.departmentId) === selectedDeptId : true;
-        const matchCredits = filterCredits ? String(s.credits) === filterCredits : true;
-        const matchStudents =
-          filterHasStudents === 'yes' ? (s._count?.studentSubjects || 0) > 0
-            : filterHasStudents === 'no' ? (s._count?.studentSubjects || 0) === 0
-              : true;
-        return matchSearch && matchDept && matchCredits && matchStudents;
-      })
-      .sort((a, b) => {
-        if (sortOrder === 'oldest') return a.id - b.id;
-        if (sortOrder === 'name_asc') return a.subjectName.localeCompare(b.subjectName, 'vi');
-        if (sortOrder === 'credits_desc') return b.credits - a.credits;
-        return b.id - a.id;
-      });
-  }, [subjects, search, selectedDeptId, sortOrder, filterCredits, filterHasStudents]);
+ const filteredSubjects = useMemo(() => {
+ return subjects
+ .filter((s: any) => {
+ const matchSearch =
+ s.subjectName.toLowerCase().includes(search.toLowerCase()) ||
+ s.subjectCode.toLowerCase().includes(search.toLowerCase());
+ const matchDept = selectedDeptId ? String(s.departmentId) === selectedDeptId : true;
+ const matchCredits = filterCredits ? String(s.credits) === filterCredits : true;
+ const matchStudents =
+ filterHasStudents === 'yes' ? (s._count?.studentSubjects || 0) > 0
+ : filterHasStudents === 'no' ? (s._count?.studentSubjects || 0) === 0
+ : true;
+ return matchSearch && matchDept && matchCredits && matchStudents;
+ })
+ .sort((a, b) => {
+ if (sortOrder === 'oldest') return a.id - b.id;
+ if (sortOrder === 'name_asc') return a.subjectName.localeCompare(b.subjectName, 'vi');
+ if (sortOrder === 'credits_desc') return b.credits - a.credits;
+ return b.id - a.id;
+ });
+ }, [subjects, search, selectedDeptId, sortOrder, filterCredits, filterHasStudents]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredSubjects.length / limit));
-  const paginatedSubjects = useMemo(() => {
-    const start = (page - 1) * limit;
-    return filteredSubjects.slice(start, start + limit);
-  }, [filteredSubjects, page, limit]);
+ const totalPages = Math.max(1, Math.ceil(filteredSubjects.length / limit));
+ const paginatedSubjects = useMemo(() => {
+ const start = (page - 1) * limit;
+ return filteredSubjects.slice(start, start + limit);
+ }, [filteredSubjects, page, limit]);
 
-  const openAddModal = () => {
-    setEditingSubject(null);
-    setFormData({ subjectCode: '', subjectName: '', credits: '3', departmentId: departments[0]?.id ? String(departments[0].id) : '' });
-    setIsModalOpen(true);
-  };
+ const openAddModal = () => {
+ setEditingSubject(null);
+ setFormData({ subjectCode: '', subjectName: '', credits: '3', departmentId: departments[0]?.id ? String(departments[0].id) : '' });
+ setIsModalOpen(true);
+ };
 
-  const openEditModal = (s: Subject) => {
-    setEditingSubject(s);
-    setFormData({ subjectCode: s.subjectCode, subjectName: s.subjectName, credits: String(s.credits), departmentId: s.departmentId ? String(s.departmentId) : '' });
-    setIsModalOpen(true);
-  };
+ const openEditModal = (s: Subject) => {
+ setEditingSubject(s);
+ setFormData({ subjectCode: s.subjectCode, subjectName: s.subjectName, credits: String(s.credits), departmentId: s.departmentId ? String(s.departmentId) : '' });
+ setIsModalOpen(true);
+ };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const payload = { subjectCode: formData.subjectCode, subjectName: formData.subjectName, credits: Number(formData.credits), departmentId: Number(formData.departmentId) };
-      if (editingSubject) {
-        await api.patch(`/subjects/${editingSubject.id}`, payload);
-        setToast({ message: 'Cập nhật môn học thành công!', type: 'success' });
-      } else {
-        await api.post('/subjects', payload);
-        setToast({ message: 'Thêm môn học mới thành công!', type: 'success' });
-      }
-      setIsModalOpen(false);
-      fetchData();
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi lưu thông tin môn học', type: 'error' });
-      setIsModalOpen(false);
-    }
-  };
+ const handleSubmit = async (e: React.FormEvent) => {
+ e.preventDefault();
+ try {
+ const payload = { subjectCode: formData.subjectCode, subjectName: formData.subjectName, credits: Number(formData.credits), departmentId: Number(formData.departmentId) };
+ if (editingSubject) {
+ await api.patch(`/subjects/${editingSubject.id}`, payload);
+ setToast({ message: 'Cập nhật môn học thành công!', type: 'success' });
+ } else {
+ await api.post('/subjects', payload);
+ setToast({ message: 'Thêm môn học mới thành công!', type: 'success' });
+ }
+ setIsModalOpen(false);
+ fetchData();
+ } catch (err: any) {
+ setToast({ message: err.message || 'Lỗi lưu thông tin môn học', type: 'error' });
+ setIsModalOpen(false);
+ }
+ };
 
-  const handleDelete = (id: number) => {
-    const item = subjects.find((s) => s.id === id);
-    setConfirmModal({
-      isOpen: true,
-      title: 'Xóa Môn học',
-      message: `Bạn có chắc chắn muốn xóa môn ${item?.subjectName || ''}?`,
-      type: 'danger',
-      onConfirm: async () => {
-        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-        try {
-          await api.delete(`/subjects/${id}`);
-          setToast({ message: 'Đã xóa môn học thành công!', type: 'success' });
-          fetchData();
-        } catch (err: any) {
-          setToast({ message: err.message || 'Lỗi xóa môn học', type: 'error' });
-        }
-      },
-    });
-  };
+ const handleDelete = (id: number) => {
+ const item = subjects.find((s) => s.id === id);
+ setConfirmModal({
+ isOpen: true,
+ title: 'Xóa môn học',
+ message: `Bạn có chắc chắn muốn xóa môn ${item?.subjectName || ''}?`,
+ type: 'danger',
+ onConfirm: async () => {
+ setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+ try {
+ await api.delete(`/subjects/${id}`);
+ setToast({ message: 'Đã xóa môn học thành công!', type: 'success' });
+ fetchData();
+ } catch (err: any) {
+ setToast({ message: err.message || 'Lỗi xóa môn học', type: 'error' });
+ }
+ },
+ });
+ };
 
-  // Enroll by Class Handlers
-  const openEnrollClassModal = (s: Subject) => {
-    setEnrollClassSubject(s);
-    setEnrollClassData({ classId: '', semester: 'HK1', schoolYear: '2025-2026' });
-    setEnrollClassPreview(null);
-  };
+ // Enroll by Class Handlers
+ const openEnrollClassModal = (s: Subject) => {
+ setEnrollClassSubject(s);
+ setEnrollClassData({ classId: '', semester: 'HK1', schoolYear: '2025-2026' });
+ setEnrollClassPreview(null);
+ };
 
-  const fetchPreview = useCallback(async (subjectId: number, classId: string, semester: string, schoolYear: string) => {
-    if (!classId) { setEnrollClassPreview(null); return; }
-    setPreviewLoading(true);
-    try {
-      const r = await api.get(`/subjects/${subjectId}/enroll-class/preview`, { params: { classId, semester, schoolYear } });
-      setEnrollClassPreview(r.data);
-    } catch {
-      setEnrollClassPreview(null);
-    } finally {
-      setPreviewLoading(false);
-    }
-  }, []);
+ const fetchPreview = useCallback(async (subjectId: number, classId: string, semester: string, schoolYear: string) => {
+ if (!classId) { setEnrollClassPreview(null); return; }
+ setPreviewLoading(true);
+ try {
+ const r = await api.get(`/subjects/${subjectId}/enroll-class/preview`, { params: { classId, semester, schoolYear } });
+ setEnrollClassPreview(r.data);
+ } catch {
+ setEnrollClassPreview(null);
+ } finally {
+ setPreviewLoading(false);
+ }
+ }, []);
 
-  useEffect(() => {
-    if (!enrollClassSubject || !enrollClassData.classId) { setEnrollClassPreview(null); return; }
-    const t = setTimeout(() => {
-      fetchPreview(enrollClassSubject.id, enrollClassData.classId, enrollClassData.semester, enrollClassData.schoolYear);
-    }, 400);
-    return () => clearTimeout(t);
-  }, [enrollClassSubject, enrollClassData.classId, enrollClassData.semester, enrollClassData.schoolYear, fetchPreview]);
+ useEffect(() => {
+ if (!enrollClassSubject || !enrollClassData.classId) { setEnrollClassPreview(null); return; }
+ const t = setTimeout(() => {
+ fetchPreview(enrollClassSubject.id, enrollClassData.classId, enrollClassData.semester, enrollClassData.schoolYear);
+ }, 400);
+ return () => clearTimeout(t);
+ }, [enrollClassSubject, enrollClassData.classId, enrollClassData.semester, enrollClassData.schoolYear, fetchPreview]);
 
-  const handleEnrollByClass = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!enrollClassSubject || !enrollClassData.classId) return;
-    setEnrollClassLoading(true);
-    try {
-      const r = await api.post(`/subjects/${enrollClassSubject.id}/enroll-by-class`, {
-        classId: Number(enrollClassData.classId),
-        semester: enrollClassData.semester,
-        schoolYear: enrollClassData.schoolYear,
-      });
-      setToast({ message: `Đã gán ${r.data.successCount} sinh viên lớp ${r.data.className} vào môn ${enrollClassSubject.subjectName}.`, type: 'success' });
-      setEnrollClassSubject(null);
-      fetchData();
-    } catch (err: any) {
-      setToast({ message: err.response?.data?.message || 'Lỗi khi gán lớp vào môn học', type: 'error' });
-    } finally {
-      setEnrollClassLoading(false);
-    }
-  };
+ const handleEnrollByClass = async (e: React.FormEvent) => {
+ e.preventDefault();
+ if (!enrollClassSubject || !enrollClassData.classId) return;
+ setEnrollClassLoading(true);
+ try {
+ const r = await api.post(`/subjects/${enrollClassSubject.id}/enroll-by-class`, {
+ classId: Number(enrollClassData.classId),
+ semester: enrollClassData.semester,
+ schoolYear: enrollClassData.schoolYear,
+ });
+ setToast({ message: `Đã gán ${r.data.successCount} sinh viên lớp ${r.data.className} vào môn ${enrollClassSubject.subjectName}.`, type: 'success' });
+ setEnrollClassSubject(null);
+ fetchData();
+ } catch (err: any) {
+ setToast({ message: err.response?.data?.message || 'Lỗi khi gán lớp vào môn học', type: 'error' });
+ } finally {
+ setEnrollClassLoading(false);
+ }
+ };
 
-  const exportExcel = () => {
-    exportToFormattedExcel({
-      filename: 'Danh_sach_mon_hoc.xls',
-      title: 'DANH SÁCH MÔN HỌC HỆ THỐNG',
-      subtitle: 'Trích xuất dữ liệu danh mục môn học',
-      columns: [
-        { header: 'STT', width: 8, align: 'center' as const },
-        { header: 'Mã môn học', width: 15 },
-        { header: 'Tên môn học', width: 35 },
-        { header: 'Số tín chỉ', width: 12, align: 'center' as const },
-        { header: 'Khoa đào tạo', width: 25 },
-        { header: 'Số SV đăng ký', width: 15, align: 'center' as const },
-      ],
-      rows: filteredSubjects.map((s: any, idx) => [
-        idx + 1, s.subjectCode, s.subjectName, s.credits,
-        s.department?.name || '', s._count?.studentSubjects || 0,
-      ]),
-    });
-  };
+ const exportExcel = () => {
+ exportToFormattedExcel({
+ filename: 'Danh_sach_mon_hoc.xls',
+ title: 'DANH SÁCH MÔN HỌC HỆ THỐNG',
+ subtitle: 'Trích xuất dữ liệu danh mục môn học',
+ columns: [
+ { header: 'STT', width: 8, align: 'center' as const },
+ { header: 'Mã môn học', width: 15 },
+ { header: 'Tên môn học', width: 35 },
+ { header: 'Số tín chỉ', width: 12, align: 'center' as const },
+ { header: 'Khoa đào tạo', width: 25 },
+ { header: 'Số SV đăng ký', width: 15, align: 'center' as const },
+ ],
+ rows: filteredSubjects.map((s: any, idx) => [
+ idx + 1, s.subjectCode, s.subjectName, s.credits,
+ s.department?.name || '', s._count?.studentSubjects || 0,
+ ]),
+ });
+ };
 
-  const handlePrintReport = () => {
-    printReport({
-      title: 'BÁO CÁO DANH SÁCH MÔN HỌC',
-      subtitle: 'Danh sách môn học và phân bổ tín chỉ',
-      metaInfo: [
-        { label: 'Tổng số môn học', value: String(subjects.length) },
-        { label: 'Tổng số tín chỉ', value: `${kpiData.totalCredits} TC` },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã Môn', width: '90px' },
-        { header: 'Tên Môn học', width: '220px' },
-        { header: 'Số TC', width: '70px', align: 'center' },
-        { header: 'Khoa đào tạo', width: '180px' },
-        { header: 'Số SV', width: '70px', align: 'center' },
-      ],
-      rows: filteredSubjects.map((s: any, idx) => [
-        idx + 1, s.subjectCode, s.subjectName, `${s.credits} TC`,
-        s.department?.name || '', s._count?.studentSubjects || 0,
-      ]),
-    });
-  };
+ const handlePrintReport = () => {
+ printReport({
+ title: 'BÁO CÁO DANH SÁCH MÔN HỌC',
+ subtitle: 'Danh sách môn học và phân bổ tín chỉ',
+ metaInfo: [
+ { label: 'Tổng số môn học', value: String(subjects.length) },
+ { label: 'Tổng số tín chỉ', value: `${kpiData.totalCredits} TC` },
+ ],
+ columns: [
+ { header: 'STT', width: '40px' },
+ { header: 'Mã Môn', width: '90px' },
+ { header: 'Tên Môn học', width: '220px' },
+ { header: 'Số TC', width: '70px', align: 'center' },
+ { header: 'Khoa đào tạo', width: '180px' },
+ { header: 'Số SV', width: '70px', align: 'center' },
+ ],
+ rows: filteredSubjects.map((s: any, idx) => [
+ idx + 1, s.subjectCode, s.subjectName, `${s.credits} TC`,
+ s.department?.name || '', s._count?.studentSubjects || 0,
+ ]),
+ });
+ };
 
-  // Unique semesters from drawer data for filter dropdown
-  const drawerSemesters = useMemo(() => {
-    const set = new Set<string>();
-    drawerEnrollments.forEach((e: any) => { if (e.semester) set.add(e.semester); });
-    drawerClassSummary.forEach((c: any) => c.semesters?.forEach((s: string) => set.add(s.split(' / ')[0])));
-    return Array.from(set).sort();
-  }, [drawerEnrollments, drawerClassSummary]);
+ // Unique semesters from drawer data for filter dropdown
+ const drawerSemesters = useMemo(() => {
+ const set = new Set<string>();
+ drawerEnrollments.forEach((e: any) => { if (e.semester) set.add(e.semester); });
+ drawerClassSummary.forEach((c: any) => c.semesters?.forEach((s: string) => set.add(s.split(' / ')[0])));
+ return Array.from(set).sort();
+ }, [drawerEnrollments, drawerClassSummary]);
 
-  const drawerClassesForFilter = useMemo(() => {
-    const map = new Map<number, string>();
-    drawerEnrollments.forEach((e: any) => {
-      if (e.student?.class) map.set(e.student.class.id, `${e.student.class.code} - ${e.student.class.name}`);
-    });
-    return Array.from(map.entries()).map(([id, label]) => ({ id, label }));
-  }, [drawerEnrollments]);
+ const drawerClassesForFilter = useMemo(() => {
+ const map = new Map<number, string>();
+ drawerEnrollments.forEach((e: any) => {
+ if (e.student?.class) map.set(e.student.class.id, `${e.student.class.code} - ${e.student.class.name}`);
+ });
+ return Array.from(map.entries()).map(([id, label]) => ({ id, label }));
+ }, [drawerEnrollments]);
 
-  return (
-    <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
-        <SubjectHeader
-          onAdd={openAddModal}
-          onExport={exportExcel}
-          onPrint={handlePrintReport}
-          isAdmin={currentUser?.role === 'ADMIN'}
-        />
+ return (
+ <>
+ <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+ <SubjectHeader
+ onAdd={openAddModal}
+ onExport={exportExcel}
+ onPrint={handlePrintReport}
+ isAdmin={currentUser?.role === 'ADMIN'}
+ />
 
-        <SubjectKPICards
-          total={kpiData.total}
-          totalCredits={kpiData.totalCredits}
-          totalDepartments={kpiData.totalDepartments}
-          threeCreditCount={kpiData.threeCreditCount}
-          questionCount={kpiData.questionCount}
-        />
+ <SubjectKPICards
+ total={kpiData.total}
+ totalCredits={kpiData.totalCredits}
+ totalDepartments={kpiData.totalDepartments}
+ threeCreditCount={kpiData.threeCreditCount}
+ questionCount={kpiData.questionCount}
+ />
 
-        {/* Filter Bar */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center gap-3">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[220px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Tìm theo Mã môn, Tên môn học..."
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
-            />
-            {search && (
-              <button type="button" onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
+ {/* Filter Bar */}
+ <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center gap-3">
+ {/* Search */}
+ <div className="relative flex-1 min-w-[220px]">
+ <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+ <input
+ type="text"
+ placeholder="Tìm theo Mã môn, Tên môn học..."
+ value={search}
+ onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+ className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ />
+ {search && (
+ <button type="button" onClick={() => { setSearch(''); setPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
+ <X className="h-3.5 w-3.5" />
+ </button>
+ )}
+ </div>
 
-          {/* Khoa */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Khoa:</span>
-            <div className="relative">
-              <select value={selectedDeptId} onChange={(e) => { setSelectedDeptId(e.target.value); setPage(1); }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs">
-                <option value="">Tất cả</option>
-                {departments.map((d) => <option key={d.id} value={String(d.id)}>{d.name}</option>)}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            </div>
-          </div>
+ {/* Khoa */}
+ <div className="flex items-center gap-2">
+ <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Khoa:</span>
+ <div className="relative">
+ <select value={selectedDeptId} onChange={(e) => { setSelectedDeptId(e.target.value); setPage(1); }}
+ className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs">
+ <option value="">Tất cả</option>
+ {departments.map((d) => <option key={d.id} value={String(d.id)}>{d.name}</option>)}
+ </select>
+ <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </div>
+ </div>
 
-          {/* Tín chỉ */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Tín chỉ:</span>
-            <div className="relative">
-              <select value={filterCredits} onChange={(e) => { setFilterCredits(e.target.value); setPage(1); }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs">
-                <option value="">Tất cả</option>
-                {[1, 2, 3, 4, 5, 6].map((c) => <option key={c} value={String(c)}>{c} TC</option>)}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            </div>
-          </div>
+ {/* Tín chỉ */}
+ <div className="flex items-center gap-2">
+ <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Tín chỉ:</span>
+ <div className="relative">
+ <select value={filterCredits} onChange={(e) => { setFilterCredits(e.target.value); setPage(1); }}
+ className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs">
+ <option value="">Tất cả</option>
+ {[1, 2, 3, 4, 5, 6].map((c) => <option key={c} value={String(c)}>{c} TC</option>)}
+ </select>
+ <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </div>
+ </div>
 
-          {/* Sinh viên */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Sinh viên:</span>
-            <div className="relative">
-              <select value={filterHasStudents} onChange={(e) => { setFilterHasStudents(e.target.value); setPage(1); }}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs">
-                <option value="">Tất cả</option>
-                <option value="yes">Đã có SV</option>
-                <option value="no">Chưa có SV</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            </div>
-          </div>
+ {/* Sinh viên */}
+ <div className="flex items-center gap-2">
+ <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Sinh viên:</span>
+ <div className="relative">
+ <select value={filterHasStudents} onChange={(e) => { setFilterHasStudents(e.target.value); setPage(1); }}
+ className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs">
+ <option value="">Tất cả</option>
+ <option value="yes">Đã có SV</option>
+ <option value="no">Chưa có SV</option>
+ </select>
+ <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </div>
+ </div>
 
-          {/* Reset filters */}
-          {(selectedDeptId || filterCredits || filterHasStudents || search) && (
-            <button
-              type="button"
-              onClick={() => { setSearch(''); setSelectedDeptId(''); setFilterCredits(''); setFilterHasStudents(''); setPage(1); }}
-              className="text-xs font-semibold text-slate-500 hover:text-blue-600 transition flex items-center gap-1 cursor-pointer"
-            >
-              <X className="h-3.5 w-3.5" /> Xoá bộ lọc
-            </button>
-          )}
-        </div>
+ {/* Reset filters */}
+ {(selectedDeptId || filterCredits || filterHasStudents || search) && (
+ <button
+ type="button"
+ onClick={() => { setSearch(''); setSelectedDeptId(''); setFilterCredits(''); setFilterHasStudents(''); setPage(1); }}
+ className="text-xs font-semibold text-slate-500 hover:text-blue-600 transition flex items-center gap-1 cursor-pointer"
+ >
+ <X className="h-3.5 w-3.5" /> Xoá bộ lọc
+ </button>
+ )}
+ </div>
 
-        <SubjectTableToolbar
-          totalCount={filteredSubjects.length}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-          onRefresh={fetchData}
-        />
+ <SubjectTableToolbar
+ totalCount={filteredSubjects.length}
+ sortOrder={sortOrder}
+ onSortChange={setSortOrder}
+ viewMode={viewMode}
+ onViewModeChange={setViewMode}
+ visibleColumns={visibleColumns}
+ onColumnToggle={handleColumnToggle}
+ onRefresh={fetchData}
+ />
 
-        {loading ? (
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
-            {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />)}
-          </div>
-        ) : !paginatedSubjects.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
-            Không tìm thấy môn học phù hợp.
-          </div>
-        ) : (
-          <SubjectTable
-            subjects={paginatedSubjects}
-            selected={selected}
-            viewMode={viewMode}
-            visibleColumns={visibleColumns}
-            onSelect={(id, checked) => setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))}
-            onSelectAll={(checked) => setSelected(checked ? paginatedSubjects.map((s) => s.id) : [])}
-            onDetail={openDrawer}
-            onEnroll={openEnrollClassModal}
-            onEdit={openEditModal}
-            onDelete={handleDelete}
-            isAdmin={currentUser?.role === 'ADMIN'}
-          />
-        )}
+ {loading ? (
+ <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+ {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />)}
+ </div>
+ ) : !paginatedSubjects.length ? (
+ <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+ Không tìm thấy môn học phù hợp.
+ </div>
+ ) : (
+ <SubjectTable
+ subjects={paginatedSubjects}
+ selected={selected}
+ viewMode={viewMode}
+ visibleColumns={visibleColumns}
+ onSelect={(id, checked) => setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))}
+ onSelectAll={(checked) => setSelected(checked ? paginatedSubjects.map((s) => s.id) : [])}
+ onDetail={openDrawer}
+ onEnroll={openEnrollClassModal}
+ onEdit={openEditModal}
+ onDelete={handleDelete}
+ isAdmin={currentUser?.role === 'ADMIN'}
+ />
+ )}
 
-        <SubjectPaginationBar
-          page={page}
-          totalPages={totalPages}
-          limit={limit}
-          totalItems={filteredSubjects.length}
-          onPage={setPage}
-          onLimit={(v) => { setLimit(v); setPage(1); }}
-        />
-      </main>
+ <SubjectPaginationBar
+ page={page}
+ totalPages={totalPages}
+ limit={limit}
+ totalItems={filteredSubjects.length}
+ onPage={setPage}
+ onLimit={(v) => { setLimit(v); setPage(1); }}
+ />
+ </main>
 
-      {/* Add/Edit Subject Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSubject ? 'Chỉnh sửa Môn học' : 'Tạo Môn học Mới'}>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Mã Môn học</label>
-            <input type="text" required placeholder="VD: INT101" value={formData.subjectCode}
-              onChange={(e) => setFormData({ ...formData, subjectCode: e.target.value })}
-              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tên Môn học</label>
-            <input type="text" required placeholder="VD: Lập trình Căn bản" value={formData.subjectName}
-              onChange={(e) => setFormData({ ...formData, subjectName: e.target.value })}
-              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Số Tín chỉ</label>
-              <input type="number" required min={1} max={10} value={formData.credits}
-                onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
-                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Khoa đào tạo</label>
-              <select required value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
-                <option value="">-- Chọn Khoa --</option>
-                {departments.map((d) => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-            {!editingSubject ? (
-              <Button
-                type="button"
-                variant="secondary"
-                size="md"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  setIsImportModalOpen(true);
-                }}
-                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
-              >
-                Import Excel
-              </Button>
-            ) : (
-              <div />
-            )}
-            <div className="flex items-center gap-2.5">
-              <Button
-                type="button"
-                variant="secondary"
-                size="md"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Hủy
-              </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-              >
-                {editingSubject ? 'Cập nhật Môn học' : 'Lưu Môn Học'}
-              </Button>
-            </div>
-          </div>
-        </form>
-      </Modal>
+ {/* Add/Edit Subject Modal */}
+ <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSubject ? 'Chỉnh sửa Môn học' : 'Tạo Môn học Mới'}>
+ <form onSubmit={handleSubmit} className="space-y-4">
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Mã môn học</label>
+ <input type="text" required placeholder="VD: INT101" value={formData.subjectCode}
+ onChange={(e) => setFormData({ ...formData, subjectCode: e.target.value })}
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
+ </div>
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Môn học</label>
+ <input type="text" required placeholder="VD: Lập trình Căn bản" value={formData.subjectName}
+ onChange={(e) => setFormData({ ...formData, subjectName: e.target.value })}
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
+ </div>
+ <div className="grid grid-cols-2 gap-4">
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Số Tín chỉ</label>
+ <input type="number" required min={1} max={10} value={formData.credits}
+ onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
+ </div>
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Khoa đào tạo</label>
+ <select required value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+ <option value="">-- Chọn Khoa --</option>
+ {departments.map((d) => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
+ </select>
+ </div>
+ </div>
+ <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+ {!editingSubject ? (
+ <Button
+ type="button"
+ variant="secondary"
+ size="md"
+ onClick={() => {
+ setIsModalOpen(false);
+ setIsImportModalOpen(true);
+ }}
+ leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+ >
+ Import Excel
+ </Button>
+ ) : (
+ <div />
+ )}
+ <div className="flex items-center gap-2.5">
+ <Button
+ type="button"
+ variant="secondary"
+ size="md"
+ onClick={() => setIsModalOpen(false)}
+ >
+ Hủy
+ </Button>
+ <Button
+ type="submit"
+ variant="primary"
+ size="md"
+ >
+ {editingSubject ? 'Cập nhật Môn học' : 'Lưu Môn Học'}
+ </Button>
+ </div>
+ </div>
+ </form>
+ </Modal>
 
-      {/* Excel Import Modal */}
-      <ExcelImportModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        title="Import danh sách môn học từ Excel"
-        templateFileName="danh_sach_mon_hoc_mau.csv"
-        onImportSuccess={async () => {
-          await fetchData();
-          setToast({ message: 'Nhập danh sách môn học từ file thành công!', type: 'success' });
-        }}
-      />
+ {/* Excel Import Modal */}
+ <ExcelImportModal
+ isOpen={isImportModalOpen}
+ onClose={() => setIsImportModalOpen(false)}
+ title="Import danh sách môn học từ Excel"
+ templateFileName="danh_sach_mon_hoc_mau.csv"
+ onImportSuccess={async () => {
+ await fetchData();
+ setToast({ message: 'Nhập danh sách môn học từ file thành công!', type: 'success' });
+ }}
+ />
 
-      {/* Enroll by Class Modal */}
-      <Modal
-        isOpen={Boolean(enrollClassSubject)}
-        onClose={() => setEnrollClassSubject(null)}
-        title={`Gán Lớp vào Môn — ${enrollClassSubject?.subjectName || ''}`}
-      >
-        <form onSubmit={handleEnrollByClass} className="space-y-4">
-          {/* Chọn lớp */}
-          <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Chọn Lớp</label>
-            <div className="relative">
-              <select
-                required
-                value={enrollClassData.classId}
-                onChange={(e) => setEnrollClassData({ ...enrollClassData, classId: e.target.value })}
-                className="w-full appearance-none rounded-xl border border-slate-200 px-3 pr-8 py-2 text-sm font-semibold focus:border-blue-500 focus:outline-none cursor-pointer"
-              >
-                <option value="">-- Chọn lớp để gán --</option>
-                {classes.map((c: any) => (
-                  <option key={c.id} value={String(c.id)}>
-                    {c.code} — {c.name} {c.department?.name ? `(${c.department.name})` : ''} · {c._count?.students ?? c.students?.length ?? 0} SV
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            </div>
-          </div>
+ {/* Enroll by Class Modal */}
+ <Modal
+ isOpen={Boolean(enrollClassSubject)}
+ onClose={() => setEnrollClassSubject(null)}
+ title={`Gán Lớp vào Môn — ${enrollClassSubject?.subjectName || ''}`}
+ >
+ <form onSubmit={handleEnrollByClass} className="space-y-4">
+ {/* Chọn lớp */}
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Chọn Lớp</label>
+ <div className="relative">
+ <select
+ required
+ value={enrollClassData.classId}
+ onChange={(e) => setEnrollClassData({ ...enrollClassData, classId: e.target.value })}
+ className="w-full appearance-none rounded-xl border border-slate-200 px-3 pr-8 py-2 text-sm font-semibold focus:border-blue-500 focus:outline-none cursor-pointer"
+ >
+ <option value="">-- Chọn lớp để gán --</option>
+ {classes.map((c: any) => (
+ <option key={c.id} value={String(c.id)}>
+ {c.code} — {c.name} {c.department?.name ? `(${c.department.name})` : ''} · {c._count?.students ?? c.students?.length ?? 0} SV
+ </option>
+ ))}
+ </select>
+ <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </div>
+ </div>
 
-          {/* Học kỳ + Năm học */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Học kỳ</label>
-              <select value={enrollClassData.semester}
-                onChange={(e) => setEnrollClassData({ ...enrollClassData, semester: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold focus:border-blue-500 focus:outline-none">
-                <option value="HK1">Học kỳ I</option>
-                <option value="HK2">Học kỳ II</option>
-                <option value="HK3">Học kỳ Hè</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Năm học</label>
-              <input type="text" required value={enrollClassData.schoolYear}
-                onChange={(e) => setEnrollClassData({ ...enrollClassData, schoolYear: e.target.value })}
-                placeholder="VD: 2025-2026"
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-semibold focus:border-blue-500 focus:outline-none" />
-            </div>
-          </div>
+ {/* Học kỳ + Năm học */}
+ <div className="grid grid-cols-2 gap-4">
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Học kỳ</label>
+ <select value={enrollClassData.semester}
+ onChange={(e) => setEnrollClassData({ ...enrollClassData, semester: e.target.value })}
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold focus:border-blue-500 focus:outline-none">
+ <option value="HK1">Học kỳ I</option>
+ <option value="HK2">Học kỳ II</option>
+ <option value="HK3">Học kỳ Hè</option>
+ </select>
+ </div>
+ <div>
+ <label className="block text-xs font-semibold text-slate-500 mb-1">Năm học</label>
+ <input type="text" required value={enrollClassData.schoolYear}
+ onChange={(e) => setEnrollClassData({ ...enrollClassData, schoolYear: e.target.value })}
+ placeholder="VD: 2025-2026"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-semibold focus:border-blue-500 focus:outline-none" />
+ </div>
+ </div>
 
-          {/* Preview */}
-          {enrollClassData.classId && (
-            <div className={`rounded-xl p-4 border ${previewLoading ? 'border-slate-100 bg-slate-50' : enrollClassPreview ? 'border-blue-100 bg-blue-50' : 'border-slate-100 bg-slate-50'}`}>
-              {previewLoading ? (
-                <p className="text-xs text-slate-400 font-semibold animate-pulse">Đang kiểm tra...</p>
-              ) : enrollClassPreview ? (
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold text-blue-800">Xem trước kết quả gán</p>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    <div className="text-center">
-                      <p className="text-lg font-semibold text-slate-800">{enrollClassPreview.totalStudents}</p>
-                      <p className="text-[10px] font-semibold text-slate-500">Tổng SV lớp</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-lg font-semibold text-blue-600">{enrollClassPreview.newStudents}</p>
-                      <p className="text-[10px] font-semibold text-blue-600">Sẽ được thêm mới</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-lg font-semibold text-slate-500">{enrollClassPreview.alreadyEnrolled}</p>
-                      <p className="text-[10px] font-semibold text-slate-500">Đã đăng ký rồi</p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-xs text-slate-400 font-semibold">Không thể tải thông tin preview.</p>
-              )}
-            </div>
-          )}
+ {/* Preview */}
+ {enrollClassData.classId && (
+ <div className={`rounded-xl p-4 border ${previewLoading ? 'border-slate-100 bg-slate-50' : enrollClassPreview ? 'border-blue-100 bg-blue-50' : 'border-slate-100 bg-slate-50'}`}>
+ {previewLoading ? (
+ <p className="text-xs text-slate-400 font-semibold animate-pulse">Đang kiểm tra...</p>
+ ) : enrollClassPreview ? (
+ <div className="space-y-1">
+ <p className="text-xs font-semibold text-blue-800">Xem trước kết quả gán</p>
+ <div className="grid grid-cols-3 gap-2 mt-2">
+ <div className="text-center">
+ <p className="text-lg font-semibold text-slate-800">{enrollClassPreview.totalStudents}</p>
+ <p className="text-[12px] font-semibold text-slate-500">Tổng SV lớp</p>
+ </div>
+ <div className="text-center">
+ <p className="text-lg font-semibold text-blue-600">{enrollClassPreview.newStudents}</p>
+ <p className="text-[12px] font-semibold text-blue-600">Sẽ được thêm mới</p>
+ </div>
+ <div className="text-center">
+ <p className="text-lg font-semibold text-slate-500">{enrollClassPreview.alreadyEnrolled}</p>
+ <p className="text-[12px] font-semibold text-slate-500">Đã đăng ký rồi</p>
+ </div>
+ </div>
+ </div>
+ ) : (
+ <p className="text-xs text-slate-400 font-semibold">Không thể tải thông tin preview.</p>
+ )}
+ </div>
+ )}
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setEnrollClassSubject(null)}
-            >
-              Hủy
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              disabled={!enrollClassData.classId || enrollClassLoading}
-              isLoading={enrollClassLoading}
-            >
-              Xác nhận Gán Lớp
-            </Button>
-          </div>
-        </form>
-      </Modal>
+ <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+ <Button
+ type="button"
+ variant="secondary"
+ size="md"
+ onClick={() => setEnrollClassSubject(null)}
+ >
+ Hủy
+ </Button>
+ <Button
+ type="submit"
+ variant="primary"
+ size="md"
+ disabled={!enrollClassData.classId || enrollClassLoading}
+ isLoading={enrollClassLoading}
+ >
+ Xác nhận Gán Lớp
+ </Button>
+ </div>
+ </form>
+ </Modal>
 
-      {/* Subject Detail Drawer */}
-      {drawerSubject && (
-        <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] flex justify-end">
-          <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
-          <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
-            {/* Header - Solid Flat Color matching Department/Teacher/Student Drawer */}
-            <div className="bg-[#2563EB] p-5 text-white shrink-0">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
-                    {drawerSubject.subjectCode.substring(0, 2).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1 pr-2">
-                    <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
-                      {drawerSubject.subjectName}
-                    </h2>
-                    <p className="text-[13px] font-semibold text-blue-200 mt-1 font-mono tabular-nums">
-                      Mã môn: {drawerSubject.subjectCode} • {drawerSubject.credits} Tín chỉ
-                    </p>
-                  </div>
-                </div>
+ {/* Subject Detail Drawer */}
+ {drawerSubject && (
+ <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] flex justify-end">
+ <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
+ <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
+ {/* Header - Solid Flat Color matching Department/Teacher/Student Drawer */}
+ <div className="bg-[#2563EB] p-5 text-white shrink-0">
+ <div className="flex items-start justify-between gap-3">
+ <div className="flex items-start gap-3 min-w-0 flex-1">
+ <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
+ {drawerSubject.subjectCode.substring(0, 2).toUpperCase()}
+ </div>
+ <div className="min-w-0 flex-1 pr-2">
+ <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+ {drawerSubject.subjectName}
+ </h2>
+ <p className="text-[13px] font-semibold text-blue-200 mt-1 tabular-nums">
+ Mã môn: {drawerSubject.subjectCode} • {drawerSubject.credits} Tín chỉ
+ </p>
+ </div>
+ </div>
 
-                <button
-                  type="button"
-                  onClick={() => setDrawerSubject(null)}
-                  className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
-                  title="Đóng"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
+ <button
+ type="button"
+ onClick={() => setDrawerSubject(null)}
+ className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+ title="Đóng"
+ >
+ <X className="h-5 w-5" />
+ </button>
+ </div>
+ </div>
 
-            {/* Tabs */}
-            <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
-              {[
-                { key: 'info', label: 'Thông tin', icon: BookOpen },
-                { key: 'classes', label: 'Lớp đã gán', icon: GraduationCap },
-                { key: 'students', label: 'Sinh viên', icon: Users },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setDrawerTab(tab.key as any)}
-                  className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${drawerTab === tab.key
-                      ? 'border-blue-600 text-blue-600 font-semibold'
-                      : 'border-transparent text-slate-500 hover:text-slate-800'
-                    }`}
-                >
-                  <tab.icon className="h-4 w-4" />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+ {/* Tabs */}
+ <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
+ {[
+ { key: 'info', label: 'Thông tin', icon: BookOpen },
+ { key: 'classes', label: 'Lớp đã gán', icon: GraduationCap },
+ { key: 'students', label: 'Sinh viên', icon: Users },
+ ].map((tab) => (
+ <button
+ key={tab.key}
+ onClick={() => setDrawerTab(tab.key as any)}
+ className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${drawerTab === tab.key
+ ? 'border-blue-600 text-blue-600 font-semibold'
+ : 'border-transparent text-slate-500 hover:text-slate-800'
+ }`}
+ >
+ <tab.icon className="h-4 w-4" />
+ {tab.label}
+ </button>
+ ))}
+ </div>
 
-            {/* Tab Content */}
-            <div className="flex-1 overflow-y-auto p-5">
-              {/* --- TAB INFO --- */}
-              {drawerTab === 'info' && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { label: 'Sinh viên', value: (drawerSubject as any)._count?.studentSubjects ?? 0, color: 'blue' },
-                      { label: 'Câu hỏi', value: (drawerSubject as any)._count?.questions ?? 0, color: 'emerald' },
-                      { label: 'Lịch thi', value: (drawerSubject as any)._count?.examSchedules ?? 0, color: 'violet' },
-                    ].map((m) => (
-                      <div key={m.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
-                        <p className={`text-xl font-semibold text-${m.color}-600`}>{m.value}</p>
-                        <p className="text-[10px] font-semibold text-slate-500 mt-0.5">{m.label}</p>
-                      </div>
-                    ))}
-                  </div>
+ {/* Tab Content */}
+ <div className="flex-1 overflow-y-auto p-5">
+ {/* --- TAB INFO --- */}
+ {drawerTab === 'info' && (
+ <div className="space-y-4">
+ <div className="grid grid-cols-3 gap-3">
+ {[
+ { label: 'Sinh viên', value: (drawerSubject as any)._count?.studentSubjects ?? 0, color: 'blue' },
+ { label: 'Câu hỏi', value: (drawerSubject as any)._count?.questions ?? 0, color: 'emerald' },
+ { label: 'Lịch thi', value: (drawerSubject as any)._count?.examSchedules ?? 0, color: 'violet' },
+ ].map((m) => (
+ <div key={m.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
+ <p className={`text-xl font-semibold text-${m.color}-600`}>{m.value}</p>
+ <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{m.label}</p>
+ </div>
+ ))}
+ </div>
 
-                  <div className="space-y-2">
-                    {[
-                      { label: 'Mã môn học', value: drawerSubject.subjectCode },
-                      { label: 'Tên môn học', value: drawerSubject.subjectName },
-                      { label: 'Số tín chỉ', value: `${drawerSubject.credits} tín chỉ` },
-                      { label: 'Khoa đào tạo', value: (drawerSubject as any).department?.name || 'Chưa gán' },
-                    ].map((r) => (
-                      <div key={r.label} className="flex items-start justify-between py-2.5 border-b border-slate-100">
-                        <span className="text-xs font-semibold text-slate-500">{r.label}</span>
-                        <span className="text-xs font-semibold text-slate-800 text-right max-w-[60%]">{r.value}</span>
-                      </div>
-                    ))}
-                  </div>
+ <div className="space-y-2">
+ {[
+ { label: 'Mã môn học', value: drawerSubject.subjectCode },
+ { label: 'Tên môn học', value: drawerSubject.subjectName },
+ { label: 'Số tín chỉ', value: `${drawerSubject.credits} tín chỉ` },
+ { label: 'Khoa đào tạo', value: (drawerSubject as any).department?.name || 'Chưa gán' },
+ ].map((r) => (
+ <div key={r.label} className="flex items-start justify-between py-2.5 border-b border-slate-100">
+ <span className="text-xs font-semibold text-slate-500">{r.label}</span>
+ <span className="text-xs font-semibold text-slate-800 text-right max-w-[60%]">{r.value}</span>
+ </div>
+ ))}
+ </div>
 
-                  {currentUser?.role === 'ADMIN' && (
-                    <button
-                      onClick={() => openEnrollClassModal(drawerSubject)}
-                      className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <GraduationCap className="h-4 w-4" />
-                      Gán Lớp vào Môn học
-                    </button>
-                  )}
-                </div>
-              )}
+ {currentUser?.role === 'ADMIN' && (
+ <button
+ onClick={() => openEnrollClassModal(drawerSubject)}
+ className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
+ >
+ <GraduationCap className="h-4 w-4" />
+ Gán Lớp vào Môn học
+ </button>
+ )}
+ </div>
+ )}
 
-              {/* --- TAB CLASSES --- */}
-              {drawerTab === 'classes' && (
-                <div className="space-y-3">
-                  {/* Filter */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Lọc theo học kỳ..."
-                      value={drawerFilterSemester}
-                      onChange={(e) => setDrawerFilterSemester(e.target.value)}
-                      className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
+ {/* --- TAB CLASSES --- */}
+ {drawerTab === 'classes' && (
+ <div className="space-y-3">
+ {/* Filter */}
+ <div className="flex gap-2">
+ <input
+ type="text"
+ placeholder="Lọc theo học kỳ..."
+ value={drawerFilterSemester}
+ onChange={(e) => setDrawerFilterSemester(e.target.value)}
+ className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none"
+ />
+ </div>
 
-                  {drawerLoading ? (
-                    <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
-                  ) : drawerClassSummary.length === 0 ? (
-                    <div className="py-12 text-center">
-                      <BookMarked className="h-8 w-8 text-slate-700 mx-auto mb-2" />
-                      <p className="text-xs font-semibold text-slate-400">Chưa có lớp nào được gán vào môn học này.</p>
-                      {currentUser?.role === 'ADMIN' && (
-                        <button onClick={() => openEnrollClassModal(drawerSubject!)}
-                          className="mt-3 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition cursor-pointer">
-                          Gán Lớp Ngay
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    drawerClassSummary
-                      .filter((c) => !drawerFilterSemester || c.semesters?.some((s: string) => s.toLowerCase().includes(drawerFilterSemester.toLowerCase())))
-                      .map((c: any) => (
-                        <div key={c.classId} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 flex items-center justify-between gap-3">
-                          <div>
-                            <p className="text-xs font-semibold text-slate-800">{c.classCode} — {c.className}</p>
-                            <p className="text-[10px] font-semibold text-slate-500 mt-0.5">{c.departmentName}</p>
-                            <div className="flex flex-wrap gap-1 mt-1.5">
-                              {c.semesters?.map((s: string) => (
-                                <span key={s} className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-md px-1.5 py-0.5">{s}</span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <p className="text-lg font-semibold text-blue-600">{c.count}</p>
-                            <p className="text-[10px] font-semibold text-slate-500">sinh viên</p>
-                          </div>
-                        </div>
-                      ))
-                  )}
-                </div>
-              )}
+ {drawerLoading ? (
+ <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
+ ) : drawerClassSummary.length === 0 ? (
+ <div className="py-12 text-center">
+ <BookMarked className="h-8 w-8 text-slate-700 mx-auto mb-2" />
+ <p className="text-xs font-semibold text-slate-400">Chưa có lớp nào được gán vào môn học này.</p>
+ {currentUser?.role === 'ADMIN' && (
+ <button onClick={() => openEnrollClassModal(drawerSubject!)}
+ className="mt-3 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition cursor-pointer">
+ Gán Lớp Ngay
+ </button>
+ )}
+ </div>
+ ) : (
+ drawerClassSummary
+ .filter((c) => !drawerFilterSemester || c.semesters?.some((s: string) => s.toLowerCase().includes(drawerFilterSemester.toLowerCase())))
+ .map((c: any) => (
+ <div key={c.classId} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 flex items-center justify-between gap-3">
+ <div>
+ <p className="text-xs font-semibold text-slate-800">{c.classCode} — {c.className}</p>
+ <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{c.departmentName}</p>
+ <div className="flex flex-wrap gap-1 mt-1.5">
+ {c.semesters?.map((s: string) => (
+ <span key={s} className="text-[12px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-md px-1.5 py-0.5">{s}</span>
+ ))}
+ </div>
+ </div>
+ <div className="text-right shrink-0">
+ <p className="text-lg font-semibold text-blue-600">{c.count}</p>
+ <p className="text-[12px] font-semibold text-slate-500">sinh viên</p>
+ </div>
+ </div>
+ ))
+ )}
+ </div>
+ )}
 
-              {/* --- TAB STUDENTS --- */}
-              {drawerTab === 'students' && (
-                <div className="space-y-3">
-                  {/* Filters */}
-                  <div className="flex flex-wrap gap-2">
-                    <div className="relative flex-1 min-w-[120px]">
-                      <select value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
-                        className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-xs font-semibold focus:outline-none cursor-pointer">
-                        <option value="">Tất cả lớp</option>
-                        {drawerClassesForFilter.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                    </div>
-                    <div className="relative">
-                      <select value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
-                        className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-xs font-semibold focus:outline-none cursor-pointer">
-                        <option value="">Tất cả HK</option>
-                        {drawerSemesters.map((s) => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                    </div>
-                  </div>
+ {/* --- TAB STUDENTS --- */}
+ {drawerTab === 'students' && (
+ <div className="space-y-3">
+ {/* Filters */}
+ <div className="flex flex-wrap gap-2">
+ <div className="relative flex-1 min-w-[120px]">
+ <select value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-xs font-semibold focus:outline-none cursor-pointer">
+ <option value="">Tất cả lớp</option>
+ {drawerClassesForFilter.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}
+ </select>
+ <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </div>
+ <div className="relative">
+ <select value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
+ className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-xs font-semibold focus:outline-none cursor-pointer">
+ <option value="">Tất cả HK</option>
+ {drawerSemesters.map((s) => <option key={s} value={s}>{s}</option>)}
+ </select>
+ <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </div>
+ </div>
 
-                  {/* Summary */}
-                  <div className="text-xs font-semibold text-slate-500">
-                    {drawerLoading ? 'Đang tải...' : `${drawerEnrollments.length} sinh viên`}
-                  </div>
+ {/* Summary */}
+ <div className="text-xs font-semibold text-slate-500">
+ {drawerLoading ? 'Đang tải...' : `${drawerEnrollments.length} sinh viên`}
+ </div>
 
-                  {drawerLoading ? (
-                    <div className="space-y-2">{[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}</div>
-                  ) : drawerEnrollments.length === 0 ? (
-                    <div className="py-12 text-center">
-                      <Users className="h-8 w-8 text-slate-700 mx-auto mb-2" />
-                      <p className="text-xs font-semibold text-slate-400">Không có sinh viên nào phù hợp.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5">
-                      {drawerEnrollments.map((e: any) => (
-                        <div key={e.id} className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
-                          <div>
-                            <p className="text-xs font-semibold text-slate-800">{e.student?.fullName}</p>
-                            <p className="text-[10px] font-semibold text-slate-400">{e.student?.studentCode} · {e.student?.class?.name || 'Chưa có lớp'}</p>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 rounded-md px-1.5 py-0.5">{e.semester}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+ {drawerLoading ? (
+ <div className="space-y-2">{[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}</div>
+ ) : drawerEnrollments.length === 0 ? (
+ <div className="py-12 text-center">
+ <Users className="h-8 w-8 text-slate-700 mx-auto mb-2" />
+ <p className="text-xs font-semibold text-slate-400">Không có sinh viên nào phù hợp.</p>
+ </div>
+ ) : (
+ <div className="space-y-1.5">
+ {drawerEnrollments.map((e: any) => (
+ <div key={e.id} className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+ <div>
+ <p className="text-xs font-semibold text-slate-800">{e.student?.fullName}</p>
+ <p className="text-[12px] font-semibold text-slate-400">{e.student?.studentCode} · {e.student?.class?.name || 'Chưa có lớp'}</p>
+ </div>
+ <div className="text-right">
+ <span className="text-[12px] font-semibold text-blue-700 bg-blue-50 rounded-md px-1.5 py-0.5">{e.semester}</span>
+ </div>
+ </div>
+ ))}
+ </div>
+ )}
+ </div>
+ )}
+ </div>
+ </div>
+ </div>
+ )}
 
-      {/* Confirm Modal */}
-      <ConfirmModal
-        isOpen={confirmModal.isOpen}
-        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
-        onConfirm={confirmModal.onConfirm}
-        title={confirmModal.title}
-        message={confirmModal.message}
-        type={confirmModal.type}
-      />
+ {/* Confirm Modal */}
+ <ConfirmModal
+ isOpen={confirmModal.isOpen}
+ onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+ onConfirm={confirmModal.onConfirm}
+ title={confirmModal.title}
+ message={confirmModal.message}
+ type={confirmModal.type}
+ />
 
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-    </>
-  );
+ {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+ </>
+ );
 }

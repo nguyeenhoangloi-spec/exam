@@ -130,13 +130,13 @@ export default function SettingsPage() {
       {/* 4 KPI Statistic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Giao diện (Theme)</span>
+          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Giao diện (Theme)</span>
           <div className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">{isDarkMode ? 'Tối (Dark Mode)' : 'Sáng (Light Mode)'}</div>
           <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">Tự động đồng bộ</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Kênh thông báo</span>
+          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Kênh thông báo</span>
           <div className="text-[20px] font-semibold text-slate-900 dark:text-blue-400">Email & Hệ thống</div>
           <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" /> Đã bật nhắc lịch thi
@@ -144,13 +144,13 @@ export default function SettingsPage() {
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Ngôn ngữ hiển thị</span>
+          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Ngôn ngữ hiển thị</span>
           <div className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Tiếng Việt (VN)</div>
           <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">Mặc định hệ thống</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Trạng thái bảo mật</span>
+          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Trạng thái bảo mật</span>
           <div className="text-[20px] font-semibold text-emerald-700 dark:text-emerald-400">Đã mã hóa</div>
           <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">Phiên làm việc an toàn</span>
         </div>

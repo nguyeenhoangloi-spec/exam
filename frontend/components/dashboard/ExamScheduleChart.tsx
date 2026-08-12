@@ -54,7 +54,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
       </div>
 
       {/* Y-axis label */}
-      <div className="text-[11px] font-medium text-slate-400 pl-1">
+      <div className="text-[12px] font-medium text-slate-400 pl-1">
         Số lượng
       </div>
 

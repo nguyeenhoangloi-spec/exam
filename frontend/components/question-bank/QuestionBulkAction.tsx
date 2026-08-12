@@ -63,7 +63,7 @@ export function QuestionBulkAction({
 
       {/* Right side bulk action buttons */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider mr-1 hidden sm:inline select-none">
+        <span className="text-slate-400 text-xs font-semibold tracking-wider mr-1 hidden sm:inline select-none">
           THAO TÁC:
         </span>
 

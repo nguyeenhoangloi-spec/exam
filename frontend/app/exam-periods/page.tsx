@@ -25,7 +25,7 @@ import { FilterSelect } from '../../components/ui/FilterSelect';
 
 export default function ExamPeriodsPage() {
 
-  usePageTitle('Quản lý Kỳ thi');
+  usePageTitle('Quản lý kỳ thi');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -208,7 +208,7 @@ export default function ExamPeriodsPage() {
     const item = periods.find((p) => p.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa Kỳ thi',
+      title: 'Xóa kỳ thi',
       message: `Bạn có chắc chắn muốn xóa kỳ thi ${item?.name || ''}?`,
       type: 'danger',
       onConfirm: async () => {
@@ -307,7 +307,7 @@ export default function ExamPeriodsPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm theo Tên kỳ thi, Học kỳ, Năm học..."
+              placeholder="Tìm theo tên kỳ thi, học kỳ, năm học..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -456,7 +456,7 @@ export default function ExamPeriodsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Tên Kỳ thi</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Kỳ thi</label>
             <input
               type="text"
               required
@@ -469,7 +469,7 @@ export default function ExamPeriodsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Học kỳ</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Học kỳ</label>
               <select
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
@@ -481,7 +481,7 @@ export default function ExamPeriodsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Năm học</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Năm học</label>
               <input
                 type="text"
                 required
@@ -495,7 +495,7 @@ export default function ExamPeriodsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Ngày bắt đầu</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Ngày bắt đầu</label>
               <input
                 type="date"
                 required
@@ -505,7 +505,7 @@ export default function ExamPeriodsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Ngày kết thúc</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1">Ngày kết thúc</label>
               <input
                 type="date"
                 required

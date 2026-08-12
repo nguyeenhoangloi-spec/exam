@@ -7,7 +7,7 @@ interface PageTitleContextValue {
     setTitle: (title: string) => void;
 }
 
-const DEFAULT_TITLE = 'Hệ thống Quản lý Khảo thí';
+const DEFAULT_TITLE = 'Hệ thống quản lý khảo thí';
 
 const PageTitleContext = createContext<PageTitleContextValue>({
     title: DEFAULT_TITLE,

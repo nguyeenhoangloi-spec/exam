@@ -32,7 +32,7 @@ export function ClassTableToolbar({
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
 
   const columnsList = [
-    { key: 'code', label: 'Mã Lớp' },
+    { key: 'code', label: 'Mã lớp' },
     { key: 'name', label: 'Tên Lớp học' },
     { key: 'department', label: 'Khoa trực thuộc' },
     { key: 'studentCount', label: 'Sĩ số Sinh viên' },
@@ -79,7 +79,7 @@ export function ClassTableToolbar({
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
                 <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
-                <span className="text-[11px] text-slate-400 font-normal">Click để ẩn/hiện</span>
+                <span className="text-[12px] text-slate-400 font-normal">Click để ẩn/hiện</span>
               </div>
 
               <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">

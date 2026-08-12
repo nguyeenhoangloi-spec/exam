@@ -13,28 +13,28 @@ interface TeacherKPICardsProps {
 export function TeacherKPICards({ total, withDegree, withDept, filtered }: TeacherKPICardsProps) {
   const items = [
     {
-      title: 'Tổng Giảng viên',
+      title: 'Tổng giảng viên',
       value: total,
       subtext: 'Cán bộ giảng dạy',
       icon: GraduationCap,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Có Học vị khai báo',
+      title: 'Có học vị khai báo',
       value: withDegree,
       subtext: 'TS / ThS / GS',
       icon: Award,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Đã phân Khoa',
+      title: 'Đã phân khoa',
       value: withDept,
       subtext: 'Có đơn vị quản lý',
       icon: Building2,
       iconBg: 'bg-blue-50 text-blue-600 border-blue-100',
     },
     {
-      title: 'Đang Hiển thị',
+      title: 'Đang hiển thị',
       value: filtered,
       subtext: 'Theo bộ lọc hiện tại',
       icon: Users,
@@ -53,7 +53,7 @@ export function TeacherKPICards({ total, withDegree, withDept, filtered }: Teach
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[14px] font-semibold text-[#64748B] uppercase tracking-wider">
+                <span className="text-[14px] font-semibold text-[#64748B] tracking-wider">
                   {item.title}
                 </span>
                 <p className="text-[32px] font-bold text-[#0F172A] leading-tight">

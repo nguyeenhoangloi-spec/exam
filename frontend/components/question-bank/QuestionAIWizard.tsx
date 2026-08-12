@@ -146,7 +146,7 @@ export function QuestionAIWizard({
 
         {/* Configuration Parameters Grid */}
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-3">
-          <h5 className="text-[13px] font-semibold uppercase tracking-wider text-[#64748B]">
+          <h5 className="text-[13px] font-semibold tracking-wider text-[#64748B]">
             Cấu hình tham số khởi tạo
           </h5>
 
@@ -316,7 +316,7 @@ export function QuestionAIWizard({
         {items.length > 0 && (
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <h5 className="text-[16px] font-semibold uppercase tracking-wider text-[#0F172A]">
+              <h5 className="text-[16px] font-semibold tracking-wider text-[#0F172A]">
                 Danh sách {items.length} câu hỏi AI vừa khởi tạo
               </h5>
               <span className="text-[13px] font-normal text-[#64748B]">Xem lại & chỉnh sửa trước khi lưu</span>
@@ -361,7 +361,7 @@ export function QuestionAIWizard({
 
                   {q.options && q.options.length > 0 && (
                     <div className="space-y-1.5 pt-1">
-                      <span className="text-[13px] font-semibold text-[#64748B] uppercase tracking-wider">Các lựa chọn đáp án:</span>
+                      <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">Các lựa chọn đáp án:</span>
                       <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                         {q.options.map((opt: any, optIdx: number) => (
                           <div

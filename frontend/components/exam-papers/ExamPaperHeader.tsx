@@ -19,7 +19,7 @@ export function ExamPaperHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
         <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
-          <span>Quản lý Đề thi & Ma trận đề</span>
+          <span>Quản lý đề thi & ma trận đề</span>
           <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-[#2563EB]">
             <Sparkles className="h-3.5 w-3.5" />
             Tự động sinh đề

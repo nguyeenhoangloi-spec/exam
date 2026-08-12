@@ -410,7 +410,7 @@ export function QuestionImportWizard({
         {/* Metadata Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Môn học *</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Môn học *</label>
             <select
               value={meta.subjectId}
               onChange={(e) => updateMeta('subjectId', e.target.value)}
@@ -426,7 +426,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Chương (Tùy chọn)</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Chương (Tùy chọn)</label>
             <select
               value={meta.chapterId}
               onChange={(e) => updateMeta('chapterId', e.target.value)}
@@ -442,7 +442,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Dạng câu hỏi *</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Dạng câu hỏi *</label>
             <select
               value={meta.defaultType}
               onChange={(e) => updateMeta('defaultType', e.target.value)}
@@ -457,7 +457,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Độ khó mặc định *</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Độ khó mặc định *</label>
             <select
               value={meta.defaultDifficulty}
               onChange={(e) => updateMeta('defaultDifficulty', e.target.value)}
@@ -472,7 +472,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Mức tư duy Bloom *</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Mức tư duy Bloom *</label>
             <select
               value={meta.defaultBloomLevel}
               onChange={(e) => updateMeta('defaultBloomLevel', e.target.value)}
@@ -668,7 +668,7 @@ export function QuestionImportWizard({
               />
             </div>
 
-            <p className="text-[11.5px] font-medium text-slate-500">
+            <p className="text-[12px] font-medium text-slate-500">
               Không đóng cửa sổ trong khi hệ thống AI đang xử lý.
             </p>
           </div>
@@ -698,7 +698,7 @@ export function QuestionImportWizard({
         {preview && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+              <h4 className="text-xs font-semibold tracking-wider text-slate-700">
                 Bản nháp câu hỏi trích xuất ({preview.rows.length} câu)
               </h4>
               <span className="text-xs font-semibold text-slate-500">
@@ -771,7 +771,7 @@ export function QuestionImportWizard({
                     {/* Render Fill in the Blank Answers Preview */}
                     {q.type === 'FILL_BLANK' && Array.isArray(q.fillBlankAnswers) && q.fillBlankAnswers.length > 0 && (
                       <div className="space-y-1.5 bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-                        <div className="text-[11px] font-semibold text-slate-800">
+                        <div className="text-[12px] font-semibold text-slate-800">
                           Đáp án cho từng chỗ trống:
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -822,7 +822,7 @@ export function QuestionImportWizard({
                                 }`}
                             >
                               <span
-                                className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                                className={`h-5 w-5 rounded-full flex items-center justify-center text-[12px] font-semibold shrink-0 ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
                                   }`}
                               >
                                 {opt.label || String.fromCharCode(65 + optIdx)}
@@ -836,7 +836,7 @@ export function QuestionImportWizard({
 
                     {/* Explanation */}
                     <div className="space-y-1 bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-                      <div className="text-[11px] font-semibold text-slate-800">
+                      <div className="text-[12px] font-semibold text-slate-800">
                         <span>Hướng dẫn đáp án / Gợi ý chấm:</span>
                       </div>
                       <textarea
@@ -849,7 +849,7 @@ export function QuestionImportWizard({
                     </div>
 
                     {(r.errors.length > 0 || r.duplicates.length > 0) && (
-                      <div className="text-[11px] font-semibold text-rose-600">
+                      <div className="text-[12px] font-semibold text-rose-600">
                         <span>{r.errors.join(', ')}{r.duplicates.length ? ' · Cảnh báo câu hỏi bị trùng nội dung trong CSDL' : ''}</span>
                       </div>
                     )}

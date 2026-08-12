@@ -30,28 +30,28 @@ export function ExamReportKPICards({
 }: ExamReportKPICardsProps) {
   const items = [
     {
-      title: 'TỔNG CA THI',
+      title: 'Tổng ca thi',
       value: totalSchedules,
       subtext: `${totalExams} kỳ thi trong phạm vi lọc`,
       icon: ClipboardList,
       unit: '',
     },
     {
-      title: 'SINH VIÊN DỰ THI',
+      title: 'Sinh viên dự thi',
       value: totalSubmitted,
       subtext: `${totalAssigned > 0 ? ((totalSubmitted / totalAssigned) * 100).toFixed(1) : 0}% trên tổng số được gán`,
       icon: UserCheck,
       unit: '',
     },
     {
-      title: 'TỶ LỆ ĐẠT',
+      title: 'Tỷ lệ đạt',
       value: passRate,
       subtext: `${passCount} bài đạt từ 5.0 điểm`,
       icon: CheckCircle2,
       unit: '%',
     },
     {
-      title: 'ĐIỂM TRUNG BÌNH',
+      title: 'Điểm trung bình',
       value: avgScore,
       subtext: 'Trên thang điểm 10',
       icon: BarChart3,
@@ -71,7 +71,7 @@ export function ExamReportKPICards({
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
                     {item.title}
                   </span>
                   <p className="text-[30px] font-bold text-slate-900 leading-[36px]">
@@ -95,7 +95,7 @@ export function ExamReportKPICards({
 
       {/* Bar Thống kê tổng hợp tinh giản */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs text-slate-600 font-medium">
-        <span className="font-semibold text-slate-900 uppercase tracking-wider text-[11px]">Tổng hợp:</span>
+        <span className="font-semibold text-slate-900 tracking-wider text-[12px]">Tổng hợp:</span>
         <span>Được gán <strong className="text-slate-900 font-bold">{totalAssigned.toLocaleString('vi-VN')}</strong></span>
         <span>Vắng <strong className="text-rose-600 font-bold">{totalAbsent.toLocaleString('vi-VN')}</strong></span>
         <span>Chưa chấm <strong className="text-amber-600 font-bold">{totalUngraded.toLocaleString('vi-VN')}</strong></span>

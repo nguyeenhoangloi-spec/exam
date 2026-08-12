@@ -108,7 +108,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
         {/* Play Counter Badge */}
         {!isUnlimited ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold ${
+            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[12px] font-semibold ${
               isLimitReached
                 ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800'
                 : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800'
@@ -125,7 +125,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
             )}
           </span>
         ) : (
-          <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[12px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
             Không giới hạn
           </span>
         )}
@@ -163,13 +163,13 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
               <Lock className="h-6 w-6 text-rose-400" />
             </div>
             <p className="text-xs font-semibold text-white">Đã hết số lần phát cho phép ({maxPlays} lần)</p>
-            <p className="mt-1 text-[11px] text-slate-400">Bạn đã phát đủ số lần nghe cho câu hỏi này.</p>
+            <p className="mt-1 text-[12px] text-slate-400">Bạn đã phát đủ số lần nghe cho câu hỏi này.</p>
           </div>
         )}
       </div>
 
       {/* Footer Helper Note */}
-      <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300">
+      <div className="mt-2.5 flex items-center justify-between text-[12px] text-slate-600 dark:text-slate-300">
         <span>
           {!isUnlimited && !isLimitReached
             ? `⚠️ Bạn còn lại ${maxPlays - playsCount} lần nghe.`

@@ -44,7 +44,7 @@ interface NotificationItem {
 
 export const Header: React.FC<HeaderProps> = ({
   user,
-  title = 'Hệ thống Quản lý Khảo thí',
+  title = 'Hệ thống quản lý khảo thí',
   collapsed,
   onToggleSidebar,
   onMenuClick,
@@ -290,7 +290,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <span className="text-slate-700 dark:text-slate-600">/</span>
               <span className="font-medium text-slate-900 dark:text-slate-100">
-                {title === 'Hệ thống Quản lý Khảo thí' ? 'Tổng quan' : title}
+                {title === 'Hệ thống quản lý khảo thí' ? 'Tổng quan' : title}
               </span>
             </nav>
           </div>
@@ -308,7 +308,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-semibold text-white shadow-xs leading-none">
+                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[12px] font-semibold text-white shadow-xs leading-none">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
                   </span>
                 )}
@@ -377,7 +377,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="py-6 text-center space-y-2 text-slate-400 dark:text-slate-500">
                       <Inbox className="w-8 h-8 mx-auto text-slate-700 dark:bg-slate-600" />
                       <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Không có thông báo mới</p>
-                      <p className="text-[10.5px] text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
+                      <p className="text-[12px] text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
                     </div>
                   )}
                 </div>
@@ -414,7 +414,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-tight">
                   <span className="block text-[13px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[11px] font-medium text-[#2563EB]">
+                  <span className="block text-[12px] font-medium text-[#2563EB]">
                     {displayRoleLabel}
                   </span>
                 </div>

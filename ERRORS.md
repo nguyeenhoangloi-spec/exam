@@ -21,6 +21,39 @@
 
 ---
 
+## [2026-08-12 00:00] - PowerShell Regex Quoting Error During UI Scan
+
+- **Type**: Agent / Process
+- **Severity**: Low
+- **File**: `frontend/app` and `frontend/components` scan command
+- **Root Cause**: A PowerShell double-quoted regular expression contained unescaped quote characters, so PowerShell parsed part of the expression as a pipeline instead of passing it to `rg`.
+- **Error Message**:
+  ```txt
+  ParserError: Unexpected token ')' in expression or statement.
+  ```
+- **Fix Applied**: Replaced the combined scan with separately quoted, read-only scan commands.
+- **Prevention**: Use single-quoted PowerShell regex literals when the pattern contains double quotes or pipe characters.
+- **Status**: Fixed
+
+---
+
+## [2026-08-12 00:00] - Mechanical UI Case Normalization Touched Print Template Style
+
+- **Type**: Agent / Process
+- **Severity**: Medium
+- **File**: `frontend/app/exam-arrangement/page.tsx`
+- **Agent**: exam
+- **Root Cause**: A line-based replacement intended to remove the UI `uppercase` class also matched a print-template line containing `class=` and `text-transform: uppercase`, temporarily producing `text-transform:;`.
+- **Error Message**:
+  ```txt
+  text-transform:;
+  ```
+- **Fix Applied**: Restored `text-transform: uppercase` in the print template and added a follow-up scan for malformed `text-transform` declarations.
+- **Prevention**: Future bulk replacements must target the exact `className` token range and exclude inline export/print template strings before writing files.
+- **Status**: Fixed
+
+---
+
 ## [2026-08-04 13:00] - Database Schema Mismatch (Missing Migration for Online Exam Config)
 
 - **Type**: Integration / Database Error
@@ -93,5 +126,3 @@
 - **Fix Applied**: Verified TypeScript type compilation via `npx tsc --noEmit` (exit code 0).
 - **Prevention**: Stop `npm run dev` before executing a full `npm run build` or use `npx tsc --noEmit` for build validation during active dev sessions.
 - **Status**: Fixed
-
-
