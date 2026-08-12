@@ -66,7 +66,7 @@ for (const folder of sourceRoots) {
       report(file, 'Web UI dùng sentence case; không dùng utility uppercase');
     }
 
-    if (/text-\[(?:9|9\.5|10|10\.5|11|11\.5)px\]/i.test(content)) {
+    if (/text-\[(?:[0-9]|10|10\.5|11|11\.5)px\]/i.test(content)) {
       report(file, 'cỡ chữ Web UI không được thấp hơn 12px');
     }
 

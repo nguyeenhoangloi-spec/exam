@@ -56,7 +56,7 @@ export function PendingQuestionList({
  <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
  {/* Header */}
  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
- <h3 className="text-[17px] font-semibold text-slate-900">
+ <h3 className="edu-card-title">
  Câu hỏi chờ duyệt <span className="text-blue-600 font-semibold">({count})</span>
  </h3>
 
@@ -73,7 +73,7 @@ export function PendingQuestionList({
  {/* Table Container */}
  {list.length > 0 ? (
  <div className="overflow-x-auto rounded-xl border border-slate-200/80">
- <table className="w-full text-left text-xs min-w-[760px] text-slate-700 border-collapse">
+ <table className="w-full text-left text-[15px] leading-6 min-w-[760px] text-slate-700 border-collapse">
  <thead className="bg-slate-50 text-[12px] font-semibold tracking-wider text-slate-500 border-b border-slate-200">
  <tr>
  <th className="py-3 px-3 whitespace-nowrap">Mã câu hỏi</th>
@@ -86,7 +86,7 @@ export function PendingQuestionList({
  <th className="py-3 px-3 text-center whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-normal text-xs">
+ <tbody className="divide-y divide-slate-100 font-normal text-[15px] leading-6">
  {list.map((q) => {
  const difficultyInfo = difficultyBadge[q.difficulty as keyof typeof difficultyBadge] || difficultyBadge['MEDIUM'];
  return (

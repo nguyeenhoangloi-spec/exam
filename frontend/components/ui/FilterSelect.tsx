@@ -19,8 +19,8 @@ export function FilterSelect({
 }: FilterSelectProps) {
   const sizeClasses =
     size === 'sm'
-      ? `h-8 text-xs font-semibold ${leftIcon ? 'pl-8 pr-7' : 'px-3 pr-7'}`
-      : `h-9 text-xs sm:text-sm font-semibold ${leftIcon ? 'pl-9 pr-8' : 'px-3.5 pr-8'}`;
+      ? `h-8 text-[13px] font-semibold ${leftIcon ? 'pl-8 pr-7' : 'px-3 pr-7'}`
+      : `h-9 text-[14px] font-semibold ${leftIcon ? 'pl-9 pr-8' : 'px-3.5 pr-8'}`;
 
   const iconSizeClass = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4';
 

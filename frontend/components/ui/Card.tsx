@@ -33,8 +33,8 @@ export function CardHeader({
     return (
       <div className={`flex items-center justify-between border-b border-slate-100 pb-4 mb-4 ${className}`} {...props}>
         <div>
-          {title && <h3 className="text-base font-semibold text-slate-900 leading-tight">{title}</h3>}
-          {subtitle && <p className="text-xs text-slate-500 font-normal mt-0.5">{subtitle}</p>}
+          {title && <h3 className="edu-card-title">{title}</h3>}
+          {subtitle && <p className="edu-secondary mt-0.5 text-slate-500">{subtitle}</p>}
         </div>
         {action && <div className="flex items-center gap-2">{action}</div>}
       </div>
@@ -79,8 +79,8 @@ export function StatisticCard({ title, value, icon, trend, description, badge, c
     <Card className={`group flex flex-col justify-between transition hover:shadow-md ${className}`}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <span className="text-xs font-semibold tracking-wider text-slate-500">{title}</span>
-          <div className="text-2xl font-semibold text-slate-900 tracking-tight">{value}</div>
+          <span className="edu-helper font-semibold tracking-wider text-slate-500">{title}</span>
+          <div className="edu-kpi tracking-tight">{value}</div>
         </div>
         {icon && (
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100 shrink-0 transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
@@ -90,7 +90,7 @@ export function StatisticCard({ title, value, icon, trend, description, badge, c
       </div>
 
       {(trend || description || badge) && (
-        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
+        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 edu-helper font-medium text-slate-500">
           {trend && (
             <span className={`font-medium ${trend.positive ? 'text-emerald-600' : 'text-rose-600'}`}>
               {trend.positive ? '↑' : '↓'} {trend.value}

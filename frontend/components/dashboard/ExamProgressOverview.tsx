@@ -31,7 +31,7 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4 h-full flex flex-col justify-between">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="text-[17px] font-semibold text-slate-900">Tiến độ tổ chức kỳ thi</h3>
+        <h3 className="edu-card-title">Tiến độ tổ chức kỳ thi</h3>
         <button
           type="button"
           onClick={() => router.push('/exam-periods')}

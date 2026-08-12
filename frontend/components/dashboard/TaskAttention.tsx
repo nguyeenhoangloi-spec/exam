@@ -56,7 +56,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
     <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-2 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="border-b border-slate-100 pb-2.5">
-        <h3 className="text-[17px] font-semibold text-[#0F172A]">Công việc cần xử lý</h3>
+      <h3 className="edu-card-title">Công việc cần xử lý</h3>
       </div>
 
       {/* 4 Items - Bỏ khung riêng từng item */}

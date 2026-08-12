@@ -171,7 +171,7 @@ export function QuestionBankTopCharts({
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-[14px] font-semibold text-slate-900 leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="text-[8px] font-semibold text-slate-400 mt-0.5">Tổng</span>
+              <span className="edu-badge font-semibold text-slate-400 mt-0.5">Tổng</span>
             </div>
           </div>
           <div className="flex-1 space-y-1.5 overflow-y-auto max-h-24">

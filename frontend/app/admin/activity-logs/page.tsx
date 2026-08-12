@@ -384,10 +384,10 @@ export default function ActivityLogsPage() {
  {/* ── 1. Page Header (Exact StudentHeader Match 1-1) ── */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-[#0F172A]">
+<h1 className="edu-page-title">
  Nhật ký hoạt động hệ thống
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+<p className="edu-body text-[#64748B]">
  Theo dõi, rà soát và ghi vết chi tiết mọi lịch sử thao tác của Quản trị viên, Giảng viên và Thí sinh
  </p>
  </div>
@@ -667,7 +667,7 @@ export default function ActivityLogsPage() {
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
- <tr className="border-b border-slate-200/80 bg-slate-50/80 text-[15px] font-semibold leading-5 text-slate-600">
+<tr className="border-b border-slate-200/80 bg-slate-50/80 text-[14px] font-semibold leading-5 text-slate-600">
  <th className="py-3.5 px-4 w-10 text-center">
  <input
  type="checkbox"

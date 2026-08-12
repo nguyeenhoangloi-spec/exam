@@ -14,10 +14,15 @@
   --lh-body: 24px;
   --fs-body-sm: 14px;
   --lh-body-sm: 20px;
+  --fs-label: 15px;
+  --lh-label: 24px;
   --fs-helper: 13px;
   --lh-helper: 18px;
   --fs-badge: 12px;
   --lh-badge: 18px;
+  --fs-kpi: 32px;
+  --lh-kpi: 38px;
+  --lh-table-content: 22px;
   --ui-page: #f8fafc;
   --ui-surface: #ffffff;
   --ui-surface-muted: #f1f5f9;
@@ -123,11 +128,15 @@ html.dark {
   }
 
   .ui-table {
-    @apply min-w-full text-left text-[15px];
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    @apply min-w-full text-left;
   }
 
   .ui-table thead {
-    @apply bg-slate-50 text-[14px] font-semibold tracking-wide text-[#1F2937] dark:bg-slate-800 dark:text-slate-400;
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+    @apply bg-slate-50 font-semibold tracking-wide text-[#1F2937] dark:bg-slate-800 dark:text-slate-400;
   }
 
   .ui-table th {
@@ -162,7 +171,9 @@ html.dark {
   }
 
   .edu-subheading {
-    @apply text-[16px] font-semibold leading-[24px] text-[#0F172A];
+    font-size: var(--fs-card-title);
+    line-height: var(--lh-card-title);
+    @apply font-semibold text-[#0F172A];
   }
 
   .edu-body {
@@ -191,7 +202,7 @@ html.dark {
 
   .edu-table-content {
     font-size: var(--fs-body);
-    line-height: 22px;
+    line-height: var(--lh-table-content);
     @apply font-normal text-[#1F2937];
   }
 
@@ -214,13 +225,15 @@ html.dark {
   }
 
   .edu-kpi {
-    @apply text-[32px] font-bold leading-[38px] text-[#0F172A];
+    font-size: var(--fs-kpi);
+    line-height: var(--lh-kpi);
+    @apply font-bold text-[#0F172A];
     font-variant-numeric: tabular-nums;
   }
 
   .edu-label {
-    font-size: var(--fs-body-sm);
-    line-height: var(--lh-body-sm);
+    font-size: var(--fs-label);
+    line-height: var(--lh-label);
     @apply font-medium text-[#1F2937];
   }
 
@@ -231,7 +244,9 @@ html.dark {
   }
 
   .edu-reading {
-    @apply text-base font-normal leading-[26px] text-[#1F2937];
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    @apply font-normal text-[#1F2937];
   }
 
   .edu-numeric {

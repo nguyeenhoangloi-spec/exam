@@ -314,7 +314,7 @@ export default function TeacherAssignmentsPage() {
  </p>
  </div>
 
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-transform group-hover:scale-110`}>
+ <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
  <Icon className="h-5 w-5" />
  </div>
  </div>

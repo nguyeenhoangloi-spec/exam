@@ -32,7 +32,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
     <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-2 h-full flex flex-col justify-between">
       {/* Header & Dropdown Filter */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-        <h3 className="text-[17px] font-semibold text-slate-900">Lịch thi trong 7 ngày tới</h3>
+        <h3 className="edu-card-title">Lịch thi trong 7 ngày tới</h3>
 
         <FilterSelect
           size="sm"
