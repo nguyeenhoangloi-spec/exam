@@ -664,7 +664,7 @@ function TrashPageContent() {
                             </div>
                             <div>
                               <p className="font-medium text-[#0F172A] text-[15px] leading-snug">{item.title}</p>
-                              <p className="text-[13px] text-[#64748B] font-normal mt-0.5">{item.subTitle}</p>
+                              <p className="text-[15px] leading-[22px] text-[#64748B] font-normal mt-0.5">{item.subTitle}</p>
                             </div>
                           </div>
                         </td>
@@ -675,7 +675,7 @@ function TrashPageContent() {
                         )}
                         {visibleColumns.expiresIn && (
                           <td className={`px-5 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
-                            <span className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${remainingDays <= 5
+                            <span className={`inline-flex items-center gap-[6px] text-[15px] leading-[22px] font-semibold ${remainingDays <= 5
                                 ? 'text-[#DC2626]'
                                 : 'text-[#D97706]'
                               }`}>
@@ -686,7 +686,7 @@ function TrashPageContent() {
                         )}
                         {visibleColumns.deletedBy && (
                           <td className={`px-5 font-normal text-[#334155] whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
-                            <span className="text-[14px] font-medium text-[#334155]">
+                            <span className="text-[15px] leading-[22px] font-medium text-[#334155]">
                               {item.deletedBy}
                             </span>
                           </td>

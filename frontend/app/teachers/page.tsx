@@ -14,7 +14,7 @@ import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Teacher, Department, User } from '../../types';
-import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown, FileSpreadsheet } from 'lucide-react';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown, FileSpreadsheet, UserCheck } from 'lucide-react';
 
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
@@ -436,12 +436,15 @@ export default function TeachersPage() {
  />
  </main>
 
- {/* Add / Edit Modal */}
- <Modal
- isOpen={isModalOpen}
- onClose={() => setIsModalOpen(false)}
-          title={editingTeacher ? 'Chỉnh sửa giảng viên' : 'Thêm giảng viên mới'}
- >
+  {/* Add / Edit Modal */}
+  <Modal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    title={editingTeacher ? 'Chỉnh sửa hồ sơ giảng viên' : 'Thêm giảng viên mới'}
+    subtitle={editingTeacher ? `Mã cán bộ: ${editingTeacher.teacherCode}` : 'Cấu hình thông tin cá nhân và học hàm/học vị giảng viên'}
+    icon={<UserCheck className="h-6 w-6 text-white" />}
+    badge={editingTeacher ? 'Chỉnh sửa' : 'Tạo mới'}
+  >
  <form onSubmit={handleSubmit} className="space-y-4">
  {!editingTeacher && (
  <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-700 font-medium flex items-start gap-2">
@@ -584,10 +587,10 @@ export default function TeachersPage() {
  {/* Drawer Panel */}
  <div className="relative w-full max-w-md bg-slate-50 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
  {/* Header - Modern Gradient matching ProfileDrawer */}
-<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
-<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-base text-white border border-white/25 shadow-2xs">
  {drawerTeacher.fullName.trim().split(' ').pop()?.charAt(0).toUpperCase() || 'GV'}
  </div>
  <div className="min-w-0 flex-1 pr-2">

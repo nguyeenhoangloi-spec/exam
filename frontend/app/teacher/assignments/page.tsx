@@ -125,7 +125,7 @@ export default function TeacherAssignmentsPage() {
  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 13px; }
  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
  th, td { border: 1px solid #334155; padding: 8px 10px; text-align: left; }
- th { background-color: #f1f5f9; text-transform: uppercase; font-size: 11px; }
+ th { background-color: #f1f5f9; text-transform: uppercase; font-size: 12px; }
  .center { text-align: center; }
  .signatures { display: flex; justify-content: space-between; margin-top: 40px; text-align: center; }
  .sig-box { width: 45%; }

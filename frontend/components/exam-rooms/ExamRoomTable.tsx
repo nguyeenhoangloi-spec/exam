@@ -207,7 +207,7 @@ export function ExamRoomTable({
  <button
  type="button"
  onClick={() => onDetail(r)}
- className=" tabular-nums text-[14px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -219,7 +219,7 @@ export function ExamRoomTable({
  <button
  type="button"
  onClick={() => onDetail(r)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-tight text-xs"
+ className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-[22px] text-[15px]"
  >
  {nameText}
  </button>

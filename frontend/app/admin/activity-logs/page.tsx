@@ -40,6 +40,15 @@ import {
     Mail,
     Building,
     Trash2,
+    HardDrive,
+    FileCheck,
+    HelpCircle,
+    Calendar,
+    Clock,
+    GraduationCap,
+    UserCheck,
+    Building2,
+    BookOpen,
 } from 'lucide-react';
 
 interface AuditLogRecord {
@@ -127,6 +136,58 @@ const MOCK_AUDIT_LOGS: AuditLogRecord[] = [
         actor: { id: 1, username: 'admin', email: 'admin@exam.edu.vn', role: 'ADMIN' },
     },
 ];
+
+
+function EntityTarget({ entityType, entityId }: { entityType: string; entityId?: string | null }) {
+    const typeMap: Record<string, { label: string; Icon: React.ElementType }> = {
+        AUTH: { label: 'Xác thực', Icon: ShieldCheck },
+        User: { label: 'Tài khoản', Icon: UserIcon },
+        BackupJob: { label: 'Job Sao lưu', Icon: Database },
+        BACKUP_JOB: { label: 'Job Sao lưu', Icon: Database },
+        BackupRestoreRequest: { label: 'Khôi phục DB', Icon: HardDrive },
+        BACKUP_RESTORE_REQUEST: { label: 'Khôi phục DB', Icon: HardDrive },
+        GradeAppeal: { label: 'Phúc khảo', Icon: FileCheck },
+        Question: { label: 'Câu hỏi', Icon: HelpCircle },
+        ExamPaper: { label: 'Đề thi', Icon: FileText },
+        ExamPeriod: { label: 'Kỳ thi', Icon: Calendar },
+        ExamRoom: { label: 'Phòng thi', Icon: Building },
+        ExamSchedule: { label: 'Lịch thi', Icon: Clock },
+        Student: { label: 'Sinh viên', Icon: GraduationCap },
+        Teacher: { label: 'Giảng viên', Icon: UserCheck },
+        Class: { label: 'Lớp học', Icon: Building2 },
+        Department: { label: 'Khoa / Phòng', Icon: Building2 },
+        Subject: { label: 'Môn học', Icon: BookOpen },
+    };
+
+    const info = typeMap[entityType] || { label: entityType, Icon: Building };
+    const Icon = info.Icon;
+
+    const isLongId = entityId && entityId.length > 14;
+    const formattedId = entityId
+        ? isLongId
+            ? `${entityId.slice(0, 5)}...${entityId.slice(-4)}`
+            : entityId
+        : null;
+
+    return (
+        <div className="group relative inline-flex items-center gap-1.5 whitespace-nowrap">
+            <Icon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+            <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{info.label}</span>
+            {entityId && (
+                <span className="font-mono text-[13px] font-normal text-slate-500 dark:text-slate-400">
+                    #{formattedId}
+                </span>
+            )}
+
+            {isLongId && (
+                <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-mono text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50">
+                    <span>#{entityId}</span>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
+                </div>
+            )}
+        </div>
+    );
+}
 
 function ActionCode({ action }: { action: string }) {
     const normalized = action.toUpperCase();
@@ -634,10 +695,10 @@ export default function ActivityLogsPage() {
                                 </div>
                                 <div>
                                     <p className="text-[15px] font-semibold text-slate-900">{item.actor?.username || 'Hệ thống'}</p>
-                                    <p className="text-[13px] font-normal text-slate-500">{item.actor?.email}</p>
+                                    <p className="text-[15px] leading-[22px] font-normal text-slate-500">{item.actor?.email}</p>
                                 </div>
                             </div>
-                            <p className="text-[14px] font-normal leading-relaxed text-slate-700">{item.description}</p>
+                            <p className="text-[15px] leading-[22px] font-normal text-slate-700">{item.description}</p>
                             <div className="pt-2 flex justify-end gap-1">
                                 <button
                                     type="button"
@@ -719,24 +780,29 @@ export default function ActivityLogsPage() {
                                                 </td>
                                             )}
 
-                                            {/* Người thực hiện - Exact Student Table Styling */}
+                                            {/* Người thực hiện - Gọn gàng, Tooltip khi Hover */}
                                             {visibleColumns.actor && (
-                                                <td className="py-3.5 px-4 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2.5">
-                                                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 text-[12px] font-medium text-slate-700">
-                                                            {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
+                                                <td className="py-2.5 px-4 whitespace-nowrap">
+                                                    <div
+                                                        className="group relative inline-flex items-center gap-2 cursor-pointer"
+                                                        title={item.actor?.email || "system@exam.edu.vn"}
+                                                    >
+                                                        <div className="table-avatar flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 text-[12px] font-medium text-slate-700 dark:text-slate-300">
+                                                            {(item.actor?.username || "A").slice(0, 1).toUpperCase()}
                                                         </div>
-                                                        <div>
-                                                            <p className="text-[15px] font-semibold text-slate-900">{item.actor?.username || 'Hệ thống'}</p>
-                                                            <p className="flex items-center gap-1 text-[13px] font-normal text-slate-500">
-                                                                <Mail className="h-3 w-3 text-slate-300 inline-block" />
-                                                                {item.actor?.email || 'system@exam.edu.vn'}
-                                                            </p>
+                                                        <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                            {item.actor?.username || "Hệ thống"}
+                                                        </span>
+
+                                                        {/* Floating Tooltip khi Hover */}
+                                                        <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                                                            <Mail className="h-3 w-3 text-slate-300" />
+                                                            <span>{item.actor?.email || "system@exam.edu.vn"}</span>
+                                                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
                                                         </div>
                                                     </div>
                                                 </td>
                                             )}
-
                                             {/* Hành động */}
                                             {visibleColumns.action && (
                                                 <td className="py-3.5 px-4 whitespace-nowrap">
@@ -744,14 +810,10 @@ export default function ActivityLogsPage() {
                                                 </td>
                                             )}
 
-                                            {/* Đối tượng */}
+                                            {/* Đối tượng tác động - Việt hóa & Rút gọn UUID */}
                                             {visibleColumns.entity && (
-                                                <td className="whitespace-nowrap px-4 py-3.5 text-[15px]">
-                                                    <span className="font-semibold text-slate-900 flex items-center gap-1">
-                                                        <Building className="h-3.5 w-3.5 text-slate-400 inline-block" />
-                                                        {item.entityType}
-                                                    </span>
-                                                    {item.entityId && <span className="text-slate-400 ml-1">#{item.entityId}</span>}
+                                                <td className="py-2.5 px-4 whitespace-nowrap">
+                                                    <EntityTarget entityType={item.entityType} entityId={item.entityId} />
                                                 </td>
                                             )}
 
@@ -762,24 +824,27 @@ export default function ActivityLogsPage() {
                                                 </td>
                                             )}
 
-                                            {/* Action buttons */}
+                                            {/* Action buttons - 2 Chức năng riêng biệt: Xem chi tiết & Sao chép ID */}
                                             <td className="py-3.5 px-4 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button
                                                         type="button"
                                                         onClick={() => setSelectedLog(item)}
-                                                        className="p-1 text-slate-400 hover:text-blue-600 transition cursor-pointer"
-                                                        title="Chi tiết JSON"
+                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
+                                                        title="Xem chi tiết nhật ký"
                                                     >
                                                         <Eye className="h-4 w-4" />
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        onClick={() => setSelectedLog(item)}
-                                                        className="p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer"
-                                                        title="Tùy chọn khác"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(item.id);
+                                                            setToast({ message: `Đã sao chép mã ID log (${item.id})!`, type: 'success' });
+                                                        }}
+                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-400 transition cursor-pointer"
+                                                        title="Sao chép mã Log ID"
                                                     >
-                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <Copy className="h-4 w-4" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -885,16 +950,16 @@ export default function ActivityLogsPage() {
 
             {/* ── 7. Metadata Inspector Drawer (Exact System Drawer Standard Match 1-1) ── */}
             {selectedLog && (
-                <div className="fixed inset-0 z-50 overflow-hidden">
+                <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
                     {/* Overlay */}
                     <div
-                        className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity"
+                        className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity"
                         onClick={() => setSelectedLog(null)}
                     />
 
                     {/* Drawer Container */}
-                    <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-                        <div className="relative flex h-full w-full max-w-md flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300">
+                    <div className="fixed inset-y-0 right-0 max-w-full flex pl-10 z-[100]">
+                        <div className="relative flex h-full w-full max-w-md flex-col bg-white dark:bg-slate-900 shadow-2xl animate-in slide-in-from-right duration-300">
 
                             {/* Header - Modern Gradient matching system standard */}
                             <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
@@ -938,7 +1003,7 @@ export default function ActivityLogsPage() {
                                             <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
                                                 Mã hành động
                                             </span>
-                                            <span className="font-sans text-[14px] font-medium text-blue-700">{selectedLog.action}</span>
+                                            <span className="font-sans text-[15px] leading-[22px] font-medium text-blue-700">{selectedLog.action}</span>
                                         </div>
 
                                         <div>

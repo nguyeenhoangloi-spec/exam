@@ -761,7 +761,7 @@ export default function StudentCurriculumPage() {
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-xs text-[#475569]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569]">
  {item.subjectCode}
  </span>
  </td>
@@ -777,22 +777,22 @@ export default function StudentCurriculumPage() {
  <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-900">{item.credits} TC</td>
  <td className="p-2 whitespace-nowrap">
  {item.type === 'MANDATORY' ? (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-700">
  <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
  </span>
  ) : (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-700">
  <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
  </span>
  )}
  </td>
  <td className="p-2 whitespace-nowrap">
  {item.isCompleted ? (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-700">
  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
  </span>
  ) : (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-400">
  <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
  </span>
  )}
@@ -860,7 +860,7 @@ export default function StudentCurriculumPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569] hover:text-blue-600 transition cursor-pointer"
  >
  {item.subjectCode}
  </button>
@@ -872,12 +872,12 @@ export default function StudentCurriculumPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-semibold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
+ className="font-semibold text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
  >
  {item.subjectName}
  </p>
  {item.note && (
- <p className="text-xs text-slate-400 font-normal mt-0.5 italic">{item.note}</p>
+ <p className="text-[15px] leading-[22px] text-slate-400 font-normal mt-0.5 italic">{item.note}</p>
  )}
  </td>
  )}
@@ -885,7 +885,7 @@ export default function StudentCurriculumPage() {
  {/* Semester */}
  {visibleColumns.semester !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="text-xs font-semibold text-slate-800">
+ <span className="text-[15px] leading-[22px] font-semibold text-slate-800">
  Học kỳ {item.recommendedSemester}
  </span>
  </td>
@@ -894,8 +894,8 @@ export default function StudentCurriculumPage() {
  {/* Credits */}
  {visibleColumns.credits !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="font-semibold text-slate-900 text-xs">{item.credits}</span>
- <span className="text-slate-500 font-medium ml-1 text-xs">TC</span>
+ <span className="font-semibold text-slate-900 text-[15px] leading-[22px]">{item.credits}</span>
+ <span className="text-slate-500 font-medium ml-1 text-[15px] leading-[22px]">TC</span>
  </td>
  )}
 
@@ -903,12 +903,12 @@ export default function StudentCurriculumPage() {
  {visibleColumns.type !== false && (
  <td className="p-3.5 whitespace-nowrap">
  {item.type === 'MANDATORY' ? (
- <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
  <Award className="h-4 w-4 shrink-0 text-blue-600" />
  Bắt buộc
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
  <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
  Tự chọn
  </span>
@@ -920,12 +920,12 @@ export default function StudentCurriculumPage() {
  {visibleColumns.status !== false && (
  <td className="p-3.5 whitespace-nowrap">
  {item.isCompleted ? (
- <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
  Đã học
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-500 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-500 font-semibold">
  <Clock className="h-4 w-4 shrink-0 text-slate-400" />
  Chưa tích lũy
  </span>

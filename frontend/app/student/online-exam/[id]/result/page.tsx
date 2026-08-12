@@ -121,7 +121,7 @@ export default function StudentExamResultPage() {
         <div className="w-full max-w-2xl bg-white rounded-2xl border border-slate-200/90 shadow-xl overflow-hidden">
 
           {/* Full-Bleed Header Banner: Primary Vivid Blue Gradient */}
-          <div className={`bg-gradient-to-r ${isUnderReview ? 'from-amber-600 via-amber-700 to-orange-700' : 'from-blue-600 via-blue-700 to-indigo-600'} p-6 sm:p-7 text-white shrink-0 shadow-xs`}>
+          <div className={`bg-gradient-to-r ${isUnderReview ? 'from-amber-600 via-amber-700 to-orange-700' : 'from-blue-600 via-blue-700 to-blue-800'} p-6 sm:p-7 text-white shrink-0 shadow-xs`}>
             <div className="flex items-start gap-4 min-w-0">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
                 {isUnderReview ? <AlertCircle className="h-6 w-6 text-white" /> : <Trophy className="h-6 w-6 text-white" />}
@@ -152,15 +152,15 @@ export default function StudentExamResultPage() {
             <div className="space-y-4">
               <div className="bg-slate-50/70 border border-slate-200/80 p-5 rounded-xl space-y-2.5">
                 <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-[15px]">
-                  <span className="text-slate-500 font-semibold text-xs uppercase tracking-wider">Trạng thái bài thi:</span>
+                  <span className="text-slate-500 font-semibold text-[14px] leading-5 tracking-wide">Trạng thái bài thi:</span>
                   <StatusBadge status={result.status} />
                   <span className="sr-only">
                     {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}
                   </span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200/60 pb-2.5 text-[15px]">
-                  <span className="text-slate-500 font-semibold text-xs uppercase tracking-wider">Thời điểm nộp bài:</span>
-                  <span className="font-bold text-slate-900 text-xs tabular-nums">
+                  <span className="text-slate-500 font-semibold text-[14px] leading-5 tracking-wide">Thời điểm nộp bài:</span>
+                  <span className="font-semibold text-slate-900 text-[15px] leading-6 tabular-nums">
                     {result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Mới đây'}
                   </span>
                 </div>
@@ -185,12 +185,12 @@ export default function StudentExamResultPage() {
                 <h3 className="text-sm font-bold text-amber-900 flex items-center gap-1.5">
                   <FileText className="w-4 h-4 text-amber-700" /> Gửi Giải Trình Sự Cố
                 </h3>
-                <p className="text-xs text-amber-900 font-medium leading-relaxed">
+                <p className="text-[13px] text-amber-900 font-medium leading-[18px]">
                   Nếu bài thi bị gián đoạn do rớt mạng, lỗi trình duyệt hoặc lý do khách quan, bạn có thể gửi giải trình bên dưới.
                 </p>
 
                 {appealSuccess ? (
-                  <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-semibold">
+                  <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-[13px] leading-[18px] font-semibold">
                     Đã gửi giải trình thành công. Giám thị sẽ tiến hành xem xét biên bản.
                   </div>
                 ) : (
@@ -200,7 +200,7 @@ export default function StudentExamResultPage() {
                       value={appealReason}
                       onChange={(e) => setAppealReason(e.target.value)}
                       placeholder="Nhập chi tiết lý do sự cố xảy ra..."
-                      className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 font-medium"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-3 text-[15px] leading-6 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 font-medium"
                       required
                     />
                     <Button

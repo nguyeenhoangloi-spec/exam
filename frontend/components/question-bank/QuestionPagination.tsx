@@ -1,3 +1,32 @@
-export function QuestionPagination({ page, totalPages, limit, onPage, onLimit }: { page: number; totalPages: number; limit: number; onPage: (p: number) => void; onLimit: (l: number) => void }) {
-  return <div className="mt-6 flex items-center justify-between rounded-2xl border bg-white p-3 text-sm"><select value={limit} onChange={e => onLimit(Number(e.target.value))} className="rounded-lg border px-2 py-1"><option>20</option><option>50</option><option>100</option></select><div className="flex items-center gap-3"><button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)} className="rounded-lg border px-3 py-1.5 disabled:opacity-40">Trước</button><span>Trang {page}/{totalPages}</span><button type="button" disabled={page >= totalPages} onClick={() => onPage(page + 1)} className="rounded-lg border px-3 py-1.5 disabled:opacity-40">Sau</button></div></div>;
+'use client';
+
+import React from 'react';
+import { PaginationBar } from '../ui/PaginationBar';
+
+export function QuestionPagination({
+  page,
+  totalPages,
+  limit,
+  totalItems = totalPages * limit,
+  onPage,
+  onLimit,
+}: {
+  page: number;
+  totalPages: number;
+  limit: number;
+  totalItems?: number;
+  onPage: (p: number) => void;
+  onLimit: (l: number) => void;
+}) {
+  return (
+    <PaginationBar
+      page={page}
+      totalPages={totalPages}
+      limit={limit}
+      totalItems={totalItems}
+      unit="Câu hỏi"
+      onPage={onPage}
+      onLimit={onLimit}
+    />
+  );
 }

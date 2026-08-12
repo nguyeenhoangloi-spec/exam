@@ -468,12 +468,15 @@ export default function DepartmentsPage() {
  />
  </main>
 
- {/* Edit/Add Department Modal */}
- <Modal
- isOpen={isModalOpen}
- onClose={() => setIsModalOpen(false)}
- title={editingDepartment ? 'Chỉnh sửa khoa đào tạo' : 'Tạo khoa đào tạo mới'}
- >
+  {/* Edit/Add Department Modal */}
+  <Modal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    title={editingDepartment ? 'Chỉnh sửa khoa đào tạo' : 'Tạo khoa đào tạo mới'}
+    subtitle={editingDepartment ? `Mã khoa: ${editingDepartment.code}` : 'Thiết lập mã khoa và tên đơn vị quản lý chuyên môn'}
+    icon={<Building2 className="h-6 w-6 text-white" />}
+    badge={editingDepartment ? 'Chỉnh sửa' : 'Tạo mới'}
+  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
  <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã khoa</label>
@@ -616,7 +619,7 @@ export default function DepartmentsPage() {
  {curriculumList.map((item) => (
  <tr key={item.id} className="transition hover:bg-blue-50/40">
  <td className="p-3">
- <span className=" tabular-nums text-[13px] font-semibold text-blue-600">
+ <span className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600">
  {item.subject?.subjectCode}
  </span>
  </td>
@@ -627,12 +630,12 @@ export default function DepartmentsPage() {
  </td>
  <td className="p-3 text-center">
  {item.type === 'MANDATORY' ? (
- <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
  <Award className="h-4 w-4 shrink-0 text-blue-600" />
  Bắt buộc
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 text-xs whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
  <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
  Tự chọn
  </span>
@@ -673,10 +676,10 @@ export default function DepartmentsPage() {
  {/* Drawer Content */}
  <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
  {/* Header - Modern Gradient */}
-<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
-<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 tabular-nums font-semibold text-base text-white border border-white/20 shadow-xs">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md tabular-nums font-semibold text-base text-white border border-white/25 shadow-2xs">
  {drawerDepartment.code.substring(0, 2).toUpperCase()}
  </div>
  <div className="min-w-0 flex-1 pr-2">

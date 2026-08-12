@@ -403,7 +403,7 @@ export default function ExamArrangementPage() {
  .meta { margin-bottom: 15px; line-height: 1.6; }
  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
  th, td { border: 1px solid #000; padding: 6px 8px; font-size: 12px; }
- th { background: #f2f2f2; text-transform: uppercase; font-size: 11px; }
+ th { background: #f2f2f2; text-transform: uppercase; font-size: 12px; }
  .footer { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; }
  .signature-box { width: 45%; }
  </style>
@@ -1114,7 +1114,7 @@ export default function ExamArrangementPage() {
  <td className="p-3.5 font-medium text-[#0F172A]">{st.roomName || st.roomCode}</td>
  <td className="p-3.5 text-center font-semibold text-[#2563EB]">Ghế #{st.seatNumber}</td>
  <td className="p-3.5">
- <span className=" tabular-nums font-medium text-[14px] text-[#0F172A]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#0F172A]">
  {st.studentCode}
  </span>
  </td>
@@ -1200,10 +1200,10 @@ export default function ExamArrangementPage() {
  {new Date(log.createdAt).toLocaleString('vi-VN')}
  </td>
  <td className="p-3.5 font-semibold text-slate-800 whitespace-nowrap">
- {username} <span className="text-slate-400 font-semibold text-[12px]">({roleLabel})</span>
+ {username} <span className="text-slate-400 font-semibold text-[15px] leading-[22px]">({roleLabel})</span>
  </td>
  <td className="p-3.5 whitespace-nowrap">
- <span className={`px-2.5 py-0.5 text-[12px] rounded-md ${actInfo.cls}`}>
+ <span className={`table-badge px-2.5 py-0.5 text-[12px] leading-[18px] rounded-md ${actInfo.cls}`}>
  {actInfo.label}
  </span>
  </td>

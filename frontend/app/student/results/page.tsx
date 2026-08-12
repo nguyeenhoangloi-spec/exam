@@ -1011,7 +1011,7 @@ export default function StudentResultsPage() {
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-xs text-[#475569]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569]">
  {item.subjectCode}
  </span>
  </td>
@@ -1097,7 +1097,7 @@ export default function StudentResultsPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569] hover:text-blue-600 transition cursor-pointer"
  >
  {item.subjectCode}
  </button>
@@ -1109,18 +1109,18 @@ export default function StudentResultsPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-semibold text-slate-900 text-xs cursor-pointer hover:text-blue-600 transition"
+ className="font-semibold text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
  >
  {item.subjectName}
  </p>
- <p className="text-xs text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
+ <p className="text-[15px] leading-[22px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
  </td>
  )}
 
  {/* Period */}
  {visibleColumns.period !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-xs font-semibold text-slate-700">
+ <span className="text-[15px] leading-[22px] font-semibold text-slate-700">
  {item.periodName}
  </span>
  </td>
@@ -1129,7 +1129,7 @@ export default function StudentResultsPage() {
  {/* Date */}
  {visibleColumns.date !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="text-xs font-medium text-slate-600">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-600">
  {new Date(item.examDate).toLocaleDateString('vi-VN')}
  </span>
  </td>
@@ -1138,7 +1138,7 @@ export default function StudentResultsPage() {
  {/* Type */}
  {visibleColumns.type !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-xs font-medium text-slate-600">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-600">
  {formatExamType(item.examType)}
  </span>
  </td>
@@ -1148,11 +1148,11 @@ export default function StudentResultsPage() {
  {visibleColumns.score !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {item.score !== null ? (
- <span className={`font-semibold text-xs ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
+ <span className={`font-semibold text-[15px] leading-[22px] ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
  {item.score.toFixed(1)}
  </span>
  ) : (
- <span className="text-slate-400 font-normal text-xs italic">---</span>
+ <span className="text-slate-400 font-normal text-[15px] leading-[22px] italic">---</span>
  )}
  </td>
  )}

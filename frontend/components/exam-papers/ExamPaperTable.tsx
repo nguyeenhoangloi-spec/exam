@@ -221,7 +221,7 @@ export function ExamPaperTable({
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[14px] text-[#0F172A]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#0F172A]">
  {p.paperCode}
  </span>
  </td>
@@ -310,11 +310,11 @@ export function ExamPaperTable({
  <button
  type="button"
  onClick={() => onDetail(p.id)}
- className=" tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
  >
  Mã {p.paperCode}
  </button>
- <p className="text-[12px] font-semibold text-slate-400">
+ <p className="text-[15px] leading-[22px] font-semibold text-slate-400">
  {formatExamType(examType)}
  </p>
  </div>
@@ -326,20 +326,20 @@ export function ExamPaperTable({
  <div className="min-w-0">
  <div className="flex items-center gap-1.5 flex-wrap">
  {subCode && (
- <span className=" tabular-nums font-medium text-slate-900 text-xs">
+ <span className=" tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">
  [{subCode}]
  </span>
  )}
  <button
  type="button"
  onClick={() => onDetail(p.id)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-xs"
+ className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-[15px] leading-[22px]"
  >
  {subName}
  </button>
  </div>
  {periodName && (
- <p className="text-[12px] font-medium text-slate-400 mt-0.5 truncate">
+ <p className="text-[15px] leading-[22px] font-medium text-slate-400 mt-0.5 truncate">
  {periodName}
  </p>
  )}
@@ -363,16 +363,16 @@ export function ExamPaperTable({
  <td className="p-3.5 whitespace-nowrap text-slate-700">
  <div className="space-y-0.5">
  {dateStr ? (
- <p className="text-xs">
+ <p className="text-[15px] leading-[22px]">
  <span className="font-semibold text-slate-900">{dateStr}</span>
  {timeStr && <span className="text-slate-500 ml-1.5 font-medium">({timeStr})</span>}
  </p>
  ) : (
- <p className="text-xs font-medium text-slate-400">
+ <p className="text-[15px] leading-[22px] font-medium text-slate-400">
  Chưa xếp lịch thi
  </p>
  )}
- <p className="text-[12px] font-medium text-slate-400">
+ <p className="text-[15px] leading-[22px] font-medium text-slate-400">
  Làm bài: <span className="font-semibold text-slate-700">{p.durationMinutes} phút</span>
  </p>
  </div>

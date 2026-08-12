@@ -465,12 +465,15 @@ export default function StudentsPage() {
  />
  </main>
 
- {/* Add / Edit Modal */}
- <Modal
- isOpen={isModalOpen}
- onClose={() => setIsModalOpen(false)}
- title={editingStudent ? 'Chỉnh sửa hồ sơ sinh viên' : 'Thêm sinh viên mới'}
- >
+  {/* Add / Edit Modal */}
+  <Modal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    title={editingStudent ? 'Chỉnh sửa hồ sơ sinh viên' : 'Thêm sinh viên mới'}
+    subtitle={editingStudent ? `MSSV: ${editingStudent.studentCode}` : 'Nhập thông tin cá nhân và xếp lớp đào tạo cho sinh viên'}
+    icon={<UserIcon className="h-6 w-6 text-white" />}
+    badge={editingStudent ? 'Chỉnh sửa' : 'Tạo mới'}
+  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
  <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã sinh viên</label>

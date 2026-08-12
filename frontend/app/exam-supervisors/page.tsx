@@ -838,13 +838,13 @@ export default function ExamSupervisorsPage() {
  return (
  <tr key={sup.id} className="hover:bg-blue-50/40 transition">
  <td className="p-3.5 pl-4 whitespace-nowrap">
- <span className=" tabular-nums text-[13px] font-semibold text-blue-600">
+ <span className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600">
  {sup.teacher?.teacherCode}
  </span>
  </td>
  <td className="p-3.5 min-w-[160px]">
- <div className="font-semibold text-slate-900 text-xs">{sup.teacher?.fullName}</div>
- <div className="text-[12px] text-slate-500 font-normal">{sup.teacher?.degree || 'TS'}</div>
+ <div className="font-semibold text-slate-900 text-[15px] leading-[22px]">{sup.teacher?.fullName}</div>
+ <div className="text-[15px] leading-[22px] text-slate-500 font-normal">{sup.teacher?.degree || 'TS'}</div>
  </td>
  <td className="p-3.5 font-semibold text-slate-900 whitespace-nowrap text-[15px]">{rName}</td>
  <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-800">
@@ -854,7 +854,7 @@ export default function ExamSupervisorsPage() {
  <div className="space-y-1">
  {renderStatusBadge(sup.status)}
  {sup.note && (
- <div className="text-[12px] text-amber-700 bg-amber-50 p-1.5 rounded-lg border border-amber-200 max-w-xs">
+ <div className="text-[15px] leading-[22px] text-amber-700 bg-amber-50 p-1.5 rounded-lg border border-amber-200 max-w-xs">
  <strong>Lý do:</strong> {sup.note}
  </div>
  )}

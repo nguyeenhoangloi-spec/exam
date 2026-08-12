@@ -172,7 +172,7 @@ export default function ForgotPasswordPage() {
  <ShieldCheck className="w-2.5 h-2.5" />
  Khôi phục mật khẩu &nbsp;•&nbsp; Bảo mật 2 lớp
  </div>
- <h2 className="mt-3.5 text-[26px] xl:text-[30px] font-semibold text-white leading-[1.2] tracking-tight">
+ <h2 className="mt-3.5 text-[28px] font-semibold text-white leading-[1.2] tracking-tight">
  Khôi phục mật khẩu
  <span className="block text-blue-300">Nhanh chóng – An toàn – Nhanh gọn</span>
  </h2>
@@ -304,7 +304,7 @@ export default function ForgotPasswordPage() {
 
  {/* Header */}
  <div className="mb-4">
- <h2 className={['text-[22px] font-semibold tracking-tight leading-tight', isDark ? 'text-white' : 'text-slate-900'].join(' ')}>
+ <h2 className={['text-[20px] font-semibold tracking-tight leading-tight', isDark ? 'text-white' : 'text-slate-900'].join(' ')}>
  {step === 1 && 'Quên mật khẩu?'}
  {step === 2 && 'Xác thực mã OTP'}
  {step === 3 && 'Tạo mật khẩu mới'}

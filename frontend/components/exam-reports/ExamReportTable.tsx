@@ -184,7 +184,7 @@ export function ExamReportTable({
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[14px] text-[#0F172A]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#0F172A]">
  {c.studentCode}
  </span>
  </td>
@@ -206,7 +206,7 @@ export function ExamReportTable({
  <button
  type="button"
  onClick={() => setReviewAttemptId(c.attemptId!)}
- className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-[#2563EB] hover:bg-blue-100 text-[13px] font-medium transition cursor-pointer"
+ className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-[#2563EB] hover:bg-blue-100 text-[15px] leading-[22px] font-medium transition cursor-pointer"
  title="Xem chi tiết bài làm"
  >
  <Eye className="h-3.5 w-3.5" />
@@ -280,7 +280,7 @@ export function ExamReportTable({
 
  {visibleColumns.studentCode !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className=" tabular-nums text-[13px] font-semibold text-blue-600">
+ <span className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600">
  {c.studentCode}
  </span>
  </td>
@@ -341,7 +341,7 @@ export function ExamReportTable({
  {visibleColumns.violationCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {c.violationCount > 0 ? (
- <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-700 border border-rose-200">
+ <span className="table-badge inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[12px] leading-[18px] font-semibold text-rose-700 border border-rose-200">
  <AlertTriangle className="h-3 w-3 text-rose-600" /> {c.violationCount}
  </span>
  ) : (
@@ -356,7 +356,7 @@ export function ExamReportTable({
  <button
  type="button"
  onClick={() => setReviewAttemptId(c.attemptId!)}
- className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[12px] font-semibold transition cursor-pointer"
+ className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[15px] leading-[22px] font-semibold transition cursor-pointer"
  title="Xem chi tiết bài làm"
  >
  <Eye className="h-3.5 w-3.5" />

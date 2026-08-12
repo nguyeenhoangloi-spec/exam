@@ -23,6 +23,7 @@ const kpiBoldFiles = new Set([
   'app/trash/page.tsx',
   'app/student/online-exam/[id]/lobby/page.tsx',
   'app/student/online-exam/[id]/take/page.tsx',
+  'app/student/online-exam/[id]/result/page.tsx',
 ]);
 const popupBoldFiles = new Set([
   'components/ConfirmModal.tsx',
@@ -80,6 +81,17 @@ for (const folder of sourceRoots) {
     if (/(?:<table|<thead|<tbody|<th|<td)[^<>]*\btext-xs\b/i.test(content)
       || /(?:<table|<thead|<tbody|<th|<td)[^<>]*text-\[12px\]/i.test(content)) {
       report(file, 'table header/cell size must use the table scale');
+    }
+
+    for (const tableMatch of content.matchAll(/<table\b[\s\S]*?<\/table>/gi)) {
+      for (const bodyMatch of tableMatch[0].matchAll(/<tbody\b[\s\S]*?<\/tbody>/gi)) {
+        const body = bodyMatch[0]
+          .replace(/<svg[\s\S]*?<\/svg>/gi, '')
+          .replace(/[^\r\n]*(?:table-badge|table-avatar)[^\r\n]*/gi, '');
+        if (/text-xs|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(body)) {
+          report(file, 'table body text must be 15px; compact size is limited to table-badge/table-avatar');
+        }
+      }
     }
 
     if (/text-transform\s*:\s*;/i.test(content)) {

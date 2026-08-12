@@ -902,17 +902,17 @@ export default function ProctorDashboardPage() {
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-slate-900 text-xs">{s.examNumber}</span>
- <span className="ml-1 text-slate-500 font-semibold text-xs">G:{s.seatNumber}</span>
+ <span className=" tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">{s.examNumber}</span>
+ <span className="ml-1 text-slate-500 font-semibold text-[15px] leading-[22px]">G:{s.seatNumber}</span>
  </td>
  <td className="p-2 min-w-[180px]">
  <div className="flex items-center gap-1.5">
- <span className="font-semibold text-slate-900 text-xs truncate">{s.student.fullName}</span>
+ <span className="font-semibold text-slate-900 text-[15px] leading-[22px] truncate">{s.student.fullName}</span>
  {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
  </div>
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-xs text-[#475569]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569]">
  {s.student.studentCode}
  </span>
  </td>
@@ -920,7 +920,7 @@ export default function ProctorDashboardPage() {
  <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
  </td>
  <td className="p-2 text-center whitespace-nowrap">
- <span className={`text-xs ${riskCls}`}>
+ <span className={`text-[15px] leading-[22px] ${riskCls}`}>
  {riskScore}đ
  </span>
  </td>
@@ -998,8 +998,8 @@ export default function ProctorDashboardPage() {
  {/* SBD / Seat */}
  {visibleColumns.seat !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-slate-900 text-xs">{s.examNumber}</span>
- <span className="ml-1.5 text-slate-500 font-semibold text-xs">G:{s.seatNumber}</span>
+ <span className=" tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">{s.examNumber}</span>
+ <span className="ml-1.5 text-slate-500 font-semibold text-[15px] leading-[22px]">G:{s.seatNumber}</span>
  </td>
  )}
 
@@ -1007,7 +1007,7 @@ export default function ProctorDashboardPage() {
  {visibleColumns.name !== false && (
  <td className="p-3.5 min-w-[200px]">
  <div className="flex items-center gap-2">
- <p className="font-semibold text-slate-900 text-xs truncate">{s.student.fullName}</p>
+ <p className="font-semibold text-slate-900 text-[15px] leading-[22px] truncate">{s.student.fullName}</p>
  {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
  </div>
  </td>
@@ -1016,7 +1016,7 @@ export default function ProctorDashboardPage() {
  {/* Student code */}
  {visibleColumns.code !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-xs text-[#475569]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569]">
  {s.student.studentCode}
  </span>
  </td>
@@ -1035,7 +1035,7 @@ export default function ProctorDashboardPage() {
  {/* Risk */}
  {visibleColumns.risk !== false && (
  <td className="p-3.5 text-center whitespace-nowrap">
- <span className={`text-xs ${riskCls}`}>
+ <span className={`text-[15px] leading-[22px] ${riskCls}`}>
  {riskScore}đ ({riskLevel})
  </span>
  </td>
@@ -1051,7 +1051,7 @@ export default function ProctorDashboardPage() {
  type="button"
  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
  title="Gia hạn thời gian làm bài"
- className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+ className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-3 py-1.5 text-[15px] leading-[22px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
  >
  <Clock className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-blue-600 transition-colors" />
  <span>Gia hạn</span>
@@ -1062,7 +1062,7 @@ export default function ProctorDashboardPage() {
  type="button"
  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('REOPEN'); }}
  title="Mở lại phiên thi khi có sự cố"
- className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-amber-300 hover:bg-amber-50 text-slate-700 hover:text-amber-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+ className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-amber-300 hover:bg-amber-50 text-slate-700 hover:text-amber-700 px-3 py-1.5 text-[15px] leading-[22px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
  >
  <RotateCcw className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-amber-600 transition-colors" />
  <span>Mở lại</span>
@@ -1073,7 +1073,7 @@ export default function ProctorDashboardPage() {
  type="button"
  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('RESOLVE'); }}
  title="Xử lý biên bản vi phạm"
- className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-emerald-300 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+ className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-emerald-300 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 px-3 py-1.5 text-[15px] leading-[22px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
  >
  <CheckCircle2 className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-emerald-600 transition-colors" />
  <span>Xử lý</span>
@@ -1083,7 +1083,7 @@ export default function ProctorDashboardPage() {
  type="button"
  onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
  title="Lập biên bản sự cố"
- className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+ className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 px-3 py-1.5 text-[15px] leading-[22px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
  >
  <FileText className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-rose-600 transition-colors" />
  <span>Biên bản</span>

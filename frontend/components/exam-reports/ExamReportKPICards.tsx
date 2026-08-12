@@ -74,7 +74,7 @@ export function ExamReportKPICards({
                   <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
                     {item.title}
                   </span>
-                  <p className="text-[30px] font-bold text-slate-900 leading-[36px]">
+                  <p className="text-[32px] font-bold text-slate-900 leading-[38px] tabular-nums">
                     {item.value.toLocaleString('vi-VN')}
                     {item.unit || ''}
                   </p>

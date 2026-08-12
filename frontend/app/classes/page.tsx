@@ -13,7 +13,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { ClassItem, Department } from '../../types';
-import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen, FileSpreadsheet } from 'lucide-react';
+import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen, FileSpreadsheet, School } from 'lucide-react';
 
 import { ClassHeader } from '../../components/classes/ClassHeader';
 import { ClassKPICards } from '../../components/classes/ClassKPICards';
@@ -439,12 +439,15 @@ export default function ClassesPage() {
  />
  </main>
 
- {/* Edit/Add Class Modal */}
- <Modal
- isOpen={isModalOpen}
- onClose={() => setIsModalOpen(false)}
- title={editingClass ? 'Chỉnh sửa lớp học' : 'Tạo lớp học mới'}
- >
+  {/* Edit/Add Class Modal */}
+  <Modal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    title={editingClass ? 'Chỉnh sửa lớp học' : 'Tạo lớp học mới'}
+    subtitle={editingClass ? `Mã lớp: ${editingClass.code}` : 'Thiết lập mã lớp, ngành đào tạo và khóa sinh viên'}
+    icon={<School className="h-6 w-6 text-white" />}
+    badge={editingClass ? 'Chỉnh sửa' : 'Tạo mới'}
+  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
  <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Mã lớp</label>
@@ -547,10 +550,10 @@ export default function ClassesPage() {
 
  <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
  {/* Header - Modern Gradient matching system standard */}
-<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
-<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-base text-white border border-white/25 shadow-2xs">
  {drawerClass.code.substring(0, 3).toUpperCase()}
  </div>
  <div className="min-w-0 flex-1 pr-2">

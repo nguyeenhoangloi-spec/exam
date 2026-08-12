@@ -68,10 +68,10 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  {/* Right Drawer Container */}
  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-[620px] flex-col bg-white shadow-2xl transition-transform duration-300 border-l border-slate-200 animate-slide-left">
  {/* ── 1. Modern Gradient Header (Matching ProfileDrawer & RegradeReviewDrawer) ── */}
-                  <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-white border border-white/20 shadow-xs">
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-white border border-white/25 shadow-2xs">
  <HelpCircle className="h-6 w-6 text-white" />
  </div>
 
@@ -110,7 +110,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  <QuestionStatusBadge status={question.status || 'APPROVED'} />
  </div>
 
- <div className="text-[14.5px] font-medium text-slate-900 leading-relaxed bg-slate-50/80 rounded-xl p-4 border border-slate-200/70">
+ <div className="text-[15px] font-medium text-slate-900 leading-relaxed bg-slate-50/80 rounded-xl p-4 border border-slate-200/70">
  {rich ? <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(rich) }} /> : question.content}
  </div>
  </div>

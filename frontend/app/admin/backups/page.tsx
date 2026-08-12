@@ -411,7 +411,7 @@ export default function BackupsPage() {
  <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
  Backup Worker
  </span>
- <p className="text-[20px] xl:text-[22px] font-semibold text-[#0F172A] leading-[28px] truncate flex items-center gap-2">
+ <p className="text-[20px] font-semibold text-[#0F172A] leading-[28px] truncate flex items-center gap-2">
  {overview?.worker?.enabled ? (
  <span className="inline-flex items-center gap-1.5 text-emerald-600 font-semibold">
  <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
@@ -439,7 +439,7 @@ export default function BackupsPage() {
  <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
  Nơi lưu trữ (Storage)
  </span>
- <p className="text-[20px] xl:text-[22px] font-semibold text-[#0F172A] leading-[28px] truncate">
+ <p className="text-[20px] font-semibold text-[#0F172A] leading-[28px] truncate">
  {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa Local'}
  </p>
  </div>
@@ -484,7 +484,7 @@ export default function BackupsPage() {
  <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
  Dung lượng tổng
  </span>
- <p className="text-[24px] xl:text-[26px] font-semibold text-[#0F172A] leading-[32px] truncate">
+ <p className="text-[28px] font-semibold text-[#0F172A] leading-[36px] truncate">
  {formatBytes(overview?.totalBytes)}
  </p>
  </div>
@@ -677,12 +677,12 @@ export default function BackupsPage() {
  <button
  type="button"
  onClick={() => setDetailJob(job)}
- className=" tabular-nums text-xs font-semibold text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
  >
  {job.snapshotId}
  </button>
  {job.checksum && (
- <div className="mt-0.5 text-[12px] tabular-nums text-slate-500">
+ <div className="mt-0.5 text-[15px] leading-[22px] tabular-nums text-slate-500">
  SHA-256: {job.checksum.slice(0, 12)}…
  </div>
  )}
@@ -690,7 +690,7 @@ export default function BackupsPage() {
 
  <td className="p-3.5 whitespace-nowrap">
  <span
- className={`font-semibold text-xs px-2.5 py-1 rounded-lg ${job.type === 'FULL'
+ className={`table-badge font-semibold text-[12px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
  ? 'bg-blue-600 text-white shadow-2xs'
  : job.type === 'DATABASE'
  ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
@@ -717,7 +717,7 @@ export default function BackupsPage() {
 
  <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-700">
  {formatDate(job.completedAt || job.createdAt)}
- <span className="block text-[12px] text-slate-400 mt-0.5">
+ <span className="block text-[15px] leading-[22px] text-slate-400 mt-0.5">
  Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
  </span>
  </td>
@@ -748,7 +748,7 @@ export default function BackupsPage() {
  Khôi phục
  </Button>
  ) : (
- <span className="text-xs font-semibold text-slate-400">
+ <span className="text-[15px] leading-[22px] font-semibold text-slate-400">
  {job.status === 'SUCCEEDED' ? 'Hết retention' : 'Không khả dụng'}
  </span>
  )}
@@ -804,12 +804,12 @@ export default function BackupsPage() {
  {/* Environment badge */}
  <td className="px-4 py-3.5 whitespace-nowrap">
  {request.target === 'PRODUCTION' ? (
- <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-danger-50 border border-danger-200 text-danger-600 text-[12px] font-semibold">
+ <span className="table-badge inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-danger-50 border border-danger-200 text-danger-600 text-[12px] leading-[18px] font-semibold">
  <ShieldAlert className="h-3 w-3 shrink-0" />
  PRODUCTION
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-warning-50 border border-warning-200 text-warning-600 text-[12px] font-semibold">
+ <span className="table-badge inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-warning-50 border border-warning-200 text-warning-600 text-[12px] leading-[18px] font-semibold">
  <Server className="h-3 w-3 shrink-0" />
  STAGING
  </span>
@@ -840,7 +840,7 @@ export default function BackupsPage() {
  selfBlocked ? (
  <span
  title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
- className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[#475569] text-[12px] font-semibold cursor-default select-none"
+ className="table-badge inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[#475569] text-[12px] leading-[18px] font-semibold cursor-default select-none"
  >
  <LockKeyhole className="h-3 w-3 shrink-0" />
  Cần Admin khác phê duyệt

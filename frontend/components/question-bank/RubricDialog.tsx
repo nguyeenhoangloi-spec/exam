@@ -140,23 +140,30 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
     <div role="dialog" aria-modal="true" aria-label="Quản lý rubric chấm điểm" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header - Modern Gradient Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white flex justify-between items-center shrink-0 shadow-sm">
-          <div>
-            <h2 className="text-[20px] font-semibold leading-[28px] text-white flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-white" />
-              Thiết Lập Rubric Chấm Điểm Tự Luận
-            </h2>
-            <p className="text-[13px] font-medium text-blue-100/90 tabular-nums mt-0.5">
-              Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-white font-semibold">{expectedScore}đ</strong>
-            </p>
+        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3.5 min-w-0 flex-1">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
+                <HelpCircle className="h-6 w-6 text-white" />
+              </div>
+              <div className="min-w-0 flex-1 pr-2">
+                <h2 className="text-[18px] font-semibold leading-snug text-white">
+                  Thiết Lập Rubric Chấm Điểm Tự Luận
+                </h2>
+                <p className="text-[13px] font-medium text-blue-100/90 tabular-nums mt-0.5">
+                  Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-white font-semibold">{expectedScore}đ</strong>
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
+              title="Đóng"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Content Body */}

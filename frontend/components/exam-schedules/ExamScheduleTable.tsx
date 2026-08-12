@@ -317,7 +317,7 @@ export function ExamScheduleTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[14px] font-semibold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-semibold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -406,7 +406,7 @@ export function ExamScheduleTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[13px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -419,12 +419,12 @@ export function ExamScheduleTable({
  <div className="space-y-0.5">
  <button
  type="button"
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition text-xs"
+ className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition text-[15px] leading-[22px]"
  onClick={() => onDetail(s)}
  >
  {periodName}
  </button>
- <p className="text-[14px] font-normal text-[#64748B]">
+ <p className="text-[15px] leading-[22px] font-normal text-[#64748B]">
  {formatExamType(s.examType)}
  </p>
  </div>

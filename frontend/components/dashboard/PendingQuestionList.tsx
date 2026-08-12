@@ -104,7 +104,7 @@ export function PendingQuestionList({
  {q.chapter}
  </td>
  <td className="py-3 px-3 text-center whitespace-nowrap">
- <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[12px] font-medium ${difficultyInfo[1]}`}>
+ <span className={`table-badge inline-flex rounded-full border px-2.5 py-0.5 text-[12px] leading-[18px] font-medium ${difficultyInfo[1]}`}>
  {difficultyInfo[0]}
  </span>
  </td>

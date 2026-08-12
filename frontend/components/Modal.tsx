@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -37,12 +37,16 @@ export const Modal: React.FC<ModalProps> = ({
   icon,
   subtitle,
   badge,
-  variant = 'default',
+  variant = 'gradient',
 }) => {
   if (!isOpen || typeof document === 'undefined') return null;
 
   const widthClass = sizeClasses[size] || sizeClasses.md;
-  const isGradient = variant === 'gradient' || Boolean(icon || subtitle || badge || headerClassName.includes('bg-gradient') || headerClassName.includes('bg-blue'));
+  const isGradient = variant !== 'default';
+
+  const defaultIcon = icon || <Sparkles className="h-5 w-5 text-white" />;
+  const defaultBadge = badge || (typeof title === 'string' && (title.includes('Sửa') || title.includes('Chỉnh') || title.includes('Tạo') || title.includes('Thêm')) ? (title.includes('Sửa') || title.includes('Chỉnh') ? 'Cập nhật' : 'Tạo mới') : 'Hệ thống');
+  const defaultSubtitle = subtitle || 'Quản lý thông tin trên hệ thống khảo thí';
 
   return createPortal(
     <div
@@ -58,28 +62,27 @@ export const Modal: React.FC<ModalProps> = ({
         className={`relative my-auto flex max-h-[calc(100vh-2rem)] w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 transform transition-all ${className}`}
       >
         {isGradient ? (
-          <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 p-5 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>
+          <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                {icon && (
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
-                    {icon}
-                  </div>
-                )}
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
+                  {defaultIcon}
+                </div>
+
                 <div className="min-w-0 flex-1 pr-1 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-base sm:text-[17px] font-bold leading-snug text-white">
+                    <h3 className="text-[18px] leading-[26px] font-semibold text-white">
                       {title}
                     </h3>
-                    {badge && (
-                      <span className="inline-flex items-center text-[11px] font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
-                        {badge}
+                    {defaultBadge && (
+                      <span className="inline-flex items-center text-[12px] leading-[18px] font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
+                        {defaultBadge}
                       </span>
                     )}
                   </div>
-                  {subtitle && (
-                    <p className="text-xs sm:text-[13px] font-medium text-blue-100/90 line-clamp-1">
-                      {subtitle}
+                  {defaultSubtitle && (
+                    <p className="text-[13px] leading-[18px] font-medium text-blue-100/90 line-clamp-1">
+                      {defaultSubtitle}
                     </p>
                   )}
                 </div>

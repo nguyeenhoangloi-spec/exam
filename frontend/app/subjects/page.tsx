@@ -484,8 +484,15 @@ export default function SubjectsPage() {
  />
  </main>
 
- {/* Add/Edit Subject Modal */}
- <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSubject ? 'Chỉnh sửa môn học' : 'Tạo môn học mới'}>
+  {/* Add/Edit Subject Modal */}
+  <Modal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    title={editingSubject ? 'Chỉnh sửa môn học' : 'Tạo môn học mới'}
+    subtitle={editingSubject ? `Mã môn: ${editingSubject.subjectCode}` : 'Cấu hình mã môn, số tín chỉ và khoa quản lý'}
+    icon={<BookOpen className="h-6 w-6 text-white" />}
+    badge={editingSubject ? 'Chỉnh sửa' : 'Tạo mới'}
+  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
  <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã môn học</label>
@@ -671,10 +678,10 @@ export default function SubjectsPage() {
  <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
  <div className="relative z-10 w-full max-w-md bg-white shadow-2xl flex flex-col h-full">
  {/* Header - Modern Gradient matching ProfileDrawer */}
-<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
-<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-base text-white border border-white/25 shadow-2xs">
  {drawerSubject.subjectCode.substring(0, 2).toUpperCase()}
  </div>
  <div className="min-w-0 flex-1 pr-2">

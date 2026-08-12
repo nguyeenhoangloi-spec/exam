@@ -100,11 +100,11 @@ export function RegradeReviewDrawer({
 
  {/* Drawer Container */}
  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl flex-col bg-white shadow-2xl border-l border-slate-200 animate-slide-left">
- {/* ── 1. Modern Gradient Header (Matching ProfileDrawer) ── */}
-          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3.5 min-w-0 flex-1">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
+          {/* ── 1. Modern Gradient Header (Matching ProfileDrawer) ── */}
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-base text-white border border-white/25 shadow-2xs">
  {shortAvatar}
  </div>
 

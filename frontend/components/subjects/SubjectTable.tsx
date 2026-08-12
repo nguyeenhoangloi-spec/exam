@@ -66,7 +66,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
  >
  {s.subjectCode}
  </button>
@@ -240,7 +240,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
  >
  {s.subjectCode}
  </button>
@@ -277,7 +277,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onEnroll(s)}
- className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-xs font-medium transition cursor-pointer shadow-2xs"
+ className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-[15px] leading-[22px] font-medium transition cursor-pointer shadow-2xs"
  title="Gán Sinh viên đăng ký môn học"
  >
  <UserPlus className="h-3.5 w-3.5 text-slate-500" />

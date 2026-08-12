@@ -470,12 +470,27 @@ export function QuestionBankTable({
  </td>
  )}
 
- {/* Môn học */}
- {visibleColumns.subject !== false && (
- <td className="p-3.5 whitespace-nowrap text-[15px] font-normal text-[#334155] dark:text-slate-300 align-top pt-4">
- {subjectName}
- </td>
- )}
+              {/* Môn học - Rút gọn max-w-[140px] & hover tooltip */}
+              {visibleColumns.subject !== false && (
+                <td className="p-3.5 align-top pt-4">
+                  <div
+                    className="group relative inline-block max-w-[140px] cursor-pointer"
+                    title={subjectName}
+                  >
+                    <span className="block truncate text-[15px] font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {subjectName}
+                    </span>
+
+                    {/* Floating Tooltip khi Hover nếu tên môn dài > 12 ký tự */}
+                    {subjectName.length > 12 && (
+                      <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                        <span>{subjectName}</span>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
+                      </div>
+                    )}
+                  </div>
+                </td>
+              )}
 
  {/* Độ khó */}
  {visibleColumns.difficulty !== false && (

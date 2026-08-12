@@ -78,7 +78,7 @@ export function TeacherTable({
  <button
  type="button"
  onClick={() => onDetail(t)}
- className=" tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
  >
  {t.teacherCode}
  </button>
@@ -275,7 +275,7 @@ export function TeacherTable({
  <button
  type="button"
  onClick={() => onDetail(t)}
- className=" tabular-nums text-[14px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
  >
  {t.teacherCode}
  </button>

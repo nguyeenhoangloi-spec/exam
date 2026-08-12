@@ -14,6 +14,10 @@
   --lh-body: 24px;
   --fs-body-sm: 14px;
   --lh-body-sm: 20px;
+  --fs-table-body: 15px;
+  --lh-table-body: 22px;
+  --fs-table-header: 14px;
+  --lh-table-header: 20px;
   --fs-label: 15px;
   --lh-label: 24px;
   --fs-helper: 13px;
@@ -122,6 +126,14 @@ html.dark {
     line-height: var(--lh-body);
   }
 
+  /* Legacy text-xs utilities are helper text in the application shell. Keep
+   * them readable at 13px; explicit text-[12px] remains reserved for compact
+   * badges and metadata. */
+  .app-shell-main .text-xs {
+    font-size: var(--fs-helper);
+    line-height: var(--lh-helper);
+  }
+
   .app-shell-main label {
     font-size: var(--fs-label);
     line-height: var(--lh-label);
@@ -135,22 +147,49 @@ html.dark {
   }
 
   .app-shell-main table {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
   }
 
   .app-shell-main thead,
   .app-shell-main thead tr,
   .app-shell-main th {
-    font-size: var(--fs-body-sm);
-    line-height: var(--lh-body-sm);
+    font-size: var(--fs-table-header);
+    line-height: var(--lh-table-header);
+  }
+
+  .app-shell-main table .text-xs {
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
+  }
+
+  .app-shell-main thead .text-xs {
+    font-size: var(--fs-table-header);
+    line-height: var(--lh-table-header);
   }
 
   .app-shell-main tbody,
   .app-shell-main tbody tr,
   .app-shell-main td {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
+  }
+
+  /* Keep readable text in table cells at the table-body scale. Components
+   * may opt into the compact scale only for badges, avatars and icons. */
+  .app-shell-main tbody td :where(p, span, a, button, div:not(.table-avatar)) {
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
+  }
+
+  .app-shell-main .table-badge {
+    font-size: var(--fs-badge);
+    line-height: var(--lh-badge);
+  }
+
+  .app-shell-main .table-avatar {
+    font-size: 12px;
+    line-height: 18px;
   }
 
   .app-shell-main p.text-xs {
