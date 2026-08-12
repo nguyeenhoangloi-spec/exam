@@ -111,6 +111,48 @@ html.dark {
 }
 
 @layer components {
+  /*
+   * App-shell typography guardrails.
+   * Semantic utility classes remain free to opt into badge/helper scales,
+   * while native form and table elements keep one readable baseline even
+   * when a legacy page still carries a smaller Tailwind utility.
+   */
+  .app-shell-main {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .app-shell-main label {
+    font-size: var(--fs-label);
+    line-height: var(--lh-label);
+  }
+
+  .app-shell-main input:not([type='checkbox']):not([type='radio']),
+  .app-shell-main select,
+  .app-shell-main textarea {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .app-shell-main table {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .app-shell-main thead,
+  .app-shell-main thead tr,
+  .app-shell-main th {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+  }
+
+  .app-shell-main tbody,
+  .app-shell-main tbody tr,
+  .app-shell-main td {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
   .ui-page {
     @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
   }

@@ -423,7 +423,7 @@ export default function BackupsPage() {
  )}
  </p>
  </div>
- <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white transition">
+ <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
  <Server className="h-5 w-5" />
  </div>
  </div>
@@ -443,7 +443,7 @@ export default function BackupsPage() {
  {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa Local'}
  </p>
  </div>
- <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white transition">
+ <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
  <HardDrive className="h-5 w-5" />
  </div>
  </div>
@@ -468,7 +468,7 @@ export default function BackupsPage() {
  </span>
  </div>
  </div>
- <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white transition">
+ <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
  <Terminal className="h-5 w-5" />
  </div>
  </div>
@@ -488,7 +488,7 @@ export default function BackupsPage() {
  {formatBytes(overview?.totalBytes)}
  </p>
  </div>
- <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white transition">
+ <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
  <ShieldCheck className="h-5 w-5" />
  </div>
  </div>
