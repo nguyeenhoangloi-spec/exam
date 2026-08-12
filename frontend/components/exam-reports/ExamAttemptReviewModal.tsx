@@ -402,7 +402,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
 
  {/* Questions List Header */}
  <div className="flex items-center justify-between pt-1">
- <h3 className="text-xs font-semibold tracking-wider text-slate-700 flex items-center gap-2">
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-700 flex items-center gap-2">
  <FileText className="w-4 h-4 text-blue-600" />
  Chi tiết từng câu ({data.questions?.length ?? 0} câu)
  </h3>
@@ -439,7 +439,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  {/* Incidents Warning Box */}
  {data.incidents?.length > 0 && (
  <div className="rounded-2xl border border-amber-200 bg-amber-50/90 p-4 space-y-2.5 shadow-2xs">
- <h4 className="text-xs font-semibold text-amber-900 tracking-wider flex items-center gap-2">
+ <h4 className="text-[14px] leading-5 font-semibold text-amber-900 tracking-wider flex items-center gap-2">
  <AlertTriangle className="w-4 h-4 text-amber-600" />
  Sự cố & Vi phạm ghi nhận ({data.incidents.length})
  </h4>

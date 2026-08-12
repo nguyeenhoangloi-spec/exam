@@ -263,7 +263,7 @@ export default function ChangePasswordPage() {
 
         {/* Right Info Box: 5 cols */}
         <div className="md:col-span-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 space-y-4">
-          <h3 className="text-xs font-semibold text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
+          <h3 className="text-[14px] leading-5 font-semibold text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
             <ShieldCheck className="h-4 w-4 text-blue-600" />
             <span>Quy tắc bảo mật mật khẩu</span>
           </h3>

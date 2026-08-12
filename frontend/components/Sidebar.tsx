@@ -261,10 +261,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[16px] font-semibold tracking-tight text-[#0F172A] dark:text-slate-100 leading-tight">
+              <h1 className="truncate text-[18px] leading-[26px] font-semibold tracking-tight text-[#0F172A] dark:text-slate-100">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[12px] font-semibold tracking-tight text-[#475569] dark:text-slate-300 leading-tight mt-0.5">
+              <h2 className="truncate text-[13px] leading-[18px] font-semibold tracking-tight text-[#475569] dark:text-slate-300 mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>

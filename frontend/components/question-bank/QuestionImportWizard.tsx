@@ -410,7 +410,7 @@ export function QuestionImportWizard({
         {/* Metadata Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Môn học *</label>
+            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Môn học *</label>
             <select
               value={meta.subjectId}
               onChange={(e) => updateMeta('subjectId', e.target.value)}
@@ -426,7 +426,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Chương (Tùy chọn)</label>
+            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Chương (Tùy chọn)</label>
             <select
               value={meta.chapterId}
               onChange={(e) => updateMeta('chapterId', e.target.value)}
@@ -442,7 +442,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Dạng câu hỏi *</label>
+            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Dạng câu hỏi *</label>
             <select
               value={meta.defaultType}
               onChange={(e) => updateMeta('defaultType', e.target.value)}
@@ -457,7 +457,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Độ khó mặc định *</label>
+            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Độ khó mặc định *</label>
             <select
               value={meta.defaultDifficulty}
               onChange={(e) => updateMeta('defaultDifficulty', e.target.value)}
@@ -472,7 +472,7 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Mức tư duy Bloom *</label>
+            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Mức tư duy Bloom *</label>
             <select
               value={meta.defaultBloomLevel}
               onChange={(e) => updateMeta('defaultBloomLevel', e.target.value)}
@@ -487,7 +487,7 @@ export function QuestionImportWizard({
           </div>
 
           <div className="flex items-center pt-5">
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+            <label className="flex items-center gap-2 text-[13px] font-semibold text-slate-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={meta.applyDefaultsToMissingOnly}
@@ -698,7 +698,7 @@ export function QuestionImportWizard({
         {preview && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold tracking-wider text-slate-700">
+              <h4 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-700">
                 Bản nháp câu hỏi trích xuất ({preview.rows.length} câu)
               </h4>
               <span className="text-xs font-semibold text-slate-500">

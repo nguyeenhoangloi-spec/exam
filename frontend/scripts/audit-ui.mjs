@@ -21,6 +21,8 @@ const kpiBoldFiles = new Set([
   'components/teachers/TeacherKPICards.tsx',
   'app/admin/activity-logs/page.tsx',
   'app/trash/page.tsx',
+  'app/student/online-exam/[id]/lobby/page.tsx',
+  'app/student/online-exam/[id]/take/page.tsx',
 ]);
 const popupBoldFiles = new Set([
   'components/ConfirmModal.tsx',
@@ -68,6 +70,16 @@ for (const folder of sourceRoots) {
 
     if (/text-\[(?:[0-9]|10|10\.5|11|11\.5)px\]/i.test(content)) {
       report(file, 'cỡ chữ Web UI không được thấp hơn 12px');
+    }
+
+    if (/(?:<label|<input|<select|<textarea)[^<>]*\btext-xs\b/i.test(content)
+      || /(?:<label|<input|<select|<textarea)[^<>]*text-\[12px\]/i.test(content)) {
+      report(file, 'label/control size must be at least 15px');
+    }
+
+    if (/(?:<table|<thead|<tbody|<th|<td)[^<>]*\btext-xs\b/i.test(content)
+      || /(?:<table|<thead|<tbody|<th|<td)[^<>]*text-\[12px\]/i.test(content)) {
+      report(file, 'table header/cell size must use the table scale');
     }
 
     if (/text-transform\s*:\s*;/i.test(content)) {

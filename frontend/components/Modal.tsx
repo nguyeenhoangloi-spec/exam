@@ -10,6 +10,10 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   className?: string;
   headerClassName?: string;
+  icon?: React.ReactNode;
+  subtitle?: React.ReactNode;
+  badge?: React.ReactNode;
+  variant?: 'default' | 'gradient';
 }
 
 const sizeClasses: Record<string, string> = {
@@ -30,10 +34,15 @@ export const Modal: React.FC<ModalProps> = ({
   size = 'xl',
   className = '',
   headerClassName = '',
+  icon,
+  subtitle,
+  badge,
+  variant = 'default',
 }) => {
   if (!isOpen || typeof document === 'undefined') return null;
 
   const widthClass = sizeClasses[size] || sizeClasses.md;
+  const isGradient = variant === 'gradient' || Boolean(icon || subtitle || badge || headerClassName.includes('bg-gradient') || headerClassName.includes('bg-blue'));
 
   return createPortal(
     <div
@@ -48,16 +57,56 @@ export const Modal: React.FC<ModalProps> = ({
         onMouseDown={(event) => event.stopPropagation()}
         className={`relative my-auto flex max-h-[calc(100vh-2rem)] w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 transform transition-all ${className}`}
       >
-        <div className={`flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 ${headerClassName}`}>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+        {isGradient ? (
+          <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 p-5 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                {icon && (
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
+                    {icon}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1 pr-1 space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-base sm:text-[17px] font-bold leading-snug text-white">
+                      {title}
+                    </h3>
+                    {badge && (
+                      <span className="inline-flex items-center text-[11px] font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
+                        {badge}
+                      </span>
+                    )}
+                  </div>
+                  {subtitle && (
+                    <p className="text-xs sm:text-[13px] font-medium text-blue-100/90 line-clamp-1">
+                      {subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
+                title="Đóng"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className={`flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 ${headerClassName}`}>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h3>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
         <div className="min-h-0 overflow-y-auto p-5">{children}</div>
       </div>
     </div>,

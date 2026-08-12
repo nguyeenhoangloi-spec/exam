@@ -89,7 +89,7 @@ export function ExamPeriodTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition text-xs"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition text-[13px]"
                     >
                       <span className="flex items-center gap-2">
                         <input

@@ -566,7 +566,7 @@ export default function ExamSchedulesPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">
                 Kỳ thi <span className="text-red-500">*</span>
               </label>
               <select
@@ -596,7 +596,7 @@ export default function ExamSchedulesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">
                 Môn học / Môn thi <span className="text-red-500">*</span>
               </label>
               <select
@@ -620,7 +620,7 @@ export default function ExamSchedulesPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">
                 Loại ca thi (Chế độ dự thi) <span className="text-red-500">*</span>
               </label>
               <select
@@ -635,7 +635,7 @@ export default function ExamSchedulesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">
                 Hình thức thi <span className="text-red-500">*</span>
               </label>
               <select
@@ -654,7 +654,7 @@ export default function ExamSchedulesPage() {
           {/* Quick Duration Selection */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-slate-500">Thời lượng thi (Tự động tính Giờ kết thúc)</label>
+              <label className="text-[15px] font-semibold text-slate-500">Thời lượng thi (Tự động tính Giờ kết thúc)</label>
               <span className="text-xs font-semibold text-slate-500">
                 Đang chọn: <span className="font-semibold text-blue-600">{selectedDuration} phút</span>
               </span>
@@ -685,7 +685,7 @@ export default function ExamSchedulesPage() {
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Ngày thi</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Ngày thi</label>
               <input
                 type="date"
                 required
@@ -695,7 +695,7 @@ export default function ExamSchedulesPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Giờ bắt đầu</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Giờ bắt đầu</label>
               <input
                 type="time"
                 required
@@ -715,7 +715,7 @@ export default function ExamSchedulesPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Giờ kết thúc (Tự động)</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Giờ kết thúc (Tự động)</label>
               <input
                 type="time"
                 required

@@ -423,7 +423,7 @@ export default function ExamSupervisorsPage() {
  </h3>
 
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1.5">Ca thi Môn học</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1.5">Ca thi Môn học</label>
 
  {/* Custom grouped picker trigger */}
  <button
@@ -675,7 +675,7 @@ export default function ExamSupervisorsPage() {
  )}
 
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Phòng thi được phân công</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Phòng thi được phân công</label>
  <select
  value={selectedScheduleRoomId}
  onChange={(e) => {
@@ -704,7 +704,7 @@ export default function ExamSupervisorsPage() {
  {currentUser?.role === 'ADMIN' && (
  <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
  <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
- <h3 className="text-xs font-semibold tracking-wider text-slate-800">
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-800">
  THÊM PHÂN CÔNG GIÁM THỊ
  </h3>
  <Button
@@ -728,7 +728,7 @@ export default function ExamSupervisorsPage() {
  {autoProposal.proposals.map((p: any) => {
  const key = `${p.examScheduleRoomId}-${p.role}`;
  return (
- <label key={key} className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-700">
+ <label key={key} className="flex items-center gap-1.5 cursor-pointer text-[13px] text-slate-700">
  <input
  type="checkbox"
  checked={selectedAutoProposalKeys.includes(key)}
@@ -763,7 +763,7 @@ export default function ExamSupervisorsPage() {
 
  <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
  <div className="md:col-span-5">
- <label className="block text-xs font-semibold text-slate-600 mb-1.5">Giảng viên coi thi</label>
+ <label className="block text-[15px] font-semibold text-slate-600 mb-1.5">Giảng viên coi thi</label>
  <select
  value={selectedTeacherId}
  onChange={(e) => setSelectedTeacherId(e.target.value)}
@@ -778,7 +778,7 @@ export default function ExamSupervisorsPage() {
  </div>
 
  <div className="md:col-span-4">
- <label className="block text-xs font-semibold text-slate-600 mb-1.5">Vai trò Coi thi</label>
+ <label className="block text-[15px] font-semibold text-slate-600 mb-1.5">Vai trò Coi thi</label>
  <select
  value={role}
  onChange={(e) => setRole(e.target.value)}

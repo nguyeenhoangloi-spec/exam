@@ -618,7 +618,7 @@ export default function ExamArrangementPage() {
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
  {/* Left Column: Parameter Selection & Room Availability */}
  <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-5 lg:sticky lg:top-5 self-start">
- <h3 className="text-xs font-semibold tracking-wider text-slate-400">
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-400">
  THAM SỐ THUẬT TOÁN
  </h3>
 
@@ -843,7 +843,7 @@ export default function ExamArrangementPage() {
  <div>
  <div className="flex items-center justify-between mb-2">
  <label className="block text-[15px] font-semibold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
- <button type="button" onClick={selectAvailableOnly} className="text-[12px] font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
+ <button type="button" onClick={selectAvailableOnly} className="text-[13px] font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
  Chọn phòng trống ({availableCount})
  </button>
  </div>

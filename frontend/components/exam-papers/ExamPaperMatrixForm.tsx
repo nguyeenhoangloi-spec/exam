@@ -169,7 +169,7 @@ export function ExamPaperMatrixForm({
 
           {/* 1. Loại đề */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#0F172A]">
+            <label className="block text-[15px] font-semibold text-[#0F172A]">
               Loại đề <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-1">
@@ -254,7 +254,7 @@ export function ExamPaperMatrixForm({
 
         {/* ── ROW 2: Schedule Selector ── */}
         <div className="space-y-1.5">
-          <label className="block text-[12px] font-semibold text-slate-500 tracking-wider">
+          <label className="block text-[15px] font-semibold text-slate-500 tracking-wider">
             Chọn Ca thi / Lịch thi <span className="text-red-500">*</span>
           </label>
 
@@ -472,7 +472,7 @@ export function ExamPaperMatrixForm({
         {/* ── ROW 3: Difficulty Matrix ── */}
         <div className="space-y-3 pt-1 border-t border-slate-100">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h4 className="text-xs font-semibold tracking-wider text-slate-700">
+            <h4 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-700">
               Ma trận phân bổ đề thi
             </h4>
 
@@ -509,7 +509,7 @@ export function ExamPaperMatrixForm({
                 { label: 'Khó (Điểm)', key: 'hardScore' },
               ].map(({ label: lb, key }) => (
                 <div key={key} className="space-y-1">
-                  <label className="block text-xs font-semibold text-slate-700">{lb}</label>
+                  <label className="block text-[15px] font-semibold text-slate-700">{lb}</label>
                   <input
                     type="number"
                     step="0.25"
@@ -530,7 +530,7 @@ export function ExamPaperMatrixForm({
                 { label: 'Khó (Số câu)', key: 'hardCount' },
               ].map(({ label: lb, key }) => (
                 <div key={key} className="space-y-1">
-                  <label className="block text-xs font-semibold text-slate-700">{lb}</label>
+                  <label className="block text-[15px] font-semibold text-slate-700">{lb}</label>
                   <input
                     type="number"
                     min={0}

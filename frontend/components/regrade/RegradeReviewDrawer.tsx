@@ -206,7 +206,7 @@ export function RegradeReviewDrawer({
 
  {/* Card 2: Nội dung & Lý do xin phúc khảo */}
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-2.5 shadow-2xs">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">
  Nội dung & Lý do xin phúc khảo
  </h3>
  <div className="rounded-xl bg-amber-50/80 border border-amber-200/80 p-3.5 text-slate-900 leading-relaxed font-normal text-xs">
@@ -217,7 +217,7 @@ export function RegradeReviewDrawer({
  {/* Card 3: Bài làm sinh viên (Chi tiết các câu tự luận nếu có) */}
  {selectedAppeal.attempt?.attemptAnswers && selectedAppeal.attempt.attemptAnswers.length > 0 && (
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">
  Xem nhanh câu trả lời ({selectedAppeal.attempt.attemptAnswers.length} câu)
  </h3>
  <div className="space-y-3">
@@ -243,7 +243,7 @@ export function RegradeReviewDrawer({
 
  {/* Card 4: Quyết định thẩm định & Chấm lại */}
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">
  Quyết định thẩm định & Chấm lại
  </h3>
 

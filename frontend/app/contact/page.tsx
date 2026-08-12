@@ -355,7 +355,7 @@ export default function ContactSupportPage() {
                             <span className="shrink-0 text-[12px] font-semibold text-[#475569] dark:text-slate-300">
                               {art.categoryLabel}
                             </span>
-                            <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
+                            <h4 className="text-[14px] leading-5 font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
                               {art.title}
                             </h4>
                           </div>
@@ -756,7 +756,7 @@ export default function ContactSupportPage() {
                   AI
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold">Hỗ trợ Khảo thí Nhanh</h4>
+                  <h4 className="text-[14px] leading-5 font-semibold">Hỗ trợ Khảo thí Nhanh</h4>
                   <p className="text-[12px] text-blue-300 font-semibold flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                     Trực tuyến

@@ -58,7 +58,7 @@ export function QuestionBankTableToolbar({
           <select
             value={sortOrder}
             onChange={(e) => onSortChange?.(e.target.value)}
-            className="h-9 appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] pl-3 pr-8 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
+            className="h-9 appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] pl-3 pr-8 text-[14px] font-semibold text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
@@ -72,7 +72,7 @@ export function QuestionBankTableToolbar({
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] px-3 text-xs font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 shadow-2xs cursor-pointer active:scale-95"
           >
             <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
             <span>Chọn cột</span>
@@ -96,7 +96,7 @@ export function QuestionBankTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-semibold text-slate-700 dark:text-slate-200 select-none transition text-xs"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-semibold text-slate-700 dark:text-slate-200 select-none transition text-[13px]"
                     >
                       <span className="flex items-center gap-2">
                         <input

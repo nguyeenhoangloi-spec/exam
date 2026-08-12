@@ -221,7 +221,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-2.5 shrink-0">
                 <ShieldCheck className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xs font-semibold text-white leading-tight">Xác thực an toàn</h3>
+              <h3 className="text-[13px] leading-[18px] font-semibold text-white">Xác thực an toàn</h3>
               <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Đăng nhập bằng Google bảo mật và tin cậy
               </p>
@@ -231,7 +231,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-2.5 shrink-0">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xs font-semibold text-white leading-tight">Phân quyền tự động</h3>
+              <h3 className="text-[13px] leading-[18px] font-semibold text-white">Phân quyền tự động</h3>
               <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Hệ thống tự động xác định vai trò và quyền truy cập
               </p>
@@ -241,7 +241,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-2.5 shrink-0">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xs font-semibold text-white leading-tight">Truy cập nhanh</h3>
+              <h3 className="text-[13px] leading-[18px] font-semibold text-white">Truy cập nhanh</h3>
               <p className="text-[12px] text-blue-100/75 mt-1 leading-snug font-normal">
                 Một lần đăng nhập, sử dụng mọi tính năng
               </p>

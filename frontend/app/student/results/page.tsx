@@ -1345,6 +1345,10 @@ export default function StudentResultsPage() {
  isOpen={showAppealModal && Boolean(detailItem)}
  onClose={() => setShowAppealModal(false)}
  title="Gửi yêu cầu phúc khảo"
+ subtitle={`Môn học: ${detailItem?.subjectName} (${detailItem?.subjectCode})`}
+ icon={<MessageSquare className="h-6 w-6 text-white" />}
+ badge="Phúc khảo"
+ variant="gradient"
  size="md"
  >
  {detailItem && (

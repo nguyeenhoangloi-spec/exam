@@ -106,7 +106,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  {/* Card 1: Trạng thái & Nội dung câu hỏi */}
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-2xs">
  <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">Nội dung câu hỏi</h3>
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Nội dung câu hỏi</h3>
  <QuestionStatusBadge status={question.status || 'APPROVED'} />
  </div>
 
@@ -118,7 +118,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  {/* Card 2: Media Attachments (if available) */}
  {question.media?.length ? (
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-2xs">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">Media đính kèm</h3>
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Media đính kèm</h3>
  <div className="flex flex-wrap gap-3">
  {question.media.map((media) => {
  const fullUrl = getImageUrl(media.url);
@@ -185,7 +185,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  {/* Card 3: Options & Correct Answer / Explanation */}
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">Danh sách đáp án</h3>
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Danh sách đáp án</h3>
  {question.options && question.options.length > 0 ? (
  <div className="space-y-2.5">
  {question.options.map((o) => (
@@ -225,7 +225,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  {/* Card 4: Metadata Grid */}
  <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-xs font-semibold tracking-wider text-slate-500">Thông tin chi tiết</h3>
+ <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Thông tin chi tiết</h3>
  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
  {/* Mã câu hỏi */}
  <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">

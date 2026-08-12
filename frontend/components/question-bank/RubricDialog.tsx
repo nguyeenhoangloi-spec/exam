@@ -195,7 +195,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
           ) : (
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <h3 className="text-xs font-semibold tracking-wider text-slate-500">Danh sách tiêu chí Rubric</h3>
+                <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Danh sách tiêu chí Rubric</h3>
                 <button
                   type="button"
                   onClick={handleAddCriterion}

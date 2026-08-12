@@ -978,7 +978,7 @@ export default function BackupsPage() {
  </div>
 
  <div className="space-y-1.5">
- <label className="block text-sm font-semibold text-[#64748B]">Môi trường đích:</label>
+ <label className="block text-[15px] font-semibold text-[#64748B]">Môi trường đích:</label>
  <FilterSelect
  size="md"
  className="w-full text-sm font-semibold text-slate-900"
@@ -992,7 +992,7 @@ export default function BackupsPage() {
  </div>
 
  <div className="space-y-1.5">
- <label className="block text-sm font-semibold text-[#64748B]">
+ <label className="block text-[15px] font-semibold text-[#64748B]">
  Lý do khôi phục <span className="text-rose-500">*</span>
  </label>
  <textarea

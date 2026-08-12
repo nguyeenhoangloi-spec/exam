@@ -87,7 +87,7 @@ export function ExamReportFiltersCard({
 
  {reportSchedule ? (
  <>
- <h3 className="text-xs font-semibold text-slate-900 truncate">
+ <h3 className="text-[14px] leading-5 font-semibold text-slate-900 truncate">
  {reportSchedule.subjectName}
  </h3>
  <span className="text-[12px] tabular-nums font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80 shrink-0">
@@ -124,7 +124,7 @@ export function ExamReportFiltersCard({
  <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100">
  <div className="flex items-center gap-2">
  <Filter className="h-3.5 w-3.5 text-blue-600" />
- <h2 className="text-xs font-semibold tracking-wider text-slate-700">
+ <h2 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-700">
  Bộ lọc thống kê nâng cao
  </h2>
  {summaryLoading && <span className="text-xs font-semibold text-blue-600 ml-2">Đang cập nhật...</span>}
@@ -146,7 +146,7 @@ export function ExamReportFiltersCard({
  {/* ── 3. Filters Input Grid (Responsive 3 Columns) ── */}
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
  <div>
- <label className="block text-[12px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
  Kỳ thi
  </label>
  <select
@@ -164,7 +164,7 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[12px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
  Môn học
  </label>
  <select
@@ -182,7 +182,7 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[12px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
  Khoa / Bộ môn
  </label>
  <select
@@ -200,7 +200,7 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[12px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
  Lớp học
  </label>
  <select
@@ -218,7 +218,7 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[12px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
  Từ ngày
  </label>
  <input
@@ -230,7 +230,7 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[12px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
  Đến ngày
  </label>
  <input

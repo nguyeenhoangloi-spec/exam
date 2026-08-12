@@ -74,7 +74,7 @@ export function PendingQuestionList({
  {list.length > 0 ? (
  <div className="overflow-x-auto rounded-xl border border-slate-200/80">
  <table className="w-full text-left text-[15px] leading-6 min-w-[760px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[12px] font-semibold tracking-wider text-slate-500 border-b border-slate-200">
+ <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-slate-500 border-b border-slate-200">
  <tr>
  <th className="py-3 px-3 whitespace-nowrap">Mã câu hỏi</th>
  <th className="py-3 px-3">Nội dung câu hỏi</th>

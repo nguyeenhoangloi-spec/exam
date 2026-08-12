@@ -49,7 +49,7 @@ export function ExamScheduleFiltersCard({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Row 1, Col 1: Kỳ thi */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Kỳ thi</label>
+          <label className="text-[15px] font-semibold text-slate-700">Kỳ thi</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -68,7 +68,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 1, Col 2: Ca thi */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Ca thi</label>
+          <label className="text-[15px] font-semibold text-slate-700">Ca thi</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -86,7 +86,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 1, Col 3: Phòng thi */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Phòng thi</label>
+          <label className="text-[15px] font-semibold text-slate-700">Phòng thi</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -105,7 +105,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 1, Col 4: Ngày thi */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Ngày thi</label>
+          <label className="text-[15px] font-semibold text-slate-700">Ngày thi</label>
           <div className="relative">
             <input
               type="date"
@@ -119,7 +119,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 1: Trạng thái */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Trạng thái</label>
+          <label className="text-[15px] font-semibold text-slate-700">Trạng thái</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -137,7 +137,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 2: Học kỳ */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Học kỳ</label>
+          <label className="text-[15px] font-semibold text-slate-700">Học kỳ</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -154,7 +154,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 3: Năm học */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Năm học</label>
+          <label className="text-[15px] font-semibold text-slate-700">Năm học</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -171,7 +171,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 4: Giám thị */}
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700">Giám thị</label>
+          <label className="text-[15px] font-semibold text-slate-700">Giám thị</label>
           <FilterSelect
             size="md"
             className="w-full"

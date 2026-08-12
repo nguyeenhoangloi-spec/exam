@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService, AnswerItem, ProctoringEventItem } from '@/lib/services/online-exam.service';
-import { Clock, Shield, Flag, CheckCircle, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
+import { Clock, Shield, Flag, CheckCircle, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle, X } from 'lucide-react';
 import { fixHtmlImageUrls, getImageUrl } from '@/lib/media-utils';
 import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { Toast } from '@/components/Toast';
@@ -808,13 +808,35 @@ export default function StudentExamTakePage() {
  <div role="dialog" aria-modal="true" aria-label="Xác nhận nộp bài" className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
  <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-2xl max-w-md w-full my-auto overflow-hidden shadow-2xl space-y-0">
  {/* Header */}
- <div className="px-5 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3.5">
- <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800 shrink-0 shadow-2xs">
- <Send className="h-5 w-5" />
+ <div className="bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 p-5 text-white shrink-0 shadow-xs">
+ <div className="flex items-start justify-between gap-3">
+ <div className="flex items-start gap-3.5 min-w-0 flex-1">
+ <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
+ <Send className="h-6 w-6 text-white" />
  </div>
- <div>
- <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 tracking-tight ">Xác Nhận Nộp Bài Thi</h3>
- <p className="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5">Kết thúc và chuyển sang màn hình kết quả</p>
+ <div className="min-w-0 flex-1 pr-2">
+ <div className="flex items-center gap-2 flex-wrap">
+ <h3 className="text-[18px] font-bold leading-snug text-white line-clamp-1">
+ Xác Nhận Nộp Bài Thi
+ </h3>
+ <span className="text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30">
+ Nộp bài
+ </span>
+ </div>
+ <p className="text-[13px] font-medium text-emerald-100/90 mt-1 line-clamp-1">
+ Hoàn thành làm bài và chuyển sang màn hình kết quả
+ </p>
+ </div>
+ </div>
+
+ <button
+ type="button"
+ onClick={() => setShowSubmitModal(false)}
+ className="shrink-0 rounded-xl p-1.5 text-emerald-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
+ title="Đóng"
+ >
+ <X className="h-5 w-5" />
+ </button>
  </div>
  </div>
 
