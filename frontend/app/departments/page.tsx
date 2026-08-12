@@ -476,7 +476,7 @@ export default function DepartmentsPage() {
  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Mã khoa</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã khoa</label>
  <input
  type="text"
  required
@@ -488,7 +488,7 @@ export default function DepartmentsPage() {
  </div>
 
  <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên khoa đào tạo</label>
+            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tên khoa đào tạo</label>
  <input
  type="text"
  required

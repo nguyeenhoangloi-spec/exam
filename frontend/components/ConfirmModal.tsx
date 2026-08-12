@@ -111,7 +111,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
           {requireReason && (
             <div className="space-y-1.5 pt-1">
-              <label className="block text-xs font-medium text-slate-700 dark:text-slate-200">Lý do thực hiện:</label>
+              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-200">Lý do thực hiện:</label>
               <textarea
                 rows={3}
                 value={reason}
@@ -120,9 +120,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   if (reasonError) setReasonError('');
                 }}
                 placeholder={reasonPlaceholder}
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-xs font-medium focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-medium focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
               />
-              {reasonError && <p className="text-xs font-bold text-rose-600">{reasonError}</p>}
+              {reasonError && <p className="text-[13px] font-bold text-rose-600">{reasonError}</p>}
             </div>
           )}
         </div>

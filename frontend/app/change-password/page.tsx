@@ -167,7 +167,7 @@ export default function ChangePasswordPage() {
 
           {/* Current Password */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-800">Mật khẩu hiện tại</label>
+            <label className="block text-[15px] font-semibold text-slate-800">Mật khẩu hiện tại</label>
             <div className="relative">
               <input
                 type={showCurrent ? 'text' : 'password'}
@@ -189,7 +189,7 @@ export default function ChangePasswordPage() {
 
           {/* New Password */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-800">Mật khẩu mới</label>
+            <label className="block text-[15px] font-semibold text-slate-800">Mật khẩu mới</label>
             <div className="relative">
               <input
                 type={showNew ? 'text' : 'password'}
@@ -227,7 +227,7 @@ export default function ChangePasswordPage() {
 
           {/* Confirm Password */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-800">Xác nhận mật khẩu mới</label>
+            <label className="block text-[15px] font-semibold text-slate-800">Xác nhận mật khẩu mới</label>
             <div className="relative">
               <input
                 type={showConfirm ? 'text' : 'password'}

@@ -104,7 +104,7 @@ export function ChangeExamPasswordModal({
 
  {/* Input new password */}
  <div className="space-y-1">
- <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+ <label className="block text-[15px] font-semibold text-slate-700 dark:text-slate-300">
  Mật khẩu thi mới <span className="text-rose-500">*</span>
  </label>
  <div className="relative">
@@ -130,7 +130,7 @@ export function ChangeExamPasswordModal({
 
  {/* Confirm password */}
  <div className="space-y-1">
- <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+ <label className="block text-[15px] font-semibold text-slate-700 dark:text-slate-300">
  Xác nhận mật khẩu mới <span className="text-rose-500">*</span>
  </label>
  <input
@@ -147,7 +147,7 @@ export function ChangeExamPasswordModal({
 
  {/* Reason */}
  <div className="space-y-1">
- <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+ <label className="block text-[15px] font-semibold text-slate-700 dark:text-slate-300">
  Lý do cập nhật mật khẩu <span className="text-slate-400 font-normal">(Tùy chọn)</span>
  </label>
  <input

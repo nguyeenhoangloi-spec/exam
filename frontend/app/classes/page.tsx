@@ -714,7 +714,7 @@ export default function ClassesPage() {
  {drawerTab === 'enrollments' && (
  <div className="space-y-4 animate-in fade-in duration-300">
  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
- <h3 className="text-[16px] font-semibold text-[#0F172A]">Danh sách môn học đã đăng ký</h3>
+ <h3 className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">Danh sách môn học đã đăng ký</h3>
  <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
  {drawerEnrollments?.length || 0} môn
  </span>

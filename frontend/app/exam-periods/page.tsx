@@ -456,7 +456,7 @@ export default function ExamPeriodsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên kỳ thi</label>
+            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tên kỳ thi</label>
             <input
               type="text"
               required
@@ -469,7 +469,7 @@ export default function ExamPeriodsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Học kỳ</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Học kỳ</label>
               <select
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
@@ -481,7 +481,7 @@ export default function ExamPeriodsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Năm học</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Năm học</label>
               <input
                 type="text"
                 required
@@ -495,7 +495,7 @@ export default function ExamPeriodsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Ngày bắt đầu</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Ngày bắt đầu</label>
               <input
                 type="date"
                 required
@@ -505,7 +505,7 @@ export default function ExamPeriodsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Ngày kết thúc</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Ngày kết thúc</label>
               <input
                 type="date"
                 required

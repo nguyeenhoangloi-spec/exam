@@ -277,7 +277,7 @@ export function RegradeReviewDrawer({
 
  {reviewStatus === 'APPROVED_REGRADE' && (
  <div className="space-y-1.5 pt-1">
- <label className="block text-xs font-semibold text-slate-700">
+ <label className="block text-[15px] font-semibold text-slate-700">
  Điểm số mới sau phúc khảo (Thang điểm 10):
  </label>
  <input
@@ -294,7 +294,7 @@ export function RegradeReviewDrawer({
  )}
 
  <div className="space-y-1.5">
- <label className="block text-xs font-semibold text-slate-700">
+ <label className="block text-[15px] font-semibold text-slate-700">
  Ghi chú & Nhận xét của CB Thẩm định:
  </label>
  <textarea

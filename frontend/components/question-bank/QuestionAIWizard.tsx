@@ -135,7 +135,7 @@ export function QuestionAIWizard({
         {/* Banner Header */}
         <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3.5">
           <div className="space-y-0.5">
-            <h4 className="text-[16px] font-semibold text-blue-900">
+            <h4 className="text-[18px] leading-[26px] font-semibold text-blue-900">
               Trợ lý AI thiết kế ngân hàng câu hỏi
             </h4>
             <p className="text-[13px] font-medium text-blue-700 leading-relaxed">
@@ -316,7 +316,7 @@ export function QuestionAIWizard({
         {items.length > 0 && (
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <h5 className="text-[16px] font-semibold tracking-wider text-[#0F172A]">
+              <h5 className="text-[18px] leading-[26px] font-semibold tracking-wider text-[#0F172A]">
                 Danh sách {items.length} câu hỏi AI vừa khởi tạo
               </h5>
               <span className="text-[13px] font-normal text-[#64748B]">Xem lại & chỉnh sửa trước khi lưu</span>

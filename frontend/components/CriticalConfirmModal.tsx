@@ -189,13 +189,13 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 1: Select Reason */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label className="block text-[15px] font-semibold text-slate-600 mb-1">
               1. Lý do thực hiện thao tác <span className="text-rose-500">*</span>
             </label>
             <select
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold focus:!border-rose-500 focus:bg-white focus:outline-none bg-slate-50/50 cursor-pointer transition"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-semibold focus:!border-rose-500 focus:bg-white focus:outline-none bg-slate-50/50 cursor-pointer transition"
             >
               {reasons.map((r) => (
                 <option key={r} value={r}>
@@ -210,14 +210,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 required
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:!border-rose-500 focus:outline-none transition"
+                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-medium focus:!border-rose-500 focus:outline-none transition"
               />
             )}
           </div>
 
           {/* Step 2: Optional Note */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label className="block text-[15px] font-semibold text-slate-600 mb-1">
               2. Ghi chú chi tiết (Tùy chọn)
             </label>
             <textarea
@@ -225,7 +225,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:!border-rose-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-medium focus:!border-rose-500 focus:outline-none transition"
             />
           </div>
 

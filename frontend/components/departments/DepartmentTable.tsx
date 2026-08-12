@@ -97,15 +97,15 @@ export function DepartmentTable({
  <div className="grid grid-cols-3 gap-2 text-[14px] font-normal text-[#475569] pt-1">
  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
  <span className="text-[12px] text-[#64748B] font-semibold">Môn học</span>
- <span className="text-[16px] font-semibold text-[#0F172A]">{subjectsCount}</span>
+ <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">{subjectsCount}</span>
  </div>
  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
  <span className="text-[12px] text-[#64748B] font-semibold">Lớp học</span>
- <span className="text-[16px] font-semibold text-[#0F172A]">{classesCount}</span>
+ <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">{classesCount}</span>
  </div>
  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
  <span className="text-[12px] text-[#64748B] font-semibold">Giảng viên</span>
- <span className="text-[16px] font-semibold text-[#0F172A]">{teachersCount}</span>
+ <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">{teachersCount}</span>
  </div>
  </div>
  </div>

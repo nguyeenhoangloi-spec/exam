@@ -1023,8 +1023,8 @@ export default function StudentResultsPage() {
  {item.subjectName}
  </p>
  </td>
- <td className="p-2 whitespace-nowrap text-xs font-semibold text-slate-700">{item.periodName}</td>
- <td className="p-2 whitespace-nowrap text-center text-xs font-medium text-slate-600">
+ <td className="p-2 whitespace-nowrap text-[15px] font-semibold text-slate-700">{item.periodName}</td>
+ <td className="p-2 whitespace-nowrap text-center text-[15px] font-medium text-slate-600">
  {new Date(item.examDate).toLocaleDateString('vi-VN')}
  </td>
  <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-900">

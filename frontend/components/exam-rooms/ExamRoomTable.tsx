@@ -227,13 +227,13 @@ export function ExamRoomTable({
  )}
 
  {visibleColumns.capacity !== false && (
- <td className="p-3.5 whitespace-nowrap text-center text-xs">
+ <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
  <span className="font-semibold text-slate-900">{r.capacity} chỗ</span>
  </td>
  )}
 
  {visibleColumns.building !== false && (
- <td className="p-3.5 min-w-[140px] text-xs font-semibold text-slate-700">
+ <td className="p-3.5 min-w-[140px] text-[15px] font-semibold text-slate-700">
  {locText}
  </td>
  )}

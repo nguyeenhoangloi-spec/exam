@@ -330,7 +330,7 @@ export default function ForgotPasswordPage() {
  {step === 1 && (
  <form onSubmit={handleRequestOtp} noValidate className="space-y-3">
  <div>
- <label htmlFor="fp-identifier" className={['block text-[12px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+<label htmlFor="fp-identifier" className={['block text-[15px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
  Mã số sinh viên / Giảng viên / Email
  </label>
  <div className="relative">
@@ -364,7 +364,7 @@ export default function ForgotPasswordPage() {
  {step === 2 && (
  <form onSubmit={handleVerifyOtp} noValidate className="space-y-3">
  <div>
- <label htmlFor="fp-otp" className={['block text-[12px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+<label htmlFor="fp-otp" className={['block text-[15px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
  Mã xác thực OTP (6 chữ số)
  </label>
  <div className="relative">
@@ -408,7 +408,7 @@ export default function ForgotPasswordPage() {
  {step === 3 && (
  <form onSubmit={handleResetPassword} noValidate className="space-y-3">
  <div>
- <label htmlFor="fp-newpass" className={['block text-[12px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+<label htmlFor="fp-newpass" className={['block text-[15px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
  Mật khẩu mới
  </label>
  <div className="relative">
@@ -428,7 +428,7 @@ export default function ForgotPasswordPage() {
  </div>
 
  <div>
- <label htmlFor="fp-confirmpass" className={['block text-[12px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
+<label htmlFor="fp-confirmpass" className={['block text-[15px] font-semibold tracking-[0.13em] mb-1.5', isDark ? 'text-slate-300' : 'text-slate-600'].join(' ')}>
  Xác nhận mật khẩu mới
  </label>
  <div className="relative">

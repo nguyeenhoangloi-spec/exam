@@ -846,8 +846,8 @@ export default function ExamSupervisorsPage() {
  <div className="font-semibold text-slate-900 text-xs">{sup.teacher?.fullName}</div>
  <div className="text-[12px] text-slate-500 font-normal">{sup.teacher?.degree || 'TS'}</div>
  </td>
- <td className="p-3.5 font-semibold text-slate-900 whitespace-nowrap text-xs">{rName}</td>
- <td className="p-3.5 whitespace-nowrap text-xs font-semibold text-slate-800">
+ <td className="p-3.5 font-semibold text-slate-900 whitespace-nowrap text-[15px]">{rName}</td>
+ <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-800">
  {sup.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
  </td>
  <td className="p-3.5 min-w-[130px]">

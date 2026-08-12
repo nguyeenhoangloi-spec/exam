@@ -306,7 +306,7 @@ export default function ContactSupportPage() {
             <span>Hệ thống giải đáp sự cố thi tự động 24/7</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-[28px] leading-[36px] font-semibold tracking-tight text-slate-900 dark:text-white">
             Chúng tôi có thể giúp gì cho bạn?
           </h1>
 
@@ -561,7 +561,7 @@ export default function ContactSupportPage() {
           <form onSubmit={handleSendSupportForm} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
+                <label className="block text-[15px] font-semibold text-slate-800 dark:text-slate-200">
                   Họ và tên người gửi
                 </label>
                 <input
@@ -575,7 +575,7 @@ export default function ContactSupportPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
+                <label className="block text-[15px] font-semibold text-slate-800 dark:text-slate-200">
                   Email liên hệ
                 </label>
                 <input
@@ -589,7 +589,7 @@ export default function ContactSupportPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
+                <label className="block text-[15px] font-semibold text-slate-800 dark:text-slate-200">
                   Vai trò hệ thống
                 </label>
                 <select
@@ -605,7 +605,7 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200">
+              <label className="block text-[15px] font-semibold text-slate-800 dark:text-slate-200">
                 Nội dung cần hỗ trợ chi tiết
               </label>
               <textarea

@@ -1007,7 +1007,7 @@ function TeacherEssayGradingContent() {
 
  {/* Overall Teacher Comment */}
  <div className="space-y-1 pt-1">
- <label className="text-[12px] font-semibold text-slate-500">Nhận xét tổng quát câu hỏi:</label>
+ <label className="text-[15px] font-semibold text-slate-500">Nhận xét tổng quát câu hỏi:</label>
  <input
  type="text"
  placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."

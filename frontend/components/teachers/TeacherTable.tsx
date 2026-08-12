@@ -295,7 +295,7 @@ export function TeacherTable({
  )}
 
  {visibleColumns.degree !== false && (
- <td className="p-3.5 whitespace-nowrap text-xs font-medium text-slate-800">
+ <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-800">
  {t.degree || 'TS'}
  </td>
  )}

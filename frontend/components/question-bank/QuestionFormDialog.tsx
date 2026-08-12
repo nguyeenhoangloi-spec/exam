@@ -393,7 +393,7 @@ export function QuestionFormDialog({
         {!['FILL_BLANK', 'ESSAY'].includes(type) && (
           <div className="space-y-3 border-t border-slate-100 pt-4">
             <div className="flex items-center justify-between">
-              <span className="text-[16px] font-semibold text-[#0F172A] tracking-tight">Danh sách đáp án</span>
+              <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A] tracking-tight">Danh sách đáp án</span>
               <span className="text-[13px] font-normal text-[#64748B]">Tích chọn để đánh dấu đáp án ĐÚNG</span>
             </div>
             

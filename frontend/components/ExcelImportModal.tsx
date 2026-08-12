@@ -176,7 +176,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           {previewData.length > 0 && (
             <div className="max-h-52 overflow-auto rounded-xl border border-slate-200">
               <table className="w-full text-left text-sm text-[#0F172A]">
-                <thead className="sticky top-0 bg-slate-50 text-xs font-semibold text-[#64748B] border-b border-slate-200">
+                <thead className="sticky top-0 bg-slate-50 text-[14px] font-semibold text-[#64748B] border-b border-slate-200">
                   <tr>
                     {Object.keys(previewData[0]).map((key) => (
                       <th key={key} className="px-3 py-2 font-semibold">
@@ -185,7 +185,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="font-semibold text-xs divide-y divide-slate-100">
+                <tbody className="font-semibold text-[15px] divide-y divide-slate-100">
                   {previewData.slice(0, 20).map((row, index) => (
                     <tr key={index} className="hover:bg-slate-50/60">
                       {Object.keys(previewData[0]).map((key) => (

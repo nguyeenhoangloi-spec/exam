@@ -624,7 +624,7 @@ export default function ExamArrangementPage() {
 
  <form onSubmit={runPreview} className="space-y-4">
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
 
  {/* Custom popup trigger */}
  <button
@@ -842,7 +842,7 @@ export default function ExamArrangementPage() {
 
  <div>
  <div className="flex items-center justify-between mb-2">
- <label className="block text-xs font-semibold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
+ <label className="block text-[15px] font-semibold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
  <button type="button" onClick={selectAvailableOnly} className="text-[12px] font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
  Chọn phòng trống ({availableCount})
  </button>

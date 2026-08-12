@@ -703,7 +703,7 @@ export default function BackupsPage() {
  </span>
  </td>
 
- <td className="p-3.5 whitespace-nowrap text-xs font-semibold text-slate-700">
+ <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-700">
  {job.initiatedBy ? (
  <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
  <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
@@ -715,14 +715,14 @@ export default function BackupsPage() {
  )}
  </td>
 
- <td className="p-3.5 whitespace-nowrap text-xs font-semibold text-slate-700">
+ <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-700">
  {formatDate(job.completedAt || job.createdAt)}
  <span className="block text-[12px] text-slate-400 mt-0.5">
  Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
  </span>
  </td>
 
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-[15px]">
  {formatBytes(job.sizeBytes)}
  </td>
 

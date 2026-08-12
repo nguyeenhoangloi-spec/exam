@@ -503,7 +503,7 @@ export function QuestionImportWizard({
           <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-[16px] font-semibold text-[#0F172A]">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
+                <h4 className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
                 <p className="text-[14px] font-normal text-[#64748B]">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động sinh danh sách câu hỏi bám sát kiến thức.</p>
               </div>
               <div className="flex items-center gap-2">

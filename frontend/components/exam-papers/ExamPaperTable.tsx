@@ -354,7 +354,7 @@ export function ExamPaperTable({
  )}
 
  {visibleColumns.questionCount !== false && (
- <td className="p-3.5 whitespace-nowrap text-xs">
+ <td className="p-3.5 whitespace-nowrap text-[15px]">
  <span className="font-semibold text-slate-900">{qCount} câu</span>
  </td>
  )}
@@ -380,7 +380,7 @@ export function ExamPaperTable({
  )}
 
  {visibleColumns.totalScore !== false && (
- <td className="p-3.5 whitespace-nowrap text-center text-xs">
+ <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
  <span className="font-semibold text-slate-900">{p.totalScore}đ</span>
  </td>
  )}

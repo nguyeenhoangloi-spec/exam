@@ -145,10 +145,10 @@ export function RegradeTable({
  <td className="p-2.5 min-w-[220px]">
  <p className="truncate text-slate-700 text-xs font-normal">{item.reason}</p>
  </td>
- <td className="p-2.5 whitespace-nowrap text-center font-semibold text-slate-900 text-xs">
+ <td className="p-2.5 whitespace-nowrap text-center font-semibold text-slate-900 text-[15px]">
  {item.originalScore.toFixed(1)} đ
  </td>
- <td className="p-2.5 whitespace-nowrap text-center text-xs">
+ <td className="p-2.5 whitespace-nowrap text-center text-[15px]">
  {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
  <span className="font-semibold text-emerald-600">{item.revisedScore.toFixed(1)} đ</span>
  ) : (

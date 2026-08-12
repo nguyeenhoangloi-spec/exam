@@ -452,7 +452,7 @@ export default function TeachersPage() {
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Mã giảng viên</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã giảng viên</label>
  <input
  type="text"
  required
@@ -462,7 +462,7 @@ export default function TeachersPage() {
  />
  </div>
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Học vị / Học hàm</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Học vị / Học hàm</label>
  <select
  value={formData.degree}
  onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
@@ -476,7 +476,7 @@ export default function TeachersPage() {
  </div>
 
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Họ và tên</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Họ và tên</label>
  <input
  type="text"
  required
@@ -487,7 +487,7 @@ export default function TeachersPage() {
  </div>
 
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Khoa trực thuộc</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Khoa trực thuộc</label>
  <select
  required
  value={formData.departmentId}
@@ -503,7 +503,7 @@ export default function TeachersPage() {
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Email Công vụ</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Email Công vụ</label>
  <input
  type="email"
  required
@@ -513,7 +513,7 @@ export default function TeachersPage() {
  />
  </div>
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Số điện thoại</label>
+ <label className="block text-[15px] font-semibold text-slate-500 mb-1">Số điện thoại</label>
  <input
  type="text"
  value={formData.phone}

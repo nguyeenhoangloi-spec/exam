@@ -355,7 +355,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
           ) : (
             <div className="py-12 text-center text-[#64748B]">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
-              <p className="font-semibold text-[#0F172A] dark:text-slate-300 text-[16px]">
+              <p className="font-semibold text-[#0F172A] dark:text-slate-300 text-[15px] leading-6">
                 Không tìm thấy kết quả phù hợp
               </p>
               <p className="text-[14px] text-[#64748B] mt-1 font-normal">

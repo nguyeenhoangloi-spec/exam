@@ -664,7 +664,7 @@ export default function StudentExamTakePage() {
  {/* Answer area */}
  {currentQ.type === 'ESSAY' ? (
  <div className="space-y-3 pt-2">
- <label className="block text-sm font-medium text-slate-700">Bài làm tự luận</label>
+ <label className="block text-[15px] font-medium text-slate-700">Bài làm tự luận</label>
  <textarea
  value={currentAns.textAnswer || ''}
  onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
@@ -875,7 +875,7 @@ export default function StudentExamTakePage() {
 
  <div className="p-5 space-y-3.5">
  <div>
- <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Chọn nhanh loại sự cố:</label>
+ <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">Chọn nhanh loại sự cố:</label>
  <div className="grid grid-cols-2 gap-2">
  {['Sự cố mất mạng / gián đoạn Wifi', 'Màn hình bị đơ / không phản hồi', 'Không hiển thị ảnh / media', 'Sự cố thiết bị cá nhân'].map((quickMsg) => (
  <button
@@ -891,7 +891,7 @@ export default function StudentExamTakePage() {
  </div>
 
  <div>
- <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Mô tả chi tiết sự cố:</label>
+ <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">Mô tả chi tiết sự cố:</label>
  <textarea
  rows={3}
  value={incidentText}

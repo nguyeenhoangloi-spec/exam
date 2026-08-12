@@ -433,14 +433,14 @@ export function ExamScheduleTable({
 
  {/* Ca thi */}
  {visibleColumns.shift !== false && (
- <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 text-[15px]">
  {shiftName}
  </td>
  )}
 
  {/* Phòng thi */}
  {visibleColumns.room !== false && (
- <td className="p-3.5 whitespace-nowrap text-xs">
+ <td className="p-3.5 whitespace-nowrap text-[15px]">
  {roomName === 'Chưa xếp phòng' || !roomName ? (
  <span className="font-medium text-slate-500">Chưa xếp phòng</span>
  ) : (
@@ -451,35 +451,35 @@ export function ExamScheduleTable({
 
  {/* Ngày thi */}
  {visibleColumns.date !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-[15px]">
  {formatDate(s.examDate)}
  </td>
  )}
 
  {/* Giờ bắt đầu */}
  {visibleColumns.startTime !== false && (
- <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-[15px]">
  {s.startTime || '07:00'}
  </td>
  )}
 
  {/* Giờ kết thúc */}
  {visibleColumns.endTime !== false && (
- <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-[15px]">
  {s.endTime || '09:00'}
  </td>
  )}
 
  {/* Số TS */}
  {visibleColumns.students !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-[15px]">
  {studentCount}
  </td>
  )}
 
  {/* Giám thị */}
  {visibleColumns.supervisors !== false && (
- <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 text-xs">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 text-[15px]">
  {supervisorCount}
  </td>
  )}

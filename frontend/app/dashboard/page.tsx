@@ -265,7 +265,7 @@ export default function DashboardPage() {
       >
         <div className="space-y-4">
           <div>
-            <label htmlFor="reject-reason" className="mb-1.5 block text-xs font-semibold text-slate-700">
+            <label htmlFor="reject-reason" className="mb-1.5 block text-[15px] font-semibold text-slate-700">
               Lý do từ chối <span className="text-rose-500">*</span>
             </label>
             <textarea

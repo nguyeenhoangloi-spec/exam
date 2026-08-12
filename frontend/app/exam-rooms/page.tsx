@@ -448,7 +448,7 @@ export default function ExamRoomsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Mã phòng thi</label>
+            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã phòng thi</label>
             <input
               type="text"
               required
@@ -460,7 +460,7 @@ export default function ExamRoomsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên phòng thi</label>
+            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tên phòng thi</label>
             <input
               type="text"
               required
@@ -473,7 +473,7 @@ export default function ExamRoomsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
               <input
                 type="number"
                 required
@@ -483,7 +483,7 @@ export default function ExamRoomsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Tòa nhà / Vị trí</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tòa nhà / Vị trí</label>
               <input
                 type="text"
                 required
@@ -497,7 +497,7 @@ export default function ExamRoomsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Loại phòng</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Loại phòng</label>
               <select
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
@@ -508,7 +508,7 @@ export default function ExamRoomsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Trạng thái</label>
+              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Trạng thái</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
