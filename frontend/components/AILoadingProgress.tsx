@@ -40,7 +40,7 @@ export function AILoadingProgress({
  </div>
  </div>
  <div className="text-right">
- <span className="text-2xl font-semibold tracking-tight text-blue-700 tabular-nums">
+ <span className="edu-kpi tracking-tight text-blue-700">
  {Math.min(100, Math.max(0, Math.round(percent)))}%
  </span>
  </div>

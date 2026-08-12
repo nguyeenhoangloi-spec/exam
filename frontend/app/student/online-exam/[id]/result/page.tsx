@@ -129,7 +129,7 @@ export default function StudentExamResultPage() {
 
               <div className="space-y-1 min-w-0 flex-1">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+                  <h1 className="edu-page-title text-white tracking-tight leading-snug">
                     {isUnderReview ? 'Bài Thi Cần Được Xem Xét' : 'Hoàn Thành Bài Thi Trực Tuyến'}
                   </h1>
                   <span className="inline-flex items-center gap-1 text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
@@ -168,7 +168,7 @@ export default function StudentExamResultPage() {
                 {result.totalScore !== undefined && result.totalScore !== null ? (
                   <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-[18px]">
                     <span className="text-slate-900 font-bold text-sm">Điểm số đạt được:</span>
-                    <span className="text-emerald-600 text-2xl font-bold tabular-nums">
+                    <span className="edu-kpi text-emerald-600">
                       {result.totalScore} / {result.maxScore || 10} điểm
                     </span>
                   </div>

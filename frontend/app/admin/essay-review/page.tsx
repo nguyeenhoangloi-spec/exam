@@ -581,7 +581,7 @@ export default function AdminEssayReviewPage() {
  </p>
  </div>
  <div className="text-right">
- <span className="text-2xl tabular-nums font-medium text-slate-900">
+ <span className="edu-kpi tabular-nums text-slate-900">
  {selected.totalScore ?? '--'} <span className="text-xs text-slate-500 font-semibold">/ {selected.maxScore || 10}đ</span>
  </span>
  {selected.penaltyPoints > 0 && (

@@ -260,7 +260,7 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
             {/* Avatar Circle with Camera Overlay */}
             <div className="relative group shrink-0">
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 font-semibold text-white text-3xl shadow-xl overflow-hidden">
+              <div className="edu-kpi flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl overflow-hidden">
                 {avatarUrl ? (
                   <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                 ) : (
@@ -449,7 +449,7 @@ export default function ProfilePage() {
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
               <label className="block text-[15px] font-medium text-[#0F172A]">Ảnh đại diện tài khoản</label>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-semibold text-blue-600 text-2xl shadow-xs overflow-hidden shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-semibold text-blue-600 text-xl shadow-xs overflow-hidden shrink-0">
                   {avatarUrl ? (
                     <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                   ) : (

@@ -727,7 +727,7 @@ export default function StudentsPage() {
  <BookOpen className="h-4 w-4" />
  <span className="text-xs font-semibold ">Môn đăng ký</span>
  </div>
- <p className="text-2xl font-semibold text-blue-900">
+ <p className="edu-kpi text-blue-900">
  {drawerSubjects ? drawerSubjects.length : '--'}
  </p>
  </div>
@@ -736,7 +736,7 @@ export default function StudentsPage() {
  <Clock className="h-4 w-4" />
  <span className="text-xs font-semibold ">Lịch thi</span>
  </div>
- <p className="text-2xl font-semibold text-blue-900">
+ <p className="edu-kpi text-blue-900">
  {drawerSchedule ? drawerSchedule.length : '--'}
  </p>
  </div>

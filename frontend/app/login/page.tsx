@@ -199,10 +199,10 @@ export default function LoginPage() {
 
             {/* 3. Hero Titles & Subtitle */}
             <div className="space-y-2 pt-2">
-              <h2 className="text-3xl xl:text-4xl font-semibold text-white leading-tight tracking-tight">
+              <h2 className="edu-page-title text-white leading-tight tracking-tight">
                 Quản lý khảo thí
               </h2>
-              <p className="text-xl xl:text-2xl font-semibold text-blue-100/90 leading-snug">
+              <p className="text-xl font-semibold text-blue-100/90 leading-snug">
                 Đăng nhập tập trung, truy cập nhanh
               </p>
               <p className="text-xs xl:text-sm text-blue-100/80 leading-relaxed font-normal pt-1 max-w-md">
@@ -325,7 +325,7 @@ export default function LoginPage() {
               <div className="mb-6 space-y-1.5">
                 <h2
                   className={[
-                    'text-2xl font-semibold tracking-tight leading-tight',
+                    'edu-card-title tracking-tight leading-tight',
                     isDark ? 'text-white' : 'text-[#0F172A]',
                   ].join(' ')}
                 >

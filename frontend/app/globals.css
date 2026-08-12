@@ -129,75 +129,140 @@ html.dark {
   /* Legacy text-xs utilities are helper text in the application shell. Keep
    * them readable at 13px; explicit text-[12px] remains reserved for compact
    * badges and metadata. */
-  .app-shell-main .text-xs {
+  .typography-scale .text-xs {
     font-size: var(--fs-helper);
     line-height: var(--lh-helper);
   }
 
-  .app-shell-main label {
-    font-size: var(--fs-label);
-    line-height: var(--lh-label);
+  .typography-scale .text-sm {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
   }
 
-  .app-shell-main input:not([type='checkbox']):not([type='radio']),
-  .app-shell-main select,
-  .app-shell-main textarea {
+  .typography-scale .text-base {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
   }
 
-  .app-shell-main table {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
+  .typography-scale .text-lg {
+    font-size: var(--fs-card-title);
+    line-height: var(--lh-card-title);
   }
 
-  .app-shell-main thead,
-  .app-shell-main thead tr,
-  .app-shell-main th {
-    font-size: var(--fs-table-header);
-    line-height: var(--lh-table-header);
+  .typography-scale .text-xl {
+    font-size: var(--fs-section-title);
+    line-height: var(--lh-section-title);
   }
 
-  .app-shell-main table .text-xs {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
-  }
-
-  .app-shell-main thead .text-xs {
-    font-size: var(--fs-table-header);
-    line-height: var(--lh-table-header);
-  }
-
-  .app-shell-main tbody,
-  .app-shell-main tbody tr,
-  .app-shell-main td {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
-  }
-
-  /* Keep readable text in table cells at the table-body scale. Components
-   * may opt into the compact scale only for badges, avatars and icons. */
-  .app-shell-main tbody td :where(p, span, a, button, div:not(.table-avatar)) {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
-  }
-
-  .app-shell-main .table-badge {
-    font-size: var(--fs-badge);
-    line-height: var(--lh-badge);
-  }
-
-  .app-shell-main .table-avatar {
-    font-size: 12px;
-    line-height: 18px;
-  }
-
-  .app-shell-main p.text-xs {
+  /* Responsive Tailwind variants must resolve to the same semantic scale as
+   * their unprefixed counterparts. */
+  .typography-scale [class*=':text-xs'] {
     font-size: var(--fs-helper);
     line-height: var(--lh-helper);
   }
 
-  .app-shell-main button.text-xs {
+  .typography-scale [class*=':text-sm'] {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+  }
+
+  .typography-scale [class*=':text-base'] {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .typography-scale [class*=':text-lg'] {
+    font-size: var(--fs-card-title);
+    line-height: var(--lh-card-title);
+  }
+
+  .typography-scale [class*=':text-xl'] {
+    font-size: var(--fs-section-title);
+    line-height: var(--lh-section-title);
+  }
+
+  .typography-scale label {
+    font-size: var(--fs-label);
+    line-height: var(--lh-label);
+  }
+
+  .typography-scale input:not([type='checkbox']):not([type='radio']),
+  .typography-scale select,
+  .typography-scale textarea {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .typography-scale label.text-xs,
+  .typography-scale label.text-sm,
+  .typography-scale label.text-base,
+  .typography-scale input.text-xs,
+  .typography-scale input.text-sm,
+  .typography-scale input.text-base,
+  .typography-scale select.text-xs,
+  .typography-scale select.text-sm,
+  .typography-scale select.text-base,
+  .typography-scale textarea.text-xs,
+  .typography-scale textarea.text-sm,
+  .typography-scale textarea.text-base,
+  .typography-scale label[class*=':text-'],
+  .typography-scale input[class*=':text-'],
+  .typography-scale select[class*=':text-'],
+  .typography-scale textarea[class*=':text-'] {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .typography-scale table {
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
+  }
+
+  .typography-scale thead,
+  .typography-scale thead tr,
+  .typography-scale th {
+    font-size: var(--fs-table-header);
+    line-height: var(--lh-table-header);
+  }
+
+  .typography-scale tbody,
+  .typography-scale tbody tr,
+  .typography-scale td {
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
+  }
+
+  .typography-scale .table-badge {
+    font-size: var(--fs-badge);
+    line-height: var(--lh-badge);
+  }
+
+  .typography-scale .table-avatar {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .typography-scale .table-action {
+    font-size: var(--fs-table-body);
+    line-height: var(--lh-table-body);
+  }
+
+  .typography-scale .table-tooltip {
+    font-size: var(--fs-helper);
+    line-height: var(--lh-helper);
+  }
+
+  .typography-scale .table-meta {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
+  }
+
+  .typography-scale p.text-xs {
+    font-size: var(--fs-helper);
+    line-height: var(--lh-helper);
+  }
+
+  .typography-scale button.text-xs {
     font-size: 13px;
     line-height: 20px;
   }

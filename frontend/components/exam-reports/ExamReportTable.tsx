@@ -352,17 +352,20 @@ export function ExamReportTable({
 
  <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
  <div className="flex items-center justify-end gap-1">
- {c.attemptId && (
  <button
  type="button"
- onClick={() => setReviewAttemptId(c.attemptId!)}
- className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[15px] leading-[22px] font-semibold transition cursor-pointer"
- title="Xem chi tiết bài làm"
+ onClick={() => {
+ if (c.attemptId) {
+ setReviewAttemptId(c.attemptId);
+ } else {
+ onDetail(c);
+ }
+ }}
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
+ title={c.attemptId ? "Xem chi tiết bài làm" : "Xem hồ sơ thí sinh"}
  >
- <Eye className="h-3.5 w-3.5" />
- <span>Bài làm</span>
+ <Eye className="h-4 w-4" />
  </button>
- )}
  <ActionDropdownPortal>
  {(closeMenu) => (
  <>

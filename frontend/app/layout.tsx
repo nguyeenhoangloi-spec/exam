@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className="bg-slate-50 min-h-screen">
+      <body className="typography-scale bg-slate-50 min-h-screen">
         <PageTitleProvider>
           <RouteShell>{children}</RouteShell>
         </PageTitleProvider>

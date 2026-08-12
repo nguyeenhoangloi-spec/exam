@@ -357,7 +357,7 @@ export function QuestionBankTable({
  <button
  type="button"
  onClick={() => onDetail(q)}
- className=" tabular-nums text-[14px] font-semibold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-semibold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -381,7 +381,7 @@ export function QuestionBankTable({
  {/* Đáp án + Media — gộp chung 1 hàng flex-wrap */}
  <div className="flex flex-wrap items-center gap-1.5">
  {q.type === 'ESSAY' ? (
- <span className="inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-800 border border-blue-200/80">
+ <span className="table-badge inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-800 border border-blue-200/80">
  <FileText className="w-3 h-3 text-blue-600 shrink-0" />
  {q.sampleAnswer || q.explanation ? 'Có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
  </span>
@@ -389,7 +389,7 @@ export function QuestionBankTable({
  optionsList.map((opt) => (
  <span
  key={opt.label + opt.content}
- className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[12px] font-semibold text-slate-700"
+ className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[12px] font-semibold text-slate-700"
  >
  <span className="font-semibold text-slate-500">{opt.label}.</span>
  <span className="truncate max-w-[120px]">{opt.content}</span>
@@ -450,7 +450,7 @@ export function QuestionBankTable({
  key={m.id || idx}
  type="button"
  onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
- className="group inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[12px] font-semibold text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
+ className="table-badge group inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[12px] font-semibold text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
  title="Bấm để phát âm thanh"
  >
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3 text-blue-600 group-hover:scale-110 transition"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
@@ -459,7 +459,7 @@ export function QuestionBankTable({
  );
 
  return (
- <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[12px] font-semibold text-slate-500 shrink-0">
+ <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[12px] font-semibold text-slate-500 shrink-0">
  <ImageIcon className="h-3 w-3 text-blue-400" />
  {cleanMediaFileName(m.fileName, 'Tập tin')}
  </span>
@@ -483,7 +483,7 @@ export function QuestionBankTable({
 
                     {/* Floating Tooltip khi Hover nếu tên môn dài > 12 ký tự */}
                     {subjectName.length > 12 && (
-                      <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                      <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                         <span>{subjectName}</span>
                         <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
                       </div>
@@ -524,7 +524,7 @@ export function QuestionBankTable({
  {visibleColumns.creator !== false && (
  <td className="p-3.5 whitespace-nowrap align-top pt-4">
  <div className="flex items-center gap-1.5 text-[15px] font-normal text-[#334155] dark:text-slate-300">
- <div className="h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-[#475569] dark:text-slate-300 flex items-center justify-center font-semibold text-[13px] border border-slate-200 dark:border-slate-600">
+ <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-[#475569] dark:text-slate-300 flex items-center justify-center font-semibold text-[13px] border border-slate-200 dark:border-slate-600">
  {creatorName.charAt(0).toUpperCase()}
  </div>
  <span>{creatorName}</span>
@@ -534,7 +534,7 @@ export function QuestionBankTable({
 
  {/* Ngày tạo */}
  {visibleColumns.createdAt !== false && (
- <td className="p-3.5 whitespace-nowrap text-[14px] text-[#64748B] dark:text-slate-400 font-normal align-top pt-4">
+ <td className="table-meta p-3.5 whitespace-nowrap text-[14px] text-[#64748B] dark:text-slate-400 font-normal align-top pt-4">
  {formatDate(q.createdAt)}
  </td>
  )}

@@ -174,13 +174,13 @@ function EntityTarget({ entityType, entityId }: { entityType: string; entityId?:
             <Icon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
             <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{info.label}</span>
             {entityId && (
-                <span className="font-mono text-[13px] font-normal text-slate-500 dark:text-slate-400">
+                <span className="tabular-nums text-[13px] font-normal text-slate-500 dark:text-slate-400">
                     #{formattedId}
                 </span>
             )}
 
             {isLongId && (
-                <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-mono text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50">
+                <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50">
                     <span>#{entityId}</span>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
                 </div>
@@ -201,7 +201,7 @@ function ActionCode({ action }: { action: string }) {
     const Icon = meta.Icon;
 
     return (
-        <span className={`inline-flex items-center gap-1.5 font-sans text-[14px] font-medium ${meta.className}`}>
+        <span className={`table-action inline-flex items-center gap-1.5 font-sans text-[15px] leading-[22px] font-medium ${meta.className}`}>
             <Icon className="h-3.5 w-3.5 shrink-0" />
             {action}
         </span>
@@ -790,12 +790,12 @@ export default function ActivityLogsPage() {
                                                         <div className="table-avatar flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 text-[12px] font-medium text-slate-700 dark:text-slate-300">
                                                             {(item.actor?.username || "A").slice(0, 1).toUpperCase()}
                                                         </div>
-                                                        <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                        <span className="text-[15px] leading-[22px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                             {item.actor?.username || "Hệ thống"}
                                                         </span>
 
                                                         {/* Floating Tooltip khi Hover */}
-                                                        <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                                                             <Mail className="h-3 w-3 text-slate-300" />
                                                             <span>{item.actor?.email || "system@exam.edu.vn"}</span>
                                                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />

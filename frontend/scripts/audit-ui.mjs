@@ -73,6 +73,10 @@ for (const folder of sourceRoots) {
       report(file, 'cỡ chữ Web UI không được thấp hơn 12px');
     }
 
+    if (/text-\[16px\]|\btext-(2xl|3xl|4xl)\b/i.test(content)) {
+      report(file, 'Web UI must use the semantic typography scale; avoid 16px/2xl/3xl/4xl');
+    }
+
     if (/(?:<label|<input|<select|<textarea)[^<>]*\btext-xs\b/i.test(content)
       || /(?:<label|<input|<select|<textarea)[^<>]*text-\[12px\]/i.test(content)) {
       report(file, 'label/control size must be at least 15px');
@@ -87,9 +91,9 @@ for (const folder of sourceRoots) {
       for (const bodyMatch of tableMatch[0].matchAll(/<tbody\b[\s\S]*?<\/tbody>/gi)) {
         const body = bodyMatch[0]
           .replace(/<svg[\s\S]*?<\/svg>/gi, '')
-          .replace(/[^\r\n]*(?:table-badge|table-avatar)[^\r\n]*/gi, '');
+          .replace(/[^\r\n]*(?:table-badge|table-avatar|table-action|table-tooltip|table-meta)[^\r\n]*/gi, '');
         if (/text-xs|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(body)) {
-          report(file, 'table body text must be 15px; compact size is limited to table-badge/table-avatar');
+          report(file, 'table body text must be 15px; compact size is limited to table-badge/table-avatar/table-tooltip/table-meta');
         }
       }
     }

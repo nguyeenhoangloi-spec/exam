@@ -401,7 +401,7 @@ export default function ContactSupportPage() {
 
         {/* Featured Big Category Box matching OpenAI ChatGPT Help Center Card */}
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white font-semibold text-2xl shadow-lg">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white font-semibold text-xl shadow-lg">
             <GraduationCap className="h-8 w-8 text-blue-400" />
           </div>
           <div className="space-y-1 min-w-0 flex-1">
