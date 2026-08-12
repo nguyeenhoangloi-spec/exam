@@ -560,7 +560,7 @@ export default function ExamSchedulesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingSchedule ? 'Chỉnh sửa Lịch thi' : 'Tạo Lịch thi Mới'}
+        title={editingSchedule ? 'Chỉnh sửa lịch thi' : 'Tạo lịch thi mới'}
         size="2xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -767,7 +767,7 @@ export default function ExamSchedulesPage() {
                 size="md"
                 disabled={isPastTime}
               >
-                {editingSchedule ? 'Cập nhật Lịch thi' : 'Lưu Lịch Thi'}
+                {editingSchedule ? 'Cập nhật lịch thi' : 'Lưu lịch thi'}
               </Button>
             </div>
           </div>
@@ -798,7 +798,7 @@ export default function ExamSchedulesPage() {
           className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
-          { label: 'Tên Kỳ thi', value: drawerSchedule?.periodName, icon: Calendar },
+          { label: 'Tên kỳ thi', value: drawerSchedule?.periodName, icon: Calendar },
           { label: 'Mã lịch thi', value: drawerSchedule?.code },
           { label: 'Ca thi', value: drawerSchedule?.shiftName, icon: Clock },
           { label: 'Phòng thi', value: drawerSchedule?.roomName, icon: Building },

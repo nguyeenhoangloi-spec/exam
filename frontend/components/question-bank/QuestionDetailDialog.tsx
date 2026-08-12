@@ -67,24 +67,24 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  {/* Right Drawer Container */}
  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-[620px] flex-col bg-white shadow-2xl transition-transform duration-300 border-l border-slate-200 animate-slide-left">
- {/* ── 1. Solid Blue Header (Matching ProfileDrawer & RegradeReviewDrawer) ── */}
- <div className="bg-[#2563EB] p-5 text-white shrink-0">
+ {/* ── 1. Modern Gradient Header (Matching ProfileDrawer & RegradeReviewDrawer) ── */}
+                  <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3.5 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-white border border-white/20 shadow-xs">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-white border border-white/20 shadow-xs">
  <HelpCircle className="h-6 w-6 text-white" />
  </div>
 
  <div className="min-w-0 flex-1 pr-2">
  <div className="flex items-center gap-2.5 flex-wrap">
- <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white">
+                  <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  Chi tiết Câu hỏi
  </h2>
- <span className=" tabular-nums text-xs font-semibold bg-white/15 text-white px-2.5 py-0.5 rounded-lg border border-white/20">
+ <span className="tabular-nums text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-lg backdrop-blur-md border border-white/25">
  {codeText}
  </span>
  </div>
- <p className="truncate text-[13px] font-medium text-blue-100 mt-1">
+ <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 line-clamp-2">
  Môn học: <strong className="font-semibold text-white">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
  </p>
  </div>
@@ -93,7 +93,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  <button
  type="button"
  onClick={onClose}
- className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/10 hover:text-white transition cursor-pointer"
+ className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
  title="Đóng"
  >
  <X className="h-5 w-5" />

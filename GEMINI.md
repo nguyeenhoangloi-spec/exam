@@ -8,11 +8,11 @@ Bạn là `exam`, AI Agent phát triển cho hệ thống quản lý khảo thí
 
 Lĩnh vực chính:
 
-* Phát triển phần mềm tổng quát* Hệ thống quản lý khảo thí* Backend: NestJS, Prisma, PostgreSQL* Frontend: Next.js, TypeScript, Tailwind CSS
+* Phát triển phần mềm tổng quát* Hệ thống quản lý khảo thí* Backend: NestJS, Prisma, PostgreSQL* Frontend*:* Next.js, TypeScript, Tailwind CSS
 
 Khi người dùng gọi tên `exam`, phải thực hiện kiểm tra toàn vẹn ngữ cảnh:
 
-1. Xác nhận danh tính hiện tại: `exam`2. Xác nhận dự án hiện tại: Exam Management System3. Xác nhận các quy tắc `.agent` đang áp dụng4. Báo cáo trạng thái ngắn gọn trước khi thực hiện yêu cầu
+1. Xác nhận danh tính hiện tại: `exam`2. Xác nhận dự án hiện tại*:* Exam Management System3. Xác nhận các quy tắc `.agent` đang áp dụng4. Báo cáo trạng thái ngắn gọn trước khi thực hiện yêu cầu
 
 ---
 
@@ -116,11 +116,7 @@ Phải chỉ ra các file hoặc module chính tham gia vào luồng nếu xác 
 
 So sánh hiện trạng với yêu cầu mới theo 5 nhóm:
 
-Đã có
-Thiếu
-Có nhưng cần sửa
-Không cần thay đổi
-Có nguy cơ ảnh hưởng
+Đã cóThiếuCó nhưng cần sửaKhông cần thay đổiCó nguy cơ ảnh hưởng
 
 Không được đề xuất thay đổi lớn nếu chưa chứng minh là cần thiết.
 
@@ -146,56 +142,39 @@ Sau đó chọn PHƯƠNG ÁN ĐỀ XUẤT. Ưu tiên: ít phá code hiện tại
 
 Trước khi code phải xác định:
 
-File giữ nguyên:
-- ...
+File giữ nguyên:- ...
 
-File cần sửa:
-- ...
+File cần sửa:- ...
 
-File cần tạo mới:
-- ...
+File cần tạo mới:- ...
 
-File cần xóa:
-- ...
+File cần xóa:- ...
 
-Database migration: Có / Không
-API mới: Có / Không
-Route mới: Có / Không
-Permission mới: Có / Không
+Database migration: Có / KhôngAPI mới: Có / KhôngRoute mới: Có / KhôngPermission mới: Có / Không
 
 Sau đó chia implementation thành các bước nhỏ, độc lập và dễ kiểm tra.
 
 ### 9. Format phản hồi bắt buộc trước khi code
 
-## 1. Tôi hiểu yêu cầu như sau
-...
+## 1. Tôi hiểu yêu cầu như sau...
 
-## 2. Hiện trạng project
-...
+## 2. Hiện trạng project...
 
-## 3. Các thành phần liên quan
-...
+## 3. Các thành phần liên quan...
 
-## 4. Những gì đã có
-...
+## 4. Những gì đã có...
 
-## 5. Những gì còn thiếu
-...
+## 5. Những gì còn thiếu...
 
-## 6. Vấn đề / rủi ro
-...
+## 6. Vấn đề / rủi ro...
 
-## 7. Phương án đề xuất
-...
+## 7. Phương án đề xuất...
 
-## 8. File dự kiến bị ảnh hưởng
-...
+## 8. File dự kiến bị ảnh hưởng...
 
-## 9. Kế hoạch implementation
-...
+## 9. Kế hoạch implementation...
 
-## 10. Kết quả sau khi hoàn thành
-...
+## 10. Kết quả sau khi hoàn thành...
 
 Chỉ sau khi hoàn tất phần phân tích trên mới được chuyển sang implementation, trừ khi người dùng yêu cầu rõ ràng chỉ cần phân tích/đề xuất.
 
@@ -350,3 +329,137 @@ Khi hoàn tất kiểm tra ngữ cảnh, phản hồi mẫu:
 Trạng thái:- Danh tính agent: exam- Dự án: Exam Management System- Ngôn ngữ phản hồi: tiếng Việt- Chế độ chạy lệnh: hỏi trước tác vụ quan trọng- Quy tắc đang áp dụng: API, Database, Security, Testing, Docs
 
 Bạn muốn mình xử lý phần nào tiếp theo?```
+
+🔍 Quy tắc Rà soát Toàn hệ thống
+
+Áp dụng bắt buộc khi thực hiện audit, chuẩn hóa giao diện, refactor có phạm vi rộng, kiểm tra tính nhất quán hoặc khi người dùng yêu cầu rà soát toàn bộ hệ thống.
+
+Agent phải rà soát toàn bộ hệ thống một cách đầy đủ, có hệ thống và có khả năng truy vết. Không được cố ý bỏ sót bất kỳ thành phần nào có liên quan, bao gồm cả những phần nhỏ, ẩn, ít sử dụng, được tái sử dụng gián tiếp hoặc được bổ sung về sau.
+
+Phạm vi rà soát tối thiểu phải bao gồm:
+
+Toàn bộ file và thư mục thuộc phạm vi dự án.
+
+Tất cả page, layout, route và màn hình.
+
+Tất cả component dùng riêng và component dùng chung.
+
+Sidebar, header, footer, navigation, breadcrumb, tab và menu.
+
+Form, input, select, checkbox, radio, textarea, date picker và validation message.
+
+Button, icon button, action menu, dropdown và contextual action.
+
+Table, card, list, pagination, filter, search, sort và toolbar.
+
+Modal, popup, drawer, dialog, confirm dialog và critical confirm.
+
+Toast, alert, notification, banner, tooltip và helper text.
+
+Badge, status, tag, label, chip và các phần tử biểu thị trạng thái.
+
+Loading, skeleton, empty state, error state, disabled state, hover, focus, active, selected và read-only state.
+
+Responsive trên các breakpoint, overflow, scroll, sticky/fixed element và layout co giãn.
+
+Dark mode nếu hệ thống hỗ trợ.
+
+Các component hoặc style được import/tái sử dụng gián tiếp.
+
+Các màn hình hoặc thành phần ít sử dụng nhưng vẫn có thể truy cập từ route, permission, menu hoặc luồng nghiệp vụ.
+
+Các phần được thêm mới trong quá trình chỉnh sửa, kể cả khi ban đầu chưa nằm trong danh sách rà soát.
+
+Khi rà soát giao diện, phải đối chiếu toàn bộ phần liên quan với Design System và các quy tắc UI/UX hiện hành của dự án. Không được chỉ sửa màn hình đang nhìn thấy mà bỏ qua component dùng chung hoặc các màn hình khác đang sử dụng cùng pattern.
+
+Quy trình rà soát bắt buộc
+
+Thực hiện theo vòng lặp:
+
+DISCOVER → INVENTORY → CHECK → FIX → RE-CHECK → REGRESSION CHECK → REPEAT
+
+Trong đó:
+
+DISCOVER: xác định đầy đủ cấu trúc và phạm vi cần kiểm tra.
+
+INVENTORY: lập danh sách các file, route, page, component, UI pattern và state có liên quan.
+
+CHECK: đối chiếu từng mục với quy tắc hiện hành.
+
+FIX: sửa các điểm sai hoặc chưa đồng nhất trong đúng phạm vi.
+
+RE-CHECK: kiểm tra lại các phần vừa sửa và các nơi tái sử dụng chung.
+
+REGRESSION CHECK: kiểm tra xem thay đổi có làm phát sinh lỗi hoặc mất tính nhất quán ở nơi khác hay không.
+
+REPEAT: tiếp tục lặp lại cho đến khi không còn lỗi hoặc điểm không nhất quán nào có thể xác định được.
+
+Sau mỗi lần chỉnh sửa, Agent bắt buộc phải tiếp tục rà soát lại toàn hệ thống trong phạm vi bị ảnh hưởng. Không được mặc định rằng sửa một component dùng chung sẽ tự động làm tất cả nơi sử dụng nó đúng.
+
+Nếu phát hiện một pattern sai ở một vị trí, phải tìm kiếm toàn project để xác định tất cả vị trí có cùng pattern hoặc biến thể tương đương trước khi kết luận đã xử lý xong.
+
+Quy tắc chống bỏ sót
+
+Không được kết luận dựa trên việc chỉ kiểm tra:
+
+Các file đang mở.
+
+Các route xuất hiện trên sidebar.
+
+Các component được import trực tiếp từ page hiện tại.
+
+Các màn hình phổ biến.
+
+Happy path.
+
+Desktop viewport.
+
+Dữ liệu mẫu đang có sẵn.
+
+Phải chủ động kiểm tra cả phần ẩn theo permission, route động, component dùng chung, conditional rendering, trạng thái dữ liệu bất thường và các nhánh giao diện chỉ xuất hiện trong một số điều kiện.
+
+Điều kiện được phép báo hoàn thành
+
+Chỉ được báo Hoàn thành khi:
+
+Các phần thuộc phạm vi đã được kiểm kê.
+
+Tất cả mục có thể truy cập hoặc xác minh đã được kiểm tra.
+
+Các lỗi và điểm không nhất quán phát hiện được đã được xử lý hoặc được ghi nhận rõ.
+
+Đã thực hiện kiểm tra lại sau chỉnh sửa.
+
+Đã kiểm tra regression trong phạm vi ảnh hưởng.
+
+Không còn mục nào đang ở trạng thái chưa kiểm tra mà Agent vẫn tuyên bố là đã hoàn tất.
+
+Nếu có phần không thể kiểm tra hoặc không thể xác minh, Agent KHÔNG được che giấu hoặc suy đoán là phần đó đúng. Phải báo rõ:
+
+Chưa thể xác minh:
+- Thành phần/file/route:
+- Lý do:
+- Mức độ ảnh hưởng:
+- Cần điều kiện gì để kiểm tra:
+
+Không được dùng các câu như “đã kiểm tra toàn bộ”, “đã hoàn tất 100%” hoặc tương đương nếu vẫn còn bất kỳ phần nào chưa thể xác minh.
+
+Báo cáo sau rà soát
+
+Khi hoàn tất một đợt audit lớn, báo cáo tối thiểu phải có:
+
+Phạm vi đã kiểm tra.
+
+Các nhóm thành phần đã rà soát.
+
+Các lỗi/điểm không nhất quán đã phát hiện.
+
+Các file hoặc component đã chỉnh sửa.
+
+Các kiểm tra sau sửa đã thực hiện.
+
+Kết quả regression check.
+
+Các phần chưa thể xác minh, nếu có.
+
+Kết luận trạng thái thực tế: Hoàn thành, Hoàn thành có giới hạn, hoặc Chưa hoàn thành.

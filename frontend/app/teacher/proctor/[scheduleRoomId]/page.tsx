@@ -1348,7 +1348,7 @@ export default function ProctorDashboardPage() {
  <Clock className="h-4.5 w-4.5" />
  </div>
  <div>
- <h3 className="text-[20px] font-semibold text-[#0F172A] leading-none">Bù Giờ Toàn Phòng Thi Khẩn Cấp</h3>
+                <h3 className="text-[20px] font-semibold text-[#0F172A] leading-none">Bù giờ toàn phòng thi khẩn cấp</h3>
  <p className="mt-1 text-[13px] text-[#64748B] font-semibold leading-none">Cộng bù thời gian làm bài cho tất cả sinh viên</p>
  </div>
  </div>

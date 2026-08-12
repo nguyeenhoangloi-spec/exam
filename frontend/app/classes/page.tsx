@@ -443,7 +443,7 @@ export default function ClassesPage() {
  <Modal
  isOpen={isModalOpen}
  onClose={() => setIsModalOpen(false)}
- title={editingClass ? 'Chỉnh sửa Lớp học' : 'Tạo Lớp học Mới'}
+ title={editingClass ? 'Chỉnh sửa lớp học' : 'Tạo lớp học mới'}
  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
@@ -459,7 +459,7 @@ export default function ClassesPage() {
  </div>
 
  <div>
- <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Tên Lớp học</label>
+                    <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Tên lớp học</label>
  <input
  type="text"
  required
@@ -518,7 +518,7 @@ export default function ClassesPage() {
  variant="primary"
  size="md"
  >
- {editingClass ? 'Cập nhật Lớp học' : 'Lưu Lớp Học'}
+ {editingClass ? 'Cập nhật lớp học' : 'Lưu lớp học'}
  </Button>
  </div>
  </div>
@@ -546,18 +546,18 @@ export default function ClassesPage() {
  />
 
  <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
- {/* Header - Brand Blue Color matching system standard */}
- <div className="bg-blue-600 p-5 text-white shrink-0 border-b border-blue-700">
+ {/* Header - Modern Gradient matching system standard */}
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
  {drawerClass.code.substring(0, 3).toUpperCase()}
  </div>
  <div className="min-w-0 flex-1 pr-2">
- <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+<h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerClass.name}
  </h2>
- <p className="text-[13px] font-semibold text-blue-200 mt-1 tabular-nums">
+ <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
  Mã lớp: {drawerClass.code}
  </p>
  </div>

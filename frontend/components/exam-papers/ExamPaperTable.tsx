@@ -269,7 +269,7 @@ export function ExamPaperTable({
  />
  </th>
  {visibleColumns.paperCode !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã đề thi</th>}
- {visibleColumns.subjectName !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên Môn học & Kỳ thi</th>}
+ {visibleColumns.subjectName !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên môn học & kỳ thi</th>}
  {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
  {visibleColumns.questionCount !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số câu hỏi</th>}
  {visibleColumns.durationMinutes !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Lịch thi & Thời gian</th>}

@@ -164,7 +164,7 @@ export function DepartmentTable({
  />
  </th>
  <th scope="col" className="p-2 whitespace-nowrap">Mã khoa</th>
- <th scope="col" className="p-2 min-w-[200px]">Tên Khoa đào tạo</th>
+ <th scope="col" className="p-2 min-w-[200px]">Tên khoa đào tạo</th>
  <th scope="col" className="p-2 whitespace-nowrap">Số môn</th>
  <th scope="col" className="p-2 whitespace-nowrap">Số lớp</th>
  <th scope="col" className="p-2 whitespace-nowrap">Số giảng viên</th>
@@ -230,7 +230,7 @@ export function DepartmentTable({
  />
  </th>
  {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã khoa</th>}
- {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên Khoa đào tạo</th>}
+ {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên khoa đào tạo</th>}
  {visibleColumns.subjectsCount !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số môn học</th>}
  {visibleColumns.classesCount !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số lớp học</th>}
  {visibleColumns.teachersCount !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số giảng viên</th>}
@@ -362,7 +362,7 @@ export function DepartmentTable({
  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
  >
  <Edit className="h-4 w-4 text-[#2563EB]" />
- <span>Chỉnh sửa Khoa</span>
+ <span>Chỉnh sửa khoa</span>
  </button>
 
  <div className="my-1 border-t border-[#E2E8F0]" />

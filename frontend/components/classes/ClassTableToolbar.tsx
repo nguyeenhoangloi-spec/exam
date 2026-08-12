@@ -33,7 +33,7 @@ export function ClassTableToolbar({
 
   const columnsList = [
     { key: 'code', label: 'Mã lớp' },
-    { key: 'name', label: 'Tên Lớp học' },
+    { key: 'name', label: 'Tên lớp học' },
     { key: 'department', label: 'Khoa trực thuộc' },
     { key: 'studentCount', label: 'Sĩ số Sinh viên' },
   ];
@@ -54,7 +54,7 @@ export function ClassTableToolbar({
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="name_asc">Tên Lớp: A - Z</option>
+            <option value="name_asc">Tên lớp: A - Z</option>
             <option value="students_desc">Sĩ số: Cao nhất</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />

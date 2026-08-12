@@ -250,7 +250,7 @@ export default function ExamRoomsPage() {
       r.roomName || r.name || '',
       r.capacity ?? 0,
       r.building || r.location || '',
-      r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết',
+      r.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết',
       r.status === 'MAINTENANCE' ? 'Bảo trì' : 'Sẵn sàng',
     ]);
 
@@ -274,7 +274,7 @@ export default function ExamRoomsPage() {
       columns: [
         { header: 'STT', width: '40px' },
         { header: 'Mã Phòng', width: '100px' },
-        { header: 'Tên Phòng thi', width: '200px' },
+        { header: 'Tên phòng thi', width: '200px' },
         { header: 'Sức chứa', width: '90px', align: 'center' },
         { header: 'Tòa nhà', width: '100px', align: 'center' },
         { header: 'Loại phòng', width: '120px', align: 'center' },
@@ -285,7 +285,7 @@ export default function ExamRoomsPage() {
         r.roomName || r.name || '',
         `${r.capacity ?? 0} chỗ`,
         r.building || r.location || '',
-        r.roomType === 'COMPUTER_LAB' ? 'Phòng Máy' : 'Phòng Lý thuyết',
+        r.roomType === 'COMPUTER_LAB' ? 'Phòng máy' : 'Phòng lý thuyết',
       ]),
     });
   };
@@ -351,8 +351,8 @@ export default function ExamRoomsPage() {
                   className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
                 >
                   <option value="">Tất cả loại phòng</option>
-                  <option value="COMPUTER_LAB">Phòng Máy tính</option>
-                  <option value="THEORY">Phòng Lý thuyết</option>
+                  <option value="COMPUTER_LAB">Phòng máy tính</option>
+                  <option value="THEORY">Phòng lý thuyết</option>
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               </div>
@@ -444,7 +444,7 @@ export default function ExamRoomsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingRoom ? 'Chỉnh sửa Phòng thi' : 'Tạo Phòng thi Mới'}
+        title={editingRoom ? 'Chỉnh sửa phòng thi' : 'Tạo phòng thi mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -460,11 +460,11 @@ export default function ExamRoomsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Phòng thi</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên phòng thi</label>
             <input
               type="text"
               required
-              placeholder="VD: Phòng Máy Tính A101"
+              placeholder="VD: Phòng máy tính A101"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
@@ -503,8 +503,8 @@ export default function ExamRoomsPage() {
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               >
-                <option value="COMPUTER_LAB">Phòng Máy tính</option>
-                <option value="THEORY">Phòng Lý thuyết</option>
+                <option value="COMPUTER_LAB">Phòng máy tính</option>
+                <option value="THEORY">Phòng lý thuyết</option>
               </select>
             </div>
             <div>
@@ -552,7 +552,7 @@ export default function ExamRoomsPage() {
                 variant="primary"
                 size="md"
               >
-                {editingRoom ? 'Cập nhật Phòng thi' : 'Lưu Phòng Thi'}
+                {editingRoom ? 'Cập nhật phòng thi' : 'Lưu phòng thi'}
               </Button>
             </div>
           </div>
@@ -579,7 +579,7 @@ export default function ExamRoomsPage() {
         subtitle={`Mã phòng: ${drawerRoom?.roomCode || drawerRoom?.code || ''}`}
         avatarText={drawerRoom?.building?.slice(-2) || 'RM'}
         badge={{
-          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy' : 'Phòng Lý thuyết',
+          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy' : 'Phòng lý thuyết',
           className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
@@ -587,7 +587,7 @@ export default function ExamRoomsPage() {
           { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code },
           { label: 'Sức chứa', value: `${drawerRoom?.capacity ?? 0} chỗ`, icon: Users },
           { label: 'Tòa nhà / Vị trí', value: drawerRoom?.building || drawerRoom?.location, icon: Building },
-          { label: 'Loại phòng', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng Máy tính' : 'Phòng Lý thuyết', icon: Monitor },
+          { label: 'Loại phòng', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết', icon: Monitor },
         ]}
       />
 

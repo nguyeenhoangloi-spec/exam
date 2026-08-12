@@ -130,7 +130,7 @@ export function ExamPaperMatrixForm({
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-b border-slate-100">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900">Tạo Đề thi theo Ma trận</h3>
+          <h3 className="text-sm font-semibold text-slate-900">Tạo đề thi theo ma trận</h3>
           <p className="text-[12px] font-semibold text-slate-400">Tự động chọn ngẫu nhiên từ Ngân hàng đề</p>
         </div>
 

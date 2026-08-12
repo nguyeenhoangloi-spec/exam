@@ -519,8 +519,8 @@ export default function StudentCurriculumPage() {
  >
  <option value="semester_asc">Học kỳ: Tăng dần</option>
  <option value="semester_desc">Học kỳ: Giảm dần</option>
- <option value="name_asc">Tên Môn: A - Z</option>
- <option value="name_desc">Tên Môn: Z - A</option>
+ <option value="name_asc">Tên môn: A - Z</option>
+ <option value="name_desc">Tên môn: Z - A</option>
  <option value="credits_desc">Số tín chỉ: Cao nhất</option>
  <option value="credits_asc">Số tín chỉ: Thấp nhất</option>
  </select>

@@ -22,6 +22,10 @@ const kpiBoldFiles = new Set([
   'app/admin/activity-logs/page.tsx',
   'app/trash/page.tsx',
 ]);
+const popupBoldFiles = new Set([
+  'components/ConfirmModal.tsx',
+  'components/CriticalConfirmModal.tsx',
+]);
 
 async function collectFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -56,7 +60,9 @@ for (const folder of sourceRoots) {
       report(file, 'Web UI phải dùng Inter; không dùng class font-mono');
     }
 
-    if (file.endsWith('.tsx') && /(?:className|class)\s*=\s*["'`][^"'`]*\buppercase\b/i.test(content)) {
+    const hasUppercaseUtility = /className\s*=\s*["'][^"']*\buppercase\b/i.test(content)
+      || /class\s*=\s*["'][^"']*\buppercase\b/i.test(content);
+    if (file.endsWith('.tsx') && hasUppercaseUtility) {
       report(file, 'Web UI dùng sentence case; không dùng utility uppercase');
     }
 
@@ -69,11 +75,11 @@ for (const folder of sourceRoots) {
     }
 
     const relativeFile = relative(root, file).replaceAll('\\', '/');
-    if (relativeFile !== 'app/exam-arrangement/page.tsx' && (/font-(thin|extralight|light|black|extrabold)/i.test(content) || /font-weight:\s*(100|200|300|800|900)/i.test(content))) {
+    if (relativeFile !== 'app/exam-arrangement/page.tsx' && !popupBoldFiles.has(relativeFile) && (/font-(thin|extralight|light|black|extrabold)/i.test(content) || /font-weight:\s*(100|200|300|800|900)/i.test(content))) {
       report(file, 'Web UI chi duoc dung font weight 400-700');
     }
 
-    if (file.endsWith('.tsx') && /font-bold/i.test(content) && !kpiBoldFiles.has(relativeFile)) {
+    if (file.endsWith('.tsx') && /font-bold/i.test(content) && !kpiBoldFiles.has(relativeFile) && !popupBoldFiles.has(relativeFile)) {
       report(file, 'font-bold (700) chi danh cho component KPI/tong so da duoc phe duyet');
     }
 

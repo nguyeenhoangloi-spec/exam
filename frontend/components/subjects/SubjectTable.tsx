@@ -208,7 +208,7 @@ export function SubjectTable({
  />
  </th>
  {visibleColumns.subjectCode !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã môn học</th>}
- {visibleColumns.subjectName !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên Môn học</th>}
+ {visibleColumns.subjectName !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên môn học</th>}
  {visibleColumns.credits !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số Tín chỉ</th>}
  {visibleColumns.department !== false && <th scope="col" className="p-3.5 min-w-[200px]">Khoa đào tạo</th>}
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>

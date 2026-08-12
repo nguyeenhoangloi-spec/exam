@@ -1018,7 +1018,7 @@ export default function StudentExamTakePage() {
  Bạn đã vi phạm quy chế thi vượt quá {violationSubmittedModal.maxAllowed} lần cho phép ({violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed} lần).
  </p>
  <p className="font-medium text-slate-600 dark:text-slate-300 text-xs">
- Hệ thống đã ghi lại toàn bộ nhật ký vi phạm và gửi bài làm về cho Giám thị phòng thi.
+ Hệ thống đã ghi lại toàn bộ nhật ký vi phạm và gửi bài làm về cho giám thị phòng thi.
  </p>
  </div>
 

@@ -209,7 +209,7 @@ export function ClassTable({
  />
  </th>
  {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã lớp</th>}
- {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên Lớp học</th>}
+ {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên lớp học</th>}
  {visibleColumns.department !== false && <th scope="col" className="p-3.5 min-w-[200px]">Khoa trực thuộc</th>}
  {visibleColumns.studentCount !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Sĩ số Sinh viên</th>}
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
@@ -311,7 +311,7 @@ export function ClassTable({
  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
  >
  <Edit className="h-4 w-4 text-[#2563EB]" />
- <span>Chỉnh sửa Lớp</span>
+ <span>Chỉnh sửa lớp</span>
  </button>
 
  <div className="my-1 border-t border-[#E2E8F0]" />

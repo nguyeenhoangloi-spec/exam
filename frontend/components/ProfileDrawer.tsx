@@ -41,14 +41,14 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
           {/* Header - Modern Gradient Header */}
-          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 p-5 text-white shrink-0 shadow-sm">
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0 flex-1">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-bold text-base text-white border border-white/20 shadow-xs">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
                   {shortAvatar}
                 </div>
                 <div className="min-w-0 flex-1 pr-1">
-                  <h2 className="text-[18px] font-bold leading-snug text-white line-clamp-2 break-words" title={title}>
+                  <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words" title={title}>
                     {title}
                   </h2>
 
@@ -112,7 +112,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               <div className="space-y-4">
                 {extraSections.map((sec, i) => (
                   <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 shadow-2xs">
-                    <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">{sec.title}</h3>
+                    <h3 className="text-xs font-semibold tracking-wider text-slate-500">{sec.title}</h3>
                     <div>{sec.content}</div>
                   </div>
                 ))}

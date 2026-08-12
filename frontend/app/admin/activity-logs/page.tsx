@@ -901,20 +901,20 @@ export default function ActivityLogsPage() {
 
  {/* Drawer Container */}
  <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
- <div className="relative flex h-full w-full max-w-lg flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300">
+ <div className="relative flex h-full w-full max-w-md flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300">
  
- {/* Header - Solid Flat Blue #2563EB matching Student/Teacher/Department Drawer */}
- <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white p-5">
+ {/* Header - Modern Gradient matching system standard */}
+ <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-sm font-medium text-blue-700 shadow-xs">
+ <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-bold text-sm text-white border border-white/20 shadow-xs">
  LOG
  </div>
  <div className="min-w-0 flex-1 pr-2">
- <h2 className="break-words text-[18px] font-semibold leading-[26px] text-slate-900">
+ <h2 className="text-[18px] font-bold leading-snug text-white line-clamp-2 break-words">
  Chi tiết Nhật ký #{selectedLog.id}
  </h2>
- <p className="mt-0.5 text-[13px] font-normal tabular-nums text-slate-500">
+ <p className="mt-1.5 text-[13px] font-medium text-blue-100/90 tabular-nums">
  Thời gian: {new Date(selectedLog.createdAt).toLocaleString('vi-VN')}
  </p>
  </div>
@@ -923,7 +923,7 @@ export default function ActivityLogsPage() {
  <button
  type="button"
  onClick={() => setSelectedLog(null)}
- className="shrink-0 cursor-pointer rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+ className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
  title="Đóng"
  >
  <X className="h-5 w-5" />

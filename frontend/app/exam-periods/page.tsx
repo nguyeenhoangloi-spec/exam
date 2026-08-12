@@ -452,15 +452,15 @@ export default function ExamPeriodsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingPeriod ? 'Chỉnh sửa Kỳ thi' : 'Tạo Kỳ thi Mới'}
+        title={editingPeriod ? 'Chỉnh sửa kỳ thi' : 'Tạo kỳ thi mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Kỳ thi</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên kỳ thi</label>
             <input
               type="text"
               required
-              placeholder="VD: Kỳ thi Học kỳ 1 Năm học 2025-2026"
+              placeholder="VD: Kỳ thi học kỳ 1 năm học 2025-2026"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
@@ -538,7 +538,7 @@ export default function ExamPeriodsPage() {
                 Hủy
               </Button>
               <Button variant="primary" size="md" type="submit">
-                {editingPeriod ? 'Cập nhật Kỳ thi' : 'Lưu Kỳ Thi'}
+                {editingPeriod ? 'Cập nhật kỳ thi' : 'Lưu kỳ thi'}
               </Button>
             </div>
           </div>

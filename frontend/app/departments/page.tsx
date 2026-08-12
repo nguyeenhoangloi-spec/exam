@@ -209,10 +209,10 @@ export default function DepartmentsPage() {
  try {
  if (editingDepartment) {
  await api.patch(`/departments/${editingDepartment.id}`, formData);
- setToast({ message: 'Cập nhật Khoa thành công!', type: 'success' });
+ setToast({ message: 'Cập nhật khoa thành công!', type: 'success' });
  } else {
  await api.post('/departments', formData);
- setToast({ message: 'Tạo Khoa mới thành công!', type: 'success' });
+ setToast({ message: 'Tạo khoa mới thành công!', type: 'success' });
  }
  setIsModalOpen(false);
  fetchData();
@@ -236,7 +236,7 @@ export default function DepartmentsPage() {
  setToast({ message: 'Đã xóa Khoa thành công!', type: 'success' });
  fetchData();
  } catch (err: any) {
- setToast({ message: err.message || 'Lỗi xóa Khoa', type: 'error' });
+ setToast({ message: err.message || 'Lỗi xóa khoa', type: 'error' });
  }
  },
  });
@@ -472,7 +472,7 @@ export default function DepartmentsPage() {
  <Modal
  isOpen={isModalOpen}
  onClose={() => setIsModalOpen(false)}
- title={editingDepartment ? 'Chỉnh sửa Khoa Đào tạo' : 'Tạo Khoa Đào tạo Mới'}
+ title={editingDepartment ? 'Chỉnh sửa khoa đào tạo' : 'Tạo khoa đào tạo mới'}
  >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
@@ -488,7 +488,7 @@ export default function DepartmentsPage() {
  </div>
 
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Khoa Đào tạo</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên khoa đào tạo</label>
  <input
  type="text"
  required
@@ -513,7 +513,7 @@ export default function DepartmentsPage() {
  variant="primary"
  size="md"
  >
- Lưu Thông Tin
+ Lưu thông tin
  </Button>
  </div>
  </form>
@@ -672,18 +672,18 @@ export default function DepartmentsPage() {
 
  {/* Drawer Content */}
  <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
- {/* Header - Solid Flat Color */}
- <div className="bg-[#2563EB] p-5 text-white shrink-0">
+ {/* Header - Modern Gradient */}
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 tabular-nums font-medium text-base text-white border border-white/15">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 tabular-nums font-semibold text-base text-white border border-white/20 shadow-xs">
  {drawerDepartment.code.substring(0, 2).toUpperCase()}
  </div>
  <div className="min-w-0 flex-1 pr-2">
- <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+<h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerDepartment.name}
  </h2>
- <p className="text-[13px] font-semibold text-blue-200 mt-1 tabular-nums">
+ <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
  Mã khoa: {drawerDepartment.code}
  </p>
  </div>
@@ -692,7 +692,7 @@ export default function DepartmentsPage() {
  <button
  type="button"
  onClick={() => setDrawerDepartment(null)}
- className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+ className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
  title="Đóng"
  >
  <X className="h-5 w-5" />

@@ -1047,7 +1047,7 @@ export default function ExamPapersPage() {
                 &quot;{swapModal.targetQuestion?.content}&quot;
               </p>
               <p className="mt-1 text-[12px] text-blue-700 font-semibold">
-                Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'Trắc nghiệm'}) & độ khó tương đương từ Ngân hàng đề.
+                Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'trắc nghiệm'}) & độ khó tương đương từ ngân hàng đề.
               </p>
             </div>
 

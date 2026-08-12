@@ -81,7 +81,7 @@ function escapeHtml(val: unknown) {
 }
 
 export default function ExamArrangementPage() {
- usePageTitle('Xếp Phòng Thi Tự Động');
+ usePageTitle('Xếp phòng thi tự động');
  const router = useRouter();
  const [currentUser, setCurrentUser] = useState<any>(null);
  const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
@@ -541,7 +541,7 @@ export default function ExamArrangementPage() {
  {/* Header */}
  <div className="space-y-1">
  <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
- Xếp Phòng Thi Tự Động
+ Xếp phòng thi tự động
  </h1>
  <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
  Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
@@ -1008,7 +1008,7 @@ export default function ExamArrangementPage() {
  onClick={() =>
  setConfirmModal({
  isOpen: true,
- title: 'Xác nhận Lưu Phương án Xếp phòng',
+ title: 'Xác nhận lưu phương án xếp phòng',
  message: 'Kết quả sẽ được ghi chính thức vào cơ sở dữ liệu. Bạn có chắc chắn?',
  type: 'warning',
  onConfirm: runSaveArrangement,

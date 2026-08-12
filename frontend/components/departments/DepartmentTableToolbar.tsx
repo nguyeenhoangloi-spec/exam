@@ -34,7 +34,7 @@ export function DepartmentTableToolbar({
 
   const columnsList = [
     { key: 'code', label: 'Mã khoa' },
-    { key: 'name', label: 'Tên Khoa đào tạo' },
+    { key: 'name', label: 'Tên khoa đào tạo' },
     { key: 'subjectsCount', label: 'Số môn học' },
     { key: 'classesCount', label: 'Số lớp học' },
     { key: 'teachersCount', label: 'Số giảng viên' },
@@ -56,7 +56,7 @@ export function DepartmentTableToolbar({
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="name_asc">Tên Khoa: A - Z</option>
+            <option value="name_asc">Tên khoa: A - Z</option>
             <option value="subjects_desc">Nhiều môn học nhất</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />

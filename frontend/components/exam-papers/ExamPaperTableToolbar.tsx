@@ -35,7 +35,7 @@ export function ExamPaperTableToolbar({
 
   const columnsList = [
     { key: 'paperCode', label: 'Mã đề thi' },
-    { key: 'subjectName', label: 'Tên Môn học' },
+    { key: 'subjectName', label: 'Tên môn học' },
     { key: 'status', label: 'Trạng thái phát hành' },
     { key: 'questionCount', label: 'Số câu hỏi' },
     { key: 'durationMinutes', label: 'Thời gian thi' },

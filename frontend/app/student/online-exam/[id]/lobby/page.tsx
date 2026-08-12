@@ -154,7 +154,7 @@ export default function StudentExamLobbyPage() {
  <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/20 border-t-blue-500"></div>
  <ShieldCheck className="w-6 h-6 text-blue-400 absolute" />
  </div>
- <h3 className="mt-4 text-base font-semibold text-slate-200">Hệ thống Giám thị đang xác thực điều kiện...</h3>
+                <h3 className="mt-4 text-base font-semibold text-slate-200">Hệ thống giám thị đang xác thực điều kiện...</h3>
  <p className="text-xs text-slate-400 mt-1">Vui lòng chờ trong giây lát</p>
  </div>
  );
@@ -438,7 +438,7 @@ export default function StudentExamLobbyPage() {
  <Lock className="h-5 w-5 text-white" />
  </div>
  <div>
- <h3 className="text-[20px] font-semibold tracking-tight text-white">Nhập Mật Khẩu Phòng Thi</h3>
+              <h3 className="text-[20px] font-semibold tracking-tight text-white">Nhập mật khẩu phòng thi</h3>
  <p className="text-[13px] text-blue-100 font-normal">Xác thực quyền truy cập trước khi vào thi</p>
  </div>
  </div>

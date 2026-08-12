@@ -375,7 +375,7 @@ export default function SubjectsPage() {
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  <input
  type="text"
- placeholder="Tìm theo Mã môn, Tên môn học..."
+              placeholder="Tìm theo mã môn, tên môn học..."
  value={search}
  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
@@ -485,7 +485,7 @@ export default function SubjectsPage() {
  </main>
 
  {/* Add/Edit Subject Modal */}
- <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSubject ? 'Chỉnh sửa Môn học' : 'Tạo Môn học Mới'}>
+ <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSubject ? 'Chỉnh sửa môn học' : 'Tạo môn học mới'}>
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
  <label className="block text-xs font-semibold text-slate-500 mb-1">Mã môn học</label>
@@ -494,7 +494,7 @@ export default function SubjectsPage() {
  className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
  </div>
  <div>
- <label className="block text-xs font-semibold text-slate-500 mb-1">Tên Môn học</label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1">Tên môn học</label>
  <input type="text" required placeholder="VD: Lập trình Căn bản" value={formData.subjectName}
  onChange={(e) => setFormData({ ...formData, subjectName: e.target.value })}
  className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
@@ -546,7 +546,7 @@ export default function SubjectsPage() {
  variant="primary"
  size="md"
  >
- {editingSubject ? 'Cập nhật Môn học' : 'Lưu Môn Học'}
+ {editingSubject ? 'Cập nhật môn học' : 'Lưu môn học'}
  </Button>
  </div>
  </div>
@@ -669,19 +669,19 @@ export default function SubjectsPage() {
  {drawerSubject && (
  <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] flex justify-end">
  <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
- <div className="relative z-10 w-full max-w-lg bg-white shadow-2xl flex flex-col h-full">
- {/* Header - Solid Flat Color matching Department/Teacher/Student Drawer */}
- <div className="bg-[#2563EB] p-5 text-white shrink-0">
+ <div className="relative z-10 w-full max-w-md bg-white shadow-2xl flex flex-col h-full">
+ {/* Header - Modern Gradient matching ProfileDrawer */}
+<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
+<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
  {drawerSubject.subjectCode.substring(0, 2).toUpperCase()}
  </div>
  <div className="min-w-0 flex-1 pr-2">
- <h2 className="text-[20px] font-semibold leading-[28px] text-white break-words">
+<h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerSubject.subjectName}
  </h2>
- <p className="text-[13px] font-semibold text-blue-200 mt-1 tabular-nums">
+ <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
  Mã môn: {drawerSubject.subjectCode} • {drawerSubject.credits} Tín chỉ
  </p>
  </div>
@@ -690,7 +690,7 @@ export default function SubjectsPage() {
  <button
  type="button"
  onClick={() => setDrawerSubject(null)}
- className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+ className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
  title="Đóng"
  >
  <X className="h-5 w-5" />
@@ -728,7 +728,7 @@ export default function SubjectsPage() {
  {[
  { label: 'Sinh viên', value: (drawerSubject as any)._count?.studentSubjects ?? 0, color: 'blue' },
  { label: 'Câu hỏi', value: (drawerSubject as any)._count?.questions ?? 0, color: 'emerald' },
- { label: 'Lịch thi', value: (drawerSubject as any)._count?.examSchedules ?? 0, color: 'violet' },
+ { label: 'Lịch thi', value: (drawerSubject as any)._count?.examSchedules ?? 0, color: 'blue' },
  ].map((m) => (
  <div key={m.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
  <p className={`text-xl font-semibold text-${m.color}-600`}>{m.value}</p>

@@ -50,7 +50,7 @@ export function RegradeFiltersCard({
             type="text"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Tìm theo Mã SV, Tên SV, Lý do..."
+            placeholder="Tìm theo mã SV, tên SV, lý do..."
             className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-8 pr-7 text-xs font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition shadow-2xs"
           />
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />

@@ -411,7 +411,7 @@ export default function StudentExamSchedulePage() {
  onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
  rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
  >
- {item.mode === 'MOCK' ? 'Vào Thi Thử' : 'Vào Phòng Thi Online'}
+ {item.mode === 'MOCK' ? 'Vào thi thử' : 'Vào phòng thi online'}
  </Button>
  )}
 

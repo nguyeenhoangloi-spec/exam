@@ -289,13 +289,13 @@ function TeacherEssayGradingContent() {
  }
 
  if (savedCount > 0 && options.showPopup) {
- showResultPopup('Lưu Điểm Thành Công', `Đã lưu thành công toàn bộ điểm cho ${savedCount} câu hỏi tự luận!`, 'success');
+ showResultPopup('Lưu điểm thành công', `Đã lưu thành công toàn bộ điểm cho ${savedCount} câu hỏi tự luận!`, 'success');
  }
  return true;
  } catch (e: any) {
  const errText = e?.response?.data?.message || 'Không thể lưu điểm bài thi.';
  setMessage(errText);
- showResultPopup('Lỗi Lưu Điểm', errText, 'danger');
+ showResultPopup('Lỗi lưu điểm', errText, 'danger');
  return false;
  } finally {
  setSaving(false);
@@ -816,7 +816,7 @@ function TeacherEssayGradingContent() {
  <StatusBadge status={selected.gradingStatus} />
  </div>
  <p className="text-xs text-slate-500 tabular-nums mt-0.5">
- Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong>
+                        Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong>
  </p>
  </div>
  </div>

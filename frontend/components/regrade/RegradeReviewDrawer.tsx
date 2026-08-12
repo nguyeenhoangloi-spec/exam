@@ -100,24 +100,24 @@ export function RegradeReviewDrawer({
 
  {/* Drawer Container */}
  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl flex-col bg-white shadow-2xl border-l border-slate-200 animate-slide-left">
- {/* ── 1. Standard Solid Blue Header (Matching ProfileDrawer) ── */}
- <div className="bg-[#2563EB] p-5 text-white shrink-0">
+ {/* ── 1. Modern Gradient Header (Matching ProfileDrawer) ── */}
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3.5 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/20 shadow-xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
  {shortAvatar}
  </div>
 
  <div className="min-w-0 flex-1 pr-2">
  <div className="flex items-center gap-2.5 flex-wrap">
- <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white" title={selectedAppeal.student.fullName}>
+              <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words" title={selectedAppeal.student.fullName}>
  Thẩm định Đơn Phúc khảo
  </h2>
- <span className="shrink-0 rounded-lg bg-white/15 px-2.5 py-0.5 text-xs font-semibold text-white border border-white/20">
+ <span className="shrink-0 rounded-lg bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-md border border-white/25">
  {selectedAppeal.student.studentCode}
  </span>
  </div>
- <p className="truncate text-[13px] font-medium text-blue-100 mt-1">
+ <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 line-clamp-2">
  Sinh viên: <strong className="font-semibold text-white">{selectedAppeal.student.fullName}</strong>
  {selectedAppeal.student.class?.code ? ` (${selectedAppeal.student.class.code})` : ''}
  </p>
@@ -127,7 +127,7 @@ export function RegradeReviewDrawer({
  <button
  type="button"
  onClick={onClose}
- className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/10 hover:text-white transition cursor-pointer"
+ className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
  title="Đóng"
  >
  <X className="h-5 w-5" />

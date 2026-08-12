@@ -33,7 +33,7 @@ export function SubjectTableToolbar({
 
   const columnsList = [
     { key: 'subjectCode', label: 'Mã môn học' },
-    { key: 'subjectName', label: 'Tên Môn học' },
+    { key: 'subjectName', label: 'Tên môn học' },
     { key: 'credits', label: 'Số Tín chỉ' },
     { key: 'department', label: 'Khoa đào tạo' },
   ];
@@ -54,7 +54,7 @@ export function SubjectTableToolbar({
           >
             <option value="newest">Sắp xếp: Mới nhất</option>
             <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="name_asc">Tên Môn: A - Z</option>
+            <option value="name_asc">Tên môn: A - Z</option>
             <option value="credits_desc">Số tín chỉ: Cao nhất</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />

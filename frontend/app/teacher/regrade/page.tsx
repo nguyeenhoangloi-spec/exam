@@ -246,7 +246,7 @@ export default function RegradeManagementPage() {
       columns: [
         { header: 'STT', width: '40px' },
         { header: 'Mã SV', width: '90px', align: 'center' },
-        { header: 'Họ và Tên Sinh viên', width: '160px' },
+        { header: 'Họ và tên sinh viên', width: '160px' },
         { header: 'Môn thi', width: '180px' },
         { header: 'Điểm gốc', width: '80px', align: 'center' },
         { header: 'Điểm mới', width: '80px', align: 'center' },
@@ -299,7 +299,7 @@ export default function RegradeManagementPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Tìm theo Mã SV, Họ tên, Lý do..."
+        placeholder="Tìm theo mã SV, họ tên, lý do..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);

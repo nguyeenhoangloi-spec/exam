@@ -150,7 +150,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
   return createPortal(
     <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-rose-100 flex flex-col max-h-[90vh]">
         {/* Header Alert Banner */}
         <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-amber-600 px-6 py-4 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -173,16 +173,16 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
         {/* Warning Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
-          <div className="rounded-xl bg-rose-50/90 p-4 flex items-start gap-3">
+          <div className="rounded-xl bg-rose-50/80 border border-rose-200 p-4 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
             <div className="text-xs text-rose-900 space-y-1">
-              <p className="font-semibold ">CẢNH BÁO HẬU QUẢ:</p>
+              <p className="font-bold">CẢNH BÁO HẬU QUẢ:</p>
               <p className="leading-relaxed font-medium">{warningMessage}</p>
             </div>
           </div>
 
           {errorMsg && (
-            <div className="rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-700 animate-shake">
+            <div className="rounded-xl bg-red-100 border border-red-200 p-3 text-xs font-semibold text-red-700 animate-shake">
               {errorMsg}
             </div>
           )}
@@ -195,7 +195,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <select
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:bg-white focus:outline-none bg-slate-50/50 cursor-pointer transition"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold focus:!border-rose-500 focus:bg-white focus:outline-none bg-slate-50/50 cursor-pointer transition"
             >
               {reasons.map((r) => (
                 <option key={r} value={r}>
@@ -210,7 +210,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 required
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-blue-500 focus:outline-none transition"
+                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:!border-rose-500 focus:outline-none transition"
               />
             )}
           </div>
@@ -225,7 +225,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium focus:!border-rose-500 focus:outline-none transition"
             />
           </div>
 
@@ -258,7 +258,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               onChange={(e) => setInputPhrase(e.target.value)}
               className={`w-full rounded-xl border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${isPhraseMatched
                 ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900 font-semibold'
-                : 'border-slate-200 text-[#0F172A] focus:border-blue-500'
+                : 'border-slate-200 text-[#0F172A] focus:!border-rose-500'
                 }`}
             />
             {isPhraseMatched && (
@@ -284,7 +284,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder={passwordRequired ? 'Nhập mật khẩu Admin hiện tại' : 'Mật khẩu tài khoản (tùy chọn)'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:!border-rose-500 focus:outline-none transition"
             />
           </div>
 
@@ -302,7 +302,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
                 value={examPassword}
                 onChange={(e) => setExamPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] bg-white focus:border-blue-500 focus:outline-none shadow-2xs transition"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] bg-white focus:!border-rose-500 focus:outline-none shadow-2xs transition"
               />
               <p className="text-[13px] font-normal text-[#64748B] leading-relaxed">
                 Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.

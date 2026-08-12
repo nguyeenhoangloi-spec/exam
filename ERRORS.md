@@ -21,6 +21,57 @@
 
 ---
 
+## [2026-08-12 00:00] - Next.js Production Build Race With Running Server
+
+- **Type**: Build / Infrastructure
+- **Severity**: Medium
+- **File**: `frontend/app/admin/activity-logs/page.tsx`, `frontend/app/students/page.tsx`
+- **Root Cause**: A subsequent `next build` ran while the workspace had active Next.js dev/start processes using the shared `.next-prod` output. The build reported transient JSX parse failures at valid `return` blocks; the same source had already passed a prior production build, ESLint and TypeScript checks.
+- **Error Message**:
+  ```txt
+  Unexpected token `main`. Expected jsx identifier
+  Expression expected
+  ```
+- **Fix Applied**: No source rollback; verified the reported regions and confirmed lint/TypeScript still pass. A clean build requires stopping the active Next.js processes before rerunning.
+- **Prevention**: Stop active development/production Next.js servers before a full production build, or configure an isolated build output directory.
+- **Status**: Resolved with isolated build output; active-server race remains documented for default `.next-prod`
+
+---
+
+## [2026-08-12 00:00] - Generated Isolated Build Directory Cleanup Blocked
+
+- **Type**: Agent / Environment Policy
+- **Severity**: Low
+- **File**: `frontend/.next-audit/`
+- **Root Cause**: The isolated build succeeded, but the environment policy rejected the recursive removal command for the generated output directory.
+- **Error Message**:
+  ```txt
+  command rejected: blocked by policy
+  ```
+- **Fix Applied**: Removed the temporary `.next-audit` include from `tsconfig.json`; `.next-audit/` contains only generated build artifacts and does not affect source or runtime behavior.
+- **Prevention**: Use an approved workspace cleanup operation after confirming the target path, or remove the generated directory manually when no Next.js process is using it.
+- **Status**: Blocked by environment policy
+
+---
+
+## [2026-08-12 00:00] - Auxiliary Audit Command Failures
+
+- **Type**: Agent / Process
+- **Severity**: Low
+- **File**: Read-only audit commands
+- **Root Cause**: A few exploratory commands used PowerShell quoting incompatible with regex literals, one patch used an incorrect path, and the optional `@swc/core` package was not installed locally.
+- **Error Message**:
+  ```txt
+  ParserError: The string is missing the terminator
+  Failed to read file to update ... path specified
+  Cannot find module '@swc/core'
+  ```
+- **Fix Applied**: Replaced exploratory checks with PowerShell-native scans, corrected patch paths, and used the project’s own Next.js build/lint/type checks instead of the optional parser.
+- **Prevention**: Keep regex literals single-quoted in PowerShell and validate paths before applying multi-file patches.
+- **Status**: Fixed
+
+---
+
 ## [2026-08-12 00:00] - PowerShell Regex Quoting Error During UI Scan
 
 - **Type**: Agent / Process

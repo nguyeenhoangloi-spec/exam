@@ -60,7 +60,7 @@ export function ExamReportTableToolbar({
           >
             <option value="score_desc">Điểm thi: Cao xuống thấp</option>
             <option value="score_asc">Điểm thi: Thấp đến cao</option>
-            <option value="name_asc">Tên Thí sinh: A - Z</option>
+            <option value="name_asc">Tên thí sinh: A - Z</option>
             <option value="violation_desc">Nhiều vi phạm nhất</option>
           </select>
           <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
