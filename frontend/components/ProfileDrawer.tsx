@@ -31,98 +31,108 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
  const shortAvatar = avatarText ? avatarText.trim().slice(0, 3).toUpperCase() : 'HD';
 
  return (
- <div role="dialog" aria-modal="true" aria-label="Thông tin tài khoản" className="fixed inset-0 z-[70] overflow-hidden">
- {/* Backdrop */}
- <div
- className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
- onClick={onClose}
- />
+    <div role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" className="fixed inset-0 z-[70] overflow-hidden">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      />
 
- <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
- <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
- {/* Header - Solid Flat Color matching All Drawers */}
- <div className="bg-[#2563EB] p-5 text-white shrink-0">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 font-semibold text-base text-white border border-white/15">
- {shortAvatar}
- </div>
- <div className="min-w-0 flex-1 pr-2">
- <div className="flex items-center gap-2 flex-wrap">
- <h2 className="truncate text-[20px] font-semibold leading-[28px] text-white max-w-[220px]" title={title}>{title}</h2>
- {badge && (badge.status ? (
- <StatusBadge status={badge.status} customLabel={badge.label} />
- ) : (
- <span className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 text-[13px] font-semibold ${badge.className}`}>
- {badge.label}
- </span>
- ))}
- </div>
- {subtitle && <p className="truncate text-[13px] font-semibold text-blue-200 mt-1 tabular-nums">{subtitle}</p>}
- </div>
- </div>
+      <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
+          {/* Header - Modern Gradient Header */}
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 p-5 text-white shrink-0 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-bold text-base text-white border border-white/20 shadow-xs">
+                  {shortAvatar}
+                </div>
+                <div className="min-w-0 flex-1 pr-1">
+                  <h2 className="text-[18px] font-bold leading-snug text-white line-clamp-2 break-words" title={title}>
+                    {title}
+                  </h2>
 
- <button
- type="button"
- onClick={onClose}
- className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
- title="Đóng"
- >
- <X className="h-5 w-5" />
- </button>
- </div>
- </div>
+                  {badge && (
+                    <div className="mt-2 flex items-center gap-2 flex-wrap">
+                      {badge.status ? (
+                        <StatusBadge status={badge.status} customLabel={badge.label} />
+                      ) : (
+                        <span className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-white/20 text-white backdrop-blur-md border border-white/25 ${badge.className || ''}`}>
+                          {badge.label}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
- {/* Details Body */}
- <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-[15px] font-semibold text-[#0F172A]">Thông tin chi tiết</h3>
- <div className="grid gap-3">
- {details.map((item, idx) => {
- const Icon = item.icon;
- return (
- <div key={idx} className="flex items-start justify-between gap-3 text-[15px]">
- <span className="flex items-center gap-2 text-[#64748B] text-[13px] font-semibold shrink-0">
- {Icon && <Icon className="h-4 w-4 text-[#64748B]" />}
- {item.label}:
- </span>
- <span className="font-semibold text-[#0F172A] text-right text-[15px]">
- {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
- ? <StatusBadge status={item.value} />
- : item.value || '---'}
- </span>
- </div>
- );
- })}
- </div>
- </div>
+                  {subtitle && (
+                    <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 tabular-nums">
+                      {subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
 
- {/* Extra Custom Sections */}
- {extraSections && extraSections.length > 0 && (
- <div className="space-y-4">
- {extraSections.map((sec, i) => (
- <div key={i} className="rounded-2xl border border-slate-200 p-4 space-y-3">
- <h3 className="text-xs font-semibold tracking-wider text-slate-400">{sec.title}</h3>
- <div>{sec.content}</div>
- </div>
- ))}
- </div>
- )}
- </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
+                title="Đóng"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
 
- {/* Footer */}
- <div className="border-t border-slate-200/90 bg-slate-50 px-6 py-4 flex items-center justify-end">
- <Button
- type="button"
- variant="secondary"
- size="md"
- onClick={onClose}
- >
- Đóng
- </Button>
- </div>
- </div>
- </div>
- </div>
+          {/* Details Body */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
+              <h3 className="text-[15px] font-semibold text-[#0F172A]">Thông tin chi tiết</h3>
+              <div className="grid gap-3.5">
+                {details.map((item, idx) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={idx} className="flex items-start justify-between gap-3 text-[14px]">
+                      <span className="flex items-center gap-2 text-slate-500 text-[13px] font-semibold shrink-0 pt-0.5">
+                        {Icon && <Icon className="h-4 w-4 text-slate-400 shrink-0" />}
+                        {item.label}:
+                      </span>
+                      <span className="font-semibold text-slate-900 text-right text-[14px] leading-snug break-words max-w-[65%]">
+                        {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
+                          ? <StatusBadge status={item.value} />
+                          : item.value || '---'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Extra Custom Sections */}
+            {extraSections && extraSections.length > 0 && (
+              <div className="space-y-4">
+                {extraSections.map((sec, i) => (
+                  <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 shadow-2xs">
+                    <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">{sec.title}</h3>
+                    <div>{sec.content}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-slate-200/90 bg-white px-6 py-3.5 flex items-center justify-end shrink-0">
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              onClick={onClose}
+            >
+              Đóng
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
  );
 };

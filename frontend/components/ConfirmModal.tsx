@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import { X, AlertTriangle, CheckCircle, Info, LogOut } from 'lucide-react';
 import { Button } from './ui';
 
 interface ConfirmModalProps {
@@ -23,7 +23,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  type = 'danger',
+  type = 'warning',
   requireReason = false,
   reasonPlaceholder = 'Nhập lý do (tối thiểu 3 ký tự)...',
   confirmText = 'Xác nhận',
@@ -61,13 +61,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     switch (type) {
       case 'danger':
         return {
-          icon: <AlertTriangle className="h-4.5 w-4.5 text-red-600" />,
-          bg: 'bg-red-50 border-red-200',
+          icon: <LogOut className="h-4.5 w-4.5 text-rose-600" />,
+          bg: 'bg-rose-50 border-rose-200',
         };
       case 'success':
         return {
-          icon: <CheckCircle2 className="h-4.5 w-4.5 text-green-600" />,
-          bg: 'bg-green-50 border-green-200',
+          icon: <CheckCircle className="h-4.5 w-4.5 text-emerald-600" />,
+          bg: 'bg-emerald-50 border-emerald-200',
         };
       case 'info':
         return {
@@ -93,7 +93,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${iconConfig.bg} shadow-2xs shrink-0`}>
               {iconConfig.icon}
             </div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">{title}</h3>
+            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-snug">{title}</h3>
           </div>
           <button
             type="button"
@@ -107,7 +107,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-5 space-y-3">
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed">{message}</p>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
 
           {requireReason && (
             <div className="space-y-1.5 pt-1">
@@ -122,7 +122,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 placeholder={reasonPlaceholder}
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-xs font-medium focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
               />
-              {reasonError && <p className="text-xs font-medium text-rose-600">{reasonError}</p>}
+              {reasonError && <p className="text-xs font-bold text-rose-600">{reasonError}</p>}
             </div>
           )}
         </div>
@@ -135,7 +135,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </Button>
           )}
           <Button
-            variant={type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'primary'}
+            variant={type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'info' ? 'primary' : 'secondary'}
             size="md"
             onClick={handleConfirm}
             disabled={isLoading}
