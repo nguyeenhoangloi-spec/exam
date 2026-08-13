@@ -152,7 +152,7 @@ export default function LoginPage() {
   );
 
   const inputCls = [
-    'w-full h-10 rounded-lg border px-3.5 pl-10 text-[15px] font-normal placeholder-slate-400 transition duration-150 outline-none',
+    'w-full h-10 rounded-xl border px-3.5 pl-10 text-[15px] font-normal placeholder-slate-400 transition duration-150 outline-none',
     'focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
     isDark
       ? 'bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500'
@@ -358,8 +358,8 @@ export default function LoginPage() {
                   onClick={handleGoogleLogin}
                   disabled={loading}
                   className={[
-                    'w-full h-12 flex items-center justify-between px-5 rounded-lg text-[15px] font-semibold transition-all duration-150 cursor-pointer border shadow-2xs',
-                    'bg-primary-50 hover:bg-primary-50 border-primary-200 text-slate-800',
+                    'w-full h-12 flex items-center justify-between px-5 rounded-xl text-[15px] font-semibold transition-all duration-150 cursor-pointer border border-slate-200/90 shadow-2xs',
+                    'bg-white hover:bg-slate-50 text-slate-800',
                     'dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/80',
                     'disabled:opacity-60 disabled:cursor-not-allowed',
                   ].join(' ')}
@@ -402,10 +402,10 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowManualLogin((prev) => !prev)}
                   className={[
-                    'w-full h-12 px-4 rounded-lg border transition flex items-center justify-between text-[15px] font-semibold cursor-pointer',
+                    'w-full h-12 px-4 rounded-xl border border-transparent transition-colors flex items-center justify-between text-[15px] font-semibold cursor-pointer',
                     isDark
-                      ? 'bg-slate-800/60 border-slate-700 text-slate-300 hover:bg-slate-800'
-                      : 'bg-slate-50 border-slate-200/80 text-slate-700 hover:bg-slate-100',
+                      ? 'bg-transparent text-slate-300 hover:text-white'
+                      : 'bg-transparent text-slate-700 hover:text-primary-600',
                   ].join(' ')}
                 >
                   <div className="flex items-center gap-3">

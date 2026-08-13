@@ -53,7 +53,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
     }
   };
 
-  const fieldClass = 'h-9 w-full rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3.5 text-[15px] leading-6 font-normal text-slate-900 dark:text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder:text-slate-400';
+  const fieldClass = 'h-9 w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 text-[15px] leading-6 font-normal text-slate-900 dark:text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder:text-slate-400';
 
   return (
     <Modal isOpen={isOpen} onClose={close} title="Đổi mật khẩu tài khoản">
@@ -87,7 +87,7 @@ function PasswordField({ label, value, onChange, visible, onToggle, placeholder 
     <div className="space-y-1">
       <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">{label} <span className="text-rose-500">*</span></label>
       <div className="relative">
-        <input type={visible ? 'text' : 'password'} value={value} onChange={(e) => onChange(e.target.value)} className="h-9 w-full rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3.5 pr-10 text-[15px] leading-6 font-normal text-slate-900 dark:text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder:text-slate-400" placeholder={placeholder} autoComplete="new-password" />
+        <input type={visible ? 'text' : 'password'} value={value} onChange={(e) => onChange(e.target.value)} className="h-9 w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 pr-10 text-[15px] leading-6 font-normal text-slate-900 dark:text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder:text-slate-400" placeholder={placeholder} autoComplete="new-password" />
         <button type="button" onClick={onToggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition" aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}>{visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
       </div>
     </div>

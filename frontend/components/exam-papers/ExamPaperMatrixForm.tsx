@@ -176,7 +176,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
+                className={`flex h-9 items-center justify-center gap-1 rounded-xl text-xs font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
                   ? 'bg-primary-600 text-white border-primary-600 shadow-2xs'
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
@@ -186,7 +186,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
-                className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
+                className={`flex h-9 items-center justify-center gap-1 rounded-xl text-xs font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
                   ? 'bg-primary-600 text-white border-primary-600 shadow-2xs'
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
@@ -196,7 +196,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
+                className={`flex h-9 items-center justify-center gap-1 rounded-xl text-xs font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
                   ? 'bg-primary-600 text-white border-primary-600 shadow-2xs'
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
@@ -218,7 +218,7 @@ export function ExamPaperMatrixForm({
               value={formData.paperCode}
               onChange={(e) => setFormData((p: any) => ({ ...p, paperCode: e.target.value }))}
               placeholder="101"
-              className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
             />
           </div>
 
@@ -231,7 +231,7 @@ export function ExamPaperMatrixForm({
               max={10}
               value={formData.variantCount}
               onChange={(e) => setFormData((p: any) => ({ ...p, variantCount: e.target.value }))}
-              className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
             />
           </div>
 
@@ -244,7 +244,7 @@ export function ExamPaperMatrixForm({
               max={scheduleDuration || 180}
               value={formData.durationMinutes}
               onChange={(e) => handleDurationChange(e.target.value)}
-              className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
             />
             {scheduleDuration > 0 && (
               <p className="text-[12px] text-slate-400 font-semibold">Tối đa: {scheduleDuration} phút</p>
@@ -517,7 +517,7 @@ export function ExamPaperMatrixForm({
                     max={10}
                     value={(formData as any)[key] || ''}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -536,7 +536,7 @@ export function ExamPaperMatrixForm({
                     min={0}
                     value={(formData as any)[key]}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -560,7 +560,7 @@ export function ExamPaperMatrixForm({
           <select
             value={formData.mediaMaxPlays || '2'}
             onChange={(e) => setFormData((p: any) => ({ ...p, mediaMaxPlays: e.target.value }))}
-            className="h-9 rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
+            className="h-9 rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
           >
             <option value="1">1 lần (Ngặt nghèo / Thi Nghe)</option>
             <option value="2">2 lần (Chuẩn Khảo thí / IELTS)</option>

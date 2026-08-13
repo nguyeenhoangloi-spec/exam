@@ -321,7 +321,7 @@ export default function ContactSupportPage() {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm hướng dẫn, quy chế thi, câu hỏi thường gặp..."
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-4 pl-12 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950 transition"
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-4 pl-12 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950 transition"
               />
               {searchQuery && (
                 <button
@@ -570,7 +570,7 @@ export default function ContactSupportPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Ví dụ: Nguyễn Văn A"
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
                 />
               </div>
 
@@ -584,7 +584,7 @@ export default function ContactSupportPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nguyenvana@exam.edu.vn"
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
                 />
               </div>
 
@@ -595,7 +595,7 @@ export default function ContactSupportPage() {
                 <select
                   value={role}
                   onChange={(e: any) => setRole(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
                 >
                   <option value="STUDENT">Sinh viên</option>
                   <option value="TEACHER">Giảng viên</option>
@@ -614,7 +614,7 @@ export default function ContactSupportPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Mô tả cụ thể sự cố bạn gặp phải (ví dụ: Không đăng nhập được, thiếu môn thi trong lịch thi, lỗi nộp bài...)"
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -799,7 +799,7 @@ export default function ContactSupportPage() {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Nhập câu hỏi hỗ trợ..."
-                className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+                className="flex-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
               />
               <button
                 type="submit"

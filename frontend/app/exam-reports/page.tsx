@@ -686,7 +686,7 @@ export default function ExamReportsPage() {
  placeholder="Tìm kiếm theo Tên môn, Mã môn, Kỳ thi..."
  value={modalSearch}
  onChange={(e) => setModalSearch(e.target.value)}
- className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  {modalSearch && (
  <button
@@ -716,7 +716,7 @@ export default function ExamReportsPage() {
  <select
  value={modalFormatFilter}
  onChange={(e) => setModalFormatFilter(e.target.value as any)}
- className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+ className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
  >
  <option value="ALL">Hình thức: Tất cả</option>
  <option value="TRAC_NGHIEM">Hình thức: Trắc nghiệm</option>
@@ -729,7 +729,7 @@ export default function ExamReportsPage() {
  <select
  value={modalSubjectFilter}
  onChange={(e) => setModalSubjectFilter(e.target.value)}
- className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
+ className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
  >
  <option value="ALL">Môn học: Tất cả</option>
  {availableSubjects.map((sb) => (
@@ -742,7 +742,7 @@ export default function ExamReportsPage() {
  <select
  value={modalStatusFilter}
  onChange={(e) => setModalStatusFilter(e.target.value as any)}
- className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+ className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
  >
  <option value="ALL">Trạng thái: Tất cả</option>
  <option value="ONGOING">Đang diễn ra</option>
@@ -878,7 +878,7 @@ export default function ExamReportsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-8 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs leading-none"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-8 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs leading-none"
  />
  {search && (
  <button
@@ -903,7 +903,7 @@ export default function ExamReportsPage() {
  setStatusFilter(e.target.value);
  setPage(1);
  }}
- className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 outline-none hover:border-slate-300 transition-all cursor-pointer shadow-2xs leading-none"
+ className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 outline-none hover:border-slate-300 transition-all cursor-pointer shadow-2xs leading-none"
  >
  <option value="ALL">Tất cả Thí sinh</option>
  <option value="SUBMITTED">Đã tham gia / Nộp bài</option>

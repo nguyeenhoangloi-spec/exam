@@ -175,7 +175,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Nhập mật khẩu hiện tại của bạn..."
                 required
-                className="w-full rounded-lg border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="button"
@@ -197,7 +197,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..."
                 required
-                className="w-full rounded-lg border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="button"
@@ -235,7 +235,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Nhập lại chính xác mật khẩu mới..."
                 required
-                className="w-full rounded-lg border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="button"

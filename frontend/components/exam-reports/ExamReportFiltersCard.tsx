@@ -152,7 +152,7 @@ export function ExamReportFiltersCard({
  <select
  value={summaryFilters.examPeriodId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, examPeriodId: e.target.value }))}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả kỳ thi</option>
  {summaryOptions?.periods.map((item) => (
@@ -170,7 +170,7 @@ export function ExamReportFiltersCard({
  <select
  value={summaryFilters.subjectId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, subjectId: e.target.value }))}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả môn học</option>
  {summaryOptions?.subjects.map((item) => (
@@ -188,7 +188,7 @@ export function ExamReportFiltersCard({
  <select
  value={summaryFilters.departmentId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, departmentId: e.target.value }))}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả khoa</option>
  {summaryOptions?.departments.map((item) => (
@@ -206,7 +206,7 @@ export function ExamReportFiltersCard({
  <select
  value={summaryFilters.classId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, classId: e.target.value }))}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả lớp học</option>
  {summaryOptions?.classes?.map((item: any) => (
@@ -225,7 +225,7 @@ export function ExamReportFiltersCard({
  type="date"
  value={summaryFilters.fromDate}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, fromDate: e.target.value }))}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  </div>
 
@@ -237,7 +237,7 @@ export function ExamReportFiltersCard({
  type="date"
  value={summaryFilters.toDate}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, toDate: e.target.value }))}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  </div>
  </div>

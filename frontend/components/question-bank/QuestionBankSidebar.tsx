@@ -49,7 +49,7 @@ export function QuestionBankSidebar({
         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
           <h3 className="text-[18px] font-semibold text-slate-900">Tổng quan ngân hàng</h3>
           <div className="relative">
-            <select className="h-9 appearance-none rounded-lg border border-slate-200 bg-white px-3 pr-7 text-[15px] font-normal text-slate-700 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs leading-none">
+            <select className="h-9 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-7 text-[15px] font-normal text-slate-700 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs leading-none">
               <option>Tất cả thời gian</option>
               <option>Tháng này</option>
               <option>Học kỳ này</option>

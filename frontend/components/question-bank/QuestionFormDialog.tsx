@@ -209,7 +209,7 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Môn học / Học phần <span className="text-rose-500">*</span>
             </label>
-<select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {subjects.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.subjectName}
@@ -223,7 +223,7 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Loại câu hỏi <span className="text-rose-500">*</span>
             </label>
-<select {...register('type')} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -237,7 +237,7 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Mức độ khó <span className="text-rose-500">*</span>
             </label>
-<select {...register('difficulty')} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -251,7 +251,7 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
             </label>
-<select {...register('bloomLevel')} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(BLOOM_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -470,11 +470,11 @@ export function QuestionFormDialog({
             </div>
             {fillBlankFields.fields.map((field, index) => (
               <div key={field.id} className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[70px_1fr_100px_auto]">
-                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-lg border bg-slate-50 p-2 text-[15px] font-semibold text-center" />
-                <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-lg border p-2 text-[15px] font-semibold" />
-                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-lg border p-2 text-[15px] font-semibold" />
+                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-xl border bg-slate-50 p-2 text-[15px] font-semibold text-center" />
+                <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-xl border p-2 text-[15px] font-semibold" />
+                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-xl border p-2 text-[15px] font-semibold" />
                 <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600 font-semibold">×</button>
-                <input {...register(`fillBlankAnswers.${index}.acceptedAnswersText`)} placeholder="Đáp án chấp nhận thêm, ngăn cách bằng dấu phẩy" className="md:col-span-4 rounded-lg border p-2 text-[15px]" />
+                <input {...register(`fillBlankAnswers.${index}.acceptedAnswersText`)} placeholder="Đáp án chấp nhận thêm, ngăn cách bằng dấu phẩy" className="md:col-span-4 rounded-xl border p-2 text-[15px]" />
               </div>
             ))}
             <button type="button" onClick={() => {

@@ -130,8 +130,8 @@ for (const folder of sourceRoots) {
 
     for (const control of inspectJsxControlClasses(content)) {
       if (['input', 'select', 'textarea'].includes(control.tagName) && !['hidden', 'file', 'checkbox', 'radio'].includes(control.type)) {
-        if (/\brounded-xl\b/i.test(control.classes)) {
-          report(file, 'input/select/textarea phải dùng radius control rounded-lg');
+        if (/\brounded-md\b/i.test(control.classes)) {
+          report(file, 'input/select/textarea phải dùng radius control rounded-xl');
         }
         if (/\btext-sm\b|\btext-xs\b|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(control.classes)) {
           report(file, 'input/select/textarea phải dùng cỡ chữ 15px');
@@ -394,11 +394,11 @@ if (!/role="status"/.test(toast)
   violations.push('components/Toast.tsx: Toast specification is incomplete');
 }
 
-if (!/appearance-none rounded-lg/.test(filterSelect) || !/dark:bg-slate-900/.test(filterSelect)) {
-  violations.push('components/ui/FilterSelect.tsx: shared select must use rounded-lg and dark-mode surface');
+if (!/appearance-none rounded-xl/.test(filterSelect) || !/dark:bg-slate-900/.test(filterSelect)) {
+  violations.push('components/ui/FilterSelect.tsx: shared select must use rounded-xl and dark-mode surface');
 }
-if (/rounded-xl/.test(button) || !/rounded-lg/.test(button) || /rounded-xl/.test(input) || !/rounded-lg/.test(input)) {
-  violations.push('components/ui/Button.tsx and Input.tsx: shared controls must use rounded-lg, not rounded-xl');
+if (!/rounded-xl/.test(button) || !/rounded-xl/.test(input)) {
+  violations.push('components/ui/Button.tsx and Input.tsx: shared controls must use rounded-xl');
 }
 
 for (const relativePrimitive of sharedUiPrimitiveFiles) {

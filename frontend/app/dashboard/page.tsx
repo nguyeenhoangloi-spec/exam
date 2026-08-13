@@ -277,7 +277,7 @@ export default function DashboardPage() {
                 if (reasonError) setReasonError('');
               }}
               placeholder="Nhập chi tiết lý do từ chối để giảng viên chỉnh sửa..."
-              className={`w-full resize-none rounded-lg border px-3 py-2.5 text-[15px] font-normal outline-none transition focus:ring-2 ${
+              className={`w-full resize-none rounded-xl border px-3 py-2.5 text-[15px] font-normal outline-none transition focus:ring-2 ${
                 reasonError
                   ? 'border-rose-300 bg-rose-50/40 focus:ring-rose-200'
                   : 'border-slate-200 bg-white focus:border-blue-500 focus:ring-blue-100'

@@ -324,7 +324,7 @@ export default function ExamRoomsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -458,7 +458,7 @@ export default function ExamRoomsPage() {
               placeholder="VD: LAB-A101"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -470,7 +470,7 @@ export default function ExamRoomsPage() {
               placeholder="VD: Phòng máy tính A101"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -482,7 +482,7 @@ export default function ExamRoomsPage() {
                 required
                 value={formData.capacity}
                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -493,7 +493,7 @@ export default function ExamRoomsPage() {
                 placeholder="VD: Tòa A"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -504,7 +504,7 @@ export default function ExamRoomsPage() {
               <select
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               >
                 <option value="COMPUTER_LAB">Phòng máy tính</option>
                 <option value="THEORY">Phòng lý thuyết</option>
@@ -515,7 +515,7 @@ export default function ExamRoomsPage() {
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               >
                 <option value="AVAILABLE">Sẵn sàng</option>
                 <option value="MAINTENANCE">Bảo trì</option>

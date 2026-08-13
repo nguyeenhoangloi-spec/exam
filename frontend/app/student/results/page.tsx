@@ -710,60 +710,43 @@ export default function StudentResultsPage() {
  </div>
 
  {/* Academic Year Filter */}
- <div className="relative">
- <select
- value={filterYear}
- onChange={(e) => {
- setFilterYear(e.target.value);
- setPage(1);
- }}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ <FilterSelect
+  value={filterYear}
+  onChange={(e) => { setFilterYear(e.target.value); setPage(1); }}
+  containerClassName="w-full"
+  className="w-full"
  >
- <option value="ALL">Tất cả năm học</option>
- {academicYears.map((yr) => (
- <option key={yr} value={yr}>
- Năm học {yr}
- </option>
- ))}
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
- </div>
+  <option value="ALL">Tất cả năm học</option>
+  {academicYears.map((yr) => (
+  <option key={yr} value={yr}>Năm học {yr}</option>
+  ))}
+ </FilterSelect>
 
  {/* Semester Filter */}
- <div className="relative">
- <select
- value={filterSemester}
- onChange={(e) => {
- setFilterSemester(e.target.value);
- setPage(1);
- }}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ <FilterSelect
+  value={filterSemester}
+  onChange={(e) => { setFilterSemester(e.target.value); setPage(1); }}
+  containerClassName="w-full"
+  className="w-full"
  >
- <option value="ALL">Tất cả học kỳ</option>
- <option value="HK1">Học kỳ I</option>
- <option value="HK2">Học kỳ II</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
- </div>
+  <option value="ALL">Tất cả học kỳ</option>
+  <option value="HK1">Học kỳ I</option>
+  <option value="HK2">Học kỳ II</option>
+ </FilterSelect>
 
  {/* Status Filter */}
- <div className="relative">
- <select
- value={filterStatus}
- onChange={(e) => {
- setFilterStatus(e.target.value);
- setPage(1);
- }}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ <FilterSelect
+  value={filterStatus}
+  onChange={(e) => { setFilterStatus(e.target.value); setPage(1); }}
+  containerClassName="w-full"
+  className="w-full"
  >
- <option value="ALL">Tất cả trạng thái kết quả</option>
- <option value="PASSED">Môn Đạt</option>
- <option value="FAILED">Chưa đạt</option>
- <option value="GRADING">Đang chấm</option>
- <option value="UNPUBLISHED">Chờ công bố</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
- </div>
+  <option value="ALL">Tất cả trạng thái kết quả</option>
+  <option value="PASSED">Môn Đạt</option>
+  <option value="FAILED">Chưa đạt</option>
+  <option value="GRADING">Đang chấm</option>
+  <option value="UNPUBLISHED">Chờ công bố</option>
+ </FilterSelect>
  </div>
  </div>
 
@@ -775,21 +758,17 @@ export default function StudentResultsPage() {
 
  <div className="flex items-center gap-2">
  {/* Sort */}
- <div className="relative">
- <select
- value={sortOrder}
- onChange={(e) => setSortOrder(e.target.value)}
- className="appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+ <FilterSelect
+  value={sortOrder}
+  onChange={(e) => setSortOrder(e.target.value)}
  >
- <option value="date_desc">Ngày thi: Mới nhất</option>
- <option value="date_asc">Ngày thi: Cũ nhất</option>
- <option value="score_desc">Điểm số: Cao nhất</option>
- <option value="score_asc">Điểm số: Thấp nhất</option>
- <option value="code_asc">Mã môn: A - Z</option>
- <option value="name_asc">Tên môn: A - Z</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
- </div>
+  <option value="date_desc">Ngày thi: Mới nhất</option>
+  <option value="date_asc">Ngày thi: Cũ nhất</option>
+  <option value="score_desc">Điểm số: Cao nhất</option>
+  <option value="score_asc">Điểm số: Thấp nhất</option>
+  <option value="code_asc">Mã môn: A - Z</option>
+  <option value="name_asc">Tên môn: A - Z</option>
+ </FilterSelect>
 
  {/* Column Selector */}
  <div className="relative">

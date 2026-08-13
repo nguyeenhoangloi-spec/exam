@@ -382,7 +382,7 @@ export default function SubjectsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
  />
  {search && (
  <button
@@ -536,25 +536,25 @@ export default function SubjectsPage() {
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã môn học</label>
  <input type="text" required placeholder="VD: INT101" value={formData.subjectCode}
  onChange={(e) => setFormData({ ...formData, subjectCode: e.target.value })}
- className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
  </div>
  <div>
             <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên môn học</label>
  <input type="text" required placeholder="VD: Lập trình Căn bản" value={formData.subjectName}
  onChange={(e) => setFormData({ ...formData, subjectName: e.target.value })}
- className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Số Tín chỉ</label>
  <input type="number" required min={1} max={10} value={formData.credits}
  onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
- className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white" />
  </div>
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa đào tạo</label>
  <select required value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
- className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+ className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
  <option value="">-- Chọn Khoa --</option>
  {departments.map((d) => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
  </select>
@@ -625,7 +625,7 @@ export default function SubjectsPage() {
  required
  value={enrollClassData.classId}
  onChange={(e) => setEnrollClassData({ ...enrollClassData, classId: e.target.value })}
- className="w-full appearance-none rounded-lg border border-slate-200 px-3 pr-8 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full appearance-none rounded-xl border border-slate-200 px-3 pr-8 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  <option value="">-- Chọn lớp để gán --</option>
  {classes.map((c: any) => (
@@ -644,7 +644,7 @@ export default function SubjectsPage() {
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Học kỳ</label>
  <select value={enrollClassData.semester}
  onChange={(e) => setEnrollClassData({ ...enrollClassData, semester: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none">
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none">
  <option value="HK1">Học kỳ I</option>
  <option value="HK2">Học kỳ II</option>
  <option value="HK3">Học kỳ Hè</option>
@@ -655,7 +655,7 @@ export default function SubjectsPage() {
  <input type="text" required value={enrollClassData.schoolYear}
  onChange={(e) => setEnrollClassData({ ...enrollClassData, schoolYear: e.target.value })}
  placeholder="VD: 2025-2026"
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none" />
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none" />
  </div>
  </div>
 
@@ -818,7 +818,7 @@ export default function SubjectsPage() {
  placeholder="Lọc theo học kỳ..."
  value={drawerFilterSemester}
  onChange={(e) => setDrawerFilterSemester(e.target.value)}
- className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none"
+ className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -866,7 +866,7 @@ export default function SubjectsPage() {
  <div className="flex flex-wrap gap-2">
  <div className="relative flex-1 min-w-[120px]">
  <select value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
  <option value="">Tất cả lớp</option>
  {drawerClassesForFilter.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}
  </select>
@@ -874,7 +874,7 @@ export default function SubjectsPage() {
  </div>
  <div className="relative">
  <select value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
- className="appearance-none rounded-lg border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
+ className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
  <option value="">Tất cả HK</option>
  {drawerSemesters.map((s) => <option key={s} value={s}>{s}</option>)}
  </select>

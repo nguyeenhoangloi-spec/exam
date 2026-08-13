@@ -682,7 +682,7 @@ export default function ExamSupervisorsPage() {
  setSelectedScheduleRoomId(e.target.value);
  void fetchSupervisors(e.target.value, selectedSchedule?.id);
  }}
- className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
  >
  {selectedSchedule?.examScheduleRooms?.map((sr: any) => {
  const roomObj = sr.room || sr.examRoom;
@@ -767,7 +767,7 @@ export default function ExamSupervisorsPage() {
  <select
  value={selectedTeacherId}
  onChange={(e) => setSelectedTeacherId(e.target.value)}
- className="w-full h-[42px] rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
+ className="w-full h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
  >
  {teachers.map((t) => (
  <option key={t.id} value={t.id}>

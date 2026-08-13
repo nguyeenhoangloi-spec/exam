@@ -8,6 +8,7 @@ import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
+import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { Toast } from '../../../components/Toast';
 import { printReport } from '../../../lib/export-print';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
@@ -563,17 +564,13 @@ export default function ActivityLogsPage() {
 
                 <div className="flex items-center gap-2">
                     {/* Sort selector */}
-                    <div className="relative">
-                        <select
-                            value={sortOrder}
-                            onChange={(e) => setSortOrder(e.target.value)}
-                            className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 shadow-2xs transition-all hover:border-slate-300 focus:outline-none cursor-pointer leading-none"
-                        >
-                            <option value="newest">Mới nhất</option>
-                            <option value="oldest">Cũ nhất</option>
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    </div>
+                    <FilterSelect
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                    >
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                    </FilterSelect>
 
                     {/* Column selector */}
                     <div className="relative">
@@ -932,22 +929,19 @@ export default function ActivityLogsPage() {
                             </button>
                         </div>
 
-                        <div className="relative">
-                            <select
-                                value={limit}
-                                onChange={(e) => {
-                                    setLimit(Number(e.target.value));
-                                    setPage(1);
-                                }}
-                                className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 focus:outline-none"
-                            >
-                                <option value={10}>10 / trang</option>
-                                <option value={20}>20 / trang</option>
-                                <option value={50}>50 / trang</option>
-                                <option value={100}>100 / trang</option>
-                            </select>
-                            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                        </div>
+                        <FilterSelect
+                            size="sm"
+                            value={limit}
+                            onChange={(e) => {
+                                setLimit(Number(e.target.value));
+                                setPage(1);
+                            }}
+                        >
+                            <option value={10}>10 / trang</option>
+                            <option value={20}>20 / trang</option>
+                            <option value={50}>50 / trang</option>
+                            <option value={100}>100 / trang</option>
+                        </FilterSelect>
                     </div>
                 </div>
             )}

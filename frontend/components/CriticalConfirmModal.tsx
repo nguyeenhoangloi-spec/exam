@@ -195,7 +195,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <select
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition"
             >
               {reasons.map((r) => (
                 <option key={r} value={r}>
@@ -210,7 +210,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 required
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
+                className="mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
               />
             )}
           </div>
@@ -225,7 +225,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
             />
           </div>
 
@@ -256,7 +256,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder={`Gõ: ${targetPhrase} (hoặc bấm Điền nhanh)`}
               value={inputPhrase}
               onChange={(e) => setInputPhrase(e.target.value)}
-              className={`w-full rounded-lg border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${isPhraseMatched
+              className={`w-full rounded-xl border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${isPhraseMatched
                 ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900 font-semibold'
                  : 'border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
                 }`}
@@ -284,7 +284,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder={passwordRequired ? 'Nhập mật khẩu Admin hiện tại' : 'Mật khẩu tài khoản (tùy chọn)'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
             />
           </div>
 
@@ -302,7 +302,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
                 value={examPassword}
                 onChange={(e) => setExamPassword(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
               />
               <p className="text-[13px] font-normal text-slate-500 leading-relaxed">
                 Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.
@@ -317,14 +317,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="h-[38px] px-3.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-sm font-medium transition cursor-pointer disabled:opacity-50"
+              className="h-[38px] px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-sm font-medium transition cursor-pointer disabled:opacity-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`h-[38px] px-4 rounded-lg text-white font-medium text-sm transition flex items-center gap-2 cursor-pointer ${
+              className={`h-[38px] px-4 rounded-xl text-white font-medium text-sm transition flex items-center gap-2 cursor-pointer ${
                 loading ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700 active:bg-red-800'
               }`}
             >

@@ -111,7 +111,7 @@ export function ExamScheduleFiltersCard({
               type="date"
               value={filters.examDate}
               onChange={(e) => handleChange('examDate', e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-3.5 pr-9 text-[15px] font-normal text-slate-800 outline-none hover:border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-2xs [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-3.5 pr-9 text-[15px] font-normal text-slate-800 outline-none hover:border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-2xs [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
             />
             <Calendar className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           </div>
@@ -205,7 +205,7 @@ export function ExamScheduleFiltersCard({
           <button
             type="button"
             onClick={onReset}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer shadow-2xs"
           >
             <RotateCcw className="h-3.5 w-3.5 text-slate-400" />
             <span>Xóa bộ lọc</span>
@@ -213,7 +213,7 @@ export function ExamScheduleFiltersCard({
 
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-xs transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-[15px] font-medium shadow-xs transition active:scale-95 cursor-pointer"
           >
             <Search className="h-3.5 w-3.5" />
             <span>Lọc kết quả</span>

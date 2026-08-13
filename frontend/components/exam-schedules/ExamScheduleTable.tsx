@@ -124,8 +124,7 @@ export function ExamScheduleTable({
  shift: true,
  room: true,
  date: true,
- startTime: true,
- endTime: true,
+ time: true,
  students: true,
  supervisors: true,
  status: true,
@@ -364,8 +363,7 @@ export function ExamScheduleTable({
  {visibleColumns.shift !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ca thi</th>}
  {visibleColumns.room !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Phòng thi</th>}
  {visibleColumns.date !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày thi ↕</th>}
- {visibleColumns.startTime !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Giờ bắt đầu</th>}
- {visibleColumns.endTime !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Giờ kết thúc</th>}
+ {visibleColumns.time !== false && visibleColumns.startTime !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Thời gian</th>}
  {visibleColumns.students !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số TS</th>}
  {visibleColumns.supervisors !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Giám thị</th>}
  {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
@@ -456,17 +454,10 @@ export function ExamScheduleTable({
  </td>
  )}
 
- {/* Giờ bắt đầu */}
- {visibleColumns.startTime !== false && (
- <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-[15px]">
- {s.startTime || '07:00'}
- </td>
- )}
-
- {/* Giờ kết thúc */}
- {visibleColumns.endTime !== false && (
- <td className="p-3.5 whitespace-nowrap font-medium text-slate-600 text-[15px]">
- {s.endTime || '09:00'}
+ {/* Thời gian */}
+ {(visibleColumns.time !== false && visibleColumns.startTime !== false) && (
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 text-[15px] tabular-nums">
+ {s.startTime || '07:00'} - {s.endTime || '09:00'}
  </td>
  )}
 

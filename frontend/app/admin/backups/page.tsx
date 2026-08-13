@@ -500,7 +500,7 @@ export default function BackupsPage() {
                         placeholder="Tìm theo Snapshot ID, mã lỗi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-[15px] font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-[15px] font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
                     />
                     {search && (
                         <button
@@ -997,7 +997,7 @@ export default function BackupsPage() {
                             onChange={(e) => setReason(e.target.value)}
                             maxLength={500}
                             placeholder="Mô tả cụ thể sự cố cần phục hồi hoặc mục đích thử nghiệm..."
-                            className="w-full rounded-lg border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
                         />
                     </div>
 

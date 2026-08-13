@@ -345,7 +345,7 @@ export default function ClassesPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
  />
  {search && (
  <button
@@ -456,7 +456,7 @@ export default function ClassesPage() {
  placeholder="VD: CNTT-K65A"
  value={formData.code}
  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -468,7 +468,7 @@ export default function ClassesPage() {
  placeholder="VD: Công nghệ thông tin 1 - K65"
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -478,7 +478,7 @@ export default function ClassesPage() {
  required
  value={formData.departmentId}
  onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
  >
  <option value="">-- Chọn Khoa --</option>
  {departments.map((d) => (
@@ -652,7 +652,7 @@ export default function ClassesPage() {
  placeholder="Tìm sinh viên..."
  value={drawerStudentSearch}
  onChange={(e) => setDrawerStudentSearch(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
  />
  </div>
 

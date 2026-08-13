@@ -116,7 +116,7 @@ export function ChangeExamPasswordModal({
  required
  minLength={4}
  maxLength={50}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 pr-10 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 pr-10 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
  />
  <button
  type="button"
@@ -141,7 +141,7 @@ export function ChangeExamPasswordModal({
  required
  minLength={4}
  maxLength={50}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
  />
  </div>
 
@@ -156,7 +156,7 @@ export function ChangeExamPasswordModal({
  onChange={(e) => setReason(e.target.value)}
  placeholder="VD: Giảng viên cấp lại do sinh viên quên mật khẩu thi"
  maxLength={255}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
  />
  </div>
 

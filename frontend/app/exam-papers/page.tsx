@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { FormEvent, useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -725,7 +725,7 @@ export default function ExamPapersPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button

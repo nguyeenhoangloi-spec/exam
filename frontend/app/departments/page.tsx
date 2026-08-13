@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -487,7 +487,7 @@ export default function DepartmentsPage() {
  placeholder="VD: CNTT"
  value={formData.code}
  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -499,7 +499,7 @@ export default function DepartmentsPage() {
  placeholder="VD: Khoa Công nghệ Thông tin"
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -853,7 +853,7 @@ export default function DepartmentsPage() {
  placeholder="Tìm sinh viên trong Khoa..."
  value={drawerStudentSearch}
  onChange={(e) => setDrawerStudentSearch(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-4 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none"
  />
  </div>
 

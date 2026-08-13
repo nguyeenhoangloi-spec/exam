@@ -74,6 +74,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
 
         <FilterSelect
           size="sm"
+          variant="ghost"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >

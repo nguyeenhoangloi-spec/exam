@@ -314,7 +314,7 @@ export default function ExamPeriodsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -468,7 +468,7 @@ export default function ExamPeriodsPage() {
               placeholder="VD: Kỳ thi học kỳ 1 năm học 2025-2026"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -478,7 +478,7 @@ export default function ExamPeriodsPage() {
               <select
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               >
                 <option value="HK1">Học kỳ I</option>
                 <option value="HK2">Học kỳ II</option>
@@ -493,7 +493,7 @@ export default function ExamPeriodsPage() {
                 placeholder="VD: 2025-2026"
                 value={formData.schoolYear}
                 onChange={(e) => setFormData({ ...formData, schoolYear: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -506,7 +506,7 @@ export default function ExamPeriodsPage() {
                 required
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -516,7 +516,7 @@ export default function ExamPeriodsPage() {
                 required
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>

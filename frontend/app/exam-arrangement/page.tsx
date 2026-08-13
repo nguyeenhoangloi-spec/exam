@@ -1029,7 +1029,7 @@ export default function ExamArrangementPage() {
  <select
  value={filterRoomCode}
  onChange={(e) => setFilterRoomCode(e.target.value)}
- className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[15px] font-medium text-slate-800 focus:bg-white cursor-pointer"
+ className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-[15px] font-medium text-slate-800 focus:bg-white cursor-pointer"
  >
  <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
  {roomSummaries.map((rm) => (

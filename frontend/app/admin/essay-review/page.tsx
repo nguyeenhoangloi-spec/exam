@@ -7,6 +7,7 @@ import { ConfirmModal } from '../../../components/ConfirmModal';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
 import { Button } from '../../../components/ui/Button';
+import { FilterSelect } from '../../../components/ui/FilterSelect';
 import {
  FileCheck,
  ShieldCheck,
@@ -461,10 +462,11 @@ export default function AdminEssayReviewPage() {
  {/* Dropdown Filters Row: Môn thi & Ngày thi */}
  <div className="grid grid-cols-2 gap-2">
  {availableSubjects.length > 0 && (
- <select
+ <FilterSelect
  value={subjectFilter}
  onChange={(e) => setSubjectFilter(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ containerClassName="w-full"
+ className="w-full"
  >
  <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
  {availableSubjects.map((s) => (
@@ -472,14 +474,15 @@ export default function AdminEssayReviewPage() {
  [{s.code}] {s.name}
  </option>
  ))}
- </select>
+ </FilterSelect>
  )}
 
  {availableDates.length > 0 && (
- <select
+ <FilterSelect
  value={dateFilter}
  onChange={(e) => setDateFilter(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ containerClassName="w-full"
+ className="w-full"
  >
  <option value="ALL">Tất cả ngày thi</option>
  {availableDates.map((d) => (
@@ -487,25 +490,26 @@ export default function AdminEssayReviewPage() {
  Ngày {d}
  </option>
  ))}
- </select>
+ </FilterSelect>
  )}
  </div>
 
  {/* Optional Schedule / Ca thi Filter if multiple schedules exist */}
  {availableSchedules.length > 1 && (
  <div>
- <select
- value={scheduleFilter}
- onChange={(e) => setScheduleFilter(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
- >
- <option value="ALL">Tất cả ca thi / lịch thi</option>
- {availableSchedules.map((s) => (
- <option key={s.id} value={s.id}>
- {s.label}
- </option>
- ))}
- </select>
+  <FilterSelect
+  value={scheduleFilter}
+  onChange={(e) => setScheduleFilter(e.target.value)}
+  containerClassName="w-full"
+  className="w-full"
+  >
+  <option value="ALL">Tất cả ca thi / lịch thi</option>
+  {availableSchedules.map((s) => (
+  <option key={s.id} value={s.id}>
+  {s.label}
+  </option>
+  ))}
+  </FilterSelect>
  </div>
  )}
 

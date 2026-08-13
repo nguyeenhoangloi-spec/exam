@@ -6,6 +6,7 @@ import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import api from '../../../lib/api';
+import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { getAuthUser } from '../../../lib/auth';
 import { BookOpen, CheckCircle2, Loader2, Play, Send } from 'lucide-react';
 
@@ -114,33 +115,35 @@ export default function PracticePage() {
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-5 max-w-3xl">
             <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Cấu hình bài luyện tập</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="text-[15px] font-medium text-slate-900 dark:text-slate-100 space-y-1.5 block">
+              <div className="text-[15px] font-medium text-slate-900 dark:text-slate-100 space-y-1.5 block">
                 <span>Chọn Môn học</span>
-                <select
+                <FilterSelect
                   value={subjectId}
                   onChange={(event) => setSubjectId(event.target.value)}
                   disabled={loading}
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition cursor-pointer"
+                  containerClassName="w-full"
+                  className="w-full"
                 >
                   {subjects.map((subject) => (
                     <option key={subject.id} value={subject.id}>
                       {subject.subjectName}{subject.subjectCode ? ` (${subject.subjectCode})` : ''}
                     </option>
                   ))}
-                </select>
-              </label>
-              <label className="text-[15px] font-medium text-slate-900 dark:text-slate-100 space-y-1.5 block">
+                </FilterSelect>
+              </div>
+              <div className="text-[15px] font-medium text-slate-900 dark:text-slate-100 space-y-1.5 block">
                 <span>Số lượng câu hỏi</span>
-                <select
+                <FilterSelect
                   value={questionCount}
                   onChange={(event) => setQuestionCount(Number(event.target.value))}
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition cursor-pointer"
+                  containerClassName="w-full"
+                  className="w-full"
                 >
                   {[10, 20, 30, 40].map((count) => (
                     <option key={count} value={count}>{count} câu</option>
                   ))}
-                </select>
-              </label>
+                </FilterSelect>
+              </div>
             </div>
             <button
               type="button"
