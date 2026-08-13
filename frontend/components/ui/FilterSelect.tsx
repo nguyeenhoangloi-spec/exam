@@ -6,12 +6,14 @@ import { ChevronDown } from 'lucide-react';
 export interface FilterSelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   leftIcon?: React.ReactNode;
   size?: 'sm' | 'md';
+  variant?: 'outline' | 'ghost';
   containerClassName?: string;
 }
 
 export function FilterSelect({
   leftIcon,
   size = 'md',
+  variant = 'outline',
   containerClassName = '',
   className = '',
   children,
@@ -21,6 +23,11 @@ export function FilterSelect({
     size === 'sm'
       ? `h-9 text-[15px] font-medium ${leftIcon ? 'pl-8 pr-7' : 'px-3 pr-7'}`
       : `h-9 text-[15px] font-medium ${leftIcon ? 'pl-9 pr-8' : 'px-3.5 pr-8'}`;
+
+  const variantClasses =
+    variant === 'ghost'
+      ? 'border border-transparent bg-transparent text-slate-700 dark:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 focus:ring-2 focus:ring-blue-500/20 shadow-none'
+      : 'border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs';
 
   const iconSizeClass = 'h-4 w-4';
 
@@ -32,7 +39,7 @@ export function FilterSelect({
         </div>
       )}
       <select
-        className={`appearance-none rounded-lg border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 outline-none hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-2xs leading-none ${sizeClasses} ${className}`}
+        className={`appearance-none rounded-lg outline-none transition-all cursor-pointer leading-none ${variantClasses} ${sizeClasses} ${className}`}
         {...props}
       >
         {children}

@@ -36,6 +36,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
 
         <FilterSelect
           size="sm"
+          variant="ghost"
           value={timeFilter}
           onChange={(e) => setTimeFilter(e.target.value)}
         >

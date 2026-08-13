@@ -60,6 +60,7 @@ export function DashboardHeader({
           {onPeriodChange && (
             <FilterSelect
               size="md"
+              variant="ghost"
               leftIcon={<Calendar className="w-4 h-4" />}
               value={selectedPeriod}
               onChange={(e) => onPeriodChange(e.target.value)}
