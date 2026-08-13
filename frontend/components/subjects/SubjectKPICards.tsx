@@ -69,10 +69,10 @@ export function SubjectKPICards({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[14px] font-semibold text-[#64748B] tracking-wider">
+                <span className="text-[14px] font-semibold text-slate-500 tracking-wider">
                   {item.title}
                 </span>
-                <p className="text-[32px] font-bold text-[#0F172A] leading-tight">
+                <p className="text-[32px] font-bold text-slate-900 leading-tight">
                   {item.value.toLocaleString('vi-VN')}
                   {item.unit || ''}
                 </p>
@@ -85,7 +85,7 @@ export function SubjectKPICards({
               </div>
             </div>
 
-            <span className="text-[13px] font-normal text-[#64748B] mt-2">
+            <span className="text-[13px] font-normal text-slate-500 mt-2">
               {item.subtext}
             </span>
           </div>

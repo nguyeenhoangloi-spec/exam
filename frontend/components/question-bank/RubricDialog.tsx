@@ -138,7 +138,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
 
   return (
     <div role="dialog" aria-modal="true" aria-label="Quản lý rubric chấm điểm" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header - Modern Gradient Header */}
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
           <div className="flex items-start justify-between gap-3">
@@ -167,9 +167,9 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-4 flex-1">
+        <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-white dark:bg-slate-900">
           {/* Question preview */}
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800">
+          <div className="p-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200">
             <span className="font-semibold text-slate-900">Nội dung câu hỏi: </span>
             {question.content}
           </div>
@@ -183,8 +183,8 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
 
           {/* Real-time score balance status badge */}
           <div className={`inline-flex w-full items-center justify-between gap-3 text-[14px] leading-5 font-semibold ${isMatched
-            ? 'text-[#15803D]'
-            : 'text-[#D97706]'
+            ? 'text-success-600'
+            : 'text-warning-600'
             }`}>
             <span className="inline-flex items-center gap-[6px]">
               {isMatched ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
@@ -213,20 +213,20 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
               </div>
 
               {criteria.map((c, idx) => (
-                <div key={idx} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 relative">
+                <div key={idx} className="p-3.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl space-y-2.5 relative">
                   <div className="grid grid-cols-12 gap-3">
                     <div className="col-span-6 space-y-1">
-                      <label className="block text-[15px] font-medium text-[#0F172A]">Tên tiêu chí *</label>
+                      <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Tên tiêu chí *</label>
                       <input
                         type="text"
                         placeholder="Nhập tên tiêu chí..."
                         value={c.label}
                         onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] text-[#0F172A] font-medium focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-normal focus:outline-none focus:border-blue-500"
                       />
                     </div>
                     <div className="col-span-3 space-y-1">
-                      <label className="block text-[15px] font-medium text-[#0F172A]">Điểm tối đa *</label>
+                      <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Điểm tối đa *</label>
                       <input
                         type="number"
                         step={0.1}
@@ -234,18 +234,18 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                         max={100}
                         value={c.maxScore}
                         onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] text-[#0F172A] font-semibold tabular-nums focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-medium tabular-nums focus:outline-none focus:border-blue-500"
                       />
                     </div>
                     <div className="col-span-3 flex justify-between items-end">
                       <div className="space-y-1">
-                        <label className="block text-[15px] font-medium text-[#0F172A]">Thứ tự *</label>
+                         <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Thứ tự *</label>
                         <input
                           type="number"
                           min={1}
                           value={c.sortOrder}
                           onChange={(e) => handleFieldChange(idx, 'sortOrder', Number(e.target.value))}
-                          className="w-16 bg-white border border-slate-200 rounded-xl px-2 py-2 text-[15px] font-medium text-center focus:outline-none focus:border-blue-500"
+                           className="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-2 text-[15px] font-normal text-center focus:outline-none focus:border-blue-500"
                         />
                       </div>
                       {criteria.length > 1 && (
@@ -262,13 +262,13 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[15px] font-medium text-[#0F172A]">Mô tả / Hướng dẫn tiêu chí (Tùy chọn)</label>
+                     <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Mô tả / Hướng dẫn tiêu chí (Tùy chọn)</label>
                     <input
                       type="text"
                       placeholder="Mô tả hướng dẫn tiêu chí chấm..."
                       value={c.description}
                       onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -278,7 +278,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 shrink-0">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/70 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
           <Button type="button" variant="outline" onClick={onClose}>
             Hủy
           </Button>

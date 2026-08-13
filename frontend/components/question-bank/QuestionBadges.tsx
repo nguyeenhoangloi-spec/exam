@@ -7,9 +7,18 @@ export const QuestionStatusBadge = ({ status }: { status: string }) => {
 };
 
 export const QuestionDifficultyBadge = ({ difficulty }: { difficulty: string }) => {
-  const label = DIFFICULTY_LABELS[difficulty] || (difficulty === 'EASY' ? 'Dễ' : difficulty === 'MEDIUM' ? 'Trung bình' : difficulty === 'HARD' ? 'Khó' : difficulty);
+  const isEasy = difficulty === 'EASY';
+  const isHard = difficulty === 'HARD';
+  const label = DIFFICULTY_LABELS[difficulty] || (isEasy ? 'Dễ' : isHard ? 'Khó' : 'Trung bình');
+
+  const textCls = isEasy
+    ? 'text-emerald-600 dark:text-emerald-400'
+    : isHard
+      ? 'text-rose-600 dark:text-rose-400'
+      : 'text-amber-600 dark:text-amber-400';
+
   return (
-    <span className="text-[13px] font-semibold text-[#334155] dark:text-slate-300">
+    <span className={`text-[13px] font-semibold select-none whitespace-nowrap ${textCls}`}>
       {label}
     </span>
   );
@@ -26,7 +35,7 @@ const QUESTION_TYPE_SHORT_LABELS: Record<string, string> = {
 export const QuestionTypeBadge = ({ type }: { type: string }) => {
   const label = QUESTION_TYPE_SHORT_LABELS[type] || QUESTION_TYPE_LABELS[type] || 'Trắc nghiệm';
   return (
-    <span className="text-[13px] font-semibold text-[#334155] dark:text-slate-300">
+    <span className="text-[13px] font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">
       {label}
     </span>
   );

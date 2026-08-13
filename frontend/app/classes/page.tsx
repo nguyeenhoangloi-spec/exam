@@ -18,6 +18,7 @@ import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, B
 import { ClassHeader } from '../../components/classes/ClassHeader';
 import { ClassKPICards } from '../../components/classes/ClassKPICards';
 import { ClassTableToolbar } from '../../components/classes/ClassTableToolbar';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ClassTable } from '../../components/classes/ClassTable';
 import { ClassPaginationBar } from '../../components/classes/ClassPaginationBar';
 
@@ -333,7 +334,7 @@ export default function ClassesPage() {
  />
 
  {/* Filter Card */}
- <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+ <div className="flex flex-wrap items-center justify-between gap-4">
  <div className="relative flex-1 min-w-[260px]">
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  <input
@@ -344,7 +345,7 @@ export default function ClassesPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
  />
  {search && (
  <button
@@ -360,28 +361,25 @@ export default function ClassesPage() {
  )}
  </div>
 
- <div className="flex items-center gap-3">
- <span className="text-xs font-semibold text-slate-500">Khoa trực thuộc:</span>
- <div className="relative">
- <select
- value={selectedDeptId}
- onChange={(e) => {
- setSelectedDeptId(e.target.value);
- setPage(1);
- }}
- className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
- >
- <option value="">Tất cả các Khoa</option>
- {departments.map((d) => (
- <option key={d.id} value={String(d.id)}>
- {d.name} ({d.code})
- </option>
- ))}
- </select>
- <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
- </div>
- </div>
- </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Khoa trực thuộc:</span>
+            <FilterSelect
+              value={selectedDeptId}
+              onChange={(e) => {
+                setSelectedDeptId(e.target.value);
+                setPage(1);
+              }}
+              size="md"
+            >
+              <option value="">Tất cả các Khoa</option>
+              {departments.map((d) => (
+                <option key={d.id} value={String(d.id)}>
+                  {d.name} ({d.code})
+                </option>
+              ))}
+            </FilterSelect>
+          </div>
+        </div>
 
  {/* Dynamic Table Action Toolbar */}
  <ClassTableToolbar
@@ -393,6 +391,7 @@ export default function ClassesPage() {
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
  onRefresh={fetchData}
+ loading={loading}
  />
 
  {/* Full-Width DataGrid Table */}
@@ -450,36 +449,36 @@ export default function ClassesPage() {
   >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
- <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Mã lớp</label>
+ <label className="block text-[15px] font-medium text-slate-900 mb-1">Mã lớp</label>
  <input
  type="text"
  required
  placeholder="VD: CNTT-K65A"
  value={formData.code}
  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
  />
  </div>
 
  <div>
-                    <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Tên lớp học</label>
+                    <label className="block text-[15px] font-medium text-slate-900 mb-1">Tên lớp học</label>
  <input
  type="text"
  required
  placeholder="VD: Công nghệ thông tin 1 - K65"
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
  />
  </div>
 
  <div>
- <label className="block text-[15px] font-medium text-[#0F172A] mb-1">Khoa trực thuộc</label>
+ <label className="block text-[15px] font-medium text-slate-900 mb-1">Khoa trực thuộc</label>
  <select
  required
  value={formData.departmentId}
  onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
  >
  <option value="">-- Chọn Khoa --</option>
  {departments.map((d) => (
@@ -548,7 +547,7 @@ export default function ClassesPage() {
  onClick={() => setDrawerClass(null)}
  />
 
- <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
+  <div className="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
  {/* Header - Modern Gradient matching system standard */}
 <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
@@ -578,7 +577,7 @@ export default function ClassesPage() {
  </div>
 
  {/* Tabs */}
- <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
+  <div className="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
  <button
  onClick={() => setDrawerTab('info')}
  className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'info'
@@ -609,7 +608,7 @@ export default function ClassesPage() {
  </div>
 
  {/* Drawer Body */}
- <div className="flex-1 overflow-y-auto p-6 bg-white">
+  <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-slate-900">
  {drawerTab === 'info' && (
  <div className="space-y-6 animate-in fade-in duration-300">
  <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
@@ -617,8 +616,8 @@ export default function ClassesPage() {
  <GraduationCap className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B] ">Tên lớp học</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerClass.name}</p>
+ <p className="text-[13px] font-semibold text-slate-500 ">Tên lớp học</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerClass.name}</p>
  </div>
  </div>
 
@@ -627,8 +626,8 @@ export default function ClassesPage() {
  <Building2 className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B] ">Khoa trực thuộc</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerClass.department?.name || (drawerClass as any).departmentName || 'Chưa gán Khoa'}</p>
+ <p className="text-[13px] font-semibold text-slate-500 ">Khoa trực thuộc</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerClass.department?.name || (drawerClass as any).departmentName || 'Chưa gán Khoa'}</p>
  </div>
  </div>
 
@@ -637,8 +636,8 @@ export default function ClassesPage() {
  <Users className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B] ">Sĩ số Sinh viên</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{(drawerClass as any)._count?.students ?? (drawerClass as any).studentsCount ?? (drawerClass as any).students?.length ?? 0} sinh viên</p>
+ <p className="text-[13px] font-semibold text-slate-500 ">Sĩ số Sinh viên</p>
+ <p className="text-[15px] font-semibold text-slate-900">{(drawerClass as any)._count?.students ?? (drawerClass as any).studentsCount ?? (drawerClass as any).students?.length ?? 0} sinh viên</p>
  </div>
  </div>
  </div>
@@ -647,13 +646,13 @@ export default function ClassesPage() {
  {drawerTab === 'students' && (
  <div className="space-y-4 flex flex-col h-full animate-in fade-in duration-300">
  <div className="relative shrink-0">
- <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#64748B]" />
+ <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
  <input
  type="text"
  placeholder="Tìm sinh viên..."
  value={drawerStudentSearch}
  onChange={(e) => setDrawerStudentSearch(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
  />
  </div>
 
@@ -676,9 +675,9 @@ export default function ClassesPage() {
  {sv.fullName?.charAt(0) || 'U'}
  </div>
  <div className="flex-1 min-w-0">
- <p className="text-[15px] font-semibold text-[#0F172A] truncate">{sv.fullName}</p>
- <p className="text-[13px] font-normal text-[#64748B]">{sv.studentCode}</p>
- <div className="flex items-center gap-3 mt-1.5 text-[13px] font-normal text-[#64748B]">
+ <p className="text-[15px] font-semibold text-slate-900 truncate">{sv.fullName}</p>
+ <p className="text-[13px] font-normal text-slate-500">{sv.studentCode}</p>
+ <div className="flex items-center gap-3 mt-1.5 text-[13px] font-normal text-slate-500">
  {sv.email && (
  <span className="flex items-center gap-1">
  <Mail className="h-3.5 w-3.5" />
@@ -695,7 +694,7 @@ export default function ClassesPage() {
  </div>
  </div>
  )) || (
- <div className="text-center text-[15px] font-normal text-[#64748B] mt-10">
+ <div className="text-center text-[15px] font-normal text-slate-500 mt-10">
  Không có sinh viên nào.
  </div>
  )}
@@ -705,7 +704,7 @@ export default function ClassesPage() {
  (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) ||
  (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
  ).length === 0 && (
- <div className="text-center text-[15px] font-normal text-[#64748B] mt-10">
+ <div className="text-center text-[15px] font-normal text-slate-500 mt-10">
  Không tìm thấy kết quả phù hợp.
  </div>
  )}
@@ -717,7 +716,7 @@ export default function ClassesPage() {
  {drawerTab === 'enrollments' && (
  <div className="space-y-4 animate-in fade-in duration-300">
  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
- <h3 className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">Danh sách môn học đã đăng ký</h3>
+ <h3 className="text-[18px] leading-[26px] font-semibold text-slate-900">Danh sách môn học đã đăng ký</h3>
  <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
  {drawerEnrollments?.length || 0} môn
  </span>
@@ -743,11 +742,11 @@ export default function ClassesPage() {
  <span className=" tabular-nums text-[13px] font-semibold text-blue-600">
  {sub.subjectCode}
  </span>
- <span className="text-[13px] font-normal text-[#64748B]">{sub.credits} tín chỉ</span>
+ <span className="text-[13px] font-normal text-slate-500">{sub.credits} tín chỉ</span>
  </div>
- <p className="text-[15px] font-semibold text-[#0F172A]">{sub.subjectName}</p>
+ <p className="text-[15px] font-semibold text-slate-900">{sub.subjectName}</p>
  {sub.departmentName && (
- <p className="text-[13px] font-normal text-[#64748B] mt-0.5">{sub.departmentName}</p>
+ <p className="text-[13px] font-normal text-slate-500 mt-0.5">{sub.departmentName}</p>
  )}
  </div>
  </div>
@@ -755,7 +754,7 @@ export default function ClassesPage() {
  <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
  {sub.semester} ({sub.schoolYear})
  </span>
- <p className="text-[13px] font-normal text-[#64748B] mt-1">
+ <p className="text-[13px] font-normal text-slate-500 mt-1">
  <span className="font-semibold text-blue-600">{sub.studentCount}</span> SV học
  </p>
  </div>
@@ -766,11 +765,11 @@ export default function ClassesPage() {
  ) : (
  <div className="py-12 text-center text-slate-400">
  <BookOpen className="h-10 w-10 text-slate-700 mx-auto mb-2" />
- <p className="text-[15px] font-semibold text-[#0F172A]">Lớp chưa có sinh viên nào đăng ký môn.</p>
- <p className="text-[13px] font-normal text-[#64748B] mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý môn học.</p>
+ <p className="text-[15px] font-semibold text-slate-900">Lớp chưa có sinh viên nào đăng ký môn.</p>
+ <p className="text-[13px] font-normal text-slate-500 mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý môn học.</p>
  <button
  onClick={() => router.push('/subjects')}
- className="mt-4 px-4 py-2 rounded-xl bg-[#2563EB] text-white text-[15px] font-medium hover:bg-blue-700 transition cursor-pointer"
+ className="mt-4 px-4 py-2 rounded-xl bg-primary-600 text-white text-[15px] font-medium hover:bg-blue-700 transition cursor-pointer"
  >
  Đến trang quản lý môn học
  </button>

@@ -137,7 +137,16 @@ export default function StudentCurriculumPage() {
  }
  }, []);
 
- useEffect(() => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchData();
+    setTimeout(() => setIsRefreshing(false), 600);
+    setToast({ message: 'Đã làm mới dữ liệu khung đào tạo', type: 'success' });
+  };
+
+  useEffect(() => {
  const u = getAuthUser();
  if (!u) {
  router.push('/login');
@@ -356,11 +365,11 @@ export default function StudentCurriculumPage() {
  {/* ── 1. Standard Page Header ── */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Khung Chương Trình Đào Tạo
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
- Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-[#0F172A] font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+ Sinh viên: <strong className="text-slate-900 font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
  </p>
  </div>
 
@@ -369,7 +378,7 @@ export default function StudentCurriculumPage() {
  variant="secondary"
  size="md"
  onClick={handleExportExcel}
- leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Download className="h-4 w-4 text-slate-500" />}
  >
  Xuất Excel
  </Button>
@@ -378,7 +387,7 @@ export default function StudentCurriculumPage() {
  variant="secondary"
  size="md"
  onClick={handlePrintReport}
- leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
  >
  In Khung Đào Tạo
  </Button>
@@ -396,10 +405,10 @@ export default function StudentCurriculumPage() {
  >
  <div className="flex items-start justify-between gap-3">
  <div className="space-y-1">
- <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
+ <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
  {item.title}
  </span>
- <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
+ <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
  {item.value.toLocaleString('vi-VN')}
  {item.unit || ''}
  </p>
@@ -412,7 +421,7 @@ export default function StudentCurriculumPage() {
  </div>
  </div>
 
- <span className="text-[13px] font-normal text-[#64748B] mt-2">
+ <span className="text-[13px] font-normal text-slate-500 mt-2">
  {item.subtext}
  </span>
  </div>
@@ -425,7 +434,7 @@ export default function StudentCurriculumPage() {
  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
  {/* Search Input */}
  <div className="relative">
- <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] pointer-events-none" />
+ <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
  <input
  type="text"
  placeholder="Tìm theo mã môn, tên môn học..."
@@ -434,7 +443,7 @@ export default function StudentCurriculumPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
  />
  {search && (
  <button
@@ -455,7 +464,7 @@ export default function StudentCurriculumPage() {
  setFilterSemester(e.target.value);
  setPage(1);
  }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả học kỳ đào tạo</option>
  {semesters.map((sem) => (
@@ -464,7 +473,7 @@ export default function StudentCurriculumPage() {
  </option>
  ))}
  </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
  </div>
 
  {/* Type Filter */}
@@ -475,13 +484,13 @@ export default function StudentCurriculumPage() {
  setFilterType(e.target.value);
  setPage(1);
  }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả loại môn học</option>
  <option value="MANDATORY">Môn bắt buộc</option>
  <option value="ELECTIVE">Môn tự chọn</option>
  </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
  </div>
 
  {/* Status Filter */}
@@ -492,21 +501,21 @@ export default function StudentCurriculumPage() {
  setFilterStatus(e.target.value);
  setPage(1);
  }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả trạng thái tích lũy</option>
  <option value="COMPLETED">Đã hoàn thành (Đã học)</option>
  <option value="INCOMPLETE">Chưa tích lũy tín chỉ</option>
  </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
  </div>
  </div>
  </div>
 
  {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
  <div className="flex flex-wrap items-center justify-between gap-3 py-1">
- <span className="text-[15px] font-normal text-[#334155]">
- <span className="font-semibold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
+ <span className="text-[15px] font-normal text-slate-700">
+ <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> môn học trong khung
  </span>
 
  <div className="flex items-center gap-2">
@@ -515,7 +524,7 @@ export default function StudentCurriculumPage() {
  <select
  value={sortOrder}
  onChange={(e) => setSortOrder(e.target.value)}
- className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+ className="appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
  >
  <option value="semester_asc">Học kỳ: Tăng dần</option>
  <option value="semester_desc">Học kỳ: Giảm dần</option>
@@ -555,7 +564,7 @@ export default function StudentCurriculumPage() {
  return (
  <label
  key={col.key}
- className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition"
+ className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition"
  >
  <span className="flex items-center gap-2">
  <input
@@ -611,11 +620,11 @@ export default function StudentCurriculumPage() {
  {/* Refresh */}
  <button
  type="button"
- onClick={fetchData}
- className="flex h-8 w-8 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
+ onClick={handleManualRefresh}
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
  title="Làm mới dữ liệu"
  >
- <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+ <RefreshCw className={`h-4 w-4 ${loading || isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
  </button>
  </div>
  </div>
@@ -659,13 +668,13 @@ export default function StudentCurriculumPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums font-medium text-xs text-slate-600 hover:text-blue-600 transition cursor-pointer"
  >
  {item.subjectCode}
  </button>
  </div>
 
- <span className="text-[13px] font-semibold text-[#64748B]">
+ <span className="text-[13px] font-semibold text-slate-500">
  HK {item.recommendedSemester}
  </span>
  </div>
@@ -726,9 +735,9 @@ export default function StudentCurriculumPage() {
  </div>
  ) : viewMode === 'compact' ? (
  /* ── 5.2 Compact View Mode ── */
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -747,7 +756,7 @@ export default function StudentCurriculumPage() {
  <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {currentItems.map((item) => {
  const isChecked = selected.includes(item.id);
  return (
@@ -761,38 +770,38 @@ export default function StudentCurriculumPage() {
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600">
  {item.subjectCode}
  </span>
  </td>
  <td className="p-2 min-w-[200px]">
  <p
- className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600"
+ className="truncate font-medium text-slate-900 cursor-pointer hover:text-blue-600"
  onClick={() => setDetailItem(item)}
  >
  {item.subjectName}
  </p>
  </td>
- <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-700">HK {item.recommendedSemester}</td>
- <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-900">{item.credits} TC</td>
+ <td className="p-2 whitespace-nowrap text-center font-medium text-slate-700">HK {item.recommendedSemester}</td>
+ <td className="p-2 whitespace-nowrap text-center font-medium text-slate-900">{item.credits} TC</td>
  <td className="p-2 whitespace-nowrap">
  {item.type === 'MANDATORY' ? (
- <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-700">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-medium text-slate-700">
  <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
  </span>
  ) : (
- <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-700">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-medium text-slate-700">
  <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
  </span>
  )}
  </td>
  <td className="p-2 whitespace-nowrap">
  {item.isCompleted ? (
- <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-700">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-medium text-slate-700">
  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã học
  </span>
  ) : (
- <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-semibold text-slate-400">
+ <span className="inline-flex items-center gap-1 text-[15px] leading-[22px] font-medium text-slate-400">
  <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
  </span>
  )}
@@ -815,9 +824,9 @@ export default function StudentCurriculumPage() {
  </div>
  ) : (
  /* ── 5.3 Standard List View Mode (Default Table) ── */
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -836,7 +845,7 @@ export default function StudentCurriculumPage() {
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {currentItems.map((item) => {
  const isChecked = selected.includes(item.id);
  return (
@@ -860,7 +869,7 @@ export default function StudentCurriculumPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569] hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 hover:text-blue-600 transition cursor-pointer"
  >
  {item.subjectCode}
  </button>
@@ -872,7 +881,7 @@ export default function StudentCurriculumPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-semibold text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
+ className="font-medium text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
  >
  {item.subjectName}
  </p>
@@ -885,7 +894,7 @@ export default function StudentCurriculumPage() {
  {/* Semester */}
  {visibleColumns.semester !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="text-[15px] leading-[22px] font-semibold text-slate-800">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-800">
  Học kỳ {item.recommendedSemester}
  </span>
  </td>
@@ -894,7 +903,7 @@ export default function StudentCurriculumPage() {
  {/* Credits */}
  {visibleColumns.credits !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="font-semibold text-slate-900 text-[15px] leading-[22px]">{item.credits}</span>
+ <span className="font-medium text-slate-900 text-[15px] leading-[22px]">{item.credits}</span>
  <span className="text-slate-500 font-medium ml-1 text-[15px] leading-[22px]">TC</span>
  </td>
  )}
@@ -903,12 +912,12 @@ export default function StudentCurriculumPage() {
  {visibleColumns.type !== false && (
  <td className="p-3.5 whitespace-nowrap">
  {item.type === 'MANDATORY' ? (
- <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-medium">
  <Award className="h-4 w-4 shrink-0 text-blue-600" />
  Bắt buộc
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-medium">
  <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
  Tự chọn
  </span>
@@ -920,12 +929,12 @@ export default function StudentCurriculumPage() {
  {visibleColumns.status !== false && (
  <td className="p-3.5 whitespace-nowrap">
  {item.isCompleted ? (
- <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-medium">
  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
  Đã học
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-500 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-500 font-medium">
  <Clock className="h-4 w-4 shrink-0 text-slate-400" />
  Chưa tích lũy
  </span>
@@ -1021,7 +1030,7 @@ export default function StudentCurriculumPage() {
  setLimit(Number(e.target.value));
  setPage(1);
  }}
- className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+ className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-7 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
  >
  <option value={8}>8 dòng / trang</option>
  <option value={15}>15 dòng / trang</option>

@@ -81,8 +81,8 @@ export function ChangeExamPasswordModal({
  <span
  className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${
  hasPassword
- ? 'text-[#15803D] dark:text-emerald-400'
- : 'text-[#D97706] dark:text-amber-400'
+ ? 'text-success-600 dark:text-emerald-400'
+ : 'text-warning-600 dark:text-amber-400'
  }`}
  >
  <KeyRound className="h-3 w-3" />
@@ -104,7 +104,7 @@ export function ChangeExamPasswordModal({
 
  {/* Input new password */}
  <div className="space-y-1">
- <label className="block text-[15px] font-semibold text-slate-700 dark:text-slate-300">
+ <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
  Mật khẩu thi mới <span className="text-rose-500">*</span>
  </label>
  <div className="relative">
@@ -116,7 +116,7 @@ export function ChangeExamPasswordModal({
  required
  minLength={4}
  maxLength={50}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 pr-10 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 pr-10 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
  />
  <button
  type="button"
@@ -130,7 +130,7 @@ export function ChangeExamPasswordModal({
 
  {/* Confirm password */}
  <div className="space-y-1">
- <label className="block text-[15px] font-semibold text-slate-700 dark:text-slate-300">
+ <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
  Xác nhận mật khẩu mới <span className="text-rose-500">*</span>
  </label>
  <input
@@ -141,13 +141,13 @@ export function ChangeExamPasswordModal({
  required
  minLength={4}
  maxLength={50}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
  />
  </div>
 
  {/* Reason */}
  <div className="space-y-1">
- <label className="block text-[15px] font-semibold text-slate-700 dark:text-slate-300">
+ <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
  Lý do cập nhật mật khẩu <span className="text-slate-400 font-normal">(Tùy chọn)</span>
  </label>
  <input
@@ -156,7 +156,7 @@ export function ChangeExamPasswordModal({
  onChange={(e) => setReason(e.target.value)}
  placeholder="VD: Giảng viên cấp lại do sinh viên quên mật khẩu thi"
  maxLength={255}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
  />
  </div>
 

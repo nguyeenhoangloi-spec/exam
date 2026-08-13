@@ -371,10 +371,10 @@ export default function AdminEssayReviewPage() {
  {/* Page Header matching system standards */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Duyệt & Quản Lý Bài Thi Tự Luận
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
  Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.
  </p>
  </div>
@@ -384,7 +384,7 @@ export default function AdminEssayReviewPage() {
  onClick={loadAssignments}
  disabled={loading}
  title="Làm mới danh sách"
- className="flex h-10 w-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition cursor-pointer active:scale-95 shrink-0 select-none disabled:opacity-50"
+ className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer active:scale-95 shrink-0 select-none disabled:opacity-50"
  >
  <RotateCcw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
  </button>
@@ -445,7 +445,7 @@ export default function AdminEssayReviewPage() {
  placeholder="Tìm mã SV, tên SV, môn, ca thi..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="w-full bg-slate-50/50 border border-slate-200 rounded-lg pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  {searchQuery && (
  <button
@@ -464,7 +464,7 @@ export default function AdminEssayReviewPage() {
  <select
  value={subjectFilter}
  onChange={(e) => setSubjectFilter(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
  {availableSubjects.map((s) => (
@@ -479,7 +479,7 @@ export default function AdminEssayReviewPage() {
  <select
  value={dateFilter}
  onChange={(e) => setDateFilter(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả ngày thi</option>
  {availableDates.map((d) => (
@@ -497,7 +497,7 @@ export default function AdminEssayReviewPage() {
  <select
  value={scheduleFilter}
  onChange={(e) => setScheduleFilter(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả ca thi / lịch thi</option>
  {availableSchedules.map((s) => (
@@ -510,12 +510,12 @@ export default function AdminEssayReviewPage() {
  )}
 
  {loading ? (
- <div className="text-center py-10 text-[15px] font-medium text-[#64748B]">
- <RotateCcw className="h-4 w-4 animate-spin mx-auto mb-2 text-blue-600" />
- Đang tải danh sách bài làm...
+ <div className="py-10 flex flex-col items-center gap-3">
+ <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+ <p className="text-xs font-semibold text-slate-500">Đang tải danh sách bài làm...</p>
  </div>
  ) : filteredRows.length === 0 ? (
- <div className="text-center py-10 text-[15px] font-normal text-[#64748B]">
+ <div className="text-center py-10 text-[15px] font-normal text-slate-500">
  Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
  </div>
  ) : (
@@ -539,19 +539,19 @@ export default function AdminEssayReviewPage() {
  }`}
  >
  <div className="flex justify-between items-center gap-2">
- <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
+ <span className="font-semibold text-[15px] text-slate-900">{row.student?.fullName}</span>
  <StatusBadge status={row.gradingStatus} />
  </div>
- <p className="text-[13px] text-[#64748B] tabular-nums font-normal">
- Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-[#0F172A] font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
+ <p className="text-[13px] text-slate-500 tabular-nums font-normal">
+ Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-slate-900 font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
  </p>
- <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
- <span className="truncate flex-1 font-medium text-[#334155]">
+ <div className="flex items-center justify-between gap-1 text-[13px] text-slate-500 font-normal border-t border-slate-100 pt-1.5 mt-0.5">
+ <span className="truncate flex-1 font-medium text-slate-700">
  {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
  {schedCode ? ` (${schedCode})` : ''}
  </span>
  {dateStr && (
- <span className="shrink-0 text-[13px] font-semibold text-[#0F172A] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+ <span className="shrink-0 text-[13px] font-semibold text-slate-900 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
  {dateStr}
  </span>
  )}
@@ -684,7 +684,7 @@ export default function AdminEssayReviewPage() {
  <div className="flex flex-wrap items-center justify-between gap-2 pb-1">
  <div className="flex items-center gap-2">
  <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
- <h3 className="text-[20px] font-semibold text-[#0F172A] tracking-tight">Thao tác Quản trị Admin</h3>
+ <h3 className="text-[20px] font-semibold text-slate-900 tracking-tight">Thao tác Quản trị Admin</h3>
  </div>
  {selected.gradingStatus === 'PUBLISHED' ? (
  <StatusBadge status="PUBLISHED" customLabel="Điểm số đã công bố chính thức" />
@@ -698,8 +698,8 @@ export default function AdminEssayReviewPage() {
  {/* Input Reason with Icon & Micro-Interaction */}
  <div className="space-y-1.5">
  <div className="flex items-center justify-between text-[15px]">
- <label className="font-medium text-[#0F172A]">Lý do thao tác</label>
- <span className="text-[#64748B] font-normal">(Bắt buộc khi Trả lại, Mở lại, Gia hạn, Trừ điểm)</span>
+ <label className="text-[15px] font-medium text-slate-900">Lý do thao tác</label>
+ <span className="text-slate-500 font-normal">(Bắt buộc khi Trả lại, Mở lại, Gia hạn, Trừ điểm)</span>
  </div>
  <div className="relative">
  <input
@@ -707,7 +707,7 @@ export default function AdminEssayReviewPage() {
  placeholder="Nhập ghi chú hoặc lý do chi tiết..."
  value={actionReason}
  onChange={(e) => setActionReason(e.target.value)}
- className="w-full bg-slate-50/70 border border-slate-200/90 rounded-xl px-3.5 py-2.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-2xs placeholder-slate-400"
+ className="w-full bg-slate-50/70 border border-slate-200/90 rounded-lg px-3.5 py-2.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition shadow-2xs placeholder-slate-400"
  />
  </div>
  </div>
@@ -747,7 +747,7 @@ export default function AdminEssayReviewPage() {
  </Button>
  <Button
  type="button"
- variant="danger-outline"
+ variant="secondary"
  size="md"
  onClick={handleReturn}
  leftIcon={<XCircle className="w-4 h-4" />}
@@ -761,7 +761,7 @@ export default function AdminEssayReviewPage() {
  {/* Gia hạn làm bài */}
  <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
  <div className="flex items-center gap-2">
- <span className="text-[15px] font-medium text-[#0F172A]">Gia hạn:</span>
+ <span className="text-[15px] font-medium text-slate-900">Gia hạn:</span>
  <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1 shadow-2xs">
  <input
  type="number"
@@ -769,9 +769,9 @@ export default function AdminEssayReviewPage() {
  max={240}
  value={extraMinutes}
  onChange={(e) => setExtraMinutes(Number(e.target.value))}
- className="w-12 text-[15px] font-medium text-center text-[#0F172A] focus:outline-none"
+ className="w-12 text-[15px] font-medium text-center text-slate-900 focus:outline-none"
  />
- <span className="text-[13px] font-semibold text-[#64748B] ml-1">phút</span>
+ <span className="text-[13px] font-semibold text-slate-500 ml-1">phút</span>
  </div>
  </div>
  <Button
@@ -787,7 +787,7 @@ export default function AdminEssayReviewPage() {
  {/* Trừ điểm phạt */}
  <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
  <div className="flex items-center gap-2">
- <span className="text-[15px] font-medium text-[#0F172A]">Điểm phạt:</span>
+ <span className="text-[15px] font-medium text-slate-900">Điểm phạt:</span>
  <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1 shadow-2xs">
  <input
  type="number"
@@ -795,14 +795,14 @@ export default function AdminEssayReviewPage() {
  step={0.5}
  value={penaltyInput}
  onChange={(e) => setPenaltyInput(Number(e.target.value))}
- className="w-12 text-xs font-semibold text-center text-slate-900 focus:outline-none"
+ className="w-12 text-[15px] font-medium text-center text-slate-900 focus:outline-none"
  />
  <span className="text-[12px] font-semibold text-slate-800 ml-1">điểm</span>
  </div>
  </div>
  <Button
  type="button"
- variant="danger-outline"
+ variant="secondary"
  size="sm"
  onClick={handlePenalty}
  >

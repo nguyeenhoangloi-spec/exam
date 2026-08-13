@@ -31,7 +31,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
  const shortAvatar = avatarText ? avatarText.trim().slice(0, 3).toUpperCase() : 'HD';
 
  return (
-    <div role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" className="fixed inset-0 z-[70] overflow-hidden">
+    <div role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" className="fixed inset-0 z-[100] overflow-hidden">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
@@ -39,7 +39,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
+        <div className="w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-700">
           {/* Header - Modern Gradient Header */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 p-5 text-white shrink-0 shadow-xs">
             <div className="flex items-start justify-between gap-3">
@@ -84,19 +84,19 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Details Body */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
-              <h3 className="text-[15px] font-semibold text-[#0F172A]">Thông tin chi tiết</h3>
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 dark:bg-slate-950/40">
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">Thông tin chi tiết</h3>
               <div className="grid gap-3.5">
                 {details.map((item, idx) => {
                   const Icon = item.icon;
                   return (
                     <div key={idx} className="flex items-start justify-between gap-3 text-[14px]">
-                      <span className="flex items-center gap-2 text-slate-500 text-[13px] font-semibold shrink-0 pt-0.5">
+                      <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[13px] font-medium shrink-0 pt-0.5">
                         {Icon && <Icon className="h-4 w-4 text-slate-400 shrink-0" />}
                         {item.label}:
                       </span>
-                      <span className="font-semibold text-slate-900 text-right text-[14px] leading-snug break-words max-w-[65%]">
+                      <span className="font-medium text-slate-900 dark:text-slate-100 text-right text-[14px] leading-snug break-words max-w-[65%]">
                         {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
                           ? <StatusBadge status={item.value} />
                           : item.value || '---'}
@@ -111,8 +111,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             {extraSections && extraSections.length > 0 && (
               <div className="space-y-4">
                 {extraSections.map((sec, i) => (
-                  <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 shadow-2xs">
-                    <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">{sec.title}</h3>
+                  <div key={i} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 space-y-3 shadow-2xs">
+                    <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">{sec.title}</h3>
                     <div>{sec.content}</div>
                   </div>
                 ))}
@@ -121,7 +121,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-slate-200/90 bg-white px-6 py-3.5 flex items-center justify-end shrink-0">
+          <div className="border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3.5 flex items-center justify-end shrink-0">
             <Button
               type="button"
               variant="secondary"

@@ -148,9 +148,9 @@ export function ExamReportTable({
  if (viewMode === 'compact') {
  return (
  <>
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -184,20 +184,20 @@ export function ExamReportTable({
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#0F172A]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-900">
  {c.studentCode}
  </span>
  </td>
  <td className="p-2 min-w-[180px]">
- <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(c)}>
+ <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-primary-600" onClick={() => onDetail(c)}>
  {c.fullName}
  </button>
  </td>
- <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{c.className}</td>
+ <td className="p-2 whitespace-nowrap font-normal text-slate-700">{c.className}</td>
  <td className="p-2 whitespace-nowrap">
  <StatusBadge status={c.status} />
  </td>
- <td className={`p-2 whitespace-nowrap text-center font-semibold ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
+ <td className={`p-2 whitespace-nowrap text-center font-medium ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
  {c.status === 'ABSENT' ? 'Vắng' : c.totalScore}
  </td>
  <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -206,13 +206,13 @@ export function ExamReportTable({
  <button
  type="button"
  onClick={() => setReviewAttemptId(c.attemptId!)}
- className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-[#2563EB] hover:bg-blue-100 text-[15px] leading-[22px] font-medium transition cursor-pointer"
+ className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-primary-600 hover:bg-blue-100 text-[15px] leading-[22px] font-medium transition cursor-pointer"
  title="Xem chi tiết bài làm"
  >
  <Eye className="h-3.5 w-3.5" />
  </button>
  )}
- <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+ <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-primary-600 cursor-pointer">
  <Eye className="h-4 w-4" />
  </button>
  </div>
@@ -236,9 +236,9 @@ export function ExamReportTable({
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
  <>
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -258,7 +258,7 @@ export function ExamReportTable({
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {candidates.map((c) => {
  const isChecked = selected.includes(c.studentId);
  const badge = statusBadgeMap[c.status] || { label: c.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
@@ -280,7 +280,7 @@ export function ExamReportTable({
 
  {visibleColumns.studentCode !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600">
+ <span className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600">
  {c.studentCode}
  </span>
  </td>
@@ -291,7 +291,7 @@ export function ExamReportTable({
  <button
  type="button"
  onClick={() => onDetail(c)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+ className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition"
  >
  {c.fullName}
  </button>
@@ -299,7 +299,7 @@ export function ExamReportTable({
  )}
 
  {visibleColumns.className !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-700">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-700">
  {c.className}
  </td>
  )}
@@ -311,12 +311,12 @@ export function ExamReportTable({
  )}
 
  {visibleColumns.totalScore !== false && (
- <td className="p-3.5 whitespace-nowrap text-center font-semibold">
+ <td className="p-3.5 whitespace-nowrap text-center font-medium">
  {c.status === 'ABSENT' ? (
  <StatusBadge status="ABSENT" customLabel="Vắng thi" />
  ) : (
  <span
- className={`text-sm ${c.totalScore >= 5 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'
+ className={`text-sm ${c.totalScore >= 5 ? 'text-emerald-600 font-medium' : 'text-rose-600 font-medium'
  }`}
  >
  {c.totalScore}
@@ -326,7 +326,7 @@ export function ExamReportTable({
  )}
 
  {visibleColumns.submittedAt !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-600">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-600">
  {c.submittedAt ? (
  <span className="inline-flex items-center gap-1 text-slate-700">
  <Clock className="h-3.5 w-3.5 text-slate-400" />
@@ -341,7 +341,7 @@ export function ExamReportTable({
  {visibleColumns.violationCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {c.violationCount > 0 ? (
- <span className="table-badge inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[12px] leading-[18px] font-semibold text-rose-700 border border-rose-200">
+ <span className="table-badge inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-0.5 text-[12px] leading-[18px] font-medium text-rose-700 border border-rose-200">
  <AlertTriangle className="h-3 w-3 text-rose-600" /> {c.violationCount}
  </span>
  ) : (

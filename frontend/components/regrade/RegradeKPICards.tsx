@@ -64,12 +64,12 @@ export function RegradeKPICards({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
+                <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
                   {item.title}
                 </span>
-                <p className="text-[32px] font-bold text-[#0F172A] leading-[38px]">
+                <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
                   {item.value.toLocaleString('vi-VN')}
-                  {item.unit ? <span className="text-xs font-normal text-[#64748B] ml-1">{item.unit}</span> : ''}
+                  {item.unit ? <span className="text-xs font-normal text-slate-500 ml-1">{item.unit}</span> : ''}
                 </p>
               </div>
 
@@ -80,7 +80,7 @@ export function RegradeKPICards({
               </div>
             </div>
 
-            <span className="text-[13px] font-normal text-[#64748B] mt-2">
+            <span className="text-[13px] font-normal text-slate-500 mt-2">
               {item.subtext}
             </span>
           </div>

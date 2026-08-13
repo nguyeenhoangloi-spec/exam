@@ -87,7 +87,7 @@ export function ExamRoomTable({
  <button
  type="button"
  onClick={() => onDetail(r)}
- className=" tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
+ className="tabular-nums text-xs font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -159,9 +159,9 @@ export function ExamRoomTable({
 
  // 2. Dạng Bảng Chuẩn (List View Mode)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-3.5 pl-4 text-center whitespace-nowrap w-10">
  <input
@@ -180,7 +180,7 @@ export function ExamRoomTable({
  <th className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+ <tbody className="divide-y divide-slate-100 font-normal text-slate-800">
  {rooms.map((r, index) => {
  const isChecked = selected.includes(r.id);
  const isLastRow = index >= Math.floor(rooms.length / 2);
@@ -207,7 +207,7 @@ export function ExamRoomTable({
  <button
  type="button"
  onClick={() => onDetail(r)}
- className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+ className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -219,7 +219,7 @@ export function ExamRoomTable({
  <button
  type="button"
  onClick={() => onDetail(r)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition leading-[22px] text-[15px]"
+ className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition leading-[22px] text-[15px]"
  >
  {nameText}
  </button>
@@ -228,12 +228,12 @@ export function ExamRoomTable({
 
  {visibleColumns.capacity !== false && (
  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
- <span className="font-semibold text-slate-900">{r.capacity} chỗ</span>
+ <span className="font-medium text-slate-900">{r.capacity} chỗ</span>
  </td>
  )}
 
  {visibleColumns.building !== false && (
- <td className="p-3.5 min-w-[140px] text-[15px] font-semibold text-slate-700">
+ <td className="p-3.5 min-w-[140px] text-[15px] font-medium text-slate-700">
  {locText}
  </td>
  )}

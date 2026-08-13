@@ -169,7 +169,7 @@ export function ExamPaperMatrixForm({
 
           {/* 1. Loại đề */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-semibold text-[#0F172A]">
+            <label className="block text-[15px] font-medium text-slate-900">
               Loại đề <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-1">
@@ -177,8 +177,8 @@ export function ExamPaperMatrixForm({
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
                 className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
-                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs'
-                  : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1]'
+                  ? 'bg-primary-600 text-white border-primary-600 shadow-2xs'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
               >
                 TN
@@ -187,8 +187,8 @@ export function ExamPaperMatrixForm({
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
                 className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
-                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs'
-                  : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1]'
+                  ? 'bg-primary-600 text-white border-primary-600 shadow-2xs'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
               >
                 Điền lỗ
@@ -197,54 +197,54 @@ export function ExamPaperMatrixForm({
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
                 className={`flex h-9 items-center justify-center gap-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
-                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-2xs'
-                  : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1]'
+                  ? 'bg-primary-600 text-white border-primary-600 shadow-2xs'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
               >
                 TL
               </button>
             </div>
-            <p className="text-xs text-[#64748B] font-medium">
+            <p className="text-xs text-slate-500 font-medium">
               {examType === 'DIEN_LO' || examType === 'FILL_BLANK' ? 'Điền vào chỗ trống' : isEssay ? 'Tự luận' : 'Trắc nghiệm'}
             </p>
           </div>
 
           {/* 2. Mã đề gốc */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-[#0F172A]">Mã đề gốc</label>
+            <label className="block text-[15px] font-medium text-slate-900">Mã đề gốc</label>
             <input
               type="text"
               required
               value={formData.paperCode}
               onChange={(e) => setFormData((p: any) => ({ ...p, paperCode: e.target.value }))}
               placeholder="101"
-              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
             />
           </div>
 
           {/* 3. Số mã đảo */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-[#0F172A]">Số mã đảo</label>
+            <label className="block text-[15px] font-medium text-slate-900">Số mã đảo</label>
             <input
               type="number"
               min={1}
               max={10}
               value={formData.variantCount}
               onChange={(e) => setFormData((p: any) => ({ ...p, variantCount: e.target.value }))}
-              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
             />
           </div>
 
           {/* 4. Thời gian */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-[#0F172A]">Thời gian (phút)</label>
+            <label className="block text-[15px] font-medium text-slate-900">Thời gian (phút)</label>
             <input
               type="number"
               min={15}
               max={scheduleDuration || 180}
               value={formData.durationMinutes}
               onChange={(e) => handleDurationChange(e.target.value)}
-              className="w-full h-9 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 outline-none transition"
+              className="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition"
             />
             {scheduleDuration > 0 && (
               <p className="text-[12px] text-slate-400 font-semibold">Tối đa: {scheduleDuration} phút</p>
@@ -254,7 +254,7 @@ export function ExamPaperMatrixForm({
 
         {/* ── ROW 2: Schedule Selector ── */}
         <div className="space-y-1.5">
-          <label className="block text-[15px] font-semibold text-slate-500 tracking-wider">
+          <label className="block text-[15px] font-medium text-slate-500 tracking-wider">
             Chọn Ca thi / Lịch thi <span className="text-red-500">*</span>
           </label>
 
@@ -262,7 +262,7 @@ export function ExamPaperMatrixForm({
             <div className="flex flex-wrap items-center justify-between gap-3 py-2">
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[12px] font-semibold tracking-wide text-[#475569]">
+                  <span className="text-[12px] font-semibold tracking-wide text-slate-600">
                     {(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}
                   </span>
                   <span className="text-sm font-semibold text-slate-900 truncate">
@@ -278,7 +278,7 @@ export function ExamPaperMatrixForm({
                   </span>
                   <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
                   {scheduleDuration > 0 && (
-                    <span className="text-[13px] font-semibold text-[#475569]">
+                    <span className="text-[13px] font-semibold text-slate-600">
                       {scheduleDuration} phút
                     </span>
                   )}
@@ -317,10 +317,10 @@ export function ExamPaperMatrixForm({
 
               {/* Popup card — centered */}
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-                <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+                <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
 
                   {/* Header */}
-                  <div className="flex items-center justify-between px-6 py-4 bg-[#2563EB] text-white">
+                  <div className="flex items-center justify-between px-6 py-4 bg-primary-600 text-white">
                     <div>
                       <p className="text-lg font-semibold text-white tracking-tight">Chọn Ca thi / Lịch thi</p>
                       <p className="text-xs font-semibold text-blue-100 mt-0.5">
@@ -337,11 +337,11 @@ export function ExamPaperMatrixForm({
                   </div>
 
                   {/* Body — 2 columns */}
-                  <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+                  <div className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-700" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
 
                     {/* LEFT: Chưa có đề */}
                     <div>
-                      <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
+                      <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10">
                         <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
                           Chưa có đề ({pending.length})
                         </span>
@@ -357,16 +357,16 @@ export function ExamPaperMatrixForm({
                               key={s.id}
                               type="button"
                               onClick={() => selectSchedule(String(s.id))}
-                              className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+                              className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${active ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''
                                 }`}
                             >
-                              <p className={`text-xs font-semibold truncate ${active ? 'text-blue-700' : 'text-slate-800'}`}>
+                              <p className={`text-xs font-semibold truncate ${active ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-100'}`}>
                                 [{subCode}] {subName}
                               </p>
-                              <p className="text-[12px] text-slate-500 font-semibold mt-0.5 truncate">
+                              <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 truncate">
                                 {periodName} · {fmt(s.examDate)}
                               </p>
-                              <p className="text-[12px] text-slate-400 mt-0.5">{s.startTime} – {s.endTime}</p>
+                              <p className="text-[12px] text-slate-400 dark:text-slate-500 mt-0.5">{s.startTime} – {s.endTime}</p>
                             </button>
                           );
                         })
@@ -374,9 +374,9 @@ export function ExamPaperMatrixForm({
 
                       {/* Phân đoạn ca thi Đã quá hạn / Đã kết thúc */}
                       {expired.length > 0 && (
-                        <div className="border-t border-slate-200 bg-slate-100/50 pt-2">
-                          <div className="px-4 py-1.5 bg-slate-200/60">
-                            <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
+                        <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50 pt-2">
+                          <div className="px-4 py-1.5 bg-slate-200/60 dark:bg-slate-700/60">
+                            <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
                               📁 Đã quá hạn / Đã kết thúc ({expired.length})
                             </span>
                           </div>
@@ -385,18 +385,18 @@ export function ExamPaperMatrixForm({
                             return (
                               <div
                                 key={s.id}
-                                className="w-full text-left px-4 py-2.5 border-b border-slate-100 bg-slate-50/80 opacity-60 cursor-not-allowed select-none"
+                                className="w-full text-left px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 opacity-60 cursor-not-allowed select-none"
                               >
                                 <div className="flex items-center justify-between gap-1">
-                                  <p className="text-xs font-semibold text-slate-600 truncate">
+                                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate">
                                     [{subCode}] {subName}
                                   </p>
-                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-[#DC2626]">
+                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-danger-600">
                                     <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                                     Đã quá hạn
                                   </span>
                                 </div>
-                                <p className="text-[12px] text-slate-400 font-semibold mt-0.5 truncate">
+                                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
                                   {periodName} · {fmt(s.examDate)} ({s.startTime} – {s.endTime})
                                 </p>
                               </div>
@@ -408,8 +408,8 @@ export function ExamPaperMatrixForm({
 
                     {/* RIGHT: Đã có đề */}
                     <div>
-                      <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
-                        <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
+                      <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10">
+                        <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
                           Đã có đề ({created.length})
                         </span>
                       </div>
@@ -425,24 +425,24 @@ export function ExamPaperMatrixForm({
                               key={s.id}
                               type="button"
                               onClick={() => selectSchedule(String(s.id))}
-                              className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${active ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+                              className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${active ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''
                                 }`}
                             >
                               <div className="flex items-center gap-1.5">
-                                <p className={`text-xs font-semibold truncate flex-1 ${active ? 'text-blue-700' : 'text-slate-700'}`}>
+                                <p className={`text-xs font-semibold truncate flex-1 ${active ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}`}>
                                   [{subCode}] {subName}
                                 </p>
                                 {s.examPapers?.some((p: any) => p.status === 'PUBLISHED') && (
-                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-[#15803D]">
+                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-success-600">
                                     <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                                     Đã phát hành
                                   </span>
                                 )}
-                                <span className="shrink-0 text-[13px] font-semibold text-[#475569]">
+                                <span className="shrink-0 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
                                   {count} đề
                                 </span>
                               </div>
-                              <p className="text-[12px] text-slate-400 font-semibold mt-0.5 truncate">
+                              <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
                                 {periodName} · {fmt(s.examDate)}
                               </p>
                             </button>
@@ -453,7 +453,7 @@ export function ExamPaperMatrixForm({
                   </div>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+                  <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
                     <Button
                       type="button"
                       variant="secondary"
@@ -509,7 +509,7 @@ export function ExamPaperMatrixForm({
                 { label: 'Khó (Điểm)', key: 'hardScore' },
               ].map(({ label: lb, key }) => (
                 <div key={key} className="space-y-1">
-                  <label className="block text-[15px] font-semibold text-slate-700">{lb}</label>
+                  <label className="block text-[15px] font-medium text-slate-700">{lb}</label>
                   <input
                     type="number"
                     step="0.25"
@@ -517,7 +517,7 @@ export function ExamPaperMatrixForm({
                     max={10}
                     value={(formData as any)[key] || ''}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -530,13 +530,13 @@ export function ExamPaperMatrixForm({
                 { label: 'Khó (Số câu)', key: 'hardCount' },
               ].map(({ label: lb, key }) => (
                 <div key={key} className="space-y-1">
-                  <label className="block text-[15px] font-semibold text-slate-700">{lb}</label>
+                  <label className="block text-[15px] font-medium text-slate-700">{lb}</label>
                   <input
                     type="number"
                     min={0}
                     value={(formData as any)[key]}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -545,7 +545,7 @@ export function ExamPaperMatrixForm({
         </div>
 
         {/* ── CẤU HÌNH MEDIA ── */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+        <div className="flex flex-wrap items-center justify-between gap-4 py-1">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
               <Volume2 className="h-5 w-5" />
@@ -560,7 +560,7 @@ export function ExamPaperMatrixForm({
           <select
             value={formData.mediaMaxPlays || '2'}
             onChange={(e) => setFormData((p: any) => ({ ...p, mediaMaxPlays: e.target.value }))}
-            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
+            className="h-9 rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
           >
             <option value="1">1 lần (Ngặt nghèo / Thi Nghe)</option>
             <option value="2">2 lần (Chuẩn Khảo thí / IELTS)</option>

@@ -32,9 +32,27 @@
   --ui-surface-muted: #f1f5f9;
   --ui-text: #0f172a;
   --ui-text-muted: #1f2937;
+  --ui-text-primary: #0f172a;
+  --ui-text-body: #1f2937;
+  --ui-text-secondary: #334155;
+  --ui-text-muted-soft: #475569;
+  --ui-text-disabled: #64748b;
   --ui-border: #e2e8f0;
   --ui-primary: #2563eb;
   --ui-primary-hover: #1d4ed8;
+  --ui-primary-rgb: 37 99 235;
+  --ui-chart-primary: #2563eb;
+  --ui-chart-primary-light: #3b82f6;
+  --ui-chart-success: #10b981;
+  --ui-chart-success-strong: #16a34a;
+  --ui-chart-warning: #f59e0b;
+  --ui-chart-danger: #ef4444;
+  --ui-chart-danger-strong: #dc2626;
+  --ui-chart-info: #0891b2;
+  --ui-brand-google-blue: #4285f4;
+  --ui-brand-google-green: #34a853;
+  --ui-brand-google-yellow: #fbbc05;
+  --ui-brand-google-red: #ea4335;
   --ui-radius: 0.75rem;
   font-family: var(--font-ui);
 }
@@ -45,9 +63,15 @@ html.dark {
   --ui-surface-muted: #1e293b;
   --ui-text: #e2e8f0;
   --ui-text-muted: #94a3b8;
+  --ui-text-primary: #f1f5f9;
+  --ui-text-body: #e2e8f0;
+  --ui-text-secondary: #cbd5e1;
+  --ui-text-muted-soft: #94a3b8;
+  --ui-text-disabled: #64748b;
   --ui-border: #334155;
   --ui-primary: #4e95f5;
   --ui-primary-hover: #86bbff;
+  --ui-primary-rgb: 78 149 245;
 }
 
 @layer base {
@@ -80,7 +104,11 @@ html.dark {
   textarea,
   table,
   th,
-  td {
+  td,
+  code,
+  kbd,
+  pre,
+  samp {
     font-family: inherit;
   }
 
@@ -93,12 +121,12 @@ html.dark {
   :where(input, select, textarea):not(.no-focus-ring):focus,
   :where(input, select, textarea):not(.no-focus-ring):focus-visible {
     outline: none !important;
-    border-color: #2563eb !important;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+    border-color: var(--ui-primary) !important;
+    box-shadow: 0 0 0 3px rgb(var(--ui-primary-rgb) / 0.18) !important;
   }
 
   :where(button, a, [role='button']):not(.no-focus-ring):focus-visible {
-    outline: 1.5px solid rgba(37, 99, 235, 0.7) !important;
+    outline: 1.5px solid rgb(var(--ui-primary-rgb) / 0.7) !important;
     outline-offset: 1px !important;
   }
 }
@@ -292,7 +320,8 @@ html.dark {
   .ui-table thead {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
-    @apply bg-slate-50 font-semibold tracking-wide text-[#1F2937] dark:bg-slate-800 dark:text-slate-400;
+    @apply bg-slate-50 font-medium tracking-wide dark:bg-slate-800 dark:text-slate-400;
+    color: var(--ui-text-body);
   }
 
   .ui-table th {
@@ -300,7 +329,9 @@ html.dark {
   }
 
   .ui-table td {
-    @apply border-t border-slate-100 px-4 py-3.5 text-[#1F2937] dark:border-slate-800 dark:text-slate-200;
+    @apply border-t border-slate-100 px-4 py-3.5 dark:border-slate-800 dark:text-slate-200;
+    color: var(--ui-text-body);
+    font-weight: 400;
   }
 
   .ui-table tbody tr {
@@ -311,86 +342,99 @@ html.dark {
   .edu-page-title {
     font-size: var(--fs-page-title);
     line-height: var(--lh-page-title);
-    @apply font-bold text-[#0F172A] tracking-tight;
+    @apply font-semibold tracking-tight;
+    color: var(--ui-text-primary);
   }
 
   .edu-section-title {
     font-size: var(--fs-section-title);
     line-height: var(--lh-section-title);
-    @apply font-semibold text-[#0F172A] tracking-tight;
+    @apply font-semibold tracking-tight;
+    color: var(--ui-text-primary);
   }
 
   .edu-card-title {
     font-size: var(--fs-card-title);
     line-height: var(--lh-card-title);
-    @apply font-semibold text-[#0F172A];
+    @apply font-semibold;
+    color: var(--ui-text-primary);
   }
 
   .edu-subheading {
     font-size: var(--fs-card-title);
     line-height: var(--lh-card-title);
-    @apply font-semibold text-[#0F172A];
+    @apply font-semibold;
+    color: var(--ui-text-primary);
   }
 
   .edu-body {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    @apply font-normal text-[#1F2937];
+    @apply font-normal;
+    color: var(--ui-text-body);
   }
 
   .edu-body-medium {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    @apply font-medium text-[#1F2937];
+    @apply font-medium;
+    color: var(--ui-text-body);
   }
 
   .edu-body-important {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    @apply font-medium text-[#0F172A];
+    @apply font-semibold;
+    color: var(--ui-text-primary);
   }
 
   .edu-table-header {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
-    @apply font-semibold text-[#1F2937] tracking-wider;
+    @apply font-medium tracking-wider;
+    color: var(--ui-text-body);
   }
 
   .edu-table-content {
     font-size: var(--fs-body);
     line-height: var(--lh-table-content);
-    @apply font-normal text-[#1F2937];
+    @apply font-normal;
+    color: var(--ui-text-body);
   }
 
   .edu-secondary {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
-    @apply font-normal text-[#1F2937];
+    @apply font-normal;
+    color: var(--ui-text-secondary);
   }
 
   .edu-helper {
     font-size: var(--fs-helper);
     line-height: var(--lh-helper);
-    @apply font-normal text-[#1F2937];
+    @apply font-normal;
+    color: var(--ui-text-muted-soft);
   }
 
   .edu-badge {
     font-size: var(--fs-badge);
     line-height: var(--lh-badge);
-    @apply font-semibold;
+    @apply font-medium;
   }
 
   .edu-kpi {
     font-size: var(--fs-kpi);
     line-height: var(--lh-kpi);
-    @apply font-bold text-[#0F172A];
+    @apply font-bold;
+    color: var(--ui-text-primary);
     font-variant-numeric: tabular-nums;
   }
 
   .edu-label {
     font-size: var(--fs-label);
     line-height: var(--lh-label);
-    @apply font-medium text-[#1F2937];
+    @apply font-medium;
+    color: var(--ui-text-secondary);
   }
 
   .edu-control {
@@ -402,7 +446,8 @@ html.dark {
   .edu-reading {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
-    @apply font-normal text-[#1F2937];
+    @apply font-normal;
+    color: var(--ui-text-body);
   }
 
   .edu-numeric {
@@ -410,83 +455,61 @@ html.dark {
   }
 }
 
-/* Light-theme neutral text is intentionally black-forward. These selectors
-   normalize legacy Tailwind and hard-coded slate colors across existing
-   screens without changing semantic status or action colors. */
-html:not(.dark) .text-slate-400,
-html:not(.dark) .text-slate-500,
-html:not(.dark) .text-slate-600,
-html:not(.dark) .text-slate-700,
-html:not(.dark) .text-gray-400,
-html:not(.dark) .text-gray-500,
-html:not(.dark) .text-gray-600,
-html:not(.dark) .text-gray-700,
-html:not(.dark) .text-\[\#64748B\],
-html:not(.dark) .text-\[\#475569\],
-html:not(.dark) .text-\[\#334155\],
-html:not(.dark) .text-\[\#94A3B8\] {
-  color: rgb(31 41 55) !important;
+/* Semantic weight guardrails. These rules keep native semantic elements
+ * consistent on legacy screens that still carry local utility classes. */
+.typography-scale :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: 600;
 }
 
-/* Bold neutral text uses the stronger black tier. */
-html:not(.dark) :is(.text-slate-400,
-  .text-slate-500,
-  .text-slate-600,
-  .text-slate-700,
-  .text-gray-400,
-  .text-gray-500,
-  .text-gray-600,
-  .text-gray-700,
-  .text-\[\#64748B\],
-  .text-\[\#475569\],
-  .text-\[\#334155\]).font-medium,
-html:not(.dark) :is(.text-slate-400,
-  .text-slate-500,
-  .text-slate-600,
-  .text-slate-700,
-  .text-gray-400,
-  .text-gray-500,
-  .text-gray-600,
-  .text-gray-700,
-  .text-\[\#64748B\],
-  .text-\[\#475569\],
-  .text-\[\#334155\]).font-semibold,
-html:not(.dark) :is(.text-slate-400,
-  .text-slate-500,
-  .text-slate-600,
-  .text-slate-700,
-  .text-gray-400,
-  .text-gray-500,
-  .text-gray-600,
-  .text-gray-700,
-  .text-\[\#64748B\],
-  .text-\[\#475569\],
-  .text-\[\#334155\]).font-bold {
-  color: rgb(15 23 42) !important;
+.typography-scale :where(label) {
+  font-weight: 500;
 }
 
-/* Placeholder and alpha variants remain black-forward, with opacity used
-   only to communicate that the control is inactive or not yet filled. */
-html:not(.dark) .placeholder\:text-slate-400::placeholder,
-html:not(.dark) .placeholder\:text-slate-500::placeholder,
-html:not(.dark) .placeholder\:text-gray-400::placeholder,
-html:not(.dark) .placeholder\:text-\[\#94A3B8\]::placeholder {
-  color: rgb(31 41 55) !important;
+.typography-scale :where(button, [role='button']) {
+  font-weight: 600;
 }
 
-html:not(.dark) .text-slate-400\/70,
-html:not(.dark) .text-slate-400\/80,
-html:not(.dark) .text-slate-500\/70,
-html:not(.dark) .text-slate-500\/80,
-html:not(.dark) .text-slate-600\/70,
-html:not(.dark) .text-slate-600\/80,
-html:not(.dark) .text-\[\#64748B\]\/70,
-html:not(.dark) .text-\[\#64748B\]\/80 {
-  color: rgb(31 41 55) !important;
+.typography-scale :where(nav a, nav button) {
+  font-weight: 500;
 }
 
-html.dark .text-\[\#64748B\] {
-  color: rgb(148 163 184) !important;
+.typography-scale :where(thead, th) {
+  font-weight: 500;
+}
+
+.typography-scale :where(tbody td) {
+  font-weight: 400;
+}
+
+/* Muted neutral text must not become louder merely because a legacy
+ * component attached a stronger utility. Status/action colors are excluded. */
+.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-semibold,
+.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-bold {
+  font-weight: 400;
+}
+
+/* Black-forward neutral palette for the light theme. Existing neutral
+ * utilities are intentionally remapped by semantic depth so every screen
+ * becomes clearer without changing component markup or layout. Semantic
+ * status/action colors (blue, emerald, amber, rose) are not affected. */
+html:not(.dark) .typography-scale :where(.text-slate-400, .text-gray-400) {
+  color: var(--ui-text-muted-soft) !important;
+}
+
+html:not(.dark) .typography-scale :where(.text-slate-500, .text-gray-500) {
+  color: var(--ui-text-secondary) !important;
+}
+
+html:not(.dark) .typography-scale :where(.text-slate-600, .text-gray-600, .text-slate-700, .text-gray-700, .text-slate-800, .text-gray-800) {
+  color: var(--ui-text-body) !important;
+}
+
+html:not(.dark) .typography-scale :where(.text-slate-900, .text-gray-900) {
+  color: var(--ui-text-primary) !important;
+}
+
+html:not(.dark) .typography-scale :where(.placeholder\:text-slate-400, .placeholder\:text-gray-400)::placeholder {
+  color: var(--ui-text-disabled) !important;
 }
 
 /* Inter is intentionally loaded only at 400–700. Keep the visual weight
@@ -708,7 +731,7 @@ html.dark .app-shell-main .hover\:text-slate-700:hover {
 html.dark .app-shell-main :where(input, select, textarea):not(.no-focus-ring):focus,
 html.dark .app-shell-main :where(input, select, textarea):not(.no-focus-ring):focus-visible {
   outline: none !important;
-  border-color: #3b82f6 !important;
+  border-color: var(--ui-primary) !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
 }
 

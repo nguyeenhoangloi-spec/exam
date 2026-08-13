@@ -1,58 +1,91 @@
 ---
-description: Chưa biết bắt đầu từ đâu? Lập kế hoạch theo chuẩn Senior Personnel.
+description: Nghiên cứu, rà soát, phân tích và lập kế hoạch triển khai (SCAN → ANALYZE → PLAN → STOP) - Không viết code.
 ---
 
-# /plan - Strategic Planning System
+# /plan - Quy trình Nghiên cứu & Lập Kế hoạch Triển khai (Zero-Code)
 
-$ARGUMENTS
-
----
-
-## 🟢 PHASE 1: Discovery & Terrain Analysis (Gatekeeper)
-**Agent**: `explorer-agent`
-**Mission**: Understand the current state before proposing changes.
-- **Action**: Perform a recursive scan of the workspace.
-- **Action**: Identify all relevant DNA (`GEMINI.md`) and Rules (`rules/`).
-- **Critical Gate**: If the request is ambiguous, trigger the **Socratic Gate** and ask 3-5 clarifying questions.
-
-## 🟡 PHASE 2: Strategic Implementation Plan
-**Agent**: `project-planner`
-**Mission**: Create the blueprint for success.
-- **Output**: `PLAN-{task-slug}.md` in the project root or relevant docs folder.
-- **Requirement**: Use GitHub-style alerts (IMPORTANT/WARNING) for risks.
-- **Protocol**: 
-  1. Define Clear Goals.
-  2. Map Dependency Chains.
-  3. Establish Phase-by-Phase Breakdown.
-  4. Create a specific Verification Plan (Automated + Manual).
-
-## 🔵 PHASE 3: Surgical Task Distribution
-**Agent**: `orchestrator`
-**Mission**: Map the plan to specialized specialists.
-- **Action**: Update `task.md` with unique IDs for every step.
-- **Action**: Assign the "Heavy Lifters" (Backend, Frontend, etc.).
-
-## 🔴 PHASE 4: Plan Validation & Sign-off
-**Agent**: `quality-inspector`
-**Mission**: Ensure the plan is "Operational-Ready."
-- **Verification**: Check if the plan matches `DNA_REF` compliance.
-- **Reporting**: Report the exact file path of the created Plan to the User.
+Workflow này định hướng cho Agent thực hiện nghiên cứu, rà soát, phân tích và lập kế hoạch chi tiết trước khi tiến hành chỉnh sửa dự án trên Antigravity IDE.
 
 ---
 
-## Output Format
-```markdown
-[OK] Plan Created: {path_to_plan.md}
+## 🚫 QUY TẮC TỐI CAO: ZERO-CODE
 
-### Next Steps:
-1. Review the Plan.
-2. Manually adjust if needed.
-3. Run `/create` or `/orchestrate` to begin the surgical execution.
-```
+**KHÔNG được viết, sửa, tạo hoặc xóa bất kỳ dòng code nào ở giai đoạn này.**
+
+Nhiệm vụ hiện tại chỉ là **nghiên cứu, rà soát, phân tích và lập kế hoạch triển khai**.
+
+Phải chủ động kiểm tra toàn bộ phạm vi liên quan trong project, không chỉ file đang mở hoặc một vài page dễ thấy.
 
 ---
 
-## Key Principles:
-- **No Code**: This workflow is strictly for strategy.
-- **Naming Protocol**: `PLAN-kebab-case-slug.md`.
-- **User-Centric**: Respect the user's OS and workspace constraints.
+## 🔄 QUY TRÌNH BẮT BUỘC
+
+Thực hiện liên tục theo chu trình:
+
+**SCAN → ANALYZE → PLAN → STOP**
+
+---
+
+### 1. 🔍 SCAN
+
+Rà soát toàn bộ các file, thư mục, page, route, layout, component, shared component, UI primitive, style, token, state và các phần được tái sử dụng có liên quan trong project.
+
+---
+
+### 2. 📊 ANALYZE
+
+Xác định rõ:
+
+* Hiện trạng đang được triển khai như thế nào.
+* Những vị trí nào đã đúng.
+* Những vị trí nào chưa đúng hoặc chưa đồng nhất.
+* Nguyên nhân nằm ở page riêng hay shared component.
+* Các dependency và phạm vi ảnh hưởng.
+* Những rủi ro có thể phát sinh nếu chỉnh sửa.
+* Những phần cần giữ nguyên.
+* Có thể chuẩn hóa ở nguồn dùng chung hay không.
+
+---
+
+### 3. 📝 PLAN
+
+Lập kế hoạch triển khai chi tiết, bao gồm:
+
+* File dự kiến cần sửa.
+* File dự kiến tạo mới nếu thực sự cần.
+* Shared component/token/style nào nên chỉnh trước.
+* Thứ tự triển khai.
+* Phạm vi ảnh hưởng.
+* Cách kiểm tra sau mỗi bước.
+* Cách chạy type-check, lint, build hoặc test nếu có.
+* Tiêu chí xác nhận hoàn thành.
+
+**Lưu ý**: Không được lập kế hoạch chung chung. Phải dựa trên codebase thực tế đã rà soát.
+
+---
+
+### 4. 🛑 STOP
+
+Sau khi hoàn thành nghiên cứu và lập kế hoạch:
+
+**DỪNG LẠI. KHÔNG TRIỂN KHAI CODE.**
+
+Chỉ được bắt đầu chỉnh sửa khi người dùng xác nhận bằng một lệnh rõ ràng như:
+
+* `Triển khai`
+* `Bắt đầu thực hiện`
+* `Code theo kế hoạch`
+* `Thực hiện kế hoạch`
+
+---
+
+## ⚠️ XỬ LÝ PHẦN CHƯA THỂ XÁC MINH
+
+Nếu phát hiện phần nào không thể kiểm tra, phải nêu rõ trong báo cáo kế hoạch:
+
+* File/thư mục nào.
+* Không xác minh được điều gì.
+* Lý do.
+* Ảnh hưởng tới kế hoạch.
+
+**Tuyệt đối không được tự suy đoán rồi đưa vào kế hoạch như thể đã được xác minh.**

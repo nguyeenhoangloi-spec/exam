@@ -20,11 +20,11 @@ interface StatusConfig {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const success = 'text-[#15803D] dark:text-emerald-400';
-const active = 'text-[#2563EB] dark:text-blue-400';
-const pending = 'text-[#D97706] dark:text-amber-400';
-const danger = 'text-[#DC2626] dark:text-rose-400';
-const neutral = 'text-[#475569] dark:text-slate-400';
+const success = 'text-success-600 dark:text-emerald-400';
+const active = 'text-primary-600 dark:text-blue-400';
+const pending = 'text-warning-600 dark:text-amber-400';
+const danger = 'text-danger-600 dark:text-rose-400';
+const neutral = 'text-slate-600 dark:text-slate-400';
 
 const statusConfigs: Record<string, StatusConfig> = {
   PUBLISHED: { label: 'Đã công bố', textClass: success, icon: CheckCircle2 },
@@ -64,30 +64,44 @@ const statusConfigs: Record<string, StatusConfig> = {
   ROOM_THEORY: { label: 'Phòng lý thuyết', textClass: neutral, icon: BookOpen },
 };
 
+const dotBgConfigs: Record<string, string> = {
+  PUBLISHED: 'bg-emerald-500', APPROVED: 'bg-emerald-500', CONFIRMED: 'bg-emerald-500', COMPLETED: 'bg-emerald-500', READY: 'bg-emerald-500', GRADED: 'bg-emerald-500', SUBMITTED: 'bg-emerald-500', AUTO_SUBMITTED: 'bg-emerald-500',
+  SCHEDULED: 'bg-blue-500', UPCOMING: 'bg-blue-500', IN_PROGRESS: 'bg-blue-500', ONGOING: 'bg-blue-500', IN_USE: 'bg-blue-500', DEVICE_CHECK: 'bg-blue-500', GRADING: 'bg-blue-500',
+  WAITING_APPROVAL: 'bg-amber-500', PENDING: 'bg-amber-500', CHANGE_REQUESTED: 'bg-amber-500', UNDER_REVIEW: 'bg-amber-500', MAINTENANCE: 'bg-amber-500', BUSY: 'bg-amber-500', DISCONNECTED: 'bg-amber-500',
+  CANCELLED: 'bg-rose-500', REJECTED: 'bg-rose-500', ABSENT: 'bg-rose-500',
+  DRAFT: 'bg-slate-400', ARCHIVED: 'bg-slate-400', LOCKED: 'bg-slate-400', NOT_STARTED: 'bg-slate-400', ROOM_COMPUTER: 'bg-slate-400', ROOM_THEORY: 'bg-slate-400',
+};
+
 interface StatusBadgeProps {
   status: string;
   customLabel?: string;
   className?: string;
+  variant?: 'dot' | 'icon';
 }
 
-/** Inline semantic status: icon + colored text only, without a badge container. */
-export function StatusBadge({ status, customLabel, className = '' }: StatusBadgeProps) {
+/** Inline semantic status: Dot + Text or Icon + Text without container box. */
+export function StatusBadge({ status, customLabel, className = '', variant = 'dot' }: StatusBadgeProps) {
   const config = statusConfigs[status] || {
     label: customLabel || status,
     textClass: neutral,
     icon: HelpCircle,
   };
   const IconComponent = config.icon;
+  const dotBg = dotBgConfigs[status] || 'bg-slate-400';
 
   return (
     <span
       className={[
-        'inline-flex items-center gap-[6px] text-[14px] font-semibold leading-5 whitespace-nowrap select-none',
+        'inline-flex items-center gap-[6px] text-[13px] font-semibold leading-5 whitespace-nowrap select-none',
         config.textClass,
         className,
       ].join(' ')}
     >
-      <IconComponent className="h-4 w-4 shrink-0" />
+      {variant === 'icon' ? (
+        <IconComponent className="h-3.5 w-3.5 shrink-0" />
+      ) : (
+        <span className={`h-2 w-2 rounded-full ${dotBg} shrink-0`} />
+      )}
       <span>{customLabel || config.label}</span>
     </span>
   );

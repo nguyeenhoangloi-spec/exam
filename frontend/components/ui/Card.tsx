@@ -11,7 +11,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Card({ children, className = '', noPadding = false, ...props }: CardProps) {
   return (
     <div
-      className={`rounded-2xl border border-slate-200/90 bg-white shadow-2xs ${
+      className={`rounded-2xl border border-slate-200/90 bg-white dark:border-slate-700 dark:bg-slate-900 shadow-2xs ${
         noPadding ? '' : 'p-6'
       } ${className}`}
       {...props}
@@ -31,10 +31,10 @@ export function CardHeader({
 }: React.HTMLAttributes<HTMLDivElement> & { title?: React.ReactNode; subtitle?: React.ReactNode; action?: React.ReactNode }) {
   if (title || subtitle || action) {
     return (
-      <div className={`flex items-center justify-between border-b border-slate-100 pb-4 mb-4 ${className}`} {...props}>
+      <div className={`flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4 ${className}`} {...props}>
         <div>
           {title && <h3 className="edu-card-title">{title}</h3>}
-          {subtitle && <p className="edu-secondary mt-0.5 text-slate-500">{subtitle}</p>}
+          {subtitle && <p className="edu-secondary mt-0.5 text-slate-500 dark:text-slate-400">{subtitle}</p>}
         </div>
         {action && <div className="flex items-center gap-2">{action}</div>}
       </div>
@@ -42,7 +42,7 @@ export function CardHeader({
   }
 
   return (
-    <div className={`border-b border-slate-100 pb-4 mb-4 ${className}`} {...props}>
+    <div className={`border-b border-slate-100 dark:border-slate-800 pb-4 mb-4 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -58,7 +58,7 @@ export function CardBody({ children, className = '', ...props }: React.HTMLAttri
 
 export function CardFooter({ children, className = '', ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`flex items-center justify-between border-t border-slate-100 pt-4 mt-4 ${className}`} {...props}>
+    <div className={`flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4 mt-4 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -79,7 +79,7 @@ export function StatisticCard({ title, value, icon, trend, description, badge, c
     <Card className={`group flex flex-col justify-between transition hover:shadow-md ${className}`}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <span className="edu-helper font-semibold tracking-wider text-slate-500">{title}</span>
+          <span className="edu-helper font-medium tracking-wider text-slate-500 dark:text-slate-400">{title}</span>
           <div className="edu-kpi tracking-tight">{value}</div>
         </div>
         {icon && (
@@ -90,7 +90,7 @@ export function StatisticCard({ title, value, icon, trend, description, badge, c
       </div>
 
       {(trend || description || badge) && (
-        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 edu-helper font-medium text-slate-500">
+        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 edu-helper text-slate-500 dark:text-slate-400">
           {trend && (
             <span className={`font-medium ${trend.positive ? 'text-emerald-600' : 'text-rose-600'}`}>
               {trend.positive ? '↑' : '↓'} {trend.value}

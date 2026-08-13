@@ -540,10 +540,10 @@ export default function ExamArrangementPage() {
  <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
  {/* Header */}
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Xếp phòng thi tự động
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
  Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
  </p>
  </div>
@@ -556,28 +556,28 @@ export default function ExamArrangementPage() {
  value: selectedScheduleId ? 'Đã chọn' : 'Chưa chọn',
  subtext: `${schedules.length} ca thi trong kỳ`,
  icon: Zap,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  {
  title: 'Phòng thi khả dụng',
  value: `${availableCount}/${rooms.length}`,
  subtext: 'Trạng thái rảnh trong khung giờ',
  icon: DoorOpen,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  {
  title: 'Sức chứa đã chọn',
  value: `${selectedCapacity} chỗ`,
  subtext: `${selectedRoomIds.length} phòng đang được chọn`,
  icon: Users,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  {
  title: 'Kết quả phân bổ',
  value: result ? `${result.summary.totalStudents} SV` : 'Chưa xếp',
  subtext: result ? `${roomSummaries.length} phòng được xếp` : 'Bấm kích hoạt để bắt đầu',
  icon: CheckCircle2,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  ].map((item) => {
  const IconComponent = item.icon;
@@ -588,14 +588,14 @@ export default function ExamArrangementPage() {
  >
  <div className="flex items-start justify-between gap-3">
  <div className="space-y-1">
- <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">{item.title}</span>
- <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">{item.value}</p>
+ <span className="text-[13px] font-semibold text-slate-500 tracking-wider">{item.title}</span>
+ <p className="text-[32px] font-bold text-slate-900 leading-[38px]">{item.value}</p>
  </div>
  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
  <IconComponent className="h-5 w-5" />
  </div>
  </div>
- <span className="text-[13px] font-normal text-[#64748B] mt-2">{item.subtext}</span>
+ <span className="text-[13px] font-normal text-slate-500 mt-2">{item.subtext}</span>
  </div>
  );
  })}
@@ -624,7 +624,7 @@ export default function ExamArrangementPage() {
 
  <form onSubmit={runPreview} className="space-y-4">
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
 
  {/* Custom popup trigger */}
  <button
@@ -646,10 +646,10 @@ export default function ExamArrangementPage() {
  <>
  <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
- <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+ <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
 
  {/* Header */}
- <div className="flex items-center justify-between px-6 py-4 bg-[#2563EB] text-white">
+ <div className="flex items-center justify-between px-6 py-4 bg-primary-600 text-white">
  <div>
  <p className="text-lg font-semibold text-white tracking-tight">Chọn Ca thi</p>
  <p className="text-xs font-semibold text-blue-100 mt-0.5">
@@ -687,10 +687,10 @@ export default function ExamArrangementPage() {
  const expiredArrangement = schedules.filter((s: any) => !s.examScheduleRooms?.length && isScheduleExpired(s));
 
  return (
- <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+ <div className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-700" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
  {/* LEFT: Chưa xếp phòng */}
  <div>
- <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
+ <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10">
  <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
  Chưa xếp phòng ({pendingArrangement.length})
  </span>
@@ -705,14 +705,14 @@ export default function ExamArrangementPage() {
  key={s.id}
  type="button"
  onClick={() => { void handleScheduleChange(s.id.toString()); setShowSchedulePicker(false); }}
- className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+ className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${isActive ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''
  }`}
  >
- <p className={`text-xs font-semibold truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
+ <p className={`text-xs font-semibold truncate ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-100'}`}>
  {s.mode === 'MOCK' ? '[THI THỬ] ' : '[CHÍNH THỨC] '}
  {s.subject?.subjectName}
  </p>
- <p className="text-[12px] text-slate-500 font-semibold mt-0.5">
+ <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
  {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
@@ -723,26 +723,26 @@ export default function ExamArrangementPage() {
 
  {/* Section Ca thi Đã quá hạn */}
  {expiredArrangement.length > 0 && (
- <div className="border-t border-slate-200 bg-slate-100/50 pt-2">
- <div className="px-4 py-1.5 bg-slate-200/60">
- <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
+ <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50 pt-2">
+ <div className="px-4 py-1.5 bg-slate-200/60 dark:bg-slate-700/60">
+ <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
  📁 Đã quá hạn / Đã kết thúc ({expiredArrangement.length})
  </span>
  </div>
  {expiredArrangement.map((s: any) => (
  <div
  key={s.id}
- className="w-full text-left px-4 py-2.5 border-b border-slate-100 bg-slate-50/80 cursor-not-allowed select-none"
+ className="w-full text-left px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 cursor-not-allowed select-none"
  >
  <div className="flex items-center justify-between gap-1">
- <p className="text-xs font-semibold text-slate-600 truncate">
+ <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate">
  {s.subject?.subjectName}
  </p>
  <span className="shrink-0 rounded-md bg-amber-100 text-amber-800 text-[12px] font-semibold px-1.5 py-0.5">
  Đã quá hạn
  </span>
  </div>
- <p className="text-[12px] text-slate-400 font-semibold mt-0.5 truncate">
+ <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
  {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
@@ -754,8 +754,8 @@ export default function ExamArrangementPage() {
 
  {/* RIGHT: Đã xếp phòng */}
  <div>
- <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10">
- <span className="text-[12px] font-semibold text-slate-500 tracking-wider">
+ <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10">
+ <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
  Đã xếp phòng ({createdArrangement.length})
  </span>
  </div>
@@ -770,18 +770,18 @@ export default function ExamArrangementPage() {
  key={s.id}
  type="button"
  onClick={() => { void handleScheduleChange(s.id.toString()); setShowSchedulePicker(false); }}
- className={`w-full text-left px-4 py-3 border-b border-slate-50 last:border-0 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''
+ className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${isActive ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''
  }`}
  >
  <div className="flex items-center gap-2">
- <p className={`text-xs font-semibold truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
+ <p className={`text-xs font-semibold truncate flex-1 ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}`}>
  {s.subject?.subjectName}
  </p>
- <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[12px] font-semibold px-1.5 py-0.5">
+ <span className="shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 text-[12px] font-semibold px-1.5 py-0.5">
  {roomCount} phòng
  </span>
  </div>
- <p className="text-[12px] text-slate-400 font-semibold mt-0.5">
+ <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
  {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
@@ -795,7 +795,7 @@ export default function ExamArrangementPage() {
  })()}
 
  {/* Footer */}
- <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+ <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
  <Button type="button" variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
  Đóng
  </Button>
@@ -842,7 +842,7 @@ export default function ExamArrangementPage() {
 
  <div>
  <div className="flex items-center justify-between mb-2">
- <label className="block text-[15px] font-semibold text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
+ <label className="block text-[15px] font-medium text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
  <button type="button" onClick={selectAvailableOnly} className="text-[13px] font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
  Chọn phòng trống ({availableCount})
  </button>
@@ -903,7 +903,7 @@ export default function ExamArrangementPage() {
  {result && (
  <Button
  type="button"
- variant="danger-outline"
+ variant="secondary"
  size="md"
  onClick={handleResetArrangement}
  className="flex-1 w-full"
@@ -1029,7 +1029,7 @@ export default function ExamArrangementPage() {
  <select
  value={filterRoomCode}
  onChange={(e) => setFilterRoomCode(e.target.value)}
- className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-800 focus:bg-white cursor-pointer"
+ className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[15px] font-medium text-slate-800 focus:bg-white cursor-pointer"
  >
  <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
  {roomSummaries.map((rm) => (
@@ -1096,9 +1096,9 @@ export default function ExamArrangementPage() {
 
  {/* View Mode 2: Detailed Table */}
  {viewMode === 'table' && (
- <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[580px] overflow-y-auto">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200 max-h-[580px] overflow-y-auto">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-3.5">Phòng</th>
  <th className="p-3.5 text-center">Vị trí</th>
@@ -1111,18 +1111,18 @@ export default function ExamArrangementPage() {
  <tbody className="divide-y divide-slate-100 font-normal">
  {filteredDetails.map((st, dIdx) => (
  <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50/60 transition">
- <td className="p-3.5 font-medium text-[#0F172A]">{st.roomName || st.roomCode}</td>
- <td className="p-3.5 text-center font-semibold text-[#2563EB]">Ghế #{st.seatNumber}</td>
+ <td className="p-3.5 font-medium text-slate-900">{st.roomName || st.roomCode}</td>
+ <td className="p-3.5 text-center font-medium text-primary-600">Ghế #{st.seatNumber}</td>
  <td className="p-3.5">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#0F172A]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-900">
  {st.studentCode}
  </span>
  </td>
- <td className="p-3.5 font-medium text-[#0F172A]">{st.fullName}</td>
- <td className="p-3.5 font-normal text-[#334155]">
+ <td className="p-3.5 font-medium text-slate-900">{st.fullName}</td>
+ <td className="p-3.5 font-normal text-slate-700">
  {st.className && st.className !== '---' ? st.className : 'CNTT-K65'}
  </td>
- <td className="p-3.5 font-normal text-[#334155] whitespace-nowrap">
+ <td className="p-3.5 font-normal text-slate-700 whitespace-nowrap">
  {(st.requirementLabel || st.departmentName || 'Khoa Công nghệ thông tin').split(/[•\.\·]/)[0].trim()}
  </td>
  </tr>
@@ -1142,25 +1142,25 @@ export default function ExamArrangementPage() {
  <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
  <div>
- <h3 className="text-[20px] font-semibold text-[#0F172A]">
+ <h3 className="text-[20px] font-semibold text-slate-900">
  Nhật ký thao tác & Lịch sử Xếp phòng thi
  </h3>
- <p className="text-[15px] text-[#64748B] font-normal mt-0.5">
+ <p className="text-[15px] text-slate-500 font-normal mt-0.5">
  Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi
  </p>
  </div>
  <button
  type="button"
  onClick={fetchHistory}
- className="text-[14px] font-medium text-[#2563EB] hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
+ className="text-[14px] font-medium text-primary-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
  >
  Tải lại Nhật ký
  </button>
  </div>
 
- <div className="overflow-x-auto rounded-xl border border-slate-200/80">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/80">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-3.5">Thời gian</th>
  <th className="p-3.5">Người thực hiện</th>
@@ -1168,28 +1168,28 @@ export default function ExamArrangementPage() {
  <th className="p-3.5">Mô tả chi tiết</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {!historyLogs.length ? (
  <tr>
- <td colSpan={4} className="p-12 text-center text-slate-400 font-semibold">Chưa có lịch sử thao tác xếp phòng.</td>
+ <td colSpan={4} className="p-12 text-center text-slate-400 font-medium">Chưa có lịch sử thao tác xếp phòng.</td>
  </tr>
  ) : (
  historyLogs.map((log: any, lIdx: number) => {
- const actInfo = (() => {
- const act = log.action || '';
- if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls: 'bg-emerald-50 text-emerald-700 font-semibold' };
- if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls: 'bg-rose-50 text-rose-700 font-semibold' };
- if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls: 'bg-rose-50 text-rose-700 font-semibold' };
- if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls: 'bg-blue-50 text-blue-700 font-semibold' };
- if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls: 'bg-blue-50 text-blue-700 font-semibold' };
- if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls: 'bg-blue-50 text-blue-700 font-semibold' };
- if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls: 'bg-emerald-50 text-emerald-700 font-semibold' };
- if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls: 'bg-amber-50 text-amber-700 font-semibold' };
- if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls: 'bg-slate-100 text-slate-700 font-semibold' };
+  const actInfo = (() => {
+  const act = log.action || '';
+  if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls: 'text-emerald-600 font-medium' };
+  if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls: 'text-rose-600 font-medium' };
+  if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls: 'text-rose-600 font-medium' };
+  if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls: 'text-blue-600 font-medium' };
+  if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls: 'text-blue-600 font-medium' };
+  if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls: 'text-blue-600 font-medium' };
+  if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls: 'text-emerald-600 font-medium' };
+  if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls: 'text-amber-600 font-medium' };
+  if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls: 'text-slate-600 font-medium' };
 
- const formatted = act.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
- return { label: formatted, cls: 'bg-slate-100 text-slate-700 font-semibold' };
- })();
+  const formatted = act.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
+  return { label: formatted, cls: 'text-slate-600 font-medium' };
+  })();
 
  const roleLabel = log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role === 'TEACHER' ? 'Giảng viên' : log.actor?.role === 'STUDENT' ? 'Sinh viên' : (log.actor?.role || 'Quản trị viên');
  const username = log.actor?.username || log.actor?.fullName || 'admin';
@@ -1199,13 +1199,14 @@ export default function ExamArrangementPage() {
  <td className="p-3.5 font-medium text-slate-500 whitespace-nowrap">
  {new Date(log.createdAt).toLocaleString('vi-VN')}
  </td>
- <td className="p-3.5 font-semibold text-slate-800 whitespace-nowrap">
- {username} <span className="text-slate-400 font-semibold text-[15px] leading-[22px]">({roleLabel})</span>
+ <td className="p-3.5 font-medium text-slate-800 whitespace-nowrap">
+ {username} <span className="text-slate-400 font-medium text-[15px] leading-[22px]">({roleLabel})</span>
  </td>
  <td className="p-3.5 whitespace-nowrap">
- <span className={`table-badge px-2.5 py-0.5 text-[12px] leading-[18px] rounded-md ${actInfo.cls}`}>
- {actInfo.label}
- </span>
+  <span className={`inline-flex items-center gap-1.5 text-[15px] leading-[22px] font-medium ${actInfo.cls}`}>
+  <span className="h-1.5 w-1.5 rounded-full bg-current shrink-0" />
+  {actInfo.label}
+  </span>
  </td>
  <td className="p-3.5 text-slate-700 font-medium leading-relaxed">{log.description}</td>
  </tr>

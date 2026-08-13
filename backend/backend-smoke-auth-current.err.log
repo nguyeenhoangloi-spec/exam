@@ -1,0 +1,22 @@
+[31m[Nest] 1272  - [39m15:26:22 12/08/2026 [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +27ms[39m
+node:net:2009
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:2009:16)
+    at listenInCluster (node:net:2066:12)
+    at Server.listen (node:net:2171:7)
+    at ExpressAdapter.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\platform-express\adapters\express-adapter.js:95:32)
+    at C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\node_modules\@nestjs\core\nest-application.js:173:16)
+    at async bootstrap (C:\Users\loiho\.gemini\antigravity-ide\scratch\exam-management\backend\dist\src\main.js:87:5) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v24.18.1

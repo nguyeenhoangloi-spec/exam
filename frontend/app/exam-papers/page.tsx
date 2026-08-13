@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { FormEvent, useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -725,7 +725,7 @@ export default function ExamPapersPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -751,6 +751,7 @@ export default function ExamPapersPage() {
           visibleColumns={visibleColumns}
           onColumnToggle={handleColumnToggle}
           onRefresh={fetchData}
+          loading={loading}
         />
 
         {loading ? (
@@ -806,13 +807,13 @@ export default function ExamPapersPage() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <span className="text-[13px] font-semibold text-[#475569]">
+                <span className="text-[13px] font-semibold text-slate-600">
                   {(selectedPaper as any).questionCount ?? selectedPaper.questions?.length ?? (selectedPaper as any).details?.length ?? 0} câu hỏi
                 </span>
-                <span className="text-[13px] font-semibold text-[#475569]">
+                <span className="text-[13px] font-semibold text-slate-600">
                   {selectedPaper.totalScore} điểm
                 </span>
-                <span className="text-[13px] font-semibold text-[#475569]">
+                <span className="text-[13px] font-semibold text-slate-600">
                   {selectedPaper.durationMinutes} phút
                 </span>
               </div>
@@ -964,10 +965,10 @@ export default function ExamPapersPage() {
                 <span className="text-xs font-semibold text-slate-500">
                   Trạng thái: <strong className={
                     selectedPaper.status === 'PUBLISHED'
-                      ? 'inline-flex items-center gap-[6px] text-[14px] text-[#15803D] font-semibold leading-5 before:content-[\'✓\'] before:mr-1'
+                      ? 'inline-flex items-center gap-[6px] text-[14px] text-success-600 font-semibold leading-5 before:content-[\'✓\'] before:mr-1'
                       : selectedPaper.status === 'ARCHIVED'
-                        ? 'inline-flex items-center gap-[6px] text-[14px] text-[#475569] font-semibold leading-5 before:content-[\'•\'] before:mr-1'
-                        : 'inline-flex items-center gap-[6px] text-[14px] text-[#475569] font-semibold leading-5 before:content-[\'•\'] before:mr-1'
+                        ? 'inline-flex items-center gap-[6px] text-[14px] text-slate-600 font-semibold leading-5 before:content-[\'•\'] before:mr-1'
+                        : 'inline-flex items-center gap-[6px] text-[14px] text-slate-600 font-semibold leading-5 before:content-[\'•\'] before:mr-1'
                   }>
                     {selectedPaper.status === 'PUBLISHED' ? 'Đã phát hành' : selectedPaper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
                   </strong>
@@ -1007,7 +1008,7 @@ export default function ExamPapersPage() {
                       setSelectedPaper(null);
                       runAction(p, 'archive');
                     }}
-                    leftIcon={<Archive className="w-4 h-4 text-[#64748B]" />}
+                    leftIcon={<Archive className="w-4 h-4 text-slate-500" />}
                   >
                     Lưu trữ
                   </Button>
@@ -1022,7 +1023,7 @@ export default function ExamPapersPage() {
                       setSelectedPaper(null);
                       runAction(p, 'restore');
                     }}
-                    leftIcon={<RotateCcw className="w-4 h-4 text-[#64748B]" />}
+                    leftIcon={<RotateCcw className="w-4 h-4 text-slate-500" />}
                   >
                     Khôi phục
                   </Button>

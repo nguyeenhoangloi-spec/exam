@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -19,6 +19,7 @@ import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Inf
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
 import { TeacherTableToolbar } from '../../components/teachers/TeacherTableToolbar';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 import { TeacherTable } from '../../components/teachers/TeacherTable';
 import { TeacherPaginationBar } from '../../components/teachers/TeacherPaginationBar';
 
@@ -325,9 +326,9 @@ export default function TeachersPage() {
  filtered={filteredTeachers.length}
  />
 
- {/* Filter Card */}
- <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
- <div className="relative flex-1 min-w-[260px]">
+ {/* Filter Card Toolbar */}
+ <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-col lg:flex-row items-center justify-between gap-3.5">
+ <div className="relative flex-1 w-full min-w-[280px]">
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  <input
  type="text"
@@ -337,7 +338,7 @@ export default function TeachersPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
  />
  {search && (
  <button
@@ -353,28 +354,28 @@ export default function TeachersPage() {
  )}
  </div>
 
- <div className="flex items-center gap-3">
- <span className="text-xs font-semibold text-slate-500">Khoa trực thuộc:</span>
- <div className="relative">
- <select
- value={selectedDeptId}
- onChange={(e) => {
- setSelectedDeptId(e.target.value);
- setPage(1);
- }}
- className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
- >
- <option value="">Tất cả các Khoa</option>
- {departments.map((d) => (
- <option key={d.id} value={String(d.id)}>
- {d.name} ({d.code})
- </option>
- ))}
- </select>
- <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
- </div>
- </div>
- </div>
+          {/* Filter Select Dropdowns Group */}
+          <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Khoa trực thuộc:</span>
+              <FilterSelect
+                value={selectedDeptId}
+                onChange={(e) => {
+                  setSelectedDeptId(e.target.value);
+                  setPage(1);
+                }}
+                size="md"
+              >
+                <option value="">Tất cả các Khoa</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={String(d.id)}>
+                    {d.name} ({d.code})
+                  </option>
+                ))}
+              </FilterSelect>
+            </div>
+          </div>
+        </div>
 
  {/* Dynamic Table Action Toolbar */}
  <TeacherTableToolbar
@@ -386,6 +387,7 @@ export default function TeachersPage() {
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
  onRefresh={fetchData}
+ loading={loading}
  />
 
  {/* Full-Width DataGrid Table */}
@@ -455,21 +457,21 @@ export default function TeachersPage() {
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã giảng viên</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã giảng viên</label>
  <input
  type="text"
  required
  value={formData.teacherCode}
  onChange={(e) => setFormData({ ...formData, teacherCode: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Học vị / Học hàm</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Học vị / Học hàm</label>
  <select
  value={formData.degree}
  onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  {DEGREE_OPTIONS.map((d) => (
  <option key={d} value={d}>{d}</option>
@@ -479,23 +481,23 @@ export default function TeachersPage() {
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Họ và tên</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Họ và tên</label>
  <input
  type="text"
  required
  value={formData.fullName}
  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Khoa trực thuộc</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
  <select
  required
  value={formData.departmentId}
  onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  <option value="">-- Chọn Khoa --</option>
  {departments.map((d) => (
@@ -506,22 +508,22 @@ export default function TeachersPage() {
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Email Công vụ</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Email Công vụ</label>
  <input
  type="email"
  required
  value={formData.email}
  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Số điện thoại</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Số điện thoại</label>
  <input
  type="text"
  value={formData.phone}
  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  </div>
@@ -585,7 +587,7 @@ export default function TeachersPage() {
  onClick={() => setDrawerTeacher(null)}
  />
  {/* Drawer Panel */}
- <div className="relative w-full max-w-md bg-slate-50 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+ <div className="relative w-full max-w-md bg-slate-50 dark:bg-slate-950 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
  {/* Header - Modern Gradient matching ProfileDrawer */}
 <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
@@ -615,7 +617,7 @@ export default function TeachersPage() {
  </div>
 
  {/* Tabs */}
- <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
+<div className="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
  {[
  { id: 'info', label: 'Thông tin' },
  { id: 'assignments', label: 'Lịch coi thi' },
@@ -635,7 +637,7 @@ export default function TeachersPage() {
  </div>
 
  {/* Content */}
- <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+ <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-950/40">
  {drawerTab === 'info' && (
  <div className="space-y-4">
  <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4">
@@ -644,8 +646,8 @@ export default function TeachersPage() {
  <UserIcon className="w-5 h-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Mã giảng viên</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.teacherCode}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Mã giảng viên</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerTeacher.teacherCode}</p>
  </div>
  </div>
  <div className="flex items-center gap-3">
@@ -653,8 +655,8 @@ export default function TeachersPage() {
  <GraduationCap className="w-5 h-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Học vị / Học hàm</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.degree || 'Thạc sĩ / Tiến sĩ'}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Học vị / Học hàm</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerTeacher.degree || 'Thạc sĩ / Tiến sĩ'}</p>
  </div>
  </div>
  <div className="flex items-center gap-3">
@@ -662,8 +664,8 @@ export default function TeachersPage() {
  <Building2 className="w-5 h-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Khoa trực thuộc</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.department?.name || '---'}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Khoa trực thuộc</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerTeacher.department?.name || '---'}</p>
  </div>
  </div>
  <div className="flex items-center gap-3">
@@ -671,8 +673,8 @@ export default function TeachersPage() {
  <Mail className="w-5 h-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Email công vụ</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.email}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Email công vụ</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerTeacher.email}</p>
  </div>
  </div>
  <div className="flex items-center gap-3">
@@ -680,8 +682,8 @@ export default function TeachersPage() {
  <Phone className="w-5 h-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Số điện thoại</p>
- <p className="text-[15px] font-semibold text-[#0F172A]">{drawerTeacher.phone || '---'}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Số điện thoại</p>
+ <p className="text-[15px] font-semibold text-slate-900">{drawerTeacher.phone || '---'}</p>
  </div>
  </div>
  </div>
@@ -692,14 +694,14 @@ export default function TeachersPage() {
  <div className="space-y-4">
  {loadingAssignments ? (
  <div className="flex justify-center p-8">
- <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+ <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
  </div>
  ) : drawerAssignments.length === 0 ? (
  <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-2xs text-center">
  <div className="w-16 h-16 mx-auto bg-slate-50 rounded-2xl flex items-center justify-center mb-3">
  <Info className="w-8 h-8 text-slate-400" />
  </div>
- <p className="text-[#64748B] font-medium text-[15px]">Không có lịch coi thi</p>
+ <p className="text-slate-500 font-medium text-[15px]">Không có lịch coi thi</p>
  </div>
  ) : (
  <div className="space-y-3">
@@ -711,11 +713,11 @@ export default function TeachersPage() {
  <div key={index} className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs hover:border-blue-200 transition-colors space-y-2">
  <div className="flex justify-between items-start">
  <div>
- <h4 className="font-semibold text-[#0F172A] text-[15px]">
+ <h4 className="font-semibold text-slate-900 text-[15px]">
  {subject?.subjectName || 'Môn thi'}
  </h4>
  {subject?.subjectCode && (
- <span className="text-[13px] font-medium text-[#64748B]">Mã môn: {subject.subjectCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã môn: {subject.subjectCode}</span>
  )}
  </div>
  <span className={`px-2.5 py-1 rounded-lg text-[13px] font-semibold shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-slate-100 text-slate-700'
@@ -723,31 +725,31 @@ export default function TeachersPage() {
  {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
  </span>
  </div>
- <div className="space-y-1.5 text-[13px] text-[#475569] border-t border-slate-100 pt-2 font-medium">
+ <div className="space-y-1.5 text-[13px] text-slate-600 border-t border-slate-100 pt-2 font-medium">
  <div className="flex justify-between">
- <span className="text-[#64748B]">Phòng thi:</span>
- <span className="font-semibold text-[#0F172A]">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
+ <span className="text-slate-500">Phòng thi:</span>
+ <span className="font-semibold text-slate-900">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
  </div>
  <div className="flex justify-between">
- <span className="text-[#64748B]">Ngày thi:</span>
- <span className="font-semibold text-[#0F172A]">
+ <span className="text-slate-500">Ngày thi:</span>
+ <span className="font-semibold text-slate-900">
  {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'}
  </span>
  </div>
  <div className="flex justify-between">
- <span className="text-[#64748B]">Thời gian:</span>
- <span className="font-semibold text-[#0F172A]">
+ <span className="text-slate-500">Thời gian:</span>
+ <span className="font-semibold text-slate-900">
  {sched?.startTime && sched?.endTime ? `${sched.startTime} - ${sched.endTime}` : '---'}
  </span>
  </div>
  <div className="flex justify-between">
- <span className="text-[#64748B]">Trạng thái:</span>
+ <span className="text-slate-500">Trạng thái:</span>
  <StatusBadge status={assignment.status || 'CONFIRMED'} customLabel={assignment.status === 'CONFIRMED' ? 'Đã xác nhận' : assignment.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : assignment.status || 'Đã phân công'} />
  <span className={`sr-only ${assignment.status === 'CONFIRMED'
  ? 'text-emerald-600 before:content-[\'✓\'] before:mr-1'
  : assignment.status === 'CHANGE_REQUESTED'
  ? 'text-amber-600 before:content-[\'•\'] before:mr-1'
- : 'text-[#0F172A] before:content-[\'•\'] before:mr-1'
+ : 'text-slate-900 before:content-[\'•\'] before:mr-1'
  }`}>
  {assignment.status === 'CONFIRMED'
  ? 'Đã xác nhận'
@@ -770,7 +772,7 @@ export default function TeachersPage() {
  <div className="w-16 h-16 mx-auto bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-center text-blue-600 mb-2">
  <Building2 className="w-8 h-8" />
  </div>
- <h3 className="text-[20px] font-semibold text-[#0F172A]">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
+ <h3 className="text-[20px] font-semibold text-slate-900">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
  <p className="text-[13px] font-semibold text-blue-600 tabular-nums">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
  </div>
  )}

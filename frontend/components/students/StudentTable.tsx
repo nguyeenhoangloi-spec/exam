@@ -68,7 +68,7 @@ export function StudentTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
  >
  {s.studentCode}
  </button>
@@ -80,21 +80,21 @@ export function StudentTable({
  <div>
  <h4
  onClick={() => onDetail(s)}
- className="text-[18px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition"
+ className="text-[18px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
  >
  {s.fullName}
  </h4>
- <p className="text-[13px] text-[#64748B] font-normal mt-0.5">{s.gender || 'Nam'}</p>
+ <p className="text-[13px] text-slate-500 font-normal mt-0.5">{s.gender || 'Nam'}</p>
  </div>
 
- <div className="space-y-1.5 text-[14px] text-[#475569] font-normal pt-1">
+ <div className="space-y-1.5 text-[14px] text-slate-600 font-normal pt-1">
  <div className="flex items-center gap-1.5">
  <School className="h-4 w-4 text-slate-400 shrink-0" />
  <span className="truncate">{s.class?.name || 'Chưa xếp lớp'}</span>
  </div>
  <div className="flex items-center gap-1.5">
  <Mail className="h-4 w-4 text-slate-400 shrink-0" />
- <span className="truncate text-[#64748B]">{s.email}</span>
+ <span className="truncate text-slate-500">{s.email}</span>
  </div>
  {s.phone && (
  <div className="flex items-center gap-1.5">
@@ -109,7 +109,7 @@ export function StudentTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="flex items-center gap-1 text-[#2563EB] hover:text-blue-700 cursor-pointer"
+ className="flex items-center gap-1 text-primary-600 hover:text-blue-700 cursor-pointer"
  >
  <Eye className="h-3.5 w-3.5" />
  <span>Xem hồ sơ</span>
@@ -146,9 +146,9 @@ export function StudentTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-2 pl-3 text-center w-8">
  <input
@@ -180,12 +180,12 @@ export function StudentTable({
  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </td>
- <td className="p-2 font-medium text-slate-700 tabular-nums whitespace-nowrap">{s.studentCode}</td>
+ <td className="p-2 font-semibold text-primary-600 tabular-nums whitespace-nowrap">{s.studentCode}</td>
  <td className="p-2 min-w-[160px]">
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+ className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition"
  >
  {s.fullName}
  </button>
@@ -210,9 +210,9 @@ export function StudentTable({
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-3.5 pl-4 text-center w-10">
  <input
@@ -251,15 +251,15 @@ export function StudentTable({
  </td>
 
  {visibleColumns.studentCode !== false && (
- <td className="p-3.5 whitespace-nowrap">
- <button
- type="button"
- onClick={() => onDetail(s)}
- className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
- >
- {s.studentCode}
- </button>
- </td>
+  <td className="p-3.5 whitespace-nowrap">
+  <button
+  type="button"
+  onClick={() => onDetail(s)}
+  className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
+  >
+  {s.studentCode}
+  </button>
+  </td>
  )}
 
  {visibleColumns.fullName !== false && (
@@ -267,7 +267,7 @@ export function StudentTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition leading-tight text-[15px]"
+ className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition leading-tight text-[15px]"
  >
  {s.fullName}
  </button>
@@ -312,7 +312,7 @@ export function StudentTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem hồ sơ"
  >
  <Eye className="h-4 w-4" />
@@ -325,17 +325,17 @@ export function StudentTable({
  <button
  type="button"
  onClick={() => { closeMenu(); onDetail(s); }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
- <Eye className="h-4 w-4 text-[#64748B]" />
+ <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem hồ sơ</span>
  </button>
  <button
  type="button"
  onClick={() => { closeMenu(); onEdit(s); }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
- <Edit className="h-4 w-4 text-[#2563EB]" />
+ <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa</span>
  </button>
  {onToggleLock && (
@@ -359,13 +359,13 @@ export function StudentTable({
  )}
  </button>
  )}
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
  <button
  type="button"
  onClick={() => { closeMenu(); onDelete(s.id); }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa sinh viên</span>
  </button>
  </>

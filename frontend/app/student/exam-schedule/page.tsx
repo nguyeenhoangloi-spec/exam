@@ -178,11 +178,11 @@ export default function StudentExamSchedulePage() {
  {/* ── 1. Standard Page Header ── */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Lịch Thi Cá Nhân Sinh Viên
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
- Sinh viên: <strong className="text-[#0F172A] font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+ Sinh viên: <strong className="text-slate-900 font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
  </p>
  </div>
 
@@ -191,7 +191,7 @@ export default function StudentExamSchedulePage() {
  variant="secondary"
  size="md"
  onClick={exportCsv}
- leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Download className="h-4 w-4 text-slate-500" />}
  >
  Xuất CSV
  </Button>
@@ -200,7 +200,7 @@ export default function StudentExamSchedulePage() {
  variant="secondary"
  size="md"
  onClick={handlePrintReport}
- leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
  >
  In Lịch Thi
  </Button>
@@ -216,10 +216,10 @@ export default function StudentExamSchedulePage() {
  >
  <div className="flex items-start justify-between gap-3">
  <div className="space-y-1">
- <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
+ <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
  {label}
  </span>
- <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
+ <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
  {value}
  </p>
  </div>
@@ -229,7 +229,7 @@ export default function StudentExamSchedulePage() {
  </div>
  </div>
 
- <span className="text-[13px] font-normal text-[#64748B] mt-2">
+ <span className="text-[13px] font-normal text-slate-500 mt-2">
  {subtext}
  </span>
  </div>
@@ -253,7 +253,7 @@ export default function StudentExamSchedulePage() {
  <select
  value={statusFilter}
  onChange={(e) => setStatusFilter(e.target.value)}
- className="h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 transition shadow-2xs"
+ className="h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-3 text-[15px] font-medium text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 transition shadow-2xs"
  >
  <option value="ALL">Tất cả thời gian</option>
  <option value="UPCOMING">Sắp diễn ra</option>
@@ -261,13 +261,13 @@ export default function StudentExamSchedulePage() {
  </select>
 
  <div className="relative w-full sm:w-64">
- <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] pointer-events-none" />
+ <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
  <input
  type="text"
  placeholder="Tìm môn thi, kỳ thi, phòng..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white hover:bg-slate-50/50 pl-9 pr-8 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition shadow-2xs placeholder:text-slate-400"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white hover:bg-slate-50/50 pl-9 pr-8 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs placeholder:text-slate-400"
  />
  {searchQuery && (
  <button
@@ -309,7 +309,7 @@ export default function StudentExamSchedulePage() {
  <div className="space-y-3.5">
  {/* Card top badges */}
  <div className="flex items-center justify-between gap-2">
- <span className=" tabular-nums font-medium text-xs text-[#475569]">
+ <span className=" tabular-nums font-medium text-xs text-slate-600">
  {item.subjectCode}
  </span>
  <div className="flex items-center gap-2">
@@ -317,11 +317,11 @@ export default function StudentExamSchedulePage() {
  {item.periodName}
  </span>
  {item.mode === 'MOCK' ? (
- <span className="text-[13px] font-semibold text-[#475569] shrink-0">
+ <span className="text-[13px] font-semibold text-slate-600 shrink-0">
  Thi thử
  </span>
  ) : (
- <span className="text-[13px] font-semibold text-[#475569] shrink-0">
+ <span className="text-[13px] font-semibold text-slate-600 shrink-0">
  Chính thức
  </span>
  )}
@@ -383,8 +383,8 @@ export default function StudentExamSchedulePage() {
  Điểm công bố:
  </span>
  <span className={` tabular-nums font-medium text-xs ${(item as any).attempt.totalScore === 0
- ? 'text-[#DC2626]'
- : 'text-[#15803D]'
+ ? 'text-danger-600'
+ : 'text-success-600'
  }`}>
  {(item as any).attempt.totalScore}đ {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
  </span>

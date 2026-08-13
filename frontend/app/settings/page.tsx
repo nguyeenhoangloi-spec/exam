@@ -256,7 +256,7 @@ export default function SettingsPage() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-3 text-[15px] font-medium focus:border-blue-600 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-3 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
                 >
                   <option value="vi">Tiếng Việt (Mặc định)</option>
                   <option value="en">English (US)</option>
@@ -281,7 +281,7 @@ export default function SettingsPage() {
                 <select
                   value={sessionTimeout}
                   onChange={(e) => setSessionTimeout(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-medium focus:border-blue-600 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
                 >
                   <option value="30">30 phút không hoạt động</option>
                   <option value="60">60 phút không hoạt động (Mặc định)</option>

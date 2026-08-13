@@ -316,10 +316,10 @@ export default function ExamSupervisorsPage() {
  {/* Header */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Quản lý & Phân công Giám thị
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
  Theo dõi trạng thái xác nhận, phê duyệt yêu cầu đổi ca và đánh dấu điểm danh gác thi
  </p>
  </div>
@@ -330,7 +330,7 @@ export default function ExamSupervisorsPage() {
  variant="secondary"
  size="md"
  onClick={exportCsv}
- leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Download className="h-4 w-4 text-slate-500" />}
  >
  Xuất CSV
  </Button>
@@ -340,7 +340,7 @@ export default function ExamSupervisorsPage() {
  variant="secondary"
  size="md"
  onClick={handlePrintReport}
- leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
  >
  In Báo cáo
  </Button>
@@ -355,28 +355,28 @@ export default function ExamSupervisorsPage() {
  value: totalAssignments,
  subtext: `Lịch thi: ${(selectedSchedule?.examScheduleRooms || []).length} phòng`,
  icon: ShieldCheck,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  {
  title: 'Yêu cầu đổi ca',
  value: changeRequestedCount,
  subtext: changeRequestedCount > 0 ? 'Cần quản trị viên phê duyệt' : 'Không có yêu cầu mới',
  icon: RefreshCw,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  {
  title: 'Đã xác nhận ca',
  value: `${confirmedCount}/${totalAssignments}`,
  subtext: 'Sẵn sàng gác thi',
  icon: CheckCircle2,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  {
  title: 'Hoàn thành gác thi',
  value: `${completedCount}/${totalAssignments}`,
  subtext: 'Theo báo cáo phòng thi',
  icon: UserCheck,
- iconBg: 'bg-blue-50 text-[#2563EB] border-blue-100',
+ iconBg: 'bg-blue-50 text-primary-600 border-blue-100',
  },
  ].map((item) => {
  const IconComponent = item.icon;
@@ -387,14 +387,14 @@ export default function ExamSupervisorsPage() {
  >
  <div className="flex items-start justify-between gap-3">
  <div className="space-y-1">
- <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">{item.title}</span>
- <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">{item.value}</p>
+ <span className="text-[13px] font-semibold text-slate-500 tracking-wider">{item.title}</span>
+ <p className="text-[32px] font-bold text-slate-900 leading-[38px]">{item.value}</p>
  </div>
  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
  <IconComponent className="h-5 w-5" />
  </div>
  </div>
- <span className="text-[13px] font-normal text-[#64748B] mt-2">{item.subtext}</span>
+ <span className="text-[13px] font-normal text-slate-500 mt-2">{item.subtext}</span>
  </div>
  );
  })}
@@ -423,13 +423,13 @@ export default function ExamSupervisorsPage() {
  </h3>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1.5">Ca thi Môn học</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1.5">Ca thi Môn học</label>
 
  {/* Custom grouped picker trigger */}
  <button
  type="button"
  onClick={() => setShowSchedulePicker(true)}
- className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-left hover:bg-white hover:border-blue-300 transition cursor-pointer"
+ className="w-full flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-left hover:bg-white hover:border-blue-300 transition cursor-pointer"
  >
  <span className={selectedSchedule ? 'text-slate-800' : 'text-slate-400'}>
  {selectedSchedule
@@ -444,10 +444,10 @@ export default function ExamSupervisorsPage() {
  <>
  <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
- <div className="pointer-events-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+ <div className="pointer-events-auto w-full max-w-xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
 
  {/* Header */}
- <div className="flex items-center justify-between px-6 py-4 bg-[#2563EB] text-white">
+ <div className="flex items-center justify-between px-6 py-4 bg-primary-600 text-white">
  <div>
  <p className="text-lg font-semibold text-white tracking-tight">Chọn Ca thi</p>
  <p className="text-xs font-semibold text-blue-100 mt-0.5">
@@ -462,7 +462,7 @@ export default function ExamSupervisorsPage() {
  </div>
 
  {/* Body: 2 columns */}
- <div className="grid grid-cols-2 divide-x divide-slate-100" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+ <div className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-700" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
 
  {/* LEFT: Chưa phân công */}
  {(() => {
@@ -478,7 +478,7 @@ export default function ExamSupervisorsPage() {
 
  return (
  <div>
- <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10 flex items-center justify-between">
+ <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10 flex items-center justify-between">
  <span className="text-[12px] font-semibold text-slate-700 tracking-wider">
  Chưa phân công ({unassigned.length})
  </span>
@@ -499,13 +499,13 @@ export default function ExamSupervisorsPage() {
  return (
  <button key={s.id} type="button"
  onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
- className={`w-full text-left px-4 py-3 border-b border-slate-50 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+ className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${isActive ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''}`}
  >
- <p className={`text-xs font-semibold truncate ${isActive ? 'text-blue-700' : 'text-slate-800'}`}>
+ <p className={`text-xs font-semibold truncate ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-100'}`}>
  {s.mode === 'MOCK' ? '[THI THỬ] ' : '[CHÍNH THỨC] '}
  {s.subject?.subjectName || s.subjectName}
  </p>
- <p className="text-[12px] text-slate-500 font-semibold mt-0.5 flex items-center gap-1.5">
+ <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 flex items-center gap-1.5">
  <span>{s.startTime} – {s.endTime}</span>
  {s.examDate && <span>· {new Date(s.examDate).toLocaleDateString('vi-VN')}</span>}
  </p>
@@ -515,8 +515,8 @@ export default function ExamSupervisorsPage() {
 
  {/* Ca thi đã kết thúc / quá hạn - Gom nhóm riêng */}
  {expiredUnassigned.length > 0 && (
- <div className="bg-slate-50/80 border-t-2 border-slate-200/80 mt-1">
- <div className="px-4 py-1.5 text-[12px] font-semibold text-slate-400 tracking-wider bg-slate-100 flex items-center gap-1">
+ <div className="bg-slate-50/80 dark:bg-slate-800/60 border-t-2 border-slate-200/80 dark:border-slate-700/80 mt-1">
+ <div className="px-4 py-1.5 text-[12px] font-semibold text-slate-400 dark:text-slate-300 tracking-wider bg-slate-100 dark:bg-slate-700 flex items-center gap-1">
  <span>📁 Ca thi đã kết thúc / Quá hạn ({expiredUnassigned.length})</span>
  </div>
  {expiredUnassigned.map((s: any) => {
@@ -527,12 +527,12 @@ export default function ExamSupervisorsPage() {
  className={`w-full text-left px-4 py-2.5 border-b border-slate-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600' : ''}`}
  >
  <div className="flex items-center justify-between gap-1">
- <p className="text-[12px] font-semibold text-slate-600 truncate">
+ <p className="text-[12px] font-semibold text-slate-600 dark:text-slate-300 truncate">
  {s.subject?.subjectName || s.subjectName}
  </p>
  <span className="text-[12px] font-semibold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded shrink-0">Đã kết thúc</span>
  </div>
- <p className="text-[12px] text-slate-400 font-medium mt-0.5">
+ <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">
  {s.startTime} – {s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
  </button>
@@ -560,8 +560,8 @@ export default function ExamSupervisorsPage() {
 
  return (
  <div>
- <div className="sticky top-0 bg-slate-50 px-4 py-2 border-b border-slate-100 z-10 flex items-center justify-between">
- <span className="text-[12px] font-semibold text-slate-700 tracking-wider">
+ <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10 flex items-center justify-between">
+ <span className="text-[12px] font-semibold text-slate-700 dark:text-slate-200 tracking-wider">
  Đã phân công ({assigned.length})
  </span>
  {expiredAssigned.length > 0 && (
@@ -582,17 +582,17 @@ export default function ExamSupervisorsPage() {
  return (
  <button key={s.id} type="button"
  onClick={() => { void selectSchedule(s.id); setShowSchedulePicker(false); }}
- className={`w-full text-left px-4 py-3 border-b border-slate-50 hover:bg-blue-50 transition cursor-pointer ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-500' : ''}`}
+ className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${isActive ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''}`}
  >
  <div className="flex items-center gap-2">
- <p className={`text-xs font-semibold truncate flex-1 ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
+ <p className={`text-xs font-semibold truncate flex-1 ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}`}>
  {s.subject?.subjectName || s.subjectName}
  </p>
- <span className="shrink-0 rounded-full bg-slate-100 text-slate-500 text-[12px] font-semibold px-1.5 py-0.5">
+ <span className="shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 text-[12px] font-semibold px-1.5 py-0.5">
  {count} GT
  </span>
  </div>
- <p className="text-[12px] text-slate-400 font-semibold mt-0.5">
+ <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
  {s.startTime} – {s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
  </button>
@@ -601,8 +601,8 @@ export default function ExamSupervisorsPage() {
 
  {/* Đã phân công & đã kết thúc / quá hạn - Gom nhóm riêng */}
  {expiredAssigned.length > 0 && (
- <div className="bg-slate-50/80 border-t-2 border-slate-200/80 mt-1">
- <div className="px-4 py-1.5 text-[12px] font-semibold text-slate-400 tracking-wider bg-slate-100 flex items-center gap-1">
+ <div className="bg-slate-50/80 dark:bg-slate-800/60 border-t-2 border-slate-200/80 dark:border-slate-700/80 mt-1">
+ <div className="px-4 py-1.5 text-[12px] font-semibold text-slate-400 dark:text-slate-300 tracking-wider bg-slate-100 dark:bg-slate-700 flex items-center gap-1">
  <span>📁 Ca thi đã xong / Quá hạn ({expiredAssigned.length})</span>
  </div>
  {expiredAssigned.map((s: any) => {
@@ -614,14 +614,14 @@ export default function ExamSupervisorsPage() {
  className={`w-full text-left px-4 py-2.5 border-b border-slate-100 hover:bg-slate-100 transition cursor-pointer ${isActive ? 'bg-slate-200 border-l-[3px] border-l-slate-600' : ''}`}
  >
  <div className="flex items-center justify-between gap-1">
- <p className="text-[12px] font-semibold text-slate-600 truncate flex-1">
+ <p className="text-[12px] font-semibold text-slate-600 dark:text-slate-300 truncate flex-1">
  {s.subject?.subjectName || s.subjectName}
  </p>
  <span className="text-[12px] font-semibold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded shrink-0">
  {count} GT · Đã xong
  </span>
  </div>
- <p className="text-[12px] text-slate-400 font-medium mt-0.5">
+ <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">
  {s.startTime} – {s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
  </button>
@@ -637,7 +637,7 @@ export default function ExamSupervisorsPage() {
  </div>
 
  {/* Footer */}
- <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+ <div className="flex items-center justify-end px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
  <Button type="button" variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
  Đóng
  </Button>
@@ -675,14 +675,14 @@ export default function ExamSupervisorsPage() {
  )}
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Phòng thi được phân công</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Phòng thi được phân công</label>
  <select
  value={selectedScheduleRoomId}
  onChange={(e) => {
  setSelectedScheduleRoomId(e.target.value);
  void fetchSupervisors(e.target.value, selectedSchedule?.id);
  }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
+ className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
  >
  {selectedSchedule?.examScheduleRooms?.map((sr: any) => {
  const roomObj = sr.room || sr.examRoom;
@@ -728,7 +728,7 @@ export default function ExamSupervisorsPage() {
  {autoProposal.proposals.map((p: any) => {
  const key = `${p.examScheduleRoomId}-${p.role}`;
  return (
- <label key={key} className="flex items-center gap-1.5 cursor-pointer text-[13px] text-slate-700">
+ <label key={key} className="flex items-center gap-1.5 cursor-pointer text-[15px] font-medium text-slate-700">
  <input
  type="checkbox"
  checked={selectedAutoProposalKeys.includes(key)}
@@ -763,11 +763,11 @@ export default function ExamSupervisorsPage() {
 
  <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
  <div className="md:col-span-5">
- <label className="block text-[15px] font-semibold text-slate-600 mb-1.5">Giảng viên coi thi</label>
+ <label className="block text-[15px] font-medium text-slate-600 mb-1.5">Giảng viên coi thi</label>
  <select
  value={selectedTeacherId}
  onChange={(e) => setSelectedTeacherId(e.target.value)}
- className="w-full h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
+ className="w-full h-[42px] rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
  >
  {teachers.map((t) => (
  <option key={t.id} value={t.id}>
@@ -778,11 +778,11 @@ export default function ExamSupervisorsPage() {
  </div>
 
  <div className="md:col-span-4">
- <label className="block text-[15px] font-semibold text-slate-600 mb-1.5">Vai trò Coi thi</label>
+ <label className="block text-[15px] font-medium text-slate-600 mb-1.5">Vai trò Coi thi</label>
  <select
  value={role}
  onChange={(e) => setRole(e.target.value)}
- className="w-full h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
+ className="w-full h-[42px] rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
  >
  <option value="SUPERVISOR_1">Giám thị 1 (Cán bộ coi thi chính)</option>
  <option value="SUPERVISOR_2">Giám thị 2 (Cán bộ coi thi phụ)</option>
@@ -819,9 +819,9 @@ export default function ExamSupervisorsPage() {
  Chưa có giám thị nào phù hợp với bộ lọc hiện tại.
  </div>
  ) : (
- <div className="overflow-x-auto">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-3.5 pl-4 whitespace-nowrap">Mã GV</th>
  <th className="p-3.5 min-w-[160px]">Họ và tên Giám thị</th>
@@ -831,23 +831,23 @@ export default function ExamSupervisorsPage() {
  <th className="p-3.5 pr-4 text-right whitespace-nowrap">Phê duyệt / Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {displayedSupervisors.map((sup) => {
  const roomObj = sup.examScheduleRoom?.room || sup.examScheduleRoom?.examRoom;
  const rName = roomObj?.roomName || roomObj?.roomCode || '---';
  return (
  <tr key={sup.id} className="hover:bg-blue-50/40 transition">
  <td className="p-3.5 pl-4 whitespace-nowrap">
- <span className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600">
+ <span className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600">
  {sup.teacher?.teacherCode}
  </span>
  </td>
  <td className="p-3.5 min-w-[160px]">
- <div className="font-semibold text-slate-900 text-[15px] leading-[22px]">{sup.teacher?.fullName}</div>
+ <div className="font-medium text-slate-900 text-[15px] leading-[22px]">{sup.teacher?.fullName}</div>
  <div className="text-[15px] leading-[22px] text-slate-500 font-normal">{sup.teacher?.degree || 'TS'}</div>
  </td>
- <td className="p-3.5 font-semibold text-slate-900 whitespace-nowrap text-[15px]">{rName}</td>
- <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-800">
+ <td className="p-3.5 font-medium text-slate-900 whitespace-nowrap text-[15px]">{rName}</td>
+ <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-800">
  {sup.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
  </td>
  <td className="p-3.5 min-w-[130px]">

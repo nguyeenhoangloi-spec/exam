@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import api from '../../../lib/api';
@@ -8,7 +8,7 @@ import { TabBar, TabItem } from '../../../components/ui/TabBar';
 import { Toast } from '../../../components/Toast';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
-import { Search, X, RotateCcw } from 'lucide-react';
+import { Search, X, RotateCcw, ChevronDown } from 'lucide-react';
 
 import { RegradeHeader } from '../../../components/regrade/RegradeHeader';
 import { RegradeKPICards } from '../../../components/regrade/RegradeKPICards';
@@ -16,6 +16,7 @@ import { RegradeTableToolbar } from '../../../components/regrade/RegradeTableToo
 import { RegradeTable } from '../../../components/regrade/RegradeTable';
 import { RegradePaginationBar } from '../../../components/regrade/RegradePaginationBar';
 import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrade/RegradeReviewDrawer';
+import { FilterSelect } from '../../../components/ui/FilterSelect';
 
 export default function RegradeManagementPage() {
   usePageTitle('Quản lý phúc khảo & khiếu nại điểm');
@@ -265,7 +266,7 @@ export default function RegradeManagementPage() {
   };
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
+    <main className="w-full min-w-0 px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
       {/* Toast Notification */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
@@ -299,13 +300,13 @@ export default function RegradeManagementPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
-        placeholder="Tìm theo mã SV, họ tên, lý do..."
+              placeholder="Tìm theo mã SV, họ tên, lý do..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -314,18 +315,18 @@ export default function RegradeManagementPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
               </button>
             )}
           </div>
 
           {subjectsList.length > 0 && (
-            <select
+            <FilterSelect
               value={subjectFilter}
               onChange={(e) => { setSubjectFilter(e.target.value); setPage(1); }}
-              className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 focus:border-blue-500 transition cursor-pointer shadow-2xs"
+              size="md"
             >
               <option value="ALL">Tất cả Môn học</option>
               {subjectsList.map(([id, name]) => (
@@ -333,7 +334,7 @@ export default function RegradeManagementPage() {
                   {name}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           )}
 
           {(search || subjectFilter !== 'ALL' || statusTab !== 'ALL') && (

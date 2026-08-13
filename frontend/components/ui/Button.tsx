@@ -18,29 +18,29 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#2563EB] text-white hover:bg-[#1D4ED8] active:bg-[#1E40AF] border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/30 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/30 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg',
   secondary:
-    'bg-white text-[#334155] hover:bg-[#F8FAFC] active:bg-slate-100 border border-[#E2E8F0] hover:border-[#CBD5E1] focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg shadow-2xs',
   outline:
-    'bg-white text-[#334155] hover:bg-[#F8FAFC] active:bg-slate-100 border border-[#E2E8F0] hover:border-[#CBD5E1] focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg shadow-2xs',
   ghost:
-    'bg-transparent text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#334155] active:bg-slate-200 border border-transparent focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 dark:active:bg-slate-700 border border-transparent focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg',
   danger:
-    'bg-[#DC2626] text-white hover:bg-[#B91C1C] active:bg-[#991B1B] border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/30 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-danger-600 text-white hover:bg-danger-700 active:bg-red-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/30 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg',
   'danger-outline':
-    'bg-white text-[#DC2626] hover:bg-[#FEF2F2] active:bg-rose-100 border border-rose-200 hover:border-rose-300 focus:ring-2 focus:ring-rose-400/20 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-white text-danger-600 hover:bg-danger-50 active:bg-rose-100 dark:bg-slate-900 dark:text-rose-400 dark:hover:bg-rose-950/30 dark:active:bg-rose-950/50 dark:border-rose-800/70 border border-rose-200 hover:border-rose-300 focus:ring-2 focus:ring-rose-400/20 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg',
   success:
-    'bg-[#16A34A] text-white hover:bg-[#15803D] active:bg-[#166534] border border-transparent shadow-2xs focus:ring-2 focus:ring-green-500/30 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-success-500 text-white hover:bg-success-600 active:bg-success-700 border border-transparent shadow-2xs focus:ring-2 focus:ring-green-500/30 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg',
   warning:
-    'bg-[#D97706] text-white hover:bg-[#B45309] active:bg-[#92400E] border border-transparent shadow-2xs focus:ring-2 focus:ring-amber-500/30 focus:outline-none font-medium cursor-pointer transition-all duration-150 rounded-lg',
+    'bg-warning-600 text-white hover:bg-warning-700 active:bg-amber-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-amber-500/30 focus:outline-none font-semibold cursor-pointer transition-all duration-150 rounded-lg',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: 'h-7 px-2.5 text-[13px] font-medium rounded-lg gap-1.5',
-  sm: 'h-8 px-[10px] text-[13px] font-medium rounded-lg gap-1.5',
-  md: 'h-[38px] px-3.5 text-sm font-medium rounded-lg gap-2',
-  lg: 'h-[42px] px-[18px] text-[15px] font-medium rounded-lg gap-2',
-  icon: 'h-8 w-8 p-0 rounded-md justify-center items-center shrink-0',
+  xs: 'h-7 px-2.5 text-[13px] font-semibold rounded-lg gap-1.5',
+  sm: 'h-8 px-[10px] text-[13px] font-semibold rounded-lg gap-1.5',
+  md: 'h-[38px] px-3.5 text-[15px] font-semibold rounded-lg gap-2',
+  lg: 'h-[42px] px-[18px] text-[15px] font-semibold rounded-lg gap-2',
+  icon: 'h-8 w-8 p-0 rounded-lg justify-center items-center shrink-0',
   'icon-lg': 'h-[34px] w-[34px] p-0 rounded-lg justify-center items-center shrink-0',
 };
 
@@ -69,7 +69,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         type={type}
         disabled={isBtnDisabled}
-        className={`inline-flex items-center justify-center font-sans tracking-tight transition-all duration-150 ease-in-out cursor-pointer select-none disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF] disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`inline-flex items-center justify-center font-sans tracking-tight transition-all duration-150 ease-in-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...props}
       >
         {isLoading ? (

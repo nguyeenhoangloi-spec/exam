@@ -149,8 +149,8 @@ export default function StudentExamLobbyPage() {
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/20 border-t-blue-500"></div>
           <ShieldCheck className="w-6 h-6 text-blue-400 absolute" />
         </div>
-        <h3 className="mt-4 text-base font-semibold text-slate-200">Hệ thống giám thị đang xác thực điều kiện...</h3>
-        <p className="text-xs text-slate-400 mt-1">Vui lòng chờ trong giây lát</p>
+        <h3 className="mt-4 text-base font-semibold text-slate-200 dark:text-slate-200">Hệ thống giám thị đang xác thực điều kiện...</h3>
+        <p className="text-xs text-slate-400 dark:text-slate-400 mt-1">Vui lòng chờ trong giây lát</p>
       </div>
     );
   }
@@ -183,11 +183,11 @@ export default function StudentExamLobbyPage() {
       : 'Thi Trắc Nghiệm Trực Tuyến';
 
   return (
-    <div className="min-h-screen bg-slate-50/60 text-slate-900 py-10 px-4 sm:px-6 flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-slate-50/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10 px-4 sm:px-6 flex flex-col justify-center items-center">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* ── Seamless Single White Card Architecture (Full-Bleed Header) ── */}
-      <div className="w-full max-w-2xl bg-white rounded-2xl border border-slate-200/90 shadow-xl overflow-hidden">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl overflow-hidden">
 
         {/* Full-Bleed Vivid Blue Gradient Header matching exact screenshot */}
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 p-6 sm:p-7 text-white shrink-0 shadow-xs">
@@ -220,7 +220,7 @@ export default function StudentExamLobbyPage() {
               <Clock className="w-5 h-5 text-blue-100" />
               <div className="text-xs font-semibold">
                 <span className="text-blue-100/80 font-medium block text-[12px] tracking-wider">Thời gian</span>
-                <span className="text-sm font-bold text-white">{durationMinutes} phút</span>
+                <span className="text-sm font-semibold text-white">{durationMinutes} phút</span>
               </div>
             </div>
           </div>
@@ -236,8 +236,8 @@ export default function StudentExamLobbyPage() {
               <Trophy className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-lg font-bold text-slate-900">Bạn Đã Hoàn Thành Bài Thi Này</h2>
-              <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Bạn Đã Hoàn Thành Bài Thi Này</h2>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
                 Bài thi của bạn đã được nộp thành công và lưu trữ an toàn trên hệ thống máy chủ khảo thí.
               </p>
             </div>
@@ -255,54 +255,54 @@ export default function StudentExamLobbyPage() {
           <div className="space-y-6">
             {/* System Error Alert */}
             {error && (
-              <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 space-y-1">
-                <div className="flex items-center gap-2 font-semibold text-xs text-rose-900">
+              <div className="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-800 rounded-xl text-rose-800 dark:text-rose-100 space-y-1">
+                <div className="flex items-center gap-2 font-semibold text-xs text-rose-900 dark:text-rose-100">
                   <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                   <span>Thông báo từ hệ thống khảo thí:</span>
                 </div>
-                <p className="text-xs font-medium pl-6 text-rose-700 leading-relaxed">{error}</p>
+                <p className="text-xs font-medium pl-6 text-rose-700 dark:text-rose-200 leading-relaxed">{error}</p>
               </div>
             )}
 
             {/* Section 1: Candidate & Room Information */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                 <User className="w-4 h-4 text-blue-600" />
                 <span>Thông tin Thí sinh & Phòng thi</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50/70 border border-slate-200/60">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700">
                 <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 tracking-wider block">Thí sinh</span>
-                  <span className="text-xs font-bold text-slate-900 block truncate">{fullName}</span>
+                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Thí sinh</span>
+                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block truncate">{fullName}</span>
                 </div>
 
                 <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 tracking-wider block">Mã sinh viên</span>
-                  <span className="text-xs font-bold text-slate-900 block tabular-nums">{studentCode}</span>
+                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Mã sinh viên</span>
+                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block tabular-nums">{studentCode}</span>
                 </div>
 
                 <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 tracking-wider block">Lớp & Số ghế</span>
-                  <span className="text-xs font-bold text-slate-900 block truncate">{studentClass} • Ghế {seatNumber}</span>
+                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Lớp & Số ghế</span>
+                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block truncate">{studentClass} • Ghế {seatNumber}</span>
                 </div>
 
                 <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 tracking-wider block">Phòng & Ca thi</span>
-                  <span className="text-xs font-bold text-blue-600 block truncate">{roomName} ({building})</span>
-                  <span className="text-[12px] font-medium text-slate-500 block">{timeSlotStr}</span>
+                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Phòng & Ca thi</span>
+                  <span className="text-xs font-semibold text-blue-600 block truncate">{roomName} ({building})</span>
+                  <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400 block">{timeSlotStr}</span>
                 </div>
               </div>
             </div>
 
             {/* Section 2: Monitoring Rules */}
             <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 <span>Quy chế & Giám sát an toàn thi</span>
               </div>
 
-              <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
+              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
                 <li className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span><strong>Tự động lưu câu trả lời:</strong> Mỗi đáp án bạn chọn sẽ được hệ thống lưu tức thì về máy chủ khảo thí.</span>
@@ -323,14 +323,14 @@ export default function StudentExamLobbyPage() {
             </div>
 
             {/* Section 3: Commitment & Submit */}
-            <div className="pt-4 border-t border-slate-100 space-y-4">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
               {config?.requireRulesAcceptance !== false && (
-                <label className="flex items-start gap-3 text-[13px] font-medium text-slate-700 cursor-pointer select-none">
+              <label className="flex items-start gap-3 text-[15px] font-medium text-slate-700 dark:text-slate-300 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={rulesAccepted}
                     onChange={(event) => setRulesAccepted(event.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                    className="mt-0.5 h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <span className="leading-relaxed">
                     Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
@@ -380,7 +380,7 @@ export default function StudentExamLobbyPage() {
           onClick={() => setShowPasswordModal(false)}
         >
           <div
-            className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-200"
+            className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-700"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient Blue Header matching exact design system standard */}
@@ -392,7 +392,7 @@ export default function StudentExamLobbyPage() {
                   </div>
                   <div className="min-w-0 flex-1 pr-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-[18px] font-bold leading-snug text-white line-clamp-1">
+                      <h3 className="text-[18px] font-semibold leading-snug text-white line-clamp-1">
                         Nhập Mật Khẩu Phòng Thi
                       </h3>
                       <span className="text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30">
@@ -425,7 +425,7 @@ export default function StudentExamLobbyPage() {
 
               {isPasswordRequired && (
                 <div className="space-y-1.5">
-                  <label className="block text-[15px] font-semibold text-slate-800">
+              <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
                     Mật khẩu đề thi <span className="text-rose-500">* (Giám thị đọc tại phòng)</span>
                   </label>
                   <div className="relative">
@@ -445,12 +445,12 @@ export default function StudentExamLobbyPage() {
                           void handleStartExam();
                         }
                       }}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 pr-10 text-xs font-medium text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 transition cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 transition cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -460,7 +460,7 @@ export default function StudentExamLobbyPage() {
 
               {isAccessCodeRequired && (
                 <div className="space-y-1.5">
-                  <label className="block text-[15px] font-semibold text-slate-800">
+                  <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
                     Mã truy cập phòng thi <span className="text-rose-500">* (Bắt buộc)</span>
                   </label>
                   <input
@@ -478,14 +478,14 @@ export default function StudentExamLobbyPage() {
                         void handleStartExam();
                       }
                     }}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                   />
                 </div>
               )}
             </div>
 
             {/* Footer Modal */}
-            <div className="flex items-center justify-end gap-2 px-6 py-3 border-t border-slate-100 bg-slate-50/50">
+              <div className="flex items-center justify-end gap-2 px-6 py-3 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/70">
               <Button variant="secondary" size="md" onClick={() => setShowPasswordModal(false)}>
                 Hủy
               </Button>

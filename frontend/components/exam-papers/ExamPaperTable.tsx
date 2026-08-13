@@ -96,40 +96,40 @@ export function ExamPaperTable({
  <div>
  <div className="flex items-center gap-1.5 flex-wrap">
  {subCode && (
- <span className="text-[13px] font-semibold text-[#475569] tabular-nums">
+ <span className="text-[13px] font-semibold text-slate-600 tabular-nums">
  {subCode}
  </span>
  )}
  <h4
  onClick={() => onDetail(p.id)}
- className="text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-blue-600 transition truncate"
+ className="text-[15px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition truncate"
  >
  {subName}
  </h4>
  </div>
  {periodName && (
- <p className="text-[13px] font-normal text-[#64748B] mt-0.5 truncate">
+ <p className="text-[13px] font-normal text-slate-500 mt-0.5 truncate">
  {periodName}
  </p>
  )}
 
- <div className="mt-2 space-y-0.5 text-[14px] font-normal text-[#475569]">
- <span className="flex items-center gap-1 text-[#334155]">
+ <div className="mt-2 space-y-0.5 text-[14px] font-normal text-slate-600">
+ <span className="flex items-center gap-1 text-slate-700">
  <Clock className="h-4 w-4 text-blue-600 shrink-0" />
  {dateStr ? `${dateStr} (${timeStr || 'Chưa có giờ'})` : 'Chưa xếp lịch thi'}
  </span>
- <span className="text-[13px] text-[#64748B] font-normal block pl-5">
+ <span className="text-[13px] text-slate-500 font-normal block pl-5">
  Thời gian làm bài: {p.durationMinutes} phút
  </span>
  </div>
  </div>
 
  <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
- <div className="flex items-center gap-[6px] text-[13px] text-[#475569]">
+ <div className="flex items-center gap-[6px] text-[13px] text-slate-600">
  <HelpCircle className="h-3.5 w-3.5 text-blue-600 shrink-0" />
  <span>{qCount} câu hỏi</span>
  </div>
- <div className="flex items-center gap-[6px] text-[13px] text-[#475569]">
+ <div className="flex items-center gap-[6px] text-[13px] text-slate-600">
  <Award className="h-3.5 w-3.5 text-blue-600 shrink-0" />
  <span>{p.totalScore} điểm</span>
  </div>
@@ -179,9 +179,9 @@ export function ExamPaperTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -221,27 +221,27 @@ export function ExamPaperTable({
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#0F172A]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-900">
  {p.paperCode}
  </span>
  </td>
  <td className="p-2 min-w-[180px]">
- <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p.id)}>
+ <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-primary-600" onClick={() => onDetail(p.id)}>
  {subCode ? `[${subCode}] ` : ''}{subName}
  </button>
  </td>
  <td className="p-2 whitespace-nowrap">
  <StatusBadge status={p.status} />
  </td>
- <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{qCount} câu</td>
- <td className="p-2 whitespace-nowrap font-normal text-[#334155]">
+ <td className="p-2 whitespace-nowrap font-medium text-slate-900">{qCount} câu</td>
+ <td className="p-2 whitespace-nowrap font-normal text-slate-700">
  {dateStr ? `${dateStr} (${timeStr || ''})` : `${p.durationMinutes} phút`}
  </td>
- <td className="p-2 whitespace-nowrap text-[15px] font-semibold text-[#0F172A]">
+ <td className="p-2 whitespace-nowrap text-[15px] font-medium text-slate-900">
  {p.totalScore}đ
  </td>
  <td className="p-2 pr-3 text-right whitespace-nowrap">
- <button type="button" onClick={() => onDetail(p.id)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+ <button type="button" onClick={() => onDetail(p.id)} className="p-1 text-slate-500 hover:text-primary-600 cursor-pointer">
  <Eye className="h-4 w-4" />
  </button>
  </td>
@@ -256,9 +256,9 @@ export function ExamPaperTable({
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -277,7 +277,7 @@ export function ExamPaperTable({
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {papers.map((p, index) => {
  const isChecked = selected.includes(p.id);
  const sched = (p as any).examSchedule || {};
@@ -310,11 +310,11 @@ export function ExamPaperTable({
  <button
  type="button"
  onClick={() => onDetail(p.id)}
- className=" tabular-nums text-[15px] leading-[22px] font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-blue-600 transition cursor-pointer"
  >
  Mã {p.paperCode}
  </button>
- <p className="text-[15px] leading-[22px] font-semibold text-slate-400">
+ <p className="text-[15px] leading-[22px] font-medium text-slate-400">
  {formatExamType(examType)}
  </p>
  </div>
@@ -322,30 +322,30 @@ export function ExamPaperTable({
  )}
 
  {visibleColumns.subjectName !== false && (
- <td className="p-3.5 min-w-[220px]">
- <div className="min-w-0">
- <div className="flex items-center gap-1.5 flex-wrap">
- {subCode && (
- <span className=" tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">
- [{subCode}]
- </span>
- )}
- <button
- type="button"
- onClick={() => onDetail(p.id)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition truncate text-[15px] leading-[22px]"
- >
- {subName}
- </button>
- </div>
- {periodName && (
- <p className="text-[15px] leading-[22px] font-medium text-slate-400 mt-0.5 truncate">
- {periodName}
- </p>
- )}
- </div>
- </td>
- )}
+  <td className="p-3.5 min-w-[250px] whitespace-nowrap">
+  <div className="min-w-0">
+  <div className="flex items-center gap-1.5 whitespace-nowrap">
+  {subCode && (
+  <span className=" tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">
+  [{subCode}]
+  </span>
+  )}
+  <button
+  type="button"
+  onClick={() => onDetail(p.id)}
+  className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition text-[15px] leading-[22px] whitespace-nowrap"
+  >
+  {subName}
+  </button>
+  </div>
+  {periodName && (
+  <p className="text-[15px] leading-[22px] font-medium text-slate-400 mt-0.5 whitespace-nowrap block">
+  {periodName}
+  </p>
+  )}
+  </div>
+  </td>
+  )}
 
  {visibleColumns.status !== false && (
  <td className="p-3.5 whitespace-nowrap">
@@ -355,7 +355,7 @@ export function ExamPaperTable({
 
  {visibleColumns.questionCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-[15px]">
- <span className="font-semibold text-slate-900">{qCount} câu</span>
+ <span className="font-medium text-slate-900">{qCount} câu</span>
  </td>
  )}
 
@@ -364,7 +364,7 @@ export function ExamPaperTable({
  <div className="space-y-0.5">
  {dateStr ? (
  <p className="text-[15px] leading-[22px]">
- <span className="font-semibold text-slate-900">{dateStr}</span>
+ <span className="font-medium text-slate-900">{dateStr}</span>
  {timeStr && <span className="text-slate-500 ml-1.5 font-medium">({timeStr})</span>}
  </p>
  ) : (
@@ -373,7 +373,7 @@ export function ExamPaperTable({
  </p>
  )}
  <p className="text-[15px] leading-[22px] font-medium text-slate-400">
- Làm bài: <span className="font-semibold text-slate-700">{p.durationMinutes} phút</span>
+ Làm bài: <span className="font-medium text-slate-700">{p.durationMinutes} phút</span>
  </p>
  </div>
  </td>
@@ -381,7 +381,7 @@ export function ExamPaperTable({
 
  {visibleColumns.totalScore !== false && (
  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
- <span className="font-semibold text-slate-900">{p.totalScore}đ</span>
+ <span className="font-medium text-slate-900">{p.totalScore}đ</span>
  </td>
  )}
 
@@ -391,7 +391,7 @@ export function ExamPaperTable({
  type="button"
  onClick={() => onDetail(p.id)}
  disabled={busyId === p.id}
- className="flex h-8 w-8 items-center justify-center rounded-md text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết đề"
  >
  <Eye className="h-4 w-4" />
@@ -400,7 +400,7 @@ export function ExamPaperTable({
  <button
  type="button"
  onClick={() => onExportWord(p)}
- className="flex h-8 w-8 items-center justify-center rounded-md text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xuất Word (.doc)"
  >
  <Download className="h-4 w-4" />

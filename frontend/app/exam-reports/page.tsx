@@ -657,13 +657,13 @@ export default function ExamReportsPage() {
  <>
  <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
- <div className="pointer-events-auto w-full max-w-3xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+ <div className="pointer-events-auto w-full max-w-3xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
 
  {/* Header */}
- <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50/70">
+ <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70">
  <div>
- <p className="text-[20px] font-semibold text-[#0F172A] tracking-tight leading-none">Chọn Lịch thi để xem Báo cáo</p>
- <p className="text-[13px] text-[#64748B] font-semibold mt-1">
+ <p className="text-[20px] font-semibold text-slate-900 tracking-tight leading-none">Chọn Lịch thi để xem Báo cáo</p>
+ <p className="text-[13px] text-slate-500 font-semibold mt-1">
  Phân loại theo dạng lịch thi, môn học & trạng thái
  </p>
  </div>
@@ -678,7 +678,7 @@ export default function ExamReportsPage() {
  </div>
 
  {/* Filter Controls Bar: Clean & Minimalist */}
- <div className="p-4 border-b border-slate-100 bg-slate-50/50 space-y-3">
+ <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 space-y-3">
  {/* Search Input */}
  <div className="relative">
  <input
@@ -686,7 +686,7 @@ export default function ExamReportsPage() {
  placeholder="Tìm kiếm theo Tên môn, Mã môn, Kỳ thi..."
  value={modalSearch}
  onChange={(e) => setModalSearch(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  {modalSearch && (
  <button
@@ -712,11 +712,11 @@ export default function ExamReportsPage() {
  />
 
  {/* Row 2: Secondary Dropdown Filters */}
- <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60">
+ <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
  <select
  value={modalFormatFilter}
  onChange={(e) => setModalFormatFilter(e.target.value as any)}
- className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+ className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
  >
  <option value="ALL">Hình thức: Tất cả</option>
  <option value="TRAC_NGHIEM">Hình thức: Trắc nghiệm</option>
@@ -729,7 +729,7 @@ export default function ExamReportsPage() {
  <select
  value={modalSubjectFilter}
  onChange={(e) => setModalSubjectFilter(e.target.value)}
- className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer max-w-[200px]"
+ className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
  >
  <option value="ALL">Môn học: Tất cả</option>
  {availableSubjects.map((sb) => (
@@ -742,7 +742,7 @@ export default function ExamReportsPage() {
  <select
  value={modalStatusFilter}
  onChange={(e) => setModalStatusFilter(e.target.value as any)}
- className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+ className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
  >
  <option value="ALL">Trạng thái: Tất cả</option>
  <option value="ONGOING">Đang diễn ra</option>
@@ -760,7 +760,7 @@ export default function ExamReportsPage() {
  setModalSubjectFilter('ALL');
  setModalStatusFilter('ALL');
  }}
- className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer select-none ml-auto"
+ className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer select-none ml-auto"
  title="Đặt lại bộ lọc"
  >
  <RotateCcw className="h-3.5 w-3.5" />
@@ -815,14 +815,14 @@ export default function ExamReportsPage() {
  }}
  className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${
  isActive
- ? 'bg-blue-50/50 border-blue-500 border-l-4 shadow-2xs'
- : 'bg-white border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/60'
+ ? 'bg-blue-50/50 dark:bg-blue-950/40 border-blue-500 border-l-4 shadow-2xs'
+ : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50/60 dark:hover:bg-slate-800/60'
  }`}
  >
  <div className="flex items-center justify-between gap-2">
  <div className="flex items-center gap-2">
- <span className="text-xs font-semibold text-slate-900">{name}</span>
- <span className="text-[12px] tabular-nums font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+ <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">{name}</span>
+ <span className="text-[12px] tabular-nums font-medium text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
  {code}
  </span>
  </div>
@@ -832,7 +832,7 @@ export default function ExamReportsPage() {
  </div>
  </div>
 
- <div className="flex flex-wrap items-center justify-between text-[12px] text-slate-500 gap-2">
+ <div className="flex flex-wrap items-center justify-between text-[12px] text-slate-500 dark:text-slate-400 gap-2">
  <div className="flex items-center gap-1.5">
  <span className={`px-2 py-0.5 rounded text-[12px] ${typeBadge.badgeClass}`}>
  {typeBadge.label}
@@ -840,9 +840,9 @@ export default function ExamReportsPage() {
  <span className={`px-2 py-0.5 rounded text-[12px] ${formatBadge.badgeClass}`}>
  {formatBadge.label}
  </span>
- <span className="text-slate-400">· {period}</span>
+ <span className="text-slate-400 dark:text-slate-500">· {period}</span>
  </div>
- <span className="font-semibold text-slate-700">
+ <span className="font-semibold text-slate-700 dark:text-slate-200">
  {s.startTime}–{s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </span>
  </div>
@@ -853,9 +853,9 @@ export default function ExamReportsPage() {
  </div>
 
  {/* Footer */}
- <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/60">
- <span className="text-[12px] font-semibold text-slate-500">
- Đã chọn lịch thi ID: <strong className="text-slate-800">#{selectedScheduleId || '---'}</strong>
+ <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
+ <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">
+ Đã chọn lịch thi ID: <strong className="text-slate-800 dark:text-slate-100">#{selectedScheduleId || '---'}</strong>
  </span>
  <Button variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
  Đóng
@@ -878,7 +878,7 @@ export default function ExamReportsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-8 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs leading-none"
  />
  {search && (
  <button
@@ -903,14 +903,14 @@ export default function ExamReportsPage() {
  setStatusFilter(e.target.value);
  setPage(1);
  }}
- className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+ className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 outline-none hover:border-slate-300 transition-all cursor-pointer shadow-2xs leading-none"
  >
  <option value="ALL">Tất cả Thí sinh</option>
  <option value="SUBMITTED">Đã tham gia / Nộp bài</option>
  <option value="ABSENT">Chưa thi / Vắng thi</option>
  <option value="FLAGGED">Có cảnh báo vi phạm</option>
  </select>
- <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  </div>
  </div>
  </div>

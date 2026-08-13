@@ -142,8 +142,8 @@ export function ExamPeriodTable({
  </div>
  </div>
 
- <div className="text-[14px] font-normal text-[#64748B] flex items-center justify-between pt-1">
- <span>Thời gian: <strong className="text-[#0F172A] font-semibold">{formatDate(p.startDate)} - {formatDate(p.endDate)}</strong></span>
+ <div className="text-[14px] font-normal text-slate-500 flex items-center justify-between pt-1">
+ <span>Thời gian: <strong className="text-slate-900 font-semibold">{formatDate(p.startDate)} - {formatDate(p.endDate)}</strong></span>
  </div>
  </div>
 
@@ -188,9 +188,9 @@ export function ExamPeriodTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -223,16 +223,16 @@ export function ExamPeriodTable({
  />
  </td>
  <td className="p-2 min-w-[200px]">
- <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(p)}>
+ <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-primary-600" onClick={() => onDetail(p)}>
  {p.name}
  </button>
  </td>
- <td className="p-2 whitespace-nowrap font-semibold text-slate-800">{p.semester}</td>
- <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{p.schoolYear}</td>
- <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
+ <td className="p-2 whitespace-nowrap font-medium text-slate-800">{p.semester}</td>
+ <td className="p-2 whitespace-nowrap font-medium text-slate-900">{p.schoolYear}</td>
+ <td className="p-2 whitespace-nowrap font-normal text-slate-700">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
  <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status, p)}</td>
  <td className="p-2 pr-3 text-right whitespace-nowrap">
- <button type="button" onClick={() => onDetail(p)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+ <button type="button" onClick={() => onDetail(p)} className="p-1 text-slate-500 hover:text-primary-600 cursor-pointer">
  <Eye className="h-4 w-4" />
  </button>
  </td>
@@ -247,9 +247,9 @@ export function ExamPeriodTable({
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -259,7 +259,7 @@ export function ExamPeriodTable({
  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </th>
- {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[220px]">Tên kỳ thi</th>}
+ {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[250px] whitespace-nowrap">Tên kỳ thi</th>}
  {visibleColumns.semester !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Học kỳ</th>}
  {visibleColumns.schoolYear !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Năm học</th>}
  {visibleColumns.dateRange !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Thời gian tổ chức</th>}
@@ -267,7 +267,7 @@ export function ExamPeriodTable({
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {periods.map((p, index) => {
  const isChecked = selected.includes(p.id);
 
@@ -286,11 +286,11 @@ export function ExamPeriodTable({
  </td>
 
  {visibleColumns.name !== false && (
- <td className="p-3.5 min-w-[220px]">
+ <td className="p-3.5 min-w-[250px] whitespace-nowrap">
  <button
  type="button"
  onClick={() => onDetail(p)}
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition"
+ className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition whitespace-nowrap block"
  >
  {p.name}
  </button>
@@ -298,20 +298,20 @@ export function ExamPeriodTable({
  )}
 
  {visibleColumns.semester !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-800">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-800">
  {p.semester}
  </td>
  )}
 
 
  {visibleColumns.schoolYear !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-900">
  {p.schoolYear}
  </td>
  )}
 
  {visibleColumns.dateRange !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-800">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-800">
  {formatDate(p.startDate)} - {formatDate(p.endDate)}
  </td>
  )}
@@ -327,7 +327,7 @@ export function ExamPeriodTable({
  <button
  type="button"
  onClick={() => onDetail(p)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -342,9 +342,9 @@ export function ExamPeriodTable({
  closeMenu();
  onDetail(p);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
- <Eye className="h-4 w-4 text-[#64748B]" />
+ <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
  </button>
 
@@ -356,13 +356,13 @@ export function ExamPeriodTable({
  closeMenu();
  onEdit(p);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
- <Edit className="h-4 w-4 text-[#2563EB]" />
+ <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa kỳ thi</span>
  </button>
 
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
 
  <button
  type="button"
@@ -370,9 +370,9 @@ export function ExamPeriodTable({
  closeMenu();
  onDelete(p.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa kỳ thi</span>
  </button>
  </>

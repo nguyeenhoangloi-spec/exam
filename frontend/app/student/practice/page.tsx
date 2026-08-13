@@ -93,34 +93,34 @@ export default function PracticePage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[13px] font-semibold tracking-wide">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-[13px] font-semibold tracking-wide">
               <BookOpen className="w-3.5 h-3.5" />
               Luyện Tập Kiến Thức
             </div>
-            <h1 className="text-[28px] font-semibold text-[#0F172A] tracking-tight">
+            <h1 className="text-[28px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
               Luyện tập tự do
             </h1>
-            <p className="text-[15px] font-normal text-[#64748B]">
+            <p className="text-[15px] font-normal text-slate-500 dark:text-slate-400">
               Tạo bài luyện tập theo môn học, tự làm bài trắc nghiệm và nhận kết quả chấm điểm ngay.
             </p>
           </div>
         </div>
 
         {!session && !result && (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-5 max-w-3xl">
-            <h3 className="text-[20px] font-semibold text-[#0F172A]">Cấu hình bài luyện tập</h3>
+          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-5 max-w-3xl">
+            <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Cấu hình bài luyện tập</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="text-[15px] font-medium text-[#0F172A] space-y-1.5 block">
+              <label className="text-[15px] font-medium text-slate-900 dark:text-slate-100 space-y-1.5 block">
                 <span>Chọn Môn học</span>
                 <select
                   value={subjectId}
                   onChange={(event) => setSubjectId(event.target.value)}
                   disabled={loading}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition cursor-pointer"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition cursor-pointer"
                 >
                   {subjects.map((subject) => (
                     <option key={subject.id} value={subject.id}>
@@ -129,12 +129,12 @@ export default function PracticePage() {
                   ))}
                 </select>
               </label>
-              <label className="text-[15px] font-medium text-[#0F172A] space-y-1.5 block">
+              <label className="text-[15px] font-medium text-slate-900 dark:text-slate-100 space-y-1.5 block">
                 <span>Số lượng câu hỏi</span>
                 <select
                   value={questionCount}
                   onChange={(event) => setQuestionCount(Number(event.target.value))}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none transition cursor-pointer"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition cursor-pointer"
                 >
                   {[10, 20, 30, 40].map((count) => (
                     <option key={count} value={count}>{count} câu</option>
@@ -158,20 +158,20 @@ export default function PracticePage() {
             {session.questions.map((question, index) => {
               const single = question.type !== 'MULTIPLE_CHOICE';
               return (
-                <div key={question.id} className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3">
-                  <p className="font-semibold text-[18px] text-[#0F172A] leading-snug">Câu {index + 1}. {question.content}</p>
+                <div key={question.id} className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-3">
+                  <p className="font-semibold text-[18px] text-slate-900 dark:text-slate-100 leading-snug">Câu {index + 1}. {question.content}</p>
                   <div className="space-y-2">
                     {(question.options || []).map((option) => (
                       <label
                         key={option.id}
-                        className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-slate-200/70 p-3 text-[15px] font-medium text-[#334155] hover:bg-blue-50/40 hover:border-blue-200 transition"
+                        className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-slate-200/70 dark:border-slate-700 p-3 text-[15px] font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-50/40 dark:hover:bg-blue-950/30 hover:border-blue-200 dark:hover:border-blue-800 transition"
                       >
                         <input
                           type={single ? 'radio' : 'checkbox'}
                           name={`question-${question.id}`}
                           checked={(answers[question.id] || []).includes(option.id)}
                           onChange={() => toggleAnswer(question.id, option.id, single)}
-                          className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="h-4.5 w-4.5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                         <span>{option.content}</span>
                       </label>
@@ -192,10 +192,10 @@ export default function PracticePage() {
         )}
 
         {result && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-8 text-center max-w-xl mx-auto shadow-2xs space-y-3">
+          <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/30 p-8 text-center max-w-xl mx-auto shadow-2xs space-y-3">
             <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" />
-            <h2 className="text-[28px] font-semibold text-[#0F172A]">Hoàn thành bài luyện tập</h2>
-            <p className="text-[15px] font-medium text-[#334155]">
+            <h2 className="text-[28px] font-semibold text-slate-900 dark:text-slate-100">Hoàn thành bài luyện tập</h2>
+            <p className="text-[15px] font-medium text-slate-700 dark:text-slate-300">
               Điểm số: <strong className="text-emerald-700 font-semibold text-xl">{result.totalScore ?? result.score ?? 0}</strong> / {result.maxScore ?? 10}
             </p>
             <button

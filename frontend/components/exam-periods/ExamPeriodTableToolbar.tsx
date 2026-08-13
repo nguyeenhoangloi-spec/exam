@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, RefreshCw, Check } from 'lucide-react';
-import { FilterSelect } from '../ui/FilterSelect';
+import { SortDropdown } from '../ui/SortDropdown';
 
 interface ExamPeriodTableToolbarProps {
   totalCount: number;
@@ -13,6 +13,7 @@ interface ExamPeriodTableToolbarProps {
   visibleColumns?: Record<string, boolean>;
   onColumnToggle?: (columnKey: string) => void;
   onRefresh?: () => void;
+  loading?: boolean;
 }
 
 export function ExamPeriodTableToolbar({
@@ -30,8 +31,22 @@ export function ExamPeriodTableToolbar({
   },
   onColumnToggle,
   onRefresh,
+  loading = false,
 }: ExamPeriodTableToolbarProps) {
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefreshClick = async () => {
+    if (!onRefresh) return;
+    setIsSpinning(true);
+    try {
+      await onRefresh();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTimeout(() => setIsSpinning(false), 600);
+    }
+  };
 
   const columnsList = [
     { key: 'name', label: 'Tên kỳ thi' },
@@ -49,28 +64,27 @@ export function ExamPeriodTableToolbar({
 
       <div className="flex items-center gap-2">
         {/* Sort */}
-        <FilterSelect
-          size="md"
+        <SortDropdown
           value={sortOrder}
-          onChange={(e) => onSortChange?.(e.target.value)}
-        >
-          <option value="newest">Sắp xếp: Mới nhất</option>
-          <option value="oldest">Sắp xếp: Cũ nhất</option>
-          <option value="date_desc">Ngày bắt đầu: Mới nhất</option>
-          <option value="date_asc">Ngày bắt đầu: Xa nhất</option>
-        </FilterSelect>
-
+          onChange={(val) => onSortChange?.(val)}
+          options={[
+            { value: 'newest', label: 'Mới nhất' },
+            { value: 'oldest', label: 'Cũ nhất' },
+            { value: 'date_desc', label: 'Ngày bắt đầu: Mới nhất' },
+            { value: 'date_asc', label: 'Ngày bắt đầu: Cũ nhất' },
+          ]}
+        />
 
         {/* Column Selector */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+            <SlidersHorizontal className="h-4 w-4 text-blue-600" />
             <span>Chọn cột</span>
-            <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {openColumnMenu && (
@@ -89,7 +103,7 @@ export function ExamPeriodTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition text-[13px]"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition text-[15px]"
                     >
                       <span className="flex items-center gap-2">
                         <input
@@ -123,7 +137,7 @@ export function ExamPeriodTableToolbar({
             }`}
             title="Dạng danh sách"
           >
-            <List className="h-3.5 w-3.5" />
+            <List className="h-4 w-4" />
           </button>
 
           <button
@@ -136,7 +150,7 @@ export function ExamPeriodTableToolbar({
             }`}
             title="Dạng lưới"
           >
-            <LayoutGrid className="h-3.5 w-3.5" />
+            <LayoutGrid className="h-4 w-4" />
           </button>
 
           <button
@@ -149,7 +163,7 @@ export function ExamPeriodTableToolbar({
             }`}
             title="Dạng thu gọn"
           >
-            <Layers className="h-3.5 w-3.5" />
+            <Layers className="h-4 w-4" />
           </button>
         </div>
 
@@ -157,11 +171,11 @@ export function ExamPeriodTableToolbar({
         {onRefresh && (
           <button
             type="button"
-            onClick={onRefresh}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition cursor-pointer active:scale-95 shadow-2xs select-none"
+            onClick={handleRefreshClick}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all active:scale-95 cursor-pointer shadow-2xs select-none"
             title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
+            <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
           </button>
         )}
       </div>

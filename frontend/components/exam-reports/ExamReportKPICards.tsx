@@ -96,10 +96,10 @@ export function ExamReportKPICards({
       {/* Bar Thống kê tổng hợp tinh giản */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-slate-200/80 bg-slate-50/70 px-4 py-2.5 text-xs text-slate-600 font-medium">
         <span className="font-semibold text-slate-900 tracking-wider text-[12px]">Tổng hợp:</span>
-        <span>Được gán <strong className="text-slate-900 font-bold">{totalAssigned.toLocaleString('vi-VN')}</strong></span>
-        <span>Vắng <strong className="text-rose-600 font-bold">{totalAbsent.toLocaleString('vi-VN')}</strong></span>
-        <span>Chưa chấm <strong className="text-amber-600 font-bold">{totalUngraded.toLocaleString('vi-VN')}</strong></span>
-        <span>Bất thường <strong className="text-rose-600 font-bold">{totalFlagged.toLocaleString('vi-VN')}</strong></span>
+        <span>Được gán <strong className="text-slate-900 font-semibold">{totalAssigned.toLocaleString('vi-VN')}</strong></span>
+        <span>Vắng <strong className="text-rose-600 font-semibold">{totalAbsent.toLocaleString('vi-VN')}</strong></span>
+        <span>Chưa chấm <strong className="text-amber-600 font-semibold">{totalUngraded.toLocaleString('vi-VN')}</strong></span>
+        <span>Bất thường <strong className="text-rose-600 font-semibold">{totalFlagged.toLocaleString('vi-VN')}</strong></span>
       </div>
     </div>
   );

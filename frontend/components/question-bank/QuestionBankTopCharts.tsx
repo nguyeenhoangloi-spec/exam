@@ -29,9 +29,9 @@ export function QuestionBankTopCharts({
   const pctLabel = (val: number) => total > 0 ? `${((val / total) * 100).toFixed(1)}%` : '0%';
 
   const statusData = [
-    { name: 'Đã duyệt', value: approved, color: '#10b981' },
-    { name: 'Chờ duyệt', value: pending, color: '#f59e0b' },
-    { name: 'Từ chối', value: rejected, color: '#ef4444' },
+    { name: 'Đã duyệt', value: approved, color: 'var(--ui-chart-success)' },
+    { name: 'Chờ duyệt', value: pending, color: 'var(--ui-chart-warning)' },
+    { name: 'Từ chối', value: rejected, color: 'var(--ui-chart-danger)' },
   ];
 
   const difficultyCounts = (counts.difficulty || {}) as Record<string, number>;
@@ -40,9 +40,9 @@ export function QuestionBankTopCharts({
   const hard = difficultyCounts.HARD ?? questions.filter((q) => q.difficulty === 'HARD').length;
 
   const difficultyData = [
-    { label: 'Dễ', value: easy, color: '#10b981', pct: total > 0 ? (easy / total) * 100 : 0, pill: 'bg-emerald-50 text-emerald-700' },
-    { label: 'Trung bình', value: medium, color: '#f59e0b', pct: total > 0 ? (medium / total) * 100 : 0, pill: 'bg-amber-50 text-amber-700' },
-    { label: 'Khó', value: hard, color: '#ef4444', pct: total > 0 ? (hard / total) * 100 : 0, pill: 'bg-rose-50 text-rose-700' },
+    { label: 'Dễ', value: easy, color: 'var(--ui-chart-success)', pct: total > 0 ? (easy / total) * 100 : 0, pill: 'bg-emerald-50 text-emerald-700' },
+    { label: 'Trung bình', value: medium, color: 'var(--ui-chart-warning)', pct: total > 0 ? (medium / total) * 100 : 0, pill: 'bg-amber-50 text-amber-700' },
+    { label: 'Khó', value: hard, color: 'var(--ui-chart-danger)', pct: total > 0 ? (hard / total) * 100 : 0, pill: 'bg-rose-50 text-rose-700' },
   ];
 
   const typeCounts = (counts.types || {}) as Record<string, number>;
@@ -53,11 +53,11 @@ export function QuestionBankTopCharts({
   const essay = typeCounts.ESSAY ?? questions.filter((q) => q.type === 'ESSAY').length;
 
   const allTypesData = [
-    { name: 'Trắc nghiệm', value: singleChoice, color: '#2563eb' },
-    { name: 'Nhiều đáp án', value: multipleChoice, color: '#7c3aed' },
-    { name: 'Đúng/Sai', value: trueFalse, color: '#0891b2' },
-    { name: 'Điền khuyết', value: fillBlank, color: '#059669' },
-    { name: 'Tự luận', value: essay, color: '#dc2626' },
+    { name: 'Trắc nghiệm', value: singleChoice, color: 'var(--ui-chart-primary)' },
+    { name: 'Nhiều đáp án', value: multipleChoice, color: 'var(--ui-chart-primary-light)' },
+    { name: 'Đúng/Sai', value: trueFalse, color: 'var(--ui-chart-info)' },
+    { name: 'Điền khuyết', value: fillBlank, color: 'var(--ui-chart-success-strong)' },
+    { name: 'Tự luận', value: essay, color: 'var(--ui-chart-danger-strong)' },
   ];
   const typeData = allTypesData.filter((d) => d.value > 0).length > 0
     ? allTypesData.filter((d) => d.value > 0)
@@ -67,11 +67,11 @@ export function QuestionBankTopCharts({
   const cardCls = 'group flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md overflow-hidden cursor-pointer';
   const hdrCls = 'flex items-center gap-3 border-b border-slate-100 pb-3 mb-3';
   const iconCls = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 text-blue-600 bg-blue-50 border-blue-100';
-  const titleCls = 'text-[15px] font-semibold text-[#0F172A]';
+  const titleCls = 'text-[15px] font-semibold text-slate-900';
   const legendRowCls = 'flex items-center justify-between gap-1';
-  const legendNameCls = 'text-[13px] font-medium text-[#475569] truncate';
-  const legendValCls = 'text-[14px] font-semibold text-[#0F172A] shrink-0';
-  const legendPctCls = 'text-[13px] text-[#64748B] font-normal ml-0.5';
+  const legendNameCls = 'text-[13px] font-medium text-slate-600 truncate';
+  const legendValCls = 'text-[14px] font-semibold text-slate-900 shrink-0';
+  const legendPctCls = 'text-[13px] text-slate-500 font-normal ml-0.5';
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -96,8 +96,8 @@ export function QuestionBankTopCharts({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[18px] font-semibold text-[#0F172A] leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="text-[13px] font-normal text-[#64748B] mt-0.5">Tổng</span>
+              <span className="text-[18px] font-semibold text-slate-900 leading-none">{total.toLocaleString('vi-VN')}</span>
+              <span className="text-[13px] font-normal text-slate-500 mt-0.5">Tổng</span>
             </div>
           </div>
           <div className="flex-1 space-y-2">
@@ -136,7 +136,7 @@ export function QuestionBankTopCharts({
                 </span>
                 <span className={legendValCls}>
                   {item.value.toLocaleString('vi-VN')}
-                  <span className="text-[13px] text-[#64748B] font-normal ml-1">({pctLabel(item.value)})</span>
+                  <span className="text-[13px] text-slate-500 font-normal ml-1">({pctLabel(item.value)})</span>
                 </span>
               </div>
               <div className="h-[5px] w-full overflow-hidden rounded-full bg-slate-100">

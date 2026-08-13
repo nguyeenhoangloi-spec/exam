@@ -35,7 +35,7 @@ export function RegradeHeader({
             variant="secondary"
             size="md"
             onClick={onExportExcel}
-            leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+            leftIcon={<Download className="h-4 w-4 text-slate-500" />}
           >
             Xuất Excel
           </Button>

@@ -99,7 +99,7 @@ export function RegradeReviewDrawer({
  />
 
  {/* Drawer Container */}
- <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl flex-col bg-white shadow-2xl border-l border-slate-200 animate-slide-left">
+  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl flex-col bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-700 animate-slide-left">
           {/* ── 1. Modern Gradient Header (Matching ProfileDrawer) ── */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
             <div className="flex items-start justify-between gap-3">
@@ -136,9 +136,9 @@ export function RegradeReviewDrawer({
  </div>
 
  {/* ── 2. Scrollable Content Body ── */}
- <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 text-xs">
+  <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/40 text-xs">
  {/* Card 1: Thông tin tổng quan đơn & Nút xem bài thi trực tiếp */}
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
  <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
  <h3 className="text-[14px] font-semibold text-slate-900">Thông tin chi tiết</h3>
  <StatusBadge status={badgeStatus} className="text-xs" />
@@ -205,7 +205,7 @@ export function RegradeReviewDrawer({
  </div>
 
  {/* Card 2: Nội dung & Lý do xin phúc khảo */}
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-2.5 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-2.5 shadow-2xs">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">
  Nội dung & Lý do xin phúc khảo
  </h3>
@@ -216,7 +216,7 @@ export function RegradeReviewDrawer({
 
  {/* Card 3: Bài làm sinh viên (Chi tiết các câu tự luận nếu có) */}
  {selectedAppeal.attempt?.attemptAnswers && selectedAppeal.attempt.attemptAnswers.length > 0 && (
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">
  Xem nhanh câu trả lời ({selectedAppeal.attempt.attemptAnswers.length} câu)
  </h3>
@@ -242,7 +242,7 @@ export function RegradeReviewDrawer({
  )}
 
  {/* Card 4: Quyết định thẩm định & Chấm lại */}
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-4 shadow-2xs">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">
  Quyết định thẩm định & Chấm lại
  </h3>
@@ -277,7 +277,7 @@ export function RegradeReviewDrawer({
 
  {reviewStatus === 'APPROVED_REGRADE' && (
  <div className="space-y-1.5 pt-1">
- <label className="block text-[15px] font-semibold text-slate-700">
+ <label className="block text-[15px] font-medium text-slate-700">
  Điểm số mới sau phúc khảo (Thang điểm 10):
  </label>
  <input
@@ -287,21 +287,21 @@ export function RegradeReviewDrawer({
  max="10"
  value={revisedScore}
  onChange={(e) => setRevisedScore(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] font-medium text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
  placeholder="Nhập điểm mới..."
  />
  </div>
  )}
 
  <div className="space-y-1.5">
- <label className="block text-[15px] font-semibold text-slate-700">
+ <label className="block text-[15px] font-medium text-slate-700">
  Ghi chú & Nhận xét của CB Thẩm định:
  </label>
  <textarea
  rows={3}
  value={reviewerNote}
  onChange={(e) => setReviewerNote(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
+ className="w-full rounded-lg border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
  placeholder="Nhập lý do chấp nhận / từ chối hoặc giải trình điểm chấm lại..."
  />
  </div>
@@ -309,7 +309,7 @@ export function RegradeReviewDrawer({
  </div>
 
  {/* ── 3. Standard Footer ── */}
- <div className="border-t border-slate-200 p-4 bg-slate-50 px-6 shrink-0 flex items-center justify-end gap-3">
+  <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-900 px-6 shrink-0 flex items-center justify-end gap-3">
  <Button type="button" variant="secondary" size="md" onClick={onClose}>
  Hủy bỏ
  </Button>

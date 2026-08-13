@@ -550,30 +550,30 @@ export default function StudentResultsPage() {
  switch (status) {
  case 'PASSED':
  return (
- <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#16A34A]">
- <CheckCircle2 className="w-4 h-4 shrink-0 text-[#16A34A]" />
+ <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-success-500">
+ <CheckCircle2 className="w-4 h-4 shrink-0 text-success-500" />
  <span>Đạt</span>
  </span>
  );
  case 'FAILED':
  return (
- <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#DC2626]">
- <XCircle className="w-4 h-4 shrink-0 text-[#DC2626]" />
+ <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-danger-600">
+ <XCircle className="w-4 h-4 shrink-0 text-danger-600" />
  <span>Chưa đạt</span>
  </span>
  );
  case 'GRADING':
  return (
- <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#2563EB]">
- <Loader2 className="w-4 h-4 shrink-0 text-[#2563EB] animate-spin" />
+ <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-primary-600">
+ <Loader2 className="w-4 h-4 shrink-0 text-primary-600 animate-spin" />
  <span>Đang chấm</span>
  </span>
  );
  case 'UNPUBLISHED':
  default:
  return (
- <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-[#D97706]">
- <Clock className="w-4 h-4 shrink-0 text-[#D97706]" />
+ <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-warning-600">
+ <Clock className="w-4 h-4 shrink-0 text-warning-600" />
  <span>Chờ công bố</span>
  </span>
  );
@@ -618,11 +618,11 @@ export default function StudentResultsPage() {
  {/* ── 1. Standard Page Header ── */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Kết Quả Thi Sinh Viên
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
- Sinh viên: <strong className="text-[#0F172A] font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-[#0F172A] font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+ Sinh viên: <strong className="text-slate-900 font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
  </p>
  </div>
 
@@ -631,7 +631,7 @@ export default function StudentResultsPage() {
  variant="secondary"
  size="md"
  onClick={handleExportExcel}
- leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Download className="h-4 w-4 text-slate-500" />}
  >
  Xuất Excel
  </Button>
@@ -640,7 +640,7 @@ export default function StudentResultsPage() {
  variant="secondary"
  size="md"
  onClick={handlePrintReport}
- leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
  >
  In Báo Cáo
  </Button>
@@ -658,10 +658,10 @@ export default function StudentResultsPage() {
  >
  <div className="flex items-start justify-between gap-3">
  <div className="space-y-1">
- <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
+ <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
  {item.title}
  </span>
- <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
+ <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
  {item.value}
  {item.unit || ''}
  </p>
@@ -674,7 +674,7 @@ export default function StudentResultsPage() {
  </div>
  </div>
 
- <span className="text-[13px] font-normal text-[#64748B] mt-2">
+ <span className="text-[13px] font-normal text-slate-500 mt-2">
  {item.subtext}
  </span>
  </div>
@@ -687,7 +687,7 @@ export default function StudentResultsPage() {
  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
  {/* Search Input */}
  <div className="relative">
- <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] pointer-events-none" />
+ <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
  <input
  type="text"
  placeholder="Tìm theo mã môn, tên môn học..."
@@ -696,7 +696,7 @@ export default function StudentResultsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
  />
  {search && (
  <button
@@ -717,7 +717,7 @@ export default function StudentResultsPage() {
  setFilterYear(e.target.value);
  setPage(1);
  }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả năm học</option>
  {academicYears.map((yr) => (
@@ -726,7 +726,7 @@ export default function StudentResultsPage() {
  </option>
  ))}
  </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
  </div>
 
  {/* Semester Filter */}
@@ -737,13 +737,13 @@ export default function StudentResultsPage() {
  setFilterSemester(e.target.value);
  setPage(1);
  }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả học kỳ</option>
  <option value="HK1">Học kỳ I</option>
  <option value="HK2">Học kỳ II</option>
  </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
  </div>
 
  {/* Status Filter */}
@@ -754,7 +754,7 @@ export default function StudentResultsPage() {
  setFilterStatus(e.target.value);
  setPage(1);
  }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả trạng thái kết quả</option>
  <option value="PASSED">Môn Đạt</option>
@@ -762,15 +762,15 @@ export default function StudentResultsPage() {
  <option value="GRADING">Đang chấm</option>
  <option value="UNPUBLISHED">Chờ công bố</option>
  </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
+ <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
  </div>
  </div>
  </div>
 
  {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
  <div className="flex flex-wrap items-center justify-between gap-3 py-1">
- <span className="text-[15px] font-normal text-[#334155]">
- <span className="font-semibold text-[#0F172A]">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi môn học
+ <span className="text-[15px] font-normal text-slate-700">
+ <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi môn học
  </span>
 
  <div className="flex items-center gap-2">
@@ -779,7 +779,7 @@ export default function StudentResultsPage() {
  <select
  value={sortOrder}
  onChange={(e) => setSortOrder(e.target.value)}
- className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+ className="appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-7 py-1.5 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
  >
  <option value="date_desc">Ngày thi: Mới nhất</option>
  <option value="date_asc">Ngày thi: Cũ nhất</option>
@@ -819,7 +819,7 @@ export default function StudentResultsPage() {
  return (
  <label
  key={col.key}
- className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition"
+ className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition"
  >
  <span className="flex items-center gap-2">
  <input
@@ -876,7 +876,7 @@ export default function StudentResultsPage() {
  <button
  type="button"
  onClick={fetchData}
- className="flex h-8 w-8 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
  title="Làm mới dữ liệu"
  >
  <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
@@ -923,13 +923,13 @@ export default function StudentResultsPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-xs text-[#475569] hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums font-medium text-xs text-slate-600 hover:text-blue-600 transition cursor-pointer"
  >
  {item.subjectCode}
  </button>
  </div>
 
- <span className="text-[13px] font-semibold text-[#64748B]">
+ <span className="text-[13px] font-semibold text-slate-500">
  {item.schoolYear}
  </span>
  </div>
@@ -951,7 +951,7 @@ export default function StudentResultsPage() {
  </div>
  <div className="flex items-center justify-between">
  <span className="text-slate-400">Điểm số:</span>
- <span className="font-semibold text-sm text-[#0F172A]">
+ <span className="font-semibold text-sm text-slate-900">
  {item.score !== null ? item.score.toFixed(1) : '---'}
  </span>
  </div>
@@ -976,9 +976,9 @@ export default function StudentResultsPage() {
  </div>
  ) : viewMode === 'compact' ? (
  /* ── 5.2 Compact View Mode ── */
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -997,7 +997,7 @@ export default function StudentResultsPage() {
  <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {currentItems.map((item) => {
  const isChecked = selected.includes(item.id);
  return (
@@ -1011,23 +1011,23 @@ export default function StudentResultsPage() {
  />
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569]">
+ <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600">
  {item.subjectCode}
  </span>
  </td>
  <td className="p-2 min-w-[200px]">
  <p
- className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600"
+ className="truncate font-medium text-slate-900 cursor-pointer hover:text-blue-600"
  onClick={() => setDetailItem(item)}
  >
  {item.subjectName}
  </p>
  </td>
- <td className="p-2 whitespace-nowrap text-[15px] font-semibold text-slate-700">{item.periodName}</td>
+ <td className="p-2 whitespace-nowrap text-[15px] font-medium text-slate-700">{item.periodName}</td>
  <td className="p-2 whitespace-nowrap text-center text-[15px] font-medium text-slate-600">
  {new Date(item.examDate).toLocaleDateString('vi-VN')}
  </td>
- <td className="p-2 whitespace-nowrap text-center font-semibold text-slate-900">
+ <td className="p-2 whitespace-nowrap text-center font-medium text-slate-900">
  {item.score !== null ? item.score.toFixed(1) : '---'}
  </td>
  <td className="p-2 whitespace-nowrap">
@@ -1051,9 +1051,9 @@ export default function StudentResultsPage() {
  </div>
  ) : (
  /* ── 5.3 Standard List View Mode (Default Table) ── */
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -1073,7 +1073,7 @@ export default function StudentResultsPage() {
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {currentItems.map((item) => {
  const isChecked = selected.includes(item.id);
  return (
@@ -1097,7 +1097,7 @@ export default function StudentResultsPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-[15px] leading-[22px] text-[#475569] hover:text-blue-600 transition cursor-pointer"
+ className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 hover:text-blue-600 transition cursor-pointer"
  >
  {item.subjectCode}
  </button>
@@ -1109,7 +1109,7 @@ export default function StudentResultsPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-semibold text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
+ className="font-medium text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
  >
  {item.subjectName}
  </p>
@@ -1120,7 +1120,7 @@ export default function StudentResultsPage() {
  {/* Period */}
  {visibleColumns.period !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-[15px] leading-[22px] font-semibold text-slate-700">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-700">
  {item.periodName}
  </span>
  </td>
@@ -1148,7 +1148,7 @@ export default function StudentResultsPage() {
  {visibleColumns.score !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {item.score !== null ? (
- <span className={`font-semibold text-[15px] leading-[22px] ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
+ <span className={`font-medium text-[15px] leading-[22px] ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
  {item.score.toFixed(1)}
  </span>
  ) : (
@@ -1251,7 +1251,7 @@ export default function StudentResultsPage() {
  setLimit(Number(e.target.value));
  setPage(1);
  }}
- className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none transition cursor-pointer shadow-2xs"
+ className="appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-7 py-2 text-[15px] font-medium text-slate-700 focus:border-blue-500 focus:outline-none transition cursor-pointer shadow-2xs"
  >
  <option value={8}>8 dòng / trang</option>
  <option value={15}>15 dòng / trang</option>
@@ -1353,10 +1353,10 @@ export default function StudentResultsPage() {
  >
  {detailItem && (
  <div className="space-y-4 text-xs -mt-1">
- <p className="text-[#334155] leading-relaxed">
- Môn học: <strong className="text-[#0F172A]">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
+ <p className="text-slate-700 leading-relaxed">
+ Môn học: <strong className="text-slate-900">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
  </p>
- <label className="block font-semibold text-[#334155]">
+ <label className="block font-medium text-slate-700">
  Lý do xin phúc khảo:
  </label>
  <textarea
@@ -1364,7 +1364,7 @@ export default function StudentResultsPage() {
  value={appealReason}
  onChange={(e) => setAppealReason(e.target.value)}
  placeholder="Nhập chi tiết lý do đề nghị chấm lại bài thi..."
- className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-[#0F172A] placeholder:text-slate-400 focus:border-[#2563EB] focus:outline-none transition"
+ className="w-full rounded-lg border border-slate-200 bg-slate-50 p-3 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-primary-600 focus:outline-none transition"
  />
 
  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">

@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -347,14 +349,14 @@ export default function BackupsPage() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2.5">
-                        <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+                        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
                             Sao lưu & khôi phục dữ liệu
                         </h1>
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold shadow-xs">
                             <ShieldCheck className="h-3.5 w-3.5" /> Hệ thống bảo vệ
                         </span>
                     </div>
-                    <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+                    <p className="text-[15px] font-normal leading-[22px] text-slate-500">
                         Màn hình vận hành an toàn database, file upload và các snapshot hệ thống khảo thí
                     </p>
                 </div>
@@ -399,10 +401,10 @@ export default function BackupsPage() {
                 <div className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md space-y-3">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
+                            <span className="text-[13px] font-semibold text-slate-500 tracking-wider block truncate">
                                 Backup Worker
                             </span>
-                            <p className="text-[20px] font-semibold text-[#0F172A] leading-[28px] truncate flex items-center gap-2">
+                            <p className="text-[20px] font-semibold text-slate-900 leading-[28px] truncate flex items-center gap-2">
                                 {overview?.worker?.enabled ? (
                                     <span className="inline-flex items-center gap-1.5 text-emerald-600 font-semibold">
                                         <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
@@ -414,11 +416,11 @@ export default function BackupsPage() {
                                 )}
                             </p>
                         </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-primary-600 transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
                             <Server className="h-5 w-5" />
                         </div>
                     </div>
-                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-[#64748B]">
+                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-slate-500">
                         Lịch chạy: <strong>{overview?.worker?.schedule || '02:00'}</strong> ({overview?.timezone || 'Asia/Ho_Chi_Minh'})
                     </div>
                 </div>
@@ -427,18 +429,18 @@ export default function BackupsPage() {
                 <div className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md space-y-3">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
+                            <span className="text-[13px] font-semibold text-slate-500 tracking-wider block truncate">
                                 Nơi lưu trữ (Storage)
                             </span>
-                            <p className="text-[20px] font-semibold text-[#0F172A] leading-[28px] truncate">
+                            <p className="text-[20px] font-semibold text-slate-900 leading-[28px] truncate">
                                 {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa Local'}
                             </p>
                         </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-primary-600 transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
                             <HardDrive className="h-5 w-5" />
                         </div>
                     </div>
-                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-[#64748B] truncate">
+                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-slate-500 truncate">
                         {overview?.storage?.bucketName ? `Bucket: ${overview.storage.bucketName}` : 'Thư mục máy chủ cục bộ'}
                     </div>
                 </div>
@@ -447,7 +449,7 @@ export default function BackupsPage() {
                 <div className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md space-y-3">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
+                            <span className="text-[13px] font-semibold text-slate-500 tracking-wider block truncate">
                                 Công cụ Database CLI
                             </span>
                             <div className="flex items-center gap-3 text-xs font-semibold pt-1">
@@ -459,11 +461,11 @@ export default function BackupsPage() {
                                 </span>
                             </div>
                         </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-primary-600 transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
                             <Terminal className="h-5 w-5" />
                         </div>
                     </div>
-                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-[#64748B]">
+                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-slate-500">
                         {overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? 'Sẵn sàng sao lưu & phục hồi' : 'Thiếu công cụ PostgreSQL CLI'}
                     </div>
                 </div>
@@ -472,25 +474,25 @@ export default function BackupsPage() {
                 <div className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md space-y-3">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block truncate">
+                            <span className="text-[13px] font-semibold text-slate-500 tracking-wider block truncate">
                                 Dung lượng tổng
                             </span>
-                            <p className="text-[28px] font-semibold text-[#0F172A] leading-[36px] truncate">
+                            <p className="text-[28px] font-semibold text-slate-900 leading-[36px] truncate">
                                 {formatBytes(overview?.totalBytes)}
                             </p>
                         </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#2563EB] transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-primary-600 transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
                             <ShieldCheck className="h-5 w-5" />
                         </div>
                     </div>
-                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-[#64748B] truncate">
+                    <div className="pt-2 border-t border-slate-100/80 text-[13px] font-normal text-slate-500 truncate">
                         {verifiedJobs.length} bản hợp lệ · {overview?.failed24h || 0} lỗi 24h
                     </div>
                 </div>
             </div>
 
             {/* Advanced Filter Card */}
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="relative flex-1 min-w-[240px]">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
@@ -498,7 +500,7 @@ export default function BackupsPage() {
                         placeholder="Tìm theo Snapshot ID, mã lỗi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-[15px] font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
                     />
                     {search && (
                         <button
@@ -603,8 +605,8 @@ export default function BackupsPage() {
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
                     >
-                        <option value="newest">Sắp xếp: Mới nhất</option>
-                        <option value="oldest">Sắp xếp: Cũ nhất</option>
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
                     </FilterSelect>
 
                     <button
@@ -649,8 +651,8 @@ export default function BackupsPage() {
             ) : (
                 /* Data Grid Table */
                 <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-                    <table className="w-full text-left border-collapse text-[15px] text-[#334155]">
-                        <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+                    <table className="w-full text-left border-collapse text-[15px] text-slate-700">
+                        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
                             <tr>
                                 <th scope="col" className="p-3.5 pl-4 min-w-[200px]">Snapshot ID</th>
                                 <th scope="col" className="p-3.5 whitespace-nowrap">Loại</th>
@@ -661,14 +663,14 @@ export default function BackupsPage() {
                                 <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 font-medium">
+                        <tbody className="divide-y divide-slate-100 font-normal">
                             {sortedJobs.map((job) => (
                                 <tr key={job.id} className="transition hover:bg-slate-50/60">
                                     <td className="p-3.5 pl-4 min-w-[200px]">
                                         <button
                                             type="button"
                                             onClick={() => setDetailJob(job)}
-                                            className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
+                                            className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
                                         >
                                             {job.snapshotId}
                                         </button>
@@ -681,7 +683,7 @@ export default function BackupsPage() {
 
                                     <td className="p-3.5 whitespace-nowrap">
                                         <span
-                                            className={`table-badge font-semibold text-[12px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
+                                            className={`table-badge font-medium text-[12px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
                                                 ? 'bg-blue-600 text-white shadow-2xs'
                                                 : job.type === 'DATABASE'
                                                     ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
@@ -694,26 +696,26 @@ export default function BackupsPage() {
                                         </span>
                                     </td>
 
-                                    <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-700">
+                                    <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700">
                                         {job.initiatedBy ? (
-                                            <span className="inline-flex items-center gap-1 text-blue-700 font-semibold">
+                                            <span className="inline-flex items-center gap-1 text-blue-700 font-medium">
                                                 <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center gap-1 text-slate-600 font-semibold">
+                                            <span className="inline-flex items-center gap-1 text-slate-600 font-medium">
                                                 <Clock className="h-3 w-3 text-slate-400" /> Tự động (Cron)
                                             </span>
                                         )}
                                     </td>
 
-                                    <td className="p-3.5 whitespace-nowrap text-[15px] font-semibold text-slate-700">
+                                    <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700">
                                         {formatDate(job.completedAt || job.createdAt)}
                                         <span className="block text-[15px] leading-[22px] text-slate-400 mt-0.5">
                                             Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
                                         </span>
                                     </td>
 
-                                    <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-[15px]">
+                                    <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 text-[15px]">
                                         {formatBytes(job.sizeBytes)}
                                     </td>
 
@@ -740,7 +742,7 @@ export default function BackupsPage() {
                                                     <RotateCcw className="h-4 w-4" />
                                                 </button>
                                             ) : (
-                                                <span className="table-badge text-[12px] font-semibold text-slate-400">
+                                                <span className="table-badge text-[12px] font-medium text-slate-400">
                                                     {job.status === 'SUCCEEDED' ? 'Hết retention' : 'Không khả dụng'}
                                                 </span>
                                             )}
@@ -759,14 +761,14 @@ export default function BackupsPage() {
                     {/* Section header — edu-section-title với warning indicator */}
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                            <h2 className="edu-section-title text-[#0F172A]">
+                            <h2 className="edu-section-title text-slate-900">
                                 Yêu cầu khôi phục đang chờ xử lý
                             </h2>
                             <span className="inline-flex items-center justify-center h-6 min-w-[24px] px-2 rounded-full bg-warning-600 text-white text-[12px] font-semibold leading-none">
                                 {restoreRequests.length}
                             </span>
                         </div>
-                        <p className="edu-helper text-[#64748B] hidden sm:block shrink-0">
+                        <p className="edu-helper text-slate-500 hidden sm:block shrink-0">
                             Các yêu cầu chờ Admin thứ hai phê duyệt
                         </p>
                     </div>
@@ -776,12 +778,12 @@ export default function BackupsPage() {
                         <table className="ui-table">
                             <thead>
                                 <tr className="bg-warning-50 border-b border-warning-200/70">
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Snapshot ID</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Môi trường</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937]">Lý do khôi phục</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Người tạo yêu cầu</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] whitespace-nowrap">Thời hạn</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-semibold tracking-wide text-[#1F2937] text-right whitespace-nowrap">Thao tác</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Snapshot ID</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Môi trường</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800">Lý do khôi phục</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Người tạo yêu cầu</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Thời hạn</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 text-right whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -790,19 +792,19 @@ export default function BackupsPage() {
                                     return (
                                         <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
                                             {/* Snapshot ID */}
-                                            <td className="px-4 py-3.5 tabular-nums text-[15px] font-semibold text-[#0F172A] whitespace-nowrap">
+                                            <td className="px-4 py-3.5 tabular-nums text-[15px] font-medium text-slate-900 whitespace-nowrap">
                                                 {request.backupJob.snapshotId}
                                             </td>
 
                                             {/* Environment — flat, no border, no background */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
                                                 {request.target === 'PRODUCTION' ? (
-                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[13px] font-semibold text-danger-600">
+                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[13px] font-medium text-danger-600">
                                                         <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
                                                         PRODUCTION
                                                     </span>
                                                 ) : (
-                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[13px] font-semibold text-warning-600">
+                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[13px] font-medium text-warning-600">
                                                         <Server className="h-3.5 w-3.5 shrink-0" />
                                                         STAGING
                                                     </span>
@@ -811,19 +813,19 @@ export default function BackupsPage() {
 
                                             {/* Reason */}
                                             <td className="px-4 py-3.5">
-                                                <p className="edu-secondary text-[#1F2937] max-w-[240px] line-clamp-2">{request.reason}</p>
+                                                <p className="edu-secondary text-slate-800 max-w-[240px] line-clamp-2">{request.reason}</p>
                                             </td>
 
                                             {/* Requested by */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
-                                                <span className="inline-flex items-center gap-1.5 edu-secondary font-semibold text-[#1F2937]">
-                                                    <UserIcon className="h-3.5 w-3.5 text-[#64748B] shrink-0" />
+                                                <span className="inline-flex items-center gap-1.5 edu-secondary font-medium text-slate-800">
+                                                    <UserIcon className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                                                     {request.requestedBy?.username || 'admin'}
                                                 </span>
                                             </td>
 
                                             {/* Expires at */}
-                                            <td className="px-4 py-3.5 whitespace-nowrap edu-secondary text-[#475569]">
+                                            <td className="px-4 py-3.5 whitespace-nowrap edu-secondary text-slate-600">
                                                 {formatDate(request.expiresAt)}
                                             </td>
 
@@ -833,7 +835,7 @@ export default function BackupsPage() {
                                                     selfBlocked ? (
                                                         <span
                                                             title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
-                                                            className="table-action inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-400 cursor-default select-none"
+                                                            className="table-action inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-400 cursor-default select-none"
                                                         >
                                                             <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
                                                             Cần Admin khác phê duyệt
@@ -842,7 +844,7 @@ export default function BackupsPage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => openCriticalApproveModal(request)}
-                                                            className="table-action inline-flex items-center gap-1.5 text-[13px] font-semibold text-amber-600 hover:text-amber-700 transition cursor-pointer"
+                                                            className="table-action inline-flex items-center gap-1.5 text-[13px] font-medium text-amber-600 hover:text-amber-700 transition cursor-pointer"
                                                         >
                                                             <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
                                                             Phê duyệt an toàn
@@ -874,44 +876,44 @@ export default function BackupsPage() {
                         {/* Overview Metadata Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 pb-3 border-b border-slate-100">
                             <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-[#64748B] block">Loại Backup</span>
-                                <span className="text-sm font-semibold text-[#0F172A] block">{detailJob.type}</span>
+                                <span className="text-xs font-semibold text-slate-500 block">Loại Backup</span>
+                                <span className="text-sm font-semibold text-slate-900 block">{detailJob.type}</span>
                             </div>
                             <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-[#64748B] block">Dung lượng tổng</span>
-                                <span className="text-sm font-semibold text-[#0F172A] block">{formatBytes(detailJob.sizeBytes)}</span>
+                                <span className="text-xs font-semibold text-slate-500 block">Dung lượng tổng</span>
+                                <span className="text-sm font-semibold text-slate-900 block">{formatBytes(detailJob.sizeBytes)}</span>
                             </div>
                             <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-[#64748B] block">Người khởi tạo</span>
-                                <span className="text-sm font-semibold text-[#0F172A] block">
+                                <span className="text-xs font-semibold text-slate-500 block">Người khởi tạo</span>
+                                <span className="text-sm font-semibold text-slate-900 block">
                                     {detailJob.initiatedBy ? detailJob.initiatedBy.username : 'Hệ thống (Cron)'}
                                 </span>
                             </div>
                             <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-[#64748B] block">Thời gian khởi tạo</span>
-                                <span className="text-sm font-semibold text-[#0F172A] block">{formatDate(detailJob.createdAt)}</span>
+                                <span className="text-xs font-semibold text-slate-500 block">Thời gian khởi tạo</span>
+                                <span className="text-sm font-semibold text-slate-900 block">{formatDate(detailJob.createdAt)}</span>
                             </div>
                             <div className="space-y-0.5 sm:col-span-2">
-                                <span className="text-xs font-semibold text-[#64748B] block">Thời gian hoàn thành</span>
-                                <span className="text-sm font-semibold text-[#0F172A] block">{formatDate(detailJob.completedAt)}</span>
+                                <span className="text-xs font-semibold text-slate-500 block">Thời gian hoàn thành</span>
+                                <span className="text-sm font-semibold text-slate-900 block">{formatDate(detailJob.completedAt)}</span>
                             </div>
                         </div>
 
                         {/* Long Technical Identifiers */}
                         <div className="space-y-3 pb-3 border-b border-slate-100">
                             <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-[#64748B] block">Mã Snapshot ID</span>
-                                <span className=" tabular-nums text-sm font-semibold text-[#0F172A] break-all block">{detailJob.snapshotId}</span>
+                                <span className="text-xs font-semibold text-slate-500 block">Mã Snapshot ID</span>
+                                <span className=" tabular-nums text-sm font-semibold text-slate-900 break-all block">{detailJob.snapshotId}</span>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                                 <div className="space-y-0.5">
-                                    <span className="text-xs font-semibold text-[#64748B] block">Prisma Migration Version</span>
-                                    <span className=" tabular-nums text-sm font-semibold text-[#0F172A] break-all block">{detailJob.migration || 'Không xác định'}</span>
+                                    <span className="text-xs font-semibold text-slate-500 block">Prisma Migration Version</span>
+                                    <span className=" tabular-nums text-sm font-semibold text-slate-900 break-all block">{detailJob.migration || 'Không xác định'}</span>
                                 </div>
                                 <div className="space-y-0.5">
-                                    <span className="text-xs font-semibold text-[#64748B] block">App Commit Hash</span>
-                                    <span className=" tabular-nums text-xs font-semibold text-[#0F172A] break-all block">{detailJob.appCommit || 'Latest HEAD'}</span>
+                                    <span className="text-xs font-semibold text-slate-500 block">App Commit Hash</span>
+                                    <span className=" tabular-nums text-xs font-semibold text-slate-900 break-all block">{detailJob.appCommit || 'Latest HEAD'}</span>
                                 </div>
                             </div>
                         </div>
@@ -919,7 +921,7 @@ export default function BackupsPage() {
                         {/* SHA-256 Checksum */}
                         <div className="space-y-1 pt-1">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-[#64748B]">Mã băm SHA-256 Checksum</span>
+                                <span className="text-xs font-semibold text-slate-500">Mã băm SHA-256 Checksum</span>
                                 {detailJob.checksum && (
                                     <button
                                         type="button"
@@ -964,15 +966,15 @@ export default function BackupsPage() {
 
                     {/* Frameless Selected Snapshot Info */}
                     <div className="space-y-0.5 pb-2 border-b border-slate-100">
-                        <span className="text-xs font-semibold text-[#64748B] block">Snapshot đã chọn</span>
-                        <p className=" tabular-nums text-sm font-semibold text-[#0F172A] break-all">{selectedJob?.snapshotId}</p>
+                        <span className="text-xs font-semibold text-slate-500 block">Snapshot đã chọn</span>
+                        <p className=" tabular-nums text-sm font-semibold text-slate-900 break-all">{selectedJob?.snapshotId}</p>
                         <p className="text-xs font-semibold text-slate-500 mt-0.5">
                             {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
                         </p>
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="block text-[15px] font-semibold text-[#64748B]">Môi trường đích:</label>
+                        <label className="block text-[15px] font-medium text-slate-500">Môi trường đích:</label>
                         <FilterSelect
                             size="md"
                             className="w-full text-sm font-semibold text-slate-900"
@@ -986,7 +988,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="block text-[15px] font-semibold text-[#64748B]">
+                        <label className="block text-[15px] font-medium text-slate-500">
                             Lý do khôi phục <span className="text-rose-500">*</span>
                         </label>
                         <textarea
@@ -995,7 +997,7 @@ export default function BackupsPage() {
                             onChange={(e) => setReason(e.target.value)}
                             maxLength={500}
                             placeholder="Mô tả cụ thể sự cố cần phục hồi hoặc mục đích thử nghiệm..."
-                            className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-semibold text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+                            className="w-full rounded-lg border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
                         />
                     </div>
 

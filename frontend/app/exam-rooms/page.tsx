@@ -21,6 +21,7 @@ import { ExamRoomKPICards } from '../../components/exam-rooms/ExamRoomKPICards';
 import { ExamRoomTableToolbar } from '../../components/exam-rooms/ExamRoomTableToolbar';
 import { ExamRoomTable } from '../../components/exam-rooms/ExamRoomTable';
 import { ExamRoomPaginationBar } from '../../components/exam-rooms/ExamRoomPaginationBar';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 
 export default function ExamRoomsPage() {
   usePageTitle('Quản lý phòng thi');
@@ -310,10 +311,11 @@ export default function ExamRoomsPage() {
           activeBuildingCount={kpiData.activeBuildingCount}
         />
 
-        {/* Filter Card */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center justify-between gap-4">
-          <div className="relative flex-1 min-w-[260px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        {/* Filter Card Toolbar */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
+          {/* Search Input Field */}
+          <div className="relative flex-1 w-full min-w-[280px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
               placeholder="Tìm theo mã phòng, tên phòng, tòa nhà..."
@@ -322,7 +324,7 @@ export default function ExamRoomsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -331,54 +333,51 @@ export default function ExamRoomsPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
               </button>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Filter Select Dropdowns Group */}
+          <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
+            {/* Filter Item: Loại phòng */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-500">Loại phòng:</span>
-              <div className="relative">
-                <select
-                  value={selectedType}
-                  onChange={(e) => {
-                    setSelectedType(e.target.value);
-                    setPage(1);
-                  }}
-                  className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
-                >
-                  <option value="">Tất cả loại phòng</option>
-                  <option value="COMPUTER_LAB">Phòng máy tính</option>
-                  <option value="THEORY">Phòng lý thuyết</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-              </div>
+              <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Loại phòng:</span>
+              <FilterSelect
+                value={selectedType}
+                onChange={(e) => {
+                  setSelectedType(e.target.value);
+                  setPage(1);
+                }}
+                size="md"
+              >
+                <option value="">Tất cả loại phòng</option>
+                <option value="COMPUTER_LAB">Phòng máy tính</option>
+                <option value="THEORY">Phòng lý thuyết</option>
+              </FilterSelect>
             </div>
 
+            {/* Filter Item: Tòa nhà */}
             {buildingList.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-500">Tòa nhà:</span>
-                <div className="relative">
-                  <select
-                    value={selectedBuilding}
-                    onChange={(e) => {
-                      setSelectedBuilding(e.target.value);
-                      setPage(1);
-                    }}
-                    className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer hover:border-slate-300 transition shadow-2xs"
-                  >
-                    <option value="">Tất cả tòa nhà</option>
-                    {buildingList.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                </div>
+                <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Tòa nhà:</span>
+                <FilterSelect
+                  value={selectedBuilding}
+                  onChange={(e) => {
+                    setSelectedBuilding(e.target.value);
+                    setPage(1);
+                  }}
+                  size="md"
+                >
+                  <option value="">Tất cả tòa nhà</option>
+                  {buildingList.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </FilterSelect>
               </div>
             )}
           </div>
@@ -394,6 +393,7 @@ export default function ExamRoomsPage() {
           visibleColumns={visibleColumns}
           onColumnToggle={handleColumnToggle}
           onRefresh={fetchData}
+          loading={loading}
         />
 
         {/* Full-Width DataGrid Table */}
@@ -451,71 +451,71 @@ export default function ExamRoomsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã phòng thi</label>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã phòng thi</label>
             <input
               type="text"
               required
               placeholder="VD: LAB-A101"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tên phòng thi</label>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên phòng thi</label>
             <input
               type="text"
               required
               placeholder="VD: Phòng máy tính A101"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
               <input
                 type="number"
                 required
                 value={formData.capacity}
                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tòa nhà / Vị trí</label>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">Tòa nhà / Vị trí</label>
               <input
                 type="text"
                 required
                 placeholder="VD: Tòa A"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Loại phòng</label>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">Loại phòng</label>
               <select
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               >
                 <option value="COMPUTER_LAB">Phòng máy tính</option>
                 <option value="THEORY">Phòng lý thuyết</option>
               </select>
             </div>
             <div>
-              <label className="block text-[15px] font-semibold text-slate-500 mb-1">Trạng thái</label>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">Trạng thái</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               >
                 <option value="AVAILABLE">Sẵn sàng</option>
                 <option value="MAINTENANCE">Bảo trì</option>

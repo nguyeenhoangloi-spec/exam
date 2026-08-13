@@ -268,11 +268,11 @@ export default function TeacherAssignmentsPage() {
  {/* ── 1. Standard Page Header ── */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Lịch Phân Công Coi Thi
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
- Giảng viên: <strong className="text-[#0F172A] font-semibold">{currentUser?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Danh sách ca coi thi được phân công trong học kỳ
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+ Giảng viên: <strong className="text-slate-900 font-semibold">{currentUser?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Danh sách ca coi thi được phân công trong học kỳ
  </p>
  </div>
 
@@ -306,10 +306,10 @@ export default function TeacherAssignmentsPage() {
  >
  <div className="flex items-start justify-between gap-3">
  <div className="space-y-1">
- <span className="text-[13px] font-semibold text-[#64748B] tracking-wider">
+ <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
  {label}
  </span>
- <p className="text-[32px] font-semibold text-[#0F172A] leading-[38px]">
+ <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
  {value}
  </p>
  </div>
@@ -319,7 +319,7 @@ export default function TeacherAssignmentsPage() {
  </div>
  </div>
 
- <span className="text-[13px] font-normal text-[#64748B] mt-2">
+ <span className="text-[13px] font-normal text-slate-500 mt-2">
  {subtext}
  </span>
  </div>
@@ -358,7 +358,7 @@ export default function TeacherAssignmentsPage() {
  <div className="space-y-3.5">
  {/* Card top badges */}
  <div className="flex items-center justify-between gap-2">
- <span className=" tabular-nums font-medium text-xs text-[#475569]">
+ <span className=" tabular-nums font-medium text-xs text-slate-600">
  {item.subjectCode}
  </span>
  <div className="flex items-center gap-1.5">
@@ -366,7 +366,7 @@ export default function TeacherAssignmentsPage() {
  status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
  customLabel={isExpired ? 'Quá hạn ca thi' : item.status === 'CONFIRMED' ? 'Đã xác nhận' : item.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận'}
  />
- <span className="text-[13px] font-semibold text-[#475569]">
+ <span className="text-[13px] font-semibold text-slate-600">
  {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
  </span>
  </div>

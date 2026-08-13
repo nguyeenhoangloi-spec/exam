@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -394,7 +394,7 @@ export default function DepartmentsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
  />
  {search && (
  <button
@@ -421,6 +421,7 @@ export default function DepartmentsPage() {
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
  onRefresh={fetchData}
+ loading={loading}
  />
 
  {/* Full-Width DataGrid Table */}
@@ -479,26 +480,26 @@ export default function DepartmentsPage() {
   >
  <form onSubmit={handleSubmit} className="space-y-4">
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 mb-1">Mã khoa</label>
+ <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã khoa</label>
  <input
  type="text"
  required
  placeholder="VD: CNTT"
  value={formData.code}
  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
  <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Tên khoa đào tạo</label>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên khoa đào tạo</label>
  <input
  type="text"
  required
  placeholder="VD: Khoa Công nghệ Thông tin"
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -538,7 +539,7 @@ export default function DepartmentsPage() {
  required
  value={addCurriculumForm.subjectId}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, subjectId: e.target.value })}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 outline-none"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  >
  <option value="">-- Chọn Môn học --</option>
  {allSubjects.map((s) => (
@@ -553,7 +554,7 @@ export default function DepartmentsPage() {
  <select
  value={addCurriculumForm.type}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, type: e.target.value as any })}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 outline-none"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  >
  <option value="MANDATORY">Bắt buộc</option>
  <option value="ELECTIVE">Tự chọn</option>
@@ -564,7 +565,7 @@ export default function DepartmentsPage() {
  <select
  value={addCurriculumForm.recommendedSemester}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, recommendedSemester: e.target.value })}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:border-blue-500 outline-none"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  >
  {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
  <option key={sem} value={sem}>
@@ -581,7 +582,7 @@ export default function DepartmentsPage() {
  placeholder="Ghi chú (Tùy chọn)..."
  value={addCurriculumForm.note}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, note: e.target.value })}
- className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-800 focus:border-blue-500 outline-none"
+ className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  />
  <button
  type="submit"
@@ -603,9 +604,9 @@ export default function DepartmentsPage() {
  Chưa có môn học nào trong Khung chương trình đào tạo của khoa này.
  </div>
  ) : (
- <div className="overflow-x-auto rounded-xl border border-slate-200">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th className="p-3">Mã môn</th>
  <th className="p-3">Tên môn học</th>
@@ -615,33 +616,33 @@ export default function DepartmentsPage() {
  {currentUser?.role === 'ADMIN' && <th className="p-3 text-right">Thao tác</th>}
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-medium">
+ <tbody className="divide-y divide-slate-100 font-normal">
  {curriculumList.map((item) => (
  <tr key={item.id} className="transition hover:bg-blue-50/40">
  <td className="p-3">
- <span className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600">
+ <span className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600">
  {item.subject?.subjectCode}
  </span>
  </td>
- <td className="p-3 font-semibold text-slate-900">{item.subject?.subjectName}</td>
- <td className="p-3 text-center font-semibold text-slate-700">
- <span className="font-semibold text-slate-800">{item.subject?.credits}</span>
- <span className="text-slate-400 font-semibold ml-0.5">TC</span>
+ <td className="p-3 font-medium text-slate-900">{item.subject?.subjectName}</td>
+ <td className="p-3 text-center font-medium text-slate-700">
+ <span className="font-medium text-slate-800">{item.subject?.credits}</span>
+ <span className="text-slate-400 font-medium ml-0.5">TC</span>
  </td>
  <td className="p-3 text-center">
  {item.type === 'MANDATORY' ? (
- <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-medium">
  <Award className="h-4 w-4 shrink-0 text-blue-600" />
  Bắt buộc
  </span>
  ) : (
- <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-semibold">
+ <span className="inline-flex items-center gap-1.5 text-[15px] leading-[22px] whitespace-nowrap select-none text-slate-700 font-medium">
  <GraduationCap className="h-4 w-4 shrink-0 text-blue-500" />
  Tự chọn
  </span>
  )}
  </td>
- <td className="p-3 text-center font-semibold text-slate-800">HK {item.recommendedSemester}</td>
+ <td className="p-3 text-center font-medium text-slate-800">HK {item.recommendedSemester}</td>
  {currentUser?.role === 'ADMIN' && (
  <td className="p-3 text-right">
  <button
@@ -674,7 +675,7 @@ export default function DepartmentsPage() {
  />
 
  {/* Drawer Content */}
- <div className="relative w-full max-w-md bg-white shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
+  <div className="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col animate-[slide-in-right_0.3s_ease-out]">
  {/* Header - Modern Gradient */}
 <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
  <div className="flex items-start justify-between gap-3">
@@ -704,7 +705,7 @@ export default function DepartmentsPage() {
  </div>
 
  {/* Tabs */}
- <div className="flex border-b border-slate-200 px-6 shrink-0 bg-white overflow-x-auto">
+  <div className="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
  {[
  { id: 'info', label: 'Thông tin' },
  { id: 'subjects', label: 'Môn học' },
@@ -726,7 +727,7 @@ export default function DepartmentsPage() {
  </div>
 
  {/* Tab Content */}
- <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+  <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-950/40">
  {loadingDrawer ? (
  <div className="space-y-4">
  {[1, 2, 3].map((i) => (
@@ -740,15 +741,15 @@ export default function DepartmentsPage() {
  {drawerTab === 'info' && (
  <div className="space-y-4">
  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
- <h3 className="text-[15px] font-semibold text-[#0F172A] mb-4">Tổng quan Khoa</h3>
+ <h3 className="text-[15px] font-semibold text-slate-900 mb-4">Tổng quan Khoa</h3>
  <div className="grid grid-cols-2 gap-3">
  <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50/60 border border-blue-100">
  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shrink-0">
  <BookOpen className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Môn học</p>
- <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.subjects?.length || 0}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Môn học</p>
+ <p className="text-[18px] font-semibold text-slate-900">{drawerDetail.subjects?.length || 0}</p>
  </div>
  </div>
 
@@ -757,8 +758,8 @@ export default function DepartmentsPage() {
  <GraduationCap className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Lớp học</p>
- <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.classes?.length || 0}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Lớp học</p>
+ <p className="text-[18px] font-semibold text-slate-900">{drawerDetail.classes?.length || 0}</p>
  </div>
  </div>
 
@@ -767,8 +768,8 @@ export default function DepartmentsPage() {
  <Users className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Giảng viên</p>
- <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.teachers?.length || 0}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Giảng viên</p>
+ <p className="text-[18px] font-semibold text-slate-900">{drawerDetail.teachers?.length || 0}</p>
  </div>
  </div>
 
@@ -777,8 +778,8 @@ export default function DepartmentsPage() {
  <GraduationCap className="h-5 w-5" />
  </div>
  <div>
- <p className="text-[13px] font-semibold text-[#64748B]">Sinh viên</p>
- <p className="text-[18px] font-semibold text-[#0F172A]">{drawerDetail.students?.length || drawerDetail._count?.students || 0}</p>
+ <p className="text-[13px] font-semibold text-slate-500">Sinh viên</p>
+ <p className="text-[18px] font-semibold text-slate-900">{drawerDetail.students?.length || drawerDetail._count?.students || 0}</p>
  </div>
  </div>
  </div>
@@ -792,10 +793,10 @@ export default function DepartmentsPage() {
  drawerDetail.subjects.map((sub: any) => (
  <div key={sub.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
  <div className="flex justify-between items-start">
- <span className="text-[15px] font-semibold text-[#0F172A]">{sub.subjectName}</span>
- <span className="rounded bg-slate-100 px-2 py-0.5 text-[13px] font-semibold text-[#475569] shrink-0">{sub.credits} TC</span>
+ <span className="text-[15px] font-semibold text-slate-900">{sub.subjectName}</span>
+ <span className="rounded bg-slate-100 px-2 py-0.5 text-[13px] font-semibold text-slate-600 shrink-0">{sub.credits} TC</span>
  </div>
- <span className="text-[13px] font-medium text-[#64748B]">Mã môn: {sub.subjectCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã môn: {sub.subjectCode}</span>
  </div>
  ))
  ) : (
@@ -810,10 +811,10 @@ export default function DepartmentsPage() {
  drawerDetail.classes.map((cls: any) => (
  <div key={cls.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
  <div className="flex justify-between items-start">
- <span className="text-[15px] font-semibold text-[#0F172A]">{cls.name || cls.className}</span>
+ <span className="text-[15px] font-semibold text-slate-900">{cls.name || cls.className}</span>
  <span className="rounded bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 text-[13px] font-semibold shrink-0">{cls._count?.students ?? 0} SV</span>
  </div>
- <span className="text-[13px] font-medium text-[#64748B]">Mã lớp: {cls.code || cls.classCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã lớp: {cls.code || cls.classCode}</span>
  </div>
  ))
  ) : (
@@ -828,13 +829,13 @@ export default function DepartmentsPage() {
  drawerDetail.teachers.map((teacher: any) => (
  <div key={teacher.id} className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
  <div className="flex justify-between items-start">
- <span className="text-[15px] font-semibold text-[#0F172A]">{teacher.fullName}</span>
+ <span className="text-[15px] font-semibold text-slate-900">{teacher.fullName}</span>
  {(teacher.degree || teacher.academicTitle) && (
  <span className="rounded bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-[13px] font-semibold shrink-0">{teacher.degree || teacher.academicTitle}</span>
  )}
  </div>
- <span className="text-[13px] font-medium text-[#64748B]">Mã GV: {teacher.teacherCode}</span>
- <span className="text-[13px] font-medium text-[#64748B]">Email: {teacher.email}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã GV: {teacher.teacherCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Email: {teacher.email}</span>
  </div>
  ))
  ) : (
@@ -852,7 +853,7 @@ export default function DepartmentsPage() {
  placeholder="Tìm sinh viên trong Khoa..."
  value={drawerStudentSearch}
  onChange={(e) => setDrawerStudentSearch(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-4 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -866,11 +867,11 @@ export default function DepartmentsPage() {
  .map((sv: any) => (
  <div key={sv.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs hover:border-blue-200 transition-colors">
  <div>
- <p className="text-[15px] font-semibold text-[#0F172A]">{sv.fullName}</p>
- <p className="text-[13px] font-medium text-[#64748B] mt-0.5">{sv.studentCode} • Lớp: <span className="font-semibold text-blue-600">{sv.classCode || sv.className}</span></p>
+ <p className="text-[15px] font-semibold text-slate-900">{sv.fullName}</p>
+ <p className="text-[13px] font-medium text-slate-500 mt-0.5">{sv.studentCode} • Lớp: <span className="font-semibold text-blue-600">{sv.classCode || sv.className}</span></p>
  </div>
  <div className="text-right">
- <span className="text-[13px] font-medium text-[#475569] bg-slate-100 px-2 py-0.5 rounded-md">{sv.email}</span>
+ <span className="text-[13px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">{sv.email}</span>
  </div>
  </div>
  ))

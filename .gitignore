@@ -39,6 +39,9 @@ node_modules
 /frontend/.next-verify-2/
 /frontend/.next-verify-final/
 /frontend/.next-audit/
+/frontend/.next-verify-*/
+/frontend/.edge-*/
+/frontend/.ui-verify*
 
 # Generated backend artifacts
 /backend/dist/

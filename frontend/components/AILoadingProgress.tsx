@@ -67,10 +67,10 @@ export function AILoadingProgress({
  key={s.id}
  className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold transition ${
  isDone
- ? 'text-[#15803D]'
+ ? 'text-success-600'
  : isCurrent
- ? 'text-[#2563EB]'
- : 'text-[#475569]'
+ ? 'text-primary-600'
+ : 'text-slate-600'
  }`}
  >
  {isDone ? (

@@ -206,10 +206,10 @@ export function QuestionFormDialog({
         <div className="grid gap-3 md:grid-cols-2">
           {/* Môn */}
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Môn học / Học phần <span className="text-rose-500">*</span>
             </label>
-            <select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {subjects.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.subjectName}
@@ -220,10 +220,10 @@ export function QuestionFormDialog({
 
           {/* Loại câu hỏi */}
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Loại câu hỏi <span className="text-rose-500">*</span>
             </label>
-            <select {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('type')} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -234,10 +234,10 @@ export function QuestionFormDialog({
 
           {/* Độ khó */}
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Mức độ khó <span className="text-rose-500">*</span>
             </label>
-            <select {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('difficulty')} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -248,10 +248,10 @@ export function QuestionFormDialog({
 
           {/* Mức độ Bloom */}
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
             </label>
-            <select {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+<select {...register('bloomLevel')} className="h-9 w-full rounded-lg border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(BLOOM_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
@@ -262,7 +262,7 @@ export function QuestionFormDialog({
 
           {/* Điểm số */}
           <div className="md:col-span-2">
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Điểm số mặc định câu hỏi <span className="text-rose-500">*</span>
             </label>
             <input
@@ -270,14 +270,14 @@ export function QuestionFormDialog({
               step="0.25"
               {...register('score', { valueAsNumber: true })}
               placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-semibold text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
         </div>
 
         {/* Nội dung câu hỏi */}
         <div>
-          <label className="block text-[15px] font-semibold text-slate-500 mb-1">
+          <label className="block text-[15px] font-medium text-slate-500 mb-1">
             Nội dung câu hỏi <span className="text-rose-500">*</span>
           </label>
           <input type="hidden" {...register('content')} />
@@ -299,7 +299,7 @@ export function QuestionFormDialog({
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">Đính kèm media (Tùy chọn)</span>
-            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
+            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
               <input
                 type="file"
                 multiple
@@ -333,14 +333,14 @@ export function QuestionFormDialog({
                     )}
                     {mime.startsWith('audio/') && (
                       <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
-                        <span className="text-[13px] font-semibold text-[#334155] max-w-[120px] truncate">{media.fileName}</span>
+                        <span className="text-[13px] font-semibold text-slate-700 max-w-[120px] truncate">{media.fileName}</span>
                         <audio src={fullUrl} controls className="h-8 w-36" />
                       </div>
                     )}
                     {!mime.startsWith('image/') && !mime.startsWith('video/') && !mime.startsWith('audio/') && (
                       <div className="flex flex-col items-center justify-center h-20 w-28 gap-1">
                         <ImageIcon className="h-6 w-6 text-slate-400" />
-                        <span className="text-[13px] text-[#64748B] truncate max-w-[100px]">{media.fileName}</span>
+                        <span className="text-[13px] text-slate-500 truncate max-w-[100px]">{media.fileName}</span>
                       </div>
                     )}
                     {/* Badge 'đã lưu' */}
@@ -372,7 +372,7 @@ export function QuestionFormDialog({
                   )}
                   {file.type.startsWith('audio/') && (
                     <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
-                      <span className="text-[13px] font-semibold text-[#334155] max-w-[120px] truncate">{file.name}</span>
+                      <span className="text-[13px] font-semibold text-slate-700 max-w-[120px] truncate">{file.name}</span>
                       <audio src={mediaUrls[idx]} controls className="h-8 w-36" />
                     </div>
                   )}
@@ -393,8 +393,8 @@ export function QuestionFormDialog({
         {!['FILL_BLANK', 'ESSAY'].includes(type) && (
           <div className="space-y-3 border-t border-slate-100 pt-4">
             <div className="flex items-center justify-between">
-              <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A] tracking-tight">Danh sách đáp án</span>
-              <span className="text-[13px] font-normal text-[#64748B]">Tích chọn để đánh dấu đáp án ĐÚNG</span>
+              <span className="text-[18px] leading-[26px] font-semibold text-slate-900 tracking-tight">Danh sách đáp án</span>
+              <span className="text-[13px] font-normal text-slate-500">Tích chọn để đánh dấu đáp án ĐÚNG</span>
             </div>
 
             <div className="space-y-2">
@@ -489,21 +489,21 @@ export function QuestionFormDialog({
 
         <div className="grid gap-3 md:grid-cols-2 pt-3 border-t border-slate-100">
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
             <input
               {...register('keywords')}
               placeholder="Ví dụ: RSA, ma hoa, security..."
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-semibold text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
             <textarea
               {...register('explanation')}
               rows={2}
               placeholder="Giải thích lý do đáp án đúng..."
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
         </div>

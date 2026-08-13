@@ -237,17 +237,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-[#0F172A] text-[#334155] dark:text-slate-200 border-r border-[#E2E8F0] dark:border-slate-800 transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[252px]'
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800 transition-all duration-200 ease-in-out ${collapsed ? 'w-[72px]' : 'w-[252px]'
         } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'
         }`}
     >
       {/* Header Section with Toggle Button */}
       {collapsed ? (
-        <div className="relative flex h-[68px] shrink-0 items-center justify-center border-b border-[#E2E8F0] dark:border-slate-800 px-3 py-1.5 bg-white dark:bg-[#0F172A]">
+        <div className="relative flex h-[68px] shrink-0 items-center justify-center border-b border-slate-200 dark:border-slate-800 px-3 py-1.5 bg-white dark:bg-slate-900">
           <button
             type="button"
             onClick={onToggle}
-            className="absolute left-1/2 -translate-x-1/2 flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#0F172A] dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
+            className="absolute left-1/2 -translate-x-1/2 flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
@@ -255,16 +255,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       ) : (
-        <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-[#E2E8F0] dark:border-slate-800 px-4 py-1.5 bg-white dark:bg-[#0F172A]">
+        <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-slate-200 dark:border-slate-800 px-4 py-1.5 bg-white dark:bg-slate-900">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white shadow-md shadow-blue-500/20">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white shadow-md shadow-blue-500/20">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[18px] leading-[26px] font-semibold tracking-tight text-[#0F172A] dark:text-slate-100">
+              <h1 className="truncate text-[18px] leading-[26px] font-semibold tracking-tight text-slate-900 dark:text-slate-100">
                 EXAM SYSTEM
               </h1>
-              <h2 className="truncate text-[13px] leading-[18px] font-semibold tracking-tight text-[#475569] dark:text-slate-300 mt-0.5">
+              <h2 className="truncate text-[12px] leading-[16px] font-medium tracking-[-0.015em] text-slate-500 dark:text-slate-400 mt-0.5">
                 HỆ THỐNG QUẢN LÝ THI
               </h2>
             </div>
@@ -272,7 +272,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 hover:text-[#0F172A] dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
@@ -293,14 +293,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-[#64748B] dark:text-slate-300 hover:text-[#334155] dark:hover:text-white transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-[13px] font-semibold tracking-[0.03em] text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-white transition cursor-pointer select-none ${collapsed ? 'h-0 opacity-0 overflow-hidden hidden' : 'h-auto opacity-100'
                     }`}
                 >
                   <span className="truncate">{group.group}</span>
                   {isExpanded ? (
-                    <ChevronDown className="h-3.5 w-3.5 text-[#64748B] dark:text-slate-300 shrink-0" />
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-500 dark:text-slate-300 shrink-0" />
                   ) : (
-                    <ChevronRight className="h-3.5 w-3.5 text-[#64748B] dark:text-slate-300 shrink-0" />
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-500 dark:text-slate-300 shrink-0" />
                   )}
                 </button>
               )}
@@ -320,11 +320,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSubMenu(item.href)}
-                            className={`relative w-full flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white transition-colors`}
+                            className={`relative w-full flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white transition-colors`}
                           >
-                            <Icon className="absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#475569] dark:text-slate-300" />
+                            <Icon className="absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-600 dark:text-slate-300" />
                             <span className={`ml-8 truncate flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>{item.name}</span>
-                            <ChevronDown className={`h-4 w-4 text-[#64748B] dark:text-slate-300 transition-all duration-200 shrink-0 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100'} ${isSubOpen ? 'rotate-180' : ''}`} />
+                            <ChevronDown className={`h-4 w-4 text-slate-500 dark:text-slate-300 transition-all duration-200 shrink-0 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100'} ${isSubOpen ? 'rotate-180' : ''}`} />
                           </button>
 
                           {/* Sub items */}
@@ -337,8 +337,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     className={`block rounded-xl px-3.5 py-2 text-[13px] font-semibold transition-all ${isSubActive
-                                      ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
-                                      : 'text-[#475569] dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                                      ? 'bg-primary-600 text-white shadow-md shadow-blue-500/20'
+                                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                                       }`}
                                   >
                                     {sub.name}
@@ -358,11 +358,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
                         className={`relative flex items-center ${collapsed ? 'justify-start gap-0 pl-4 pr-0' : 'gap-3 pl-4 pr-3'} py-2.5 rounded-xl text-[14px] font-semibold transition-colors group ${isActive
-                          ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
-                          : 'text-[#334155] dark:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/80 hover:text-[#0F172A] dark:hover:text-white font-semibold'
+                          ? 'bg-primary-600 text-white shadow-md shadow-blue-500/20'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-semibold'
                           }`}
                       >
-                        <Icon className={`absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-[#475569] dark:text-slate-300'}`} />
+                        <Icon className={`absolute left-1.5 top-1/2 h-5 w-5 -translate-y-1/2 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-600 dark:text-slate-300'}`} />
                         <span className={`ml-8 truncate overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>{item.name}</span>
                       </Link>
                     );
@@ -375,7 +375,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* User Footer Profile Card */}
-      <div ref={footerRef} className="relative border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-[#0F172A] p-2">
+      <div ref={footerRef} className="relative border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2">
         <button
           type="button"
           onClick={() => setShowUserMenu(!showUserMenu)}
@@ -392,13 +392,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Text — ẩn bằng overflow-hidden, không xóa khỏi DOM */}
           <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <p className="truncate text-[14px] font-semibold text-[#0F172A] dark:text-slate-100 leading-snug whitespace-nowrap">{displayName}</p>
+            <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-snug whitespace-nowrap">{displayName}</p>
             <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug whitespace-nowrap">
               {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
             </p>
           </div>
 
-          <ChevronRight className={`h-4 w-4 text-[#475569] dark:text-slate-300 shrink-0 transition-all duration-200 ${collapsed ? 'opacity-0 w-0' : 'opacity-100'}`} />
+          <ChevronRight className={`h-4 w-4 text-slate-600 dark:text-slate-300 shrink-0 transition-all duration-200 ${collapsed ? 'opacity-0 w-0' : 'opacity-100'}`} />
         </button>
 
 
@@ -415,7 +415,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Header profile info item */}
               <div className="flex items-center justify-between rounded-xl p-2 bg-slate-50/70 dark:bg-slate-800/50 mb-1">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white font-semibold text-xs shadow-xs">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-white font-semibold text-xs shadow-xs">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -425,7 +425,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-[#475569] dark:text-slate-300 shrink-0" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 shrink-0" />
               </div>
 
               {/* Items */}
@@ -434,7 +434,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setShowUserMenu(false)}
                 className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
-                <UserIcon className="h-4 w-4 text-[#475569] dark:text-slate-300 group-hover:text-blue-600 transition" />
+                <UserIcon className="h-4 w-4 text-slate-600 dark:text-slate-300 group-hover:text-blue-600 transition" />
                 <span>Hồ sơ cá nhân</span>
               </Link>
 
@@ -443,7 +443,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setShowUserMenu(false)}
                 className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
-                <Settings className="h-4 w-4 text-[#475569] dark:text-slate-300 group-hover:text-blue-600 transition" />
+                <Settings className="h-4 w-4 text-slate-600 dark:text-slate-300 group-hover:text-blue-600 transition" />
                 <span>Cài đặt tài khoản</span>
               </Link>
 
@@ -452,7 +452,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setShowUserMenu(false)}
                 className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
-                <Lock className="h-4 w-4 text-[#475569] dark:text-slate-300 group-hover:text-blue-600 transition" />
+                <Lock className="h-4 w-4 text-slate-600 dark:text-slate-300 group-hover:text-blue-600 transition" />
                 <span>Đổi mật khẩu</span>
               </Link>
 

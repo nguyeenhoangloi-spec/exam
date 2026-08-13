@@ -9,9 +9,9 @@ export function Skeleton({ className = '' }: SkeletonProps) {
     return (
         <div
             className={[
-                'relative overflow-hidden rounded-xl bg-slate-200/70',
+                'relative overflow-hidden rounded-xl bg-slate-200/70 dark:bg-slate-700/70',
                 'after:absolute after:inset-0 after:-translate-x-full after:animate-shimmer',
-                'after:bg-gradient-to-r after:from-transparent after:via-white/60 after:to-transparent',
+                'after:bg-gradient-to-r after:from-transparent after:via-white/60 after:to-transparent dark:after:via-slate-500/30',
                 className,
             ].join(' ')}
         />

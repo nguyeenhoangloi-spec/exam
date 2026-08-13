@@ -69,7 +69,7 @@ export function DepartmentTable({
  <button
  type="button"
  onClick={() => onDetail(d)}
- className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
  >
  {d.code}
  </button>
@@ -78,9 +78,9 @@ export function DepartmentTable({
  <button
  type="button"
  onClick={() => onOpenCurriculum(d)}
- className="flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-[13px] font-medium text-[#2563EB] hover:bg-blue-100 transition border border-blue-200 cursor-pointer"
+ className="flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-[13px] font-medium text-primary-600 hover:bg-blue-100 transition border border-blue-200 cursor-pointer"
  >
- <Sparkles className="h-3.5 w-3.5 text-[#2563EB]" />
+ <Sparkles className="h-3.5 w-3.5 text-primary-600" />
  <span>Khung CTDT</span>
  </button>
  </div>
@@ -88,24 +88,24 @@ export function DepartmentTable({
  <div>
  <h4
  onClick={() => onDetail(d)}
- className="text-[18px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition"
+ className="text-[18px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
  >
  {d.name}
  </h4>
  </div>
 
- <div className="grid grid-cols-3 gap-2 text-[14px] font-normal text-[#475569] pt-1">
+ <div className="grid grid-cols-3 gap-2 text-[14px] font-normal text-slate-600 pt-1">
  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
- <span className="text-[12px] text-[#64748B] font-semibold">Môn học</span>
- <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">{subjectsCount}</span>
+ <span className="text-[12px] text-slate-500 font-semibold">Môn học</span>
+ <span className="text-[18px] leading-[26px] font-semibold text-slate-900">{subjectsCount}</span>
  </div>
  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
- <span className="text-[12px] text-[#64748B] font-semibold">Lớp học</span>
- <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">{classesCount}</span>
+ <span className="text-[12px] text-slate-500 font-semibold">Lớp học</span>
+ <span className="text-[18px] leading-[26px] font-semibold text-slate-900">{classesCount}</span>
  </div>
  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
- <span className="text-[12px] text-[#64748B] font-semibold">Giảng viên</span>
- <span className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">{teachersCount}</span>
+ <span className="text-[12px] text-slate-500 font-semibold">Giảng viên</span>
+ <span className="text-[18px] leading-[26px] font-semibold text-slate-900">{teachersCount}</span>
  </div>
  </div>
  </div>
@@ -114,7 +114,7 @@ export function DepartmentTable({
  <button
  type="button"
  onClick={() => onDetail(d)}
- className="flex items-center gap-1 text-[#2563EB] hover:text-blue-700 cursor-pointer"
+ className="flex items-center gap-1 text-primary-600 hover:text-blue-700 cursor-pointer"
  >
  <Eye className="h-3.5 w-3.5" />
  <span>Xem chi tiết</span>
@@ -151,9 +151,9 @@ export function DepartmentTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -189,12 +189,12 @@ export function DepartmentTable({
  />
  </td>
  <td className="p-2 whitespace-nowrap tabular-nums font-medium text-slate-900">
- <button type="button" onClick={() => onDetail(d)} className="hover:text-blue-600">
+  <button type="button" onClick={() => onDetail(d)} className="hover:text-primary-700 text-primary-600 font-semibold">
  {d.code}
  </button>
  </td>
  <td className="p-2 min-w-[200px]">
- <button type="button" className="block truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(d)}>
+ <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(d)}>
  {d.name}
  </button>
  </td>
@@ -217,9 +217,9 @@ export function DepartmentTable({
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -265,7 +265,7 @@ export function DepartmentTable({
  <button
  type="button"
  onClick={() => onDetail(d)}
- className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
  >
  {d.code}
  </button>
@@ -277,7 +277,7 @@ export function DepartmentTable({
  <button
  type="button"
  onClick={() => onDetail(d)}
- className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition text-[15px]"
+ className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition text-[15px]"
  >
  {d.name}
  </button>
@@ -286,19 +286,19 @@ export function DepartmentTable({
 
  {visibleColumns.subjectsCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-[15px]">
- <span className="font-medium text-[#0F172A]">{subjectsCount} môn</span>
+ <span className="font-medium text-slate-900">{subjectsCount} môn</span>
  </td>
  )}
 
  {visibleColumns.classesCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-[15px]">
- <span className="font-medium text-[#0F172A]">{classesCount} lớp</span>
+ <span className="font-medium text-slate-900">{classesCount} lớp</span>
  </td>
  )}
 
  {visibleColumns.teachersCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-[15px]">
- <span className="font-medium text-[#0F172A]">{teachersCount} giảng viên</span>
+ <span className="font-medium text-slate-900">{teachersCount} giảng viên</span>
  </td>
  )}
 
@@ -318,7 +318,7 @@ export function DepartmentTable({
  <button
  type="button"
  onClick={() => onDetail(d)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -333,9 +333,9 @@ export function DepartmentTable({
  closeMenu();
  onOpenCurriculum(d);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#2563EB] font-medium"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-primary-600 font-medium"
  >
- <Sparkles className="h-4 w-4 text-[#2563EB]" />
+ <Sparkles className="h-4 w-4 text-primary-600" />
  <span>Khung CTDT</span>
  </button>
 
@@ -345,9 +345,9 @@ export function DepartmentTable({
  closeMenu();
  onDetail(d);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
- <Eye className="h-4 w-4 text-[#64748B]" />
+ <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
  </button>
 
@@ -359,13 +359,13 @@ export function DepartmentTable({
  closeMenu();
  onEdit(d);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
- <Edit className="h-4 w-4 text-[#2563EB]" />
+ <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa khoa</span>
  </button>
 
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
 
  <button
  type="button"
@@ -373,9 +373,9 @@ export function DepartmentTable({
  closeMenu();
  onDelete(d.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa khoa</span>
  </button>
  </>

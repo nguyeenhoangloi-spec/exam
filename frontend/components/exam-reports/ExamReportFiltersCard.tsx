@@ -77,11 +77,11 @@ export function ExamReportFiltersCard({
  }
 
  return (
- <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-4">
+ <div className="space-y-4">
  {/* ── 1. Integrated Active Schedule Banner ── */}
  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
  <div className="flex items-center gap-2.5 flex-wrap min-w-0">
- <span className="px-2.5 py-0.5 rounded-md bg-blue-600 text-white text-[12px] font-semibold tracking-wider shrink-0">
+ <span className="px-2.5 py-0.5 rounded-xl bg-blue-600 text-white text-[12px] font-semibold tracking-wider shrink-0">
  {activeTypeBadge?.label || 'Chính thức'}
  </span>
 
@@ -90,7 +90,7 @@ export function ExamReportFiltersCard({
  <h3 className="text-[14px] leading-5 font-semibold text-slate-900 truncate">
  {reportSchedule.subjectName}
  </h3>
- <span className="text-[12px] tabular-nums font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80 shrink-0">
+ <span className="text-[12px] tabular-nums font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-xl border border-blue-200/80 shrink-0">
  {reportSchedule.subjectCode}
  </span>
  <span className="text-xs text-slate-500 font-medium hidden xl:inline-block">
@@ -146,13 +146,13 @@ export function ExamReportFiltersCard({
  {/* ── 3. Filters Input Grid (Responsive 3 Columns) ── */}
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Kỳ thi
  </label>
  <select
  value={summaryFilters.examPeriodId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, examPeriodId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả kỳ thi</option>
  {summaryOptions?.periods.map((item) => (
@@ -164,13 +164,13 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Môn học
  </label>
  <select
  value={summaryFilters.subjectId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, subjectId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả môn học</option>
  {summaryOptions?.subjects.map((item) => (
@@ -182,13 +182,13 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Khoa / Bộ môn
  </label>
  <select
  value={summaryFilters.departmentId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, departmentId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả khoa</option>
  {summaryOptions?.departments.map((item) => (
@@ -200,13 +200,13 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Lớp học
  </label>
  <select
  value={summaryFilters.classId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, classId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả lớp học</option>
  {summaryOptions?.classes?.map((item: any) => (
@@ -218,26 +218,26 @@ export function ExamReportFiltersCard({
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Từ ngày
  </label>
  <input
  type="date"
  value={summaryFilters.fromDate}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, fromDate: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  </div>
 
  <div>
- <label className="block text-[15px] font-semibold text-slate-500 tracking-wider mb-1.5">
+ <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Đến ngày
  </label>
  <input
  type="date"
  value={summaryFilters.toDate}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, toDate: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  </div>
  </div>

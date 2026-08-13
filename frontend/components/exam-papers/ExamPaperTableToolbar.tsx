@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, RefreshCw, Check } from 'lucide-react';
+import { SortDropdown } from '../ui/SortDropdown';
 
 interface ExamPaperTableToolbarProps {
   totalCount: number;
@@ -12,6 +13,7 @@ interface ExamPaperTableToolbarProps {
   visibleColumns?: Record<string, boolean>;
   onColumnToggle?: (columnKey: string) => void;
   onRefresh?: () => void;
+  loading?: boolean;
 }
 
 export function ExamPaperTableToolbar({
@@ -30,8 +32,22 @@ export function ExamPaperTableToolbar({
   },
   onColumnToggle,
   onRefresh,
+  loading = false,
 }: ExamPaperTableToolbarProps) {
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefreshClick = async () => {
+    if (!onRefresh) return;
+    setIsSpinning(true);
+    try {
+      await onRefresh();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTimeout(() => setIsSpinning(false), 600);
+    }
+  };
 
   const columnsList = [
     { key: 'paperCode', label: 'Mã đề thi' },
@@ -50,30 +66,27 @@ export function ExamPaperTableToolbar({
 
       <div className="flex items-center gap-2">
         {/* Sort */}
-        <div className="relative">
-          <select
-            value={sortOrder}
-            onChange={(e) => onSortChange?.(e.target.value)}
-            className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[14px] font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-          >
-            <option value="newest">Sắp xếp: Mới nhất</option>
-            <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="code_asc">Mã đề: thấp đến cao</option>
-            <option value="questions_desc">Số câu: Nhiều nhất</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-        </div>
+        <SortDropdown
+          value={sortOrder}
+          onChange={(val) => onSortChange?.(val)}
+          options={[
+            { value: 'newest', label: 'Mới nhất' },
+            { value: 'oldest', label: 'Cũ nhất' },
+            { value: 'code_asc', label: 'Mã đề: A - Z' },
+            { value: 'questions_desc', label: 'Số câu: Nhiều nhất' },
+          ]}
+        />
 
         {/* Column Selector */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+            <SlidersHorizontal className="h-4 w-4 text-blue-600" />
             <span>Chọn cột</span>
-            <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {openColumnMenu && (
@@ -92,7 +105,7 @@ export function ExamPaperTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-semibold text-slate-700 select-none transition text-[13px]"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition text-[15px]"
                     >
                       <span className="flex items-center gap-2">
                         <input
@@ -126,7 +139,7 @@ export function ExamPaperTableToolbar({
             }`}
             title="Dạng danh sách"
           >
-            <List className="h-3.5 w-3.5" />
+            <List className="h-4 w-4" />
           </button>
 
           <button
@@ -139,7 +152,7 @@ export function ExamPaperTableToolbar({
             }`}
             title="Dạng lưới"
           >
-            <LayoutGrid className="h-3.5 w-3.5" />
+            <LayoutGrid className="h-4 w-4" />
           </button>
 
           <button
@@ -152,7 +165,7 @@ export function ExamPaperTableToolbar({
             }`}
             title="Dạng thu gọn"
           >
-            <Layers className="h-3.5 w-3.5" />
+            <Layers className="h-4 w-4" />
           </button>
         </div>
 
@@ -160,11 +173,11 @@ export function ExamPaperTableToolbar({
         {onRefresh && (
           <button
             type="button"
-            onClick={onRefresh}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition cursor-pointer active:scale-95 shadow-2xs select-none"
+            onClick={handleRefreshClick}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all active:scale-95 cursor-pointer shadow-2xs select-none"
             title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
+            <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
           </button>
         )}
       </div>

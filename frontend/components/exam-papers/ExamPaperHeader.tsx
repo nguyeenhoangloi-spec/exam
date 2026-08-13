@@ -18,14 +18,14 @@ export function ExamPaperHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
+        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight flex items-center gap-2">
           <span>Quản lý đề thi & ma trận đề</span>
-          <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-[#2563EB]">
+          <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-primary-600">
             <Sparkles className="h-3.5 w-3.5" />
             Tự động sinh đề
           </span>
         </h1>
-        <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+        <p className="text-[15px] font-normal leading-[22px] text-slate-500">
           Sinh đề thi ngẫu nhiên theo ma trận độ khó, phát hành, đảo đề thi và lưu trữ đề thi theo quy chuẩn
         </p>
       </div>
@@ -37,7 +37,7 @@ export function ExamPaperHeader({
             variant="secondary"
             size="md"
             onClick={onExportAll}
-            leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+            leftIcon={<Download className="h-4 w-4 text-slate-500" />}
           >
             Xuất báo cáo
           </Button>
@@ -49,7 +49,7 @@ export function ExamPaperHeader({
             variant="secondary"
             size="md"
             onClick={onPrintAll}
-            leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
           >
             In danh sách
           </Button>

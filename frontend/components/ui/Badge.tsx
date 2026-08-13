@@ -5,11 +5,11 @@ import React from 'react';
 export type BadgeTone = 'slate' | 'blue' | 'emerald' | 'amber' | 'rose';
 
 const toneClasses: Record<BadgeTone, string> = {
-  slate: 'text-[#475569] dark:text-slate-400',
-  blue: 'text-[#2563EB] dark:text-blue-400',
-  emerald: 'text-[#15803D] dark:text-emerald-400',
-  amber: 'text-[#D97706] dark:text-amber-400',
-  rose: 'text-[#DC2626] dark:text-rose-400',
+  slate: 'text-slate-600 dark:text-slate-400',
+  blue: 'text-primary-600 dark:text-blue-400',
+  emerald: 'text-success-600 dark:text-emerald-400',
+  amber: 'text-warning-600 dark:text-amber-400',
+  rose: 'text-danger-600 dark:text-rose-400',
 };
 
 type BadgeProps = {
@@ -31,7 +31,7 @@ export function Badge({ children, tone = 'slate', size, className = '', leftIcon
   return (
     <span
       className={[
-        'inline-flex items-center gap-[6px] font-semibold leading-5 whitespace-nowrap select-none',
+        'inline-flex items-center gap-[6px] font-medium leading-5 whitespace-nowrap select-none',
         sizeClass,
         toneClasses[tone],
         className,

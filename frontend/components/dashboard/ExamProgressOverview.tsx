@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ArrowRight, Layers, PieChart } from 'lucide-react';
+import { ChevronRight, Layers, PieChart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DashboardOverview } from '../../types/dashboard';
 
@@ -35,10 +35,10 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
         <button
           type="button"
           onClick={() => router.push('/exam-periods')}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-[14px] leading-5 font-medium text-primary-600 hover:text-primary-700 transition cursor-pointer select-none"
         >
           <span>Xem chi tiết</span>
-          <ArrowRight className="h-3.5 w-3.5" />
+          <ChevronRight className="h-4 w-4 text-primary-600" />
         </button>
       </div>
 

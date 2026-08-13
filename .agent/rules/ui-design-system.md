@@ -1,4 +1,4 @@
-﻿---
+---
 trigger: contextual
 description: >
   Áp dụng khi làm việc với UI/giao diện: tạo page mới, sửa component,
@@ -43,7 +43,7 @@ agent PHẢI đọc file skill sau và tuân thủ nghiêm ngặt:
 ### Checklist nhanh trước khi submit
 - [ ] Token màu (không hex tùy ý)
 - [ ] Typography .edu-* đúng scale
-- [ ] rounded-2xl cho card/table/modal
+- [ ] Border Radius 4 tầng: 8px (controls/buttons/inputs) -> 12px (cards/tables) -> 16px (modals) -> rounded-full (tròn thực sự)
 - [ ] Loading + empty + error + success state
 - [ ] dark: variant đầy đủ
 - [ ] Responsive 375/768/1024/1440px

@@ -561,10 +561,10 @@ function TeacherEssayGradingContent() {
  {/* Page Header (Match System Standard Header Layout) */}
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
  <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+ <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
  Chấm Bài Thi Tự Luận
  </h1>
- <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+ <p className="text-[15px] font-normal leading-[22px] text-slate-500">
  Chấm điểm và đánh giá bài làm tự luận của sinh viên theo chuẩn Rubric.
  </p>
  </div>
@@ -649,7 +649,7 @@ function TeacherEssayGradingContent() {
  placeholder="Tìm mã SV, tên SV, môn, ca thi..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="w-full bg-slate-50/50 border border-slate-200 rounded-lg pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  {searchQuery && (
  <button
@@ -667,7 +667,7 @@ function TeacherEssayGradingContent() {
  <select
  value={subjectFilter}
  onChange={(e) => setSubjectFilter(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
  {availableSubjects.map((s) => (
@@ -680,7 +680,7 @@ function TeacherEssayGradingContent() {
  <select
  value={dateFilter}
  onChange={(e) => setDateFilter(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả ngày thi ({availableDates.length})</option>
  {availableDates.map((d) => (
@@ -697,7 +697,7 @@ function TeacherEssayGradingContent() {
  <select
  value={scheduleFilter}
  onChange={(e) => setScheduleFilter(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả ca thi / lịch thi</option>
  {availableSchedules.map((s) => (
@@ -710,12 +710,12 @@ function TeacherEssayGradingContent() {
  )}
 
  {loading ? (
- <div className="text-center py-10 text-[15px] font-medium text-[#64748B]">
- <RotateCcw className="h-4 w-4 animate-spin mx-auto mb-2 text-blue-600" />
- Đang tải danh sách bài làm...
+ <div className="py-10 flex flex-col items-center gap-3">
+ <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+ <p className="text-xs font-semibold text-slate-500">Đang tải danh sách bài làm...</p>
  </div>
  ) : filteredRows.length === 0 ? (
- <div className="text-center py-10 text-[15px] font-normal text-[#64748B]">
+ <div className="text-center py-10 text-[15px] font-normal text-slate-500">
  Không tìm thấy bài thi tự luận nào phù hợp bộ lọc.
  </div>
  ) : (
@@ -741,19 +741,19 @@ function TeacherEssayGradingContent() {
  }`}
  >
  <div className="flex justify-between items-center gap-2">
- <span className="font-semibold text-[15px] text-[#0F172A]">{row.student?.fullName}</span>
+ <span className="font-semibold text-[15px] text-slate-900">{row.student?.fullName}</span>
  <StatusBadge status={row.gradingStatus} />
  </div>
- <p className="text-[13px] text-[#64748B] font-normal tabular-nums">
- Mã SV: <strong className="text-[#0F172A] font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-[#0F172A] font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
+ <p className="text-[13px] text-slate-500 font-normal tabular-nums">
+ Mã SV: <strong className="text-slate-900 font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-slate-900 font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
  </p>
- <div className="flex items-center justify-between gap-1 text-[13px] text-[#64748B] font-normal border-t border-slate-100 pt-1.5 mt-0.5">
- <span className="truncate flex-1 font-medium text-[#334155]">
+ <div className="flex items-center justify-between gap-1 text-[13px] text-slate-500 font-normal border-t border-slate-100 pt-1.5 mt-0.5">
+ <span className="truncate flex-1 font-medium text-slate-700">
  Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
  {schedCode ? ` (${schedCode})` : ''}
  </span>
  {dateStr && (
- <span className="shrink-0 text-[13px] font-semibold text-[#475569]">
+ <span className="shrink-0 text-[13px] font-semibold text-slate-600">
  {dateStr}
  </span>
  )}
@@ -893,12 +893,12 @@ function TeacherEssayGradingContent() {
  <button
  type="button"
  onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: q.rubric || [] })}
- className="inline-flex items-center gap-1 text-[15px] font-medium text-[#0F172A] bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
+ className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
  >
- <Sliders className="h-4 w-4 text-[#64748B]" />
+ <Sliders className="h-4 w-4 text-slate-500" />
  <span>Sửa Rubric</span>
  </button>
- <span className="text-[#0F172A] tabular-nums text-[18px] font-semibold">
+ <span className="text-slate-900 tabular-nums text-[18px] font-semibold">
  {ans?.finalScore !== undefined && ans?.finalScore !== null
  ? ans.finalScore
  : (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] || 0), 0)} / {q.score}đ
@@ -908,16 +908,16 @@ function TeacherEssayGradingContent() {
 
  {/* Student Answer */}
  <div className="space-y-1">
- <div className="text-[13px] font-semibold text-[#64748B] tracking-wider">Bài làm của sinh viên:</div>
- <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-[15px] text-[#0F172A] whitespace-pre-wrap leading-relaxed shadow-2xs font-normal">
- {ans?.textAnswer || <span className="italic text-[#64748B]">Sinh viên không nhập nội dung văn bản</span>}
+ <div className="text-[13px] font-semibold text-slate-500 tracking-wider">Bài làm của sinh viên:</div>
+ <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-[15px] text-slate-900 whitespace-pre-wrap leading-relaxed shadow-2xs font-normal">
+ {ans?.textAnswer || <span className="italic text-slate-500">Sinh viên không nhập nội dung văn bản</span>}
  </div>
  </div>
 
  {/* Files */}
  {ans?.submissionFiles?.length > 0 && (
  <div className="space-y-1">
- <div className="text-[13px] font-semibold text-[#64748B] tracking-wider">File đính kèm ({ans.submissionFiles.length}):</div>
+ <div className="text-[13px] font-semibold text-slate-500 tracking-wider">File đính kèm ({ans.submissionFiles.length}):</div>
  <div className="flex gap-2 flex-wrap">
  {ans.submissionFiles.map((f: any) => (
  <a
@@ -938,16 +938,16 @@ function TeacherEssayGradingContent() {
  {/* Rubric Criteria Table */}
  {q.rubric?.length > 0 ? (
  <div className="space-y-2 pt-1">
- <div className="text-[13px] font-semibold text-[#64748B] tracking-wider">Tiêu chí chấm Rubric:</div>
+ <div className="text-[13px] font-semibold text-slate-500 tracking-wider">Tiêu chí chấm Rubric:</div>
  <div className="space-y-2">
  {q.rubric.map((r: any) => (
  <div key={r.id} className="bg-white p-3.5 rounded-xl border border-slate-200/90 space-y-2.5 shadow-2xs">
  <div className="flex justify-between items-start text-[15px]">
  <div>
- <span className="font-semibold text-[#0F172A]">{r.label}</span>
- {r.description && <p className="text-[13px] text-[#64748B] mt-0.5 font-normal">{r.description}</p>}
+ <span className="font-semibold text-slate-900">{r.label}</span>
+ {r.description && <p className="text-[13px] text-slate-500 mt-0.5 font-normal">{r.description}</p>}
  </div>
- <span className=" tabular-nums text-[15px] font-semibold text-[#64748B] shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
+ <span className=" tabular-nums text-[15px] font-semibold text-slate-500 shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
  </div>
 
  <div className="flex gap-2 items-center flex-wrap">
@@ -959,7 +959,7 @@ function TeacherEssayGradingContent() {
  placeholder="Điểm"
  value={scores[r.id] ?? 0}
  onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
- className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium tabular-nums text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
+ className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium tabular-nums text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
  />
 
  {/* Quick Score Chips */}
@@ -972,7 +972,7 @@ function TeacherEssayGradingContent() {
  className={`px-2.5 py-1 rounded-md text-[13px] font-semibold border transition cursor-pointer ${
  scores[r.id] === presetVal
  ? 'bg-blue-600 text-white border-blue-600'
- : 'bg-slate-50 text-[#334155] border-slate-200 hover:bg-slate-100 hover:text-[#0F172A]'
+ : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
  }`}
  >
  {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
@@ -985,7 +985,7 @@ function TeacherEssayGradingContent() {
  placeholder="Nhận xét tiêu chí..."
  value={comments[r.id] || ''}
  onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
- className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium text-[#0F172A] focus:bg-white focus:border-blue-500 focus:outline-none"
+ className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
  />
  </div>
  </div>
@@ -1007,13 +1007,13 @@ function TeacherEssayGradingContent() {
 
  {/* Overall Teacher Comment */}
  <div className="space-y-1 pt-1">
- <label className="text-[15px] font-semibold text-slate-500">Nhận xét tổng quát câu hỏi:</label>
+ <label className="text-[15px] font-medium text-slate-500">Nhận xét tổng quát câu hỏi:</label>
  <input
  type="text"
  placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."
  value={teacherComments[q.questionId] || ''}
  onChange={(e) => setTeacherComments((prev) => ({ ...prev, [q.questionId]: e.target.value }))}
- className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:border-blue-500 focus:outline-none shadow-2xs"
+ className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none shadow-2xs"
  />
  </div>
  </div>
@@ -1042,7 +1042,7 @@ function TeacherEssayGradingContent() {
  onClick={handleSaveAllClick}
  disabled={saving || isNotSubmitted(selected) || selected.isVirtual}
  isLoading={saving}
- leftIcon={<Save className="h-4 w-4 text-[#64748B]" />}
+ leftIcon={<Save className="h-4 w-4 text-slate-500" />}
  >
  {saving ? 'Đang lưu...' : 'Lưu tất cả điểm'}
  </Button>
@@ -1051,7 +1051,7 @@ function TeacherEssayGradingContent() {
  variant="secondary"
  size="md"
  onClick={handleNextStudent}
- rightIcon={<ChevronRight className="h-4 w-4 text-[#64748B]" />}
+ rightIcon={<ChevronRight className="h-4 w-4 text-slate-500" />}
  >
  Bài tiếp theo
  </Button>

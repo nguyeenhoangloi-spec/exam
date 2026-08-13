@@ -10,9 +10,11 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
 import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
 import {
-  Trash2, RotateCcw, Search, CalendarCheck, FileText,
+  Trash2, RotateCcw, Search, CalendarCheck, FileText, X,
   HelpCircle, RefreshCw, ChevronDown, Clock, Users, Building2, GraduationCap, BookOpen, CheckCircle2, SlidersHorizontal, Eye, MoreVertical, List, LayoutGrid, Layers, ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { FilterSelect } from '../../components/ui/FilterSelect';
+import { SortDropdown } from '../../components/ui/SortDropdown';
 
 interface TrashItem {
   id: number | string;
@@ -267,13 +269,13 @@ function TrashPageContent() {
       {/* Page Header Động Theo Đúng Mục Đang Chọn */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight flex items-center gap-2">
+          <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight flex items-center gap-2">
             {currentCategoryInfo.title}
-            <span className="text-[13px] font-semibold text-[#64748B]">
+            <span className="text-[13px] font-semibold text-slate-500">
               {items.length} mục
             </span>
           </h1>
-          <p className="text-[15px] font-normal leading-[22px] text-[#64748B] mt-1">
+          <p className="text-[15px] font-normal leading-[22px] text-slate-500 mt-1">
             {currentCategoryInfo.subtitle} · Tự động dọn dẹp và hủy vĩnh viễn sau 30 ngày
           </p>
         </div>
@@ -284,7 +286,7 @@ function TrashPageContent() {
             variant="secondary"
             size="md"
             onClick={handleAutoClean}
-            leftIcon={<Trash2 className="h-4 w-4 text-[#64748B]" />}
+            leftIcon={<Trash2 className="h-4 w-4 text-slate-500" />}
             title="Quét và xóa vĩnh viễn toàn bộ bản ghi trong Thùng rác đã quá 30 ngày"
           >
             Dọn dẹp tự động (&gt; 30 ngày)
@@ -292,7 +294,7 @@ function TrashPageContent() {
           <button
             type="button"
             onClick={() => { fetchItems(); fetchStats(); }}
-            className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
             title="Làm mới dữ liệu"
           >
             <RefreshCw className="h-4 w-4" />
@@ -313,15 +315,15 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Lịch thi đã xóa</span>
-              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.schedules}</p>
+              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Lịch thi đã xóa</span>
+              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{stats.schedules}</p>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
               <CalendarCheck className="w-5 h-5" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Lịch thi khảo thí</span>
+          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Lịch thi khảo thí</span>
         </button>
 
         {/* Card 2: Đề thi đã xóa */}
@@ -335,15 +337,15 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Đề thi đã xóa</span>
-              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.papers}</p>
+              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Đề thi đã xóa</span>
+              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{stats.papers}</p>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
               <FileText className="w-5 h-5" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Bộ đề thi trắc nghiệm / tự luận</span>
+          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Bộ đề thi trắc nghiệm / tự luận</span>
         </button>
 
         {/* Card 3: Ngân hàng câu hỏi */}
@@ -357,15 +359,15 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Câu hỏi đã xóa</span>
-              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{stats.questions}</p>
+              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Câu hỏi đã xóa</span>
+              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{stats.questions}</p>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
               <HelpCircle className="w-5 h-5" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Ngân hàng câu hỏi</span>
+          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Ngân hàng câu hỏi</span>
         </button>
 
         {/* Card 4: Tài khoản / Khác */}
@@ -379,78 +381,88 @@ function TrashPageContent() {
         >
           <div className="flex items-start justify-between gap-3 w-full">
             <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-[#64748B] tracking-wider block">Tài khoản / khác</span>
-              <p className="text-[32px] font-bold leading-[38px] text-[#0F172A]">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
+              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Tài khoản / khác</span>
+              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB] border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
               <Users className="w-5 h-5" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-[#64748B] mt-2 block">Người dùng, Môn học, Lớp</span>
+          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Người dùng, Môn học, Lớp</span>
         </button>
       </div>
 
-      {/* Thanh Tìm Kiếm & Lọc Danh Mục (Search & Filter Bar Chuẩn Quy Tắc) */}
-      <div className="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
+      {/* Filter Card Toolbar */}
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
+        {/* Search Input Field */}
+        <div className="relative flex-1 w-full min-w-[280px]">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-[15px] font-normal text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:border-[#2563EB] transition"
+            className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
           />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[15px] font-medium text-[#334155] whitespace-nowrap">Danh mục:</span>
-          <select
-            value={activeCategory}
-            onChange={(e) => setActiveCategory(e.target.value)}
-            className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-[15px] font-medium text-[#0F172A] focus:outline-none focus:border-[#2563EB] cursor-pointer shadow-2xs"
-          >
-            <option value="schedules">Lịch thi đã xóa ({stats.schedules})</option>
-            <option value="papers">Đề thi đã xóa ({stats.papers})</option>
-            <option value="questions">Ngân hàng câu hỏi ({stats.questions})</option>
-            <option value="users">Tài khoản / Sinh viên ({stats.users || 0})</option>
-            <option value="subjects">Môn học ({stats.subjects || 0})</option>
-            <option value="classes">Lớp học ({stats.classes || 0})</option>
-          </select>
+        {/* Filter Select Dropdowns Group */}
+        <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Danh mục:</span>
+            <FilterSelect
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+              size="md"
+            >
+              <option value="schedules">Lịch thi đã xóa ({stats.schedules})</option>
+              <option value="papers">Đề thi đã xóa ({stats.papers})</option>
+              <option value="questions">Ngân hàng câu hỏi ({stats.questions})</option>
+              <option value="users">Tài khoản / Sinh viên ({stats.users || 0})</option>
+              <option value="subjects">Môn học ({stats.subjects || 0})</option>
+              <option value="classes">Lớp học ({stats.classes || 0})</option>
+            </FilterSelect>
+          </div>
         </div>
       </div>
 
       {/* Main Data Table Header & Actions Chuẩn Hệ Thống */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3 px-1">
-          <p className="text-[15px] font-normal text-[#334155]">
-            <span className="font-semibold text-[#0F172A]">{sortedItems.length}</span> kết quả
+          <p className="text-[15px] font-normal text-slate-700">
+            <span className="font-semibold text-slate-900">{sortedItems.length}</span> kết quả
           </p>
 
           <div className="flex items-center gap-2">
             {/* Sort Dropdown */}
-            <div className="relative">
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-              >
-                <option value="newest">Sắp xếp: Mới nhất</option>
-                <option value="oldest">Sắp xếp: Cũ nhất</option>
-                <option value="title_asc">Tên: A - Z</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
-            </div>
+            <SortDropdown
+              value={sortOrder}
+              onChange={(val) => setSortOrder(val)}
+              options={[
+                { value: 'newest', label: 'Mới nhất' },
+                { value: 'oldest', label: 'Cũ nhất' },
+                { value: 'title_asc', label: 'Tên: A - Z' },
+              ]}
+            />
 
             {/* Column Selector */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 shadow-2xs cursor-pointer active:scale-95"
+                className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
               >
-                <SlidersHorizontal className="h-4 w-4 text-[#2563EB]" />
+                <SlidersHorizontal className="h-4 w-4 text-primary-600" />
                 <span>Chọn cột</span>
                 <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
               </button>
@@ -461,36 +473,36 @@ function TrashPageContent() {
                   onMouseLeave={() => setOpenColumnMenu(false)}
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                    <span className="font-semibold text-[#0F172A] text-[14px]">Hiển thị cột</span>
-                    <span className="text-[13px] text-[#64748B] font-normal">Click để ẩn/hiện</span>
+                    <span className="font-semibold text-slate-900 text-[14px]">Hiển thị cột</span>
+                    <span className="text-[13px] text-slate-500 font-normal">Click để ẩn/hiện</span>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-[#334155] rounded-lg">
+                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 rounded-lg">
                       <span>Thời điểm xóa</span>
                       <input
                         type="checkbox"
                         checked={visibleColumns.deletedAt}
                         onChange={() => setVisibleColumns((prev) => ({ ...prev, deletedAt: !prev.deletedAt }))}
-                        className="rounded text-[#2563EB] cursor-pointer h-4 w-4"
+                        className="rounded text-primary-600 cursor-pointer h-4 w-4"
                       />
                     </label>
-                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-[#334155] rounded-lg">
+                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 rounded-lg">
                       <span>Tự động hủy</span>
                       <input
                         type="checkbox"
                         checked={visibleColumns.expiresIn}
                         onChange={() => setVisibleColumns((prev) => ({ ...prev, expiresIn: !prev.expiresIn }))}
-                        className="rounded text-[#2563EB] cursor-pointer h-4 w-4"
+                        className="rounded text-primary-600 cursor-pointer h-4 w-4"
                       />
                     </label>
-                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-[#334155] rounded-lg">
+                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 rounded-lg">
                       <span>Người xóa</span>
                       <input
                         type="checkbox"
                         checked={visibleColumns.deletedBy}
                         onChange={() => setVisibleColumns((prev) => ({ ...prev, deletedBy: !prev.deletedBy }))}
-                        className="rounded text-[#2563EB] cursor-pointer h-4 w-4"
+                        className="rounded text-primary-600 cursor-pointer h-4 w-4"
                       />
                     </label>
                   </div>
@@ -503,7 +515,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-[#2563EB]' : 'text-[#64748B] hover:text-[#0F172A]'}`}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-primary-600' : 'text-slate-500 hover:text-slate-900'}`}
                 title="Xem dạng danh sách"
               >
                 <List className="h-4 w-4" />
@@ -511,7 +523,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-[#2563EB]' : 'text-[#64748B] hover:text-[#0F172A]'}`}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-primary-600' : 'text-slate-500 hover:text-slate-900'}`}
                 title="Xem dạng lưới"
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -519,7 +531,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('compact')}
-                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-[#2563EB]' : 'text-[#64748B] hover:text-[#0F172A]'}`}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-primary-600' : 'text-slate-500 hover:text-slate-900'}`}
                 title="Xem dạng thu gọn"
               >
                 <Layers className="h-4 w-4" />
@@ -529,7 +541,7 @@ function TrashPageContent() {
             {/* Refresh Button */}
             <button
               onClick={() => fetchItems()}
-              className="h-9 w-9 flex items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none border border-slate-200 bg-white shadow-2xs"
+              className="h-9 w-9 flex items-center justify-center rounded-xl text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all active:scale-95 cursor-pointer select-none border border-slate-200 bg-white shadow-2xs"
               title="Tải lại dữ liệu"
             >
               <RefreshCw className="w-4 h-4" />
@@ -540,16 +552,16 @@ function TrashPageContent() {
         {/* Render Dữ Liệu Thực Tế Theo 3 Chế Độ Xem (View Mode) */}
         {loading ? (
           <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
-            <div className="w-7 h-7 border-2 border-blue-200 border-t-[#2563EB] rounded-full animate-spin mx-auto" />
-            <p className="text-[15px] font-normal text-[#64748B]">Đang tải danh sách dữ liệu...</p>
+            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+            <p className="text-xs font-semibold text-slate-500">Đang tải danh sách dữ liệu...</p>
           </div>
         ) : sortedItems.length === 0 ? (
           <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-[#64748B]">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-slate-500">
               <Trash2 className="w-6 h-6" />
             </div>
-            <h3 className="text-[18px] font-semibold text-[#0F172A]">Thùng rác trống</h3>
-            <p className="text-[15px] text-[#64748B] font-normal">Không có dữ liệu nào bị xóa trong danh mục này.</p>
+            <h3 className="text-[18px] font-semibold text-slate-900">Thùng rác trống</h3>
+            <p className="text-[15px] text-slate-500 font-normal">Không có dữ liệu nào bị xóa trong danh mục này.</p>
           </div>
         ) : viewMode === 'grid' ? (
           /* CHẾ ĐỘ XEM GRID (LƯỚI THẺ CARD UI) */
@@ -563,10 +575,10 @@ function TrashPageContent() {
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-[#64748B] flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
                         <Trash2 className="w-5 h-5" />
                       </div>
-                      <span className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${remainingDays <= 5 ? 'text-[#DC2626]' : 'text-[#D97706]'
+                      <span className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${remainingDays <= 5 ? 'text-danger-600' : 'text-warning-600'
                         }`}>
                         <Clock className="w-3.5 h-3.5" />
                         Còn {remainingDays} ngày
@@ -574,21 +586,21 @@ function TrashPageContent() {
                     </div>
 
                     <div>
-                      <h4 className="font-semibold text-[#0F172A] text-[18px] leading-[26px] line-clamp-2">{item.title}</h4>
-                      <p className="text-[14px] font-normal text-[#64748B] mt-1 line-clamp-2">{item.subTitle}</p>
+                      <h4 className="font-semibold text-slate-900 text-[18px] leading-[26px] line-clamp-2">{item.title}</h4>
+                      <p className="text-[14px] font-normal text-slate-500 mt-1 line-clamp-2">{item.subTitle}</p>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 text-[14px] space-y-1 text-[#475569] font-normal">
+                    <div className="pt-2 border-t border-slate-100 text-[14px] space-y-1 text-slate-600 font-normal">
                       {visibleColumns.deletedAt && (
                         <p className="flex justify-between">
-                          <span className="text-[#64748B]">Thời điểm xóa:</span>
-                          <span className="font-medium text-[#0F172A]">{item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}</span>
+                          <span className="text-slate-500">Thời điểm xóa:</span>
+                          <span className="font-medium text-slate-900">{item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}</span>
                         </p>
                       )}
                       {visibleColumns.deletedBy && (
                         <p className="flex justify-between">
-                          <span className="text-[#64748B]">Người xóa:</span>
-                          <span className="font-medium text-[#0F172A]">{item.deletedBy}</span>
+                          <span className="text-slate-500">Người xóa:</span>
+                          <span className="font-medium text-slate-900">{item.deletedBy}</span>
                         </p>
                       )}
                     </div>
@@ -620,16 +632,16 @@ function TrashPageContent() {
         ) : (
           /* CHẾ ĐỘ XEM TABLE (LIST / COMPACT) */
           <div className="bg-white border border-slate-200/80 rounded-2xl shadow-2xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
-                <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+             <div className="ui-table-wrap overflow-x-auto">
+               <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+                <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
                   <tr>
                     <th className={`px-5 w-10 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>
                       <input
                         type="checkbox"
                         checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
                         onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="h-4 w-4 rounded-md border-slate-300 text-[#2563EB] focus:ring-blue-500 cursor-pointer"
+                        className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
                     <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Nội dung / Dữ liệu đã xóa</th>
@@ -654,30 +666,30 @@ function TrashPageContent() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                            className="h-4 w-4 rounded-md border-slate-300 text-[#2563EB] focus:ring-blue-500 cursor-pointer"
+                            className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
                           />
                         </td>
                         <td className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 text-[#64748B] flex items-center justify-center shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
                               <Trash2 className="w-4 h-4" />
                             </div>
                             <div>
-                              <p className="font-medium text-[#0F172A] text-[15px] leading-snug">{item.title}</p>
-                              <p className="text-[15px] leading-[22px] text-[#64748B] font-normal mt-0.5">{item.subTitle}</p>
+                              <p className="font-medium text-slate-900 text-[15px] leading-snug">{item.title}</p>
+                              <p className="text-[15px] leading-[22px] text-slate-500 font-normal mt-0.5">{item.subTitle}</p>
                             </div>
                           </div>
                         </td>
                         {visibleColumns.deletedAt && (
-                          <td className={`px-5 font-normal text-[#334155] whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                          <td className={`px-5 font-normal text-slate-700 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
                             {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
                           </td>
                         )}
                         {visibleColumns.expiresIn && (
                           <td className={`px-5 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
-                            <span className={`inline-flex items-center gap-[6px] text-[15px] leading-[22px] font-semibold ${remainingDays <= 5
-                                ? 'text-[#DC2626]'
-                                : 'text-[#D97706]'
+                            <span className={`inline-flex items-center gap-[6px] text-[15px] leading-[22px] font-medium ${remainingDays <= 5
+                                ? 'text-danger-600'
+                                : 'text-warning-600'
                               }`}>
                               <Clock className="w-3.5 h-3.5" />
                               Còn {remainingDays} ngày
@@ -685,8 +697,8 @@ function TrashPageContent() {
                           </td>
                         )}
                         {visibleColumns.deletedBy && (
-                          <td className={`px-5 font-normal text-[#334155] whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
-                            <span className="text-[15px] leading-[22px] font-medium text-[#334155]">
+                          <td className={`px-5 font-normal text-slate-700 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                            <span className="text-[15px] leading-[22px] font-medium text-slate-700">
                               {item.deletedBy}
                             </span>
                           </td>
@@ -743,8 +755,9 @@ function TrashPageContent() {
 export default function TrashPage() {
   return (
     <Suspense fallback={
-      <div className="p-12 text-center">
-        <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+      <div className="p-12 flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+        <p className="text-xs font-semibold text-slate-500">Đang tải...</p>
       </div>
     }>
       <TrashPageContent />

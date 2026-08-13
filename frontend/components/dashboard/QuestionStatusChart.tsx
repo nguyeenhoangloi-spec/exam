@@ -25,7 +25,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'APPROVED',
       label: 'Đã duyệt',
       count: approvedCount,
-      color: '#10b981',
+      color: 'var(--ui-chart-success)',
       icon: CheckCircle2,
       iconColor: 'text-emerald-500',
     },
@@ -33,7 +33,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'PENDING',
       label: 'Chờ duyệt',
       count: pendingCount,
-      color: '#f59e0b',
+      color: 'var(--ui-chart-warning)',
       icon: Clock,
       iconColor: 'text-amber-500',
     },
@@ -41,7 +41,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'REJECTED',
       label: 'Bị từ chối',
       count: rejectedCount,
-      color: '#ef4444',
+      color: 'var(--ui-chart-danger)',
       icon: XCircle,
       iconColor: 'text-rose-500',
     },
@@ -49,7 +49,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'NEEDS_REVISION',
       label: 'Cần chỉnh sửa',
       count: editCount,
-      color: '#3b82f6',
+      color: 'var(--ui-chart-primary-light)',
       icon: Pencil,
       iconColor: 'text-blue-500',
     },
@@ -106,7 +106,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                 <Tooltip
                   contentStyle={{
                     borderRadius: '12px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--ui-border)',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
                     fontSize: '12px',
                     fontWeight: 600,
@@ -151,5 +151,4 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
     </div>
   );
 }
-
 

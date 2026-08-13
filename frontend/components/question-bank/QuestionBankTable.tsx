@@ -120,7 +120,7 @@ export function QuestionBankTable({
  {/* Content: Truncated 2 Lines */}
  <button
  type="button"
- className="block w-full text-left text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2 min-h-[34px]"
+ className="block w-full text-left text-[15px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition line-clamp-2 min-h-[34px]"
  onClick={() => onDetail(q)}
  title={q.content}
  >
@@ -142,10 +142,10 @@ export function QuestionBankTable({
  {optionsList.map((opt) => (
  <div
  key={opt.label + opt.content}
- className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-[13px] font-medium text-[#334155] transition"
+ className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-[13px] font-medium text-slate-700 transition"
  >
  <span
- className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[13px] font-semibold text-[#334155]"
+ className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[13px] font-semibold text-slate-700"
  >
  {opt.label}
  </span>
@@ -159,7 +159,7 @@ export function QuestionBankTable({
  </div>
 
  {/* Card Footer: Metadata & Actions */}
- <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 text-[13px] font-normal text-[#64748B]">
+ <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 text-[13px] font-normal text-slate-500">
  <span className="truncate max-w-[180px]">
  {creatorName} • {formatDate(q.createdAt).slice(0, 10)}
  </span>
@@ -236,9 +236,9 @@ export function QuestionBankTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-[#0F172A] shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] dark:text-slate-300 border-collapse">
- <thead className="bg-slate-50 dark:bg-[#1E293B] text-[14px] font-semibold tracking-wider text-[#475569] dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
+ <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -270,17 +270,17 @@ export function QuestionBankTable({
  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </td>
- <td className="p-2 whitespace-nowrap font-semibold text-blue-600">
+ <td className="p-2 whitespace-nowrap font-medium text-blue-600">
  <button type="button" onClick={() => onDetail(q)} className="rounded px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100">
  {codeText}
  </button>
  </td>
  <td className="p-2 min-w-[280px]">
- <button type="button" className="block truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(q)} title={q.content}>
+ <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(q)} title={q.content}>
  {q.content}
  </button>
  </td>
- <td className="p-2 whitespace-nowrap font-semibold text-slate-700">{q.subject?.subjectName || 'Chưa gán môn'}</td>
+ <td className="p-2 whitespace-nowrap font-medium text-slate-700">{q.subject?.subjectName || 'Chưa gán môn'}</td>
  <td className="p-2 whitespace-nowrap"><QuestionDifficultyBadge difficulty={q.difficulty || 'MEDIUM'} /></td>
  <td className="p-2 whitespace-nowrap"><QuestionStatusBadge status={q.status || 'APPROVED'} /></td>
  <td className="p-2 pr-3 text-right whitespace-nowrap">
@@ -300,9 +300,9 @@ export function QuestionBankTable({
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
  <>
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -357,7 +357,7 @@ export function QuestionBankTable({
  <button
  type="button"
  onClick={() => onDetail(q)}
- className=" tabular-nums text-[15px] leading-[22px] font-semibold text-[#0F172A] dark:text-slate-100 hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 dark:text-slate-100 hover:text-primary-600 transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -371,7 +371,7 @@ export function QuestionBankTable({
  {/* Câu hỏi */}
  <button
  type="button"
- className="block w-full text-left text-[15px] font-medium text-[#0F172A] dark:text-slate-100 leading-snug cursor-pointer hover:text-[#2563EB] transition line-clamp-2"
+ className="block w-full text-left text-[15px] font-medium text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-primary-600 transition line-clamp-2"
  onClick={() => onDetail(q)}
  title={q.content}
  >
@@ -381,7 +381,7 @@ export function QuestionBankTable({
  {/* Đáp án + Media — gộp chung 1 hàng flex-wrap */}
  <div className="flex flex-wrap items-center gap-1.5">
  {q.type === 'ESSAY' ? (
- <span className="table-badge inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-800 border border-blue-200/80">
+ <span className="table-badge inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[12px] font-medium bg-blue-50 text-blue-800 border border-blue-200/80">
  <FileText className="w-3 h-3 text-blue-600 shrink-0" />
  {q.sampleAnswer || q.explanation ? 'Có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
  </span>
@@ -389,9 +389,9 @@ export function QuestionBankTable({
  optionsList.map((opt) => (
  <span
  key={opt.label + opt.content}
- className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[12px] font-semibold text-slate-700"
+ className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[12px] font-medium text-slate-700"
  >
- <span className="font-semibold text-slate-500">{opt.label}.</span>
+ <span className="font-medium text-slate-500">{opt.label}.</span>
  <span className="truncate max-w-[120px]">{opt.content}</span>
  </span>
  ))
@@ -450,7 +450,7 @@ export function QuestionBankTable({
  key={m.id || idx}
  type="button"
  onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
- className="table-badge group inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[12px] font-semibold text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
+ className="table-badge group inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[12px] font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
  title="Bấm để phát âm thanh"
  >
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3 text-blue-600 group-hover:scale-110 transition"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
@@ -459,7 +459,7 @@ export function QuestionBankTable({
  );
 
  return (
- <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[12px] font-semibold text-slate-500 shrink-0">
+ <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[12px] font-medium text-slate-500 shrink-0">
  <ImageIcon className="h-3 w-3 text-blue-400" />
  {cleanMediaFileName(m.fileName, 'Tập tin')}
  </span>
@@ -508,7 +508,7 @@ export function QuestionBankTable({
 
  {/* Điểm số */}
  <td className="p-3.5 whitespace-nowrap align-top pt-4">
- <span className="text-[15px] font-medium text-[#0F172A] dark:text-slate-100">
+ <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100">
  {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
  </span>
  </td>
@@ -523,8 +523,8 @@ export function QuestionBankTable({
  {/* Người tạo */}
  {visibleColumns.creator !== false && (
  <td className="p-3.5 whitespace-nowrap align-top pt-4">
- <div className="flex items-center gap-1.5 text-[15px] font-normal text-[#334155] dark:text-slate-300">
- <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-[#475569] dark:text-slate-300 flex items-center justify-center font-semibold text-[13px] border border-slate-200 dark:border-slate-600">
+ <div className="flex items-center gap-1.5 text-[15px] font-normal text-slate-700 dark:text-slate-300">
+ <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-medium text-[13px] border border-slate-200 dark:border-slate-600">
  {creatorName.charAt(0).toUpperCase()}
  </div>
  <span>{creatorName}</span>
@@ -534,7 +534,7 @@ export function QuestionBankTable({
 
  {/* Ngày tạo */}
  {visibleColumns.createdAt !== false && (
- <td className="table-meta p-3.5 whitespace-nowrap text-[14px] text-[#64748B] dark:text-slate-400 font-normal align-top pt-4">
+ <td className="table-meta p-3.5 whitespace-nowrap text-[14px] text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
  {formatDate(q.createdAt)}
  </td>
  )}
@@ -546,7 +546,7 @@ export function QuestionBankTable({
  <button
  type="button"
  onClick={() => onDetail(q)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -561,9 +561,9 @@ export function QuestionBankTable({
  closeMenu();
  onDetail(q);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
- <Eye className="h-4 w-4 text-[#64748B]" />
+ <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
  </button>
 
@@ -573,9 +573,9 @@ export function QuestionBankTable({
  closeMenu();
  onAction(q, 'edit');
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
- <Edit className="h-4 w-4 text-[#2563EB]" />
+ <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa</span>
  </button>
 
@@ -586,9 +586,9 @@ export function QuestionBankTable({
  closeMenu();
  setRubricQuestion(q);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#2563EB] font-medium cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-primary-600 font-medium cursor-pointer"
  >
- <HelpCircle className="h-4 w-4 text-[#2563EB]" />
+ <HelpCircle className="h-4 w-4 text-primary-600" />
  <span>Cấu hình Rubric</span>
  </button>
  )}
@@ -600,9 +600,9 @@ export function QuestionBankTable({
  closeMenu();
  onAction(q, 'approve');
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#F0FDF4] text-[#16A34A] font-medium cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-success-50 text-success-500 font-medium cursor-pointer"
  >
- <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
+ <CheckCircle2 className="h-4 w-4 text-success-500" />
  <span>Phê duyệt</span>
  </button>
  )}
@@ -614,25 +614,25 @@ export function QuestionBankTable({
  closeMenu();
  onAction(q, 'reject');
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FFFBEB] text-[#D97706] font-medium cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-warning-50 text-warning-600 font-medium cursor-pointer"
  >
- <XCircle className="h-4 w-4 text-[#D97706]" />
+ <XCircle className="h-4 w-4 text-warning-600" />
  <span>Từ chối</span>
  </button>
  )}
 
  {isAdmin && (
  <>
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
  <button
  type="button"
  onClick={() => {
  closeMenu();
  onAction(q, 'delete');
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa câu hỏi</span>
  </button>
  </>

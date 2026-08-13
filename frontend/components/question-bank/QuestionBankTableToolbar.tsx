@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, Check } from 'lucide-react';
+import { SortDropdown } from '../ui/SortDropdown';
 
 interface QuestionBankTableToolbarProps {
   totalCount: number;
@@ -54,35 +55,32 @@ export function QuestionBankTableToolbar({
       {/* Right Controls */}
       <div className="flex items-center gap-2">
         {/* Sort selector */}
-        <div className="relative">
-          <select
-            value={sortOrder}
-            onChange={(e) => onSortChange?.(e.target.value)}
-            className="h-9 appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] pl-3 pr-8 text-[14px] font-semibold text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
-          >
-            <option value="newest">Sắp xếp: Mới nhất</option>
-            <option value="oldest">Sắp xếp: Cũ nhất</option>
-            <option value="code">Sắp xếp: Mã câu hỏi</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-        </div>
+        <SortDropdown
+          value={sortOrder}
+          onChange={(val) => onSortChange?.(val)}
+          options={[
+            { value: 'newest', label: 'Mới nhất' },
+            { value: 'oldest', label: 'Cũ nhất' },
+            { value: 'code', label: 'Mã câu hỏi: A - Z' },
+          ]}
+        />
 
         {/* Column Selector */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] px-3 text-[13px] font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 shadow-2xs cursor-pointer active:scale-95"
+            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-[15px] font-medium text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:hover:bg-slate-800 shadow-2xs cursor-pointer active:scale-95"
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+            <SlidersHorizontal className="h-4 w-4 text-blue-600" />
             <span>Chọn cột</span>
-            <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Dropdown Menu Popover */}
           {openColumnMenu && (
             <div
-            className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0F172A] p-3 shadow-xl text-xs space-y-2"
+            className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-xl text-xs space-y-2"
               onMouseLeave={() => setOpenColumnMenu(false)}
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
@@ -96,7 +94,7 @@ export function QuestionBankTableToolbar({
                   return (
                     <label
                       key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-semibold text-slate-700 dark:text-slate-200 select-none transition text-[13px]"
+                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer font-medium text-slate-700 dark:text-slate-200 select-none transition text-[15px]"
                     >
                       <span className="flex items-center gap-2">
                         <input
@@ -130,7 +128,7 @@ export function QuestionBankTableToolbar({
             }`}
             title="Dạng danh sách"
           >
-            <List className="h-3.5 w-3.5" />
+            <List className="h-4 w-4" />
           </button>
 
           <button
@@ -143,7 +141,7 @@ export function QuestionBankTableToolbar({
             }`}
             title="Dạng lưới"
           >
-            <LayoutGrid className="h-3.5 w-3.5" />
+            <LayoutGrid className="h-4 w-4" />
           </button>
 
           <button
@@ -156,7 +154,7 @@ export function QuestionBankTableToolbar({
             }`}
             title="Dạng thu gọn"
           >
-            <Layers className="h-3.5 w-3.5" />
+            <Layers className="h-4 w-4" />
           </button>
         </div>
       </div>

@@ -126,17 +126,17 @@ export function DashboardStatistics({
 
             {/* Middle: Title & Main Big Value */}
             <div className="mt-3">
-              <span className="text-[13px] font-semibold text-[#64748B] block truncate">
+              <span className="text-[13px] font-semibold text-slate-500 block truncate">
                 {spec.title}
               </span>
-              <div className="text-[32px] font-bold leading-[38px] tracking-tight text-[#0F172A] mt-1">
+              <div className="text-[32px] font-bold leading-[38px] tracking-tight text-slate-900 mt-1">
                 {formatNumber(spec.value)}
               </div>
             </div>
 
             {/* Bottom Subtext */}
             <div className="mt-2.5 pt-2 border-t border-slate-100/80">
-              <span className="text-[13px] font-normal text-[#64748B]">
+              <span className="text-[13px] font-normal text-slate-500">
                 {spec.subtext}
               </span>
             </div>

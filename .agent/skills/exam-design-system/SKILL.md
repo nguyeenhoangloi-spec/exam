@@ -1,4 +1,4 @@
-﻿---
+---
 name: exam-design-system
 description: >
   Design System chuẩn cho Exam Management System (Next.js + TypeScript + Tailwind CSS).
@@ -9,7 +9,7 @@ description: >
 
 # 🎨 Exam Design System — Nguồn Chuẩn UI
 
-> **Đã xác minh khớp 100% với codebase** (kiểm tra ngày 2026-08-11).
+> **Đã xác minh theo codebase hiện tại** (kiểm tra ngày 2026-08-12).
 > Stack: Next.js App Router · TypeScript · Tailwind CSS · Inter font.
 
 ---
@@ -18,8 +18,8 @@ description: >
 
 | Chỉ số | Giá trị |
 |---|---|
-| Route pages | 37 (trong `frontend/app/**`) |
-| File TSX | 171 |
+| Route pages | 38 (trong `frontend/app/**`) |
+| File TSX | 174 |
 | UI components dùng chung | 10 (trong `frontend/components/ui/`) |
 | Shared components | `frontend/components/` (Header, Sidebar, RouteShell, Toast, ConfirmModal, Modal, v.v.) |
 
@@ -56,8 +56,9 @@ Token danger (red):
 |---|---|---|
 | text-primary | #0F172A | tiêu đề, dữ liệu quan trọng |
 | text-body | #1F2937 | nội dung chính |
-| text-secondary | #475569 | nhãn, icon trung tính |
-| text-muted | #64748B | helper, metadata |
+| text-secondary | #334155 | nhãn, icon trung tính |
+| text-muted | #475569 | helper, metadata |
+| text-disabled | #64748B | placeholder, disabled |
 | border-default | #E2E8F0 (slate-200) | viền card, input, table |
 | surface-page | #F8FAFC (slate-50) | nền trang |
 | surface | #FFFFFF | card, modal, table |
@@ -67,6 +68,9 @@ Token danger (red):
 - KHÔNG thêm màu hex trực tiếp trong page/component mới
 - KHÔNG dùng purple/violet cho hành động thông thường
 - KHÔNG dùng màu duy nhất để truyền đạt trạng thái — phải kèm icon hoặc text
+- Biểu đồ và SVG dữ liệu phải dùng các biến `--ui-chart-*`; không gán hex trực tiếp trong TSX.
+- Màu nhận diện Google dùng biến `--ui-brand-google-*` và chỉ dành cho logo thương hiệu.
+- Các chuỗi màu/font riêng trong `print/export` là ngoại lệ có phạm vi, không được áp dụng cho Web UI.
 
 ---
 
@@ -76,7 +80,7 @@ Dùng class utility .edu-* hoặc Tailwind tương đương:
 
 | Class | Size | Line-h | Weight | Dùng cho |
 |---|---|---|---|---|
-| .edu-page-title | 28px (mobile: 24px) | 36px | 700 | h1 mỗi page |
+| .edu-page-title | 28px (mobile: 24px) | 36px | 600 | h1 mỗi page |
 | .edu-section-title | 20px (mobile: 18px) | 28px | 600 | h2 section |
 | .edu-card-title | 18px | 26px | 600 | Tiêu đề card |
 | .edu-body | 15px | 24px | 400 | Nội dung chính |
@@ -85,13 +89,15 @@ Dùng class utility .edu-* hoặc Tailwind tương đương:
 | .edu-helper | 13px | 18px | 400-500 | Helper text, error |
 | .edu-badge | 12px | 18px | 600 | Badge, tag |
 | .edu-kpi | 32px | 38px | 700 | Số KPI (+ tabular-nums) |
-| .edu-table-header | 14px | 20px | 600 | th trong bảng |
+| .edu-table-header | 14px | 20px | 500 | th trong bảng |
 | .edu-table-content | 15px | 22px | 400 | td trong bảng |
 
 Quy tắc:
 - Không dùng text nhỏ hơn 12px cho nội dung chức năng
+- Ngoại lệ duy nhất: dòng brand phụ `HỆ THỐNG QUẢN LÝ THI` trong header Sidebar dùng 10px để vừa lockup cố định; không áp dụng ngoại lệ này cho dữ liệu, form, bảng, trạng thái hoặc nội dung nghiệp vụ.
 - Số liệu/điểm/KPI: thêm font-variant-numeric: tabular-nums (.edu-numeric)
 - Font weight tối đa: 700 (Inter chỉ load 400-700)
+- `code`, `pre`, `kbd`, `samp` trong Web UI vẫn kế thừa Inter; không dùng monospace.
 
 ---
 
@@ -111,14 +117,20 @@ Lưới 4px/8px: 4, 8, 12, 16, 20, 24, 32px
 
 ---
 
-## 5. Radius, Border, Shadow
+## 5. Radius, Border, Shadow (Chuẩn hóa 4 Tầng Border Radius)
 
-| Loại | Radius | Class |
-|---|---|---|
-| Card / Table / Modal | 16px | rounded-2xl |
-| Button / Input | 8-10px | rounded-lg hoặc rounded-[10px] |
-| Avatar / Status dot | full | rounded-full |
-| Icon container | 12px | rounded-xl |
+| Phân loại | Tỷ lệ bo góc | Class Tailwind | Dùng cho các thành phần |
+|---|---|---|---|
+| **Thao tác (Controls)** | **8px** | `rounded-lg` | Button, Input, Search, Select, Date Picker, Textarea, Badge thao tác |
+| **Chứa nội dung (Containers)** | **12px** | `rounded-xl` | Table container, Card, Panel, Dropdown menu, Icon container |
+| **Nổi lớn (Overlays)** | **16px** | `rounded-2xl` | Modal, Dialog, ConfirmModal, CriticalConfirmModal, Popup lớn |
+| **Hình tròn thực sự** | **Full** | `rounded-full` | Avatar, Status Dot, Indicator tròn |
+
+### Quy tắc Border Radius bắt buộc:
+1. **Không dùng `rounded-full`** cho Button thông thường, Input, Select hoặc Badge chỉ để tạo dạng viên thuốc.
+2. **Thứ tự phân cấp chuẩn**: `8px (Thao tác)` ➔ `12px (Chứa nội dung)` ➔ `16px (Nổi lớn overlay)`.
+3. **Không tạo radius tùy ý** như `7px`, `10px`, `14px`, `18px`.
+4. Thành phần thao tác nhỏ sử dụng radius nhỏ hơn thành phần chứa nội dung (Inner Radius <= Outer Radius).
 
 Border: 1px border-slate-200/90. Không dùng border đậm trang trí.
 
@@ -156,7 +168,7 @@ Checklist:
 Spec chuẩn:
 - Height: h-10 (40px desktop) — mobile tối thiểu 44px
 - Border mặc định: border-slate-200/90
-- Focus: focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20
+- Focus: focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20
 - Radius: rounded-[10px]
 - Label: text-[15px] font-medium
 - Helper/Error: text-[13px]
@@ -212,7 +224,7 @@ Spec (từ globals.css):
 Vị trí: fixed bottom-5 right-5 — KHÔNG đặt ở vị trí khác!
 
 Spec:
-- z-index: z-[100000]
+- z-index: z-[110]
 - Border radius: rounded-2xl
 - Padding: px-4 py-3
 - Tự đóng sau: 4000ms
@@ -340,6 +352,6 @@ Trước khi hoàn thành bất kỳ màn hình nào:
 ❌ Dùng purple/violet cho hành động thông thường
 ❌ Bỏ qua dark mode (thiếu dark: variant)
 ❌ Text nhỏ hơn 12px trong nội dung chức năng
-❌ Trộn radius: Card phải là rounded-2xl, không dùng rounded-xl hay rounded-3xl
+❌ Trộn radius vi phạm phân cấp 4 tầng: Controls = 8px (rounded-lg), Containers = 12px (rounded-xl), Modals = 16px (rounded-2xl)
 ❌ Toast ở vị trí khác fixed bottom-5 right-5
 ❌ Status badge tự tạo không qua StatusBadge component

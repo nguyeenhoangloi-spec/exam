@@ -22,10 +22,10 @@ export function ExamScheduleHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Description */}
       <div className="space-y-1">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-[#0F172A] tracking-tight">
+        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
           Xếp lịch thi
         </h1>
-        <p className="text-[15px] font-normal leading-[22px] text-[#64748B]">
+        <p className="text-[15px] font-normal leading-[22px] text-slate-500">
           Tạo, quản lý và theo dõi lịch thi của các kỳ thi trong hệ thống
         </p>
       </div>
@@ -37,7 +37,7 @@ export function ExamScheduleHeader({
           variant="secondary"
           size="md"
           onClick={onExport}
-          leftIcon={<Download className="h-4 w-4 text-[#64748B]" />}
+          leftIcon={<Download className="h-4 w-4 text-slate-500" />}
         >
           Xuất Excel
         </Button>
@@ -48,7 +48,7 @@ export function ExamScheduleHeader({
             variant="secondary"
             size="md"
             onClick={onPrint}
-            leftIcon={<Printer className="h-4 w-4 text-[#64748B]" />}
+            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
           >
             In Báo cáo
           </Button>

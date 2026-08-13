@@ -28,8 +28,8 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl px-4 py-3 text-white shadow-xl transition-all transform slide-in-from-bottom duration-300 select-none"
-      style={{ backgroundColor: type === 'success' ? '#10B981' : '#EF4444' }}
+      className={`fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl px-4 py-3 text-white shadow-xl transition-all transform slide-in-from-bottom duration-300 select-none ${type === 'success' ? 'bg-success-500' : 'bg-danger-500'
+        }`}
     >
       {type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-white" /> : <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-white" />}
       <span className="text-sm font-semibold leading-5 flex-1 text-white drop-shadow-xs">{message}</span>

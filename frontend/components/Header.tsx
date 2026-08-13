@@ -304,7 +304,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-label="Xem thông báo"
                 aria-expanded={openPanel === 'notifications'}
                 onClick={() => togglePanel('notifications')}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[#475569] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
@@ -318,7 +318,7 @@ export const Header: React.FC<HeaderProps> = ({
               {openPanel === 'notifications' && (
                 <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-[15px] z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
-                    <p className="font-semibold text-[#0F172A] dark:text-slate-100 text-[15px] flex items-center gap-1.5">
+                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] flex items-center gap-1.5">
                       <Bell className="w-4 h-4 text-blue-600" />
                       <span>Thông báo hệ thống</span>
                     </p>
@@ -355,7 +355,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">
-                                <p className="font-semibold text-[#0F172A] dark:text-slate-100 text-[14px] group-hover:text-blue-600 transition flex items-center gap-2">
+                                <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14px] group-hover:text-blue-600 transition flex items-center gap-2">
                                   {isUnread ? (
                                     <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" />
                                   ) : (
@@ -363,9 +363,9 @@ export const Header: React.FC<HeaderProps> = ({
                                   )}
                                   <span>{item.title}</span>
                                 </p>
-                                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" />
+                                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" />
                               </div>
-                              <p className="text-[13px] text-[#64748B] dark:text-slate-400 font-normal leading-relaxed pl-4">
+                              <p className="text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4">
                                 {item.desc}
                               </p>
                             </div>
@@ -385,7 +385,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Vertical Divider */}
-            <div className="h-6 w-px bg-[#E2E8F0] dark:bg-slate-700" />
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
 
             {/* Header User Profile Trigger Button */}
             <div className="relative">
@@ -403,25 +403,25 @@ export const Header: React.FC<HeaderProps> = ({
                   <DynamicImage
                     src={avatarUrl}
                     alt={displayName}
-                    className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#E2E8F0]"
+                    className="h-9 w-9 shrink-0 rounded-full object-cover border border-slate-200"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2563EB] font-semibold text-white text-xs tracking-tight">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 font-semibold text-white text-xs tracking-tight">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-tight">
-                  <span className="block text-[13px] font-semibold text-[#0F172A] dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[12px] font-medium text-[#2563EB]">
+                  <span className="block text-[13px] font-semibold text-slate-900 dark:text-slate-100">{displayName}</span>
+                  <span className="block text-[12px] font-medium text-primary-600">
                     {displayRoleLabel}
                   </span>
                 </div>
 
                 {/* Chevron Arrow */}
                 <ChevronDown
-                  className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-[#2563EB]' : ''
+                  className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-primary-600' : ''
                     }`}
                 />
               </button>

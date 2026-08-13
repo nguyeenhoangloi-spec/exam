@@ -37,7 +37,7 @@ export const Modal: React.FC<ModalProps> = ({
   icon,
   subtitle,
   badge,
-  variant = 'gradient',
+  variant = 'default',
 }) => {
   if (!isOpen || typeof document === 'undefined') return null;
 

@@ -207,14 +207,14 @@ export function ExamScheduleTable({
  <span className="text-[13px] font-semibold text-blue-600">{shiftName}</span>
  <h4
  onClick={() => onDetail(s)}
- className="text-[15px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
+ className="text-[15px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
  >
  {periodName}
  </h4>
  </div>
 
  {/* Details */}
- <div className="grid grid-cols-2 gap-2 text-[15px] font-medium text-[#334155] pt-1">
+ <div className="grid grid-cols-2 gap-2 text-[15px] font-medium text-slate-700 pt-1">
  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
  <Building className="h-4 w-4 text-blue-500 shrink-0" />
  <span>Phòng {roomName}</span>
@@ -226,8 +226,8 @@ export function ExamScheduleTable({
  </div>
 
  {/* Date & Time */}
- <div className="text-[14px] font-normal text-[#64748B] flex items-center justify-between pt-1">
- <span>Ngày: <strong className="text-[#0F172A] font-semibold">{formatDate(s.examDate)}</strong></span>
+ <div className="text-[14px] font-normal text-slate-500 flex items-center justify-between pt-1">
+ <span>Ngày: <strong className="text-slate-900 font-semibold">{formatDate(s.examDate)}</strong></span>
  <span>{s.startTime || '07:00'} - {s.endTime || '09:00'}</span>
  </div>
  </div>
@@ -274,9 +274,9 @@ export function ExamScheduleTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] dark:text-slate-200 border-collapse">
- <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-semibold tracking-wider text-[#475569] dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-200 border-collapse">
+ <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -317,22 +317,22 @@ export function ExamScheduleTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[15px] leading-[22px] font-semibold text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
  >
  {codeText}
  </button>
  </td>
- <td className="p-2 min-w-[200px]">
- <button type="button" className="block truncate font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB]" onClick={() => onDetail(s)}>
+ <td className="p-2 min-w-[240px] whitespace-nowrap">
+ <button type="button" className="block whitespace-nowrap font-medium text-slate-900 cursor-pointer hover:text-primary-600" onClick={() => onDetail(s)}>
  {periodName}
  </button>
  </td>
- <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{shiftName}</td>
- <td className="p-2 whitespace-nowrap font-medium text-[#0F172A]">{roomName}</td>
- <td className="p-2 whitespace-nowrap font-normal text-[#334155]">{formatDate(s.examDate)}</td>
+ <td className="p-2 whitespace-nowrap font-normal text-slate-700">{shiftName}</td>
+ <td className="p-2 whitespace-nowrap font-medium text-slate-900">{roomName}</td>
+ <td className="p-2 whitespace-nowrap font-normal text-slate-700">{formatDate(s.examDate)}</td>
  <td className="p-2 whitespace-nowrap">{getStatusBadge(s.statusBadge || s.status, s)}</td>
  <td className="p-2 pr-3 text-right whitespace-nowrap">
- <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-[#2563EB] cursor-pointer">
+ <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-primary-600 cursor-pointer">
  <Eye className="h-4 w-4" />
  </button>
  </td>
@@ -347,9 +347,9 @@ export function ExamScheduleTable({
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default matching Mockup Image 100%)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] dark:text-slate-200 border-collapse">
- <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-semibold tracking-wider text-[#475569] dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-200 border-collapse">
+ <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -360,7 +360,7 @@ export function ExamScheduleTable({
  />
  </th>
  {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã lịch thi</th>}
- {visibleColumns.period !== false && <th scope="col" className="p-3.5 min-w-[200px]">Kỳ thi</th>}
+ {visibleColumns.period !== false && <th scope="col" className="p-3.5 min-w-[240px] whitespace-nowrap">Kỳ thi</th>}
  {visibleColumns.shift !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ca thi</th>}
  {visibleColumns.room !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Phòng thi</th>}
  {visibleColumns.date !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày thi ↕</th>}
@@ -372,7 +372,7 @@ export function ExamScheduleTable({
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-medium">
+ <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-normal">
  {schedules.map((s, index) => {
  const isChecked = selected.includes(s.id);
  const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
@@ -406,7 +406,7 @@ export function ExamScheduleTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[15px] leading-[22px] font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600 hover:text-blue-800 transition cursor-pointer"
  >
  {codeText}
  </button>
@@ -415,16 +415,16 @@ export function ExamScheduleTable({
 
  {/* Kỳ thi */}
  {visibleColumns.period !== false && (
- <td className="p-3.5 min-w-[200px]">
+ <td className="p-3.5 min-w-[240px] whitespace-nowrap">
  <div className="space-y-0.5">
  <button
  type="button"
- className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition text-[15px] leading-[22px]"
+ className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition text-[15px] leading-[22px] whitespace-nowrap block"
  onClick={() => onDetail(s)}
  >
  {periodName}
  </button>
- <p className="text-[15px] leading-[22px] font-normal text-[#64748B]">
+ <p className="text-[15px] leading-[22px] font-normal text-slate-500">
  {formatExamType(s.examType)}
  </p>
  </div>
@@ -444,14 +444,14 @@ export function ExamScheduleTable({
  {roomName === 'Chưa xếp phòng' || !roomName ? (
  <span className="font-medium text-slate-500">Chưa xếp phòng</span>
  ) : (
- <span className="font-semibold text-slate-900">{roomName}</span>
+ <span className="font-medium text-slate-900">{roomName}</span>
  )}
  </td>
  )}
 
  {/* Ngày thi */}
  {visibleColumns.date !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-[15px]">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 text-[15px]">
  {formatDate(s.examDate)}
  </td>
  )}
@@ -472,7 +472,7 @@ export function ExamScheduleTable({
 
  {/* Số TS */}
  {visibleColumns.students !== false && (
- <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 text-[15px]">
+ <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 text-[15px]">
  {studentCount}
  </td>
  )}
@@ -497,7 +497,7 @@ export function ExamScheduleTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -512,9 +512,9 @@ export function ExamScheduleTable({
  closeMenu();
  onDetail(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
- <Eye className="h-4 w-4 text-[#64748B]" />
+ <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
  </button>
 
@@ -528,21 +528,21 @@ export function ExamScheduleTable({
  closeMenu();
  onRestore?.(s.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#2563EB] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-primary-600 cursor-pointer"
  >
- <RotateCcw className="h-4 w-4 text-[#2563EB]" />
+ <RotateCcw className="h-4 w-4 text-primary-600" />
  <span>Khôi phục lịch thi</span>
  </button>
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
  <button
  type="button"
  onClick={() => {
  closeMenu();
  onHardDelete?.(s.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa vĩnh viễn</span>
  </button>
  </>
@@ -554,21 +554,21 @@ export function ExamScheduleTable({
  closeMenu();
  onEdit(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
- <Edit className="h-4 w-4 text-[#2563EB]" />
+ <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa ca thi</span>
  </button>
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
  <button
  type="button"
  onClick={() => {
  closeMenu();
  onDelete(s.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626] cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa ca thi</span>
  </button>
  </>

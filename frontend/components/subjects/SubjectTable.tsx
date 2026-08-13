@@ -66,13 +66,13 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className=" tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
  >
  {s.subjectCode}
  </button>
  </div>
 
- <span className="inline-flex items-center gap-1 text-[13px] font-medium text-[#64748B]">
+ <span className="inline-flex items-center gap-1 text-[13px] font-medium text-slate-500">
  <Award className="h-3.5 w-3.5 text-slate-400" /> {s.credits} Tín chỉ
  </span>
  </div>
@@ -80,13 +80,13 @@ export function SubjectTable({
  <div>
  <h4
  onClick={() => onDetail(s)}
- className="text-[18px] font-semibold text-[#0F172A] leading-snug cursor-pointer hover:text-[#2563EB] transition"
+ className="text-[18px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
  >
  {s.subjectName}
  </h4>
  </div>
 
- <div className="flex items-center gap-1.5 text-[14px] font-normal text-[#475569] pt-1">
+ <div className="flex items-center gap-1.5 text-[14px] font-normal text-slate-600 pt-1">
  <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
  <span className="truncate">{deptName}</span>
  </div>
@@ -96,7 +96,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onEnroll(s)}
- className="flex items-center gap-1 text-[#2563EB] hover:text-blue-700 cursor-pointer"
+ className="flex items-center gap-1 text-primary-600 hover:text-blue-700 cursor-pointer"
  >
  <UserPlus className="h-3.5 w-3.5" />
  <span>Gán sinh viên</span>
@@ -133,9 +133,9 @@ export function SubjectTable({
  // 2. Dạng Thu Gọn (Compact View Mode)
  if (viewMode === 'compact') {
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-2 pl-3 text-center w-8">
  <input
@@ -173,7 +173,7 @@ export function SubjectTable({
  </button>
  </td>
  <td className="p-2 min-w-[200px]">
- <p className="truncate font-semibold text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(s)}>
+ <p className="truncate font-medium text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(s)}>
  {s.subjectName}
  </p>
  </td>
@@ -195,9 +195,9 @@ export function SubjectTable({
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
- <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="w-full text-left text-[15px] text-[#334155] border-collapse">
- <thead className="bg-slate-50 text-[14px] font-semibold tracking-wider text-[#475569] border-b border-slate-200">
+ <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+ <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -240,7 +240,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className=" tabular-nums text-[15px] leading-[22px] font-medium text-[#0F172A] hover:text-[#2563EB] transition cursor-pointer"
+ className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
  >
  {s.subjectCode}
  </button>
@@ -252,7 +252,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="font-medium text-[#0F172A] cursor-pointer hover:text-[#2563EB] transition text-[15px]"
+ className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition text-[15px]"
  >
  {s.subjectName}
  </button>
@@ -261,12 +261,12 @@ export function SubjectTable({
 
  {visibleColumns.credits !== false && (
  <td className="p-3.5 whitespace-nowrap text-[15px]">
- <span className="font-medium text-[#0F172A]">{s.credits} tín chỉ</span>
+ <span className="font-medium text-slate-900">{s.credits} tín chỉ</span>
  </td>
  )}
 
  {visibleColumns.department !== false && (
- <td className="p-3.5 min-w-[200px] text-[15px] font-normal text-[#334155]">
+ <td className="p-3.5 min-w-[200px] text-[15px] font-normal text-slate-700">
  {deptName}
  </td>
  )}
@@ -287,7 +287,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -302,9 +302,9 @@ export function SubjectTable({
  closeMenu();
  onEnroll(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#2563EB] font-medium"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-primary-600 font-medium"
  >
- <UserPlus className="h-4 w-4 text-[#2563EB]" />
+ <UserPlus className="h-4 w-4 text-primary-600" />
  <span>Gán Sinh viên</span>
  </button>
 
@@ -314,9 +314,9 @@ export function SubjectTable({
  closeMenu();
  onDetail(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
- <Eye className="h-4 w-4 text-[#64748B]" />
+ <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
  </button>
 
@@ -328,13 +328,13 @@ export function SubjectTable({
  closeMenu();
  onEdit(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#EFF6FF] text-[#334155]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
- <Edit className="h-4 w-4 text-[#2563EB]" />
+ <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa môn</span>
  </button>
 
- <div className="my-1 border-t border-[#E2E8F0]" />
+ <div className="my-1 border-t border-slate-200" />
 
  <button
  type="button"
@@ -342,9 +342,9 @@ export function SubjectTable({
  closeMenu();
  onDelete(s.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-[#FEF2F2] text-[#DC2626]"
+ className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600"
  >
- <Trash2 className="h-4 w-4 text-[#DC2626]" />
+ <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa môn học</span>
  </button>
  </>

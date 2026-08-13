@@ -66,4 +66,53 @@ describe('OnlineExamsService review visibility', () => {
       .resolves
       .toMatchObject({ attemptId: 'attempt-1', questions: [] });
   });
+
+  it('does not expose the answer key while a student is taking the exam', async () => {
+    const service = createService({
+      id: 'attempt-1',
+      student: { userId: studentUser.id },
+      snapshot: {
+        paperTitle: 'Bài kiểm tra',
+        duration: 45,
+        snapshotData: [{
+          order: 1,
+          questionId: 'question-1',
+          code: 'Q-001',
+          content: 'Hai cộng hai bằng mấy?',
+          contentRich: null,
+          type: 'SINGLE_CHOICE',
+          difficulty: 'EASY',
+          score: 1,
+          options: [
+            { id: 'option-a', label: 'A', content: '4', isCorrect: true, media: [] },
+            { id: 'option-b', label: 'B', content: '5', isCorrect: false, media: [] },
+          ],
+          fillBlankAnswers: [],
+        }],
+      },
+      attemptAnswers: [],
+      onlineExamConfig: {
+        showImages: true,
+        showVideos: true,
+        showAudios: true,
+        requireFullscreen: false,
+        preventTabSwitch: false,
+        preventCopyPaste: false,
+        essayEnabled: false,
+        allowEssayFileUpload: false,
+        maxEssayFileSizeMb: 5,
+      },
+      status: 'IN_PROGRESS',
+      expectedEndTime: new Date(Date.now() + 15 * 60 * 1000),
+    });
+
+    const result = await service.getAttemptQuestions(studentUser.id, 'attempt-1');
+
+    expect(result.questions).toHaveLength(1);
+    expect(result.questions[0].options).toEqual([
+      { id: 'option-a', label: 'A', content: '4', contentRich: undefined, media: [] },
+      { id: 'option-b', label: 'B', content: '5', contentRich: undefined, media: [] },
+    ]);
+    expect(JSON.stringify(result)).not.toContain('isCorrect');
+  });
 });

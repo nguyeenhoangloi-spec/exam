@@ -5,6 +5,7 @@ import api from '../../lib/api';
 import { Subject } from '../../types';
 import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
+import { Toast } from '../Toast';
 import { FileSpreadsheet, FileText, Download, X, Sparkles, UploadCloud } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { DynamicImage } from '../ui/DynamicImage';
@@ -410,11 +411,11 @@ export function QuestionImportWizard({
         {/* Metadata Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <div>
-            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Môn học *</label>
+            <label className="block text-[15px] font-medium text-slate-700 mb-1">Môn học *</label>
             <select
               value={meta.subjectId}
               onChange={(e) => updateMeta('subjectId', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               <option value="">-- Chọn Môn học --</option>
               {subjects.map((s) => (
@@ -426,11 +427,11 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Chương (Tùy chọn)</label>
+            <label className="block text-[15px] font-medium text-slate-700 mb-1">Chương (Tùy chọn)</label>
             <select
               value={meta.chapterId}
               onChange={(e) => updateMeta('chapterId', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               <option value="">-- Tất cả chương / Không phân chương --</option>
               {(subject?.chapters || []).map((ch: any) => (
@@ -442,11 +443,11 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Dạng câu hỏi *</label>
+            <label className="block text-[15px] font-medium text-slate-700 mb-1">Dạng câu hỏi *</label>
             <select
               value={meta.defaultType}
               onChange={(e) => updateMeta('defaultType', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               {types.map(([v, l]) => (
                 <option key={v} value={v}>
@@ -457,11 +458,11 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Độ khó mặc định *</label>
+            <label className="block text-[15px] font-medium text-slate-700 mb-1">Độ khó mặc định *</label>
             <select
               value={meta.defaultDifficulty}
               onChange={(e) => updateMeta('defaultDifficulty', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               {difficulties.map(([v, l]) => (
                 <option key={v} value={v}>
@@ -472,11 +473,11 @@ export function QuestionImportWizard({
           </div>
 
           <div>
-            <label className="block text-[15px] font-semibold text-slate-700 mb-1">Mức tư duy Bloom *</label>
+            <label className="block text-[15px] font-medium text-slate-700 mb-1">Mức tư duy Bloom *</label>
             <select
               value={meta.defaultBloomLevel}
               onChange={(e) => updateMeta('defaultBloomLevel', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               {blooms.map(([v, l]) => (
                 <option key={v} value={v}>
@@ -487,7 +488,7 @@ export function QuestionImportWizard({
           </div>
 
           <div className="flex items-center pt-5">
-            <label className="flex items-center gap-2 text-[13px] font-semibold text-slate-600 cursor-pointer">
+            <label className="flex items-center gap-2 text-[15px] font-medium text-slate-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={meta.applyDefaultsToMissingOnly}
@@ -503,15 +504,15 @@ export function QuestionImportWizard({
           <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-[18px] leading-[26px] font-semibold text-[#0F172A]">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
-                <p className="text-[14px] font-normal text-[#64748B]">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động sinh danh sách câu hỏi bám sát kiến thức.</p>
+                <h4 className="text-[18px] leading-[26px] font-semibold text-slate-900">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
+                <p className="text-[14px] font-normal text-slate-500">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động sinh danh sách câu hỏi bám sát kiến thức.</p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-[15px] font-medium text-[#0F172A] whitespace-nowrap">Số lượng:</label>
+                <label className="text-[15px] font-medium text-slate-900 whitespace-nowrap">Số lượng:</label>
                 <select
                   value={aiCount}
                   onChange={(e) => setAiCount(Number(e.target.value))}
-                  className="rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-[#0F172A] focus:border-blue-500 focus:outline-none cursor-pointer"
+                  className="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer"
                 >
                   <option value={3}>3 câu</option>
                   <option value={5}>5 câu</option>
@@ -523,12 +524,12 @@ export function QuestionImportWizard({
             </div>
 
             <div>
-              <label className="block text-[15px] font-medium text-[#0F172A] mb-1.5">
+              <label className="block text-[15px] font-medium text-slate-900 mb-1.5">
                 1. Tải lên tệp Đề cương / Bài giảng làm căn cứ (PDF, Word, TXT):
               </label>
               <label className="inline-flex items-center gap-3 cursor-pointer">
                 <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-medium text-[15px] transition shadow-xs">Choose File</span>
-                <span className="text-[15px] font-medium text-[#0F172A] truncate max-w-[320px]">
+                <span className="text-[15px] font-medium text-slate-900 truncate max-w-[320px]">
                   {file ? file.name : 'Chưa đính kèm tệp...'}
                 </span>
                 <input
@@ -544,7 +545,7 @@ export function QuestionImportWizard({
             </div>
 
             <div>
-              <label className="block text-[15px] font-medium text-[#0F172A] mb-1">
+              <label className="block text-[15px] font-medium text-slate-900 mb-1">
                 2. Nhập/Dán nội dung Đề cương hoặc Yêu cầu bổ sung cho AI:
               </label>
               <textarea
@@ -552,7 +553,7 @@ export function QuestionImportWizard({
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Dán nội dung đề cương chi tiết hoặc yêu cầu cụ thể (ví dụ: tập trung vào nội dung SQL JOIN, Indexing, Transaction...)"
-                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-medium text-[#0F172A] placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none resize-none"
+                className="w-full rounded-lg border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none resize-none"
               />
             </div>
 
@@ -625,7 +626,7 @@ export function QuestionImportWizard({
                       variant="ghost"
                       size="md"
                       onClick={template}
-                      leftIcon={<Download className="w-4 h-4 text-[#2563EB]" />}
+                      leftIcon={<Download className="w-4 h-4 text-primary-600" />}
                     >
                       Tải mẫu CSV
                     </Button>
@@ -656,7 +657,7 @@ export function QuestionImportWizard({
                     ? 'Hệ thống AI đang phân tích đề cương và sinh câu hỏi tự động...'
                     : 'Đang kiểm tra & phân tích dữ liệu...'}
               </span>
-        <span className="font-semibold text-[13px] text-[#2563EB]">
+        <span className="font-semibold text-[13px] text-primary-600">
                 {progress}%
               </span>
             </div>
@@ -675,24 +676,7 @@ export function QuestionImportWizard({
         )}
 
         {/* Toast Error Notification */}
-        {toast && (
-          <div
-            role="status"
-            aria-live="polite"
-            className="fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl px-4 py-3 text-white shadow-xl transition-all transform slide-in-from-bottom duration-300"
-            style={{ backgroundColor: '#EF4444' }}
-          >
-            <span className="text-sm font-semibold leading-5 flex-1">{toast}</span>
-            <button
-              type="button"
-              onClick={() => setToast('')}
-              className="ml-2 rounded-lg p-1 hover:bg-white/15 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 shrink-0 cursor-pointer"
-              aria-label="Đóng thông báo"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+        {toast && <Toast message={toast} type="error" onClose={() => setToast('')} />}
 
         {/* Preview Results */}
         {preview && (
@@ -717,7 +701,7 @@ export function QuestionImportWizard({
                       }`}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <label className="flex items-center gap-2 font-semibold text-slate-800 cursor-pointer">
+                      <label className="flex items-center gap-2 font-medium text-slate-800 cursor-pointer">
                         <input
                           type="checkbox"
                           disabled={r.errors.length > 0}
@@ -735,7 +719,7 @@ export function QuestionImportWizard({
                       </label>
 
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[13px] font-semibold text-[#475569]">
+                        <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[13px] font-semibold text-slate-600">
                           {q.type === 'ESSAY' ? 'Tự luận' : q.type === 'FILL_BLANK' ? 'Điền vào chỗ trống' : q.type === 'TRUE_FALSE' ? 'Đúng / Sai' : 'Trắc nghiệm'}
                         </span>
                         <span className="rounded-full bg-blue-100 border border-blue-200 px-2.5 py-0.5 text-[13px] font-semibold text-blue-800">
@@ -751,7 +735,7 @@ export function QuestionImportWizard({
                       value={q.content || ''}
                       onChange={(e) => editRow(r, 'content', e.target.value)}
                       rows={2}
-                      className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-800 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
                       placeholder="Nội dung câu hỏi..."
                     />
 
@@ -843,7 +827,7 @@ export function QuestionImportWizard({
                         value={q.explanation || ''}
                         onChange={(e) => editRow(r, 'explanation', e.target.value)}
                         rows={2}
-                        className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-lg border border-slate-200 bg-white p-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
                         placeholder={q.type === 'ESSAY' ? 'Đáp án mẫu hoặc hướng dẫn chấm tự luận...' : 'Giải thích đáp án...'}
                       />
                     </div>

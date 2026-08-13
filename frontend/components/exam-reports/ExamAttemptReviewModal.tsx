@@ -110,7 +110,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
  const diffLabel = q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình';
 
  return (
- <div className={`rounded-2xl border bg-white shadow-2xs overflow-hidden transition-all ${borderCls}`}>
+ <div className={`rounded-2xl border bg-white dark:bg-slate-900 shadow-2xs overflow-hidden transition-all ${borderCls}`}>
  <button
  type="button"
  onClick={() => setExpanded(!expanded)}
@@ -143,7 +143,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
  </button>
 
  {expanded && (
- <div className="border-t border-slate-100 p-4 pt-3.5 space-y-3 bg-slate-50/30 text-xs">
+ <div className="border-t border-slate-100 dark:border-slate-700 p-4 pt-3.5 space-y-3 bg-slate-50/30 dark:bg-slate-800/40 text-xs">
  <div className="flex items-center gap-2 flex-wrap">
  <span className="rounded-md bg-slate-100 text-slate-700 px-2.5 py-0.5 text-xs font-semibold border border-slate-200">
  {typeLabel}
@@ -183,7 +183,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
  return (
  <div
  key={bIdx}
- className="flex flex-wrap items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl text-xs"
+ className="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 rounded-xl text-xs"
  >
  <div className="flex items-center gap-2">
  <span className="font-semibold text-blue-600">Ô #{bIdx}:</span>
@@ -208,7 +208,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
  {q.type === 'ESSAY' && (
  <div className="space-y-2">
  <p className="text-xs font-semibold text-slate-700 tracking-wider">Bài làm tự luận của sinh viên:</p>
- <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-xs text-slate-900 whitespace-pre-wrap leading-relaxed min-h-[60px] tabular-nums">
+ <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3.5 text-xs text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed min-h-[60px] tabular-nums">
  {sel?.textAnswer || <span className="italic font-normal text-slate-400 font-sans">Sinh viên không nộp câu tự luận này</span>}
  </div>
  {showAnswer && sel?.teacherComment && (
@@ -279,7 +279,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  />
 
  {/* Main Modal Container */}
- <div className="relative z-[101] w-full max-w-3xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-150">
+  <div className="relative z-[101] w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-150">
  {/* ── 1. Modern Gradient Header (Matching ProfileDrawer & RegradeReviewDrawer) ── */}
 <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
  <div className="flex items-start justify-between gap-3">
@@ -320,7 +320,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  </div>
 
  {/* ── 2. Scrollable Body Content ── */}
- <div className="flex-1 overflow-y-auto bg-slate-50/50">
+  <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-950/40">
  {loading && (
  <div className="flex flex-col items-center justify-center gap-3 py-20">
  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -375,7 +375,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  </div>
 
  {/* Sub-info Badges */}
- <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs">
+  <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-2xs">
  <span className="flex items-center gap-1.5 font-semibold text-slate-800">
  <User className="w-4 h-4 text-blue-600" />
  {data.student?.className || data.student?.classCode || 'Chính quy'}
@@ -461,7 +461,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  </div>
 
  {/* ── 3. Standard Footer ── */}
- <div className="border-t border-slate-200 px-6 py-4 shrink-0 flex items-center justify-between gap-3 bg-slate-50">
+  <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4 shrink-0 flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900">
  {data?.questions?.some((q: any) => q.type === 'ESSAY') ? (
  <a href={`/teacher/essay-grading?attemptId=${attemptId}`}>
  <Button variant="primary" size="md" leftIcon={<FileText className="w-4 h-4" />}>

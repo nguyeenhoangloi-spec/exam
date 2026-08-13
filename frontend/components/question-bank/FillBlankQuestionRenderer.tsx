@@ -76,7 +76,7 @@ export function FillBlankQuestionRenderer({
                   onChange={(e) => onChange?.(blankIndex, e.target.value)}
                   placeholder={`[Ô #${blankIndex}]...`}
                   style={{ width: `${Math.max(120, (currentVal.length + 4) * 11)}px` }}
-                  className="inline-block px-3 py-1.5 text-sm font-semibold text-slate-900 bg-white border-2 border-blue-400 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
+                  className="inline-block px-3 py-1.5 text-[15px] font-medium text-slate-900 bg-white border-2 border-blue-400 rounded-lg outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
                 />
               </span>
             );
@@ -117,7 +117,7 @@ export function FillBlankQuestionRenderer({
                     value={val}
                     onChange={(e) => onChange?.(bIndex, e.target.value)}
                     placeholder={`Nhập câu trả lời cho Ô #${bIndex}...`}
-                    className="w-full text-xs font-semibold text-slate-900 bg-transparent outline-none"
+                    className="w-full text-[15px] font-normal text-slate-900 bg-transparent outline-none"
                   />
                 </div>
               );

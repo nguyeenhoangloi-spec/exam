@@ -65,7 +65,7 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
         ref={buttonRef}
         type="button"
         onClick={toggleMenu}
-        className="inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#334155] transition cursor-pointer"
+        className="inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
         title="Thao tác khác"
       >
         {trigger || <MoreHorizontal className="h-4 w-4" />}
@@ -81,7 +81,7 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
               bottom: coords.openUp ? `${window.innerHeight - coords.top}px` : 'auto',
               right: `${coords.right}px`,
             }}
-            className="z-[9999] w-48 rounded-[10px] border border-[#E2E8F0] bg-white p-1.5 shadow-xl text-sm font-medium text-[#334155] space-y-0.5 text-left animate-in fade-in zoom-in-95 duration-150"
+            className="z-[9999] w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-sm font-medium text-slate-700 space-y-0.5 text-left animate-in fade-in zoom-in-95 duration-150"
           >
             {children(() => setIsOpen(false))}
           </div>,

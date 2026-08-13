@@ -72,22 +72,22 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
             >
               {/* Left icon & text */}
               <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#2563EB] group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-primary-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150">
                   <Icon className="h-4.5 w-4.5" />
                 </div>
                 <div className="min-w-0 leading-tight">
-                  <h4 className="text-[15px] font-medium text-[#0F172A] dark:text-slate-100 truncate group-hover:text-blue-600 transition-colors">{task.title}</h4>
-                  <p className="text-[13px] font-normal text-[#64748B] dark:text-slate-400 truncate mt-0.5">{task.subtitle}</p>
+                  <h4 className="text-[15px] font-medium text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 transition-colors">{task.title}</h4>
+                  <p className="text-[13px] font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">{task.subtitle}</p>
                 </div>
               </div>
 
               {/* Right count, priority badge, arrow */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[15px] font-semibold text-[#0F172A] dark:text-slate-200">{task.count}</span>
+                <span className="text-[15px] font-semibold text-slate-900 dark:text-slate-200">{task.count}</span>
                 <Badge tone={task.tone} size="xs">
                   {task.priority}
                 </Badge>
-                <ChevronRight className="h-4 w-4 text-[#64748B] group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="h-4 w-4 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </button>
           );
@@ -99,9 +99,10 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
         <button
           type="button"
           onClick={() => router.push('/question-bank?status=PENDING')}
-          className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+          className="inline-flex items-center gap-1 text-[14px] leading-5 font-medium text-primary-600 hover:text-primary-700 transition cursor-pointer select-none"
         >
-          Xem tất cả công việc cần xử lý →
+          <span>Xem tất cả công việc cần xử lý</span>
+          <ChevronRight className="h-4 w-4 text-primary-600" />
         </button>
       </div>
     </div>

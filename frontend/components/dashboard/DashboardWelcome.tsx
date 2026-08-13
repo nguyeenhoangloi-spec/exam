@@ -23,7 +23,7 @@ export function DashboardWelcome({
   const displayPendingCount = pendingQuestionCount ?? 0;
 
   return (
-    <div className="rounded-2xl bg-[#1E40AF] border border-white/10 px-6 py-5 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="rounded-2xl bg-primary-800 border border-white/10 px-6 py-5 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       {/* Text */}
       <div className="space-y-1">
         <h2 className="text-xl font-semibold text-white tracking-tight leading-tight">
@@ -51,7 +51,7 @@ export function DashboardWelcome({
           <button
             type="button"
             onClick={onExportPDF}
-            className="flex items-center gap-1.5 rounded-xl bg-white text-[#1E40AF] hover:bg-blue-50 px-4 py-2 text-xs font-medium transition active:scale-95 cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 rounded-xl bg-white text-primary-800 hover:bg-blue-50 px-4 py-2 text-xs font-medium transition active:scale-95 cursor-pointer shadow-sm"
             title="Xuất Báo cáo PDF"
           >
             <FileText className="h-3.5 w-3.5" />

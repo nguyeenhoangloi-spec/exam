@@ -66,7 +66,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  />
 
  {/* Right Drawer Container */}
- <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-[620px] flex-col bg-white shadow-2xl transition-transform duration-300 border-l border-slate-200 animate-slide-left">
+  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-[620px] flex-col bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-300 border-l border-slate-200 dark:border-slate-700 animate-slide-left">
  {/* ── 1. Modern Gradient Header (Matching ProfileDrawer & RegradeReviewDrawer) ── */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
             <div className="flex items-start justify-between gap-3">
@@ -102,9 +102,9 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  </div>
 
  {/* ── 2. Scrollable Content Body ── */}
- <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 text-xs">
+  <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/40 text-xs">
  {/* Card 1: Trạng thái & Nội dung câu hỏi */}
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
  <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Nội dung câu hỏi</h3>
  <QuestionStatusBadge status={question.status || 'APPROVED'} />
@@ -117,7 +117,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  {/* Card 2: Media Attachments (if available) */}
  {question.media?.length ? (
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Media đính kèm</h3>
  <div className="flex flex-wrap gap-3">
  {question.media.map((media) => {
@@ -137,7 +137,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  <video src={fullUrl} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
  <div className="absolute inset-0 flex items-center justify-center">
  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-lg group-hover:scale-110 transition">
- <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 text-[#2563EB] ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
+ <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 text-primary-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
  </span>
  </div>
  </button>
@@ -184,7 +184,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  ) : null}
 
  {/* Card 3: Options & Correct Answer / Explanation */}
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Danh sách đáp án</h3>
  {question.options && question.options.length > 0 ? (
  <div className="space-y-2.5">
@@ -224,7 +224,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  </div>
 
  {/* Card 4: Metadata Grid */}
- <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3.5 shadow-2xs">
+  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Thông tin chi tiết</h3>
  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
  {/* Mã câu hỏi */}
@@ -309,7 +309,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  </div>
 
  {/* ── 3. Standard Footer ── */}
- <div className="border-t border-slate-200 p-4 bg-slate-50 px-6 shrink-0 flex items-center justify-end">
+  <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-900 px-6 shrink-0 flex items-center justify-end">
  <Button
  variant="secondary"
  size="md"
