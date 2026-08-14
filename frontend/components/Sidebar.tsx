@@ -462,10 +462,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Text — ẩn bằng overflow-hidden, không bao giờ unmount khỏi DOM để chống nhảy layout */}
           <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100 leading-tight whitespace-nowrap">
+            <p className="truncate text-[13px] font-medium text-slate-800 dark:text-slate-100 leading-tight whitespace-nowrap">
               {displayName}
             </p>
-            <p className="truncate text-[12px] font-medium text-primary-600 dark:text-blue-400 leading-tight whitespace-nowrap">
+            <p className="truncate text-[12px] font-normal text-primary-600 dark:text-blue-400 leading-tight whitespace-nowrap">
               {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
             </p>
           </div>
@@ -484,12 +484,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             {/* Header profile info */}
             <div className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-medium text-xs shadow-xs">
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
-                <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                <p className="truncate text-xs font-medium text-slate-800 dark:text-slate-100">{displayName}</p>
+                <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-normal flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   Đang trực tuyến
                 </p>
@@ -501,7 +501,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/profile"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 <span>Hồ sơ cá nhân</span>
@@ -510,7 +510,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/settings"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 <span>Cài đặt hệ thống</span>
@@ -519,7 +519,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/contact"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 <span>Trung tâm hỗ trợ</span>
@@ -528,7 +528,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 {isDark ? (
                   <Sun className="h-4 w-4 text-amber-400" />
@@ -546,7 +546,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   setShowUserMenu(false);
                   setShowLogoutConfirm(true);
                 }}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-rose-600 font-medium hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
               >
                 <LogOut className="h-4 w-4 text-rose-600" />
                 <span>Đăng xuất</span>
