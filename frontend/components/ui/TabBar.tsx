@@ -6,6 +6,7 @@ export interface TabItem<T extends string = string> {
   key: T;
   label: string;
   count?: number;
+  icon?: React.ReactNode;
 }
 
 interface TabBarProps<T extends string = string> {
@@ -34,20 +35,24 @@ export function TabBar<T extends string = string>({
                 onChange(tab.key);
               });
             }}
-            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-[15px] font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none ${
-              isActive ? 'text-primary-600 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-base font-medium transition-colors duration-150 cursor-pointer whitespace-nowrap shrink-0 select-none ${
+              isActive
+                ? 'text-primary-600 dark:text-blue-400 font-semibold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
+            {tab.icon && <span className="shrink-0">{tab.icon}</span>}
             <span>{tab.label}</span>
-            {tab.count !== undefined && (
+
+            {typeof tab.count === 'number' && (
               <span
-                className={`rounded-xl px-2.5 py-0.5 text-[13px] font-semibold transition ${
+                className={`rounded-xl px-2.5 py-0.5 text-xs font-semibold transition-colors duration-150 ${
                   isActive
-                    ? 'bg-blue-50 text-primary-600 dark:bg-blue-950/40 dark:text-blue-300'
-                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-primary-600 dark:text-blue-400'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'
                 }`}
               >
-                ({tab.count.toLocaleString('vi-VN')})
+                {tab.count.toLocaleString('vi-VN')}
               </span>
             )}
 

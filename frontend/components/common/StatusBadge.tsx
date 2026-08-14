@@ -92,7 +92,7 @@ export function StatusBadge({ status, customLabel, className = '', variant = 'do
   return (
     <span
       className={[
-        'inline-flex items-center gap-[6px] text-[13px] font-semibold leading-5 whitespace-nowrap select-none',
+        'inline-flex items-center gap-[6px] text-xs font-semibold leading-5 whitespace-nowrap select-none',
         config.textClass,
         className,
       ].join(' ')}

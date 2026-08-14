@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../../../components/ui/FilterSelect';
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -215,23 +216,25 @@ export default function StudentExamSchedulePage() {
  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
  >
  <div className="flex items-start justify-between gap-3">
- <div className="space-y-1">
- <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
+ <div className="space-y-1 min-w-0">
+ <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
  {label}
  </span>
- <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
+ <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
  {value}
- </p>
- </div>
-
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
- <Icon className="h-5 w-5" />
  </div>
  </div>
 
- <span className="text-[13px] font-normal text-slate-500 mt-2">
+ <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
+ <Icon className="h-5 w-5 stroke-[2]" />
+ </div>
+ </div>
+
+ <div className="mt-2.5 pt-2 border-t border-slate-100/80">
+ <span className="text-[13px] font-normal text-slate-500 block truncate">
  {subtext}
  </span>
+ </div>
  </div>
  ))}
  </div>
@@ -250,15 +253,15 @@ export default function StudentExamSchedulePage() {
  />
 
  <div className="flex items-center gap-2.5 w-full lg:w-auto shrink-0 pb-1 lg:pb-0">
- <select
+ <FilterSelect
  value={statusFilter}
  onChange={(e) => setStatusFilter(e.target.value)}
- className="h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-3 text-[15px] font-medium text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 transition shadow-2xs"
+ className="h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3 text-[15px] font-medium text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 transition shadow-2xs"
  >
  <option value="ALL">Tất cả thời gian</option>
  <option value="UPCOMING">Sắp diễn ra</option>
  <option value="COMPLETED">Đã kết thúc</option>
- </select>
+ </FilterSelect>
 
  <div className="relative w-full sm:w-64">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
@@ -267,7 +270,7 @@ export default function StudentExamSchedulePage() {
  placeholder="Tìm môn thi, kỳ thi, phòng..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="h-9 w-full rounded-lg border border-slate-200 bg-white hover:bg-slate-50/50 pl-9 pr-8 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs placeholder:text-slate-400"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-white hover:bg-slate-50/50 pl-9 pr-8 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs placeholder:text-slate-400"
  />
  {searchQuery && (
  <button

@@ -206,7 +206,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                 <button
                   type="button"
                   onClick={handleAddCriterion}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition"
                 >
                   <Plus className="w-3.5 h-3.5" /> Thêm tiêu chí
                 </button>
@@ -222,7 +222,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                         placeholder="Nhập tên tiêu chí..."
                         value={c.label}
                         onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-normal focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-normal focus:outline-none focus:border-blue-500"
                       />
                     </div>
                     <div className="col-span-3 space-y-1">
@@ -234,7 +234,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                         max={100}
                         value={c.maxScore}
                         onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-medium tabular-nums focus:outline-none focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-medium tabular-nums focus:outline-none focus:border-blue-500"
                       />
                     </div>
                     <div className="col-span-3 flex justify-between items-end">
@@ -245,7 +245,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                           min={1}
                           value={c.sortOrder}
                           onChange={(e) => handleFieldChange(idx, 'sortOrder', Number(e.target.value))}
-                           className="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-2 text-[15px] font-normal text-center focus:outline-none focus:border-blue-500"
+                           className="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2 py-2 text-[15px] font-normal text-center focus:outline-none focus:border-blue-500"
                         />
                       </div>
                       {criteria.length > 1 && (
@@ -268,7 +268,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                       placeholder="Mô tả hướng dẫn tiêu chí chấm..."
                       value={c.description}
                       onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>

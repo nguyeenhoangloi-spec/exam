@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 /* eslint-disable react/no-unescaped-entities */
 
 import React, { useState, useMemo } from 'react';
@@ -379,7 +380,7 @@ export default function ContactSupportPage() {
                       key={tag}
                       type="button"
                       onMouseDown={() => setSearchQuery(tag)}
-                      className="rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[12px] font-semibold px-2 py-1 transition cursor-pointer"
+                      className="rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[12px] font-semibold px-2 py-1 transition cursor-pointer"
                     >
                       #{tag}
                     </button>
@@ -592,7 +593,7 @@ export default function ContactSupportPage() {
                 <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-200">
                   Vai trò hệ thống
                 </label>
-                <select
+                <FilterSelect containerClassName="w-full"
                   value={role}
                   onChange={(e: any) => setRole(e.target.value)}
                   className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
@@ -600,7 +601,7 @@ export default function ContactSupportPage() {
                   <option value="STUDENT">Sinh viên</option>
                   <option value="TEACHER">Giảng viên</option>
                   <option value="OTHER">Cán bộ / Khác</option>
-                </select>
+                </FilterSelect>
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import api from '../../../lib/api';
@@ -73,6 +73,11 @@ export default function RegradeManagementPage() {
   useEffect(() => {
     fetchAppeals();
   }, [fetchAppeals]);
+
+  const handleRefresh = async () => {
+    await fetchAppeals();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
 
   const openReviewDrawer = (item: GradeAppealItem) => {
     setSelectedAppeal(item);
@@ -272,7 +277,7 @@ export default function RegradeManagementPage() {
 
       {/* ── 1. Page Header ── */}
       <RegradeHeader
-        onRefresh={fetchAppeals}
+        onRefresh={handleRefresh}
         onExportExcel={exportExcel}
         onPrintReport={handlePrintReport}
         loading={loading}
@@ -306,7 +311,7 @@ export default function RegradeManagementPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-9 w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -364,7 +369,7 @@ export default function RegradeManagementPage() {
         onViewModeChange={setViewMode}
         visibleColumns={visibleColumns}
         onColumnToggle={handleColumnToggle}
-        onRefresh={fetchAppeals}
+        onRefresh={handleRefresh}
       />
 
       {/* ── 5. Main Data Table Container ── */}

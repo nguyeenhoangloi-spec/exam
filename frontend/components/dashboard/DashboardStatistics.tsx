@@ -117,20 +117,19 @@ export function DashboardStatistics({
             }}
             className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
           >
-            {/* Top row: Icon */}
-            <div className="flex items-center justify-between gap-2">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${spec.iconBg} ${spec.iconColor}`}>
-                <Icon className="h-5 w-5 stroke-[2.2]" />
+            {/* Top row: Title + Big Value on Left, Icon on Right */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1 min-w-0">
+                <span className="text-[13px] font-semibold text-slate-500 block truncate">
+                  {spec.title}
+                </span>
+                <div className="text-[32px] font-bold leading-[38px] tracking-tight text-slate-900">
+                  {formatNumber(spec.value)}
+                </div>
               </div>
-            </div>
 
-            {/* Middle: Title & Main Big Value */}
-            <div className="mt-3">
-              <span className="text-[13px] font-semibold text-slate-500 block truncate">
-                {spec.title}
-              </span>
-              <div className="text-[32px] font-bold leading-[38px] tracking-tight text-slate-900 mt-1">
-                {formatNumber(spec.value)}
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${spec.iconBg} ${spec.iconColor}`}>
+                <Icon className="h-5 w-5 stroke-[2.2]" />
               </div>
             </div>
 

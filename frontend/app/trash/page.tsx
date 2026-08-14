@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Check } from 'lucide-react';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SortDropdown } from '../../components/ui/SortDropdown';
+import { ColumnToggleDropdown } from '../../components/ui/ColumnToggleDropdown';
 
 interface TrashItem {
   id: number | string;
@@ -115,6 +117,20 @@ function TrashPageContent() {
       setLoading(false);
     }
   }, [activeCategory, search]);
+
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefreshClick = async () => {
+    setIsSpinning(true);
+    try {
+      await Promise.all([fetchStats(), fetchItems()]);
+      setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTimeout(() => setIsSpinning(false), 600);
+    }
+  };
 
   const sortedItems = useMemo(() => {
     let result = [...items];
@@ -293,103 +309,111 @@ function TrashPageContent() {
           </Button>
           <button
             type="button"
-            onClick={() => { fetchItems(); fetchStats(); }}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
+            onClick={handleRefreshClick}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer select-none shrink-0"
             title="Làm mới dữ liệu"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* 4 Thẻ Thống Kê KPI Card (Đồng bộ 100% kích thước 40x40 và vị trí góc trên bên phải) */}
+      {/* 4 Thẻ Thống Kê KPI Card (Đồng bộ 100% chuẩn Golden Master) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Lịch thi đã xóa */}
         <button
           type="button"
           onClick={() => setActiveCategory('schedules')}
-          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'schedules'
+          className={`group flex flex-col justify-between p-4 rounded-xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'schedules'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
-              : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
+              : 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-md'
             }`}
         >
           <div className="flex items-start justify-between gap-3 w-full">
-            <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Lịch thi đã xóa</span>
-              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{stats.schedules}</p>
+            <div className="space-y-1 min-w-0">
+              <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">Lịch thi đã xóa</span>
+              <div className="text-[32px] font-bold leading-[38px] tracking-tight tabular-nums text-slate-900">{stats.schedules}</div>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-105 ${activeCategory === 'schedules' ? 'bg-primary-600 text-white border-primary-600' : 'bg-blue-50 text-blue-600 border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
-              <CalendarCheck className="w-5 h-5" />
+              <CalendarCheck className="h-5 w-5 stroke-[2]" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Lịch thi khảo thí</span>
+          <div className="mt-2.5 pt-2 border-t border-slate-100/80 w-full">
+            <span className="text-[13px] font-normal text-slate-500 block truncate">Lịch thi khảo thí</span>
+          </div>
         </button>
 
         {/* Card 2: Đề thi đã xóa */}
         <button
           type="button"
           onClick={() => setActiveCategory('papers')}
-          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'papers'
+          className={`group flex flex-col justify-between p-4 rounded-xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'papers'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
-              : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
+              : 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-md'
             }`}
         >
           <div className="flex items-start justify-between gap-3 w-full">
-            <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Đề thi đã xóa</span>
-              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{stats.papers}</p>
+            <div className="space-y-1 min-w-0">
+              <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">Đề thi đã xóa</span>
+              <div className="text-[32px] font-bold leading-[38px] tracking-tight tabular-nums text-slate-900">{stats.papers}</div>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-105 ${activeCategory === 'papers' ? 'bg-primary-600 text-white border-primary-600' : 'bg-blue-50 text-blue-600 border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
-              <FileText className="w-5 h-5" />
+              <FileText className="h-5 w-5 stroke-[2]" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Bộ đề thi trắc nghiệm / tự luận</span>
+          <div className="mt-2.5 pt-2 border-t border-slate-100/80 w-full">
+            <span className="text-[13px] font-normal text-slate-500 block truncate">Bộ đề thi trắc nghiệm / tự luận</span>
+          </div>
         </button>
 
         {/* Card 3: Ngân hàng câu hỏi */}
         <button
           type="button"
           onClick={() => setActiveCategory('questions')}
-          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'questions'
+          className={`group flex flex-col justify-between p-4 rounded-xl border text-left transition cursor-pointer shadow-2xs ${activeCategory === 'questions'
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
-              : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
+              : 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-md'
             }`}
         >
           <div className="flex items-start justify-between gap-3 w-full">
-            <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Câu hỏi đã xóa</span>
-              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{stats.questions}</p>
+            <div className="space-y-1 min-w-0">
+              <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">Câu hỏi đã xóa</span>
+              <div className="text-[32px] font-bold leading-[38px] tracking-tight tabular-nums text-slate-900">{stats.questions}</div>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-105 ${activeCategory === 'questions' ? 'bg-primary-600 text-white border-primary-600' : 'bg-blue-50 text-blue-600 border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
-              <HelpCircle className="w-5 h-5" />
+              <HelpCircle className="h-5 w-5 stroke-[2]" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Ngân hàng câu hỏi</span>
+          <div className="mt-2.5 pt-2 border-t border-slate-100/80 w-full">
+            <span className="text-[13px] font-normal text-slate-500 block truncate">Ngân hàng câu hỏi</span>
+          </div>
         </button>
 
         {/* Card 4: Tài khoản / Khác */}
         <button
           type="button"
           onClick={() => setActiveCategory('users')}
-          className={`group flex flex-col justify-between p-4 rounded-2xl border text-left transition cursor-pointer shadow-2xs ${['users', 'subjects', 'classes'].includes(activeCategory)
+          className={`group flex flex-col justify-between p-4 rounded-xl border text-left transition cursor-pointer shadow-2xs ${['users', 'subjects', 'classes'].includes(activeCategory)
               ? 'bg-blue-50/70 border-blue-400 ring-2 ring-blue-500/20'
-              : 'bg-white border-slate-200/80 hover:border-blue-200 hover:bg-slate-50/60'
+              : 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-md'
             }`}
         >
           <div className="flex items-start justify-between gap-3 w-full">
-            <div className="space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 tracking-wider block">Tài khoản / khác</span>
-              <p className="text-[32px] font-bold leading-[38px] text-slate-900">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</p>
+            <div className="space-y-1 min-w-0">
+              <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">Tài khoản / khác</span>
+              <div className="text-[32px] font-bold leading-[38px] tracking-tight tabular-nums text-slate-900">{(stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)}</div>
             </div>
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-primary-600 text-white' : 'bg-blue-50 text-primary-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-105 ${['users', 'subjects', 'classes'].includes(activeCategory) ? 'bg-primary-600 text-white border-primary-600' : 'bg-blue-50 text-blue-600 border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
               }`}>
-              <Users className="w-5 h-5" />
+              <Users className="h-5 w-5 stroke-[2]" />
             </div>
           </div>
-          <span className="text-[13px] font-normal text-slate-500 mt-2 block">Người dùng, Môn học, Lớp</span>
+          <div className="mt-2.5 pt-2 border-t border-slate-100/80 w-full">
+            <span className="text-[13px] font-normal text-slate-500 block truncate">Người dùng, Môn học, Lớp</span>
+          </div>
         </button>
       </div>
 
@@ -403,7 +427,7 @@ function TrashPageContent() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
-            className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+            className="h-9 w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
           />
           {search && (
             <button
@@ -456,66 +480,22 @@ function TrashPageContent() {
             />
 
             {/* Column Selector */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
-              >
-                <SlidersHorizontal className="h-4 w-4 text-primary-600" />
-                <span>Chọn cột</span>
-                <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
-              </button>
-
-              {openColumnMenu && (
-                <div
-                  className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-[14px] space-y-2"
-                  onMouseLeave={() => setOpenColumnMenu(false)}
-                >
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                    <span className="font-semibold text-slate-900 text-[14px]">Hiển thị cột</span>
-                    <span className="text-[13px] text-slate-500 font-normal">Click để ẩn/hiện</span>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 rounded-lg">
-                      <span>Thời điểm xóa</span>
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns.deletedAt}
-                        onChange={() => setVisibleColumns((prev) => ({ ...prev, deletedAt: !prev.deletedAt }))}
-                        className="rounded text-primary-600 cursor-pointer h-4 w-4"
-                      />
-                    </label>
-                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 rounded-lg">
-                      <span>Tự động hủy</span>
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns.expiresIn}
-                        onChange={() => setVisibleColumns((prev) => ({ ...prev, expiresIn: !prev.expiresIn }))}
-                        className="rounded text-primary-600 cursor-pointer h-4 w-4"
-                      />
-                    </label>
-                    <label className="flex items-center justify-between px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 rounded-lg">
-                      <span>Người xóa</span>
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns.deletedBy}
-                        onChange={() => setVisibleColumns((prev) => ({ ...prev, deletedBy: !prev.deletedBy }))}
-                        className="rounded text-primary-600 cursor-pointer h-4 w-4"
-                      />
-                    </label>
-                  </div>
-                </div>
-              )}
-            </div>
+            <ColumnToggleDropdown
+              columns={[
+                { key: 'deletedAt', label: 'Thời điểm xóa' },
+                { key: 'expiresIn', label: 'Tự động hủy' },
+                { key: 'deletedBy', label: 'Người xóa' },
+              ]}
+              visibleColumns={visibleColumns}
+              onToggle={(key) => setVisibleColumns((prev: any) => ({ ...prev, [key]: !prev[key] }))}
+            />
 
             {/* View Mode Switcher 3 Icon */}
             <div className="flex items-center h-9 rounded-xl border border-slate-200 bg-white px-1 shadow-2xs gap-0.5">
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-primary-600' : 'text-slate-500 hover:text-slate-900'}`}
+                className={`h-9 w-9 flex items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200' : 'text-slate-400 hover:text-slate-700'}`}
                 title="Xem dạng danh sách"
               >
                 <List className="h-4 w-4" />
@@ -523,7 +503,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-primary-600' : 'text-slate-500 hover:text-slate-900'}`}
+                className={`h-9 w-9 flex items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200' : 'text-slate-400 hover:text-slate-700'}`}
                 title="Xem dạng lưới"
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -531,7 +511,7 @@ function TrashPageContent() {
               <button
                 type="button"
                 onClick={() => setViewMode('compact')}
-                className={`h-7 w-7 flex items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-primary-600' : 'text-slate-500 hover:text-slate-900'}`}
+                className={`h-9 w-9 flex items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200' : 'text-slate-400 hover:text-slate-700'}`}
                 title="Xem dạng thu gọn"
               >
                 <Layers className="h-4 w-4" />
@@ -540,11 +520,12 @@ function TrashPageContent() {
 
             {/* Refresh Button */}
             <button
-              onClick={() => fetchItems()}
-              className="h-9 w-9 flex items-center justify-center rounded-xl text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all active:scale-95 cursor-pointer select-none border border-slate-200 bg-white shadow-2xs"
-              title="Tải lại dữ liệu"
+              type="button"
+              onClick={handleRefreshClick}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+              title="Làm mới dữ liệu"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
             </button>
           </div>
         </div>
@@ -629,14 +610,101 @@ function TrashPageContent() {
               );
             })}
           </div>
+        ) : viewMode === 'compact' ? (
+          /* CHẾ ĐỘ XEM THẺ THANH NGANG THU GỌN (COMPACT CARD ROW MODE) */
+          <div className="space-y-2.5">
+            {paginatedItems.map((item) => {
+              const remainingDays = getRemainingDays(item.deletedAt);
+              const isSelected = selectedIds.includes(item.id);
+              const typeShort = item.type === 'schedules' ? 'LT' : item.type === 'papers' ? 'ĐT' : item.type === 'questions' ? 'CH' : item.type === 'users' ? 'TK' : item.type === 'subjects' ? 'MH' : 'TR';
+
+              return (
+                <div
+                  key={`${item.type}-${item.id}`}
+                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                    isSelected ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                  }`}
+                >
+                  {/* Left: Checkbox + Avatar Code Badge */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                      className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                    />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200/80">
+                      {typeShort}
+                    </div>
+
+                    {/* Middle: Title + SubTitle + Meta chips */}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[15px] font-semibold text-slate-900 truncate">
+                          {item.title}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md tabular-nums border border-slate-200">
+                          {categoryLabelMap[item.type] || item.type}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                        {item.subTitle && (
+                          <span className="text-slate-600 truncate max-w-sm">
+                            {item.subTitle}
+                          </span>
+                        )}
+                        <span className={`inline-flex items-center gap-1 font-medium ${
+                          remainingDays <= 5 ? 'text-danger-600' : 'text-warning-600'
+                        }`}>
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>Còn {remainingDays} ngày</span>
+                        </span>
+                        {item.deletedAt && (
+                          <span className="text-slate-400">
+                            Xóa lúc: {new Date(item.deletedAt).toLocaleString('vi-VN')}
+                          </span>
+                        )}
+                        {item.deletedBy && (
+                          <span className="text-slate-400">
+                            Bởi: <strong className="text-slate-600 font-medium">{item.deletedBy}</strong>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Actions */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleRestore(item)}
+                      title="Khôi phục dữ liệu"
+                      className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 select-none"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleHardDelete(item)}
+                      title="Xóa vĩnh viễn"
+                      className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 select-none"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          /* CHẾ ĐỘ XEM TABLE (LIST / COMPACT) */
+          /* CHẾ ĐỘ XEM TABLE (LIST MODE) */
           <div className="bg-white border border-slate-200/80 rounded-2xl shadow-2xs overflow-hidden">
              <div className="ui-table-wrap overflow-x-auto">
                <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
                 <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
                   <tr>
-                    <th className={`px-5 w-10 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>
+                    <th className="px-5 w-10 py-3.5">
                       <input
                         type="checkbox"
                         checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
@@ -644,11 +712,11 @@ function TrashPageContent() {
                         className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
-                    <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Nội dung / Dữ liệu đã xóa</th>
-                    {visibleColumns.deletedAt && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Thời điểm xóa</th>}
-                    {visibleColumns.expiresIn && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Tự động hủy</th>}
-                    {visibleColumns.deletedBy && <th className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Người xóa</th>}
-                    {visibleColumns.actions && <th className={`px-5 text-right ${viewMode === 'compact' ? 'py-2.5' : 'py-3.5'}`}>Thao tác</th>}
+                    <th className="px-5 py-3.5">Nội dung / Dữ liệu đã xóa</th>
+                    {visibleColumns.deletedAt && <th className="px-5 py-3.5">Thời điểm xóa</th>}
+                    {visibleColumns.expiresIn && <th className="px-5 py-3.5">Tự động hủy</th>}
+                    {visibleColumns.deletedBy && <th className="px-5 py-3.5">Người xóa</th>}
+                    {visibleColumns.actions && <th className="px-5 text-right py-3.5">Thao tác</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-normal">
@@ -661,7 +729,7 @@ function TrashPageContent() {
                         key={`${item.type}-${item.id}`}
                         className={`transition hover:bg-slate-50/60 ${isSelected ? 'bg-blue-50/50' : ''}`}
                       >
-                        <td className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                        <td className="px-5 py-4">
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -669,7 +737,7 @@ function TrashPageContent() {
                             className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
                           />
                         </td>
-                        <td className={`px-5 ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                        <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
                               <Trash2 className="w-4 h-4" />
@@ -681,12 +749,12 @@ function TrashPageContent() {
                           </div>
                         </td>
                         {visibleColumns.deletedAt && (
-                          <td className={`px-5 font-normal text-slate-700 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                          <td className="px-5 font-normal text-slate-700 whitespace-nowrap py-4">
                             {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
                           </td>
                         )}
                         {visibleColumns.expiresIn && (
-                          <td className={`px-5 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                          <td className="px-5 whitespace-nowrap py-4">
                             <span className={`inline-flex items-center gap-[6px] text-[15px] leading-[22px] font-medium ${remainingDays <= 5
                                 ? 'text-danger-600'
                                 : 'text-warning-600'
@@ -697,26 +765,26 @@ function TrashPageContent() {
                           </td>
                         )}
                         {visibleColumns.deletedBy && (
-                          <td className={`px-5 font-normal text-slate-700 whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                          <td className="px-5 font-normal text-slate-700 whitespace-nowrap py-4">
                             <span className="text-[15px] leading-[22px] font-medium text-slate-700">
                               {item.deletedBy}
                             </span>
                           </td>
                         )}
                         {visibleColumns.actions && (
-                          <td className={`px-5 text-right whitespace-nowrap ${viewMode === 'compact' ? 'py-2.5' : 'py-4'}`}>
+                          <td className="px-5 text-right whitespace-nowrap py-4">
                             <div className="inline-flex items-center gap-2">
                               <button
                                 onClick={() => handleRestore(item)}
                                 title="Khôi phục dữ liệu"
-                                className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 select-none"
+                                className="p-1.5 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 select-none"
                               >
                                 <RotateCcw className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleHardDelete(item)}
                                 title="Xóa vĩnh viễn"
-                                className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 select-none"
+                                className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 select-none"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>

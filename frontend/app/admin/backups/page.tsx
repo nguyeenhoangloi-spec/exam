@@ -32,6 +32,12 @@ import {
     User as UserIcon,
     X,
     XCircle,
+    SlidersHorizontal,
+    ChevronDown,
+    List,
+    LayoutGrid,
+    Layers,
+    Check,
 } from 'lucide-react';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -40,8 +46,11 @@ import { Button } from '../../../components/ui/Button';
 import { Modal } from '../../../components/Modal';
 import { Toast } from '../../../components/Toast';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../components/CriticalConfirmModal';
+import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { StatusBadge } from '../../../components/common/StatusBadge';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 
 type BackupJobType = 'FULL' | 'DATABASE' | 'UPLOADS' | 'SAFETY';
 type BackupStatus = 'QUEUED' | 'RUNNING' | 'VERIFYING' | 'SUCCEEDED' | 'FAILED' | 'VERIFY_FAILED' | 'CANCELLED';
@@ -154,6 +163,18 @@ export default function BackupsPage() {
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
 
+    // Toolbar Controls State
+    const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+    const [openColumnMenu, setOpenColumnMenu] = useState(false);
+    const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+        snapshotId: true,
+        type: true,
+        size: true,
+        status: true,
+        createdAt: true,
+        actions: true,
+    });
+
     // Drawer Detail State
     const [detailJob, setDetailJob] = useState<BackupJob | null>(null);
     const [copiedChecksum, setCopiedChecksum] = useState(false);
@@ -217,6 +238,15 @@ export default function BackupsPage() {
         const timer = window.setInterval(() => void fetchData(true), 5000);
         return () => window.clearInterval(timer);
     }, [overview?.running, fetchData]);
+
+    const [isSpinning, setIsSpinning] = useState(false);
+
+    const handleRefreshClick = async () => {
+        setIsSpinning(true);
+        await fetchData(true);
+        setToast({ message: 'Đã cập nhật dữ liệu sao lưu mới nhất!', type: 'success' });
+        setTimeout(() => setIsSpinning(false), 600);
+    };
 
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
@@ -341,6 +371,7 @@ export default function BackupsPage() {
         return request.target === 'PRODUCTION' && request.requestedBy?.id === currentUser?.id;
     };
 
+    {/* Shared control sizing is applied globally; keep this page behavior unchanged. */}
     return (
         <div className="w-full px-6 py-6 space-y-5">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
@@ -500,7 +531,7 @@ export default function BackupsPage() {
                         placeholder="Tìm theo Snapshot ID, mã lỗi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-9 text-[15px] font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-10 text-[15px] font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
                     />
                     {search && (
                         <button
@@ -593,36 +624,90 @@ export default function BackupsPage() {
                 </div>
             </div>
 
-            {/* Table Toolbar */}
+            {/* Table Toolbar Action Group */}
             <div className="flex flex-wrap items-center justify-between gap-3 py-1">
                 <span className="text-xs font-semibold text-slate-600">
                     Hiển thị <span className="font-semibold text-slate-900">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
                 </span>
 
                 <div className="flex items-center gap-2">
-                    <FilterSelect
-                        size="sm"
+                    {/* Sort */}
+                    <SortDropdown
                         value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
-                    >
-                        <option value="newest">Mới nhất</option>
-                        <option value="oldest">Cũ nhất</option>
-                    </FilterSelect>
+                        onChange={(val) => setSortOrder(val as 'newest' | 'oldest')}
+                        options={[
+                            { value: 'newest', label: 'Mới nhất' },
+                            { value: 'oldest', label: 'Cũ nhất' },
+                        ]}
+                    />
+
+                    {/* Column Selector */}
+                    <ColumnToggleDropdown
+                        columns={[
+                            { key: 'snapshotId', label: 'Mã Snapshot' },
+                            { key: 'type', label: 'Loại sao lưu' },
+                            { key: 'size', label: 'Kích thước' },
+                            { key: 'status', label: 'Trạng thái' },
+                            { key: 'createdAt', label: 'Thời gian tạo' },
+                            { key: 'actions', label: 'Thao tác' },
+                        ]}
+                        visibleColumns={visibleColumns}
+                        onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
+                    />
+
+                    {/* View Mode Toggle Pill */}
+                    <div className="flex h-10 items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
+                        <button
+                            type="button"
+                            onClick={() => setViewMode('list')}
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
+                                viewMode === 'list'
+                                    ? 'bg-white text-blue-600 shadow-xs font-semibold'
+                                    : 'text-slate-500 hover:text-slate-800'
+                            }`}
+                            title="Xem dạng danh sách"
+                        >
+                            <List className="h-4 w-4" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setViewMode('grid')}
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
+                                viewMode === 'grid'
+                                    ? 'bg-white text-blue-600 shadow-xs font-semibold'
+                                    : 'text-slate-500 hover:text-slate-800'
+                            }`}
+                            title="Xem dạng lưới"
+                        >
+                            <LayoutGrid className="h-4 w-4" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setViewMode('compact')}
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
+                                viewMode === 'compact'
+                                    ? 'bg-white text-blue-600 shadow-xs font-semibold'
+                                    : 'text-slate-500 hover:text-slate-800'
+                            }`}
+                            title="Xem dạng thẻ gọn"
+                        >
+                            <Layers className="h-4 w-4" />
+                        </button>
+                    </div>
 
                     <button
                         type="button"
-                        onClick={() => void fetchData(true)}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition cursor-pointer active:scale-95 shadow-2xs select-none"
+                        onClick={handleRefreshClick}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
                         title="Làm mới dữ liệu"
                     >
-                        <RefreshCw className="h-3.5 w-3.5" />
+                        <RefreshCw className={`h-4 w-4 ${loading || refreshing || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
                     </button>
                 </div>
             </div>
 
             {/* Main Snapshot Table */}
             {sortedJobs.length === 0 ? (
-                /* Empty State */
                 <div className="rounded-2xl border border-slate-200/90 bg-white p-12 shadow-2xs text-center space-y-5">
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100">
                         <DatabaseBackup className="h-8 w-8" />
@@ -650,8 +735,160 @@ export default function BackupsPage() {
                 </div>
             ) : (
                 /* Data Grid Table */
+                viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                        {sortedJobs.map((job) => (
+                            <article key={job.id} className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition hover:shadow-md">
+                                <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setDetailJob(job)}
+                                        className="min-w-0 truncate text-left text-[15px] font-medium text-slate-900 hover:text-blue-700"
+                                    >
+                                        <IdentifierBadge title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                    </button>
+                                    {getBackupStatusBadge(job.status)}
+                                </div>
+                                <div className="mt-3 grid grid-cols-2 gap-3 text-[14px]">
+                                    <div>
+                                        <p className="text-slate-500">Loại</p>
+                                        <p className="mt-0.5 font-medium text-slate-900">{job.type}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500">Dung lượng</p>
+                                        <p className="mt-0.5 font-medium text-slate-900">{formatBytes(job.sizeBytes)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500">Hoàn thành</p>
+                                        <p className="mt-0.5 font-medium text-slate-900">{formatDate(job.completedAt || job.createdAt)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500">Phương thức</p>
+                                        <p className="mt-0.5 font-medium text-slate-900">{job.initiatedBy?.username || 'Tự động'}</p>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex items-center justify-end gap-1 border-t border-slate-100 pt-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setDetailJob(job)}
+                                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600"
+                                        title="Xem chi tiết bản sao lưu"
+                                    >
+                                        <Eye className="h-4 w-4" />
+                                    </button>
+                                    {job.status === 'SUCCEEDED' && job.retained !== false && (
+                                        <button
+                                            type="button"
+                                            onClick={() => openRestoreModal(job)}
+                                            className="flex h-9 w-9 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50"
+                                            title="Khôi phục bản sao lưu này"
+                                        >
+                                            <RotateCcw className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                ) : viewMode === 'compact' ? (
+                    <div className="space-y-2.5">
+                        {sortedJobs.map((job) => (
+                            <div
+                                key={job.id}
+                                className="flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5"
+                            >
+                                {/* Left: Avatar Icon */}
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
+                                        <Database className="h-5 w-5 text-blue-600" />
+                                    </div>
+
+                                    {/* Middle: SnapshotId + Type + Meta chips */}
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <button
+                                                type="button"
+                                                onClick={() => setDetailJob(job)}
+                                                className="text-[15px] font-semibold text-slate-900 truncate hover:text-blue-600 transition cursor-pointer text-left"
+                                            >
+                                                <IdentifierBadge title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                            </button>
+                                            <span
+                                                className={`text-xs font-semibold px-2 py-0.5 rounded-md tabular-nums border ${
+                                                    job.type === 'FULL'
+                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                        : job.type === 'DATABASE'
+                                                            ? 'bg-blue-50 text-blue-700 border-blue-200/80'
+                                                            : job.type === 'UPLOADS'
+                                                                ? 'bg-sky-50 text-sky-700 border-sky-200/80'
+                                                                : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                                                }`}
+                                            >
+                                                {job.type}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                                            <span className="flex items-center gap-1">
+                                                <HardDrive className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <span className="text-slate-800 font-medium">{formatBytes(job.sizeBytes)}</span>
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                {job.initiatedBy ? (
+                                                    <>
+                                                        <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <span className="text-slate-700 font-medium">{job.initiatedBy.username}</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <span>Tự động (Cron)</span>
+                                                    </>
+                                                )}
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <span>{formatDate(job.completedAt || job.createdAt)}</span>
+                                            </span>
+                                            {job.checksum && (
+                                                <span className="text-slate-400 tabular-nums">
+                                                    SHA-256: {job.checksum.slice(0, 8)}…
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right: Status & Actions */}
+                                <div className="flex items-center gap-2 shrink-0">
+                                    {getBackupStatusBadge(job.status)}
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setDetailJob(job)}
+                                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
+                                        title="Xem chi tiết bản sao lưu"
+                                    >
+                                        <Eye className="h-4 w-4" />
+                                    </button>
+
+                                    {job.status === 'SUCCEEDED' && job.retained !== false && (
+                                        <button
+                                            type="button"
+                                            onClick={() => openRestoreModal(job)}
+                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
+                                            title="Khôi phục bản sao lưu này"
+                                        >
+                                            <RotateCcw className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-                    <table className="w-full text-left border-collapse text-[15px] text-slate-700">
+                    <table className="w-full text-left border-collapse text-slate-700 text-[15px]">
                         <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
                             <tr>
                                 <th scope="col" className="p-3.5 pl-4 min-w-[200px]">Snapshot ID</th>
@@ -672,7 +909,7 @@ export default function BackupsPage() {
                                             onClick={() => setDetailJob(job)}
                                             className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
                                         >
-                                            {job.snapshotId}
+                                            <IdentifierBadge title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
                                         </button>
                                         {job.checksum && (
                                             <div className="mt-0.5 text-[15px] leading-[22px] tabular-nums text-slate-500">
@@ -726,7 +963,7 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
+                                                className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
                                                 title="Xem chi tiết bản sao lưu"
                                             >
                                                 <Eye className="h-4 w-4" />
@@ -736,7 +973,7 @@ export default function BackupsPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => openRestoreModal(job)}
-                                                    className="flex h-8 w-8 items-center justify-center rounded-lg text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
+                                                    className="flex h-9 w-9 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
                                                     title="Khôi phục bản sao lưu này"
                                                 >
                                                     <RotateCcw className="h-4 w-4" />
@@ -753,6 +990,7 @@ export default function BackupsPage() {
                         </tbody>
                     </table>
                 </div>
+                )
             )}
 
             {/* Pending Restore Requests Table */}
@@ -793,7 +1031,7 @@ export default function BackupsPage() {
                                         <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
                                             {/* Snapshot ID */}
                                             <td className="px-4 py-3.5 tabular-nums text-[15px] font-medium text-slate-900 whitespace-nowrap">
-                                                {request.backupJob.snapshotId}
+                                                <IdentifierBadge title={request.backupJob.snapshotId}>{request.backupJob.snapshotId}</IdentifierBadge>
                                             </td>
 
                                             {/* Environment — flat, no border, no background */}
@@ -903,7 +1141,7 @@ export default function BackupsPage() {
                         <div className="space-y-3 pb-3 border-b border-slate-100">
                             <div className="space-y-0.5">
                                 <span className="text-xs font-semibold text-slate-500 block">Mã Snapshot ID</span>
-                                <span className=" tabular-nums text-sm font-semibold text-slate-900 break-all block">{detailJob.snapshotId}</span>
+                                <IdentifierBadge tone="neutral" title={detailJob.snapshotId}>{detailJob.snapshotId}</IdentifierBadge>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">

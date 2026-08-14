@@ -475,15 +475,15 @@ export default function ExamPeriodsPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-[15px] font-medium text-slate-500 mb-1">Học kỳ</label>
-              <select
+              <FilterSelect
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                containerClassName="w-full"
               >
                 <option value="HK1">Học kỳ I</option>
                 <option value="HK2">Học kỳ II</option>
                 <option value="HK3">Học kỳ Hè</option>
-              </select>
+              </FilterSelect>
             </div>
             <div>
               <label className="block text-[15px] font-medium text-slate-500 mb-1">Năm học</label>
@@ -531,7 +531,7 @@ export default function ExamPeriodsPage() {
                   setIsModalOpen(false);
                   setIsImportModalOpen(true);
                 }}
-                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
                 Import Excel
               </Button>

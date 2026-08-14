@@ -28,7 +28,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
     <div
       role="status"
       aria-live="polite"
-      className={`fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl px-4 py-3 text-white shadow-xl transition-all transform slide-in-from-bottom duration-300 select-none ${type === 'success' ? 'bg-success-500' : 'bg-danger-500'
+      className={`fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl px-4 py-3 text-white shadow-xl animate-in fade-in slide-in-from-bottom duration-200 select-none ${type === 'success' ? 'bg-success-500' : 'bg-danger-500'
         }`}
     >
       {type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-white" /> : <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-white" />}
@@ -41,7 +41,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
           e.stopPropagation();
           onClose();
         }}
-        className="ml-2 rounded-lg p-1 hover:bg-white/15 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 shrink-0 cursor-pointer text-white"
+        className="ml-2 rounded-xl p-1 hover:bg-white/15 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 shrink-0 cursor-pointer text-white"
       >
         <X className="w-4 h-4 text-white" />
       </button>

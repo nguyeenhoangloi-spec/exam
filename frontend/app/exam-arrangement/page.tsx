@@ -9,6 +9,7 @@ import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 import {
  Layers,
  Sparkles,
@@ -24,8 +25,15 @@ import {
  Grid,
  List,
  RotateCcw,
+  RefreshCw,
  Shuffle,
+ SlidersHorizontal,
+ ChevronDown,
+ LayoutGrid,
+ Check,
 } from 'lucide-react';
+import { SortDropdown } from '../../components/ui/SortDropdown';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ExamSchedule } from '../../types';
 
 type RoomAvailability = {
@@ -95,7 +103,18 @@ export default function ExamArrangementPage() {
 
  const [activeTab, setActiveTab] = useState<'arrange' | 'history'>('arrange');
  const [historyLogs, setHistoryLogs] = useState<any[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
  const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
+ const [sortOrder, setSortOrder] = useState<string>('newest');
+ const [openColumnMenu, setOpenColumnMenu] = useState(false);
+ const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+   index: true,
+   studentCode: true,
+   fullName: true,
+   className: true,
+   roomName: true,
+   seatNumber: true,
+ });
  const [filterRoomCode, setFilterRoomCode] = useState<string>('ALL');
  const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
@@ -226,14 +245,17 @@ export default function ExamArrangementPage() {
  }
  }, [fetchExistingResults, fetchRoomAvailability]);
 
- const fetchHistory = useCallback(async () => {
- try {
- const res = await api.get('/exam-arrangement/history');
- setHistoryLogs(res.data);
- } catch (err: any) {
- setToast({ message: err.message || 'Lỗi tải nhật ký xếp phòng', type: 'error' });
- }
- }, []);
+  const fetchHistory = useCallback(async () => {
+    try {
+      setIsHistoryLoading(true);
+      const res = await api.get('/exam-arrangement/history');
+      setHistoryLogs(res.data);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải nhật ký xếp phòng', type: 'error' });
+    } finally {
+      setTimeout(() => setIsHistoryLoading(false), 500);
+    }
+  }, []);
 
  const fetchData = useCallback(async () => {
  try {
@@ -586,16 +608,18 @@ export default function ExamArrangementPage() {
  key={item.title}
  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
  >
- <div className="flex items-start justify-between gap-3">
- <div className="space-y-1">
- <span className="text-[13px] font-semibold text-slate-500 tracking-wider">{item.title}</span>
- <p className="text-[32px] font-bold text-slate-900 leading-[38px]">{item.value}</p>
- </div>
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
- <IconComponent className="h-5 w-5" />
- </div>
- </div>
- <span className="text-[13px] font-normal text-slate-500 mt-2">{item.subtext}</span>
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">{item.title}</span>
+                  <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">{item.value}</div>
+                </div>
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
+                  <IconComponent className="h-5 w-5 stroke-[2]" />
+                </div>
+              </div>
+              <div className="mt-2.5 pt-2 border-t border-slate-100/80">
+                <span className="text-[13px] font-normal text-slate-500 block truncate">{item.subtext}</span>
+              </div>
  </div>
  );
  })}
@@ -658,7 +682,7 @@ export default function ExamArrangementPage() {
  </p>
  </div>
  <button type="button" onClick={() => setShowSchedulePicker(false)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer">
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer">
  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
  </button>
  </div>
@@ -713,7 +737,7 @@ export default function ExamArrangementPage() {
  {s.subject?.subjectName}
  </p>
  <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
- {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
+ <IdentifierBadge>{s.subject?.subjectCode}</IdentifierBadge> · {s.startTime}–{s.endTime}
  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
  </button>
@@ -743,7 +767,7 @@ export default function ExamArrangementPage() {
  </span>
  </div>
  <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
- {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
+ <IdentifierBadge>{s.subject?.subjectCode}</IdentifierBadge> · {s.startTime}–{s.endTime}
  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
  </div>
@@ -782,7 +806,7 @@ export default function ExamArrangementPage() {
  </span>
  </div>
  <p className="text-[12px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
- {s.subject?.subjectCode} · {s.startTime}–{s.endTime}
+ <IdentifierBadge>{s.subject?.subjectCode}</IdentifierBadge> · {s.startTime}–{s.endTime}
  {s.examDate ? ` · ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
  </p>
  </button>
@@ -931,14 +955,14 @@ export default function ExamArrangementPage() {
  <button
  type="button"
  onClick={() => setViewMode('matrix')}
- className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition cursor-pointer ${viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'}`}
+ className={`flex items-center gap-1 rounded-xl px-2.5 py-1 transition cursor-pointer ${viewMode === 'matrix' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'}`}
  >
  <Grid className="h-3.5 w-3.5" /> Sơ đồ chỗ ngồi
  </button>
  <button
  type="button"
  onClick={() => setViewMode('table')}
- className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition cursor-pointer ${viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'}`}
+ className={`flex items-center gap-1 rounded-xl px-2.5 py-1 transition cursor-pointer ${viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'}`}
  >
  <List className="h-3.5 w-3.5" /> Danh sách bảng
  </button>
@@ -1026,18 +1050,18 @@ export default function ExamArrangementPage() {
  <div className="flex items-center justify-between gap-3">
  <div className="flex items-center gap-2">
  <span className="text-xs font-semibold text-slate-500">Lọc theo Phòng:</span>
- <select
- value={filterRoomCode}
- onChange={(e) => setFilterRoomCode(e.target.value)}
- className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-[15px] font-medium text-slate-800 focus:bg-white cursor-pointer"
- >
- <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
- {roomSummaries.map((rm) => (
- <option key={rm.roomCode} value={rm.roomCode}>
- {rm.roomName || rm.roomCode} ({rm.assigned} SV)
- </option>
- ))}
- </select>
+ <FilterSelect
+                    value={filterRoomCode}
+                    onChange={(e) => setFilterRoomCode(e.target.value)}
+                    containerClassName="min-w-[200px]"
+                  >
+                    <option value="ALL">Tất cả các phòng ({roomSummaries.length} phòng)</option>
+                    {roomSummaries.map((rm) => (
+                      <option key={rm.roomCode} value={rm.roomCode}>
+                        {rm.roomName || rm.roomCode} ({rm.assigned} SV)
+                      </option>
+                    ))}
+                  </FilterSelect>
  </div>
  <span className="text-xs font-semibold text-slate-500">Hiển thị {filteredDetails.length} thí sinh</span>
  </div>
@@ -1077,7 +1101,7 @@ export default function ExamArrangementPage() {
  <span className="font-medium text-slate-400">{st.className}</span>
  </div>
  <p className="font-semibold text-slate-900 text-xs truncate" title={st.fullName}>{st.fullName}</p>
- <p className="text-[12px] font-semibold text-slate-500 tabular-nums">{st.studentCode}</p>
+ <IdentifierBadge>{st.studentCode}</IdentifierBadge>
  {(st.requirementLabel || st.departmentName) && (
  <div className="pt-0.5">
  <p className="font-semibold text-slate-800 text-xs truncate" title={st.requirementLabel || st.departmentName}>
@@ -1149,13 +1173,14 @@ export default function ExamArrangementPage() {
  Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi
  </p>
  </div>
- <button
- type="button"
- onClick={fetchHistory}
- className="text-[14px] font-medium text-primary-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-xl transition cursor-pointer"
- >
- Tải lại Nhật ký
- </button>
+  <button
+    type="button"
+    onClick={fetchHistory}
+    className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+    title="Làm mới nhật ký"
+  >
+    <RefreshCw className={`h-4 w-4 ${isHistoryLoading ? 'animate-spin text-blue-600' : ''}`} />
+  </button>
  </div>
 
   <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/80">
@@ -1175,21 +1200,24 @@ export default function ExamArrangementPage() {
  </tr>
  ) : (
  historyLogs.map((log: any, lIdx: number) => {
-  const actInfo = (() => {
-  const act = log.action || '';
-  if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls: 'text-emerald-600 font-medium' };
-  if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls: 'text-rose-600 font-medium' };
-  if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls: 'text-rose-600 font-medium' };
-  if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls: 'text-blue-600 font-medium' };
-  if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls: 'text-blue-600 font-medium' };
-  if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls: 'text-blue-600 font-medium' };
-  if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls: 'text-emerald-600 font-medium' };
-  if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls: 'text-amber-600 font-medium' };
-  if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls: 'text-slate-600 font-medium' };
+   const actInfo = (() => {
+     const act = log.action || '';
+     const isDanger = ['RESET_ARRANGEMENT', 'RESET', 'DELETE'].includes(act);
+     const cls = isDanger ? 'text-rose-600 font-semibold' : 'text-slate-800 dark:text-slate-100 font-semibold';
 
-  const formatted = act.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
-  return { label: formatted, cls: 'text-slate-600 font-medium' };
-  })();
+     if (['ARRANGE', 'AUTO_ARRANGE'].includes(act)) return { label: 'Xếp phòng', cls };
+     if (['RESET_ARRANGEMENT', 'RESET'].includes(act)) return { label: 'Hủy xếp phòng', cls };
+     if (['DELETE'].includes(act)) return { label: 'Xóa lịch', cls };
+     if (['CREATE'].includes(act)) return { label: 'Tạo lịch', cls };
+     if (['UPDATE'].includes(act)) return { label: 'Cập nhật', cls };
+     if (['REOPEN_ENTRY'].includes(act)) return { label: 'Mở lại thi', cls };
+     if (['PUBLISH'].includes(act)) return { label: 'Công bố', cls };
+     if (['LOCK'].includes(act)) return { label: 'Khóa ca thi', cls };
+     if (['EXPORT'].includes(act)) return { label: 'Xuất dữ liệu', cls };
+
+     const formatted = act.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+     return { label: formatted, cls };
+   })();
 
  const roleLabel = log.actor?.role === 'ADMIN' ? 'Quản trị viên' : log.actor?.role === 'TEACHER' ? 'Giảng viên' : log.actor?.role === 'STUDENT' ? 'Sinh viên' : (log.actor?.role || 'Quản trị viên');
  const username = log.actor?.username || log.actor?.fullName || 'admin';
@@ -1202,12 +1230,11 @@ export default function ExamArrangementPage() {
  <td className="p-3.5 font-medium text-slate-800 whitespace-nowrap">
  {username} <span className="text-slate-400 font-medium text-[15px] leading-[22px]">({roleLabel})</span>
  </td>
- <td className="p-3.5 whitespace-nowrap">
-  <span className={`inline-flex items-center gap-1.5 text-[15px] leading-[22px] font-medium ${actInfo.cls}`}>
-  <span className="h-1.5 w-1.5 rounded-full bg-current shrink-0" />
-  {actInfo.label}
-  </span>
- </td>
+  <td className="p-3.5 whitespace-nowrap">
+   <span className={`text-[15px] leading-[22px] font-semibold ${actInfo.cls}`}>
+   {actInfo.label}
+   </span>
+  </td>
  <td className="p-3.5 text-slate-700 font-medium leading-relaxed">{log.description}</td>
  </tr>
  );

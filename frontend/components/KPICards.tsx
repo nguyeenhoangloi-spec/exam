@@ -64,19 +64,29 @@ export const KPICards: React.FC<KPICardsProps> = ({ items }) => {
         return (
           <div
             key={index}
-            className={`group relative overflow-hidden rounded-2xl border ${style.border} bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="edu-helper font-medium tracking-wider text-slate-500">{item.title}</p>
-                <h3 className="edu-kpi mt-1">{item.value}</h3>
-                {item.subtext && <p className="edu-helper mt-1 font-medium text-slate-500">{item.subtext}</p>}
-                {item.trend && <span className="edu-helper mt-1.5 block font-medium text-slate-500">{item.trend}</span>}
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1 min-w-0">
+                <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
+                  {item.title}
+                </span>
+                <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
+                  {item.value}
+                </div>
               </div>
-              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${style.bg} ${style.text} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
-                <Icon className="h-6 w-6" />
+
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${style.border} ${style.bg} ${style.text} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
+                <Icon className="h-5 w-5 stroke-[2]" />
               </div>
             </div>
+
+            {(item.subtext || item.trend) && (
+              <div className="mt-2.5 pt-2 border-t border-slate-100/80 flex items-center justify-between gap-2">
+                {item.subtext && <span className="text-[13px] font-normal text-slate-500 block truncate">{item.subtext}</span>}
+                {item.trend && <span className="text-[13px] font-medium text-slate-500 block shrink-0">{item.trend}</span>}
+              </div>
+            )}
           </div>
         );
       })}

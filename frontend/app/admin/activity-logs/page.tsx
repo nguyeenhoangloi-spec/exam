@@ -7,9 +7,12 @@ import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { Button } from '../../../components/ui/Button';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { Toast } from '../../../components/Toast';
+import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { printReport } from '../../../lib/export-print';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import {
@@ -53,7 +56,7 @@ import {
     Building2,
     BookOpen,
 } from 'lucide-react';
-import { FilterSelect } from '../../../components/ui/FilterSelect';
+
 
 interface AuditLogRecord {
     id: string;
@@ -178,9 +181,9 @@ function EntityTarget({ entityType, entityId }: { entityType: string; entityId?:
             <Icon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
             <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{info.label}</span>
             {entityId && (
-                <span className="tabular-nums text-[13px] font-normal text-slate-500 dark:text-slate-400">
+                <IdentifierBadge tone="neutral" title={entityId}>
                     #{formattedId}
-                </span>
+                </IdentifierBadge>
             )}
 
             {isLongId && (
@@ -245,6 +248,7 @@ export default function ActivityLogsPage() {
     const [selectedLog, setSelectedLog] = useState<AuditLogRecord | null>(null);
     const [copied, setCopied] = useState<boolean>(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+    const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
     const fetchLogs = useCallback(async () => {
         try {
@@ -268,6 +272,13 @@ export default function ActivityLogsPage() {
             setLoading(false);
         }
     }, [page, limit, search, entityFilter]);
+
+    const handleRefreshClick = async () => {
+        setIsSpinning(true);
+        await fetchLogs();
+        setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+        setTimeout(() => setIsSpinning(false), 600);
+    };
 
     useEffect(() => {
         const currentUser = getAuthUser();
@@ -446,13 +457,13 @@ export default function ActivityLogsPage() {
         <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            {/* ── 1. Page Header (Exact StudentHeader Match 1-1) ── */}
+            {/* ── 1. Page Header ── */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-1">
-                    <h1 className="edu-page-title">
+                    <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
                         Nhật ký hoạt động hệ thống
                     </h1>
-                    <p className="edu-body text-slate-500">
+                    <p className="text-[15px] font-normal leading-[22px] text-slate-500">
                         Theo dõi, rà soát và ghi vết chi tiết mọi lịch sử thao tác của Quản trị viên, Giảng viên và Thí sinh
                     </p>
                 </div>
@@ -480,7 +491,7 @@ export default function ActivityLogsPage() {
                 </div>
             </div>
 
-            {/* ── 2. Top KPI Cards (Exact StudentKPICards Match 1-1) ── */}
+            {/* ── 2. Top KPI Cards (Golden Master Standard) ── */}
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
                 {kpiItems.map((item) => {
                     const IconComponent = item.icon;
@@ -490,23 +501,25 @@ export default function ActivityLogsPage() {
                             className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
                         >
                             <div className="flex items-start justify-between gap-3">
-                                <div className="space-y-1">
-                                    <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
+                                <div className="space-y-1 min-w-0">
+                                    <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
                                         {item.title}
                                     </span>
-                                    <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
+                                    <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
                                         {item.value.toLocaleString('vi-VN')}
-                                    </p>
+                                    </div>
                                 </div>
 
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border bg-blue-50 text-blue-600 border-blue-100 transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
-                                    <IconComponent className="h-5 w-5" />
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border bg-blue-50 text-blue-600 border-blue-100 transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
+                                    <IconComponent className="h-5 w-5 stroke-[2]" />
                                 </div>
                             </div>
 
-                            <span className="text-[13px] font-normal text-slate-500 mt-2">
-                                {item.subtext}
-                            </span>
+                            <div className="mt-2.5 pt-2 border-t border-slate-100/80">
+                                <span className="text-[13px] font-normal text-slate-500 block truncate">
+                                    {item.subtext}
+                                </span>
+                            </div>
                         </div>
                     );
                 })}
@@ -525,7 +538,7 @@ export default function ActivityLogsPage() {
                             setSearch(e.target.value);
                             setPage(1);
                         }}
-                        className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+                        className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
                     />
                     {search && (
                         <button
@@ -564,63 +577,34 @@ export default function ActivityLogsPage() {
 
                 <div className="flex items-center gap-2">
                     {/* Sort selector */}
-                    <FilterSelect
+                    <SortDropdown
                         value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value)}
-                    >
-                        <option value="newest">Mới nhất</option>
-                        <option value="oldest">Cũ nhất</option>
-                    </FilterSelect>
+                        onChange={(val) => setSortOrder(val)}
+                        options={[
+                            { value: 'newest', label: 'Mới nhất' },
+                            { value: 'oldest', label: 'Cũ nhất' },
+                        ]}
+                    />
 
                     {/* Column selector */}
-                    <div className="relative">
-                        <button
-                            type="button"
-                            onClick={() => setOpenColumnMenu(!openColumnMenu)}
-                            className="flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-2xs transition-all hover:border-slate-300 active:scale-95"
-                            title="Chọn cột hiển thị"
-                        >
-                            <SlidersHorizontal className="h-4 w-4 text-blue-600" />
-                            <span>Chọn cột</span>
-                            <ChevronDown className="h-4 w-4 text-slate-400" />
-                        </button>
-
-                        {openColumnMenu && (
-                            <>
-                                <div className="fixed inset-0 z-20" onClick={() => setOpenColumnMenu(false)} />
-                                <div className="absolute right-0 top-full z-30 mt-1.5 w-48 space-y-1 rounded-xl border border-slate-200 bg-white p-2 text-[13px] shadow-xl animate-fade-in">
-                                    <div className="px-2 py-1 text-[12px] font-semibold text-slate-500">
-                                        Hiển thị các cột
-                                    </div>
-                                    <div className="h-px bg-slate-100 my-1" />
-                                    {[
-                                        { key: 'createdAt', label: 'Thời gian' },
-                                        { key: 'actor', label: 'Người thực hiện' },
-                                        { key: 'action', label: 'Hành động' },
-                                        { key: 'entity', label: 'Đối tượng' },
-                                        { key: 'description', label: 'Mô tả thao tác' },
-                                    ].map((col) => (
-                                        <button
-                                            key={col.key}
-                                            type="button"
-                                            onClick={() => handleColumnToggle(col.key)}
-                                            className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 font-medium text-slate-700 hover:bg-slate-100 transition cursor-pointer"
-                                        >
-                                            <span>{col.label}</span>
-                                            {visibleColumns[col.key] && <Check className="h-3.5 w-3.5 text-blue-600" />}
-                                        </button>
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    </div>
+                    <ColumnToggleDropdown
+                        columns={[
+                            { key: 'createdAt', label: 'Thời gian' },
+                            { key: 'actor', label: 'Người thực hiện' },
+                            { key: 'action', label: 'Hành động' },
+                            { key: 'entity', label: 'Đối tượng' },
+                            { key: 'description', label: 'Mô tả thao tác' },
+                        ]}
+                        visibleColumns={visibleColumns}
+                        onToggle={(key) => handleColumnToggle(key)}
+                    />
 
                     {/* View mode toggle */}
-                    <div className="flex h-9 items-center gap-0.5 rounded-xl border border-slate-200 bg-white p-1 shadow-2xs">
+                    <div className="flex h-10 items-center gap-0.5 rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
                         <button
                             type="button"
                             onClick={() => setViewMode('list')}
-                            className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
                                 }`}
                             title="Danh sách"
                         >
@@ -629,7 +613,7 @@ export default function ActivityLogsPage() {
                         <button
                             type="button"
                             onClick={() => setViewMode('grid')}
-                            className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
                                 }`}
                             title="Dạng thẻ"
                         >
@@ -638,7 +622,7 @@ export default function ActivityLogsPage() {
                         <button
                             type="button"
                             onClick={() => setViewMode('compact')}
-                            className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
+                            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
                                 }`}
                             title="Thu gọn"
                         >
@@ -649,11 +633,11 @@ export default function ActivityLogsPage() {
                     {/* Refresh button */}
                     <button
                         type="button"
-                        onClick={fetchLogs}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all shadow-2xs cursor-pointer active:scale-95"
-                        title="Làm mới"
+                        onClick={handleRefreshClick}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+                        title="Làm mới dữ liệu"
                     >
-                        <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+                        <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
                     </button>
                 </div>
             </div>
@@ -721,13 +705,110 @@ export default function ActivityLogsPage() {
                         </div>
                     ))}
                 </div>
+            ) : viewMode === 'compact' ? (
+                <div className="space-y-2.5">
+                    {loading ? (
+                        <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 shadow-2xs">
+                            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
+                            <p className="text-[15px] font-semibold text-slate-500">Đang tải nhật ký hoạt động...</p>
+                        </div>
+                    ) : paginatedLogs.length === 0 ? (
+                        <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 shadow-2xs">
+                            Chưa có nhật ký hoạt động nào phù hợp.
+                        </div>
+                    ) : (
+                        paginatedLogs.map((item) => {
+                            const isChecked = selectedIds.includes(item.id);
+                            return (
+                                <div
+                                    key={item.id}
+                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                                        isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                                    }`}
+                                >
+                                    {/* Left: Checkbox + Avatar */}
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <input
+                                            type="checkbox"
+                                            checked={isChecked}
+                                            onChange={() => toggleSelect(item.id)}
+                                            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                                        />
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-bold text-xs border border-blue-100/80">
+                                            {(item.actor?.username || 'HT').slice(0, 2).toUpperCase()}
+                                        </div>
+
+                                        {/* Middle: Description + ActionCode + Meta chips */}
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedLog(item)}
+                                                    className="text-[15px] font-semibold text-slate-900 truncate hover:text-blue-600 transition cursor-pointer text-left max-w-xl"
+                                                >
+                                                    {item.description}
+                                                </button>
+                                                <ActionCode action={item.action} />
+                                            </div>
+
+                                            <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                                                <span className="flex items-center gap-1">
+                                                    <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                    <span className="text-slate-700 font-medium">{item.actor?.username || 'Hệ thống'}</span>
+                                                    {item.actor?.role && (
+                                                        <span className="table-badge bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded text-[12px] font-medium border border-slate-200">
+                                                            {item.actor.role}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <Database className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                    <span className="text-slate-600 font-medium">{item.entityType}</span>
+                                                    {item.entityId && (
+                                                        <IdentifierBadge tone="neutral" title={item.entityId}>
+                                                            ({item.entityId})
+                                                        </IdentifierBadge>
+                                                    )}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                    <span>{new Date(item.createdAt).toLocaleString('vi-VN')}</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right: Actions */}
+                                    <div className="flex items-center gap-1 shrink-0">
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedLog(item)}
+                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
+                                            title="Xem chi tiết JSON"
+                                        >
+                                            <Eye className="h-4 w-4" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedLog(item)}
+                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
+                                            title="Tùy chọn khác"
+                                        >
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
             ) : (
                 <div className="ui-table-wrap rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="ui-table w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-slate-200/80 bg-slate-50/80 text-[14px] font-semibold leading-5 text-slate-600">
-                                    <th className="py-3.5 px-4 w-10 text-center">
+                                <tr className="border-b border-slate-200/80 bg-slate-50/80 font-semibold leading-5 text-slate-600 text-[14px]">
+                                    <th className="w-10 text-center py-3.5 px-4">
                                         <input
                                             type="checkbox"
                                             checked={paginatedLogs.length > 0 && selectedIds.length === paginatedLogs.length}
@@ -735,20 +816,20 @@ export default function ActivityLogsPage() {
                                             className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                         />
                                     </th>
-                                    {visibleColumns.createdAt && <th className="py-3.5 px-4 whitespace-nowrap">Thời gian</th>}
-                                    {visibleColumns.actor && <th className="py-3.5 px-4 whitespace-nowrap">Người thực hiện</th>}
-                                    {visibleColumns.action && <th className="py-3.5 px-4 whitespace-nowrap">Hành động</th>}
-                                    {visibleColumns.entity && <th className="py-3.5 px-4 whitespace-nowrap">Đối tượng tác động</th>}
-                                    {visibleColumns.description && <th className="py-3.5 px-4 min-w-[280px]">Mô tả thao tác</th>}
-                                    <th className="py-3.5 px-4 text-right whitespace-nowrap">Thao tác</th>
+                                    {visibleColumns.createdAt && <th className="whitespace-nowrap py-3.5 px-4">Thời gian</th>}
+                                    {visibleColumns.actor && <th className="whitespace-nowrap py-3.5 px-4">Người thực hiện</th>}
+                                    {visibleColumns.action && <th className="whitespace-nowrap py-3.5 px-4">Hành động</th>}
+                                    {visibleColumns.entity && <th className="whitespace-nowrap py-3.5 px-4">Đối tượng tác động</th>}
+                                    {visibleColumns.description && <th className="min-w-[280px] py-3.5 px-4">Mô tả thao tác</th>}
+                                    <th className="text-right whitespace-nowrap py-3.5 px-4">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 text-[15px] font-normal text-slate-900">
+                            <tbody className="divide-y divide-slate-100 font-normal text-slate-900 text-[15px]">
                                 {loading ? (
                                     <tr>
                                         <td colSpan={7} className="py-12 px-4 text-center text-slate-500">
                                             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
-                                            <p className="text-xs font-semibold text-slate-500">Đang tải nhật ký hoạt động hệ thống...</p>
+                                            <p className="text-[15px] font-semibold text-slate-500">Đang tải nhật ký hoạt động hệ thống...</p>
                                         </td>
                                     </tr>
                                 ) : paginatedLogs.length === 0 ? (
@@ -765,7 +846,7 @@ export default function ActivityLogsPage() {
                                                 }`}
                                         >
                                             {/* Checkbox */}
-                                            <td className="py-3.5 px-4 text-center">
+                                            <td className="text-center py-3.5 px-4">
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedIds.includes(item.id)}
@@ -774,29 +855,29 @@ export default function ActivityLogsPage() {
                                                 />
                                             </td>
 
-                                            {/* Thời gian - Exact Student Table Font Style */}
+                                            {/* Thời gian */}
                                             {visibleColumns.createdAt && (
-                                                <td className="whitespace-nowrap px-4 py-3.5 text-[15px] font-medium text-slate-800">
+                                                <td className="whitespace-nowrap font-medium text-slate-800 py-3.5 px-4 text-[15px]">
                                                     {new Date(item.createdAt).toLocaleString('vi-VN')}
                                                 </td>
                                             )}
 
-                                            {/* Người thực hiện - Gọn gàng, Tooltip khi Hover */}
+                                            {/* Người thực hiện */}
                                             {visibleColumns.actor && (
-                                                <td className="py-2.5 px-4 whitespace-nowrap">
+                                                <td className="whitespace-nowrap py-2.5 px-4">
                                                     <div
                                                         className="group relative inline-flex items-center gap-2 cursor-pointer"
                                                         title={item.actor?.email || "system@exam.edu.vn"}
                                                     >
-                                                        <div className="table-avatar flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 text-[12px] font-medium text-slate-700 dark:text-slate-300">
+                                                        <div className="table-avatar flex shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 font-medium text-slate-700 dark:text-slate-300 h-7 w-7">
                                                             {(item.actor?.username || "A").slice(0, 1).toUpperCase()}
                                                         </div>
-                                                        <span className="text-[15px] leading-[22px] font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                        <span className="font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-[15px] leading-[22px]">
                                                             {item.actor?.username || "Hệ thống"}
                                                         </span>
 
                                                         {/* Floating Tooltip khi Hover */}
-                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-[12px] font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                                                             <Mail className="h-3 w-3 text-slate-300" />
                                                             <span>{item.actor?.email || "system@exam.edu.vn"}</span>
                                                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
@@ -806,32 +887,32 @@ export default function ActivityLogsPage() {
                                             )}
                                             {/* Hành động */}
                                             {visibleColumns.action && (
-                                                <td className="py-3.5 px-4 whitespace-nowrap">
+                                                <td className="whitespace-nowrap py-3.5 px-4">
                                                     <ActionCode action={item.action} />
                                                 </td>
                                             )}
 
-                                            {/* Đối tượng tác động - Việt hóa & Rút gọn UUID */}
+                                            {/* Đối tượng tác động */}
                                             {visibleColumns.entity && (
-                                                <td className="py-2.5 px-4 whitespace-nowrap">
+                                                <td className="whitespace-nowrap py-2.5 px-4">
                                                     <EntityTarget entityType={item.entityType} entityId={item.entityId} />
                                                 </td>
                                             )}
 
                                             {/* Mô tả */}
                                             {visibleColumns.description && (
-                                                <td className="py-3.5 px-4 leading-relaxed font-normal text-slate-700">
+                                                <td className="leading-relaxed font-normal text-slate-700 py-3.5 px-4">
                                                     {item.description}
                                                 </td>
                                             )}
 
-                                            {/* Action buttons - 2 Chức năng riêng biệt: Xem chi tiết & Sao chép ID */}
-                                            <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                                            {/* Action buttons */}
+                                            <td className="text-right whitespace-nowrap py-3.5 px-4">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button
                                                         type="button"
                                                         onClick={() => setSelectedLog(item)}
-                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
+                                                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
                                                         title="Xem chi tiết nhật ký"
                                                     >
                                                         <Eye className="h-4 w-4" />
@@ -842,7 +923,7 @@ export default function ActivityLogsPage() {
                                                             navigator.clipboard.writeText(item.id);
                                                             setToast({ message: `Đã sao chép mã ID log (${item.id})!`, type: 'success' });
                                                         }}
-                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-400 transition cursor-pointer"
+                                                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-400 transition cursor-pointer"
                                                         title="Sao chép mã Log ID"
                                                     >
                                                         <Copy className="h-4 w-4" />
@@ -873,7 +954,7 @@ export default function ActivityLogsPage() {
                                 type="button"
                                 disabled={page <= 1}
                                 onClick={() => setPage(page - 1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
                                 title="Trang trước"
                             >
                                 <ChevronLeft className="h-4 w-4" />
@@ -882,7 +963,7 @@ export default function ActivityLogsPage() {
                             <button
                                 type="button"
                                 onClick={() => setPage(1)}
-                                className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 1
+                                className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 1
                                         ? 'bg-primary-600 text-white shadow-xs font-semibold'
                                         : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                     }`}
@@ -894,7 +975,7 @@ export default function ActivityLogsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setPage(2)}
-                                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 2
+                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 2
                                             ? 'bg-primary-600 text-white shadow-xs font-semibold'
                                             : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                         }`}
@@ -909,7 +990,7 @@ export default function ActivityLogsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setPage(totalPages)}
-                                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === totalPages
+                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === totalPages
                                             ? 'bg-primary-600 text-white shadow-xs font-semibold'
                                             : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                         }`}
@@ -922,7 +1003,7 @@ export default function ActivityLogsPage() {
                                 type="button"
                                 disabled={page >= totalPages}
                                 onClick={() => setPage(page + 1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
                                 title="Trang sau"
                             >
                                 <ChevronRight className="h-4 w-4" />
@@ -1032,7 +1113,7 @@ export default function ActivityLogsPage() {
                                                 ID Thực thể
                                             </span>
                                             <p className=" text-[14px] font-medium tabular-nums text-slate-700">
-                                                #{selectedLog.entityId || 'N/A'}
+                                            #{selectedLog.entityId || 'N/A'}
                                             </p>
                                         </div>
                                     </div>
@@ -1065,7 +1146,7 @@ export default function ActivityLogsPage() {
                                                     setTimeout(() => setCopied(false), 2000);
                                                 });
                                             }}
-                                            className="flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[13px] font-medium text-slate-700 transition hover:bg-slate-50"
+                                            className="flex cursor-pointer items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-[13px] font-medium text-slate-700 transition hover:bg-slate-50"
                                         >
                                             {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                             <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>

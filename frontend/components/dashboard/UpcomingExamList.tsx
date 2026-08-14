@@ -78,7 +78,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
  <button
  type="button"
  onClick={() => router.push(`/exam-schedules?view=${exam.id}`)}
- className="flex h-6.5 w-6.5 items-center justify-center mx-auto rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center mx-auto rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-3.5 w-3.5" />
@@ -104,20 +104,20 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
  type="button"
  disabled={currentPage === 1}
  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
- className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
  >
  <ChevronLeft className="h-3.5 w-3.5" />
  </button>
  <button
  type="button"
- className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-semibold bg-blue-600 text-white"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-xs font-semibold bg-blue-600 text-white"
  >
  1
  </button>
  <button
  type="button"
  disabled
- className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 opacity-40 cursor-not-allowed"
+ className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 opacity-40 cursor-not-allowed"
  >
  <ChevronRight className="h-3.5 w-3.5" />
  </button>

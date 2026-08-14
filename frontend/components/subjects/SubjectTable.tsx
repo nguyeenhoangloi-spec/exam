@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Eye, Edit, Trash2, BookOpen, Building2, Award, UserPlus, MoreVertical } from 'lucide-react';
 import { Subject } from '../../types';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface SubjectTableProps {
  subjects: Subject[];
@@ -68,7 +69,7 @@ export function SubjectTable({
  onClick={() => onDetail(s)}
  className=" tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
  >
- {s.subjectCode}
+ <IdentifierBadge>{s.subjectCode}</IdentifierBadge>
  </button>
  </div>
 
@@ -107,7 +108,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onEdit(s)}
- className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100"
+ className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100"
  title="Sửa"
  >
  <Edit className="h-3.5 w-3.5" />
@@ -115,7 +116,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDelete(s.id)}
- className="p-1.5 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+ className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50"
  title="Xóa"
  >
  <Trash2 className="h-3.5 w-3.5" />
@@ -130,68 +131,129 @@ export function SubjectTable({
  );
  }
 
- // 2. Dạng Thu Gọn (Compact View Mode)
- if (viewMode === 'compact') {
- return (
- <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
- <tr>
- <th scope="col" className="p-2 pl-3 text-center w-8">
- <input
- type="checkbox"
- checked={allSelected}
- onChange={(e) => onSelectAll(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </th>
- <th scope="col" className="p-2 whitespace-nowrap">Mã môn</th>
- <th scope="col" className="p-2 min-w-[200px]">Tên môn học</th>
- <th scope="col" className="p-2 whitespace-nowrap">Tín chỉ</th>
- <th scope="col" className="p-2 min-w-[180px]">Khoa đào tạo</th>
- <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 font-normal">
- {subjects.map((s) => {
- const isChecked = selected.includes(s.id);
- const deptName = s.department?.name || (s as any).departmentName || '---';
+  // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
+  if (viewMode === 'compact') {
+    return (
+      <div className="space-y-2.5">
+        {subjects.map((s) => {
+          const isChecked = selected.includes(s.id);
+          const deptName = s.department?.name || (s as any).departmentName || 'Chưa gán Khoa';
 
- return (
- <tr key={s.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
- <td className="p-2 pl-3 text-center">
- <input
- type="checkbox"
- checked={isChecked}
- onChange={(e) => onSelect(s.id, e.target.checked)}
- className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </td>
- <td className="p-2 whitespace-nowrap font-medium text-blue-600">
- <button type="button" onClick={() => onDetail(s)} className=" tabular-nums hover:text-blue-800 hover:underline transition cursor-pointer">
- {s.subjectCode}
- </button>
- </td>
- <td className="p-2 min-w-[200px]">
- <p className="truncate font-medium text-slate-900 cursor-pointer hover:text-blue-600" onClick={() => onDetail(s)}>
- {s.subjectName}
- </p>
- </td>
- <td className="p-2 whitespace-nowrap font-medium text-slate-700">{s.credits} TC</td>
- <td className="p-2 min-w-[180px] font-normal text-slate-700">{deptName}</td>
- <td className="p-2 pr-3 text-right whitespace-nowrap">
- <button type="button" onClick={() => onDetail(s)} className="p-1 text-slate-500 hover:text-blue-600 cursor-pointer">
- <Eye className="h-3.5 w-3.5" />
- </button>
- </td>
- </tr>
- );
- })}
- </tbody>
- </table>
- </div>
- );
- }
+          return (
+            <div
+              key={s.id}
+              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              }`}
+            >
+              {/* Left: Checkbox + Avatar Code Badge */}
+              <div className="flex items-center gap-3 min-w-0">
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) => onSelect(s.id, e.target.checked)}
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
+                  {s.subjectCode?.slice(0, 3) || 'MH'}
+                </div>
+
+                {/* Middle: Name + SubjectCode + Meta chips */}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => onDetail(s)}
+                      className="text-[15px] font-semibold text-slate-900 truncate hover:text-primary-600 transition cursor-pointer text-left"
+                    >
+                      {s.subjectName}
+                    </button>
+                    <IdentifierBadge>
+                      {s.subjectCode}
+                    </IdentifierBadge>
+                  </div>
+
+                  <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                    <span className="flex items-center gap-1">
+                      <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span><strong className="font-semibold text-slate-800">{s.credits}</strong> Tín chỉ</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="text-slate-700 font-medium">{deptName}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => onEnroll(s)}
+                  className="hidden sm:flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
+                >
+                  <UserPlus className="h-3.5 w-3.5 text-blue-600" />
+                  <span>Gán SV</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onDetail(s)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                  title="Xem chi tiết"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+
+                {isAdmin && (
+                  <ActionDropdownPortal>
+                    {(closeMenu) => (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onDetail(s); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
+                        >
+                          <Eye className="h-4 w-4 text-slate-500" />
+                          <span>Xem chi tiết</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onEnroll(s); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
+                        >
+                          <UserPlus className="h-4 w-4 text-blue-600" />
+                          <span>Gán sinh viên</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onEdit(s); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
+                        >
+                          <Edit className="h-4 w-4 text-primary-600" />
+                          <span>Chỉnh sửa</span>
+                        </button>
+                        <div className="my-1 border-t border-slate-200" />
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onDelete(s.id); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-xs font-medium"
+                        >
+                          <Trash2 className="h-4 w-4 text-danger-600" />
+                          <span>Xóa môn học</span>
+                        </button>
+                      </>
+                    )}
+                  </ActionDropdownPortal>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
@@ -242,7 +304,7 @@ export function SubjectTable({
  onClick={() => onDetail(s)}
  className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
  >
- {s.subjectCode}
+ <IdentifierBadge>{s.subjectCode}</IdentifierBadge>
  </button>
  </td>
  )}
@@ -287,7 +349,7 @@ export function SubjectTable({
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -302,7 +364,7 @@ export function SubjectTable({
  closeMenu();
  onEnroll(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-primary-600 font-medium"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-primary-600 font-medium"
  >
  <UserPlus className="h-4 w-4 text-primary-600" />
  <span>Gán Sinh viên</span>
@@ -314,7 +376,7 @@ export function SubjectTable({
  closeMenu();
  onDetail(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
  <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
@@ -328,7 +390,7 @@ export function SubjectTable({
  closeMenu();
  onEdit(s);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700"
  >
  <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa môn</span>
@@ -342,7 +404,7 @@ export function SubjectTable({
  closeMenu();
  onDelete(s.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600"
  >
  <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa môn học</span>

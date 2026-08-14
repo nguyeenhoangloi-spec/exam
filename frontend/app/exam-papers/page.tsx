@@ -319,6 +319,11 @@ export default function ExamPapersPage() {
     fetchData();
   }, [fetchData, router]);
 
+  const handleRefresh = async () => {
+    await fetchData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
+
   const kpiData = useMemo(() => {
     const total = papers.length;
     const publishedCount = papers.filter((p) => p.status === 'PUBLISHED').length;
@@ -750,7 +755,7 @@ export default function ExamPapersPage() {
           onViewModeChange={setViewMode}
           visibleColumns={visibleColumns}
           onColumnToggle={handleColumnToggle}
-          onRefresh={fetchData}
+          onRefresh={handleRefresh}
           loading={loading}
         />
 

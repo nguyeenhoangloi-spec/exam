@@ -10,7 +10,8 @@ import { Button } from '../../../components/ui/Button';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
-import { Search, X, RotateCcw, Sparkles, Sliders, Save, CheckCircle2, FileText, User, AlertCircle, ChevronLeft, ChevronRight, Download, Loader2 } from 'lucide-react';
+import { Search, X, RotateCcw, Sparkles, Sliders, Save, CheckCircle2, FileText, User, AlertCircle, ChevronLeft, ChevronRight, Download, Loader2, SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, Check } from 'lucide-react';
+import { SortDropdown } from '../../../components/ui/SortDropdown';
 
 function TeacherEssayGradingContent() {
  usePageTitle('Chấm Bài Thi Tự Luận');
@@ -35,6 +36,17 @@ function TeacherEssayGradingContent() {
  const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
  const [dateFilter, setDateFilter] = useState<string>('ALL');
  const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
+ const [sortOrder, setSortOrder] = useState<string>('newest');
+ const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+ const [openColumnMenu, setOpenColumnMenu] = useState(false);
+ const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+   student: true,
+   subject: true,
+   date: true,
+   score: true,
+   status: true,
+   actions: true,
+ });
  const [page, setPage] = useState(1);
  const pageSize = 10;
 
@@ -620,7 +632,7 @@ function TeacherEssayGradingContent() {
  setScheduleFilter('ALL');
  setSearchQuery('');
  }}
- className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer select-none"
+ className="p-1 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer select-none"
  title="Đặt lại bộ lọc"
  >
  <RotateCcw className="h-3.5 w-3.5" />
@@ -649,7 +661,7 @@ function TeacherEssayGradingContent() {
  placeholder="Tìm mã SV, tên SV, môn, ca thi..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-slate-50/50 border border-slate-200 rounded-lg pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  {searchQuery && (
  <button
@@ -667,7 +679,7 @@ function TeacherEssayGradingContent() {
  <select
  value={subjectFilter}
  onChange={(e) => setSubjectFilter(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
  {availableSubjects.map((s) => (
@@ -680,7 +692,7 @@ function TeacherEssayGradingContent() {
  <select
  value={dateFilter}
  onChange={(e) => setDateFilter(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả ngày thi ({availableDates.length})</option>
  {availableDates.map((d) => (
@@ -697,7 +709,7 @@ function TeacherEssayGradingContent() {
  <select
  value={scheduleFilter}
  onChange={(e) => setScheduleFilter(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
  >
  <option value="ALL">Tất cả ca thi / lịch thi</option>
  {availableSchedules.map((s) => (
@@ -708,6 +720,23 @@ function TeacherEssayGradingContent() {
  </select>
  </div>
  )}
+
+  {/* Toolbar Action Group */}
+  <div className="flex items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+      Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{filteredRows.length}</span> bài làm
+    </span>
+
+    <SortDropdown
+      value={sortOrder}
+      onChange={(val) => setSortOrder(val)}
+      options={[
+        { value: 'newest', label: 'Mới nhất' },
+        { value: 'oldest', label: 'Cũ nhất' },
+        { value: 'name_asc', label: 'Tên sinh viên: A - Z' },
+      ]}
+    />
+  </div>
 
  {loading ? (
  <div className="py-10 flex flex-col items-center gap-3">
@@ -774,7 +803,7 @@ function TeacherEssayGradingContent() {
  type="button"
  disabled={page <= 1}
  onClick={() => setPage((p) => Math.max(1, p - 1))}
- className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer flex items-center justify-center"
+ className="h-8 px-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer flex items-center justify-center"
  title="Trang trước"
  >
  <ChevronLeft className="h-4 w-4" />
@@ -783,7 +812,7 @@ function TeacherEssayGradingContent() {
  type="button"
  disabled={page >= totalPages}
  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
- className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer flex items-center justify-center"
+ className="h-8 px-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition cursor-pointer flex items-center justify-center"
  title="Trang sau"
  >
  <ChevronRight className="h-4 w-4" />
@@ -893,7 +922,7 @@ function TeacherEssayGradingContent() {
  <button
  type="button"
  onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: q.rubric || [] })}
- className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
+ className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-xl hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
  >
  <Sliders className="h-4 w-4 text-slate-500" />
  <span>Sửa Rubric</span>
@@ -959,7 +988,7 @@ function TeacherEssayGradingContent() {
  placeholder="Điểm"
  value={scores[r.id] ?? 0}
  onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
- className="w-24 bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium tabular-nums text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
+ className="w-24 bg-slate-50/50 border border-slate-200 rounded-xl px-2.5 py-1 text-[15px] font-medium tabular-nums text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
  />
 
  {/* Quick Score Chips */}
@@ -969,7 +998,7 @@ function TeacherEssayGradingContent() {
  key={presetVal}
  type="button"
  onClick={() => handleScoreChange(r.id, String(presetVal), r.maxScore)}
- className={`px-2.5 py-1 rounded-md text-[13px] font-semibold border transition cursor-pointer ${
+ className={`px-2.5 py-1 rounded-xl text-[13px] font-semibold border transition cursor-pointer ${
  scores[r.id] === presetVal
  ? 'bg-blue-600 text-white border-blue-600'
  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
@@ -985,7 +1014,7 @@ function TeacherEssayGradingContent() {
  placeholder="Nhận xét tiêu chí..."
  value={comments[r.id] || ''}
  onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
- className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-lg px-2.5 py-1 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
+ className="flex-1 min-w-[200px] bg-slate-50/50 border border-slate-200 rounded-xl px-2.5 py-1 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
  />
  </div>
  </div>
@@ -998,7 +1027,7 @@ function TeacherEssayGradingContent() {
  <button
  type="button"
  onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: [] })}
- className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition cursor-pointer shadow-2xs"
+ className="px-2.5 py-1 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition cursor-pointer shadow-2xs"
  >
  Cấu hình Rubric ngay
  </button>
@@ -1013,7 +1042,7 @@ function TeacherEssayGradingContent() {
  placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."
  value={teacherComments[q.questionId] || ''}
  onChange={(e) => setTeacherComments((prev) => ({ ...prev, [q.questionId]: e.target.value }))}
- className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none shadow-2xs"
+ className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none shadow-2xs"
  />
  </div>
  </div>

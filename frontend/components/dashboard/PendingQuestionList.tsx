@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
 import { Button } from '../ui/Button';
 import { QuestionDifficultyBadge } from '../question-bank/QuestionBadges';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 const difficultyBadge = {
  EASY: ['Dễ', 'bg-slate-100 text-slate-600 border-slate-200'],
@@ -91,7 +92,7 @@ export function PendingQuestionList({
  return (
  <tr key={q.id} className="hover:bg-slate-50/60 transition">
  <td className="py-3 px-3 whitespace-nowrap tabular-nums font-semibold text-blue-600">
- {q.code}
+ <IdentifierBadge>{q.code}</IdentifierBadge>
  </td>
  <td className="py-3 px-3 font-medium text-slate-900 max-w-xs truncate">
  {q.content}

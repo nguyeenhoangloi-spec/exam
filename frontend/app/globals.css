@@ -30,17 +30,23 @@
   --ui-page: #f8fafc;
   --ui-surface: #ffffff;
   --ui-surface-muted: #f1f5f9;
+  /* Black-forward neutral hierarchy for the web UI. Keep the steps close
+   * enough for a calm interface while preventing body/table content from
+   * looking washed out. */
   --ui-text: #0f172a;
   --ui-text-muted: #1f2937;
   --ui-text-primary: #0f172a;
-  --ui-text-body: #1f2937;
-  --ui-text-secondary: #334155;
-  --ui-text-muted-soft: #475569;
+  --ui-text-body: #111827;
+  --ui-text-secondary: #1f2937;
+  --ui-text-muted-soft: #374151;
   --ui-text-disabled: #64748b;
   --ui-border: #e2e8f0;
   --ui-primary: #2563eb;
   --ui-primary-hover: #1d4ed8;
   --ui-primary-rgb: 37 99 235;
+  --ui-motion-fast: 150ms;
+  --ui-motion-medium: 200ms;
+  --ui-motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ui-chart-primary: #2563eb;
   --ui-chart-primary-light: #3b82f6;
   --ui-chart-success: #10b981;
@@ -112,6 +118,23 @@ html.dark {
     font-family: inherit;
   }
 
+  /* Interactive controls use the system-wide rounded-xl radius. */
+  button:not(.rounded-full),
+  [role='button']:not(.rounded-full),
+  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not(.rounded-full),
+  select:not(.rounded-full),
+  textarea:not(.rounded-full),
+  label.cursor-pointer:not(.rounded-full) {
+    border-radius: var(--ui-radius) !important;
+  }
+
+  /* Every interactive button keeps a consistent compact touch target. Explicit
+   * h-9/h-10/h-11/h-12 utilities may still opt into a larger semantic size. */
+  button,
+  [role='button'] {
+    min-height: 2.25rem;
+  }
+
   button:not(:disabled),
   [role='button']:not([aria-disabled='true']) {
     -webkit-tap-highlight-color: transparent;
@@ -132,6 +155,135 @@ html.dark {
 }
 
 @layer utilities {
+
+  /* Shared interaction motion: small, predictable and safe for touch input. */
+  .ui-pressable {
+    transform-origin: center;
+  }
+
+  .ui-pressable:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.98);
+  }
+
+  /* Raw controls that have not migrated to a shared primitive still receive
+   * the same press and transition contract. */
+  button:not(.no-motion):not([data-no-press]),
+  [role='button']:not(.no-motion):not([data-no-press]) {
+    transform-origin: center;
+    transition-property: background-color, border-color, box-shadow, color, opacity, transform !important;
+    transition-duration: var(--ui-motion-fast) !important;
+    transition-timing-function: ease-out !important;
+  }
+
+  button:not(:disabled):not([aria-disabled='true']):not(.no-motion):not([data-no-press]):active,
+  [role='button']:not([aria-disabled='true']):not(.no-motion):not([data-no-press]):active {
+    transform: scale(0.98) !important;
+  }
+
+  :where(input, select, textarea):not(.no-motion) {
+    transition-property: background-color, border-color, box-shadow, color, opacity !important;
+    transition-duration: var(--ui-motion-fast) !important;
+    transition-timing-function: ease-out !important;
+  }
+
+  /* Keep hover motion subtle and disable hover-only movement on touch
+   * devices. Existing page classes are normalized here at the shared layer. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .app-shell-main .hover\:-translate-y-1:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    .app-shell-main .hover\:-translate-y-0\.5:hover {
+      transform: translateY(-1px) !important;
+    }
+
+    .app-shell-main .group:hover .group-hover\:scale-110 {
+      transform: scale(1.05) !important;
+    }
+
+    .app-shell-main .group:hover .group-hover\:scale-105 {
+      transform: scale(1.03) !important;
+    }
+  }
+
+  /* Normalize legacy press utilities until every caller is migrated. */
+  .active\:scale-95:active,
+  .active\:scale-\[0\.99\]:active,
+  .active\:scale-\[0\.98\]:active {
+    transform: scale(0.98) !important;
+  }
+
+  /* Fallback for the animate-in vocabulary used by existing dialogs/menus.
+   * The project does not install tailwindcss-animate, so these definitions
+   * keep the existing class names functional without adding a dependency. */
+  @keyframes ui-motion-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes ui-motion-scale-fade-in {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes ui-motion-slide-in-right {
+    from { opacity: 0; transform: translateX(12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes ui-motion-slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-in {
+    animation-fill-mode: both;
+  }
+
+  .animate-in.fade-in,
+  .animate-in.fade-in-50 {
+    animation: ui-motion-fade-in var(--ui-motion-fast) ease-out both;
+  }
+
+  .animate-in.fade-in.zoom-in-95,
+  .animate-in.fade-in-50.zoom-in-95 {
+    animation: ui-motion-scale-fade-in var(--ui-motion-fast) var(--ui-motion-ease) both;
+  }
+
+  .animate-in.zoom-in-95 {
+    animation: ui-motion-scale-fade-in var(--ui-motion-fast) var(--ui-motion-ease) both;
+  }
+
+  .animate-in.slide-in-from-right {
+    animation: ui-motion-slide-in-right var(--ui-motion-medium) var(--ui-motion-ease) both;
+  }
+
+  .animate-in.slide-in-from-bottom,
+  .animate-in.slide-in-from-bottom-5 {
+    animation: ui-motion-slide-up var(--ui-motion-medium) var(--ui-motion-ease) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .ui-pressable:active:not(:disabled):not([aria-disabled='true']),
+    .active\:scale-95:active,
+    .active\:scale-\[0\.99\]:active,
+    .active\:scale-\[0\.98\]:active {
+      transform: none !important;
+    }
+  }
 
   .no-focus-ring,
   .no-focus-ring:focus,
@@ -773,4 +925,162 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/*
+ * Final web typography contract.
+ *
+ * These rules intentionally live outside Tailwind's base/components/utilities
+ * layers. A page-level utility such as text-[14px] must not silently reduce
+ * the readable size of a native control or data table. The semantic
+ * exceptions below (helper text, badges and technical pre blocks) remain
+ * explicit and use the shared tokens instead of raw pixel values.
+ */
+.typography-scale :where(
+  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
+  select,
+  textarea
+) {
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-body) !important;
+}
+
+/* All native form controls share the standard 40px touch target. Textareas
+ * remain content-sized so multi-line fields keep their intended layout. */
+.typography-scale :where(
+  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not([type='range']),
+  select
+) {
+  min-height: 2.5rem;
+}
+
+/* Caller utility classes must not shrink the shared custom select trigger. */
+.typography-scale button[data-ui-control='filter-select'] {
+  height: 2.5rem !important;
+  min-height: 2.5rem !important;
+}
+
+/* Legacy compact icon/text actions converge on the 36px compact target. */
+.typography-scale button[class~='h-8'] {
+  min-height: 2.25rem !important;
+}
+
+.typography-scale button[class~='h-8'][class~='w-8'],
+.typography-scale button[class~='h-8.5'] {
+  height: 2.25rem !important;
+  width: 2.25rem !important;
+}
+
+.typography-scale button[class~='h-8'][class~='min-w-[32px]'] {
+  height: 2.25rem !important;
+  min-width: 2.25rem !important;
+}
+
+.typography-scale :where(label) {
+  font-size: var(--fs-label) !important;
+  line-height: var(--lh-label) !important;
+}
+
+.typography-scale :where(table) {
+  font-size: var(--fs-table-body) !important;
+  line-height: var(--lh-table-body) !important;
+}
+
+.typography-scale :where(thead, thead tr, th) {
+  font-size: var(--fs-table-header) !important;
+  line-height: var(--lh-table-header) !important;
+}
+
+.typography-scale :where(tbody, tbody tr, td) {
+  font-size: var(--fs-table-body) !important;
+  line-height: var(--lh-table-body) !important;
+}
+
+/* Normalize arbitrary Tailwind pixel utilities to the same semantic scale.
+ * The selector also catches responsive forms such as sm:text-[14px]. */
+.typography-scale :where(
+  [class*='text-[12px]'],
+  [class*='text-[13px]']
+) {
+  font-size: var(--fs-helper) !important;
+  line-height: var(--lh-helper) !important;
+}
+
+.typography-scale :where([class*='text-[14px]']) {
+  font-size: var(--fs-body-sm) !important;
+  line-height: var(--lh-body-sm) !important;
+}
+
+.typography-scale :where([class*='text-[15px]']) {
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-body) !important;
+}
+
+.typography-scale :where([class*='text-[18px]']) {
+  font-size: var(--fs-card-title) !important;
+  line-height: var(--lh-card-title) !important;
+}
+
+.typography-scale :where([class*='text-[20px]']) {
+  font-size: var(--fs-section-title) !important;
+  line-height: var(--lh-section-title) !important;
+}
+
+.typography-scale :where([class*='text-[28px]']) {
+  font-size: var(--fs-page-title) !important;
+  line-height: var(--lh-page-title) !important;
+}
+
+.typography-scale :where([class*='text-[32px]']) {
+  font-size: var(--fs-kpi) !important;
+  line-height: var(--lh-kpi) !important;
+}
+
+/* Native semantic elements win over every page-local text utility. */
+.typography-scale :where(
+  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
+  select,
+  textarea
+) {
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-body) !important;
+}
+
+.typography-scale :where(label) {
+  font-size: var(--fs-label) !important;
+  line-height: var(--lh-label) !important;
+}
+
+.typography-scale :where(table) {
+  font-size: var(--fs-table-body) !important;
+  line-height: var(--lh-table-body) !important;
+}
+
+.typography-scale :where(thead, thead tr, th) {
+  font-size: var(--fs-table-header) !important;
+  line-height: var(--lh-table-header) !important;
+}
+
+.typography-scale :where(tbody, tbody tr, td) {
+  font-size: var(--fs-table-body) !important;
+  line-height: var(--lh-table-body) !important;
+}
+
+.typography-scale :where(button, [role='button']) {
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-body) !important;
+}
+
+/* Small technical and status elements are the only intentional compact
+ * exceptions. They stay readable while remaining below normal body text. */
+.typography-scale :where(
+  .table-badge,
+  .table-avatar,
+  .table-tooltip,
+  .edu-badge,
+  pre,
+  code
+) {
+  font-size: var(--fs-badge) !important;
+  line-height: var(--lh-badge) !important;
 }

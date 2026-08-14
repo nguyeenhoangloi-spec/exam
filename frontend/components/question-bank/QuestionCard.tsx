@@ -5,6 +5,7 @@ import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from 
 import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { DynamicImage } from '../ui/DynamicImage';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 export function QuestionCard({
  question: q,
@@ -43,9 +44,9 @@ export function QuestionCard({
  type="checkbox"
  checked={selected}
  onChange={(e) => onSelect(e.target.checked)}
- className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
- <b className="text-primary-600 tabular-nums text-[14px] font-semibold">{q.code}</b>
+ <IdentifierBadge>{q.code}</IdentifierBadge>
  {q.subject?.subjectName && (
  <span className="rounded-lg bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[13px] font-medium text-primary-600 h-6 inline-flex items-center">
  {q.subject.subjectName}
@@ -68,7 +69,7 @@ export function QuestionCard({
  <button
  title="Gửi duyệt"
  onClick={() => onAction('submit')}
- className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition font-semibold"
+ className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition font-semibold"
  >
  <Send className="h-4 w-4" />
  </button>
@@ -79,14 +80,14 @@ export function QuestionCard({
  <button
  title="Phê duyệt câu hỏi"
  onClick={() => onAction('approve')}
- className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+ className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition"
  >
  <Check className="h-4 w-4" />
  </button>
  <button
  title="Từ chối câu hỏi"
  onClick={() => onAction('reject')}
- className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition"
+ className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition"
  >
  <X className="h-4 w-4" />
  </button>
@@ -96,7 +97,7 @@ export function QuestionCard({
  <button
  title="Xem chi tiết"
  onClick={onDetail}
- className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+ className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition"
  >
  <Eye className="h-4 w-4" />
  </button>
@@ -105,7 +106,7 @@ export function QuestionCard({
  <button
  title="Chỉnh sửa câu hỏi"
  onClick={() => onAction('edit')}
- className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+ className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition"
  >
  <Pencil className="h-4 w-4" />
  </button>
@@ -114,7 +115,7 @@ export function QuestionCard({
  <button
  title="Nhân bản câu hỏi"
  onClick={() => onAction('duplicate')}
- className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+ className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition"
  >
  <Copy className="h-4 w-4" />
  </button>
@@ -125,7 +126,7 @@ export function QuestionCard({
  <button
  title="Khôi phục câu hỏi"
  onClick={() => onAction('restore')}
- className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+ className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition"
  >
  <RotateCcw className="h-4 w-4" />
  </button>
@@ -133,7 +134,7 @@ export function QuestionCard({
  <button
  title="Kho lưu trữ"
  onClick={() => onAction('archive')}
- className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+ className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition"
  >
  <Archive className="h-4 w-4" />
  </button>
@@ -141,7 +142,7 @@ export function QuestionCard({
  <button
  title="Xóa câu hỏi"
  onClick={() => onAction('delete')}
- className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition"
+ className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition"
  >
  <Trash2 className="h-4 w-4" />
  </button>
@@ -153,7 +154,7 @@ export function QuestionCard({
  {/* Question Content */}
  <div className="space-y-3">
  <div
- className="text-[15px] font-medium text-slate-900 leading-relaxed cursor-pointer hover:text-primary-600 transition"
+ className="text-[15px] font-normal text-slate-900 leading-relaxed cursor-pointer hover:text-primary-600 transition"
  onClick={onDetail}
  >
  {q.contentRich && typeof q.contentRich === 'object' && 'html' in q.contentRich ? (

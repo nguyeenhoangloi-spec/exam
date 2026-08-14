@@ -7,6 +7,7 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 import {
   Settings,
   Bell,
@@ -253,14 +254,14 @@ export default function SettingsPage() {
 
               <div className="space-y-1.5">
                 <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-200">Ngôn ngữ giao diện</label>
-                <select
+                <FilterSelect containerClassName="w-full"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-3 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-3 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
                 >
                   <option value="vi">Tiếng Việt (Mặc định)</option>
                   <option value="en">English (US)</option>
-                </select>
+                </FilterSelect>
               </div>
             </div>
           </div>
@@ -278,15 +279,15 @@ export default function SettingsPage() {
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 space-y-1">
                 <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100 block">Thời gian tự động đăng xuất (Timeout)</span>
                 <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block mb-2">Tự động hủy phiên đăng nhập nếu không có thao tác</span>
-                <select
+                <FilterSelect
                   value={sessionTimeout}
                   onChange={(e) => setSessionTimeout(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
                 >
                   <option value="30">30 phút không hoạt động</option>
                   <option value="60">60 phút không hoạt động (Mặc định)</option>
                   <option value="120">120 phút không hoạt động</option>
-                </select>
+                </FilterSelect>
               </div>
 
               <div className="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">

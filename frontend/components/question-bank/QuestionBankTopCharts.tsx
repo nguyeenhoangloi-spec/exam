@@ -67,11 +67,11 @@ export function QuestionBankTopCharts({
   const cardCls = 'group flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md overflow-hidden cursor-pointer';
   const hdrCls = 'flex items-center gap-3 border-b border-slate-100 pb-3 mb-3';
   const iconCls = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 text-blue-600 bg-blue-50 border-blue-100';
-  const titleCls = 'text-[15px] font-semibold text-slate-900';
+  const titleCls = 'text-lg font-semibold text-slate-900 dark:text-slate-100';
   const legendRowCls = 'flex items-center justify-between gap-1';
-  const legendNameCls = 'text-[13px] font-medium text-slate-600 truncate';
-  const legendValCls = 'text-[14px] font-semibold text-slate-900 shrink-0';
-  const legendPctCls = 'text-[13px] text-slate-500 font-normal ml-0.5';
+  const legendNameCls = 'text-xs font-medium text-slate-600 dark:text-slate-400 truncate';
+  const legendValCls = 'text-sm font-semibold text-slate-900 dark:text-slate-100 shrink-0';
+  const legendPctCls = 'text-xs text-slate-500 dark:text-slate-400 font-normal ml-0.5';
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -79,7 +79,7 @@ export function QuestionBankTopCharts({
       {/* ─── Card 1: Tổng quan ─── */}
       <div className={cardCls}>
         <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
             <span className={titleCls}>Tổng quan ngân hàng</span>
             <span className={iconCls}>
               <Database className="h-5 w-5" />
@@ -96,8 +96,8 @@ export function QuestionBankTopCharts({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[18px] font-semibold text-slate-900 leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="text-[13px] font-normal text-slate-500 mt-0.5">Tổng</span>
+              <span className="text-lg font-semibold text-slate-900 dark:text-slate-100 leading-none">{total.toLocaleString('vi-VN')}</span>
+              <span className="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5">Tổng</span>
             </div>
           </div>
           <div className="flex-1 space-y-2">
@@ -120,7 +120,7 @@ export function QuestionBankTopCharts({
       {/* ─── Card 2: Độ khó ─── */}
       <div className={cardCls}>
         <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
             <span className={titleCls}>Phân bố độ khó</span>
             <span className={iconCls}>
               <BarChart2 className="h-5 w-5" />
@@ -131,15 +131,15 @@ export function QuestionBankTopCharts({
           {difficultyData.map((item) => (
             <div key={item.label}>
               <div className="flex items-center justify-between mb-1">
-                <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[13px] font-semibold ${item.pill}`}>
+                <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold ${item.pill}`}>
                   {item.label}
                 </span>
                 <span className={legendValCls}>
                   {item.value.toLocaleString('vi-VN')}
-                  <span className="text-[13px] text-slate-500 font-normal ml-1">({pctLabel(item.value)})</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-normal ml-1">({pctLabel(item.value)})</span>
                 </span>
               </div>
-              <div className="h-[5px] w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="h-[5px] w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
                   className="h-full rounded-full transition-all duration-700 ease-out"
                   style={{ width: `${item.pct}%`, backgroundColor: item.color }}
@@ -153,7 +153,7 @@ export function QuestionBankTopCharts({
       {/* ─── Card 3: Loại câu hỏi ─── */}
       <div className={cardCls}>
         <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
             <span className={titleCls}>Phân bố loại câu hỏi</span>
             <span className={iconCls}>
               <LayoutGrid className="h-5 w-5" />
@@ -170,8 +170,8 @@ export function QuestionBankTopCharts({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[14px] font-semibold text-slate-900 leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="edu-badge font-semibold text-slate-400 mt-0.5">Tổng</span>
+              <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-none">{total.toLocaleString('vi-VN')}</span>
+              <span className="edu-badge font-semibold text-slate-400 dark:text-slate-500 mt-0.5">Tổng</span>
             </div>
           </div>
           <div className="flex-1 space-y-1.5 overflow-y-auto max-h-24">

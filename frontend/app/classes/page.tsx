@@ -1,5 +1,5 @@
-
 'use client';
+
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
@@ -21,6 +21,7 @@ import { ClassTableToolbar } from '../../components/classes/ClassTableToolbar';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ClassTable } from '../../components/classes/ClassTable';
 import { ClassPaginationBar } from '../../components/classes/ClassPaginationBar';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function ClassesPage() {
  usePageTitle('Quản lý lớp học');
@@ -98,6 +99,11 @@ export default function ClassesPage() {
  setLoading(false);
  }
  }, []);
+
+ const handleRefresh = async () => {
+    await fetchData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
 
  useEffect(() => {
  const u = getAuthUser();
@@ -390,7 +396,7 @@ export default function ClassesPage() {
  onViewModeChange={setViewMode}
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
- onRefresh={fetchData}
+ onRefresh={handleRefresh}
  loading={loading}
  />
 
@@ -474,7 +480,7 @@ export default function ClassesPage() {
 
  <div>
  <label className="block text-[15px] font-medium text-slate-900 mb-1">Khoa trực thuộc</label>
- <select
+ <FilterSelect containerClassName="w-full"
  required
  value={formData.departmentId}
  onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
@@ -486,7 +492,7 @@ export default function ClassesPage() {
  {d.name} ({d.code})
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
@@ -499,7 +505,7 @@ export default function ClassesPage() {
  setIsModalOpen(false);
  setIsImportModalOpen(true);
  }}
- leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+ leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
  >
  Import Excel
  </Button>
@@ -676,7 +682,7 @@ export default function ClassesPage() {
  </div>
  <div className="flex-1 min-w-0">
  <p className="text-[15px] font-semibold text-slate-900 truncate">{sv.fullName}</p>
- <p className="text-[13px] font-normal text-slate-500">{sv.studentCode}</p>
+ <IdentifierBadge tone="neutral">{sv.studentCode}</IdentifierBadge>
  <div className="flex items-center gap-3 mt-1.5 text-[13px] font-normal text-slate-500">
  {sv.email && (
  <span className="flex items-center gap-1">
@@ -739,9 +745,7 @@ export default function ClassesPage() {
  </div>
  <div>
  <div className="flex items-center gap-2 mb-1">
- <span className=" tabular-nums text-[13px] font-semibold text-blue-600">
- {sub.subjectCode}
- </span>
+ <IdentifierBadge>{sub.subjectCode}</IdentifierBadge>
  <span className="text-[13px] font-normal text-slate-500">{sub.credits} tín chỉ</span>
  </div>
  <p className="text-[15px] font-semibold text-slate-900">{sub.subjectName}</p>

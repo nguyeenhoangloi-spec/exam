@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,7 @@ import { TeacherTableToolbar } from '../../components/teachers/TeacherTableToolb
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { TeacherTable } from '../../components/teachers/TeacherTable';
 import { TeacherPaginationBar } from '../../components/teachers/TeacherPaginationBar';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 const DEGREE_OPTIONS = ['GS.TS', 'PGS.TS', 'TS', 'ThS'];
 
@@ -118,6 +119,11 @@ export default function TeachersPage() {
  setLoading(false);
  }
  }, []);
+
+  const handleRefresh = async () => {
+    await fetchData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
 
  useEffect(() => {
  const u = getAuthUser();
@@ -326,8 +332,8 @@ export default function TeachersPage() {
  filtered={filteredTeachers.length}
  />
 
- {/* Filter Card Toolbar */}
- <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-col lg:flex-row items-center justify-between gap-3.5">
+ {/* Filter Toolbar */}
+ <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
  <div className="relative flex-1 w-full min-w-[280px]">
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  <input
@@ -338,7 +344,7 @@ export default function TeachersPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
  />
  {search && (
  <button
@@ -386,7 +392,7 @@ export default function TeachersPage() {
  onViewModeChange={setViewMode}
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
- onRefresh={fetchData}
+ onRefresh={handleRefresh}
  loading={loading}
  />
 
@@ -463,20 +469,20 @@ export default function TeachersPage() {
  required
  value={formData.teacherCode}
  onChange={(e) => setFormData({ ...formData, teacherCode: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Học vị / Học hàm</label>
- <select
+ <FilterSelect containerClassName="w-full"
  value={formData.degree}
  onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  {DEGREE_OPTIONS.map((d) => (
  <option key={d} value={d}>{d}</option>
  ))}
- </select>
+ </FilterSelect>
  </div>
  </div>
 
@@ -487,23 +493,23 @@ export default function TeachersPage() {
  required
  value={formData.fullName}
  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
- <select
+ <FilterSelect 
  required
  value={formData.departmentId}
  onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  <option value="">-- Chọn Khoa --</option>
  {departments.map((d) => (
  <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div className="grid grid-cols-2 gap-4">
@@ -514,7 +520,7 @@ export default function TeachersPage() {
  required
  value={formData.email}
  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  <div>
@@ -523,7 +529,7 @@ export default function TeachersPage() {
  type="text"
  value={formData.phone}
  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  </div>
@@ -538,7 +544,7 @@ export default function TeachersPage() {
  setIsModalOpen(false);
  setIsImportModalOpen(true);
  }}
- leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+ leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
  >
  Import Excel
  </Button>
@@ -599,9 +605,9 @@ export default function TeachersPage() {
 <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerTeacher.fullName}
  </h2>
- <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
- Mã cán bộ: {drawerTeacher.teacherCode}
- </p>
+ <div className="mt-1.5">
+  <IdentifierBadge tone="inverse">Mã cán bộ: {drawerTeacher.teacherCode}</IdentifierBadge>
+ </div>
  </div>
  </div>
 
@@ -647,7 +653,7 @@ export default function TeachersPage() {
  </div>
  <div>
  <p className="text-[13px] font-semibold text-slate-500">Mã giảng viên</p>
- <p className="text-[15px] font-semibold text-slate-900">{drawerTeacher.teacherCode}</p>
+ <IdentifierBadge tone="neutral">{drawerTeacher.teacherCode}</IdentifierBadge>
  </div>
  </div>
  <div className="flex items-center gap-3">
@@ -717,7 +723,7 @@ export default function TeachersPage() {
  {subject?.subjectName || 'Môn thi'}
  </h4>
  {subject?.subjectCode && (
- <span className="text-[13px] font-medium text-slate-500">Mã môn: {subject.subjectCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã môn: <IdentifierBadge tone="neutral">{subject.subjectCode}</IdentifierBadge></span>
  )}
  </div>
  <span className={`px-2.5 py-1 rounded-lg text-[13px] font-semibold shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-slate-100 text-slate-700'

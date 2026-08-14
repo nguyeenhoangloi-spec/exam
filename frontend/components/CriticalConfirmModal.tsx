@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from './ui/FilterSelect';
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -165,7 +166,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-white/80 hover:bg-white/20 transition cursor-pointer"
+            className="rounded-xl p-1.5 text-white/80 hover:bg-white/20 transition cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -192,7 +193,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             <label className="block text-[15px] font-medium text-slate-600 mb-1">
               1. Lý do thực hiện thao tác <span className="text-rose-500">*</span>
             </label>
-            <select
+            <FilterSelect containerClassName="w-full"
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value)}
               className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition"
@@ -202,7 +203,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                   {r}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
             {selectedReason === 'Lý do khác' && (
               <input
                 type="text"
@@ -242,7 +243,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 <button
                   type="button"
                   onClick={handleQuickFillPhrase}
-                  className="text-[13px] font-semibold text-blue-600 hover:bg-blue-50 px-2.5 py-0.5 rounded-md transition cursor-pointer"
+                  className="text-[13px] font-semibold text-blue-600 hover:bg-blue-50 px-2.5 py-0.5 rounded-xl transition cursor-pointer"
                   title="Tự động điền cụm từ xác nhận"
                 >
                   Điền nhanh
@@ -317,14 +318,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="h-[38px] px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-sm font-medium transition cursor-pointer disabled:opacity-50"
+              className="h-[38px] px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-base font-medium transition cursor-pointer disabled:opacity-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`h-[38px] px-4 rounded-xl text-white font-medium text-sm transition flex items-center gap-2 cursor-pointer ${
+              className={`h-[38px] px-4 rounded-xl text-white font-medium text-base transition flex items-center gap-2 cursor-pointer ${
                 loading ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700 active:bg-red-800'
               }`}
             >

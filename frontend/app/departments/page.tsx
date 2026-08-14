@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -19,6 +20,7 @@ import { DepartmentKPICards } from '../../components/departments/DepartmentKPICa
 import { DepartmentTableToolbar } from '../../components/departments/DepartmentTableToolbar';
 import { DepartmentTable } from '../../components/departments/DepartmentTable';
 import { DepartmentPaginationBar } from '../../components/departments/DepartmentPaginationBar';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 interface CurriculumItem {
  id: number;
@@ -120,6 +122,11 @@ export default function DepartmentsPage() {
  setLoading(false);
  }
  }, []);
+
+ const handleRefresh = async () => {
+ await fetchData();
+ setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+ };
 
  useEffect(() => {
  const u = getAuthUser();
@@ -394,7 +401,7 @@ export default function DepartmentsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
  />
  {search && (
  <button
@@ -420,7 +427,7 @@ export default function DepartmentsPage() {
  onViewModeChange={setViewMode}
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
- onRefresh={fetchData}
+ onRefresh={handleRefresh}
  loading={loading}
  />
 
@@ -535,11 +542,11 @@ export default function DepartmentsPage() {
  <span className="text-xs font-semibold text-slate-700 tracking-wider">Thêm Môn học vào Khung CTDT</span>
  <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
  <div className="sm:col-span-2">
- <select
+ <FilterSelect
  required
  value={addCurriculumForm.subjectId}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, subjectId: e.target.value })}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  >
  <option value="">-- Chọn Môn học --</option>
  {allSubjects.map((s) => (
@@ -547,32 +554,32 @@ export default function DepartmentsPage() {
  [{s.subjectCode}] {s.subjectName} ({s.credits} TC)
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div>
- <select
+ <FilterSelect
  value={addCurriculumForm.type}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, type: e.target.value as any })}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  >
  <option value="MANDATORY">Bắt buộc</option>
  <option value="ELECTIVE">Tự chọn</option>
- </select>
+ </FilterSelect>
  </div>
 
  <div>
- <select
+ <FilterSelect
  value={addCurriculumForm.recommendedSemester}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, recommendedSemester: e.target.value })}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  >
  {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
  <option key={sem} value={sem}>
  Học kỳ {sem}
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
  </div>
 
@@ -582,7 +589,7 @@ export default function DepartmentsPage() {
  placeholder="Ghi chú (Tùy chọn)..."
  value={addCurriculumForm.note}
  onChange={(e) => setAddCurriculumForm({ ...addCurriculumForm, note: e.target.value })}
- className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
+ className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 outline-none"
  />
  <button
  type="submit"
@@ -620,9 +627,7 @@ export default function DepartmentsPage() {
  {curriculumList.map((item) => (
  <tr key={item.id} className="transition hover:bg-blue-50/40">
  <td className="p-3">
- <span className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600">
- {item.subject?.subjectCode}
- </span>
+ <IdentifierBadge>{item.subject?.subjectCode}</IdentifierBadge>
  </td>
  <td className="p-3 font-medium text-slate-900">{item.subject?.subjectName}</td>
  <td className="p-3 text-center font-medium text-slate-700">
@@ -648,7 +653,7 @@ export default function DepartmentsPage() {
  <button
  type="button"
  onClick={() => handleRemoveCurriculum(item.subjectId || item.id)}
- className="p-1 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition cursor-pointer"
+ className="p-1 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition cursor-pointer"
  title="Xóa khỏi khung"
  >
  <Trash2 className="h-3.5 w-3.5" />
@@ -796,7 +801,7 @@ export default function DepartmentsPage() {
  <span className="text-[15px] font-semibold text-slate-900">{sub.subjectName}</span>
  <span className="rounded bg-slate-100 px-2 py-0.5 text-[13px] font-semibold text-slate-600 shrink-0">{sub.credits} TC</span>
  </div>
- <span className="text-[13px] font-medium text-slate-500">Mã môn: {sub.subjectCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã môn: <IdentifierBadge tone="neutral">{sub.subjectCode}</IdentifierBadge></span>
  </div>
  ))
  ) : (
@@ -834,7 +839,7 @@ export default function DepartmentsPage() {
  <span className="rounded bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-[13px] font-semibold shrink-0">{teacher.degree || teacher.academicTitle}</span>
  )}
  </div>
- <span className="text-[13px] font-medium text-slate-500">Mã GV: {teacher.teacherCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã GV: <IdentifierBadge tone="neutral">{teacher.teacherCode}</IdentifierBadge></span>
  <span className="text-[13px] font-medium text-slate-500">Email: {teacher.email}</span>
  </div>
  ))
@@ -868,7 +873,7 @@ export default function DepartmentsPage() {
  <div key={sv.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs hover:border-blue-200 transition-colors">
  <div>
  <p className="text-[15px] font-semibold text-slate-900">{sv.fullName}</p>
- <p className="text-[13px] font-medium text-slate-500 mt-0.5">{sv.studentCode} • Lớp: <span className="font-semibold text-blue-600">{sv.classCode || sv.className}</span></p>
+ <p className="text-[13px] font-medium text-slate-500 mt-0.5"><IdentifierBadge tone="neutral">{sv.studentCode}</IdentifierBadge> • Lớp: <span className="font-semibold text-blue-600">{sv.classCode || sv.className}</span></p>
  </div>
  <div className="text-right">
  <span className="text-[13px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">{sv.email}</span>

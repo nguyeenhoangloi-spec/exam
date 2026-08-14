@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../ui/FilterSelect';
 
 import { useState, useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
@@ -154,10 +155,10 @@ export function QuestionAIWizard({
             {/* Subject Select */}
             <div className="space-y-1">
               <label className="block text-[15px] font-medium text-slate-900">Môn học áp dụng <span className="text-rose-500">*</span></label>
-              <select
+              <FilterSelect containerClassName="w-full"
                 value={form.subjectId}
                 onChange={(e) => set('subjectId', e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="">-- Chọn môn học --</option>
                 {subjects.map((s) => (
@@ -165,50 +166,50 @@ export function QuestionAIWizard({
                     {s.subjectCode} - {s.subjectName}
                   </option>
                 ))}
-              </select>
+              </FilterSelect>
             </div>
 
             {/* Question Type */}
             <div className="space-y-1">
               <label className="block text-[15px] font-medium text-slate-900">Hình thức câu hỏi</label>
-              <select
+              <FilterSelect 
                 value={form.type}
                 onChange={(e) => set('type', e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="SINGLE_CHOICE">Trắc nghiệm chọn 1 đáp án</option>
                 <option value="FILL_BLANK">Điền vào chỗ trống</option>
                 <option value="ESSAY">Tự luận ngắn / Luận giải</option>
-              </select>
+              </FilterSelect>
             </div>
 
             {/* Difficulty */}
             <div className="space-y-1">
               <label className="block text-[15px] font-medium text-slate-900">Mức độ khó</label>
-              <select
+              <FilterSelect containerClassName="w-full"
                 value={form.difficulty}
                 onChange={(e) => set('difficulty', e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="EASY">Dễ (Cơ bản)</option>
                 <option value="MEDIUM">Trung bình (Vừa phải)</option>
                 <option value="HARD">Khó (Phân hóa cao)</option>
-              </select>
+              </FilterSelect>
             </div>
 
             {/* Bloom Level */}
             <div className="space-y-1">
               <label className="block text-[15px] font-medium text-slate-900">Cấp độ tư duy (Bloom)</label>
-              <select
+              <FilterSelect 
                 value={form.bloomLevel}
                 onChange={(e) => set('bloomLevel', e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer transition"
               >
                 <option value="REMEMBER">Nhận biết (Remember)</option>
                 <option value="UNDERSTAND">Thông hiểu (Understand)</option>
                 <option value="APPLY">Vận dụng (Apply)</option>
                 <option value="ANALYZE">Phân tích (Analyze)</option>
-              </select>
+              </FilterSelect>
             </div>
 
             {/* Question Count */}
@@ -260,7 +261,7 @@ export function QuestionAIWizard({
 
           <label
             htmlFor="question-ai-source-file"
-            className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-3.5 text-center cursor-pointer transition hover:border-blue-500"
+            className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-3.5 text-center cursor-pointer transition hover:border-blue-500"
           >
             {uploading ? (
               <div className="flex flex-col items-center space-y-1">
@@ -295,7 +296,7 @@ export function QuestionAIWizard({
             value={form.prompt}
             onChange={(e) => set('prompt', e.target.value)}
             placeholder="Ví dụ: Tập trung vào Chương 2 - Thuật toán sắp xếp nhanh (QuickSort), yêu cầu có câu hỏi phân tích độ phức tạp thời gian O(n log n)..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none transition"
+            className="w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-2.5 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none transition"
           />
         </div>
 
@@ -343,11 +344,11 @@ export function QuestionAIWizard({
                     onChange={(e) =>
                       setItems(items.map((x, j) => (j === i ? { ...x, content: e.target.value } : x)))
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 transition"
+                    className="w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-2 text-[15px] font-medium text-slate-900 focus:bg-white focus:border-blue-500 transition"
                   />
 
                   {q.sourceImages?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                    <div className="flex flex-wrap gap-2 h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-2">
                       {q.sourceImages.map((image: any, imageIdx: number) => (
                         <DynamicImage
                           key={imageIdx}
@@ -366,7 +367,7 @@ export function QuestionAIWizard({
                         {q.options.map((opt: any, optIdx: number) => (
                           <div
                             key={optIdx}
-                            className={`flex items-center gap-2 rounded-lg border p-2 text-[15px] font-medium transition ${opt.isCorrect
+                            className={`flex items-center gap-2 rounded-xl border p-2 text-[15px] font-medium transition ${opt.isCorrect
                               ? 'border-emerald-300 bg-emerald-50 text-emerald-900 font-semibold'
                               : 'border-slate-200 bg-slate-50 text-slate-700'
                               }`}

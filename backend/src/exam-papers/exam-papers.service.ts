@@ -43,9 +43,11 @@ const paperDetailInclude = {
 
 import { ActionVerifierService } from '../common/security/action-verifier.service';
 import { ConfirmCriticalActionDto } from '../common/dto/critical-action.dto';
+import { ExamPaperGenerationCore } from './exam-paper-generation.core';
 
 @Injectable()
 export class ExamPapersService {
+  private readonly generationCore = new ExamPaperGenerationCore();
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
@@ -65,66 +67,6 @@ export class ExamPapersService {
     });
     if (!paper) throw new NotFoundException('Không tìm thấy đề thi.');
     return paper;
-  }
-
-  private shuffle<T>(items: T[]) {
-    const result = [...items];
-    for (let index = result.length - 1; index > 0; index -= 1) {
-      const randomIndex = Math.floor(Math.random() * (index + 1));
-      [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
-    }
-    return result;
-  }
-
-  private selectQuestionsByScore(pool: any[], targetScore: number, defaultScore: number) {
-    if (targetScore <= 0 || pool.length === 0) return [];
-
-    const targetCents = Math.round(targetScore * 100);
-    const questions = this.shuffle([...pool]).map((q) => {
-      const score = q.score && Number(q.score) > 0 ? Number(q.score) : defaultScore;
-      return {
-        ...q,
-        effectiveScore: score,
-        cents: Math.round(score * 100),
-      };
-    });
-
-    const dp = new Array<number[] | null>(targetCents + 1).fill(null);
-    dp[0] = [];
-
-    for (let i = 0; i < questions.length; i++) {
-      const cents = questions[i].cents;
-      if (cents <= 0) continue;
-
-      for (let w = targetCents; w >= cents; w--) {
-        if (dp[w - cents] !== null && dp[w] === null) {
-          dp[w] = [...dp[w - cents]!, i];
-          if (w === targetCents) break;
-        }
-      }
-      if (dp[targetCents] !== null) break;
-    }
-
-    if (dp[targetCents] !== null) {
-      return dp[targetCents]!.map((idx) => questions[idx]);
-    }
-
-    for (let w = targetCents - 1; w > 0; w--) {
-      if (dp[w] !== null) {
-        return dp[w]!.map((idx) => questions[idx]);
-      }
-    }
-
-    const selected: any[] = [];
-    let currentCents = 0;
-    for (const q of questions) {
-      if (currentCents + q.cents <= targetCents) {
-        selected.push(q);
-        currentCents += q.cents;
-      }
-      if (currentCents === targetCents) break;
-    }
-    return selected.length > 0 ? selected : [questions[0]];
   }
 
   async createRandom(actor: Actor, data: CreateRandomExamPaperDto, persist = true) {
@@ -258,9 +200,9 @@ export class ExamPapersService {
         const defaultMedScore = targetType === 'TU_LUAN' ? 1.5 : 0.25;
         const defaultHardScore = targetType === 'TU_LUAN' ? 2.0 : 0.25;
 
-        const easySel = this.selectQuestionsByScore(byDifficulty.EASY, easyTarget, defaultEasyScore);
-        const medSel = this.selectQuestionsByScore(byDifficulty.MEDIUM, medTarget, defaultMedScore);
-        const hardSel = this.selectQuestionsByScore(byDifficulty.HARD, hardTarget, defaultHardScore);
+        const easySel = this.generationCore.selectByScore(byDifficulty.EASY, easyTarget, defaultEasyScore);
+        const medSel = this.generationCore.selectByScore(byDifficulty.MEDIUM, medTarget, defaultMedScore);
+        const hardSel = this.generationCore.selectByScore(byDifficulty.HARD, hardTarget, defaultHardScore);
 
         const typeName = targetType === 'TU_LUAN' ? 'Tự luận' : targetType === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm';
         const achievedEasy = Math.round(easySel.reduce((sum, q) => sum + (q.effectiveScore || defaultEasyScore), 0) * 100) / 100;
@@ -301,11 +243,10 @@ export class ExamPapersService {
           );
         }
 
-        rawSelected = this.shuffle([
-          ...this.shuffle(byDifficulty.EASY).slice(0, data.easyCount),
-          ...this.shuffle(byDifficulty.MEDIUM).slice(0, data.mediumCount),
-          ...this.shuffle(byDifficulty.HARD).slice(0, data.hardCount),
-        ]);
+        rawSelected = this.generationCore.selectByCount(
+          { easy: byDifficulty.EASY, medium: byDifficulty.MEDIUM, hard: byDifficulty.HARD },
+          { easy: data.easyCount, medium: data.mediumCount, hard: data.hardCount },
+        );
       }
 
       let selectedQuestions: any[] = [];
@@ -315,45 +256,14 @@ export class ExamPapersService {
 
       if (isByScore || isEssay) {
         // CHẾ ĐỘ 1: Theo Thang điểm hoặc Tự luận -> Lấy NGUYÊN BẢN 100% điểm gốc từng câu từ Ngân hàng câu hỏi
-        selectedQuestions = rawSelected.map((q) => {
-          let assignedScore = 1.0;
-          if (q.score && Number(q.score) > 0) {
-            assignedScore = Number(q.score);
-          } else if (isEssay) {
-            const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
-            assignedScore = weightMap[q.difficulty] || 1.5;
-          } else {
-            assignedScore = 0.25;
-          }
-          return { ...q, assignedScore };
-        });
-        totalScore = Math.round(selectedQuestions.reduce((sum, item) => sum + item.assignedScore, 0) * 100) / 100;
+        const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore });
+        selectedQuestions = scored.questions;
+        totalScore = scored.totalScore;
       } else {
         // CHẾ ĐỘ 2: Trắc nghiệm Theo Số câu -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
-        const targetTotalScore = 10.0;
-        const numQuestions = rawSelected.length;
-
-        const rawWeights = rawSelected.map((q) => {
-          if (q.score && Number(q.score) > 0) return Number(q.score);
-          const weightMap: Record<string, number> = { EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 };
-          return weightMap[q.difficulty] || 1.5;
-        });
-        const totalRawWeight = rawWeights.reduce((sum, w) => sum + w, 0) || 1.0;
-
-        let currentSum = 0;
-        selectedQuestions = rawSelected.map((q, idx) => {
-          let assignedScore = 0.25;
-          if (idx === numQuestions - 1) {
-            assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
-          } else {
-            const w = rawWeights[idx];
-            const calculated = Math.round(((w / totalRawWeight) * targetTotalScore) * 100) / 100;
-            assignedScore = Math.max(0.05, calculated);
-            currentSum += assignedScore;
-          }
-          return { ...q, assignedScore };
-        });
-        totalScore = targetTotalScore;
+        const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore });
+        selectedQuestions = scored.questions;
+        totalScore = scored.totalScore;
       }
       const paperCode = data.paperCode.trim();
       const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;

@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -387,6 +388,15 @@ export default function ExamReportsPage() {
  }
  }, []);
 
+ const handleRefresh = async () => {
+    if (selectedScheduleId) {
+      await fetchReport(selectedScheduleId);
+    } else {
+      await fetchSchedules();
+    }
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
+
  useEffect(() => {
  const user = getAuthUser();
  if (!user) return void router.replace('/login');
@@ -670,7 +680,7 @@ export default function ExamReportsPage() {
  <button
  type="button"
  onClick={() => setShowSchedulePicker(false)}
- className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 transition cursor-pointer"
+ className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 transition cursor-pointer"
  title="Đóng"
  >
  <X className="h-4 w-4" />
@@ -713,7 +723,7 @@ export default function ExamReportsPage() {
 
  {/* Row 2: Secondary Dropdown Filters */}
  <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
- <select
+ <FilterSelect
  value={modalFormatFilter}
  onChange={(e) => setModalFormatFilter(e.target.value as any)}
  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
@@ -724,9 +734,9 @@ export default function ExamReportsPage() {
  <option value="FILL_BLANK">Hình thức: Điền khuyết</option>
  <option value="HON_HOP">Hình thức: Hỗn hợp</option>
  <option value="THUC_HANH">Hình thức: Thực hành</option>
- </select>
+ </FilterSelect>
 
- <select
+ <FilterSelect
  value={modalSubjectFilter}
  onChange={(e) => setModalSubjectFilter(e.target.value)}
  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
@@ -737,9 +747,9 @@ export default function ExamReportsPage() {
  [{sb.code}] {sb.name}
  </option>
  ))}
- </select>
+ </FilterSelect>
 
- <select
+ <FilterSelect
  value={modalStatusFilter}
  onChange={(e) => setModalStatusFilter(e.target.value as any)}
  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
@@ -748,7 +758,7 @@ export default function ExamReportsPage() {
  <option value="ONGOING">Đang diễn ra</option>
  <option value="UPCOMING">Sắp diễn ra</option>
  <option value="COMPLETED">Đã kết thúc</option>
- </select>
+ </FilterSelect>
 
  {(modalSearch || modalModeFilter !== 'ALL' || modalFormatFilter !== 'ALL' || modalSubjectFilter !== 'ALL' || modalStatusFilter !== 'ALL') && (
  <button
@@ -760,7 +770,7 @@ export default function ExamReportsPage() {
  setModalSubjectFilter('ALL');
  setModalStatusFilter('ALL');
  }}
- className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer select-none ml-auto"
+ className="p-1 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer select-none ml-auto"
  title="Đặt lại bộ lọc"
  >
  <RotateCcw className="h-3.5 w-3.5" />
@@ -897,7 +907,7 @@ export default function ExamReportsPage() {
  <div className="flex items-center gap-2.5 shrink-0">
  <span className="text-xs font-semibold text-slate-500">Trạng thái:</span>
  <div className="relative">
- <select
+ <FilterSelect
  value={statusFilter}
  onChange={(e) => {
  setStatusFilter(e.target.value);
@@ -909,8 +919,7 @@ export default function ExamReportsPage() {
  <option value="SUBMITTED">Đã tham gia / Nộp bài</option>
  <option value="ABSENT">Chưa thi / Vắng thi</option>
  <option value="FLAGGED">Có cảnh báo vi phạm</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+ </FilterSelect>
  </div>
  </div>
  </div>
@@ -924,7 +933,7 @@ export default function ExamReportsPage() {
  onViewModeChange={setViewMode}
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
- onRefresh={() => fetchReport(selectedScheduleId)}
+ onRefresh={handleRefresh}
  />
 
  {/* Full-Width DataGrid Table */}

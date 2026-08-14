@@ -3,8 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { StartExamDto } from './dto/start-exam.dto';
 import { SaveAnswersBatchDto } from './dto/save-answer.dto';
 import { ProctoringEventsBatchDto } from './dto/proctoring-event.dto';
-import { AttemptStatus, EventSeverity, ProctoringEventType } from '@prisma/client';
-import { normalizeFillBlankAnswer } from '../questions/question-validation';
+import { AttemptStatus, EventSeverity } from '@prisma/client';
 import * as crypto from 'crypto';
 import {
   EligibilityCheckerService,
@@ -14,10 +13,18 @@ import {
 import { EssayService } from '../essay/essay.service';
 import { UpdateMediaDisplayConfigDto } from './dto/media-display-config.dto';
 import { AuditService } from '../audit/audit.service';
+import { OnlineExamCore } from './online-exam.core';
+import { OnlineExamGradingCore } from './online-exam-grading.core';
+import { OnlineExamProctoringCore } from './online-exam-proctoring.core';
+import { OnlineExamAnswerCore } from './online-exam-answer.core';
 
 @Injectable()
 export class OnlineExamsService {
   private readonly logger = new Logger(OnlineExamsService.name);
+  private readonly examCore = new OnlineExamCore();
+  private readonly gradingCore = new OnlineExamGradingCore();
+  private readonly proctoringCore = new OnlineExamProctoringCore();
+  private readonly answerCore = new OnlineExamAnswerCore();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -273,46 +280,9 @@ export class OnlineExamsService {
     }
 
     // Xáo trộn câu hỏi & phương án cho từng sinh viên
-    let paperQuestions = paper.questions.map((pq) => pq);
-    if (config.shuffleQuestions) {
-      paperQuestions = paperQuestions.sort(() => Math.random() - 0.5);
-    }
-
-    const snapshotData = paperQuestions.map((pq, idx) => {
-      let options = pq.question.options.map((opt) => ({
-        id: opt.id,
-        label: opt.label,
-        content: opt.content,
-        contentRich: opt.contentRich,
-        media: opt.media,
-        isCorrect: opt.isCorrect, // Giữ trong DB snapshot để Backend chấm điểm, KHÔNG trả về Client!
-      }));
-
-      if (config.shuffleOptions) {
-        options = options.sort(() => Math.random() - 0.5);
-      }
-
-      return {
-        order: idx + 1,
-        questionId: pq.question.id,
-        code: pq.question.code,
-        content: pq.question.content,
-        contentRich: pq.question.contentRich,
-        media: pq.question.media,
-        type: pq.question.type,
-        difficulty: pq.question.difficulty,
-        score: pq.score,
-        options,
-        fillBlankAnswers: pq.question.fillBlankAnswers.map((answer) => ({
-          blankIndex: answer.blankIndex,
-          answer: answer.answer,
-          acceptedAnswers: answer.acceptedAnswers,
-          score: answer.score,
-          caseSensitive: answer.caseSensitive,
-          ignoreWhitespace: answer.ignoreWhitespace,
-          ignoreVietnameseTone: answer.ignoreVietnameseTone,
-        })),
-      };
+    const snapshotData = this.examCore.buildSnapshot(paper.questions, {
+      shuffleQuestions: config.shuffleQuestions,
+      shuffleOptions: config.shuffleOptions,
     });
 
     const now = new Date();
@@ -439,38 +409,8 @@ export class OnlineExamsService {
       showAudios: cfg.showAudios !== false,
     };
 
-    // Lọc media theo thiết lập hiển thị của ca thi (image/video/audio)
-    const filterMedia = (mediaList: any[] | null | undefined): any[] =>
-      (mediaList || [])
-        .filter((m: any) => {
-          const t = (m.mimeType || '').toLowerCase();
-          if (t.startsWith('image/')) return mediaFlags.showImages;
-          if (t.startsWith('video/')) return mediaFlags.showVideos;
-          if (t.startsWith('audio/')) return mediaFlags.showAudios;
-          return true;
-        })
-        .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
     // BỌC AN TOÀN BẢO MẬT: Lọc sạch thuộc tính isCorrect trước khi gửi cho Client!
-    const clientQuestions = rawQuestions.map((q) => ({
-      order: q.order,
-      questionId: q.questionId,
-      code: q.code,
-      content: q.content,
-      contentRich: q.contentRich,
-      media: filterMedia(q.media),
-      type: q.type,
-      difficulty: q.difficulty,
-      score: q.score,
-      options: q.options.map((opt: any) => ({
-        id: opt.id,
-        label: opt.label,
-        content: opt.content,
-        contentRich: opt.contentRich,
-        media: filterMedia(opt.media),
-      })),
-      blankIndexes: (q.fillBlankAnswers || []).map((answer: any) => answer.blankIndex),
-    }));
+    const clientQuestions = this.examCore.sanitizeQuestions(rawQuestions, mediaFlags);
 
     return {
       attemptId: attempt.id,
@@ -531,14 +471,15 @@ export class OnlineExamsService {
     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
     for (const item of dto.answers) {
       const snapshotQuestion = snapshotQuestions.find((question) => question.questionId === item.questionId);
-      if (!snapshotQuestion) throw new BadRequestException('Câu hỏi không thuộc đề thi này.');
-      if (snapshotQuestion.type !== 'FILL_BLANK' && item.fillBlankAnswers?.length) throw new BadRequestException('Chỉ câu điền khuyết mới nhận dữ liệu ô trống.');
-      if (snapshotQuestion.type === 'FILL_BLANK') {
-        const expected = (snapshotQuestion.fillBlankAnswers || []).map((answer: any) => Number(answer.blankIndex)).sort((a: number, b: number) => a - b);
-        const received = item.fillBlankAnswers || [];
-        if (received.some(answer => !expected.includes(Number(answer.blankIndex))) || new Set(received.map(answer => answer.blankIndex)).size !== received.length) {
-          throw new BadRequestException('Dữ liệu chỗ trống không hợp lệ.');
-        }
+      try {
+        this.answerCore.validate(snapshotQuestion, item);
+      } catch (error: any) {
+        const messages: Record<string, string> = {
+          QUESTION_NOT_IN_SNAPSHOT: 'Câu hỏi không thuộc đề thi này.',
+          FILL_BLANK_DATA_NOT_ALLOWED: 'Chỉ câu điền khuyết mới nhận dữ liệu ô trống.',
+          INVALID_FILL_BLANK_DATA: 'Dữ liệu chỗ trống không hợp lệ.',
+        };
+        throw new BadRequestException(messages[error?.message] || 'Dữ liệu đáp án không hợp lệ.');
       }
       const existing = await this.prisma.attemptAnswer.findUnique({
         where: {
@@ -659,19 +600,8 @@ export class OnlineExamsService {
       return { success: false, currentRiskScore: attempt.riskScore, isFlagged: attempt.isFlagged, autoSubmitted: true };
     }
 
-    let addedRisk = 0;
     const policy = attempt.onlineExamConfig.securityPolicy;
-
     for (const evt of dto.events) {
-      let weight = 5;
-      if (evt.eventType === ProctoringEventType.TAB_HIDDEN) weight = policy?.weightTabHidden ?? 10;
-      else if (evt.eventType === ProctoringEventType.WINDOW_BLUR) weight = policy?.weightWindowBlur ?? 5;
-      else if (evt.eventType === ProctoringEventType.FULLSCREEN_EXIT) weight = policy?.weightExitFull ?? 15;
-      else if (evt.eventType === ProctoringEventType.COPY_ATTEMPT) weight = policy?.weightCopyPaste ?? 20;
-      else if (evt.eventType === ProctoringEventType.MULTIPLE_SESSION) weight = policy?.weightMultiSession ?? 50;
-
-      addedRisk += weight;
-
       await this.prisma.proctoringEvent.create({
         data: {
           attemptId: attempt.id,
@@ -684,9 +614,8 @@ export class OnlineExamsService {
       });
     }
 
-    const newRiskScore = attempt.riskScore + addedRisk;
-    const threshold = policy?.reviewThreshold ?? 40;
-    const shouldFlag = newRiskScore >= threshold;
+    const addedRisk = this.proctoringCore.calculateRisk(dto.events, policy);
+    const { newRiskScore, shouldFlag } = this.proctoringCore.shouldFlag(attempt.riskScore, addedRisk, policy);
 
     await this.prisma.examAttempt.update({
       where: { id: attempt.id },
@@ -772,49 +701,8 @@ export class OnlineExamsService {
 
     // Tính điểm tự động dựa trên Snapshot & AttemptAnswers
     const snapshotQuestions: any[] = (attempt.snapshot?.snapshotData as any[]) || [];
-    const hasEssay = snapshotQuestions.some(
-      (q) => q.type === 'ESSAY' || q.questionType === 'ESSAY' || String(q.type || '').toUpperCase() === 'ESSAY',
-    );
-    let calculatedScore = 0;
-
-    const fillBlankUpdates: Array<{ questionId: string; score: number; result: any[] }> = [];
-    for (const q of snapshotQuestions) {
-      const studentAns = attempt.attemptAnswers.find((a) => a.questionId === q.questionId);
-      if (!studentAns) continue;
-
-      if (q.type === 'FILL_BLANK') {
-        const submitted = new Map<number, string>(((studentAns.fillBlankAnswers as any[]) || []).map(item => [Number(item.blankIndex), String(item.value || '')]));
-        const result = (q.fillBlankAnswers || []).map((expected: any) => {
-          const settings = { caseSensitive: expected.caseSensitive, ignoreWhitespace: expected.ignoreWhitespace, ignoreVietnameseTone: expected.ignoreVietnameseTone };
-          const actual = submitted.get(Number(expected.blankIndex)) || '';
-          const accepted = [expected.answer, ...((expected.acceptedAnswers as string[]) || [])];
-          const correct = accepted.some(value => normalizeFillBlankAnswer(value, settings) === normalizeFillBlankAnswer(actual, settings));
-          return { blankIndex: expected.blankIndex, value: actual, correct, score: correct ? Number(expected.score || 0) : 0 };
-        });
-        const score = result.reduce((sum: number, item: any) => sum + item.score, 0);
-        calculatedScore += score;
-        fillBlankUpdates.push({ questionId: q.questionId, score, result });
-        continue;
-      }
-
-      if (!studentAns.selectedOptionIds) continue;
-
-      const selectedIds: string[] = (studentAns.selectedOptionIds as string[]) || [];
-      const correctOptionIds: string[] = (q.options || [])
-        .filter((opt: any) => opt.isCorrect)
-        .map((opt: any) => opt.id);
-
-      // So sánh khớp 100% danh sách ID chọn với đáp án đúng
-      const isCorrect =
-        selectedIds.length === correctOptionIds.length &&
-        selectedIds.every((id) => correctOptionIds.includes(id));
-
-      if (isCorrect) {
-        calculatedScore += q.score || 0;
-      }
-    }
-
-    calculatedScore = Math.max(0, calculatedScore - (attempt.penaltyPoints || 0));
+    const gradingResult = this.gradingCore.grade(snapshotQuestions, attempt.attemptAnswers, attempt.penaltyPoints || 0);
+    const { hasEssay, calculatedScore, fillBlankUpdates } = gradingResult;
 
     const finalStatus = attempt.isFlagged
       ? AttemptStatus.UNDER_REVIEW

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, RefreshCw, Check } from 'lucide-react';
+import { List, LayoutGrid, Layers, RefreshCw } from 'lucide-react';
 import { SortDropdown } from '../ui/SortDropdown';
+import { ColumnToggleDropdown } from '../ui/ColumnToggleDropdown';
 
 interface ExamReportTableToolbarProps {
   totalCount: number;
@@ -18,24 +19,23 @@ interface ExamReportTableToolbarProps {
 
 export function ExamReportTableToolbar({
   totalCount,
-  sortOrder = 'newest',
+  sortOrder = 'score_desc',
   onSortChange,
   viewMode = 'list',
   onViewModeChange,
   visibleColumns = {
-    studentCode: true,
-    fullName: true,
-    className: true,
+    student: true,
+    examPeriod: true,
+    subject: true,
+    paper: true,
+    score: true,
+    violations: true,
     status: true,
-    totalScore: true,
-    submittedAt: true,
-    violationCount: true,
   },
   onColumnToggle,
   onRefresh,
   loading = false,
 }: ExamReportTableToolbarProps) {
-  const [openColumnMenu, setOpenColumnMenu] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
 
   const handleRefreshClick = async () => {
@@ -51,13 +51,13 @@ export function ExamReportTableToolbar({
   };
 
   const columnsList = [
-    { key: 'studentCode', label: 'Mã sinh viên' },
-    { key: 'fullName', label: 'Họ và Tên' },
-    { key: 'className', label: 'Lớp sinh viên' },
-    { key: 'status', label: 'Trạng thái nộp bài' },
-    { key: 'totalScore', label: 'Điểm số thi' },
-    { key: 'submittedAt', label: 'Thời gian nộp' },
-    { key: 'violationCount', label: 'Lượt vi phạm' },
+    { key: 'student', label: 'Mã & Họ tên thí sinh' },
+    { key: 'examPeriod', label: 'Đợt / Kỳ thi' },
+    { key: 'subject', label: 'Môn thi' },
+    { key: 'paper', label: 'Mã đề thi' },
+    { key: 'score', label: 'Điểm tổng kết' },
+    { key: 'violations', label: 'Số lần vi phạm quy chế' },
+    { key: 'status', label: 'Trạng thái chấm thi' },
   ];
 
   return (
@@ -80,61 +80,18 @@ export function ExamReportTableToolbar({
         />
 
         {/* Column Selector */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setOpenColumnMenu(!openColumnMenu)}
-            className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
-          >
-            <SlidersHorizontal className="h-4 w-4 text-blue-600" />
-            <span>Chọn cột</span>
-            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
-          </button>
-
-          {openColumnMenu && (
-            <div
-              className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
-              onMouseLeave={() => setOpenColumnMenu(false)}
-            >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
-                <span className="text-[12px] text-slate-400 font-normal">Click để ẩn/hiện</span>
-              </div>
-
-              <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-                {columnsList.map((col) => {
-                  const isVisible = visibleColumns[col.key] !== false;
-                  return (
-                    <label
-                      key={col.key}
-                      className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition text-[15px]"
-                    >
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={isVisible}
-                          onChange={() => onColumnToggle?.(col.key)}
-                          className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                        />
-                        <span className={isVisible ? 'text-slate-900' : 'text-slate-400 line-through'}>
-                          {col.label}
-                        </span>
-                      </span>
-                      {isVisible && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
+        <ColumnToggleDropdown
+          columns={columnsList}
+          visibleColumns={visibleColumns}
+          onToggle={(key) => onColumnToggle?.(key)}
+        />
 
         {/* View Mode */}
-        <div className="h-9 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-2xs">
+        <div className="h-10 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
           <button
             type="button"
             onClick={() => onViewModeChange?.('list')}
-            className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
               viewMode === 'list'
                 ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
@@ -143,24 +100,22 @@ export function ExamReportTableToolbar({
           >
             <List className="h-4 w-4" />
           </button>
-
           <button
             type="button"
             onClick={() => onViewModeChange?.('grid')}
-            className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
               viewMode === 'grid'
                 ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
             }`}
-            title="Dạng lưới"
+            title="Dạng thẻ"
           >
             <LayoutGrid className="h-4 w-4" />
           </button>
-
           <button
             type="button"
             onClick={() => onViewModeChange?.('compact')}
-            className={`flex h-7 w-7 items-center justify-center rounded-lg transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
               viewMode === 'compact'
                 ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
                 : 'text-slate-400 hover:text-slate-700'
@@ -172,16 +127,14 @@ export function ExamReportTableToolbar({
         </div>
 
         {/* Refresh */}
-        {onRefresh && (
-          <button
-            type="button"
-            onClick={handleRefreshClick}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all active:scale-95 cursor-pointer shadow-2xs select-none"
-            title="Làm mới dữ liệu"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleRefreshClick}
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
+          title="Làm mới dữ liệu"
+        >
+          <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+        </button>
       </div>
     </div>
   );

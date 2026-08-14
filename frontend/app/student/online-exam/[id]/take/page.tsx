@@ -668,12 +668,12 @@ export default function StudentExamTakePage() {
  <textarea
  value={currentAns.textAnswer || ''}
  onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
- className="min-h-[260px] w-full resize-y rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-[15px] leading-7 text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+ className="min-h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-[15px] leading-7 text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
  placeholder="Nhập bài làm của bạn..."
  />
  <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
  <span>{(currentAns.textAnswer || '').length} ký tự · Tự động lưu khi nhập</span>
- <label className="cursor-pointer rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
+ <label className="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
  Đính kèm PDF/DOCX/JPG/PNG
  <input type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" className="hidden" onChange={(e) => handleEssayFile(currentQ.questionId, e.target.files?.[0])} />
  </label>
@@ -919,7 +919,7 @@ export default function StudentExamTakePage() {
  value={incidentText}
  onChange={(e) => setIncidentText(e.target.value)}
  placeholder="Mô tả sự cố bạn đang gặp phải..."
- className="w-full rounded-lg border border-slate-200 dark:border-slate-700 p-3 text-[15px] font-normal text-slate-800 dark:text-slate-200 focus:border-amber-500 focus:outline-none transition resize-none"
+ className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-[15px] font-normal text-slate-800 dark:text-slate-200 focus:border-amber-500 focus:outline-none transition resize-none"
  />
  </div>
 

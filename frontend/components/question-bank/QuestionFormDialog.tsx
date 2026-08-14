@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../ui/FilterSelect';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -209,13 +210,13 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Môn học / Học phần <span className="text-rose-500">*</span>
             </label>
-<select {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <FilterSelect fullWidth {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {subjects.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.subjectName}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           {/* Loại câu hỏi */}
@@ -223,13 +224,13 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Loại câu hỏi <span className="text-rose-500">*</span>
             </label>
-<select {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <FilterSelect fullWidth {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           {/* Độ khó */}
@@ -237,13 +238,13 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Mức độ khó <span className="text-rose-500">*</span>
             </label>
-<select {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <FilterSelect fullWidth {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           {/* Mức độ Bloom */}
@@ -251,13 +252,13 @@ export function QuestionFormDialog({
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
               Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
             </label>
-<select {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+            <FilterSelect fullWidth {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
               {Object.entries(BLOOM_LABELS).map(([k, v]) => (
                 <option key={k} value={k}>
                   {v}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           {/* Điểm số */}
@@ -270,7 +271,7 @@ export function QuestionFormDialog({
               step="0.25"
               {...register('score', { valueAsNumber: true })}
               placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
         </div>
@@ -299,7 +300,7 @@ export function QuestionFormDialog({
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">Đính kèm media (Tùy chọn)</span>
-            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
+            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
               <input
                 type="file"
                 multiple
@@ -418,18 +419,18 @@ export function QuestionFormDialog({
                   />
                   <input
                     {...register(`options.${i}.label`)}
-                    className="w-10 rounded-lg border border-slate-200 bg-white p-2 text-center text-[15px] font-semibold text-slate-900 shrink-0"
+                    className="w-10 rounded-xl border border-slate-200 bg-white p-2 text-center text-[15px] font-semibold text-slate-900 shrink-0"
                   />
                   <input
                     {...register(`options.${i}.content`)}
-                    className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none"
+                    className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none"
                     placeholder={`Nội dung đáp án ${field.label}...`}
                   />
                   <button
                     type="button"
                     onClick={() => i > 0 && move(i, i - 1)}
                     disabled={i === 0}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 font-semibold cursor-pointer rounded-lg hover:bg-slate-200/60"
+                    className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 font-semibold cursor-pointer rounded-xl hover:bg-slate-200/60"
                     title="Di chuyển lên"
                   >
                     ↑
@@ -437,7 +438,7 @@ export function QuestionFormDialog({
                   <button
                     type="button"
                     onClick={() => remove(i)}
-                    className="p-1.5 text-rose-500 hover:text-rose-700 font-semibold cursor-pointer rounded-lg hover:bg-rose-50"
+                    className="p-1.5 text-rose-500 hover:text-rose-700 font-semibold cursor-pointer rounded-xl hover:bg-rose-50"
                     title="Xóa đáp án"
                   >
                     ×
@@ -493,7 +494,7 @@ export function QuestionFormDialog({
             <input
               {...register('keywords')}
               placeholder="Ví dụ: RSA, ma hoa, security..."
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
 
@@ -503,7 +504,7 @@ export function QuestionFormDialog({
               {...register('explanation')}
               rows={2}
               placeholder="Giải thích lý do đáp án đúng..."
-              className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
         </div>

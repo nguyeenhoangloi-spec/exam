@@ -64,8 +64,10 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
       <button
         ref={buttonRef}
         type="button"
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
         onClick={toggleMenu}
-        className="inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
+        className="ui-pressable inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors duration-150 cursor-pointer"
         title="Thao tác khác"
       >
         {trigger || <MoreHorizontal className="h-4 w-4" />}
@@ -75,13 +77,14 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
         createPortal(
           <div
             ref={menuRef}
+            role="menu"
             style={{
               position: 'fixed',
               top: coords.openUp ? 'auto' : `${coords.top}px`,
               bottom: coords.openUp ? `${window.innerHeight - coords.top}px` : 'auto',
               right: `${coords.right}px`,
             }}
-            className="z-[9999] w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl text-sm font-medium text-slate-700 space-y-0.5 text-left animate-in fade-in zoom-in-95 duration-150"
+            className="z-[99999] w-48 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl text-sm font-medium text-slate-700 dark:text-slate-200 space-y-0.5 text-left animate-in fade-in-50 zoom-in-95 duration-150"
           >
             {children(() => setIsOpen(false))}
           </div>,

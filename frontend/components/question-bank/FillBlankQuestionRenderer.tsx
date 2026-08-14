@@ -56,7 +56,7 @@ export function FillBlankQuestionRenderer({
 
             if (readOnly) {
               return (
-                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 rounded-lg border border-slate-200 bg-slate-50 font-semibold text-slate-900">
+                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 font-semibold text-slate-900">
                   <span className="text-xs text-slate-400">[{blankIndex}]</span>
                   <span>{currentVal || '____'}</span>
                   {showCorrect && correctObj && (
@@ -76,7 +76,7 @@ export function FillBlankQuestionRenderer({
                   onChange={(e) => onChange?.(blankIndex, e.target.value)}
                   placeholder={`[Ô #${blankIndex}]...`}
                   style={{ width: `${Math.max(120, (currentVal.length + 4) * 11)}px` }}
-                  className="inline-block px-3 py-1.5 text-[15px] font-medium text-slate-900 bg-white border-2 border-blue-400 rounded-lg outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
+                  className="inline-block px-3 py-1.5 text-[15px] font-medium text-slate-900 bg-white border-2 border-blue-400 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
                 />
               </span>
             );

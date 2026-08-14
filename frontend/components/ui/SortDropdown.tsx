@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowUpDown, ChevronDown, Check } from 'lucide-react';
 
 export interface SortOption {
@@ -14,82 +15,152 @@ export interface SortDropdownProps {
   onChange?: (value: string) => void;
   title?: string;
   className?: string;
+  align?: 'left' | 'right' | 'auto';
 }
 
 export function SortDropdown({
   options,
   value,
   onChange,
-  title = 'Sắp xếp theo',
   className = '',
+  align = 'auto',
 }: SortDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const selectedOption = options.find((opt) => opt.value === value) || options[0];
 
+  const updatePosition = useCallback(() => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const minWidth = Math.max(rect.width, 160);
+    const estimatedHeight = Math.min(options.length * 36 + 20, 240);
+
+    // Check vertical space (open up if near bottom)
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const openUpward = spaceBelow < estimatedHeight + 10 && rect.top > estimatedHeight;
+    const top = openUpward ? Math.max(10, rect.top - estimatedHeight - 6) : rect.bottom + 6;
+
+    // Check horizontal alignment
+    let left = rect.left;
+    if (align === 'right') {
+      left = Math.max(16, rect.right - minWidth);
+    } else if (align === 'auto') {
+      if (rect.left + minWidth > window.innerWidth - 16) {
+        left = Math.max(16, rect.right - minWidth);
+      }
+    }
+
+    setMenuStyle({
+      position: 'fixed',
+      top: `${top}px`,
+      left: `${left}px`,
+      minWidth: `${minWidth}px`,
+      maxWidth: '320px',
+      zIndex: 99999,
+    });
+  }, [options.length, align]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    updatePosition();
+
+    const handleScrollOrResize = () => {
+      updatePosition();
+    };
+
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [isOpen, updatePosition]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(target) &&
+        menuRef.current && !menuRef.current.contains(target)
+      ) {
         setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   return (
     <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
       <button
+        ref={buttonRef}
         type="button"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
         onClick={() => setIsOpen(!isOpen)}
-        className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-[15px] font-medium text-slate-700 dark:text-slate-200 transition-all hover:border-slate-300 dark:hover:border-slate-600 shadow-2xs cursor-pointer active:scale-95"
+        className={`ui-pressable h-10 flex items-center gap-1.5 rounded-xl border px-3 text-[15px] font-medium transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out shadow-2xs cursor-pointer select-none ${
+          isOpen
+            ? 'border-blue-500 ring-2 ring-blue-500/20 text-slate-900 bg-white dark:bg-slate-900 dark:border-blue-500 dark:ring-blue-500/30 dark:text-slate-100'
+            : 'border-slate-200/90 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600'
+        }`}
       >
         <ArrowUpDown className="h-4 w-4 text-blue-600 shrink-0" />
         <span className="truncate max-w-[160px]">{selectedOption?.label || 'Sắp xếp'}</span>
         <ChevronDown
-          className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
+          className={`h-4 w-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${
+            isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
           }`}
         />
       </button>
 
-      {isOpen && (
-        <div
-          className="absolute right-0 top-full z-30 mt-1.5 w-52 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl animate-in fade-in zoom-in-95 duration-150"
-          onMouseLeave={() => setIsOpen(false)}
-        >
-          <div className="px-2 py-1.5 text-xs font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-800 mb-1">
-            {title}
-          </div>
-
-          <div className="space-y-1 max-h-60 overflow-y-auto">
-            {options.map((option) => {
-              const isSelected = option.value === value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => {
-                    onChange?.(option.value);
-                    setIsOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer select-none ${
-                    isSelected
-                      ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
-                    <span>{option.label}</span>
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {isOpen && mounted &&
+        createPortal(
+          <div
+            ref={menuRef}
+            style={menuStyle}
+            role="listbox"
+            className="w-max rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150"
+          >
+            <div className="space-y-0.5 max-h-60 overflow-y-auto custom-scrollbar">
+              {options.map((option) => {
+                const isSelected = option.value === value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      onChange?.(option.value);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-[15px] leading-5 transition-colors duration-150 cursor-pointer select-none text-left ${
+                      isSelected
+                        ? 'text-slate-900 dark:text-slate-100 font-semibold bg-transparent'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                    }`}
+                  >
+                    <span className="truncate pr-2">{option.label}</span>
+                    {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 ml-1.5" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

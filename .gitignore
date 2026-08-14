@@ -33,13 +33,7 @@ node_modules
 
 # Generated frontend artifacts
 /frontend/.next/
-/frontend/.next-dev/
-/frontend/.next-prod/
-/frontend/.next-verify/
-/frontend/.next-verify-2/
-/frontend/.next-verify-final/
-/frontend/.next-audit/
-/frontend/.next-verify-*/
+/frontend/.next*
 /frontend/.edge-*/
 /frontend/.ui-verify*
 

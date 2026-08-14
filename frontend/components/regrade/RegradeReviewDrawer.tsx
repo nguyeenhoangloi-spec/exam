@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, CheckCircle2, AlertCircle, FileEdit, Award, GraduationCap, Clock, BookOpen, AlertTriangle, Eye } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { StatusBadge } from '../common/StatusBadge';
 import { ExamAttemptReviewModal } from '../exam-reports/ExamAttemptReviewModal';
 
@@ -113,9 +114,7 @@ export function RegradeReviewDrawer({
               <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words" title={selectedAppeal.student.fullName}>
  Thẩm định Đơn Phúc khảo
  </h2>
- <span className="shrink-0 rounded-lg bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-md border border-white/25">
- {selectedAppeal.student.studentCode}
- </span>
+ <IdentifierBadge tone="inverse">{selectedAppeal.student.studentCode}</IdentifierBadge>
  </div>
  <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 line-clamp-2">
  Sinh viên: <strong className="font-semibold text-white">{selectedAppeal.student.fullName}</strong>
@@ -287,7 +286,7 @@ export function RegradeReviewDrawer({
  max="10"
  value={revisedScore}
  onChange={(e) => setRevisedScore(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] font-medium text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] font-medium text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
  placeholder="Nhập điểm mới..."
  />
  </div>
@@ -301,7 +300,7 @@ export function RegradeReviewDrawer({
  rows={3}
  value={reviewerNote}
  onChange={(e) => setReviewerNote(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
+ className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition shadow-2xs"
  placeholder="Nhập lý do chấp nhận / từ chối hoặc giải trình điểm chấm lại..."
  />
  </div>

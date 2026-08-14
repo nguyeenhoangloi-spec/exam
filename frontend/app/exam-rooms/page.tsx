@@ -108,6 +108,11 @@ export default function ExamRoomsPage() {
     fetchData();
   }, [fetchData, router]);
 
+  const handleRefresh = async () => {
+    await fetchData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
+
   // Compute DYNAMIC KPI metrics directly from real API data
   const kpiData = useMemo(() => {
     const total = rooms.length;
@@ -392,7 +397,7 @@ export default function ExamRoomsPage() {
           onViewModeChange={setViewMode}
           visibleColumns={visibleColumns}
           onColumnToggle={handleColumnToggle}
-          onRefresh={fetchData}
+          onRefresh={handleRefresh}
           loading={loading}
         />
 
@@ -501,18 +506,18 @@ export default function ExamRoomsPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-[15px] font-medium text-slate-500 mb-1">Loại phòng</label>
-              <select
+              <FilterSelect containerClassName="w-full"
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
               >
                 <option value="COMPUTER_LAB">Phòng máy tính</option>
                 <option value="THEORY">Phòng lý thuyết</option>
-              </select>
+              </FilterSelect>
             </div>
             <div>
               <label className="block text-[15px] font-medium text-slate-500 mb-1">Trạng thái</label>
-              <select
+              <FilterSelect 
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
@@ -520,7 +525,7 @@ export default function ExamRoomsPage() {
                 <option value="AVAILABLE">Sẵn sàng</option>
                 <option value="MAINTENANCE">Bảo trì</option>
                 <option value="BUSY">Đang thi</option>
-              </select>
+              </FilterSelect>
             </div>
           </div>
 
@@ -534,7 +539,7 @@ export default function ExamRoomsPage() {
                   setIsModalOpen(false);
                   setIsImportModalOpen(true);
                 }}
-                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
                 Import Excel
               </Button>

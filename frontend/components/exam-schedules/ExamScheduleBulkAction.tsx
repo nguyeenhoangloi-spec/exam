@@ -42,7 +42,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onAssignSupervisors}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-blue-300 active:scale-95"
+            className="h-10 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-blue-300 active:scale-95"
           >
             <Users className="h-3.5 w-3.5" />
             <span>Phân công giám thị</span>
@@ -53,7 +53,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onChangeRoom}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-blue-300 active:scale-95"
+            className="h-10 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-blue-300 active:scale-95"
           >
             <DoorOpen className="h-3.5 w-3.5" />
             <span>Đổi phòng</span>
@@ -64,7 +64,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onChangeShift}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-blue-300 active:scale-95"
+            className="h-10 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-blue-300 active:scale-95"
           >
             <Clock className="h-3.5 w-3.5" />
             <span>Đổi ca</span>
@@ -75,7 +75,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onExport}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-slate-200 active:scale-95"
+            className="h-10 flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 hover:bg-slate-700 transition cursor-pointer text-slate-200 active:scale-95"
           >
             <Download className="h-3.5 w-3.5" />
             <span>Xuất danh sách</span>
@@ -86,7 +86,7 @@ export function ExamScheduleBulkAction({
           <button
             type="button"
             onClick={onDelete}
-            className="h-9 flex items-center gap-1.5 rounded-xl bg-rose-600/30 text-rose-300 px-3.5 hover:bg-rose-600/50 transition cursor-pointer active:scale-95"
+            className="h-10 flex items-center gap-1.5 rounded-xl bg-rose-600/30 text-rose-300 px-3.5 hover:bg-rose-600/50 transition cursor-pointer active:scale-95"
           >
             <Trash2 className="h-3.5 w-3.5 text-rose-400" />
             <span>Xóa</span>

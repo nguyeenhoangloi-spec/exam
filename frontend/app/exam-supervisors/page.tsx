@@ -13,6 +13,8 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
+import { FilterSelect } from '../../components/ui/FilterSelect';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import {
  UserCheck,
  Trash2,
@@ -28,7 +30,14 @@ import {
  RefreshCw,
  XCircle,
  Printer,
+ SlidersHorizontal,
+ ChevronDown,
+ List,
+ LayoutGrid,
+ Layers,
+ Check,
 } from 'lucide-react';
+import { SortDropdown } from '../../components/ui/SortDropdown';
 import { ExamSchedule, Teacher } from '../../types';
 
 export default function ExamSupervisorsPage() {
@@ -47,6 +56,17 @@ export default function ExamSupervisorsPage() {
  const [assignedSupervisors, setAssignedSupervisors] = useState<any[]>([]);
  const [allScheduleSupervisors, setAllScheduleSupervisors] = useState<any[]>([]);
  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+ const [sortOrder, setSortOrder] = useState<string>('newest');
+ const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+ const [openColumnMenu, setOpenColumnMenu] = useState(false);
+ const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+   code: true,
+   name: true,
+   room: true,
+   role: true,
+   status: true,
+   actions: true,
+ });
  const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
  const [autoProposal, setAutoProposal] = useState<any | null>(null);
@@ -386,15 +406,17 @@ export default function ExamSupervisorsPage() {
  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
  >
  <div className="flex items-start justify-between gap-3">
- <div className="space-y-1">
- <span className="text-[13px] font-semibold text-slate-500 tracking-wider">{item.title}</span>
- <p className="text-[32px] font-bold text-slate-900 leading-[38px]">{item.value}</p>
+ <div className="space-y-1 min-w-0">
+ <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">{item.title}</span>
+ <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">{item.value}</div>
  </div>
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
- <IconComponent className="h-5 w-5" />
+ <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
+ <IconComponent className="h-5 w-5 stroke-[2]" />
  </div>
  </div>
- <span className="text-[13px] font-normal text-slate-500 mt-2">{item.subtext}</span>
+ <div className="mt-2.5 pt-2 border-t border-slate-100/80">
+ <span className="text-[13px] font-normal text-slate-500 block truncate">{item.subtext}</span>
+ </div>
  </div>
  );
  })}
@@ -429,7 +451,7 @@ export default function ExamSupervisorsPage() {
  <button
  type="button"
  onClick={() => setShowSchedulePicker(true)}
- className="w-full flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-left hover:bg-white hover:border-blue-300 transition cursor-pointer"
+ className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-left hover:bg-white hover:border-blue-300 transition cursor-pointer"
  >
  <span className={selectedSchedule ? 'text-slate-800' : 'text-slate-400'}>
  {selectedSchedule
@@ -456,7 +478,7 @@ export default function ExamSupervisorsPage() {
  </p>
  </div>
  <button type="button" onClick={() => setShowSchedulePicker(false)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer">
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer">
  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
  </button>
  </div>
@@ -663,7 +685,7 @@ export default function ExamSupervisorsPage() {
  Môn: <strong className="font-semibold text-slate-900">{selectedSchedule.subject?.subjectName}</strong>
  </p>
  <p className="font-medium text-slate-600">
- Mã môn: <span className=" tabular-nums font-medium text-slate-900">{selectedSchedule.subject?.subjectCode}</span>
+ Mã môn: <IdentifierBadge>{selectedSchedule.subject?.subjectCode}</IdentifierBadge>
  </p>
  <p className="font-medium text-slate-600">
  Ngày thi: <span className="font-semibold text-slate-900">{selectedSchedule.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'}</span>
@@ -676,25 +698,25 @@ export default function ExamSupervisorsPage() {
 
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Phòng thi được phân công</label>
- <select
- value={selectedScheduleRoomId}
- onChange={(e) => {
- setSelectedScheduleRoomId(e.target.value);
- void fetchSupervisors(e.target.value, selectedSchedule?.id);
- }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-slate-800 focus:bg-white focus:outline-none cursor-pointer"
- >
- {selectedSchedule?.examScheduleRooms?.map((sr: any) => {
- const roomObj = sr.room || sr.examRoom;
- const name = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || roomObj?.code || '---';
- const capacity = roomObj?.capacity ?? '---';
- return (
- <option key={sr.id} value={sr.id}>
- Phòng: {name} (Sức chứa: {capacity} chỗ)
- </option>
- );
- })}
- </select>
+ <FilterSelect containerClassName="w-full"
+    value={selectedScheduleRoomId}
+    onChange={(e) => {
+      setSelectedScheduleRoomId(e.target.value);
+      void fetchSupervisors(e.target.value, selectedSchedule?.id);
+    }}
+    
+  >
+    {selectedSchedule?.examScheduleRooms?.map((sr: any) => {
+      const roomObj = sr.room || sr.examRoom;
+      const name = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || roomObj?.code || '---';
+      const capacity = roomObj?.capacity ?? '---';
+      return (
+        <option key={sr.id} value={sr.id}>
+          Phòng: {name} (Sức chứa: {capacity} chỗ)
+        </option>
+      );
+    })}
+  </FilterSelect>
  </div>
  </div>
 
@@ -762,31 +784,32 @@ export default function ExamSupervisorsPage() {
 
 
  <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+
+
  <div className="md:col-span-5">
  <label className="block text-[15px] font-medium text-slate-600 mb-1.5">Giảng viên coi thi</label>
- <select
- value={selectedTeacherId}
- onChange={(e) => setSelectedTeacherId(e.target.value)}
- className="w-full h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
- >
- {teachers.map((t) => (
- <option key={t.id} value={t.id}>
- {t.fullName} ({t.degree || 'TS'})
- </option>
- ))}
- </select>
+ <FilterSelect containerClassName="w-full"
+    value={selectedTeacherId}
+    onChange={(e) => setSelectedTeacherId(e.target.value)}
+    
+  >
+    {teachers.map((t: Teacher) => (
+      <option key={t.id} value={t.id}>
+        {t.fullName}{t.teacherCode ? ` (${t.teacherCode})` : ''}
+      </option>
+    ))}
+  </FilterSelect>
  </div>
-
  <div className="md:col-span-4">
  <label className="block text-[15px] font-medium text-slate-600 mb-1.5">Vai trò Coi thi</label>
- <select
- value={role}
- onChange={(e) => setRole(e.target.value)}
- className="w-full h-[42px] rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-600 focus:outline-none transition cursor-pointer shadow-2xs"
- >
- <option value="SUPERVISOR_1">Giám thị 1 (Cán bộ coi thi chính)</option>
- <option value="SUPERVISOR_2">Giám thị 2 (Cán bộ coi thi phụ)</option>
- </select>
+ <FilterSelect containerClassName="w-full"
+    value={role}
+    onChange={(e) => setRole(e.target.value)}
+    
+  >
+    <option value="SUPERVISOR_1">Giám thị 1 (Cán bộ coi thi chính)</option>
+    <option value="SUPERVISOR_2">Giám thị 2 (Cán bộ coi thi phụ)</option>
+  </FilterSelect>
  </div>
 
  <div className="md:col-span-3">
@@ -838,9 +861,7 @@ export default function ExamSupervisorsPage() {
  return (
  <tr key={sup.id} className="hover:bg-blue-50/40 transition">
  <td className="p-3.5 pl-4 whitespace-nowrap">
- <span className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600">
- {sup.teacher?.teacherCode}
- </span>
+ <IdentifierBadge>{sup.teacher?.teacherCode}</IdentifierBadge>
  </td>
  <td className="p-3.5 min-w-[160px]">
  <div className="font-medium text-slate-900 text-[15px] leading-[22px]">{sup.teacher?.fullName}</div>
@@ -888,7 +909,7 @@ export default function ExamSupervisorsPage() {
  type="button"
  title="Hoàn thành"
  onClick={() => void handleUpdateStatus(sup.id, 'COMPLETED', 'đánh dấu Hoàn thành ca thi')}
- className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white transition active:scale-95 cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white transition active:scale-95 cursor-pointer"
  >
  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
  </button>
@@ -896,7 +917,7 @@ export default function ExamSupervisorsPage() {
  type="button"
  title="Vắng mặt"
  onClick={() => void handleUpdateStatus(sup.id, 'ABSENT', 'báo Vắng mặt')}
- className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-100 text-rose-600 hover:bg-rose-500 hover:text-white transition active:scale-95 cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 text-rose-600 hover:bg-rose-500 hover:text-white transition active:scale-95 cursor-pointer"
  >
  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
  </button>

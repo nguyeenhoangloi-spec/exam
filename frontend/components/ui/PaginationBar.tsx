@@ -61,7 +61,7 @@ export function PaginationBar({
             type="button"
             disabled={page <= 1}
             onClick={() => onPage(page - 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Trang trước"
             aria-label="Trang trước"
           >
@@ -85,7 +85,7 @@ export function PaginationBar({
                 key={pNum}
                 type="button"
                 onClick={() => onPage(pNum)}
-                className={`flex h-8 min-w-[32px] items-center justify-center rounded-xl px-2.5 text-sm transition cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`ui-pressable flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[15px] transition-colors duration-150 cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isCurrent
                     ? 'bg-blue-600 text-white shadow-xs font-semibold dark:bg-blue-600'
                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 font-medium'
@@ -101,7 +101,7 @@ export function PaginationBar({
             type="button"
             disabled={page >= safeTotalPages}
             onClick={() => onPage(page + 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Trang sau"
             aria-label="Trang sau"
           >
@@ -111,6 +111,7 @@ export function PaginationBar({
 
         <FilterSelect
           size="sm"
+          align="right"
           value={limit}
           onChange={(e) => onLimit(Number(e.target.value))}
         >

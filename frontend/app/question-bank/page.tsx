@@ -182,6 +182,11 @@ export default function QuestionBankPage() {
     load();
   }, [load]);
 
+  const handleRefresh = async () => {
+    await load();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
+
   const closeConfirm = () => setConfirmConfig(prev => ({ ...prev, isOpen: false }));
 
   const action = async (q: Question, name: string) => {
@@ -462,6 +467,7 @@ export default function QuestionBankPage() {
             onViewModeChange={setViewMode}
             visibleColumns={visibleColumns}
             onColumnToggle={handleColumnToggle}
+            onRefresh={handleRefresh}
           />
 
           {/* Floating Bulk Action Bar when items selected */}

@@ -1,8 +1,10 @@
 'use client';
+import { FilterSelect } from '../ui/FilterSelect';
 
 import React from 'react';
 import { Calendar, RotateCcw, Filter } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface ExamReportFiltersCardProps {
  summaryFilters: {
@@ -78,55 +80,53 @@ export function ExamReportFiltersCard({
 
  return (
  <div className="space-y-4">
- {/* ── 1. Integrated Active Schedule Banner ── */}
- <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
- <div className="flex items-center gap-2.5 flex-wrap min-w-0">
- <span className="px-2.5 py-0.5 rounded-xl bg-blue-600 text-white text-[12px] font-semibold tracking-wider shrink-0">
- {activeTypeBadge?.label || 'Chính thức'}
- </span>
+      {/* ── 1. Integrated Active Schedule Banner ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200/80 shadow-2xs">
+        <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+          <span className="px-2.5 py-0.5 rounded-xl bg-blue-600 text-white text-[12px] font-semibold tracking-wider shrink-0">
+            {activeTypeBadge?.label || 'Chính thức'}
+          </span>
 
- {reportSchedule ? (
- <>
- <h3 className="text-[14px] leading-5 font-semibold text-slate-900 truncate">
- {reportSchedule.subjectName}
- </h3>
- <span className="text-[12px] tabular-nums font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-xl border border-blue-200/80 shrink-0">
- {reportSchedule.subjectCode}
- </span>
- <span className="text-xs text-slate-500 font-medium hidden xl:inline-block">
- • {reportSchedule.periodName}
- </span>
- <span className="text-xs text-slate-700 font-semibold shrink-0">
- • Thời gian: <strong className="text-slate-900 font-semibold">{reportSchedule.startTime} – {reportSchedule.endTime} ({formattedDate})</strong>
- </span>
- </>
- ) : (
- <span className="text-xs text-slate-500 font-medium">
- {loadingSchedules ? 'Đang tải thông tin ca thi...' : 'Chưa chọn ca thi cụ thể'}
- </span>
- )}
- </div>
+          {reportSchedule ? (
+            <>
+              <h3 className="text-[14px] leading-5 font-semibold text-slate-900 truncate">
+                {reportSchedule.subjectName}
+              </h3>
+              <IdentifierBadge>{reportSchedule.subjectCode}</IdentifierBadge>
+              <span className="text-xs text-slate-500 font-medium hidden xl:inline-block">
+                • {reportSchedule.periodName}
+              </span>
+              <span className="text-xs text-slate-700 font-semibold shrink-0">
+                • Thời gian: <strong className="text-slate-900 font-semibold">{reportSchedule.startTime} – {reportSchedule.endTime} ({formattedDate})</strong>
+              </span>
+            </>
+          ) : (
+            <span className="text-xs text-slate-500 font-medium">
+              {loadingSchedules ? 'Đang tải thông tin ca thi...' : 'Chưa chọn ca thi cụ thể'}
+            </span>
+          )}
+        </div>
 
- <Button
- type="button"
- variant="secondary"
- size="xs"
- disabled={loadingSchedules}
- onClick={onOpenSchedulePicker}
- leftIcon={<Calendar className="h-3.5 w-3.5 text-blue-600" />}
- className="h-8 px-3 text-xs font-semibold text-blue-600 bg-white border-slate-200 hover:bg-blue-50 hover:border-blue-300 shrink-0 self-start md:self-auto shadow-2xs"
- >
- Đổi ca thi khác
- </Button>
- </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          disabled={loadingSchedules}
+          onClick={onOpenSchedulePicker}
+          leftIcon={<Calendar className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />}
+          className="shrink-0 self-start md:self-auto"
+        >
+          Đổi ca thi khác
+        </Button>
+      </div>
 
- {/* ── 2. Filters Grid Header Bar ── */}
- <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100">
- <div className="flex items-center gap-2">
- <Filter className="h-3.5 w-3.5 text-blue-600" />
- <h2 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-700">
- Bộ lọc thống kê nâng cao
- </h2>
+      {/* ── 2. Filters Grid Header Bar ── */}
+      <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100">
+        <div className="flex items-center gap-2">
+          <Filter className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+          <h2 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-700">
+            Bộ lọc thống kê nâng cao
+          </h2>
  {summaryLoading && <span className="text-xs font-semibold text-blue-600 ml-2">Đang cập nhật...</span>}
  </div>
 
@@ -149,10 +149,10 @@ export function ExamReportFiltersCard({
  <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Kỳ thi
  </label>
- <select
+ <FilterSelect containerClassName="w-full" size="sm"
  value={summaryFilters.examPeriodId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, examPeriodId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả kỳ thi</option>
  {summaryOptions?.periods.map((item) => (
@@ -160,17 +160,17 @@ export function ExamReportFiltersCard({
  {item.name}
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div>
  <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Môn học
  </label>
- <select
+ <FilterSelect  size="sm"
  value={summaryFilters.subjectId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, subjectId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả môn học</option>
  {summaryOptions?.subjects.map((item) => (
@@ -178,17 +178,17 @@ export function ExamReportFiltersCard({
  [{item.code}] {item.name}
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div>
  <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Khoa / Bộ môn
  </label>
- <select
+ <FilterSelect containerClassName="w-full" size="sm"
  value={summaryFilters.departmentId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, departmentId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả khoa</option>
  {summaryOptions?.departments.map((item) => (
@@ -196,17 +196,17 @@ export function ExamReportFiltersCard({
  {item.name}
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div>
  <label className="block text-[15px] font-medium text-slate-700 mb-1">
  Lớp học
  </label>
- <select
+ <FilterSelect  size="sm"
  value={summaryFilters.classId}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, classId: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+ className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
  >
  <option value="ALL">Tất cả lớp học</option>
  {summaryOptions?.classes?.map((item: any) => (
@@ -214,7 +214,7 @@ export function ExamReportFiltersCard({
  {item.name}
  </option>
  ))}
- </select>
+ </FilterSelect>
  </div>
 
  <div>
@@ -225,7 +225,7 @@ export function ExamReportFiltersCard({
  type="date"
  value={summaryFilters.fromDate}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, fromDate: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  </div>
 
@@ -237,7 +237,7 @@ export function ExamReportFiltersCard({
  type="date"
  value={summaryFilters.toDate}
  onChange={(e) => setSummaryFilters((f) => ({ ...f, toDate: e.target.value }))}
- className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+ className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none transition shadow-2xs"
  />
  </div>
  </div>

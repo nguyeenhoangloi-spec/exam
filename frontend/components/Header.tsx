@@ -304,7 +304,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-label="Xem thông báo"
                 aria-expanded={openPanel === 'notifications'}
                 onClick={() => togglePanel('notifications')}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
@@ -351,7 +351,7 @@ export const Header: React.FC<HeaderProps> = ({
                                   handleNotificationClick(item);
                                 }
                               }}
-                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                                 }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">

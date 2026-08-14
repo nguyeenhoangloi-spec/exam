@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Button } from '@/components/ui/Button';
+import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import {
   Clock,
   ShieldCheck,
@@ -279,7 +280,7 @@ export default function StudentExamLobbyPage() {
 
                 <div className="space-y-0.5">
                   <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Mã sinh viên</span>
-                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block tabular-nums">{studentCode}</span>
+                  <IdentifierBadge tone="neutral">{studentCode}</IdentifierBadge>
                 </div>
 
                 <div className="space-y-0.5">
@@ -445,7 +446,7 @@ export default function StudentExamLobbyPage() {
                           void handleStartExam();
                         }
                       }}
-                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
                     <button
                       type="button"
@@ -478,7 +479,7 @@ export default function StudentExamLobbyPage() {
                         void handleStartExam();
                       }
                     }}
-                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                   />
                 </div>
               )}

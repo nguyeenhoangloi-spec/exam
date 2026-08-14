@@ -3,7 +3,7 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { KeyRound, Eye, EyeOff, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 import { Modal } from '../Modal';
-import { Button } from '../ui';
+import { Button, IdentifierBadge } from '../ui';
 import { ExamPaper } from '../../types';
 
 interface ChangeExamPasswordModalProps {
@@ -75,9 +75,7 @@ export function ChangeExamPasswordModal({
  {/* Info card */}
  <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
  <div className="flex items-center justify-between">
- <span className=" tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100">
- Mã đề: {paper.paperCode}
- </span>
+ <IdentifierBadge tone="neutral">Mã đề: {paper.paperCode}</IdentifierBadge>
  <span
  className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${
  hasPassword

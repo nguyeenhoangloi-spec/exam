@@ -124,7 +124,7 @@ export default function ForgotPasswordPage() {
  };
 
  const inputCls = [
- 'w-full rounded-lg border py-2.5 pl-10 pr-4 text-[15px] font-normal placeholder-slate-400 transition duration-200 outline-none',
+ 'w-full rounded-xl border py-2.5 pl-10 pr-4 text-[15px] font-normal placeholder-slate-400 transition duration-200 outline-none',
  'focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
  isDark ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-800 focus:bg-white',
  ].join(' ');
@@ -349,7 +349,7 @@ export default function ForgotPasswordPage() {
  <button
  type="submit"
  disabled={loading || !identifier.trim()}
- className="w-full flex items-center justify-center gap-2 rounded-lg py-3 text-[15px] font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-4"
+ className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-4"
  >
  {loading ? (
  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /><span>Đang gửi mã OTP...</span></>
@@ -393,7 +393,7 @@ export default function ForgotPasswordPage() {
  <button
  type="submit"
  disabled={loading || otpCode.trim().length < 6}
- className="w-full flex items-center justify-center gap-2 rounded-lg py-3 text-[15px] font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-3"
+ className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-3"
  >
  {loading ? (
  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /><span>Đang xác thực...</span></>
@@ -447,7 +447,7 @@ export default function ForgotPasswordPage() {
  <button
  type="submit"
  disabled={loading || !newPassword || !confirmPassword}
- className="w-full flex items-center justify-center gap-2 rounded-lg py-3 text-[15px] font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-4"
+ className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-semibold text-white transition-all duration-200 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-700/30 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-4"
  >
  {loading ? (
  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /><span>Đang lưu...</span></>

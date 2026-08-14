@@ -202,7 +202,7 @@ export default function StudentExamResultPage() {
                       value={appealReason}
                       onChange={(e) => setAppealReason(e.target.value)}
                       placeholder="Nhập chi tiết lý do sự cố xảy ra..."
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-[15px] leading-6 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 font-normal"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-[15px] leading-6 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 font-normal"
                       required
                     />
                     <Button

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -167,6 +167,11 @@ export default function StudentsPage() {
  setCurrentUser(u);
  fetchData();
  }, [fetchData, router]);
+
+ const handleRefresh = async () => {
+    await fetchData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
 
  // Compute DYNAMIC KPI Metrics from real API data
  const kpiData = useMemo(() => {
@@ -369,8 +374,8 @@ export default function StudentsPage() {
  filtered={filteredStudents.length}
  />
 
- {/* Filter Card */}
- <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs flex flex-wrap items-center gap-4">
+ {/* Filter Toolbar */}
+ <div className="flex flex-wrap items-center justify-between gap-4">
  <div className="relative flex-1 min-w-[260px]">
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  <input
@@ -381,7 +386,7 @@ export default function StudentsPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+ className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
  />
  {search && (
  <button
@@ -418,7 +423,7 @@ export default function StudentsPage() {
  onViewModeChange={setViewMode}
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
- onRefresh={fetchData}
+ onRefresh={handleRefresh}
  loading={loading}
  />
 
@@ -481,7 +486,7 @@ export default function StudentsPage() {
  required
  value={formData.studentCode}
  onChange={(e) => setFormData({ ...formData, studentCode: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -492,35 +497,35 @@ export default function StudentsPage() {
  required
  value={formData.fullName}
  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
 
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Giới tính</label>
- <select
+ <FilterSelect containerClassName="w-full"
  value={formData.gender}
  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  <option value="Nam">Nam</option>
  <option value="Nữ">Nữ</option>
- </select>
+ </FilterSelect>
  </div>
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Lớp học</label>
- <select
+ <FilterSelect
  required
  value={formData.classId}
  onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
  >
  <option value="">-- Chọn lớp học --</option>
  {classes.map((cls) => (
  <option key={cls.id} value={cls.id}>{cls.name} ({cls.code})</option>
  ))}
- </select>
+ </FilterSelect>
  </div>
  </div>
 
@@ -532,7 +537,7 @@ export default function StudentsPage() {
  required
  value={formData.email}
  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  <div>
@@ -541,7 +546,7 @@ export default function StudentsPage() {
  type="text"
  value={formData.phone}
  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
- className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+ className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
  />
  </div>
  </div>
@@ -556,7 +561,7 @@ export default function StudentsPage() {
  setIsModalOpen(false);
  setIsImportModalOpen(true);
  }}
- leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+ leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
  >
  Import Excel
  </Button>
@@ -600,10 +605,10 @@ export default function StudentsPage() {
 {drawerStudent && (
 <div role="dialog" aria-modal="true" aria-label="Thông tin sinh viên" className="fixed inset-0 z-[100] flex justify-end">
  <div
- className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity"
- onClick={closeDrawer}
- />
-  <div className="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
+  className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity"
+  onClick={closeDrawer}
+  />
+ <div className="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
 
  {/* Header - Modern Gradient matching ProfileDrawer */}
 <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">

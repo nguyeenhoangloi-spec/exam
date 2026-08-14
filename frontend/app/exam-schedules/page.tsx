@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -163,6 +164,11 @@ export default function ExamSchedulesPage() {
     setCurrentUser(u);
     void fetchInitialData();
   }, [fetchInitialData, router]);
+
+  const handleRefresh = async () => {
+    await fetchInitialData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
 
   // Compute DYNAMIC KPI Counts from REAL API DATA using Real-time status
   const counts = useMemo(() => {
@@ -432,20 +438,6 @@ export default function ExamSchedulesPage() {
             setFilterValues(next);
             setPage(1);
           }}
-          onReset={() => {
-            setFilterValues({
-              search: '',
-              examPeriodId: '',
-              shift: '',
-              roomId: '',
-              examDate: '',
-              status: '',
-              semester: '',
-              schoolYear: '',
-              supervisorId: '',
-            });
-            setPage(1);
-          }}
         />
 
         {/* Status Tabs Bar */}
@@ -467,7 +459,7 @@ export default function ExamSchedulesPage() {
           onViewModeChange={setViewMode}
           visibleColumns={visibleColumns}
           onColumnToggle={handleColumnToggle}
-          onRefresh={fetchInitialData}
+          onRefresh={handleRefresh}
           loading={loading}
         />
 
@@ -569,11 +561,11 @@ export default function ExamSchedulesPage() {
               <label className="block text-[15px] font-medium text-slate-500 mb-1">
                 Kỳ thi <span className="text-red-500">*</span>
               </label>
-              <select
+              <FilterSelect containerClassName="w-full"
                 required
                 value={formData.examPeriodId}
                 onChange={(e) => setFormData({ ...formData, examPeriodId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-medium"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-medium"
               >
                 {periods.length === 0 ? (
                   <option value="">-- Chưa có kỳ thi nào --</option>
@@ -592,18 +584,18 @@ export default function ExamSchedulesPage() {
                     );
                   })
                 )}
-              </select>
+              </FilterSelect>
             </div>
 
             <div>
               <label className="block text-[15px] font-medium text-slate-500 mb-1">
                 Môn học / Môn thi <span className="text-red-500">*</span>
               </label>
-              <select
+              <FilterSelect 
                 required
                 value={formData.subjectId}
                 onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-medium"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-medium"
               >
                 {subjects.length === 0 ? (
                   <option value="">-- Chưa có môn học nào --</option>
@@ -614,7 +606,7 @@ export default function ExamSchedulesPage() {
                     </option>
                   ))
                 )}
-              </select>
+              </FilterSelect>
             </div>
           </div>
 
@@ -623,31 +615,31 @@ export default function ExamSchedulesPage() {
               <label className="block text-[15px] font-medium text-slate-500 mb-1">
                 Loại ca thi (Chế độ dự thi) <span className="text-red-500">*</span>
               </label>
-              <select
+              <FilterSelect containerClassName="w-full"
                 required
                 value={formData.mode}
                 onChange={(e) => setFormData({ ...formData, mode: e.target.value as 'OFFICIAL' | 'MOCK' })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-semibold text-blue-700 shadow-2xs"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-semibold text-blue-700 shadow-2xs"
               >
                 <option value="OFFICIAL">Thi chính thức (Xếp SBD & Phòng thi)</option>
                 <option value="MOCK">Thi thử (Dự thi tự do online)</option>
-              </select>
+              </FilterSelect>
             </div>
 
             <div>
               <label className="block text-[15px] font-medium text-slate-500 mb-1">
                 Hình thức thi <span className="text-red-500">*</span>
               </label>
-              <select
+              <FilterSelect 
                 required
                 value={formData.examType}
                 onChange={(e) => setFormData({ ...formData, examType: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-semibold text-slate-900"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-semibold text-slate-900"
               >
                 <option value="TRAC_NGHIEM">Trắc nghiệm</option>
                 <option value="DIEN_LO">Điền khuyết (Điền vào chỗ trống)</option>
                 <option value="TU_LUAN">Tự luận</option>
-              </select>
+              </FilterSelect>
             </div>
           </div>
 
@@ -691,7 +683,7 @@ export default function ExamSchedulesPage() {
                 required
                 value={formData.examDate}
                 onChange={(e) => setFormData({ ...formData, examDate: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -711,7 +703,7 @@ export default function ExamSchedulesPage() {
                     endTime: newEnd,
                   });
                 }}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none font-semibold text-blue-700"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none font-semibold text-blue-700"
               />
             </div>
             <div>
@@ -721,7 +713,7 @@ export default function ExamSchedulesPage() {
                 required
                 value={formData.endTime}
                 onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                className="w-full rounded-xl border border-blue-200 bg-blue-50/40 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none font-semibold text-blue-900"
+                className="w-full h-10 rounded-xl border border-blue-200 bg-blue-50/40 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none font-semibold text-blue-900"
               />
             </div>
           </div>
@@ -745,7 +737,7 @@ export default function ExamSchedulesPage() {
                   setIsModalOpen(false);
                   setIsImportModalOpen(true);
                 }}
-                leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+                leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
                 Import Excel
               </Button>

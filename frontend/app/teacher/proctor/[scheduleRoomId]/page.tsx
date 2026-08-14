@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '@/components/ui/FilterSelect';
 
 import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -36,6 +37,7 @@ import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/Button';
+import { SortDropdown } from '@/components/ui/SortDropdown';
 
 const EMPTY_STUDENTS: any[] = [];
 
@@ -478,39 +480,41 @@ export default function ProctorDashboardPage() {
  }}
  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-[15px] rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
  >
- Bù giờ khẩn cấp toàn phòng (+15p)
+Bù giờ khẩn cấp toàn phòng (+15p)
  </button>
  </div>
  )}
 
- {/* ── 2. Standard KPI Cards ── */}
- <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
- {KPI_CARDS.map(({ label, value, subtext, icon: Icon, iconBg }) => (
- <div
- key={label}
- className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
- >
- <div className="flex items-start justify-between gap-3">
- <div className="space-y-1">
- <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
- {label}
- </span>
- <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
- {value}
- </p>
- </div>
+      {/* ── 2. Standard KPI Cards ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {KPI_CARDS.map(({ label, value, subtext, icon: Icon, iconBg }) => (
+          <div
+            key={label}
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1 min-w-0">
+                <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
+                  {label}
+                </span>
+                <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
+                  {value}
+                </div>
+              </div>
 
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
- <Icon className="h-5 w-5" />
- </div>
- </div>
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
+                <Icon className="h-5 w-5 stroke-[2]" />
+              </div>
+            </div>
 
- <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[13px]">
- <span className="font-normal text-slate-500">{subtext}</span>
- </div>
- </div>
- ))}
- </div>
+            <div className="mt-2.5 pt-2 border-t border-slate-100/80">
+              <span className="text-[13px] font-normal text-slate-500 block truncate">
+                {subtext}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
 
  {/* ── 3. Standard Filter Card Toolbar (Grid Inputs & TabBar) ── */}
  <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
@@ -526,7 +530,7 @@ export default function ProctorDashboardPage() {
  setSearch(e.target.value);
  setPage(1);
  }}
- className="w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+ className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
  />
  {search && (
  <button
@@ -540,48 +544,41 @@ export default function ProctorDashboardPage() {
  </div>
 
  {/* Status Select */}
- <div className="relative">
- <select
+ <FilterSelect
  value={filter}
  onChange={(e) => {
  setFilter(e.target.value as any);
  setPage(1);
  }}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả trạng thái thi</option>
  <option value="IN_PROGRESS">Đang làm bài trực tuyến</option>
  <option value="FLAGGED">Có cảnh báo vi phạm</option>
  <option value="SUBMITTED">Đã hoàn thành nộp bài</option>
  <option value="DISCONNECTED">Mất kết nối đường truyền</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
- </div>
+ </FilterSelect>
 
  {/* Risk Level Select */}
- <div className="relative">
- <select
+ <FilterSelect
  value={riskFilter}
  onChange={(e) => {
  setRiskFilter(e.target.value as any);
  setPage(1);
  }}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="ALL">Tất cả mức rủi ro</option>
  <option value="HIGH">Rủi ro cao (≥ 40 điểm)</option>
  <option value="MEDIUM">Rủi ro trung bình (15 - 39 điểm)</option>
  <option value="LOW">Rủi ro thấp (&lt; 15 điểm)</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
- </div>
+ </FilterSelect>
 
  {/* Quick Sort Filter */}
- <div className="relative">
- <select
+ <FilterSelect
  value={sortOrder}
  onChange={(e) => setSortOrder(e.target.value)}
- className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
  >
  <option value="seat_asc">Số ghế: Tăng dần (1 - 50)</option>
  <option value="seat_desc">Số ghế: Giảm dần</option>
@@ -589,9 +586,7 @@ export default function ProctorDashboardPage() {
  <option value="name_desc">Tên thí sinh: Z - A</option>
  <option value="risk_desc">Mức rủi ro: Cao nhất trước</option>
  <option value="code_asc">Mã sinh viên: Tăng dần</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
- </div>
+ </FilterSelect>
  </div>
 
  {/* TabBar Filter Buttons */}
@@ -647,20 +642,17 @@ export default function ProctorDashboardPage() {
 
  <div className="flex items-center gap-2">
  {/* Sort */}
- <div className="relative">
- <select
- value={sortOrder}
- onChange={(e) => setSortOrder(e.target.value)}
- className="appearance-none rounded-lg border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
- >
- <option value="seat_asc">Sắp xếp: Số ghế tăng dần</option>
- <option value="seat_desc">Sắp xếp: Số ghế giảm dần</option>
- <option value="name_asc">Tên thí sinh: A - Z</option>
- <option value="risk_desc">Mức cảnh báo cao nhất</option>
- <option value="code_asc">Mã SV tăng dần</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
- </div>
+          <SortDropdown
+            value={sortOrder}
+            onChange={(val) => setSortOrder(val)}
+            options={[
+              { value: 'seat_asc', label: 'Sắp xếp: Số ghế tăng dần' },
+              { value: 'seat_desc', label: 'Sắp xếp: Số ghế giảm dần' },
+              { value: 'name_asc', label: 'Tên thí sinh: A - Z' },
+              { value: 'risk_desc', label: 'Mức cảnh báo cao nhất' },
+              { value: 'code_asc', label: 'Mã SV tăng dần' },
+            ]}
+          />
 
  {/* Column Selector */}
  <div className="relative">
@@ -690,7 +682,7 @@ export default function ProctorDashboardPage() {
  return (
  <label
  key={col.key}
- className="flex items-center justify-between rounded-lg px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition"
+ className="flex items-center justify-between rounded-xl px-2 py-1 hover:bg-slate-50 cursor-pointer font-medium text-slate-700 select-none transition"
  >
  <span className="flex items-center gap-2">
  <input
@@ -717,7 +709,7 @@ export default function ProctorDashboardPage() {
  <button
  type="button"
  onClick={() => setViewMode('list')}
- className={`rounded-lg p-1.5 transition cursor-pointer ${
+ className={`rounded-xl p-1.5 transition cursor-pointer ${
  viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
  }`}
  title="Dạng Danh sách chuẩn"
@@ -727,7 +719,7 @@ export default function ProctorDashboardPage() {
  <button
  type="button"
  onClick={() => setViewMode('grid')}
- className={`rounded-lg p-1.5 transition cursor-pointer ${
+ className={`rounded-xl p-1.5 transition cursor-pointer ${
  viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
  }`}
  title="Dạng Lưới card"
@@ -737,7 +729,7 @@ export default function ProctorDashboardPage() {
  <button
  type="button"
  onClick={() => setViewMode('compact')}
- className={`rounded-lg p-1.5 transition cursor-pointer ${
+ className={`rounded-xl p-1.5 transition cursor-pointer ${
  viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
  }`}
  title="Dạng Thu gọn"
@@ -747,14 +739,14 @@ export default function ProctorDashboardPage() {
  </div>
 
  {/* Refresh */}
- <button
- type="button"
- onClick={() => loadDashboard(false)}
- className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer active:scale-95 select-none"
- title="Làm mới dữ liệu"
- >
- <RefreshCw className="h-4 w-4" />
- </button>
+          <button
+            type="button"
+            onClick={() => loadDashboard(false)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+          </button>
  </div>
  </div>
 
@@ -1161,22 +1153,19 @@ export default function ProctorDashboardPage() {
  </div>
 
  {/* Rows Per Page Dropdown */}
- <div className="relative">
- <select
+ <FilterSelect
  value={limit}
  onChange={(e) => {
  setLimit(Number(e.target.value));
  setPage(1);
  }}
- className="h-9 appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-7 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+ className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
  >
  <option value={10}>10 / trang</option>
  <option value={20}>20 / trang</option>
  <option value={50}>50 / trang</option>
  <option value={100}>100 / trang</option>
- </select>
- <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
- </div>
+ </FilterSelect>
  </div>
  </div>
  )}
@@ -1202,7 +1191,7 @@ export default function ProctorDashboardPage() {
  <button
  type="button"
  onClick={() => setActionType(null)}
- className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+ className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
  >
  <X className="w-4 h-4" />
  </button>
@@ -1251,15 +1240,15 @@ export default function ProctorDashboardPage() {
  <div className="space-y-3">
  <div>
  <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Quyết định xử lý sự cố:</label>
- <select
+ <FilterSelect
  value={resolutionDecision}
  onChange={(e) => setResolutionDecision(e.target.value as any)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
  >
  <option value="REOPEN">Cho phép mở lại phiên thi để làm tiếp</option>
  <option value="PENALTY">Giữ nguyên bài thi & Áp dụng trừ điểm</option>
  <option value="TERMINATE">Đình chỉ thi & Hủy kết quả bài làm</option>
- </select>
+ </FilterSelect>
  </div>
 
  {resolutionDecision === 'PENALTY' && (
@@ -1272,7 +1261,7 @@ export default function ProctorDashboardPage() {
  step="0.5"
  value={penaltyPoints}
  onChange={(e) => setPenaltyPoints(Number(e.target.value))}
- className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
+ className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
  />
  </div>
  )}
@@ -1282,15 +1271,15 @@ export default function ProctorDashboardPage() {
  {actionType === 'FLAG' && (
  <div>
  <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Phân loại sự cố ghi nhận:</label>
- <select
+ <FilterSelect
  value={incidentDecision}
  onChange={(e) => setIncidentDecision(e.target.value)}
- className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
+ className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
  >
  <option value="UNDER_REVIEW">Tạm giữ để hội đồng thi kiểm tra lại</option>
  <option value="CONFIRMED_VIOLATION">Xác nhận có hành vi vi phạm quy chế</option>
  <option value="DISMISSED">Bỏ qua (Sự cố khách quan ngoài ý muốn)</option>
- </select>
+ </FilterSelect>
  </div>
  )}
 
@@ -1303,7 +1292,7 @@ export default function ProctorDashboardPage() {
  placeholder="Nhập lý do hoặc ghi chú cho hội đồng thi..."
  value={reason}
  onChange={(e) => setReason(e.target.value)}
- className="w-full rounded-lg border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
+ className="w-full rounded-xl border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
  />
  </div>
  </div>
@@ -1355,7 +1344,7 @@ export default function ProctorDashboardPage() {
  <button
  type="button"
  onClick={() => setShowBulkModal(false)}
- className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+ className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
  >
  <X className="w-4 h-4" />
  </button>
@@ -1402,7 +1391,7 @@ export default function ProctorDashboardPage() {
  rows={3}
  value={bulkReason}
  onChange={(e) => setBulkReason(e.target.value)}
- className="w-full rounded-lg border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-amber-500"
+ className="w-full rounded-xl border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-amber-500"
  />
  </div>
  </div>
@@ -1449,7 +1438,7 @@ export default function ProctorDashboardPage() {
  <button
  type="button"
  onClick={() => setShowReopenEntryModal(false)}
- className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+ className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
  >
  <X className="w-4 h-4" />
  </button>

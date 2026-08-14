@@ -41,7 +41,7 @@ export function RichQuestionEditor({
  <button
  type="button"
  onClick={() => command('bold')}
- className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
  title="In đậm (Ctrl+B)"
  >
  <Bold className="h-4 w-4" />
@@ -49,7 +49,7 @@ export function RichQuestionEditor({
  <button
  type="button"
  onClick={() => command('italic')}
- className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
  title="In nghiêng (Ctrl+I)"
  >
  <Italic className="h-4 w-4" />
@@ -57,7 +57,7 @@ export function RichQuestionEditor({
  <button
  type="button"
  onClick={() => command('underline')}
- className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
  title="Gạch chân (Ctrl+U)"
  >
  <Underline className="h-4 w-4" />
@@ -66,7 +66,7 @@ export function RichQuestionEditor({
  <button
  type="button"
  onClick={() => command('insertUnorderedList')}
- className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition cursor-pointer"
  title="Danh sách dấu chấm"
  >
  <List className="h-4 w-4" />

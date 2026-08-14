@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../ui/FilterSelect';
 
 import React from 'react';
 import { Search, X, RotateCcw, ChevronDown } from 'lucide-react';
@@ -51,7 +52,7 @@ export function RegradeFiltersCard({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Tìm theo mã SV, tên SV, lý do..."
-            className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-8 pr-7 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition shadow-2xs"
+            className="h-10 w-full rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900/50 pl-8 pr-7 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition shadow-2xs"
           />
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
           {search && (
@@ -69,10 +70,10 @@ export function RegradeFiltersCard({
         {/* Subject Filter Dropdown */}
         {subjectsList.length > 0 && (
           <div className="relative min-w-[140px]">
-            <select
+            <FilterSelect size="sm"
               value={subjectFilter}
               onChange={(e) => onSubjectFilterChange(e.target.value)}
-              className="h-9 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 outline-none hover:border-slate-300 focus:border-blue-600 transition cursor-pointer shadow-2xs"
+              className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 text-[15px] font-medium text-slate-700 outline-none hover:border-slate-300 focus:border-blue-600 transition cursor-pointer shadow-2xs"
             >
               <option value="ALL">Tất cả Môn học</option>
               {subjectsList.map(([id, name]) => (
@@ -80,8 +81,7 @@ export function RegradeFiltersCard({
                   {name}
                 </option>
               ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            </FilterSelect>
           </div>
         )}
 
@@ -92,7 +92,7 @@ export function RegradeFiltersCard({
             variant="ghost"
             size="sm"
             onClick={onResetFilters}
-            className="h-9 px-2.5 text-xs text-slate-500 hover:text-rose-600 hover:bg-rose-50 border-slate-200"
+            className="h-10 px-2.5 text-xs text-slate-500 hover:text-rose-600 hover:bg-rose-50 border-slate-200"
             leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
             title="Đặt lại tất cả bộ lọc"
           >

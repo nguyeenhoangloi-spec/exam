@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, GraduationCap, AlertTriangle, Clock, CheckCircle2, MoreVertical } from 'lucide-react';
+import { Eye, GraduationCap, AlertTriangle, Clock, CheckCircle2, MoreVertical, Award, FileText } from 'lucide-react';
 import { ExamAttemptReviewModal } from './ExamAttemptReviewModal';
 import { StatusBadge } from '../common/StatusBadge';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 
 export interface CandidateReport {
@@ -27,6 +28,16 @@ const statusBadgeMap: Record<string, { label: string; className: string }> = {
  IN_PROGRESS: { label: 'Đang làm bài', className: 'bg-blue-50 text-blue-700' },
  ABSENT: { label: 'Chưa thi / Vắng thi', className: 'bg-rose-50 text-rose-700' },
 };
+
+function formatDate(dateStr?: string | null) {
+  if (!dateStr) return '---';
+  try {
+    const d = new Date(dateStr);
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  } catch {
+    return dateStr;
+  }
+}
 
 interface ExamReportTableProps {
  candidates: CandidateReport[];
@@ -84,9 +95,7 @@ export function ExamReportTable({
  onChange={(e) => onSelect(c.studentId, e.target.checked)}
  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
- <span className=" tabular-nums text-[13px] font-semibold text-blue-600">
- {c.studentCode}
- </span>
+ <IdentifierBadge>{c.studentCode}</IdentifierBadge>
  </div>
 
  <StatusBadge status={c.status} />
@@ -144,94 +153,122 @@ export function ExamReportTable({
  );
  }
 
- // 2. Dạng Thu Gọn (Compact View Mode)
- if (viewMode === 'compact') {
- return (
- <>
- <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
- <tr>
- <th scope="col" className="p-2 pl-3 text-center w-8">
- <input
- type="checkbox"
- checked={allSelected}
- onChange={(e) => onSelectAll(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </th>
- <th scope="col" className="p-2 whitespace-nowrap">Mã SV</th>
- <th scope="col" className="p-2 min-w-[180px]">Họ và Tên</th>
- <th scope="col" className="p-2 whitespace-nowrap">Lớp</th>
- <th scope="col" className="p-2 whitespace-nowrap">Trạng thái</th>
- <th scope="col" className="p-2 whitespace-nowrap text-center">Điểm số</th>
- <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 font-normal">
- {candidates.map((c) => {
- const isChecked = selected.includes(c.studentId);
- const badge = statusBadgeMap[c.status] || { label: c.status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+ // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
+  if (viewMode === 'compact') {
+    return (
+      <>
+        <div className="space-y-2.5">
+          {candidates.map((c) => {
+            const isChecked = selected.includes(c.studentId);
+            const isPass = c.totalScore >= 5;
 
- return (
- <tr key={c.studentId} className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''}`}>
- <td className="p-2 pl-3 text-center">
- <input
- type="checkbox"
- checked={isChecked}
- onChange={(e) => onSelect(c.studentId, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </td>
- <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-900">
- {c.studentCode}
- </span>
- </td>
- <td className="p-2 min-w-[180px]">
- <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-primary-600" onClick={() => onDetail(c)}>
- {c.fullName}
- </button>
- </td>
- <td className="p-2 whitespace-nowrap font-normal text-slate-700">{c.className}</td>
- <td className="p-2 whitespace-nowrap">
- <StatusBadge status={c.status} />
- </td>
- <td className={`p-2 whitespace-nowrap text-center font-medium ${c.status === 'ABSENT' ? 'text-rose-600' : c.totalScore >= 5 ? 'text-emerald-600' : 'text-rose-600'}`}>
- {c.status === 'ABSENT' ? 'Vắng' : c.totalScore}
- </td>
- <td className="p-2 pr-3 text-right whitespace-nowrap">
- <div className="flex items-center justify-end gap-1">
- {c.attemptId && (
- <button
- type="button"
- onClick={() => setReviewAttemptId(c.attemptId!)}
- className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-blue-50 text-primary-600 hover:bg-blue-100 text-[15px] leading-[22px] font-medium transition cursor-pointer"
- title="Xem chi tiết bài làm"
- >
- <Eye className="h-3.5 w-3.5" />
- </button>
- )}
- <button type="button" onClick={() => onDetail(c)} className="p-1 text-slate-500 hover:text-primary-600 cursor-pointer">
- <Eye className="h-4 w-4" />
- </button>
- </div>
- </td>
- </tr>
- );
- })}
- </tbody>
- </table>
- </div>
- {reviewAttemptId && (
- <ExamAttemptReviewModal
- attemptId={reviewAttemptId}
- onClose={() => setReviewAttemptId(null)}
- />
- )}
- </>
- );
- }
+            return (
+              <div
+                key={c.studentId}
+                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                  isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
+              >
+                {/* Left: Checkbox + Avatar Code Badge */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(e) => onSelect(c.studentId, e.target.checked)}
+                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
+                    {c.studentCode?.slice(0, 3) || 'TS'}
+                  </div>
+
+                  {/* Middle: Name + Code + Meta chips */}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => onDetail(c)}
+                        className="text-[15px] font-semibold text-slate-900 truncate hover:text-primary-600 transition cursor-pointer text-left"
+                      >
+                        {c.fullName}
+                      </button>
+                      <IdentifierBadge>
+                        {c.studentCode}
+                      </IdentifierBadge>
+                      {c.className && (
+                        <span className="text-xs text-slate-500 font-normal">
+                          ({c.className})
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                      <span className="flex items-center gap-1">
+                        <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>
+                          Điểm thi:{' '}
+                          {c.status === 'ABSENT' ? (
+                            <strong className="text-rose-600 font-semibold">Vắng thi</strong>
+                          ) : (
+                            <strong className={`font-semibold ${isPass ? 'text-emerald-600' : 'text-rose-600'}`}>
+                              {c.totalScore} / 10
+                            </strong>
+                          )}
+                        </span>
+                      </span>
+                      {c.submittedAt && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>Nộp: {formatDate(c.submittedAt)}</span>
+                        </span>
+                      )}
+                      {(c.violationCount ?? 0) > 0 && (
+                        <span className="flex items-center gap-1 text-rose-600 font-medium">
+                          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{c.violationCount} vi phạm</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Status & Actions */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <StatusBadge status={c.status} />
+
+                  {c.attemptId && (
+                    <button
+                      type="button"
+                      onClick={() => setReviewAttemptId(c.attemptId!)}
+                      className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition cursor-pointer"
+                      title="Xem bài làm"
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      <span>Bài làm</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => onDetail(c)}
+                    className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                    title="Xem hồ sơ thí sinh"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {reviewAttemptId && (
+          <ExamAttemptReviewModal
+            attemptId={reviewAttemptId}
+            onClose={() => setReviewAttemptId(null)}
+          />
+        )}
+      </>
+    );
+  }
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
@@ -280,9 +317,7 @@ export function ExamReportTable({
 
  {visibleColumns.studentCode !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-600">
- {c.studentCode}
- </span>
+ <IdentifierBadge>{c.studentCode}</IdentifierBadge>
  </td>
  )}
 
@@ -361,7 +396,7 @@ export function ExamReportTable({
  onDetail(c);
  }
  }}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
  title={c.attemptId ? "Xem chi tiết bài làm" : "Xem hồ sơ thí sinh"}
  >
  <Eye className="h-4 w-4" />
@@ -376,7 +411,7 @@ export function ExamReportTable({
  closeMenu();
  setReviewAttemptId(c.attemptId!);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-blue-50 text-blue-700"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 text-blue-700"
  >
  <Eye className="h-3.5 w-3.5 text-blue-600" />
  <span>Xem bài làm</span>
@@ -388,7 +423,7 @@ export function ExamReportTable({
  closeMenu();
  onDetail(c);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-slate-50 text-slate-700"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 text-slate-700"
  >
  <Eye className="h-3.5 w-3.5 text-slate-500" />
  <span>Hồ sơ thí sinh</span>

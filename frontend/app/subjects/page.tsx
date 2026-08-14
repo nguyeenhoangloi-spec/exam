@@ -21,6 +21,7 @@ import { SubjectTableToolbar } from '../../components/subjects/SubjectTableToolb
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SubjectTable } from '../../components/subjects/SubjectTable';
 import { SubjectPaginationBar } from '../../components/subjects/SubjectPaginationBar';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function SubjectsPage() {
  usePageTitle('Quản lý môn học');
@@ -123,6 +124,11 @@ export default function SubjectsPage() {
  setCurrentUser(u);
  fetchData();
  }, [fetchData, router]);
+
+ const handleRefresh = async () => {
+    await fetchData();
+    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+  };
 
  // Load drawer data when subject or tab changes
  useEffect(() => {
@@ -484,7 +490,7 @@ export default function SubjectsPage() {
  onViewModeChange={setViewMode}
  visibleColumns={visibleColumns}
  onColumnToggle={handleColumnToggle}
- onRefresh={fetchData}
+ onRefresh={handleRefresh}
  loading={loading}
  />
 
@@ -553,11 +559,11 @@ export default function SubjectsPage() {
  </div>
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa đào tạo</label>
- <select required value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+ <FilterSelect containerClassName="w-full" required value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
  className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
  <option value="">-- Chọn Khoa --</option>
  {departments.map((d) => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
- </select>
+ </FilterSelect>
  </div>
  </div>
  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
@@ -570,7 +576,7 @@ export default function SubjectsPage() {
  setIsModalOpen(false);
  setIsImportModalOpen(true);
  }}
- leftIcon={<FileSpreadsheet className="h-4 w-4 text-blue-600" />}
+ leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
  >
  Import Excel
  </Button>
@@ -621,7 +627,7 @@ export default function SubjectsPage() {
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Chọn Lớp</label>
  <div className="relative">
- <select
+ <FilterSelect 
  required
  value={enrollClassData.classId}
  onChange={(e) => setEnrollClassData({ ...enrollClassData, classId: e.target.value })}
@@ -633,8 +639,7 @@ export default function SubjectsPage() {
  {c.code} — {c.name} {c.department?.name ? `(${c.department.name})` : ''} · {c._count?.students ?? c.students?.length ?? 0} SV
  </option>
  ))}
- </select>
- <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </FilterSelect>
  </div>
  </div>
 
@@ -642,13 +647,13 @@ export default function SubjectsPage() {
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Học kỳ</label>
- <select value={enrollClassData.semester}
+ <FilterSelect containerClassName="w-full" value={enrollClassData.semester}
  onChange={(e) => setEnrollClassData({ ...enrollClassData, semester: e.target.value })}
  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-medium focus:border-blue-500 focus:outline-none">
  <option value="HK1">Học kỳ I</option>
  <option value="HK2">Học kỳ II</option>
  <option value="HK3">Học kỳ Hè</option>
- </select>
+ </FilterSelect>
  </div>
  <div>
  <label className="block text-[15px] font-medium text-slate-500 mb-1">Năm học</label>
@@ -845,7 +850,7 @@ export default function SubjectsPage() {
  <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{c.departmentName}</p>
  <div className="flex flex-wrap gap-1 mt-1.5">
  {c.semesters?.map((s: string) => (
- <span key={s} className="text-[12px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-md px-1.5 py-0.5">{s}</span>
+ <IdentifierBadge key={s}>{s}</IdentifierBadge>
  ))}
  </div>
  </div>
@@ -865,20 +870,18 @@ export default function SubjectsPage() {
  {/* Filters */}
  <div className="flex flex-wrap gap-2">
  <div className="relative flex-1 min-w-[120px]">
- <select value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
+ <FilterSelect value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
  <option value="">Tất cả lớp</option>
  {drawerClassesForFilter.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}
- </select>
- <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </FilterSelect>
  </div>
  <div className="relative">
- <select value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
+ <FilterSelect value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
  className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
  <option value="">Tất cả HK</option>
  {drawerSemesters.map((s) => <option key={s} value={s}>{s}</option>)}
- </select>
- <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+ </FilterSelect>
  </div>
  </div>
 

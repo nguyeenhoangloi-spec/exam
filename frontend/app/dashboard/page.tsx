@@ -182,7 +182,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div className="w-full space-y-5 px-6 py-6 bg-slate-50/50 min-h-screen">
+      <main className="w-full space-y-5 px-6 py-6 bg-slate-50/50 min-h-screen">
 
         {/* Section 1: Dashboard Header */}
         <DashboardHeader
@@ -249,7 +249,7 @@ export default function DashboardPage() {
             />
           </div>
         )}
-      </div>
+      </main>
 
       {/* Reject Question Modal */}
       <Modal

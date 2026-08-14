@@ -9,6 +9,7 @@ import { VideoLightboxModal } from '../VideoLightboxModal';
 import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle, Hash, Award, Brain } from 'lucide-react';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
 import { Button } from '../ui/Button';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { DynamicImage } from '../ui/DynamicImage';
 
 export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
@@ -77,40 +78,38 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  <div className="min-w-0 flex-1 pr-2">
  <div className="flex items-center gap-2.5 flex-wrap">
-                  <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
- Chi tiết Câu hỏi
- </h2>
- <span className="tabular-nums text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-lg backdrop-blur-md border border-white/25">
- {codeText}
- </span>
- </div>
- <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 line-clamp-2">
- Môn học: <strong className="font-semibold text-white">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
- </p>
- </div>
- </div>
+                  <h2 className="text-lg font-semibold leading-snug text-white line-clamp-2 break-words">
+                    Chi tiết Câu hỏi
+                  </h2>
+                  <IdentifierBadge tone="inverse">{codeText}</IdentifierBadge>
+                </div>
+                <p className="text-xs font-medium text-blue-100/90 mt-1.5 line-clamp-2">
+                  Môn học: <strong className="font-semibold text-white">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
+                </p>
+              </div>
+            </div>
 
- <button
- type="button"
- onClick={onClose}
- className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
- title="Đóng"
- >
- <X className="h-5 w-5" />
- </button>
- </div>
- </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
+              title="Đóng"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
 
- {/* ── 2. Scrollable Content Body ── */}
-  <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/40 text-xs">
- {/* Card 1: Trạng thái & Nội dung câu hỏi */}
-  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
- <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
- <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Nội dung câu hỏi</h3>
- <QuestionStatusBadge status={question.status || 'APPROVED'} />
- </div>
+        {/* ── 2. Scrollable Content Body ── */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/40 text-xs">
+          {/* Card 1: Trạng thái & Nội dung câu hỏi */}
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+              <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Nội dung câu hỏi</h3>
+              <QuestionStatusBadge status={question.status || 'APPROVED'} />
+            </div>
 
- <div className="text-[15px] font-medium text-slate-900 leading-relaxed bg-slate-50/80 rounded-xl p-4 border border-slate-200/70">
+            <div className="text-base font-medium text-slate-900 dark:text-slate-100 leading-relaxed bg-slate-50/80 dark:bg-slate-800/80 rounded-xl p-4 border border-slate-200/70 dark:border-slate-700">
  {rich ? <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(rich) }} /> : question.content}
  </div>
  </div>
@@ -118,7 +117,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
  {/* Card 2: Media Attachments (if available) */}
  {question.media?.length ? (
   <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
- <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Media đính kèm</h3>
+ <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Media đính kèm</h3>
  <div className="flex flex-wrap gap-3">
  {question.media.map((media) => {
  const fullUrl = getImageUrl(media.url);
@@ -185,7 +184,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  {/* Card 3: Options & Correct Answer / Explanation */}
   <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Danh sách đáp án</h3>
+ <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Danh sách đáp án</h3>
  {question.options && question.options.length > 0 ? (
  <div className="space-y-2.5">
  {question.options.map((o) => (
@@ -225,14 +224,14 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
  {/* Card 4: Metadata Grid */}
   <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Thông tin chi tiết</h3>
+ <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Thông tin chi tiết</h3>
  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
  {/* Mã câu hỏi */}
  <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
  <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
  <Hash className="h-3.5 w-3.5 text-blue-600" /> Mã câu hỏi
  </span>
- <p className=" tabular-nums font-medium text-slate-900">{codeText}</p>
+ <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
  </div>
 
  {/* Môn học */}

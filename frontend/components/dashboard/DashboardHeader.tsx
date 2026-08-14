@@ -42,7 +42,7 @@ export function DashboardHeader({
   }, [isRefreshing]);
 
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Subtitle */}
       <div className="space-y-1">
         <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
@@ -53,29 +53,11 @@ export function DashboardHeader({
         </p>
       </div>
 
-      {/* Right Controls: Period Selector & PDF Export Button */}
-      <div className="flex flex-col items-start lg:items-end gap-1.5 shrink-0">
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Semester / Exam Period Filter Selector */}
-          {onPeriodChange && (
-            <FilterSelect
-              size="md"
-              variant="ghost"
-              leftIcon={<Calendar className="w-4 h-4" />}
-              value={selectedPeriod}
-              onChange={(e) => onPeriodChange(e.target.value)}
-            >
-              <option value="ALL">Tất cả đợt thi & Học kỳ</option>
-              <option value="HK2_2025_2026">Học kỳ 2 (2025 - 2026)</option>
-              <option value="HK1_2025_2026">Học kỳ 1 (2025 - 2026)</option>
-              <option value="HK_HE_2025">Học kỳ Hè (2024 - 2025)</option>
-            </FilterSelect>
-          )}
-        </div>
-
+      {/* Right Controls: Period Selector & Date Display */}
+      <div className="flex flex-wrap items-center gap-3 shrink-0">
         {/* Date & Timestamp Display */}
         {currentDateStr && (
-          <div className="flex items-center gap-1.5 text-[13px] font-medium text-slate-500 select-none">
+          <div className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium text-slate-500 select-none">
             <span className="font-semibold text-slate-900">{currentDateStr}</span>
             {lastUpdatedStr && (
               <span className="text-[13px] text-slate-500 font-normal">
@@ -83,6 +65,22 @@ export function DashboardHeader({
               </span>
             )}
           </div>
+        )}
+
+        {/* Semester / Exam Period Filter Selector */}
+        {onPeriodChange && (
+          <FilterSelect
+            size="md"
+            variant="ghost"
+            leftIcon={<Calendar className="w-4 h-4 text-slate-500" />}
+            value={selectedPeriod}
+            onChange={(e) => onPeriodChange(e.target.value)}
+          >
+            <option value="ALL">Tất cả đợt thi & Học kỳ</option>
+            <option value="HK2_2025_2026">Học kỳ 2 (2025 - 2026)</option>
+            <option value="HK1_2025_2026">Học kỳ 1 (2025 - 2026)</option>
+            <option value="HK_HE_2025">Học kỳ Hè (2024 - 2025)</option>
+          </FilterSelect>
         )}
       </div>
     </div>

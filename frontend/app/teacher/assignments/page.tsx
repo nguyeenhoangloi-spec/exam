@@ -29,7 +29,14 @@ import {
  Sparkles,
  ExternalLink,
  Lock,
+ SlidersHorizontal,
+ ChevronDown,
+ List,
+ LayoutGrid,
+ Layers,
+ Check,
 } from 'lucide-react';
+import { SortDropdown } from '../../../components/ui/SortDropdown';
 
 export default function TeacherAssignmentsPage() {
  usePageTitle('Lịch coi thi Giảng viên');
@@ -40,6 +47,29 @@ export default function TeacherAssignmentsPage() {
  const [busyId, setBusyId] = useState<number | null>(null);
  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
  const [drawerDuty, setDrawerDuty] = useState<any | null>(null);
+
+ // Toolbar Controls State
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefreshClick = async () => {
+    setIsSpinning(true);
+    await fetchMyAssignments();
+    setTimeout(() => setIsSpinning(false), 500);
+  };
+
+ const [sortOrder, setSortOrder] = useState<string>('newest');
+ const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+ const [openColumnMenu, setOpenColumnMenu] = useState(false);
+ const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+   period: true,
+   subject: true,
+   time: true,
+   room: true,
+   role: true,
+   status: true,
+   actions: true,
+ });
+
  const [confirmModal, setConfirmModal] = useState<{
  isOpen: boolean;
  title: string;
@@ -305,28 +335,152 @@ export default function TeacherAssignmentsPage() {
  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
  >
  <div className="flex items-start justify-between gap-3">
- <div className="space-y-1">
- <span className="text-[13px] font-semibold text-slate-500 tracking-wider">
+ <div className="space-y-1 min-w-0">
+ <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
  {label}
  </span>
- <p className="text-[32px] font-bold text-slate-900 leading-[38px]">
+ <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
  {value}
- </p>
- </div>
-
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
- <Icon className="h-5 w-5" />
  </div>
  </div>
 
- <span className="text-[13px] font-normal text-slate-500 mt-2">
+ <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
+ <Icon className="h-5 w-5 stroke-[2]" />
+ </div>
+ </div>
+
+ <div className="mt-2.5 pt-2 border-t border-slate-100/80">
+ <span className="text-[13px] font-normal text-slate-500 block truncate">
  {subtext}
- </span>
+</span>
+ </div>
  </div>
  ))}
  </div>
 
- {/* Assignments List / Grid */}
+  {/* Table Toolbar Action Group */}
+  <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+    <span className="text-xs font-semibold text-slate-600">
+      Hiển thị <span className="font-semibold text-slate-900">{assignments.length}</span> ca coi thi được phân công
+    </span>
+
+    <div className="flex items-center gap-2">
+      {/* Sort */}
+      <SortDropdown
+        value={sortOrder}
+        onChange={(val) => setSortOrder(val)}
+        options={[
+          { value: 'newest', label: 'Mới nhất' },
+          { value: 'oldest', label: 'Cũ nhất' },
+          { value: 'name_asc', label: 'Môn thi: A - Z' },
+        ]}
+      />
+
+      {/* Column Selector */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpenColumnMenu(!openColumnMenu)}
+          className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
+        >
+          <SlidersHorizontal className="h-4 w-4 text-blue-600" />
+          <span>Chọn cột</span>
+          <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
+        </button>
+
+        {openColumnMenu && (
+          <div
+            className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
+            onMouseLeave={() => setOpenColumnMenu(false)}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
+              <span className="text-[12px] text-slate-400 font-normal">Click để ẩn/hiện</span>
+            </div>
+
+            <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+              {[
+                { key: 'period', label: 'Kỳ thi' },
+                { key: 'subject', label: 'Môn thi' },
+                { key: 'time', label: 'Thời gian' },
+                { key: 'room', label: 'Phòng thi' },
+                { key: 'role', label: 'Vai trò' },
+                { key: 'status', label: 'Trạng thái' },
+                { key: 'actions', label: 'Thao tác' },
+              ].map((col) => {
+                const isVisible = visibleColumns[col.key] !== false;
+                return (
+                  <button
+                    key={col.key}
+                    type="button"
+                    onClick={() => setVisibleColumns(prev => ({ ...prev, [col.key]: !isVisible }))}
+                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-left font-medium transition ${
+                      isVisible ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>{col.label}</span>
+                    {isVisible && <Check className="h-3.5 w-3.5 text-blue-600" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* View Mode Toggle Pill */}
+      <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setViewMode('grid')}
+          className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
+            viewMode === 'grid'
+              ? 'bg-white text-blue-600 shadow-xs font-semibold'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+          title="Xem dạng lưới"
+        >
+          <LayoutGrid className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode('list')}
+          className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
+            viewMode === 'list'
+              ? 'bg-white text-blue-600 shadow-xs font-semibold'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+          title="Xem dạng danh sách"
+        >
+          <List className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode('compact')}
+          className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
+            viewMode === 'compact'
+              ? 'bg-white text-blue-600 shadow-xs font-semibold'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+          title="Xem dạng thẻ gọn"
+        >
+          <Layers className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Refresh */}
+      <button
+        type="button"
+        onClick={handleRefreshClick}
+        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+        title="Làm mới danh sách"
+      >
+        <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+      </button>
+    </div>
+  </div>
+
+  {/* Assignments List / Grid */}
  {loading ? (
  <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3">
  <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
@@ -342,8 +496,174 @@ export default function TeacherAssignmentsPage() {
  Hiện tại Thầy/Cô chưa có lịch phân công coi thi mới trong học kỳ này.
  </p>
  </div>
- ) : (
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+  ) : viewMode === 'compact' ? (
+    /* ── 5.1 Compact View Mode (Dạng thu gọn 1 dòng per item) ── */
+    <div className="space-y-2">
+      {assignments.map((item) => {
+        const examTime = new Date(item.examDate).getTime();
+        const todayTime = new Date().setHours(0, 0, 0, 0);
+        const isExpired = examTime < todayTime;
+        const isLocked = item.status === 'CONFIRMED' || item.status === 'CHANGE_REQUESTED' || isExpired;
+
+        return (
+          <div
+            key={item.id}
+            className="flex items-center justify-between rounded-xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition gap-3"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 font-bold text-xs">
+                {item.subjectCode?.slice(0, 3) || 'HP'}
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-[14px] font-semibold text-slate-900 truncate">{item.subjectName}</h4>
+                  <span className="text-xs text-slate-500 font-medium">({item.subjectCode})</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                    {new Date(item.examDate).toLocaleDateString('vi-VN')}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-blue-500" />
+                    {item.startTime} - {item.endTime}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    {item.roomName || item.roomCode}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <StatusBadge
+                status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
+                customLabel={isExpired ? 'Quá hạn ca' : item.status === 'CONFIRMED' ? 'Đã xác nhận' : item.status === 'CHANGE_REQUESTED' ? 'Xin đổi' : 'Chờ xác nhận'}
+              />
+              <Button
+                variant={item.status === 'CONFIRMED' ? 'success' : 'primary'}
+                size="xs"
+                disabled={busyId === item.id || isLocked}
+                isLoading={busyId === item.id}
+                onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
+              >
+                {item.status === 'CONFIRMED' ? 'Khóa' : 'Xác nhận'}
+              </Button>
+              <Button
+                variant="ghost"
+                size="xs"
+                onClick={() => setDrawerDuty(item)}
+              >
+                <Eye className="w-4 h-4 text-slate-500" />
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  ) : viewMode === 'list' ? (
+    /* ── 5.2 List View Mode (Dạng bảng danh sách) ── */
+    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
+          <thead className="border-b border-slate-200 bg-slate-50 text-[14px] font-medium text-slate-700">
+            <tr>
+              <th className="py-3.5 px-4 w-12 text-center">STT</th>
+              {visibleColumns.subject !== false && <th className="py-3.5 px-4 min-w-[200px]">Môn thi & Mã HP</th>}
+              {visibleColumns.time !== false && <th className="py-3.5 px-4 whitespace-nowrap">Thời gian & Ca thi</th>}
+              {visibleColumns.room !== false && <th className="py-3.5 px-4 whitespace-nowrap">Phòng thi / Tòa nhà</th>}
+              {visibleColumns.role !== false && <th className="py-3.5 px-4 whitespace-nowrap">Vai trò</th>}
+              {visibleColumns.status !== false && <th className="py-3.5 px-4 whitespace-nowrap">Trạng thái ca</th>}
+              {visibleColumns.actions !== false && <th className="py-3.5 px-4 text-right whitespace-nowrap">Thao tác</th>}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 text-slate-800 text-[15px] font-normal">
+            {assignments.map((item, idx) => {
+              const examTime = new Date(item.examDate).getTime();
+              const todayTime = new Date().setHours(0, 0, 0, 0);
+              const isExpired = examTime < todayTime;
+              const isLocked = item.status === 'CONFIRMED' || item.status === 'CHANGE_REQUESTED' || isExpired;
+
+              return (
+                <tr key={item.id} className="hover:bg-slate-50/80 transition">
+                  <td className="py-3.5 px-4 text-center font-medium text-slate-500">{idx + 1}</td>
+                  {visibleColumns.subject !== false && (
+                    <td className="py-3.5 px-4">
+                      <div className="font-medium text-slate-900">{item.subjectName}</div>
+                      <div className="text-[15px] text-slate-500 font-medium">{item.subjectCode}</div>
+                    </td>
+                  )}
+                  {visibleColumns.time !== false && (
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <div className="font-medium text-slate-900">{new Date(item.examDate).toLocaleDateString('vi-VN')}</div>
+                      <div className="text-[15px] font-medium text-blue-600">{item.startTime} - {item.endTime}</div>
+                    </td>
+                  )}
+                  {visibleColumns.room !== false && (
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <div className="font-medium text-slate-900">{item.roomName || item.roomCode}</div>
+                      <div className="text-[15px] text-slate-500">{item.building || 'Nhà A1'}</div>
+                    </td>
+                  )}
+                  {visibleColumns.role !== false && (
+                    <td className="py-3.5 px-4 whitespace-nowrap font-medium">
+                      {item.role === 'SUPERVISOR_1' ? (
+                        <span className="text-blue-700 font-medium">Giám thị 1</span>
+                      ) : (
+                        <span className="text-slate-600">Giám thị 2</span>
+                      )}
+                    </td>
+                  )}
+                  {visibleColumns.status !== false && (
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <StatusBadge
+                        status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
+                        customLabel={isExpired ? 'Quá hạn ca thi' : item.status === 'CONFIRMED' ? 'Đã xác nhận' : item.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận'}
+                      />
+                    </td>
+                  )}
+                  {visibleColumns.actions !== false && (
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          variant={item.status === 'CONFIRMED' ? 'success' : 'primary'}
+                          size="xs"
+                          disabled={busyId === item.id || isLocked}
+                          isLoading={busyId === item.id}
+                          onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
+                        >
+                          {item.status === 'CONFIRMED' ? 'Đã khóa' : 'Xác nhận'}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="xs"
+                          onClick={() => handlePrintAttendance(item)}
+                          title="Điểm danh A4"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={() => setDrawerDuty(item)}
+                          title="Chi tiết"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-slate-500" />
+                        </Button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  ) : (
+    /* ── 5.3 Grid View Mode ── */
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {assignments.map((item) => {
  const examTime = new Date(item.examDate).getTime();
  const todayTime = new Date().setHours(0, 0, 0, 0);

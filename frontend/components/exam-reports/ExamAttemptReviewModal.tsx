@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Button } from '../ui/Button';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface ExamAttemptReviewModalProps {
  attemptId: string | null;
@@ -110,7 +111,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
  const diffLabel = q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình';
 
  return (
- <div className={`rounded-2xl border bg-white dark:bg-slate-900 shadow-2xs overflow-hidden transition-all ${borderCls}`}>
+ <div className={`rounded-2xl border bg-white dark:bg-slate-900 shadow-2xs overflow-hidden transition-[background-color,border-color,box-shadow,opacity,transform] duration-150 ease-out ${borderCls}`}>
  <button
  type="button"
  onClick={() => setExpanded(!expanded)}
@@ -294,9 +295,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  Xem Lại Chi Tiết Bài Thi
  </h2>
  {data?.paper?.paperCode && (
- <span className="tabular-nums text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-lg backdrop-blur-md border border-white/25">
- Mã đề: {data.paper.paperCode}
- </span>
+ <IdentifierBadge tone="inverse">Mã đề: {data.paper.paperCode}</IdentifierBadge>
  )}
  </div>
  {data && (

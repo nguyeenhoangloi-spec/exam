@@ -162,7 +162,7 @@ export function ExamPeriodTable({
  <button
  type="button"
  onClick={() => onEdit(p)}
- className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100"
+ className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100"
  title="Sửa"
  >
  <Edit className="h-3.5 w-3.5" />
@@ -170,7 +170,7 @@ export function ExamPeriodTable({
  <button
  type="button"
  onClick={() => onDelete(p.id)}
- className="p-1.5 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+ className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50"
  title="Xóa"
  >
  <Trash2 className="h-3.5 w-3.5" />
@@ -185,65 +185,110 @@ export function ExamPeriodTable({
  );
  }
 
- // 2. Dạng Thu Gọn (Compact View Mode)
- if (viewMode === 'compact') {
- return (
- <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
- <tr>
- <th scope="col" className="p-2 pl-3 text-center w-8">
- <input
- type="checkbox"
- checked={allSelected}
- onChange={(e) => onSelectAll(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </th>
- <th scope="col" className="p-2 min-w-[200px]">Tên kỳ thi</th>
- <th scope="col" className="p-2 whitespace-nowrap">Học kỳ</th>
- <th scope="col" className="p-2 whitespace-nowrap">Năm học</th>
- <th scope="col" className="p-2 whitespace-nowrap">Thời gian tổ chức</th>
- <th scope="col" className="p-2 whitespace-nowrap">Trạng thái</th>
- <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 font-normal">
- {periods.map((p) => {
- const isChecked = selected.includes(p.id);
+ // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
+  if (viewMode === 'compact') {
+    return (
+      <div className="space-y-2.5">
+        {periods.map((p) => {
+          const isChecked = selected.includes(p.id);
 
- return (
- <tr key={p.id} className={`transition hover:bg-slate-50/60 ${isChecked ? 'bg-blue-50/50' : ''}`}>
- <td className="p-2 pl-3 text-center">
- <input
- type="checkbox"
- checked={isChecked}
- onChange={(e) => onSelect(p.id, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </td>
- <td className="p-2 min-w-[200px]">
- <button type="button" className="block truncate font-medium text-slate-900 cursor-pointer hover:text-primary-600" onClick={() => onDetail(p)}>
- {p.name}
- </button>
- </td>
- <td className="p-2 whitespace-nowrap font-medium text-slate-800">{p.semester}</td>
- <td className="p-2 whitespace-nowrap font-medium text-slate-900">{p.schoolYear}</td>
- <td className="p-2 whitespace-nowrap font-normal text-slate-700">{formatDate(p.startDate)} - {formatDate(p.endDate)}</td>
- <td className="p-2 whitespace-nowrap">{getStatusBadge(p.status, p)}</td>
- <td className="p-2 pr-3 text-right whitespace-nowrap">
- <button type="button" onClick={() => onDetail(p)} className="p-1 text-slate-500 hover:text-primary-600 cursor-pointer">
- <Eye className="h-4 w-4" />
- </button>
- </td>
- </tr>
- );
- })}
- </tbody>
- </table>
- </div>
- );
- }
+          return (
+            <div
+              key={p.id}
+              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              }`}
+            >
+              {/* Left: Checkbox + Avatar Code Badge */}
+              <div className="flex items-center gap-3 min-w-0">
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) => onSelect(p.id, e.target.checked)}
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
+                  {p.semester?.slice(0, 3) || 'KT'}
+                </div>
+
+                {/* Middle: Name + Meta chips */}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => onDetail(p)}
+                      className="text-[15px] font-semibold text-slate-900 truncate hover:text-primary-600 transition cursor-pointer text-left"
+                    >
+                      {p.name}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Học kỳ: <strong className="font-semibold text-slate-800">{p.semester}</strong> ({p.schoolYear})</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>{formatDate(p.startDate)} - {formatDate(p.endDate)}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Status Badge & Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                {getStatusBadge(p.status, p)}
+
+                <button
+                  type="button"
+                  onClick={() => onDetail(p)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                  title="Xem chi tiết"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+
+                {isAdmin && (
+                  <ActionDropdownPortal>
+                    {(closeMenu) => (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onDetail(p); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
+                        >
+                          <Eye className="h-4 w-4 text-slate-500" />
+                          <span>Xem chi tiết</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onEdit(p); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
+                        >
+                          <Edit className="h-4 w-4 text-primary-600" />
+                          <span>Chỉnh sửa</span>
+                        </button>
+                        <div className="my-1 border-t border-slate-200" />
+                        <button
+                          type="button"
+                          onClick={() => { closeMenu(); onDelete(p.id); }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-xs font-medium"
+                        >
+                          <Trash2 className="h-4 w-4 text-danger-600" />
+                          <span>Xóa kỳ thi</span>
+                        </button>
+                      </>
+                    )}
+                  </ActionDropdownPortal>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
  return (
@@ -327,7 +372,7 @@ export function ExamPeriodTable({
  <button
  type="button"
  onClick={() => onDetail(p)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+ className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
  title="Xem chi tiết"
  >
  <Eye className="h-4 w-4" />
@@ -342,7 +387,7 @@ export function ExamPeriodTable({
  closeMenu();
  onDetail(p);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
  <Eye className="h-4 w-4 text-slate-500" />
  <span>Xem chi tiết</span>
@@ -356,7 +401,7 @@ export function ExamPeriodTable({
  closeMenu();
  onEdit(p);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
  >
  <Edit className="h-4 w-4 text-primary-600" />
  <span>Chỉnh sửa kỳ thi</span>
@@ -370,7 +415,7 @@ export function ExamPeriodTable({
  closeMenu();
  onDelete(p.id);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
+ className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
  >
  <Trash2 className="h-4 w-4 text-danger-600" />
  <span>Xóa kỳ thi</span>

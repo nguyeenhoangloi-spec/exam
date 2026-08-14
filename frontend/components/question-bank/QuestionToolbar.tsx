@@ -29,7 +29,7 @@ export function QuestionToolbar({ onAdd, onImport, onExport, onPrint }: Question
         onClick={onExport}
         className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
       >
-        <Download className="h-4 w-4 text-blue-600" />
+        <Download className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         Xuất CSV
       </button>
 

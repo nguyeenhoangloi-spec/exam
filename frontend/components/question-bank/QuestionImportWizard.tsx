@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../ui/FilterSelect';
 
 import { useEffect, useMemo, useState } from 'react';
 import api from '../../lib/api';
@@ -411,11 +412,11 @@ export function QuestionImportWizard({
         {/* Metadata Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <div>
-            <label className="block text-[15px] font-medium text-slate-700 mb-1">Môn học *</label>
-            <select
+            <label className="block text-base font-medium text-slate-700 dark:text-slate-200 mb-1">Môn học *</label>
+            <FilterSelect containerClassName="w-full"
               value={meta.subjectId}
               onChange={(e) => updateMeta('subjectId', e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               <option value="">-- Chọn Môn học --</option>
               {subjects.map((s) => (
@@ -423,15 +424,15 @@ export function QuestionImportWizard({
                   {s.subjectName} ({s.subjectCode})
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-700 mb-1">Chương (Tùy chọn)</label>
-            <select
+            <label className="block text-base font-medium text-slate-700 dark:text-slate-200 mb-1">Chương (Tùy chọn)</label>
+            <FilterSelect 
               value={meta.chapterId}
               onChange={(e) => updateMeta('chapterId', e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               <option value="">-- Tất cả chương / Không phân chương --</option>
               {(subject?.chapters || []).map((ch: any) => (
@@ -439,56 +440,56 @@ export function QuestionImportWizard({
                   {ch.name}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-700 mb-1">Dạng câu hỏi *</label>
-            <select
+            <label className="block text-base font-medium text-slate-700 dark:text-slate-200 mb-1">Dạng câu hỏi *</label>
+            <FilterSelect containerClassName="w-full"
               value={meta.defaultType}
               onChange={(e) => updateMeta('defaultType', e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               {types.map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-700 mb-1">Độ khó mặc định *</label>
-            <select
+            <label className="block text-base font-medium text-slate-700 dark:text-slate-200 mb-1">Độ khó mặc định *</label>
+            <FilterSelect 
               value={meta.defaultDifficulty}
               onChange={(e) => updateMeta('defaultDifficulty', e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               {difficulties.map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-700 mb-1">Mức tư duy Bloom *</label>
-            <select
+            <label className="block text-base font-medium text-slate-700 dark:text-slate-200 mb-1">Mức tư duy Bloom *</label>
+            <FilterSelect containerClassName="w-full"
               value={meta.defaultBloomLevel}
               onChange={(e) => updateMeta('defaultBloomLevel', e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base font-normal text-slate-800 focus:border-blue-500 focus:outline-none hover:border-slate-300 transition cursor-pointer"
             >
               {blooms.map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
                 </option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <div className="flex items-center pt-5">
-            <label className="flex items-center gap-2 text-[15px] font-medium text-slate-600 cursor-pointer">
+            <label className="flex items-center gap-2 text-base font-medium text-slate-600 dark:text-slate-400 cursor-pointer">
               <input
                 type="checkbox"
                 checked={meta.applyDefaultsToMissingOnly}
@@ -509,17 +510,17 @@ export function QuestionImportWizard({
               </div>
               <div className="flex items-center gap-2">
                 <label className="text-[15px] font-medium text-slate-900 whitespace-nowrap">Số lượng:</label>
-                <select
+                <FilterSelect 
                   value={aiCount}
                   onChange={(e) => setAiCount(Number(e.target.value))}
-                  className="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer"
+                  className="rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer"
                 >
                   <option value={3}>3 câu</option>
                   <option value={5}>5 câu</option>
                   <option value={10}>10 câu</option>
                   <option value={15}>15 câu</option>
                   <option value={20}>20 câu</option>
-                </select>
+                </FilterSelect>
               </div>
             </div>
 
@@ -553,7 +554,7 @@ export function QuestionImportWizard({
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Dán nội dung đề cương chi tiết hoặc yêu cầu cụ thể (ví dụ: tập trung vào nội dung SQL JOIN, Indexing, Transaction...)"
-                className="w-full rounded-lg border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none resize-none"
+                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none resize-none"
               />
             </div>
 
@@ -626,7 +627,7 @@ export function QuestionImportWizard({
                       variant="ghost"
                       size="md"
                       onClick={template}
-                      leftIcon={<Download className="w-4 h-4 text-primary-600" />}
+                      leftIcon={<Download className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
                     >
                       Tải mẫu CSV
                     </Button>
@@ -735,7 +736,7 @@ export function QuestionImportWizard({
                       value={q.content || ''}
                       onChange={(e) => editRow(r, 'content', e.target.value)}
                       rows={2}
-                      className="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
                       placeholder="Nội dung câu hỏi..."
                     />
 
@@ -827,7 +828,7 @@ export function QuestionImportWizard({
                         value={q.explanation || ''}
                         onChange={(e) => editRow(r, 'explanation', e.target.value)}
                         rows={2}
-                        className="w-full rounded-lg border border-slate-200 bg-white p-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-white p-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
                         placeholder={q.type === 'ESSAY' ? 'Đáp án mẫu hoặc hướng dẫn chấm tự luận...' : 'Giải thích đáp án...'}
                       />
                     </div>

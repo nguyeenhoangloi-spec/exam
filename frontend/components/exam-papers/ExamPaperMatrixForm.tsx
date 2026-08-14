@@ -1,4 +1,5 @@
 'use client';
+import { FilterSelect } from '../ui/FilterSelect';
 
 import React, { FormEvent, useState } from 'react';
 import {
@@ -297,7 +298,7 @@ export function ExamPaperMatrixForm({
             <button
               type="button"
               onClick={() => setShowPanel(!showPanel)}
-              className="w-full flex items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/40 p-3.5 text-left hover:bg-blue-50/80 hover:border-blue-400 transition cursor-pointer"
+              className="w-full flex items-center justify-between gap-2 rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/40 p-3.5 text-left hover:bg-blue-50/80 hover:border-blue-400 transition cursor-pointer"
             >
               <span className="text-xs font-semibold text-blue-700">Chưa chọn ca thi — Nhấn để chọn Lịch thi</span>
               <span className="inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-600 px-4 py-1.5 rounded-xl shrink-0">
@@ -330,7 +331,7 @@ export function ExamPaperMatrixForm({
                     <button
                       type="button"
                       onClick={() => setShowPanel(false)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-xl text-blue-100 hover:text-white hover:bg-blue-700/80 transition cursor-pointer"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -557,7 +558,7 @@ export function ExamPaperMatrixForm({
               </span>
             </div>
           </div>
-          <select
+          <FilterSelect
             value={formData.mediaMaxPlays || '2'}
             onChange={(e) => setFormData((p: any) => ({ ...p, mediaMaxPlays: e.target.value }))}
             className="h-9 rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-800 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
@@ -567,7 +568,7 @@ export function ExamPaperMatrixForm({
             <option value="3">3 lần</option>
             <option value="5">5 lần</option>
             <option value="0">Không giới hạn</option>
-          </select>
+          </FilterSelect>
         </div>
 
         {/* ── FOOTER ── */}

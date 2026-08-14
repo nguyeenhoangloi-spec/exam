@@ -100,7 +100,11 @@ function inspectJsxControlClasses(content) {
     }
     if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
       const tagName = node.tagName.getText(sourceFile);
-      if (/^(input|select|textarea|label)$/i.test(tagName)) {
+      const roleAttribute = node.attributes.properties.find(
+        (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === 'role',
+      );
+      const role = roleAttribute ? getStaticClassText(roleAttribute.initializer, sourceFile, variables).toLowerCase() : '';
+      if (/^(button|input|select|textarea|label)$/i.test(tagName) || role === 'button') {
         const classAttribute = node.attributes.properties.find(
           (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === 'className',
         );
@@ -109,6 +113,7 @@ function inspectJsxControlClasses(content) {
         );
         elements.push({
           tagName: tagName.toLowerCase(),
+          role,
           classes: classAttribute ? getStaticClassText(classAttribute.initializer, sourceFile, variables) : '',
           type: typeAttribute ? getStaticClassText(typeAttribute.initializer, sourceFile, variables).toLowerCase() : '',
         });
@@ -130,7 +135,7 @@ for (const folder of sourceRoots) {
 
     for (const control of inspectJsxControlClasses(content)) {
       if (['input', 'select', 'textarea'].includes(control.tagName) && !['hidden', 'file', 'checkbox', 'radio'].includes(control.type)) {
-        if (/\brounded-md\b/i.test(control.classes)) {
+        if (/\brounded-(?:sm|md|lg)\b/i.test(control.classes)) {
           report(file, 'input/select/textarea phải dùng radius control rounded-xl');
         }
         if (/\btext-sm\b|\btext-xs\b|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(control.classes)) {
@@ -144,6 +149,15 @@ for (const folder of sourceRoots) {
         if (/\bfont-(?:semibold|bold|extrabold|black)\b/i.test(control.classes)) {
           report(file, 'form label phải dùng font-weight 500 (font-medium)');
         }
+      }
+      if ((control.tagName === 'button' || control.role === 'button') && !/\brounded-full\b/i.test(control.classes)
+        && (/\brounded-(?:sm|md|lg)\b/i.test(control.classes) || /(?:^|\s)rounded(?:\s|$)/i.test(control.classes))) {
+        report(file, 'button khÃ´ng Ä‘Æ°á»£c dÃ¹ng radius legacy; pháº£i dÃ¹ng rounded-xl');
+      }
+      if (control.tagName === 'label' && /\bcursor-pointer\b/i.test(control.classes)
+        && !/\brounded-full\b/i.test(control.classes)
+        && (/\brounded-(?:sm|md|lg)\b/i.test(control.classes) || /(?:^|\s)rounded(?:\s|$)/i.test(control.classes))) {
+        report(file, 'label control khÃ´ng Ä‘Æ°á»£c dÃ¹ng radius legacy; pháº£i dÃ¹ng rounded-xl');
       }
     }
 
@@ -357,8 +371,21 @@ if (!/code,\s*kbd,\s*pre,\s*samp\s*\{[\s\S]*font-family:\s*inherit/i.test(global
   violations.push('globals.css: code/pre/log metadata must inherit Inter instead of browser monospace');
 }
 
-if (!/--ui-text-secondary:\s*#334155/i.test(globalCss)
-  || !/--ui-text-muted-soft:\s*#475569/i.test(globalCss)
+if (!/--ui-motion-fast:\s*150ms/.test(globalCss)
+  || !/ui-pressable:active/.test(globalCss)
+  || !/prefers-reduced-motion:\s*reduce/.test(globalCss)) {
+  violations.push('app/globals.css: motion contract must define shared press feedback and prefers-reduced-motion');
+}
+
+if (!/transition-property:\s*background-color,\s*border-color,\s*box-shadow,\s*color,\s*opacity,\s*transform/.test(globalCss)) {
+  violations.push('app/globals.css: interactive controls must use the shared transition-property contract');
+}
+
+if (!/--ui-text-primary:\s*#0f172a/i.test(globalCss)
+  || !/--ui-text-body:\s*#111827/i.test(globalCss)
+  || !/--ui-text-secondary:\s*#1f2937/i.test(globalCss)
+  || !/--ui-text-muted-soft:\s*#374151/i.test(globalCss)
+  || !/--ui-text-disabled:\s*#64748b/i.test(globalCss)
   || !/\.text-slate-500[^\{]*\{\s*color:\s*var\(--ui-text-secondary\)/i.test(globalCss)) {
   violations.push('app/globals.css: neutral text phải theo black-forward palette');
 }
@@ -399,6 +426,16 @@ if (!/appearance-none rounded-xl/.test(filterSelect) || !/dark:bg-slate-900/.tes
 }
 if (!/rounded-xl/.test(button) || !/rounded-xl/.test(input)) {
   violations.push('components/ui/Button.tsx and Input.tsx: shared controls must use rounded-xl');
+}
+
+if (!/aria-busy=\{isLoading \|\| undefined\}/.test(button)) {
+  violations.push('components/ui/Button.tsx: loading buttons must expose aria-busy');
+}
+
+if (!/aria-expanded=\{isOpen\}/.test(filterSelect)
+  || !/aria-haspopup="listbox"/.test(filterSelect)
+  || !/role="option"/.test(filterSelect)) {
+  violations.push('components/ui/FilterSelect.tsx: dropdown state must expose listbox semantics');
 }
 
 for (const relativePrimitive of sharedUiPrimitiveFiles) {

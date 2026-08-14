@@ -94,7 +94,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return createPortal(
     <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-sm my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 transition-all border border-slate-200/90 dark:border-slate-700">
+      <div className="relative w-full max-w-sm my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 transition-[opacity,transform] duration-150 ease-out border border-slate-200/90 dark:border-slate-700">
         <div className="flex items-start justify-between gap-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 p-4 sm:p-5 shrink-0">
             <div className="flex items-start gap-3.5 min-w-0 flex-1">
               <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border shadow-2xs ${iconConfig.iconShell}`}>

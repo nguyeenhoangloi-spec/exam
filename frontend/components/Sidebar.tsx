@@ -247,7 +247,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="absolute left-1/2 -translate-x-1/2 flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
+            className="absolute left-1/2 -translate-x-1/2 flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
             aria-label="Mở thanh bên"
             title="Mở thanh bên"
           >
@@ -272,7 +272,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors active:scale-95 cursor-pointer"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >

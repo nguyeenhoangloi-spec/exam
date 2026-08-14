@@ -67,7 +67,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
   });
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full flex flex-col justify-between overflow-hidden">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs h-full flex flex-col justify-between">
       {/* Header & Dropdown */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
         <h3 className="edu-card-title">Thống kê trạng thái câu hỏi</h3>
