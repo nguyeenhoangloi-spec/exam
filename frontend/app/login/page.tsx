@@ -10,7 +10,6 @@ import {
   Award,
   BarChart3,
   ChevronDown,
-  ChevronUp,
   Clock,
   Eye,
   EyeOff,
@@ -137,7 +136,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`min-h-screen w-full relative overflow-x-hidden font-sans antialiased flex flex-col transition-colors duration-300 ${
+      className={`min-h-screen w-full relative overflow-x-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col transition-colors duration-300 ${
         isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
       }`}
     >
@@ -147,7 +146,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
         {/* Subtle grid dots pattern */}
         <div
-          className="absolute top-6 left-1/4 w-96 h-48 opacity-30 dark:opacity-10"
+          className="absolute top-4 left-1/4 w-96 h-44 opacity-30 dark:opacity-10"
           style={{
             backgroundImage: 'radial-gradient(#3B82F6 1.2px, transparent 1.2px)',
             backgroundSize: '20px 20px',
@@ -155,13 +154,13 @@ export default function LoginPage() {
         />
 
         {/* Ambient Glows */}
-        <div className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[100px]" />
-        <div className="absolute top-1/4 -right-24 w-[550px] h-[550px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[120px]" />
-        <div className="absolute -bottom-32 left-10 w-[600px] h-[350px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[90px]" />
+        <div className="absolute -top-24 -left-24 w-[480px] h-[480px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 -right-24 w-[500px] h-[500px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[120px]" />
+        <div className="absolute -bottom-32 left-10 w-[550px] h-[320px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[90px]" />
 
         {/* Abstract Flowing Waves at Bottom */}
         <svg
-          className="absolute bottom-0 left-0 w-full max-w-3xl h-56 opacity-35 dark:opacity-10"
+          className="absolute bottom-0 left-0 w-full max-w-3xl h-52 opacity-35 dark:opacity-10"
           viewBox="0 0 800 300"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -188,66 +187,66 @@ export default function LoginPage() {
       </div>
 
       {/* ── Top Header Navigation (Fixed top position) ── */}
-      <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-6 pb-2 flex items-center justify-between">
+      <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-5 pb-1 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
-            <GraduationCap className="h-6 w-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
+            <GraduationCap className="h-5.5 w-5.5" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[18px] font-semibold tracking-tight text-slate-900 dark:text-white">
+              <span className="text-[17px] font-black tracking-tight text-slate-900 dark:text-white">
                 EXAMSYS
               </span>
             </div>
-            <p className="text-[11px] font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
+            <p className="text-[10.5px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
               HỆ THỐNG KHẢO THÍ
             </p>
           </div>
         </div>
 
-        {/* Minimal Icon-Only Theme Toggle (No Box Frame) */}
+        {/* Minimal Icon-Only Theme Toggle */}
         <button
           type="button"
           onClick={toggleDark}
           aria-label="Chuyển chủ đề sáng/tối"
           title={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-          className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
+          className="flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
         >
           {isDark ? (
-            <Sun className="h-5 w-5 text-amber-400" />
+            <Sun className="h-4.5 w-4.5 text-amber-400" />
           ) : (
-            <Moon className="h-5 w-5 text-slate-600" />
+            <Moon className="h-4.5 w-4.5 text-slate-600" />
           )}
         </button>
       </header>
 
-      {/* ── Main Section: 2-Column Desktop Grid (Anchored at top, No vertical shifting) ── */}
-      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 pt-4 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start w-full flex-1">
+      {/* ── Main Section: 2-Column Desktop Grid (Top-anchored, zero layout jump) ── */}
+      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 pt-2 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full flex-1">
         {/* ── Left Column: System Introduction & Academic 3D Art Scene (7 Cols ~ 58%) ── */}
-        <section className="lg:col-span-7 flex flex-col justify-between space-y-6">
+        <section className="lg:col-span-7 flex flex-col justify-between space-y-5">
           {/* Main Headline */}
-          <div className="space-y-2">
-            <h1 className="text-[32px] sm:text-[36px] lg:text-[42px] font-semibold tracking-tight leading-[1.15] text-slate-900 dark:text-white">
+          <div className="space-y-1.5">
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
               HỆ THỐNG <br />
               <span className="text-blue-600 dark:text-blue-500">KHẢO THÍ TRỰC TUYẾN</span>
             </h1>
-            <p className="text-[15px] sm:text-base text-slate-600 dark:text-slate-300 max-w-lg font-normal leading-relaxed">
+            <p className="text-[14.5px] sm:text-[15px] text-slate-600 dark:text-slate-300 max-w-lg font-normal leading-relaxed">
               Giải pháp toàn diện cho quản lý kỳ thi, đánh giá và phân tích kết quả.
             </p>
           </div>
 
-          {/* 4 Features List (Clean Minimalist, No Heavy Cards) & 3D Isometric Art */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
-            {/* 4 Key Features Column (Frameless / Minimalist) */}
-            <div className="sm:col-span-5 space-y-4">
+          {/* 4 Features List & 3D Isometric Art */}
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+            {/* 4 Key Features Column */}
+            <div className="sm:col-span-5 space-y-3.5">
               {/* Feature 1 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <ShieldCheck className="h-5 w-5" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <ShieldCheck className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h2 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
+                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Dữ liệu được mã hóa và bảo vệ theo tiêu chuẩn quốc tế
                   </p>
@@ -255,12 +254,12 @@ export default function LoginPage() {
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <FileCheck2 className="h-5 w-5" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <FileCheck2 className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h2 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
+                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Từ tạo đề thi, tổ chức thi đến chấm điểm và báo cáo
                   </p>
@@ -268,12 +267,12 @@ export default function LoginPage() {
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <BarChart3 className="h-5 w-5" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <BarChart3 className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h2 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
+                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Thống kê và báo cáo chi tiết, biểu đồ trực quan
                   </p>
@@ -281,12 +280,12 @@ export default function LoginPage() {
               </div>
 
               {/* Feature 4 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <Clock className="h-5 w-5" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <Clock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h2 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
+                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Tự động hóa quy trình, tối ưu hiệu suất công việc
                   </p>
@@ -296,17 +295,17 @@ export default function LoginPage() {
 
             {/* Academic 3D Illustration Canvas */}
             <div className="sm:col-span-7 flex justify-center items-center relative py-1">
-              <div className="relative w-full max-w-[350px] aspect-[4/3] flex items-center justify-center">
+              <div className="relative w-full max-w-[340px] aspect-[4/3] flex items-center justify-center">
                 {/* Soft Ambient Glow */}
                 <div className="absolute inset-0 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-2xl" />
 
                 {/* Floating Micro Badge 1: Checklist icon */}
-                <div className="absolute -top-1 left-24 z-20 h-9 w-9 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                <div className="absolute -top-1 left-24 z-20 h-8.5 w-8.5 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
                   <FileCheck2 className="h-4 w-4" />
                 </div>
 
                 {/* Floating Micro Badge 2: Mini Chart */}
-                <div className="absolute top-16 right-0 z-20 h-9 w-9 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                <div className="absolute top-16 right-0 z-20 h-8.5 w-8.5 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
                   <BarChart3 className="h-4 w-4" />
                 </div>
 
@@ -319,105 +318,105 @@ export default function LoginPage() {
                 >
                   <defs>
                     <linearGradient id="screenGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--ui-surface)" />
-                      <stop offset="100%" stopColor="var(--ui-surface-muted)" />
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="100%" stopColor="#F1F5F9" />
                     </linearGradient>
                     <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="var(--ui-primary)" />
-                      <stop offset="100%" stopColor="var(--ui-primary-hover)" />
+                      <stop offset="0%" stopColor="#2563EB" />
+                      <stop offset="100%" stopColor="#1D4ED8" />
                     </linearGradient>
                     <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--ui-chart-primary-light)" />
-                      <stop offset="100%" stopColor="var(--ui-primary-hover)" />
+                      <stop offset="0%" stopColor="#3B82F6" />
+                      <stop offset="100%" stopColor="#1D4ED8" />
                     </linearGradient>
                     <linearGradient id="book1Grad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="var(--ui-primary-hover)" />
-                      <stop offset="100%" stopColor="var(--ui-chart-primary-light)" />
+                      <stop offset="0%" stopColor="#1E40AF" />
+                      <stop offset="100%" stopColor="#3B82F6" />
                     </linearGradient>
                     <linearGradient id="book2Grad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="var(--ui-primary)" />
-                      <stop offset="100%" stopColor="var(--ui-chart-primary-light)" />
+                      <stop offset="0%" stopColor="#2563EB" />
+                      <stop offset="100%" stopColor="#60A5FA" />
                     </linearGradient>
                   </defs>
 
                   {/* Monitor Desk Shadow */}
-                  <ellipse cx="205" cy="275" rx="85" ry="14" fill="var(--ui-border)" opacity="0.45" />
+                  <ellipse cx="205" cy="275" rx="85" ry="14" fill="#CBD5E1" opacity="0.45" />
 
                   {/* Monitor Stand Base & Pole */}
-                  <ellipse cx="205" cy="265" rx="42" ry="8" fill="var(--ui-text-disabled)" />
-                  <ellipse cx="205" cy="263" rx="42" ry="8" fill="var(--ui-border)" />
-                  <path d="M197 215 L213 215 L211 262 L199 262 Z" fill="var(--ui-text-disabled)" />
-                  <path d="M199 215 L211 215 L209 262 L201 262 Z" fill="var(--ui-border)" />
+                  <ellipse cx="205" cy="265" rx="42" ry="8" fill="#94A3B8" />
+                  <ellipse cx="205" cy="263" rx="42" ry="8" fill="#CBD5E1" />
+                  <path d="M197 215 L213 215 L211 262 L199 262 Z" fill="#94A3B8" />
+                  <path d="M199 215 L211 215 L209 262 L201 262 Z" fill="#CBD5E1" />
 
                   {/* Monitor Screen Frame */}
-                  <rect x="75" y="80" width="260" height="150" rx="16" fill="var(--ui-surface)" stroke="var(--ui-border)" strokeWidth="4" />
+                  <rect x="75" y="80" width="260" height="150" rx="16" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="4" />
                   <rect x="85" y="90" width="240" height="130" rx="10" fill="url(#screenGrad)" />
 
                   {/* Monitor Screen Header */}
-                  <path d="M85 100 C85 94.48 89.48 90 95 90 L315 90 C320.52 90 325 94.48 325 100 L325 110 L85 110 Z" fill="var(--ui-primary)" />
-                  <circle cx="100" cy="100" r="3" fill="var(--ui-chart-danger)" />
-                  <circle cx="110" cy="100" r="3" fill="var(--ui-chart-warning)" />
-                  <circle cx="120" cy="100" r="3" fill="var(--ui-chart-success)" />
-                  <rect x="140" y="96" width="130" height="8" rx="4" fill="var(--ui-surface)" opacity="0.4" />
+                  <path d="M85 100 C85 94.48 89.48 90 95 90 L315 90 C320.52 90 325 94.48 325 100 L325 110 L85 110 Z" fill="#2563EB" />
+                  <circle cx="100" cy="100" r="3" fill="#EF4444" />
+                  <circle cx="110" cy="100" r="3" fill="#F59E0B" />
+                  <circle cx="120" cy="100" r="3" fill="#10B981" />
+                  <rect x="140" y="96" width="130" height="8" rx="4" fill="#FFFFFF" opacity="0.4" />
 
                   {/* Exam Form Questions & Radio Options */}
                   <g transform="translate(100, 125)">
-                    <rect x="0" y="0" width="130" height="8" rx="3" fill="var(--ui-text-disabled)" />
-                    <rect x="0" y="12" width="90" height="6" rx="2" fill="var(--ui-text-disabled)" opacity="0.6" />
+                    <rect x="0" y="0" width="130" height="8" rx="3" fill="#64748B" />
+                    <rect x="0" y="12" width="90" height="6" rx="2" fill="#94A3B8" opacity="0.6" />
 
                     {/* Option A (Selected) */}
                     <g transform="translate(0, 26)">
-                      <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--ui-primary)" />
-                      <text x="3" y="11" fill="var(--ui-surface)" fontSize="12" fontWeight="bold" fontFamily="sans-serif">A</text>
-                      <rect x="22" y="2" width="12" height="12" rx="3" fill="var(--ui-surface-muted)" stroke="var(--ui-primary)" strokeWidth="1.5" />
-                      <path d="M25 8 L27 10 L31 5" stroke="var(--ui-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <rect x="42" y="4" width="70" height="6" rx="2" fill="var(--ui-border)" />
+                      <rect x="0" y="0" width="14" height="14" rx="4" fill="#2563EB" />
+                      <text x="3" y="11" fill="#FFFFFF" fontSize="10" fontWeight="bold" fontFamily="sans-serif">A</text>
+                      <rect x="22" y="2" width="12" height="12" rx="3" fill="#DBEAFE" stroke="#2563EB" strokeWidth="1.5" />
+                      <path d="M25 8 L27 10 L31 5" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <rect x="42" y="4" width="70" height="6" rx="2" fill="#CBD5E1" />
                     </g>
 
                     {/* Option B */}
                     <g transform="translate(0, 48)">
-                      <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--ui-border)" />
-                      <text x="3" y="11" fill="var(--ui-text-disabled)" fontSize="12" fontWeight="bold" fontFamily="sans-serif">B</text>
-                      <rect x="22" y="2" width="12" height="12" rx="3" fill="var(--ui-surface)" stroke="var(--ui-border)" strokeWidth="1.5" />
-                      <rect x="42" y="4" width="85" height="6" rx="2" fill="var(--ui-border)" />
+                      <rect x="0" y="0" width="14" height="14" rx="4" fill="#E2E8F0" />
+                      <text x="3" y="11" fill="#64748B" fontSize="10" fontWeight="bold" fontFamily="sans-serif">B</text>
+                      <rect x="22" y="2" width="12" height="12" rx="3" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1.5" />
+                      <rect x="42" y="4" width="85" height="6" rx="2" fill="#CBD5E1" />
                     </g>
 
                     {/* Option C */}
                     <g transform="translate(0, 70)">
-                      <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--ui-border)" />
-                      <text x="3" y="11" fill="var(--ui-text-disabled)" fontSize="12" fontWeight="bold" fontFamily="sans-serif">C</text>
-                      <rect x="22" y="2" width="12" height="12" rx="3" fill="var(--ui-surface)" stroke="var(--ui-border)" strokeWidth="1.5" />
-                      <rect x="42" y="4" width="60" height="6" rx="2" fill="var(--ui-border)" />
+                      <rect x="0" y="0" width="14" height="14" rx="4" fill="#E2E8F0" />
+                      <text x="3" y="11" fill="#64748B" fontSize="10" fontWeight="bold" fontFamily="sans-serif">C</text>
+                      <rect x="22" y="2" width="12" height="12" rx="3" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1.5" />
+                      <rect x="42" y="4" width="60" height="6" rx="2" fill="#CBD5E1" />
                     </g>
                   </g>
 
                   {/* 3D Graduation Cap on Top of Monitor */}
                   <g transform="translate(195, 20)">
-                    <path d="M20 50 Q45 68 70 50 L70 65 Q45 83 20 65 Z" fill="var(--ui-primary-hover)" />
-                    <path d="M22 52 Q45 70 68 52 L68 62 Q45 80 22 62 Z" fill="var(--ui-primary)" />
-                    <polygon points="45,22 92,42 45,62 -2,42" fill="var(--ui-primary-hover)" />
+                    <path d="M20 50 Q45 68 70 50 L70 65 Q45 83 20 65 Z" fill="#1E3A8A" />
+                    <path d="M22 52 Q45 70 68 52 L68 62 Q45 80 22 62 Z" fill="#2563EB" />
+                    <polygon points="45,22 92,42 45,62 -2,42" fill="#172554" />
                     <polygon points="45,26 88,43 45,60 2,43" fill="url(#capGrad)" />
-                    <circle cx="45" cy="43" r="3.5" fill="var(--ui-chart-warning)" />
-                    <path d="M45 43 Q65 46 76 72" stroke="var(--ui-chart-warning)" strokeWidth="3" fill="none" strokeLinecap="round" />
-                    <circle cx="76" cy="74" r="3.5" fill="var(--ui-chart-warning)" />
+                    <circle cx="45" cy="43" r="3.5" fill="#F59E0B" />
+                    <path d="M45 43 Q65 46 76 72" stroke="#F59E0B" strokeWidth="3" fill="none" strokeLinecap="round" />
+                    <circle cx="76" cy="74" r="3.5" fill="#D97706" />
                   </g>
 
                   {/* Floating A+ Exam Paper on Bottom Left */}
                   <g transform="translate(50, 200)">
-                    <rect x="0" y="0" width="75" height="92" rx="8" fill="var(--ui-surface)" stroke="var(--ui-border)" strokeWidth="2.5" />
-                    <rect x="12" y="14" width="50" height="6" rx="2" fill="var(--ui-text-disabled)" />
-                    <rect x="12" y="26" width="35" height="4" rx="2" fill="var(--ui-border)" />
-                    <rect x="12" y="34" width="45" height="4" rx="2" fill="var(--ui-border)" />
-                    <circle cx="48" cy="62" r="17" fill="var(--ui-surface-muted)" stroke="var(--ui-primary)" strokeWidth="2" strokeDasharray="3 3" />
-                    <text x="38" y="68" fill="var(--ui-primary)" fontSize="16" fontWeight="700" fontFamily="sans-serif">A+</text>
+                    <rect x="0" y="0" width="75" height="92" rx="8" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2.5" />
+                    <rect x="12" y="14" width="50" height="6" rx="2" fill="#94A3B8" />
+                    <rect x="12" y="26" width="35" height="4" rx="2" fill="#E2E8F0" />
+                    <rect x="12" y="34" width="45" height="4" rx="2" fill="#E2E8F0" />
+                    <circle cx="48" cy="62" r="17" fill="#EFF6FF" stroke="#2563EB" strokeWidth="2" strokeDasharray="3 3" />
+                    <text x="38" y="68" fill="#2563EB" fontSize="16" fontWeight="900" fontFamily="sans-serif">A+</text>
                   </g>
 
                   {/* 3D Stack of Academic Books at Bottom Right */}
                   <g transform="translate(265, 215)">
                     <rect x="0" y="26" width="95" height="22" rx="4" fill="url(#book1Grad)" />
-                    <rect x="88" y="30" width="7" height="14" rx="1.5" fill="var(--ui-page)" />
+                    <rect x="88" y="30" width="7" height="14" rx="1.5" fill="#F8FAFC" />
                     <rect x="8" y="10" width="85" height="20" rx="4" fill="url(#book2Grad)" />
-                    <rect x="85" y="14" width="7" height="12" rx="1.5" fill="var(--ui-page)" />
+                    <rect x="85" y="14" width="7" height="12" rx="1.5" fill="#F8FAFC" />
                   </g>
 
                   {/* 3D Security Shield Badge with Checkmark */}
@@ -425,12 +424,12 @@ export default function LoginPage() {
                     <path
                       d="M28 0 L56 12 L56 34 C56 55 28 66 28 66 C28 66 0 55 0 34 L0 12 Z"
                       fill="url(#shieldGrad)"
-                      stroke="var(--ui-surface)"
+                      stroke="#FFFFFF"
                       strokeWidth="3.5"
                     />
                     <path
                       d="M17 32 L25 40 L40 21"
-                      stroke="var(--ui-surface)"
+                      stroke="#FFFFFF"
                       strokeWidth="4"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -442,41 +441,41 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Bottom Trust Statistics (Divided by single elegant line, No heavy card frames) */}
-          <div className="pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Users className="h-4.5 w-4.5" />
+          {/* Bottom Trust Statistics */}
+          <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <Users className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white leading-tight">
+                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
                   10,000+
                 </p>
-                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">Người dùng</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Người dùng</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Award className="h-4.5 w-4.5" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <Award className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white leading-tight">
+                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
                   50,000+
                 </p>
-                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">Kỳ thi đã tổ chức</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi đã tổ chức</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <ShieldCheck className="h-4.5 w-4.5" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <ShieldCheck className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white leading-tight">
+                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
                   99.9%
                 </p>
-                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">Độ tin cậy hệ thống</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Độ tin cậy</p>
               </div>
             </div>
           </div>
@@ -485,29 +484,29 @@ export default function LoginPage() {
         {/* ── Right Column: Modern Academic Login Form Card (5 Cols ~ 42%) ── */}
         <section className="lg:col-span-5 flex justify-center w-full">
           <div
-            className={`w-full max-w-[460px] rounded-[30px] border p-6 sm:p-8 transition-all duration-300 ${
+            className={`w-full max-w-[440px] rounded-[28px] border p-6 sm:p-7 transition-all duration-300 ${
               isDark
                 ? 'border-slate-800 bg-slate-900/90 shadow-2xl shadow-black/50 backdrop-blur-xl'
-                : 'border-slate-100/90 bg-white shadow-[0_20px_60px_-15px_rgba(37,99,235,0.08),0_10px_25px_-5px_rgba(0,0,0,0.04)] backdrop-blur-sm'
+                : 'border-slate-100/90 bg-white shadow-[0_15px_45px_-12px_rgba(37,99,235,0.08),0_8px_20px_-4px_rgba(0,0,0,0.03)] backdrop-blur-sm'
             }`}
           >
             {/* Top User Avatar Circle */}
-            <div className="text-center mb-5">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-2.5 border border-blue-100/80 dark:border-blue-900 shadow-inner">
-                <UserIcon className="h-7 w-7" />
+            <div className="text-center mb-4">
+              <div className="inline-flex h-13 w-13 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-2 border border-blue-100/80 dark:border-blue-900 shadow-inner">
+                <UserIcon className="h-6.5 w-6.5" />
               </div>
-              <h2 className="text-[24px] sm:text-[25px] font-semibold text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-[23px] sm:text-[24px] font-bold text-slate-900 dark:text-white tracking-tight">
                 Đăng nhập hệ thống
               </h2>
-              <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
                 Chào mừng bạn quay trở lại!
               </p>
             </div>
 
             {/* Error Notification Banner */}
             {error && (
-              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs sm:text-sm font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
-                <span className="shrink-0 text-rose-600 font-semibold">•</span>
+              <div className="mb-3.5 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
+                <span className="shrink-0 text-rose-600 font-bold">•</span>
                 <span>{error}</span>
               </div>
             )}
@@ -517,31 +516,31 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex h-[48px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[14.5px] font-semibold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
+              className="flex h-[46px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[14px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
             >
-              <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="h-4.5 w-4.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                 <path
-                  fill="var(--ui-brand-google-blue)"
+                  fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                 />
                 <path
-                  fill="var(--ui-brand-google-green)"
+                  fill="#34A853"
                   d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
                 />
                 <path
-                  fill="var(--ui-brand-google-yellow)"
+                  fill="#FBBC05"
                   d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
                 />
                 <path
-                  fill="var(--ui-brand-google-red)"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.49 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
               <span>{loading ? 'Đang kết nối...' : 'Đăng nhập với Google'}</span>
             </button>
 
             {/* Subtle Divider */}
-            <div className="my-5 flex items-center gap-3 text-xs font-medium text-slate-400">
+            <div className="my-4 flex items-center gap-3 text-xs font-medium text-slate-400">
               <div className="h-px flex-1 bg-slate-200/90 dark:bg-slate-800" />
               <span>hoặc</span>
               <div className="h-px flex-1 bg-slate-200/90 dark:bg-slate-800" />
@@ -553,7 +552,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className={`w-full h-11 rounded-2xl border px-4 flex items-center justify-between text-[13.5px] font-semibold transition-all duration-300 cursor-pointer ${
+                className={`w-full h-10.5 rounded-2xl border px-3.5 flex items-center justify-between text-[13px] font-semibold transition-all duration-300 cursor-pointer ${
                   showManualLogin
                     ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
                     : isDark
@@ -562,22 +561,22 @@ export default function LoginPage() {
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <UserIcon className="h-4 w-4 text-slate-500" />
+                  <UserIcon className="h-3.5 w-3.5 text-slate-500" />
                   <span>Đăng nhập tài khoản nội bộ</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[12px] font-normal text-slate-400">
+                  <span className="text-[10.5px] font-normal text-slate-400">
                     {showManualLogin ? 'Thu gọn' : 'Nhấn để mở form'}
                   </span>
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
+                    className={`h-3.5 w-3.5 transition-transform duration-300 ease-in-out ${
                       showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
                     }`}
                   />
                 </div>
               </button>
 
-              {/* Smooth Animated Collapsible Form Container (CSS Grid height transition) */}
+              {/* Smooth Animated Collapsible Form Container */}
               <div
                 className={`grid transition-all duration-300 ease-in-out ${
                   showManualLogin
@@ -586,15 +585,15 @@ export default function LoginPage() {
                 }`}
               >
                 <div className="overflow-hidden">
-                  <form onSubmit={handleManualLogin} noValidate className="space-y-3.5 pt-3 pb-1">
+                  <form onSubmit={handleManualLogin} noValidate className="space-y-3 pt-2.5 pb-1">
                     {/* Username / Email Input */}
                     <div className="space-y-1">
-                      <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                      <label className="block text-[11.5px] font-medium text-slate-600 dark:text-slate-300">
                         Email hoặc tên đăng nhập
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                          <Mail className="h-4 w-4" />
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                          <Mail className="h-3.5 w-3.5" />
                         </div>
                         <input
                           type="text"
@@ -602,10 +601,10 @@ export default function LoginPage() {
                           onChange={(e) => setUsername(e.target.value)}
                           placeholder="Nhập email hoặc tên đăng nhập"
                           required
-                          className={`w-full h-[44px] rounded-2xl border pl-10 pr-4 text-[15px] outline-none transition ${
+                          className={`w-full h-[42px] rounded-2xl border pl-9 pr-3.5 text-[13.5px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                           }`}
                         />
                       </div>
@@ -613,12 +612,12 @@ export default function LoginPage() {
 
                     {/* Password Input */}
                     <div className="space-y-1">
-                      <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                      <label className="block text-[11.5px] font-medium text-slate-600 dark:text-slate-300">
                         Mật khẩu
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                          <Lock className="h-4 w-4" />
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                          <Lock className="h-3.5 w-3.5" />
                         </div>
                         <input
                           type={showPassword ? 'text' : 'password'}
@@ -626,33 +625,33 @@ export default function LoginPage() {
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Nhập mật khẩu"
                           required
-                          className={`w-full h-[44px] rounded-2xl border pl-10 pr-11 text-[15px] outline-none transition ${
+                          className={`w-full h-[42px] rounded-2xl border pl-9 pr-10 text-[13.5px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                           }`}
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
                           aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                         </button>
                       </div>
                     </div>
 
                     {/* Remember Me & Forgot Password Row */}
                     <div className="flex items-center justify-between text-xs pt-0.5">
-                      <label className="flex items-center gap-2 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+                      <label className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
                         <input
                           type="checkbox"
                           checked={rememberMe}
                           onChange={(e) => setRememberMe(e.target.checked)}
                           className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
-                        <span>Ghi nhớ đăng nhập</span>
+                        <span>Ghi nhớ</span>
                       </label>
                       <Link
                         href="/forgot-password"
@@ -666,16 +665,16 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full h-[44px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[14.5px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
+                      className="w-full h-[42px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[14px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           <span>Đang xác thực...</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <Lock className="h-4 w-4" />
+                          <Lock className="h-3.5 w-3.5" />
                           <span>Đăng nhập</span>
                         </div>
                       )}
@@ -686,7 +685,7 @@ export default function LoginPage() {
             </div>
 
             {/* Card Footer Help Link */}
-            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 text-center text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-5 border-t border-slate-100 dark:border-slate-800 pt-3.5 text-center text-xs text-slate-500 dark:text-slate-400">
               <p>
                 Chưa có tài khoản?{' '}
                 <button
@@ -703,12 +702,12 @@ export default function LoginPage() {
       </main>
 
       {/* ── Page Bottom Footer ── */}
-      <footer className="relative z-10 w-full py-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1 mt-auto">
+      <footer className="relative z-10 w-full py-3 text-center text-xs text-slate-500 dark:text-slate-400 space-y-0.5 mt-auto">
         <p className="flex items-center justify-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-          <ShieldCheck className="h-4 w-4 text-blue-600" />
+          <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
         </p>
-        <p className="text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
     </div>
   );
