@@ -9,7 +9,6 @@ import { Toast } from '../../components/Toast';
 import {
   Award,
   BarChart3,
-  CheckCircle2,
   ChevronDown,
   Clock,
   Eye,
@@ -144,11 +143,11 @@ export default function LoginPage() {
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* ── Background Decorative Vector Waves & Glows ── */}
+      {/* ── Ambient Background Vector Gradients & Meshes ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
         {/* Subtle grid pattern */}
         <div
-          className="absolute top-6 left-1/3 w-[600px] h-60 opacity-30 dark:opacity-10"
+          className="absolute top-4 left-1/3 w-[600px] h-60 opacity-30 dark:opacity-10"
           style={{
             backgroundImage: 'radial-gradient(#3B82F6 1.2px, transparent 1.2px)',
             backgroundSize: '24px 24px',
@@ -156,13 +155,13 @@ export default function LoginPage() {
         />
 
         {/* Ambient Glows */}
-        <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[100px]" />
-        <div className="absolute top-1/4 -right-28 w-[550px] h-[550px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[120px]" />
+        <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[110px]" />
+        <div className="absolute top-1/4 -right-28 w-[550px] h-[550px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[130px]" />
         <div className="absolute -bottom-36 left-10 w-[600px] h-[350px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[90px]" />
 
-        {/* Vector Flow Waves */}
+        {/* Bottom Flow Waves */}
         <svg
-          className="absolute bottom-0 left-0 w-full max-w-4xl h-56 opacity-30 dark:opacity-10"
+          className="absolute bottom-0 left-0 w-full max-w-4xl h-52 opacity-30 dark:opacity-10"
           viewBox="0 0 900 300"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -190,7 +189,7 @@ export default function LoginPage() {
 
       {/* ── Top Header Navigation ── */}
       <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-4 pb-1 shrink-0 flex items-center justify-between">
-        {/* Brand Logo with Status Indicator */}
+        {/* Brand Logo & Status */}
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
             <GraduationCap className="h-5 w-5" />
@@ -211,7 +210,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Minimal Icon-Only Theme Toggle */}
+        {/* Minimal Icon Theme Toggle */}
         <button
           type="button"
           onClick={toggleDark}
@@ -230,7 +229,7 @@ export default function LoginPage() {
       {/* ── Main Section: 2-Column Desktop Grid (Fits 100vh Perfectly) ── */}
       <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 py-1 min-h-0 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
         {/* ── Left Column: System Showcase (7 Cols ~ 58%) ── */}
-        <section className="lg:col-span-7 flex flex-col justify-between h-full py-1 space-y-3">
+        <section className="lg:col-span-7 flex flex-col justify-between h-full py-1 space-y-3.5">
           {/* Main Headline */}
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
@@ -238,7 +237,7 @@ export default function LoginPage() {
               <span className="text-blue-600 dark:text-blue-500">KHẢO THÍ TRỰC TUYẾN</span>
             </h1>
             <p className="text-[13.5px] sm:text-[14px] text-slate-600 dark:text-slate-300 max-w-lg font-normal leading-relaxed">
-              Giải pháp toàn diện cho quản lý kỳ thi, tổ chức thi trắc nghiệm và phân tích kết quả học thuật.
+              Giải pháp toàn diện cho quản lý đề thi, tổ chức thi trắc nghiệm và đánh giá chuẩn mực học thuật.
             </p>
           </div>
 
@@ -248,7 +247,7 @@ export default function LoginPage() {
             <div className="sm:col-span-5 space-y-2.5">
               {/* Feature 1 */}
               <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
                 <div>
@@ -261,7 +260,7 @@ export default function LoginPage() {
 
               {/* Feature 2 */}
               <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
                   <FileCheck2 className="h-4 w-4" />
                 </div>
                 <div>
@@ -274,7 +273,7 @@ export default function LoginPage() {
 
               {/* Feature 3 */}
               <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
                   <BarChart3 className="h-4 w-4" />
                 </div>
                 <div>
@@ -287,7 +286,7 @@ export default function LoginPage() {
 
               {/* Feature 4 */}
               <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
                   <Clock className="h-4 w-4" />
                 </div>
                 <div>
@@ -302,16 +301,16 @@ export default function LoginPage() {
             {/* Academic 3D Centerpiece */}
             <div className="sm:col-span-7 flex justify-center items-center relative py-1">
               <div className="relative w-full max-w-[320px] aspect-[4/3] flex items-center justify-center">
-                {/* Soft Ambient Glow */}
+                {/* Ambient Glow */}
                 <div className="absolute inset-0 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-xl" />
 
-                {/* Floating Micro Badge: Test Check */}
-                <div className="absolute -top-1 left-20 z-20 h-7.5 w-7.5 rounded-xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                {/* Floating Badge: Check */}
+                <div className="absolute -top-1 left-20 z-20 h-7 w-7 rounded-xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
                   <FileCheck2 className="h-3.5 w-3.5" />
                 </div>
 
-                {/* Floating Micro Badge: Chart */}
-                <div className="absolute top-12 right-0 z-20 h-7.5 w-7.5 rounded-xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                {/* Floating Badge: Chart */}
+                <div className="absolute top-12 right-0 z-20 h-7 w-7 rounded-xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
                   <BarChart3 className="h-3.5 w-3.5" />
                 </div>
 
@@ -517,7 +516,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* ── HERO PRIMARY ACTION: Google OAuth Login Button ── */}
+            {/* ── HERO PRIMARY ACTION: Google OAuth Login Button (Fixed 20px SVG) ── */}
             <button
               type="button"
               onClick={handleGoogleLogin}
@@ -599,14 +598,14 @@ export default function LoginPage() {
               >
                 <div className="overflow-hidden">
                   <form onSubmit={handleManualLogin} noValidate className="space-y-2.5 pt-2 pb-0.5">
-                    {/* Username / Email Input */}
+                    {/* Username / Email Input (Spacious pl-11 to prevent text overlap) */}
                     <div className="space-y-0.5">
                       <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-300">
                         Email hoặc tên đăng nhập
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                          <Mail className="h-3.5 w-3.5" />
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <Mail className="h-4 w-4" />
                         </div>
                         <input
                           type="text"
@@ -614,7 +613,7 @@ export default function LoginPage() {
                           onChange={(e) => setUsername(e.target.value)}
                           placeholder="Nhập email hoặc tên đăng nhập"
                           required
-                          className={`w-full h-[38px] rounded-2xl border pl-8.5 pr-3 text-[13px] outline-none transition ${
+                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-3.5 text-[13px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                             : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -623,14 +622,14 @@ export default function LoginPage() {
                       </div>
                     </div>
 
-                    {/* Password Input */}
+                    {/* Password Input (Spacious pl-11 to prevent text overlap) */}
                     <div className="space-y-0.5">
                       <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-300">
                         Mật khẩu
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                          <Lock className="h-3.5 w-3.5" />
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <Lock className="h-4 w-4" />
                         </div>
                         <input
                           type={showPassword ? 'text' : 'password'}
@@ -638,7 +637,7 @@ export default function LoginPage() {
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Nhập mật khẩu"
                           required
-                          className={`w-full h-[38px] rounded-2xl border pl-8.5 pr-9 text-[13px] outline-none transition ${
+                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-10 text-[13px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                             : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -647,10 +646,10 @@ export default function LoginPage() {
                         <button
                           type="button"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
                           aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                         >
-                          {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
@@ -662,7 +661,7 @@ export default function LoginPage() {
                           type="checkbox"
                           checked={rememberMe}
                           onChange={(e) => setRememberMe(e.target.checked)}
-                          className="h-3 w-3 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                         <span>Ghi nhớ</span>
                       </label>
