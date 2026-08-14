@@ -1,62 +1,93 @@
-# # Dependencies
-# node_modules/
-# .pnpm-store/
+# ==========================================
+# 1. Dependencies & Package Managers
+# ==========================================
+node_modules/
+.pnpm-store/
+.yarn/
+.pnp
+.pnp.js
 
-# # Production / Build
-# dist/
-# build/
-# .next/
+# ==========================================
+# 2. Production & Build Outputs
+# ==========================================
+dist/
+build/
+out/
+.next/
+.next*
+.swc/
+*.tsbuildinfo
+next-env.d.ts
 
-# # Environment variables
-# .env
-# .env.local
-# .env.development.local
-# .env.production.local
+# Backend build outputs
+backend/dist/
+backend/uploads/
 
-# # Logs
-# *.log
-# npm-debug.log*
-# yarn-debug.log*
-# yarn-error.log*
+# ==========================================
+# 3. Environment & Secret Variables
+# ==========================================
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+frontend/.env.local
+frontend/.env.*.local
 
-# # Editor / IDE
-# .vscode/
-# .idea/
-# *.swp
-# *.swo
-
-# # OS files
-# .DS_Store
-# Thumbs.db
-node_modules
-node_modules
-
-# Generated frontend artifacts
-/frontend/.next/
-/frontend/.next*
-/frontend/.edge-*/
-/frontend/.ui-verify*
-
-# Generated backend artifacts
-/backend/dist/
-/backend/uploads/
-/backend-dev.*.log
-
-# Local environment and secrets
-/.env
-/.env.*
+# Always keep example configuration files
+!/.env.example
 !/backend/.env.example
 !/frontend/.env.example
-/backend/.env
-/frontend/.env.local
-/frontend/.env.*.local
 
-# Local database migration artifacts
-/backend/prisma/dev.db
-/backend/prisma/*.sqlite-backup
-/backend/prisma/data-export/
+# ==========================================
+# 4. Logs & Debugging
+# ==========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+backend-dev.*.log
 
-# Local backup storage (never commit database dumps or uploaded files)
-/backup-runtime/
-/backup-staging-uploads/
-/database-backups/*.sql
+# ==========================================
+# 5. Testing & Verification Artifacts
+# ==========================================
+coverage/
+.nyc_output/
+.edge-*/
+.ui-verify*
+.temp*
+
+# ==========================================
+# 6. Database & Local Backups
+# ==========================================
+backend/prisma/dev.db
+backend/prisma/*.sqlite*
+backend/prisma/data-export/
+backup-runtime/
+backup-staging-uploads/
+database-backups/*.sql
+
+# ==========================================
+# 7. Editor & Operating System Artifacts
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
