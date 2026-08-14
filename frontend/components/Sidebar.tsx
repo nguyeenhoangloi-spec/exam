@@ -270,76 +270,89 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200/70 dark:border-slate-700/70 transition-all duration-300 ease-in-out select-none ${collapsed ? 'w-[72px]' : 'w-[252px]'
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200/70 dark:border-slate-700/70 transition-all duration-300 ease-in-out select-none overflow-hidden ${collapsed ? 'w-[72px]' : 'w-[252px]'
         } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'}`}
     >
-      {/* ── 1. Header Section: Brand Logo & Toggle (Không dùng viền kẻ ngang, chữ to rõ nét) ── */}
-      {collapsed ? (
-        <div className="relative flex h-16 shrink-0 items-center justify-center px-3 bg-white dark:bg-slate-900">
-          <button
-            type="button"
-            onClick={onToggle}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-all active:scale-95 cursor-pointer shadow-2xs"
-            aria-label="Mở rộng thanh bên"
-            title="Mở rộng thanh bên"
-          >
-            <PanelLeftOpen className="h-6 w-6" />
-          </button>
-        </div>
-      ) : (
-        <div className="flex h-16 shrink-0 items-center justify-between px-4 bg-white dark:bg-slate-900">
-          <Link href="/dashboard" className="flex items-center gap-3 min-w-0 group cursor-pointer">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-md shadow-blue-500/25 ring-2 ring-blue-50 dark:ring-blue-950 transition-transform group-hover:scale-105">
-              <GraduationCap className="h-5.5 w-5.5" />
-            </div>
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[17px] font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
-                Exam System
-              </h1>
-              <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                Hệ thống khảo thí
-              </p>
-            </div>
-          </Link>
+      {/* ── 1. Header Section: Brand Logo & Toggle (w-full bg-transparent, không bao giờ tràn màn phủ trắng) ── */}
+      <div className="relative flex h-16 w-full shrink-0 items-center justify-between px-4 bg-transparent">
+        {/* Fixed Left Logo & Brand Title */}
+        <Link
+          href="/dashboard"
+          onClick={(e) => {
+            if (collapsed) {
+              e.preventDefault();
+              onToggle();
+            }
+          }}
+          className="flex items-center min-w-0 cursor-pointer group"
+          title={collapsed ? 'Nhấn để mở rộng thanh bên' : 'Exam System - Hệ thống khảo thí'}
+        >
+          {/* Logo Box: 40px với Icon 24px sắc nét, cố định vị trí tuyệt đối */}
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs transition-transform group-hover:scale-105">
+            <GraduationCap className="h-6 w-6" />
+          </div>
 
-          <button
-            type="button"
-            onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 cursor-pointer"
-            aria-label="Thu gọn thanh bên"
-            title="Thu gọn thanh bên"
+          {/* Text: Xuất hiện êm ái sau 150ms khi thanh bên mở rộng */}
+          <div
+            className={`min-w-0 ml-3 transition-opacity ${collapsed ? 'opacity-0 pointer-events-none hidden duration-100 delay-0' : 'opacity-100 duration-200 delay-150'
+              }`}
           >
-            <PanelLeft className="h-5 w-5" />
-          </button>
-        </div>
-      )}
+            <h1 className="text-[18px] font-semibold text-slate-900 dark:text-slate-100 leading-tight tracking-tight whitespace-nowrap">
+              Exam System
+            </h1>
+            <p className="text-[12.5px] font-medium text-slate-500 dark:text-slate-400 leading-tight whitespace-nowrap">
+              Hệ thống khảo thí
+            </p>
+          </div>
+        </Link>
+
+        {/* Nút Toggle: Ẩn trong 150ms đầu lúc mở rộng, chỉ hiện mờ dần (Fade-in) tại góc phải khi thanh bên đã mở, không bao giờ bị thấy chạy từ Logo */}
+        <button
+          type="button"
+          onClick={onToggle}
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-opacity active:scale-95 cursor-pointer ${collapsed
+            ? 'opacity-0 pointer-events-none duration-100 delay-0'
+            : 'opacity-100 duration-200 delay-150'
+            }`}
+          aria-label="Thu gọn thanh bên"
+          title="Thu gọn thanh bên"
+          tabIndex={collapsed ? -1 : 0}
+        >
+          <PanelLeft className="h-5.5 w-5.5" />
+        </button>
+      </div>
 
       {/* ── 2. Navigation Groups List ── */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 no-scrollbar" aria-label="Điều hướng chính">
+      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-3.5 no-scrollbar w-full" aria-label="Điều hướng chính">
         {filteredGroups.map((group, groupIdx) => {
           const groupName = group.group || `group_${groupIdx}`;
           const isExpanded = expandedGroups[groupName] ?? true;
 
           return (
-            <div key={groupIdx} className="space-y-1">
-              {group.group && !collapsed && (
-                <button
-                  type="button"
-                  onClick={() => toggleAccordionGroup(groupName)}
-                  className="w-full flex items-center justify-between px-3 py-1.5 text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer select-none"
+            <div key={groupIdx} className="space-y-1 w-full">
+              {group.group && (
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0 pointer-events-none' : 'max-h-10 opacity-100 mb-1'
+                    }`}
                 >
-                  <span className="truncate">{group.group}</span>
-                  {isExpanded ? (
-                    <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                  ) : (
-                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                  )}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleAccordionGroup(groupName)}
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer select-none"
+                  >
+                    <span className="truncate">{group.group}</span>
+                    {isExpanded ? (
+                      <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    ) : (
+                      <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                    )}
+                  </button>
+                </div>
               )}
 
               {/* Group Items */}
               {(isExpanded || collapsed || !group.group) && (
-                <div className="space-y-1">
+                <div className="space-y-1 w-full">
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const isActive = isItemActive(item.href);
@@ -349,22 +362,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     // Items with Submenu
                     if (hasChildren) {
                       return (
-                        <div key={item.href} className="space-y-1">
+                        <div key={item.href} className="space-y-1 w-full">
                           <button
                             type="button"
                             onClick={() => {
                               if (!collapsed) toggleSubMenu(item.href);
                             }}
-                            className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-between px-3'
-                              } py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-200 cursor-pointer ${isActive
-                                ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold'
-                                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
+                            className={`w-full flex items-center justify-between px-2 py-2 rounded-xl text-sm transition-colors duration-150 cursor-pointer ${isActive
+                              ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-500/20'
+                              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
                               }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
+                              {/* Icon luôn đứng yên 100% tại tọa độ 36px, không bao giờ di chuyển */}
                               <div
-                                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${isActive
-                                  ? 'bg-blue-600 text-white shadow-xs'
+                                className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors ${isActive
+                                  ? 'text-white'
                                   : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
                                   }`}
                               >
@@ -374,15 +387,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             </div>
                             {!collapsed && (
                               <ChevronDown
-                                className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${isSubOpen ? 'rotate-180 text-blue-600' : ''
-                                  }`}
+                                className={`h-4 w-4 transition-transform duration-200 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'
+                                  } ${isSubOpen ? 'rotate-180' : ''}`}
                               />
                             )}
                           </button>
 
-                          {/* Expanded Sub items */}
-                          {isSubOpen && !collapsed && (
-                            <div className="pl-11 pr-2 space-y-1 pt-0.5">
+                          {/* Expanded Sub items với transition mượt mà */}
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${isSubOpen && !collapsed
+                              ? 'max-h-96 opacity-100 pt-0.5'
+                              : 'max-h-0 opacity-0 pointer-events-none'
+                              }`}
+                          >
+                            <div className="pl-11 pr-2 space-y-1">
                               {item.children?.map((sub) => {
                                 const isSubActive = isSubItemActive(sub.href);
                                 return (
@@ -390,9 +408,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className={`block rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-all ${isSubActive
-                                      ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                                    className={`block rounded-lg px-2.5 py-1.5 text-[13px] transition-all ${isSubActive
+                                      ? 'bg-blue-600 text-white font-medium shadow-xs'
+                                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white font-normal'
                                       }`}
                                   >
                                     {sub.name}
@@ -400,7 +418,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 );
                               })}
                             </div>
-                          )}
+                          </div>
                         </div>
                       );
                     }
@@ -412,16 +430,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         href={item.href}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group flex items-center ${collapsed ? 'justify-center px-0' : 'px-3'
-                          } py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 ${isActive
-                            ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
+                        className={`group w-full flex items-center px-2 py-2 rounded-xl text-sm transition-colors duration-150 ${isActive
+                          ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-500/20'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
                           }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
+                          {/* Icon luôn đứng yên 100% tại tọa độ 36px, không bao giờ di chuyển */}
                           <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${isActive
-                              ? 'bg-blue-600 text-white shadow-xs'
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors ${isActive
+                              ? 'text-white'
                               : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
                               }`}
                           >
@@ -440,40 +458,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* ── 3. Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom ── */}
-      <div ref={footerRef} className="relative border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shrink-0">
+      <div ref={footerRef} className="relative border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shrink-0 w-full">
         <button
           type="button"
           onClick={() => setShowUserMenu(!showUserMenu)}
           className={`group flex w-full items-center gap-3 px-2 py-2 rounded-xl transition-colors text-left cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800 ${showUserMenu ? 'bg-slate-100 dark:bg-slate-800' : ''
             }`}
         >
-          {/* Avatar — luôn cố định tuyệt đối, không dịch chuyển */}
-          <div className="relative h-9 w-9 shrink-0">
+          {/* Avatar — luôn cố định tuyệt đối tại cùng trục tâm */}
+          <div className="relative shrink-0 flex items-center justify-center">
             {avatarUrl ? (
-              <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 rounded-full object-cover border border-slate-200" />
+              <DynamicImage
+                src={avatarUrl}
+                alt={displayName}
+                className="h-9 w-9 rounded-full object-cover border border-slate-200"
+              />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-600 text-white font-semibold text-xs tracking-tight">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-600 font-semibold text-white text-xs">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
-            {/* Chấm xanh trực tuyến */}
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
           </div>
 
-          {/* Text — ẩn bằng overflow-hidden, không bao giờ unmount khỏi DOM để chống nhảy layout */}
-          <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <p className="truncate text-[13px] font-medium text-slate-800 dark:text-slate-100 leading-tight whitespace-nowrap">
-              {displayName}
-            </p>
-            <p className="truncate text-[12px] font-normal text-primary-600 dark:text-blue-400 leading-tight whitespace-nowrap">
-              {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
-            </p>
-          </div>
+          {/* Text — ẩn khi thu gọn */}
+          {!collapsed && (
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <p className="truncate text-[13px] font-medium text-slate-800 dark:text-slate-100 leading-tight whitespace-nowrap">
+                {displayName}
+              </p>
+              <p className="truncate text-[12px] font-normal text-primary-600 dark:text-blue-400 leading-tight whitespace-nowrap">
+                {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
+              </p>
+            </div>
+          )}
 
-          <ChevronRight
-            className={`h-4 w-4 text-slate-400 shrink-0 transition-all duration-200 ${collapsed ? 'opacity-0 w-0' : 'opacity-100'
-              } ${showUserMenu ? 'rotate-90 text-blue-600' : ''}`}
-          />
+          {!collapsed && (
+            <ChevronRight
+              className={`h-4 w-4 text-slate-400 shrink-0 transition-transform duration-200 ${showUserMenu ? 'rotate-90 text-blue-600' : ''
+                }`}
+            />
+          )}
         </button>
 
         {/* User Popover Menu */}
@@ -488,8 +512,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-medium text-slate-800 dark:text-slate-100">{displayName}</p>
-                <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-normal flex items-center gap-1">
+                <p className="truncate text-[13px] font-medium text-slate-800 dark:text-slate-100">{displayName}</p>
+                <p className="truncate text-[12px] text-emerald-600 dark:text-emerald-400 font-normal flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   Đang trực tuyến
                 </p>
@@ -501,41 +525,41 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/profile"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                <span className="text-xs font-normal">Hồ sơ cá nhân</span>
+                <span className="text-[13px] font-normal">Hồ sơ cá nhân</span>
               </Link>
 
               <Link
                 href="/settings"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                <span className="text-xs font-normal">Cài đặt hệ thống</span>
+                <span className="text-[13px] font-normal">Cài đặt hệ thống</span>
               </Link>
 
               <Link
                 href="/contact"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                <span className="text-xs font-normal">Trung tâm hỗ trợ</span>
+                <span className="text-[13px] font-normal">Trung tâm hỗ trợ</span>
               </Link>
 
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 {isDark ? (
                   <Sun className="h-4 w-4 text-amber-400" />
                 ) : (
                   <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 )}
-                <span className="text-xs font-normal">Chủ đề giao diện</span>
+                <span className="text-[13px] font-normal">Chủ đề giao diện</span>
               </button>
 
               <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
@@ -546,10 +570,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   setShowUserMenu(false);
                   setShowLogoutConfirm(true);
                 }}
-                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
               >
                 <LogOut className="h-4 w-4 text-rose-600" />
-                <span className="text-xs font-normal">Đăng xuất</span>
+                <span className="text-[13px] font-normal">Đăng xuất</span>
               </button>
             </div>
           </div>

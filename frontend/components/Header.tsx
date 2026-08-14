@@ -286,8 +286,8 @@ export const Header: React.FC<HeaderProps> = ({
       />
 
       <header
-        className={`app-header-fixed fixed top-0 left-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all border-b border-slate-200/70 dark:border-slate-700/70 shadow-2xs ${collapsed ? 'md:left-[72px]' : 'md:left-[252px]'
-          }`}
+        style={{ left: collapsed ? '72px' : '252px' }}
+        className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all duration-300 ease-in-out border-b border-slate-200/70 dark:border-slate-700/70 shadow-2xs"
       >
         <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
           {/* Left Side: Navigation / Breadcrumb Pro / Command Search Bar */}
@@ -302,7 +302,21 @@ export const Header: React.FC<HeaderProps> = ({
               <Menu className="h-4.5 w-4.5" />
             </button>
 
-            {/* Breadcrumb Pro */}
+            {/* 1. Nút Tìm kiếm nhanh (Chỉ dùng Icon, đứng đầu) */}
+            <button
+              type="button"
+              aria-label="Tìm kiếm nhanh (Ctrl+K)"
+              onClick={() => setIsSearchOpen(true)}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 cursor-pointer"
+              title="Tìm kiếm nhanh (Ctrl + K)"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+
+            {/* Phân cách mảnh tinh tế */}
+            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 shrink-0 mx-0.5" />
+
+            {/* 2. Breadcrumb Navigation (Đứng sau nút tìm kiếm) */}
             <nav className="flex items-center gap-1.5 text-[13px] font-medium text-slate-400 dark:text-slate-500 min-w-0 truncate" aria-label="Breadcrumb">
               <button
                 type="button"
@@ -313,44 +327,14 @@ export const Header: React.FC<HeaderProps> = ({
                   else router.push('/dashboard');
                 }}
               >
-                <Home className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+                <Home className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                 <span>Trang chủ</span>
               </button>
               <ChevronRight className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
-              <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+              <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 truncate">
                 {title === 'Hệ thống quản lý khảo thí' ? 'Tổng quan' : title}
               </span>
             </nav>
-
-            {/* Linear / Raycast Style Command Search Bar */}
-            <button
-              type="button"
-              aria-label="Tìm kiếm nhanh (Ctrl+K)"
-              onClick={() => setIsSearchOpen(true)}
-              className="hidden lg:flex items-center justify-between gap-3 h-9 w-60 xl:w-72 px-3 rounded-xl border border-slate-200/80 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all shadow-2xs cursor-pointer group ml-2"
-              title="Tìm kiếm nhanh (Ctrl + K)"
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <Search className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                <span className="text-[13px] font-normal text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 truncate">
-                  Tìm kiếm nhanh...
-                </span>
-              </div>
-              <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 text-[10.5px] font-semibold text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-md shadow-2xs shrink-0 group-hover:border-slate-300 dark:group-hover:border-slate-600">
-                Ctrl K
-              </kbd>
-            </button>
-
-            {/* Compact Search Button on small/medium screens */}
-            <button
-              type="button"
-              aria-label="Tìm kiếm nhanh (Ctrl+K)"
-              onClick={() => setIsSearchOpen(true)}
-              className="hidden sm:flex lg:hidden h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-700/60 transition shadow-2xs cursor-pointer"
-              title="Tìm kiếm nhanh (Ctrl + K)"
-            >
-              <Search className="h-4 w-4" />
-            </button>
           </div>
 
           {/* Right Side: Notification bell & User Profile trigger */}
@@ -501,8 +485,8 @@ export const Header: React.FC<HeaderProps> = ({
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-medium text-slate-800 dark:text-slate-100">{displayName}</p>
-                      <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-normal flex items-center gap-1">
+                      <p className="truncate text-[13px] font-medium text-slate-800 dark:text-slate-100">{displayName}</p>
+                      <p className="truncate text-[12px] text-emerald-600 dark:text-emerald-400 font-normal flex items-center gap-1">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         Đang trực tuyến
                       </p>
@@ -514,30 +498,30 @@ export const Header: React.FC<HeaderProps> = ({
                     <Link
                       href="/profile"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-xs font-normal">Hồ sơ cá nhân</span>
+                      <span className="text-[13px] font-normal">Hồ sơ cá nhân</span>
                     </Link>
 
                     {/* Item 2: Cài đặt hệ thống */}
                     <Link
                       href="/settings"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-xs font-normal">Cài đặt hệ thống</span>
+                      <span className="text-[13px] font-normal">Cài đặt hệ thống</span>
                     </Link>
 
                     {/* Item 3: Trung tâm hỗ trợ */}
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-xs font-normal">Trung tâm hỗ trợ</span>
+                      <span className="text-[13px] font-normal">Trung tâm hỗ trợ</span>
                     </Link>
 
                     {/* Item 4: Chủ đề giao diện */}
@@ -545,14 +529,14 @@ export const Header: React.FC<HeaderProps> = ({
                       type="button"
                       role="menuitem"
                       onClick={toggleTheme}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       {isDark ? (
                         <Sun className="h-4 w-4 text-amber-400" />
                       ) : (
                         <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                       )}
-                      <span className="text-xs font-normal">Chủ đề giao diện</span>
+                      <span className="text-[13px] font-normal">Chủ đề giao diện</span>
                     </button>
 
                     {/* Divider */}
@@ -566,10 +550,10 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
                     >
                       <LogOut className="h-4 w-4 text-rose-600" />
-                      <span className="text-xs font-normal">Đăng xuất</span>
+                      <span className="text-[13px] font-normal">Đăng xuất</span>
                     </button>
                   </div>
                 </div>
