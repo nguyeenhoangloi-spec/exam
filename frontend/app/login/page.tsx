@@ -37,7 +37,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showManualLogin, setShowManualLogin] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [isDark, setIsDark] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -53,7 +52,6 @@ export default function LoginPage() {
 
     if (googleError) {
       const message = decodeURIComponent(googleError);
-      setError(message);
       setToast({ message, type: 'error' });
       window.history.replaceState({}, document.title, window.location.pathname);
       return;
@@ -76,7 +74,7 @@ export default function LoginPage() {
               : '/student/exam-schedule';
           router.replace(destination);
         })
-        .catch(() => setError('Không thể hoàn tất phiên đăng nhập Google.'));
+        .catch(() => setToast({ message: 'Không thể hoàn tất phiên đăng nhập Google.', type: 'error' }));
       return;
     }
 
@@ -117,7 +115,6 @@ export default function LoginPage() {
       }
 
       setLoading(true);
-      setError('');
       try {
         const res = await api.post('/auth/login', { username: username.trim(), password });
         const { accessToken, user } = res.data;
@@ -128,7 +125,6 @@ export default function LoginPage() {
       } catch (err: any) {
         const message =
           err.response?.data?.message || err.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.';
-        setError(message);
         setToast({ message, type: 'error' });
       } finally {
         setLoading(false);
@@ -513,14 +509,6 @@ export default function LoginPage() {
                 Chào mừng bạn quay trở lại!
               </p>
             </div>
-
-            {/* Error Notification Banner */}
-            {error && (
-              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
-                <span className="shrink-0 text-rose-600 font-bold">•</span>
-                <span>{error}</span>
-              </div>
-            )}
 
             {/* ── HERO PRIMARY ACTION: Google OAuth Login Button (Fixed 20px SVG) ── */}
             <button
