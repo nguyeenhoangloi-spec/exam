@@ -548,12 +548,12 @@ export default function LoginPage() {
             </div>
 
             {/* ── Collapsible Internal Login Section ── */}
-            <div className="space-y-3">
+            <div className="space-y-1">
               {/* Trigger Button to Expand/Collapse Form */}
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className={`w-full h-11 rounded-2xl border px-4 flex items-center justify-between text-[13.5px] font-semibold transition-all duration-200 cursor-pointer ${
+                className={`w-full h-11 rounded-2xl border px-4 flex items-center justify-between text-[13.5px] font-semibold transition-all duration-300 cursor-pointer ${
                   showManualLogin
                     ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
                     : isDark
@@ -569,112 +569,120 @@ export default function LoginPage() {
                   <span className="text-[11px] font-normal text-slate-400">
                     {showManualLogin ? 'Thu gọn' : 'Nhấn để mở form'}
                   </span>
-                  {showManualLogin ? (
-                    <ChevronUp className="h-4 w-4 text-blue-600" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-slate-400" />
-                  )}
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
+                      showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
+                    }`}
+                  />
                 </div>
               </button>
 
-              {/* Collapsible Form Container */}
-              {showManualLogin && (
-                <form onSubmit={handleManualLogin} noValidate className="space-y-3.5 pt-1 animate-fade-in">
-                  {/* Username / Email Input */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">
-                      Email hoặc tên đăng nhập
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <Mail className="h-4 w-4" />
+              {/* Smooth Animated Collapsible Form Container (CSS Grid height transition) */}
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  showManualLogin
+                    ? 'grid-rows-[1fr] opacity-100'
+                    : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <form onSubmit={handleManualLogin} noValidate className="space-y-3.5 pt-3 pb-1">
+                    {/* Username / Email Input */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">
+                        Email hoặc tên đăng nhập
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <Mail className="h-4 w-4" />
+                        </div>
+                        <input
+                          type="text"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          placeholder="Nhập email hoặc tên đăng nhập"
+                          required
+                          className={`w-full h-[44px] rounded-2xl border pl-10 pr-4 text-[14px] outline-none transition ${
+                            isDark
+                              ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
+                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          }`}
+                        />
                       </div>
-                      <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Nhập email hoặc tên đăng nhập"
-                        required
-                        className={`w-full h-[44px] rounded-2xl border pl-10 pr-4 text-[14px] outline-none transition ${
-                          isDark
-                            ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                        }`}
-                      />
                     </div>
-                  </div>
 
-                  {/* Password Input */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">
-                      Mật khẩu
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <Lock className="h-4 w-4" />
+                    {/* Password Input */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">
+                        Mật khẩu
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <Lock className="h-4 w-4" />
+                        </div>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Nhập mật khẩu"
+                          required
+                          className={`w-full h-[44px] rounded-2xl border pl-10 pr-11 text-[14px] outline-none transition ${
+                            isDark
+                              ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
+                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                          aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
                       </div>
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Nhập mật khẩu"
-                        required
-                        className={`w-full h-[44px] rounded-2xl border pl-10 pr-11 text-[14px] outline-none transition ${
-                          isDark
-                            ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                        }`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((prev) => !prev)}
-                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                        aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                    </div>
+
+                    {/* Remember Me & Forgot Password Row */}
+                    <div className="flex items-center justify-between text-xs pt-0.5">
+                      <label className="flex items-center gap-2 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <span>Ghi nhớ đăng nhập</span>
+                      </label>
+                      <Link
+                        href="/forgot-password"
+                        className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition"
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
+                        Quên mật khẩu?
+                      </Link>
                     </div>
-                  </div>
 
-                  {/* Remember Me & Forgot Password Row */}
-                  <div className="flex items-center justify-between text-xs pt-0.5">
-                    <label className="flex items-center gap-2 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                      />
-                      <span>Ghi nhớ đăng nhập</span>
-                    </label>
-                    <Link
-                      href="/forgot-password"
-                      className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition"
+                    {/* Primary Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={loading || !username || !password}
+                      className="w-full h-[44px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[14.5px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
                     >
-                      Quên mật khẩu?
-                    </Link>
-                  </div>
-
-                  {/* Primary Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={loading || !username || !password}
-                    className="w-full h-[44px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[14.5px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
-                  >
-                    {loading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Đang xác thực...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Lock className="h-4 w-4" />
-                        <span>Đăng nhập</span>
-                      </div>
-                    )}
-                  </button>
-                </form>
-              )}
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Đang xác thực...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Lock className="h-4 w-4" />
+                          <span>Đăng nhập</span>
+                        </div>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              </div>
             </div>
 
             {/* Card Footer Help Link */}
