@@ -449,9 +449,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Avatar — luôn cố định tuyệt đối, không dịch chuyển */}
           <div className="relative h-9 w-9 shrink-0">
             {avatarUrl ? (
-              <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 rounded-full object-cover" />
+              <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 rounded-full object-cover border border-slate-200" />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-[15px]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-600 text-white font-semibold text-xs tracking-tight">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
@@ -461,10 +461,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Text — ẩn bằng overflow-hidden, không bao giờ unmount khỏi DOM để chống nhảy layout */}
           <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-snug whitespace-nowrap">
+            <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100 leading-tight whitespace-nowrap">
               {displayName}
             </p>
-            <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug whitespace-nowrap">
+            <p className="truncate text-[12px] font-medium text-primary-600 dark:text-blue-400 leading-tight whitespace-nowrap">
               {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
             </p>
           </div>
