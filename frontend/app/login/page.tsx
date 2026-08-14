@@ -136,7 +136,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`min-h-screen w-full relative overflow-x-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-between transition-colors duration-300 ${
+      className={`min-h-screen w-full relative overflow-x-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-start transition-colors duration-300 ${
         isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
       }`}
     >
@@ -220,10 +220,10 @@ export default function LoginPage() {
         </button>
       </header>
 
-      {/* ── Main Section: Big Bold 2-Column Showcase Layout ── */}
-      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 py-6 my-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center w-full">
+      {/* ── Main Section: Big Bold 2-Column Showcase Layout (Anchored to Top) ── */}
+      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 pt-4 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start w-full">
         {/* ── Left Column: Large Showcase (7 Cols ~ 58%) ── */}
-        <section className="lg:col-span-7 flex flex-col justify-between space-y-8">
+        <section className="lg:col-span-7 flex flex-col justify-start space-y-8">
           {/* Main Large Headline */}
           <div className="space-y-3">
             <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
@@ -481,7 +481,7 @@ export default function LoginPage() {
         </section>
 
         {/* ── Right Column: Large Modern Academic Login Form Card (5 Cols ~ 42%) ── */}
-        <section className="lg:col-span-5 flex justify-center w-full">
+        <section className="lg:col-span-5 flex justify-center w-full items-start">
           <div
             className={`w-full max-w-[450px] rounded-[30px] border p-7 sm:p-8 transition-all duration-300 ${
               isDark
@@ -708,7 +708,7 @@ export default function LoginPage() {
       </main>
 
       {/* ── Page Bottom Footer ── */}
-      <footer className="relative z-10 w-full py-4 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
+      <footer className="mt-auto relative z-10 w-full py-4 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
         <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[12px]">
           <ShieldCheck className="h-4 w-4 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
