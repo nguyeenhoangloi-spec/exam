@@ -415,7 +415,7 @@ function TrashPageContent() {
       {/* Filter Card Toolbar */}
       <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
         {/* Search Input Field */}
-        <div className="relative flex-1 w-full min-w-[280px]">
+        <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
           <input
             type="text"

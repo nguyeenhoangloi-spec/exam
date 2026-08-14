@@ -173,10 +173,10 @@ export function QuestionBankFiltersCard({
             <button
               type="button"
               onClick={onReset}
-              className="ui-pressable inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-[15px] font-semibold bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-2xs shrink-0"
+              className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
               title="Xoá tất cả bộ lọc"
             >
-              <RotateCcw className="h-3.5 w-3.5" />
+              <X className="h-3.5 w-3.5" />
               <span>Xoá lọc</span>
             </button>
           )}

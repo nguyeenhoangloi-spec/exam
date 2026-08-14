@@ -38,6 +38,7 @@ import {
  Check,
 } from 'lucide-react';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
+import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 
 export default function TeacherAssignmentsPage() {
  usePageTitle('Lịch coi thi Giảng viên');
@@ -394,48 +395,29 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
           ))}
         </div>
 
-  {/* Table Toolbar Action Group */}
-  <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-    <span className="text-xs font-semibold text-slate-600">
-      Hiển thị <span className="font-semibold text-slate-900">{assignments.length}</span> ca coi thi được phân công
-    </span>
+  {/* Table Action Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{assignments.length.toLocaleString('vi-VN')}</span> ca coi thi
+            </span>
+          </div>
 
-    <div className="flex items-center gap-2">
-      {/* Sort */}
-      <SortDropdown
-        value={sortOrder}
-        onChange={(val) => setSortOrder(val)}
-        options={[
-          { value: 'newest', label: 'Mới nhất' },
-          { value: 'oldest', label: 'Cũ nhất' },
-          { value: 'name_asc', label: 'Môn thi: A - Z' },
-        ]}
-      />
+          <div className="flex items-center gap-2">
+            {/* Sort */}
+            <SortDropdown
+              value={sortOrder}
+              onChange={(val) => setSortOrder(val)}
+              options={[
+                { value: 'newest', label: 'Mới nhất' },
+                { value: 'oldest', label: 'Cũ nhất' },
+                { value: 'name_asc', label: 'Môn thi: A - Z' },
+              ]}
+            />
 
-      {/* Column Selector */}
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setOpenColumnMenu(!openColumnMenu)}
-          className="h-9 flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-[15px] font-medium text-slate-700 transition-all hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
-        >
-          <SlidersHorizontal className="h-4 w-4 text-blue-600" />
-          <span>Chọn cột</span>
-          <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${openColumnMenu ? 'rotate-180' : ''}`} />
-        </button>
-
-        {openColumnMenu && (
-          <div
-            className="absolute right-0 top-full z-30 mt-1.5 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl text-xs space-y-2"
-            onMouseLeave={() => setOpenColumnMenu(false)}
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-              <span className="font-semibold text-slate-900 text-xs">Hiển thị cột</span>
-              <span className="text-[12px] text-slate-400 font-normal">Click để ẩn/hiện</span>
-            </div>
-
-            <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-              {[
+            {/* Column Selector */}
+            <ColumnToggleDropdown
+              columns={[
                 { key: 'period', label: 'Kỳ thi' },
                 { key: 'subject', label: 'Môn thi' },
                 { key: 'time', label: 'Thời gian' },
@@ -443,78 +425,62 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
                 { key: 'role', label: 'Vai trò' },
                 { key: 'status', label: 'Trạng thái' },
                 { key: 'actions', label: 'Thao tác' },
-              ].map((col) => {
-                const isVisible = visibleColumns[col.key] !== false;
-                return (
-                  <button
-                    key={col.key}
-                    type="button"
-                    onClick={() => setVisibleColumns(prev => ({ ...prev, [col.key]: !isVisible }))}
-                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-left font-medium transition ${
-                      isVisible ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>{col.label}</span>
-                    {isVisible && <Check className="h-3.5 w-3.5 text-blue-600" />}
-                  </button>
-                );
-              })}
+              ]}
+              visibleColumns={visibleColumns}
+              onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
+            />
+
+            {/* View Mode Pills */}
+            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng thẻ"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'list'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng danh sách"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('compact')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'compact'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng thu gọn"
+              >
+                <Layers className="h-4 w-4" />
+              </button>
             </div>
+
+            {/* Refresh */}
+            <button
+              type="button"
+              onClick={handleRefreshClick}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
+              title="Làm mới dữ liệu"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+            </button>
           </div>
-        )}
-      </div>
-
-      {/* View Mode Toggle Pill */}
-      <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
-        <button
-          type="button"
-          onClick={() => setViewMode('grid')}
-          className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
-            viewMode === 'grid'
-              ? 'bg-white text-blue-600 shadow-xs font-semibold'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-          title="Xem dạng lưới"
-        >
-          <LayoutGrid className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => setViewMode('list')}
-          className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
-            viewMode === 'list'
-              ? 'bg-white text-blue-600 shadow-xs font-semibold'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-          title="Xem dạng danh sách"
-        >
-          <List className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => setViewMode('compact')}
-          className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
-            viewMode === 'compact'
-              ? 'bg-white text-blue-600 shadow-xs font-semibold'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
-          title="Xem dạng thẻ gọn"
-        >
-          <Layers className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* Refresh */}
-      <button
-        type="button"
-        onClick={handleRefreshClick}
-        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-        title="Làm mới danh sách"
-      >
-        <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-      </button>
-    </div>
-  </div>
+        </div>
 
   {/* Assignments List / Grid */}
  {loading ? (

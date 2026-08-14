@@ -377,7 +377,7 @@ export default function StudentsPage() {
 
  {/* Filter Toolbar */}
  <div className="flex flex-wrap items-center justify-between gap-4">
- <div className="relative flex-1 min-w-[260px]">
+ <div className="relative w-full sm:w-72 md:w-80">
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
  <input
  type="text"

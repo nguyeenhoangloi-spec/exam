@@ -562,105 +562,70 @@ export default function BackupsPage() {
                 </div>
             </div>
 
-            {/* Advanced Filter Card */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="relative flex-1 min-w-[240px]">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            {/* Search & Filter Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="relative w-full sm:w-72 md:w-80">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
                     <input
                         type="text"
                         placeholder="Tìm theo Snapshot ID, mã lỗi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-8 h-10 text-[15px] font-medium text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
                     />
                     {search && (
                         <button
                             type="button"
                             onClick={() => setSearch('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                            title="Xóa tìm kiếm"
                         >
                             <X className="h-3.5 w-3.5" />
                         </button>
                     )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                    {/* Filter Type */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-500">Loại:</span>
-                        <FilterSelect
-                            size="sm"
-                            value={filterType}
-                            onChange={(e) => setFilterType(e.target.value)}
-                        >
-                            <option value="">Tất cả loại</option>
-                            <option value="FULL">Sao lưu Toàn bộ (FULL)</option>
-                            <option value="DATABASE">Chỉ Cơ sở dữ liệu (DATABASE)</option>
-                            <option value="UPLOADS">Chỉ Tập tin tải lên (UPLOADS)</option>
-                            <option value="SAFETY">Snapshot An toàn (SAFETY)</option>
-                        </FilterSelect>
-                    </div>
+                <div className="flex flex-wrap items-center gap-2">
+                    <FilterSelect
+                        size="md"
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                    >
+                        <option value="">Tất cả loại sao lưu</option>
+                        <option value="FULL">Sao lưu Toàn bộ (FULL)</option>
+                        <option value="DATABASE">Chỉ Cơ sở dữ liệu (DATABASE)</option>
+                        <option value="UPLOADS">Chỉ Tập tin tải lên (UPLOADS)</option>
+                        <option value="SAFETY">Snapshot An toàn (SAFETY)</option>
+                    </FilterSelect>
 
-                    {/* Filter Status */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-500">Trạng thái:</span>
-                        <FilterSelect
-                            size="sm"
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                        >
-                            <option value="">Tất cả trạng thái</option>
-                            <option value="SUCCEEDED">Thành công</option>
-                            <option value="RUNNING">Đang chạy</option>
-                            <option value="VERIFYING">Đang kiểm tra</option>
-                            <option value="QUEUED">Đang chờ</option>
-                            <option value="FAILED">Thất bại</option>
-                        </FilterSelect>
-                    </div>
+                    <FilterSelect
+                        size="md"
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                    >
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="SUCCEEDED">Thành công</option>
+                        <option value="RUNNING">Đang chạy</option>
+                        <option value="VERIFYING">Đang kiểm tra</option>
+                        <option value="QUEUED">Đang chờ</option>
+                        <option value="FAILED">Thất bại</option>
+                    </FilterSelect>
 
-                    {/* Filter Mode */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-500">Phương thức:</span>
-                        <FilterSelect
-                            size="sm"
-                            value={filterMode}
-                            onChange={(e) => setFilterMode(e.target.value)}
-                        >
-                            <option value="">Tất cả phương thức</option>
-                            <option value="MANUAL">Thủ công</option>
-                            <option value="SCHEDULED">Tự động (Cron)</option>
-                        </FilterSelect>
-                    </div>
-
-                    {/* Filter Time Range */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-500">Khoảng thời gian:</span>
-                        <FilterSelect
-                            size="sm"
-                            value={filterTimeRange}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                setFilterTimeRange(val);
-                                if (!val) {
-                                    setFromDate('');
-                                } else if (val === '24h') {
-                                    setFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
-                                } else if (val === '7d') {
-                                    setFromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-                                } else if (val === '30d') {
-                                    setFromDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
-                                } else if (val === '90d') {
-                                    setFromDate(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString());
-                                }
+                    {(search || filterType || filterStatus) && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSearch('');
+                                setFilterType('');
+                                setFilterStatus('');
                             }}
+                            className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                            title="Xóa tất cả bộ lọc"
                         >
-                            <option value="">Tất cả thời gian</option>
-                            <option value="24h">24 giờ qua</option>
-                            <option value="7d">7 ngày qua</option>
-                            <option value="30d">30 ngày qua</option>
-                            <option value="90d">90 ngày qua</option>
-                        </FilterSelect>
-                    </div>
+                            <X className="w-3.5 h-3.5" />
+                            <span>Xóa lọc</span>
+                        </button>
+                    )}
                 </div>
             </div>
 

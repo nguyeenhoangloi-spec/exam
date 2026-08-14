@@ -275,7 +275,7 @@ export default function StudentExamSchedulePage() {
           ))}
         </div>
 
-        {/* Combined 1-Row Toolbar: TabBar bên trái, Bộ lọc & Tìm kiếm bên phải */}
+        {/* ── Status Tabs & Search Row (Chuẩn /exam-papers & /teacher/regrade) ── */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
           <TabBar
             tabs={[
@@ -288,37 +288,53 @@ export default function StudentExamSchedulePage() {
             className="border-b-0 w-auto pt-0"
           />
 
-          <div className="flex items-center gap-2.5 w-full lg:w-auto shrink-0 pb-1 lg:pb-0">
-            <FilterSelect
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 px-3 text-[14px] font-medium text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0 transition shadow-2xs"
-            >
-              <option value="ALL">Tất cả thời gian</option>
-              <option value="UPCOMING">Sắp diễn ra</option>
-              <option value="COMPLETED">Đã kết thúc</option>
-            </FilterSelect>
-
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
+          <div className="flex items-center gap-2 shrink-0 pb-1 lg:pb-0">
+            <div className="relative w-full sm:w-64 md:w-72">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Tìm môn thi, kỳ thi, phòng..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50/50 pl-9 pr-8 text-[14px] font-medium text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs placeholder:text-slate-400"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 transition cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
                   title="Xóa tìm kiếm"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
+
+            <FilterSelect
+              size="sm"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="ALL">Tất cả thời gian</option>
+              <option value="UPCOMING">Sắp diễn ra</option>
+              <option value="COMPLETED">Đã kết thúc</option>
+            </FilterSelect>
+
+            {(searchQuery || statusFilter !== 'ALL' || modeFilter !== 'ALL') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setStatusFilter('ALL');
+                  setModeFilter('ALL');
+                }}
+                className="h-9 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                title="Xóa tất cả bộ lọc"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Xóa lọc</span>
+              </button>
+            )}
           </div>
         </div>
 

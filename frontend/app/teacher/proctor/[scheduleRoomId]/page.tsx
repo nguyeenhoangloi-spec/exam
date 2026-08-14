@@ -37,6 +37,7 @@ import { FilterSelect } from '@/components/ui/FilterSelect';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { TabBar } from '@/components/ui/TabBar';
 import { SortDropdown } from '@/components/ui/SortDropdown';
+import { ColumnToggleDropdown } from '@/components/ui/ColumnToggleDropdown';
 import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { ConfirmModal } from '@/components/ConfirmModal';
@@ -661,7 +662,7 @@ export default function ProctorDashboardPage() {
         ))}
       </div>
 
-      {/* ── 3. Status Tabs & Search Row (Identical to exam-papers) ── */}
+      {/* ── 3. Status Tabs & Search Row (Chuẩn /exam-papers & /teacher/regrade) ── */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
         <TabBar
           tabs={[
@@ -679,22 +680,8 @@ export default function ProctorDashboardPage() {
           className="border-b-0 pt-0 w-auto"
         />
 
-        <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0 pb-1 md:pb-0">
-          <FilterSelect
-            value={riskFilter}
-            onChange={(e) => {
-              setRiskFilter(e.target.value as any);
-              setPage(1);
-            }}
-            size="md"
-          >
-            <option value="ALL">Tất cả mức rủi ro</option>
-            <option value="HIGH">Rủi ro cao (≥ 40đ)</option>
-            <option value="MEDIUM">Rủi ro trung bình (15 - 39đ)</option>
-            <option value="LOW">Rủi ro thấp (&lt; 15đ)</option>
-          </FilterSelect>
-
-          <div className="relative w-full md:w-64">
+        <div className="flex items-center gap-2 shrink-0 pb-1 xl:pb-0">
+          <div className="relative w-full sm:w-64 md:w-72">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
@@ -704,7 +691,7 @@ export default function ProctorDashboardPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-10 pr-8 py-2 text-xs font-normal border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search && (
               <button
@@ -714,20 +701,53 @@ export default function ProctorDashboardPage() {
                   setPage(1);
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                title="Xóa tìm kiếm"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
+
+          <FilterSelect
+            value={riskFilter}
+            onChange={(e) => {
+              setRiskFilter(e.target.value as any);
+              setPage(1);
+            }}
+            size="sm"
+          >
+            <option value="ALL">Tất cả mức rủi ro</option>
+            <option value="HIGH">Rủi ro cao (≥ 40đ)</option>
+            <option value="MEDIUM">Rủi ro trung bình (15 - 39đ)</option>
+            <option value="LOW">Rủi ro thấp (&lt; 15đ)</option>
+          </FilterSelect>
+
+          {(search || riskFilter !== 'ALL' || filter !== 'ALL') && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearch('');
+                setRiskFilter('ALL');
+                setFilter('ALL');
+                setPage(1);
+              }}
+              className="h-9 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
+              title="Xóa tất cả bộ lọc"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Xóa lọc</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* ── 4. Table Toolbar ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-          Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems}</span> /{' '}
-          {students.length} thí sinh trong phòng thi
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+            Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> / {students.length} thí sinh
+          </span>
+        </div>
 
         <div className="flex items-center gap-2">
           {/* Sort Dropdown */}
@@ -745,80 +765,47 @@ export default function ProctorDashboardPage() {
           />
 
           {/* Column Toggle */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setOpenColumnMenu(!openColumnMenu)}
-              className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
-            >
-              <SlidersHorizontal className="h-4 w-4 text-slate-500" />
-              <span>Chọn cột</span>
-            </button>
+          <ColumnToggleDropdown
+            columns={columnsList}
+            visibleColumns={visibleColumns}
+            onToggle={handleColumnToggle}
+          />
 
-            {openColumnMenu && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl z-50 animate-in fade-in zoom-in-95">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <span className="text-xs font-bold text-slate-800">Cột hiển thị</span>
-                  <button
-                    type="button"
-                    onClick={() => setOpenColumnMenu(false)}
-                    className="text-slate-400 hover:text-slate-600"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-                <div className="space-y-1.5 pt-2">
-                  {columnsList.map((col) => (
-                    <label
-                      key={col.key}
-                      className="flex items-center gap-2.5 text-xs text-slate-700 font-medium cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns[col.key] !== false}
-                        onChange={() => handleColumnToggle(col.key)}
-                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span>{col.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* View Mode Group (Standardized h-10 with h-9 w-9 buttons) */}
-          <div className="h-10 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
+          {/* View Mode Pills */}
+          <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
             <button
               type="button"
               onClick={() => setViewMode('list')}
-              className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list'
-                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
-                : 'text-slate-400 hover:text-slate-700'
-                }`}
-              title="Dạng Danh sách chuẩn"
+              className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+              title="Dạng danh sách"
             >
               <List className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => setViewMode('grid')}
-              className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid'
-                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
-                : 'text-slate-400 hover:text-slate-700'
-                }`}
-              title="Dạng Lưới sơ đồ chỗ ngồi"
+              className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+              title="Dạng sơ đồ chỗ ngồi"
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => setViewMode('compact')}
-              className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact'
-                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
-                : 'text-slate-400 hover:text-slate-700'
-                }`}
-              title="Dạng Thu gọn"
+              className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                viewMode === 'compact'
+                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+              title="Dạng thu gọn"
             >
               <Layers className="h-4 w-4" />
             </button>
@@ -828,8 +815,8 @@ export default function ProctorDashboardPage() {
           <button
             type="button"
             onClick={() => loadDashboard(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none border border-slate-200 bg-white shadow-2xs"
-            title="Làm mới dữ liệu"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+            title="Làm mới dữ liệu giám thị"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
           </button>

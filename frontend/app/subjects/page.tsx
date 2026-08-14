@@ -378,7 +378,7 @@ export default function SubjectsPage() {
  {/* Filter Card Toolbar */}
  <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
  {/* Search Input Field */}
- <div className="relative flex-1 w-full min-w-[280px]">
+ <div className="relative w-full sm:w-72 md:w-80">
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
  <input
  type="text"
@@ -869,7 +869,7 @@ export default function SubjectsPage() {
  <div className="space-y-3">
  {/* Filters */}
  <div className="flex flex-wrap gap-2">
- <div className="relative flex-1 min-w-[120px]">
+ <div className="relative w-full sm:w-72 md:w-80">
  <FilterSelect value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
  <option value="">Tất cả lớp</option>

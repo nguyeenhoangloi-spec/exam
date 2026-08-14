@@ -319,56 +319,56 @@ export default function ClassesPage() {
  });
  };
 
- return (
- <>
- <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
- {/* Header */}
- <ClassHeader
- onAdd={openAddModal}
- onExport={exportExcel}
- onPrint={handlePrintReport}
- isAdmin={currentUser?.role === 'ADMIN'}
- />
+   return (
+    <>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        {/* Header */}
+        <ClassHeader
+          onAdd={openAddModal}
+          onExport={exportExcel}
+          onPrint={handlePrintReport}
+          isAdmin={currentUser?.role === 'ADMIN'}
+        />
 
- {/* Dynamic KPI Cards Row calculated from REAL API data */}
- <ClassKPICards
- total={kpiData.total}
- totalDepartments={kpiData.totalDepartments}
- totalStudents={kpiData.totalStudents}
- avgStudents={kpiData.avgStudents}
- maxClassStudents={kpiData.maxClassStudents}
- />
+        {/* Dynamic KPI Cards Row calculated from REAL API data */}
+        <ClassKPICards
+          total={kpiData.total}
+          totalDepartments={kpiData.totalDepartments}
+          totalStudents={kpiData.totalStudents}
+          avgStudents={kpiData.avgStudents}
+          maxClassStudents={kpiData.maxClassStudents}
+        />
 
- {/* Filter Card */}
- <div className="flex flex-wrap items-center justify-between gap-4">
- <div className="relative flex-1 min-w-[260px]">
- <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
- <input
- type="text"
- placeholder="Tìm theo mã lớp, tên lớp học..."
- value={search}
- onChange={(e) => {
- setSearch(e.target.value);
- setPage(1);
- }}
- className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
- />
- {search && (
- <button
- type="button"
- onClick={() => {
- setSearch('');
- setPage(1);
- }}
- className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
- >
- <X className="h-3.5 w-3.5" />
- </button>
- )}
- </div>
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="relative w-full sm:w-72 md:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Tìm theo mã lớp, tên lớp học..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                title="Xóa tìm kiếm"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Khoa trực thuộc:</span>
+          <div className="flex flex-wrap items-center gap-2">
             <FilterSelect
               value={selectedDeptId}
               onChange={(e) => {
@@ -384,10 +384,26 @@ export default function ClassesPage() {
                 </option>
               ))}
             </FilterSelect>
+
+            {(search || selectedDeptId) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setSelectedDeptId('');
+                  setPage(1);
+                }}
+                className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                title="Xóa tất cả bộ lọc"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Xóa lọc</span>
+              </button>
+            )}
           </div>
         </div>
 
- {/* Dynamic Table Action Toolbar */}
+        {/* Dynamic Table Action Toolbar */}
  <ClassTableToolbar
  totalCount={filteredClasses.length}
  sortOrder={sortOrder}

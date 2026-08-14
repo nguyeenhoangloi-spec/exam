@@ -62,9 +62,11 @@ export function ExamReportTableToolbar({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-      <span className="text-xs font-semibold text-slate-600">
-        <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
-      </span>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+          Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> kết quả
+        </span>
+      </div>
 
       <div className="flex items-center gap-2">
         {/* Sort */}
@@ -86,15 +88,15 @@ export function ExamReportTableToolbar({
           onToggle={(key) => onColumnToggle?.(key)}
         />
 
-        {/* View Mode */}
-        <div className="h-10 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
+        {/* View Mode Pills */}
+        <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
           <button
             type="button"
             onClick={() => onViewModeChange?.('list')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'list'
-                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
-                : 'text-slate-400 hover:text-slate-700'
+                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
             title="Dạng danh sách"
           >
@@ -103,10 +105,10 @@ export function ExamReportTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('grid')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'grid'
-                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
-                : 'text-slate-400 hover:text-slate-700'
+                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
             title="Dạng thẻ"
           >
@@ -115,10 +117,10 @@ export function ExamReportTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('compact')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
               viewMode === 'compact'
-                ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
-                : 'text-slate-400 hover:text-slate-700'
+                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
             title="Dạng thu gọn"
           >
@@ -126,7 +128,7 @@ export function ExamReportTableToolbar({
           </button>
         </div>
 
-        {/* Refresh */}
+        {/* Refresh button (borderless) */}
         <button
           type="button"
           onClick={handleRefreshClick}

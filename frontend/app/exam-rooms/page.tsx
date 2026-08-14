@@ -316,10 +316,10 @@ export default function ExamRoomsPage() {
           activeBuildingCount={kpiData.activeBuildingCount}
         />
 
-        {/* Filter Card Toolbar */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Search Input Field */}
-          <div className="relative flex-1 w-full min-w-[280px]">
+          <div className="relative w-full sm:w-72 md:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
@@ -329,7 +329,7 @@ export default function ExamRoomsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
             />
             {search && (
               <button
@@ -338,52 +338,65 @@ export default function ExamRoomsPage() {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                title="Xóa tìm kiếm"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
           {/* Filter Select Dropdowns Group */}
-          <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
-            {/* Filter Item: Loại phòng */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Loại phòng:</span>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Loại phòng */}
+            <FilterSelect
+              value={selectedType}
+              onChange={(e) => {
+                setSelectedType(e.target.value);
+                setPage(1);
+              }}
+              size="md"
+            >
+              <option value="">Tất cả loại phòng</option>
+              <option value="COMPUTER_LAB">Phòng máy tính</option>
+              <option value="THEORY">Phòng lý thuyết</option>
+            </FilterSelect>
+
+            {/* Tòa nhà */}
+            {buildingList.length > 0 && (
               <FilterSelect
-                value={selectedType}
+                value={selectedBuilding}
                 onChange={(e) => {
-                  setSelectedType(e.target.value);
+                  setSelectedBuilding(e.target.value);
                   setPage(1);
                 }}
                 size="md"
               >
-                <option value="">Tất cả loại phòng</option>
-                <option value="COMPUTER_LAB">Phòng máy tính</option>
-                <option value="THEORY">Phòng lý thuyết</option>
+                <option value="">Tất cả tòa nhà</option>
+                {buildingList.map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
               </FilterSelect>
-            </div>
+            )}
 
-            {/* Filter Item: Tòa nhà */}
-            {buildingList.length > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Tòa nhà:</span>
-                <FilterSelect
-                  value={selectedBuilding}
-                  onChange={(e) => {
-                    setSelectedBuilding(e.target.value);
-                    setPage(1);
-                  }}
-                  size="md"
-                >
-                  <option value="">Tất cả tòa nhà</option>
-                  {buildingList.map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </FilterSelect>
-              </div>
+            {/* Clear Filters Button */}
+            {(search || selectedType || selectedBuilding) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setSelectedType('');
+                  setSelectedBuilding('');
+                  setPage(1);
+                }}
+                className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                title="Xóa tất cả bộ lọc"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Xóa lọc</span>
+              </button>
             )}
           </div>
         </div>
