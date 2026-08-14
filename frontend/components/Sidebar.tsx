@@ -274,13 +274,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         collapsed ? 'w-[72px]' : 'w-[252px]'
       } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'}`}
     >
-      {/* ── 1. Header Section: Brand Logo & Toggle (Khớp 100% chiều cao h-16 với Header chính) ── */}
+      {/* ── 1. Header Section: Brand Logo & Toggle (Không dùng viền kẻ ngang, chữ to rõ nét) ── */}
       {collapsed ? (
-        <div className="relative flex h-16 shrink-0 items-center justify-center border-b border-slate-200/70 dark:border-slate-700/70 px-3 bg-white dark:bg-slate-900">
+        <div className="relative flex h-16 shrink-0 items-center justify-center px-3 bg-white dark:bg-slate-900">
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-all active:scale-95 cursor-pointer shadow-2xs"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-all active:scale-95 cursor-pointer shadow-2xs"
             aria-label="Mở rộng thanh bên"
             title="Mở rộng thanh bên"
           >
@@ -288,16 +288,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       ) : (
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200/70 dark:border-slate-700/70 px-4 bg-white dark:bg-slate-900">
+        <div className="flex h-16 shrink-0 items-center justify-between px-4 bg-white dark:bg-slate-900">
           <Link href="/dashboard" className="flex items-center gap-3 min-w-0 group cursor-pointer">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-md shadow-blue-500/25 ring-2 ring-blue-50 dark:ring-blue-950 transition-transform group-hover:scale-105">
-              <GraduationCap className="h-5 w-5" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-md shadow-blue-500/25 ring-2 ring-blue-50 dark:ring-blue-950 transition-transform group-hover:scale-105">
+              <GraduationCap className="h-5.5 w-5.5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[15.5px] font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
+              <h1 className="truncate text-[17px] font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
                 Exam System
               </h1>
-              <p className="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                 Hệ thống khảo thí
               </p>
             </div>
@@ -310,7 +310,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
-            <PanelLeft className="h-4 w-4" />
+            <PanelLeft className="h-4.5 w-4.5" />
           </button>
         </div>
       )}
