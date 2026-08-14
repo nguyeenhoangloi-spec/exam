@@ -138,29 +138,22 @@ export function DashboardStatistics({
               </div>
             </div>
 
-            {/* Thanh đo tiến độ tỷ lệ động (Progress Track) */}
-            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
+            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
               <div
                 className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(Math.max(spec.progressPercent, 5), 100)}%` }}
               />
             </div>
 
-            {/* Bottom Subtext with Hover Tooltip Reveal */}
-            <div className="relative mt-2.5">
+            {/* Bottom Subtext */}
+            <div className="mt-2.5">
               <span
                 title={spec.subtext}
-                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors"
+                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
               >
                 {spec.subtext}
               </span>
-
-              {/* Tooltip nổi khi rê chuột vào */}
-              <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block z-30 pointer-events-none transition-all duration-150">
-                <div className="bg-slate-900 dark:bg-slate-800 text-white text-[12px] font-medium px-2.5 py-1 rounded-lg shadow-xl whitespace-nowrap border border-slate-700/80">
-                  {spec.subtext} ({spec.progressLabel})
-                </div>
-              </div>
             </div>
           </div>
         );
