@@ -357,15 +357,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               if (!collapsed) toggleSubMenu(item.href);
                             }}
                             className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-between px-3'
-                              } py-2.5 rounded-2xl text-[13.5px] font-semibold transition-all duration-200 cursor-pointer ${isActive
-                                ? 'bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold'
+                              } py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-200 cursor-pointer ${isActive
+                                ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold'
                                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
                               }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
                               <div
-                                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${isActive
-                                  ? 'bg-blue-600 text-white shadow-sm'
+                                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${isActive
+                                  ? 'bg-blue-600 text-white shadow-xs'
                                   : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
                                   }`}
                               >
@@ -391,8 +391,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className={`block rounded-xl px-3 py-1.5 text-[12.5px] font-medium transition-all ${isSubActive
-                                      ? 'bg-blue-600 text-white font-bold shadow-xs'
+                                    className={`block rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-all ${isSubActive
+                                      ? 'bg-blue-600 text-white font-semibold shadow-xs'
                                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                                       }`}
                                   >
@@ -414,14 +414,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
                         className={`group flex items-center ${collapsed ? 'justify-center px-0' : 'px-3'
-                          } py-2.5 rounded-2xl text-[13.5px] font-semibold transition-all duration-200 ${isActive
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 font-bold'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
+                          } py-2.5 rounded-xl text-[13.5px] font-semibold transition-all duration-150 ${isActive
+                            ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold'
+                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
                           }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${isActive
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
                               }`}
                           >
                             <Icon className="h-4.5 w-4.5" />
