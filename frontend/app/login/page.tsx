@@ -306,23 +306,23 @@ export default function LoginPage() {
 
             {/* Academic 3D Centerpiece with Floating Badges */}
             <div className="sm:col-span-7 flex justify-center items-center relative py-2">
-              <div className="relative w-full max-w-[400px] aspect-[4/3] flex items-center justify-center">
+              <div className="relative w-full max-w-[460px] aspect-[4/3] flex items-center justify-center transition-transform duration-500 hover:scale-[1.02]">
                 {/* Soft Radial Ambient Glow */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-300/30 via-sky-200/25 to-indigo-300/20 dark:from-blue-900/25 dark:to-indigo-950/20 rounded-full blur-3xl" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-300/30 via-sky-200/25 to-indigo-300/20 dark:from-blue-900/25 dark:to-indigo-950/20 rounded-full blur-3xl animate-pulse" />
 
                 {/* Floating Micro Badge 1: Test Check */}
-                <div className="absolute -top-2 left-24 z-20 h-10 w-10 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-transform duration-300 hover:scale-110">
-                  <FileCheck2 className="h-5 w-5" />
+                <div className="absolute -top-3 left-28 z-20 h-11 w-11 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-lg shadow-blue-500/10 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                  <FileCheck2 className="h-5.5 w-5.5" />
                 </div>
 
                 {/* Floating Micro Badge 2: Chart */}
-                <div className="absolute top-14 right-2 z-20 h-10 w-10 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-transform duration-300 hover:scale-110">
-                  <BarChart3 className="h-5 w-5" />
+                <div className="absolute top-16 right-0 z-20 h-11 w-11 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-lg shadow-blue-500/10 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                  <BarChart3 className="h-5.5 w-5.5" />
                 </div>
 
                 {/* 3D Vector Isometric Exam Illustration */}
                 <svg
-                  className="w-full h-full relative z-10 drop-shadow-2xl"
+                  className="w-full h-full relative z-10 drop-shadow-2xl transition-all duration-500"
                   viewBox="0 0 420 320"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -565,33 +565,20 @@ export default function LoginPage() {
             </div>
 
             {/* ── Collapsible Internal Login Section ── */}
-            <div className="space-y-1.5">
-              {/* Trigger Button to Expand/Collapse Form */}
+            <div className="space-y-1">
+              {/* Clean Frameless Trigger Button */}
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className={`w-full h-11 rounded-2xl border px-3.5 flex items-center justify-between text-[13px] font-semibold transition-all duration-300 cursor-pointer ${
-                  showManualLogin
-                    ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300 shadow-2xs'
-                    : isDark
-                    ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800'
-                    : 'border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                }`}
+                className="w-full py-2 px-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 rounded-2xl transition-all duration-200 cursor-pointer"
               >
-                <div className="flex items-center gap-2">
-                  <UserIcon className="h-4 w-4 text-slate-500" />
-                  <span>Đăng nhập tài khoản nội bộ</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-normal text-slate-400">
-                    {showManualLogin ? 'Thu gọn' : 'Nhấn để mở form'}
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
-                      showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
-                    }`}
-                  />
-                </div>
+                <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-500" />
+                <span>Đăng nhập tài khoản nội bộ</span>
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
+                    showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
+                  }`}
+                />
               </button>
 
               {/* Smooth Animated Collapsible Form Container */}
