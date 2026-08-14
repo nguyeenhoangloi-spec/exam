@@ -186,12 +186,12 @@ export default function LoginPage() {
         </svg>
       </div>
 
-      {/* ── Top Header Navigation (Fixed top position) ── */}
+      {/* ── Top Header Navigation ── */}
       <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-5 pb-1 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
-            <GraduationCap className="h-5.5 w-5.5" />
+            <GraduationCap className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
@@ -214,14 +214,14 @@ export default function LoginPage() {
           className="flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
         >
           {isDark ? (
-            <Sun className="h-4.5 w-4.5 text-amber-400" />
+            <Sun className="h-5 w-5 text-amber-400" />
           ) : (
-            <Moon className="h-4.5 w-4.5 text-slate-600" />
+            <Moon className="h-5 w-5 text-slate-600" />
           )}
         </button>
       </header>
 
-      {/* ── Main Section: 2-Column Desktop Grid (Top-anchored, zero layout jump) ── */}
+      {/* ── Main Section: 2-Column Desktop Grid ── */}
       <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 pt-2 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full flex-1">
         {/* ── Left Column: System Introduction & Academic 3D Art Scene (7 Cols ~ 58%) ── */}
         <section className="lg:col-span-7 flex flex-col justify-between space-y-5">
@@ -242,8 +242,8 @@ export default function LoginPage() {
             <div className="sm:col-span-5 space-y-3.5">
               {/* Feature 1 */}
               <div className="flex items-start gap-3 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <ShieldCheck className="h-4.5 w-4.5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
                   <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
@@ -255,8 +255,8 @@ export default function LoginPage() {
 
               {/* Feature 2 */}
               <div className="flex items-start gap-3 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <FileCheck2 className="h-4.5 w-4.5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <FileCheck2 className="h-5 w-5" />
                 </div>
                 <div>
                   <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
@@ -268,8 +268,8 @@ export default function LoginPage() {
 
               {/* Feature 3 */}
               <div className="flex items-start gap-3 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <BarChart3 className="h-4.5 w-4.5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <BarChart3 className="h-5 w-5" />
                 </div>
                 <div>
                   <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
@@ -281,8 +281,8 @@ export default function LoginPage() {
 
               {/* Feature 4 */}
               <div className="flex items-start gap-3 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <Clock className="h-4.5 w-4.5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <Clock className="h-5 w-5" />
                 </div>
                 <div>
                   <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
@@ -300,12 +300,12 @@ export default function LoginPage() {
                 <div className="absolute inset-0 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-2xl" />
 
                 {/* Floating Micro Badge 1: Checklist icon */}
-                <div className="absolute -top-1 left-24 z-20 h-8.5 w-8.5 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                <div className="absolute -top-1 left-24 z-20 h-9 w-9 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
                   <FileCheck2 className="h-4 w-4" />
                 </div>
 
                 {/* Floating Micro Badge 2: Mini Chart */}
-                <div className="absolute top-16 right-0 z-20 h-8.5 w-8.5 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                <div className="absolute top-16 right-0 z-20 h-9 w-9 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
                   <BarChart3 className="h-4 w-4" />
                 </div>
 
@@ -443,8 +443,8 @@ export default function LoginPage() {
 
           {/* Bottom Trust Statistics */}
           <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Users className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -455,8 +455,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Award className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -467,8 +467,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <ShieldCheck className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -492,8 +492,8 @@ export default function LoginPage() {
           >
             {/* Top User Avatar Circle */}
             <div className="text-center mb-4">
-              <div className="inline-flex h-13 w-13 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-2 border border-blue-100/80 dark:border-blue-900 shadow-inner">
-                <UserIcon className="h-6.5 w-6.5" />
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-2 border border-blue-100/80 dark:border-blue-900 shadow-inner">
+                <UserIcon className="h-7 w-7" />
               </div>
               <h2 className="text-[23px] sm:text-[24px] font-bold text-slate-900 dark:text-white tracking-tight">
                 Đăng nhập hệ thống
@@ -518,7 +518,7 @@ export default function LoginPage() {
               disabled={loading}
               className="flex h-[46px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[14px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
             >
-              <svg className="h-4.5 w-4.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -552,7 +552,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className={`w-full h-10.5 rounded-2xl border px-3.5 flex items-center justify-between text-[13px] font-semibold transition-all duration-300 cursor-pointer ${
+                className={`w-full h-11 rounded-2xl border px-3.5 flex items-center justify-between text-[13px] font-semibold transition-all duration-300 cursor-pointer ${
                   showManualLogin
                     ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
                     : isDark
@@ -561,7 +561,7 @@ export default function LoginPage() {
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <UserIcon className="h-3.5 w-3.5 text-slate-500" />
+                  <UserIcon className="h-4 w-4 text-slate-500" />
                   <span>Đăng nhập tài khoản nội bộ</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -569,7 +569,7 @@ export default function LoginPage() {
                     {showManualLogin ? 'Thu gọn' : 'Nhấn để mở form'}
                   </span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-300 ease-in-out ${
+                    className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
                       showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
                     }`}
                   />
@@ -593,7 +593,7 @@ export default function LoginPage() {
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                          <Mail className="h-3.5 w-3.5" />
+                          <Mail className="h-4 w-4" />
                         </div>
                         <input
                           type="text"
@@ -604,7 +604,7 @@ export default function LoginPage() {
                           className={`w-full h-[42px] rounded-2xl border pl-9 pr-3.5 text-[13.5px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                           }`}
                         />
                       </div>
@@ -617,7 +617,7 @@ export default function LoginPage() {
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                          <Lock className="h-3.5 w-3.5" />
+                          <Lock className="h-4 w-4" />
                         </div>
                         <input
                           type={showPassword ? 'text' : 'password'}
@@ -628,7 +628,7 @@ export default function LoginPage() {
                           className={`w-full h-[42px] rounded-2xl border pl-9 pr-10 text-[13.5px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                           }`}
                         />
                         <button
@@ -637,7 +637,7 @@ export default function LoginPage() {
                           className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
                           aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                         >
-                          {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
@@ -674,7 +674,7 @@ export default function LoginPage() {
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <Lock className="h-3.5 w-3.5" />
+                          <Lock className="h-4 w-4" />
                           <span>Đăng nhập</span>
                         </div>
                       )}
