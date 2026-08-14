@@ -446,42 +446,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* ── 3. Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom ── */}
+      {/* ── 3. Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom (Đồng bộ với Header) ── */}
       <div ref={footerRef} className="relative border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shrink-0">
         <button
           type="button"
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`group flex w-full items-center gap-3 px-2 py-2 rounded-xl transition-colors text-left cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800 ${
+          className={`group flex w-full items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer text-left ${
             showUserMenu ? 'bg-slate-100 dark:bg-slate-800' : ''
           }`}
         >
-          {/* Avatar — luôn cố định tuyệt đối, không dịch chuyển */}
-          <div className="relative h-9 w-9 shrink-0">
-            {avatarUrl ? (
-              <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 rounded-full object-cover" />
-            ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-[15px]">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-            )}
-            {/* Chấm xanh trực tuyến */}
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
-          </div>
+          {/* Avatar Circle — đồng bộ 100% với Header */}
+          {avatarUrl ? (
+            <DynamicImage
+              src={avatarUrl}
+              alt={displayName}
+              className="h-9 w-9 shrink-0 rounded-full object-cover border border-slate-200"
+            />
+          ) : (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 font-semibold text-white text-xs tracking-tight">
+              {displayName.charAt(0).toUpperCase()}
+            </div>
+          )}
 
-          {/* Text — ẩn bằng overflow-hidden, không bao giờ unmount khỏi DOM để chống nhảy layout */}
-          <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-snug whitespace-nowrap">
+          {/* Text — Name & Role đồng bộ 100% với Header */}
+          <div className={`min-w-0 flex-1 overflow-hidden text-left leading-tight transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
+            <span className="block text-[13px] font-semibold text-slate-900 dark:text-slate-100 truncate">
               {displayName}
-            </p>
-            <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug whitespace-nowrap">
+            </span>
+            <span className="block text-[12px] font-medium text-primary-600 truncate">
               {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
-            </p>
+            </span>
           </div>
 
-          <ChevronRight
-            className={`h-4 w-4 text-slate-400 shrink-0 transition-all duration-200 ${
+          <ChevronDown
+            className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
               collapsed ? 'opacity-0 w-0' : 'opacity-100'
-            } ${showUserMenu ? 'rotate-90 text-blue-600' : ''}`}
+            } ${showUserMenu ? 'rotate-180 text-primary-600' : ''}`}
           />
         </button>
 
