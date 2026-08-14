@@ -280,11 +280,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-all active:scale-95 cursor-pointer shadow-2xs"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-all active:scale-95 cursor-pointer shadow-2xs"
             aria-label="Mở rộng thanh bên"
             title="Mở rộng thanh bên"
           >
-            <PanelLeftOpen className="h-5 w-5" />
+            <PanelLeftOpen className="h-6 w-6" />
           </button>
         </div>
       ) : (
@@ -306,11 +306,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 cursor-pointer"
             aria-label="Thu gọn thanh bên"
             title="Thu gọn thanh bên"
           >
-            <PanelLeft className="h-4.5 w-4.5" />
+            <PanelLeft className="h-5 w-5" />
           </button>
         </div>
       )}
