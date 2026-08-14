@@ -480,16 +480,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* User Popover Menu */}
         {showUserMenu && (
           <div
-            className={`absolute bottom-full mb-2 w-60 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl ${collapsed ? 'left-14' : 'left-2'
+            className={`absolute bottom-full mb-2 w-56 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl ${collapsed ? 'left-14' : 'left-2'
               }`}
           >
             {/* Header profile info */}
             <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
+              <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
+                <p className="truncate text-[12.5px] font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
                 <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   Đang trực tuyến
@@ -502,7 +502,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/profile"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 <span>Hồ sơ cá nhân</span>
@@ -511,7 +511,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/settings"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 <span>Cài đặt hệ thống</span>
@@ -520,7 +520,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Link
                 href="/contact"
                 onClick={() => setShowUserMenu(false)}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 <span>Trung tâm hỗ trợ</span>
@@ -529,7 +529,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 {isDark ? (
                   <Sun className="h-4 w-4 text-amber-400" />
@@ -547,7 +547,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   setShowUserMenu(false);
                   setShowLogoutConfirm(true);
                 }}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-rose-600 font-medium hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
               >
                 <LogOut className="h-4 w-4 text-rose-600" />
                 <span>Đăng xuất</span>
