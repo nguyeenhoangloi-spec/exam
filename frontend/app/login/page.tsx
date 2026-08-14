@@ -191,21 +191,15 @@ export default function LoginPage() {
 
       {/* ── Top Header Navigation (Fixed & Sleek) ── */}
       <header className="relative z-10 w-full max-w-[1380px] mx-auto px-6 sm:px-10 pt-7 pb-3 shrink-0 flex items-center justify-between">
-        {/* Brand Logo with Status Pulse */}
+        {/* Brand Logo */}
         <div className="flex items-center gap-3.5 group cursor-pointer">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50 transition-transform duration-300 group-hover:scale-105">
             <GraduationCap className="h-6.5 w-6.5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[21px] font-black tracking-tight text-slate-900 dark:text-white leading-none">
-                EXAMSYS
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 shadow-2xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Hệ thống sẵn sàng
-              </span>
-            </div>
+            <span className="text-[21px] font-black tracking-tight text-slate-900 dark:text-white leading-none block">
+              EXAMSYS
+            </span>
             <p className="text-[11.5px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase mt-0.5">
               HỆ THỐNG KHẢO THÍ ĐIỆN TỬ
             </p>
@@ -234,10 +228,6 @@ export default function LoginPage() {
         <section className="lg:col-span-7 flex flex-col justify-start space-y-9">
           {/* Main Large Headline with Gradient Text */}
           <div className="space-y-3.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100/70 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200/60 dark:border-blue-800 shadow-2xs">
-              <Sparkles className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
-              <span>Nền Tảng Khảo Thí Chuẩn Quốc Tế</span>
-            </div>
             <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
               HỆ THỐNG <br />
               <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
