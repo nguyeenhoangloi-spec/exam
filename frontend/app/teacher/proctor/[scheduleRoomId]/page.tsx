@@ -848,7 +848,7 @@ export default function ProctorDashboardPage() {
           </p>
         </div>
       ) : viewMode === 'grid' ? (
-        /* ── 5.1 Creative Smart Seating Grid View Mode (Sơ đồ thẻ bàn thi thông minh) ── */
+        /* ── 5.1 Creative Smart Seating Grid View Mode ── */
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {currentStudents.map((s: any) => {
             const att = s.attempt;
@@ -859,110 +859,122 @@ export default function ProctorDashboardPage() {
             const isChecked = selectedIds.includes(s.student.id);
             const isOnline = att?.status === 'IN_PROGRESS';
             const isDisconnected = att?.status === 'DISCONNECTED';
+            const isSubmitted = ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(att?.status);
+
+            // Card color scheme based on student state
+            const cardScheme = hasFlagged
+              ? { border: 'border-rose-200 dark:border-rose-900/60', headerBg: 'bg-gradient-to-r from-rose-50 to-rose-100/60 dark:from-rose-950/40 dark:to-rose-900/20', ring: 'ring-2 ring-rose-300/50' }
+              : isDisconnected
+                ? { border: 'border-amber-200 dark:border-amber-900/60', headerBg: 'bg-gradient-to-r from-amber-50 to-amber-100/60 dark:from-amber-950/40 dark:to-amber-900/20', ring: '' }
+                : isOnline
+                  ? { border: 'border-emerald-200/80 dark:border-emerald-900/50', headerBg: 'bg-gradient-to-r from-emerald-50 to-emerald-100/40 dark:from-emerald-950/30 dark:to-emerald-900/10', ring: '' }
+                  : isSubmitted
+                    ? { border: 'border-slate-200 dark:border-slate-700', headerBg: 'bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/60 dark:to-slate-800/30', ring: '' }
+                    : { border: 'border-slate-200 dark:border-slate-700/80', headerBg: 'bg-gradient-to-r from-blue-50/60 to-slate-50 dark:from-slate-800/50 dark:to-slate-800/30', ring: '' };
 
             return (
               <div
                 key={s.student.id}
-                className={`group relative rounded-2xl border bg-white dark:bg-slate-900 p-4.5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3.5 ${isChecked
-                  ? 'ring-2 ring-blue-500 bg-blue-50/20 border-blue-300 dark:border-blue-600'
-                  : hasFlagged
-                    ? 'border-rose-200/90 hover:border-rose-400'
-                    : isDisconnected
-                      ? 'border-amber-200/90 hover:border-amber-400'
-                      : 'border-slate-200/90 dark:border-slate-800 hover:border-blue-300'
-                  }`}
+                className={`group relative rounded-2xl border ${cardScheme.border} bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col ${isChecked ? 'ring-2 ring-blue-500 border-blue-300 dark:border-blue-600' : cardScheme.ring}`}
               >
-                {/* Top Section: Seat Badge + Ping Indicator + Checkbox */}
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                  <div className="flex items-center gap-2.5">
+                {/* Card Header — Seat + Status chips */}
+                <div className={`${cardScheme.headerBg} px-4 py-3 flex items-center justify-between gap-2 border-b ${cardScheme.border}`}>
+                  <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                     />
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold text-xs border border-blue-100 dark:border-blue-900">
-                      <span>Ghế {s.seatNumber}</span>
-                    </div>
+                    <span className="text-[13px] font-black text-slate-700 dark:text-slate-200 tracking-tight">
+                      Ghế {s.seatNumber}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-1.5">
-                    {/* Live Online Ping indicator */}
+                    {hasFlagged && (
+                      <span className="flex items-center gap-1 text-[10.5px] font-bold text-rose-700 bg-rose-100 dark:bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-900">
+                        <ShieldAlert className="w-3 h-3" />
+                        Vi phạm
+                      </span>
+                    )}
                     {isOnline && (
-                      <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="flex items-center gap-1 text-[10.5px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-900">
                         <span className="relative flex h-1.5 w-1.5">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                           <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                         </span>
-                        Trực tuyến
+                        Live
                       </span>
                     )}
                     {isDisconnected && (
-                      <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                      <span className="flex items-center gap-1 text-[10.5px] font-bold text-amber-700 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-900">
                         <WifiOff className="w-3 h-3" />
                         Mất mạng
+                      </span>
+                    )}
+                    {!att && (
+                      <span className="text-[10.5px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                        Chưa vào
+                      </span>
+                    )}
+                    {isSubmitted && (
+                      <span className="flex items-center gap-1 text-[10.5px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                        <Check className="w-3 h-3" />
+                        Đã nộp
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Middle Info: Name, MSSV, SBD */}
-                <div className="space-y-2">
+                {/* Card Body — Student Info */}
+                <div className="px-4 py-3 flex-1 space-y-3">
+                  {/* Name + Flag icon */}
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <h4 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
+                      <h4 className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
                         {s.student.fullName}
                       </h4>
-                      {hasFlagged && (
-                        <span title="Có biên bản vi phạm">
-                          <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0 animate-bounce" />
-                        </span>
-                      )}
+                      {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0 animate-pulse" />}
                     </div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge>
-                      <span className="text-xs font-semibold text-slate-500 tabular-nums">
+                      <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 tabular-nums">
                         SBD: {s.examNumber}
                       </span>
                     </div>
                   </div>
 
-                  {/* Status & Risk indicators */}
-                  <div className="space-y-1.5 pt-1 text-xs text-slate-600 dark:text-slate-400">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Trạng thái:</span>
-                      <StatusBadge
-                        status={att?.status || 'NOT_STARTED'}
-                        customLabel={`${statusLabel}${att?.extraMinutes > 0 ? ` (+${att.extraMinutes}p)` : ''}`}
-                      />
-                    </div>
+                  {/* Status + Risk mini row */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <StatusBadge
+                      status={att?.status || 'NOT_STARTED'}
+                      customLabel={`${statusLabel}${att?.extraMinutes > 0 ? ` +${att.extraMinutes}p` : ''}`}
+                    />
+                    <span className={`text-[11.5px] font-bold px-2 py-0.5 rounded-full ${
+                      riskScore >= 40
+                        ? 'text-rose-700 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900'
+                        : riskScore >= 15
+                          ? 'text-amber-700 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900'
+                          : 'text-slate-500 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                    }`}>
+                      {riskScore}đ {riskLevel}
+                    </span>
+                  </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Mức rủi ro:</span>
-                      <span className={riskCls}>
-                        {riskScore}đ ({riskLevel})
-                      </span>
-                    </div>
-
-                    {/* Anti-cheat Risk Meter (h-1 slender progress) */}
-                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden mt-1">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${riskScore >= 40
-                          ? 'bg-rose-500'
-                          : riskScore >= 15
-                            ? 'bg-amber-500'
-                            : 'bg-blue-600'
-                          }`}
-                        style={{ width: `${Math.min(Math.max((riskScore / 50) * 100, 5), 100)}%` }}
-                      />
-                    </div>
+                  {/* Risk progress bar */}
+                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${riskScore >= 40 ? 'bg-rose-500' : riskScore >= 15 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                      style={{ width: `${Math.min(Math.max((riskScore / 50) * 100, 2), 100)}%` }}
+                    />
                   </div>
                 </div>
 
-                {/* Bottom Action Strip */}
-                <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800 text-xs">
-                  <span className="text-[11px] text-slate-400 truncate">
-                    {att?.startedAt ? `Bắt đầu: ${new Date(att.startedAt).toLocaleTimeString('vi-VN')}` : 'Chưa vào thi'}
+                {/* Card Footer — Time + Action Buttons */}
+                <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 truncate">
+                    {att?.startedAt ? `${new Date(att.startedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}` : 'Chưa vào thi'}
                   </span>
 
                   {att && (
@@ -970,46 +982,34 @@ export default function ProctorDashboardPage() {
                       {['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setActionError(null);
-                            setSelectedStudent(s);
-                            setActionType('EXTEND');
-                          }}
-                          className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 bg-white hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-2.5 py-1 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+                          onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
+                          className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-600 hover:text-blue-700 px-2 py-1 text-[11px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
                           title="Gia hạn thời gian"
                         >
-                          <Clock className="w-3.5 h-3.5 text-blue-600" />
-                          <span>Gia hạn</span>
+                          <Clock className="w-3 h-3 text-blue-600" />
+                          <span>+Giờ</span>
                         </button>
                       )}
                       {['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setActionError(null);
-                            setSelectedStudent(s);
-                            setActionType('REOPEN');
-                          }}
-                          className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 bg-white hover:border-amber-300 hover:bg-amber-50 text-slate-700 hover:text-amber-700 px-2.5 py-1 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+                          onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('REOPEN'); }}
+                          className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-600 hover:text-amber-700 px-2 py-1 text-[11px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
                           title="Mở lại phiên thi"
                         >
-                          <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
-                          <span>Mở lại</span>
+                          <RotateCcw className="w-3 h-3 text-amber-600" />
+                          <span>Mở</span>
                         </button>
                       )}
                       {att.isFlagged && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setActionError(null);
-                            setSelectedStudent(s);
-                            setActionType('RESOLVE');
-                          }}
-                          className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 bg-white hover:border-emerald-300 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 px-2.5 py-1 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+                          onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('RESOLVE'); }}
+                          className="flex items-center gap-1 rounded-lg border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 text-emerald-700 px-2 py-1 text-[11px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
                           title="Xử lý biên bản"
                         >
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Xử lý</span>
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>Duyệt</span>
                         </button>
                       )}
                       <button
@@ -1019,11 +1019,11 @@ export default function ProctorDashboardPage() {
                           setSelectedStudent(s);
                           setActionType('FLAG');
                         }}
-                        className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 px-2.5 py-1 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+                        className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 hover:text-rose-700 px-2 py-1 text-[11px] font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
                         title="Lập biên bản sự cố"
                       >
-                        <FileText className="w-3.5 h-3.5 text-rose-600" />
-                        <span>Biên bản</span>
+                        <FileText className="w-3 h-3 text-rose-600" />
+                        <span>BB</span>
                       </button>
                     </div>
                   )}
