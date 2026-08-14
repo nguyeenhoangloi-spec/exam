@@ -9,6 +9,7 @@ import { Toast } from '../../components/Toast';
 import {
   Award,
   BarChart3,
+  CheckCircle2,
   ChevronDown,
   Clock,
   Eye,
@@ -19,9 +20,11 @@ import {
   Mail,
   Moon,
   ShieldCheck,
+  Sparkles,
   Sun,
   User as UserIcon,
   Users,
+  Zap,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -142,24 +145,25 @@ export default function LoginPage() {
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* ── Background Decorative Vector Waves & Grids ── */}
+      {/* ── Background Decorative Vector Waves & Dynamic Mesh ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+        {/* Academic geometric grid pattern */}
         <div
-          className="absolute top-6 left-1/4 w-[750px] h-80 opacity-30 dark:opacity-10"
+          className="absolute top-6 left-1/4 w-[800px] h-96 opacity-30 dark:opacity-10"
           style={{
             backgroundImage: 'radial-gradient(#3B82F6 1.2px, transparent 1.2px)',
             backgroundSize: '24px 24px',
           }}
         />
 
-        {/* Ambient Glows */}
-        <div className="absolute -top-28 -left-28 w-[600px] h-[600px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[120px]" />
-        <div className="absolute top-1/4 -right-28 w-[650px] h-[650px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[140px]" />
-        <div className="absolute -bottom-36 left-10 w-[650px] h-[450px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[110px]" />
+        {/* Ambient Vibrant Glows */}
+        <div className="absolute -top-32 -left-32 w-[650px] h-[650px] bg-blue-200/60 dark:bg-blue-900/15 rounded-full blur-[130px]" />
+        <div className="absolute top-1/4 -right-32 w-[700px] h-[700px] bg-sky-100/70 dark:bg-indigo-950/20 rounded-full blur-[150px]" />
+        <div className="absolute -bottom-40 left-10 w-[700px] h-[500px] bg-blue-50/90 dark:bg-slate-900/40 rounded-full blur-[120px]" />
 
-        {/* Abstract Flow Waves */}
+        {/* Abstract Smooth Flow Waves */}
         <svg
-          className="absolute bottom-0 left-0 w-full max-w-6xl h-72 opacity-30 dark:opacity-10"
+          className="absolute bottom-0 left-0 w-full max-w-6xl h-80 opacity-35 dark:opacity-10"
           viewBox="0 0 1000 300"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -185,11 +189,11 @@ export default function LoginPage() {
         </svg>
       </div>
 
-      {/* ── Top Header Navigation (Anchored) ── */}
+      {/* ── Top Header Navigation (Fixed & Sleek) ── */}
       <header className="relative z-10 w-full max-w-[1380px] mx-auto px-6 sm:px-10 pt-7 pb-3 shrink-0 flex items-center justify-between">
-        {/* Brand Logo */}
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
+        {/* Brand Logo with Status Pulse */}
+        <div className="flex items-center gap-3.5 group cursor-pointer">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50 transition-transform duration-300 group-hover:scale-105">
             <GraduationCap className="h-6.5 w-6.5" />
           </div>
           <div>
@@ -197,7 +201,7 @@ export default function LoginPage() {
               <span className="text-[21px] font-black tracking-tight text-slate-900 dark:text-white leading-none">
                 EXAMSYS
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 shadow-2xs">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Hệ thống sẵn sàng
               </span>
@@ -214,38 +218,50 @@ export default function LoginPage() {
           onClick={toggleDark}
           aria-label="Chuyển chủ đề sáng/tối"
           title={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-          className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/90 dark:hover:bg-slate-800/90 transition-all duration-200 cursor-pointer shadow-2xs"
         >
-          {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
+          {isDark ? (
+            <Sun className="h-5 w-5 text-amber-400 animate-spin-slow" />
+          ) : (
+            <Moon className="h-5 w-5 text-slate-600" />
+          )}
         </button>
       </header>
 
-      {/* ── Main Section: Big Bold 2-Column Showcase Layout (Top-Anchored) ── */}
+      {/* ── Main Section: Big Bold 2-Column Showcase Layout ── */}
       <main className="relative z-10 max-w-[1380px] mx-auto px-6 sm:px-10 pt-5 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start w-full">
         {/* ── Left Column: Large Showcase (7 Cols ~ 58%) ── */}
         <section className="lg:col-span-7 flex flex-col justify-start space-y-9">
-          {/* Main Large Headline */}
+          {/* Main Large Headline with Gradient Text */}
           <div className="space-y-3.5">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100/70 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200/60 dark:border-blue-800 shadow-2xs">
+              <Sparkles className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
+              <span>Nền Tảng Khảo Thí Chuẩn Quốc Tế</span>
+            </div>
             <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
               HỆ THỐNG <br />
-              <span className="text-blue-600 dark:text-blue-500">KHẢO THÍ TRỰC TUYẾN</span>
+              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
+                KHẢO THÍ TRỰC TUYẾN
+              </span>
             </h1>
             <p className="text-[15.5px] sm:text-[16.5px] text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed">
-              Giải pháp toàn diện cho quản lý kỳ thi, tổ chức thi trắc nghiệm và phân tích kết quả học thuật chuẩn quốc tế.
+              Giải pháp toàn diện cho quản lý kỳ thi, tổ chức thi trắc nghiệm và phân tích kết quả học thuật minh bạch, chính xác.
             </p>
           </div>
 
-          {/* Center 3D Isometric Art & Features Showcase */}
+          {/* Center 3D Isometric Art & Interactive Feature Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
             {/* 4 Key Features Column */}
-            <div className="sm:col-span-5 space-y-4">
+            <div className="sm:col-span-5 space-y-3.5">
               {/* Feature 1 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
                   <ShieldCheck className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
+                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Bảo mật cao
+                  </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Mã hóa chuẩn quốc tế
                   </p>
@@ -253,12 +269,14 @@ export default function LoginPage() {
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
                   <FileCheck2 className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
+                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Quản lý toàn diện
+                  </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Từ đề thi đến chấm điểm
                   </p>
@@ -266,12 +284,14 @@ export default function LoginPage() {
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
                   <BarChart3 className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
+                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Phân tích thông minh
+                  </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Thống kê & biểu đồ trực quan
                   </p>
@@ -279,12 +299,14 @@ export default function LoginPage() {
               </div>
 
               {/* Feature 4 */}
-              <div className="flex items-start gap-3.5 group">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
                   <Clock className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
+                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Tiết kiệm thời gian
+                  </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Tối ưu hiệu suất làm việc
                   </p>
@@ -292,25 +314,25 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Academic 3D Centerpiece */}
+            {/* Academic 3D Centerpiece with Floating Badges */}
             <div className="sm:col-span-7 flex justify-center items-center relative py-2">
               <div className="relative w-full max-w-[400px] aspect-[4/3] flex items-center justify-center">
-                {/* Soft Ambient Glow */}
-                <div className="absolute inset-0 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-2xl" />
+                {/* Soft Radial Ambient Glow */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-300/30 via-sky-200/25 to-indigo-300/20 dark:from-blue-900/25 dark:to-indigo-950/20 rounded-full blur-3xl" />
 
-                {/* Floating Micro Badge: Test Check */}
-                <div className="absolute -top-2 left-24 z-20 h-9.5 w-9.5 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                {/* Floating Micro Badge 1: Test Check */}
+                <div className="absolute -top-2 left-24 z-20 h-10 w-10 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-transform duration-300 hover:scale-110">
                   <FileCheck2 className="h-5 w-5" />
                 </div>
 
-                {/* Floating Micro Badge: Chart */}
-                <div className="absolute top-14 right-2 z-20 h-9.5 w-9.5 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                {/* Floating Micro Badge 2: Chart */}
+                <div className="absolute top-14 right-2 z-20 h-10 w-10 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-transform duration-300 hover:scale-110">
                   <BarChart3 className="h-5 w-5" />
                 </div>
 
                 {/* 3D Vector Isometric Exam Illustration */}
                 <svg
-                  className="w-full h-full relative z-10 drop-shadow-xl"
+                  className="w-full h-full relative z-10 drop-shadow-2xl"
                   viewBox="0 0 420 320"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -440,9 +462,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Bottom Trust Statistics */}
+          {/* Bottom Trust Statistics Cards */}
           <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4">
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-100/80 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Users className="h-5.5 w-5.5" />
               </div>
@@ -454,7 +476,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-100/80 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Award className="h-5.5 w-5.5" />
               </div>
@@ -462,11 +484,11 @@ export default function LoginPage() {
                 <p className="text-[16px] sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight truncate">
                   50,000+
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi đã tổ chức</p>
+                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi tổ chức</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-100/80 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <ShieldCheck className="h-5.5 w-5.5" />
               </div>
@@ -515,7 +537,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex h-[48px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[14px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
+              className="flex h-[48px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[14px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
             >
               <svg
                 className="w-5 h-5 shrink-0"
@@ -560,7 +582,7 @@ export default function LoginPage() {
                 onClick={() => setShowManualLogin((prev) => !prev)}
                 className={`w-full h-11 rounded-2xl border px-3.5 flex items-center justify-between text-[13px] font-semibold transition-all duration-300 cursor-pointer ${
                   showManualLogin
-                    ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
+                    ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300 shadow-2xs'
                     : isDark
                     ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800'
                     : 'border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
@@ -671,7 +693,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full h-[46px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[14.5px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
+                      className="w-full h-[46px] rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[14.5px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
@@ -707,7 +729,7 @@ export default function LoginPage() {
         </section>
       </main>
 
-      {/* ── Page Bottom Footer (Pushed to bottom cleanly) ── */}
+      {/* ── Page Bottom Footer ── */}
       <footer className="mt-auto relative z-10 w-full py-5 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
         <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[12.5px]">
           <ShieldCheck className="h-4 w-4 text-blue-600" />
