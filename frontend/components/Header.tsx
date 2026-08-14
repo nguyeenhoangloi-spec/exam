@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Bell,
@@ -17,6 +17,9 @@ import {
   PanelLeft,
   PanelLeftOpen,
   CheckCheck,
+  Headphones,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
@@ -55,6 +58,22 @@ export const Header: React.FC<HeaderProps> = ({
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    }
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle('dark', next);
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const handleGlobalSearchKey = (e: KeyboardEvent) => {
@@ -68,19 +87,36 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem('read_notifications');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  const unreadItems = notifications.filter((n) => !readNotificationIds.includes(n.id));
-  const effectiveUnreadCount = unreadItems.length;
+  const effectiveUnreadCount = Math.max(
+    0,
+    notifications.filter((n) => !readNotificationIds.includes(n.id)).length
+  );
 
   const handleMarkAllAsRead = () => {
     const allIds = notifications.map((n) => n.id);
     setReadNotificationIds(allIds);
+    try {
+      localStorage.setItem('read_notifications', JSON.stringify(allIds));
+    } catch {}
   };
 
   const handleNotificationClick = (item: NotificationItem) => {
     if (!readNotificationIds.includes(item.id)) {
-      setReadNotificationIds((prev) => [...prev, item.id]);
+      const updated = [...readNotificationIds, item.id];
+      setReadNotificationIds(updated);
+      try {
+        localStorage.setItem('read_notifications', JSON.stringify(updated));
+      } catch {}
     }
     setOpenPanel(null);
     if (item.href) {
@@ -233,11 +269,11 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={showLogoutConfirm}
         onClose={() => setShowLogoutConfirm(false)}
         onConfirm={handleLogout}
-        title="Xác nhận đăng xuất"
-        message="Bạn có chắc chắn muốn đăng xuất khỏi hệ thống quản lý khảo thí?"
+        title="Đăng xuất khỏi hệ thống"
+        message="Bạn có chắc chắn muốn đăng xuất phiên làm việc hiện tại không?"
         type="danger"
-        confirmText="Đăng xuất"
-        cancelText="Hủy bỏ"
+        confirmText="Đăng xuất ngay"
+        cancelText="Hủy"
       />
 
       {/* Quick Search Modal */}
@@ -426,16 +462,30 @@ export const Header: React.FC<HeaderProps> = ({
                 />
               </button>
 
-              {/* Redesigned Account Dropdown Menu */}
+              {/* Redesigned Account Dropdown Menu (Đồng bộ 100% với Sidebar) */}
               {openPanel === 'account' && (
                 <div
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+10px)] w-[240px] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150"
+                  className="absolute right-0 top-[calc(100%+10px)] w-60 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl"
                 >
-                  {/* Isometric Top Pointer Tip pointing up to Header trigger */}
+                  {/* Isometric Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-7 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
+
+                  {/* Header Profile Info Card */}
+                  <div className="relative z-20 flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
+                      <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        Đang trực tuyến
+                      </p>
+                    </div>
+                  </div>
 
                   <div className="relative z-20 space-y-0.5">
                     {/* Item 1: Hồ sơ cá nhân */}
@@ -446,15 +496,13 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/profile');
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
-                      <UserIcon className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs font-medium text-slate-800 dark:text-slate-100">
-                        Hồ sơ cá nhân
-                      </span>
+                      <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                      <span>Hồ sơ cá nhân</span>
                     </button>
 
-                    {/* Item 2: Cài đặt tài khoản */}
+                    {/* Item 2: Cài đặt hệ thống */}
                     <button
                       type="button"
                       role="menuitem"
@@ -462,34 +510,45 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/settings');
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
-                      <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs font-medium text-slate-800 dark:text-slate-100">
-                        Cài đặt tài khoản
-                      </span>
+                      <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                      <span>Cài đặt hệ thống</span>
                     </button>
 
-                    {/* Item 3: Đổi mật khẩu */}
+                    {/* Item 3: Trung tâm hỗ trợ */}
                     <button
                       type="button"
                       role="menuitem"
                       onClick={() => {
                         setOpenPanel(null);
-                        router.push('/change-password');
+                        router.push('/contact');
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
-                      <Lock className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs font-medium text-slate-800 dark:text-slate-100">
-                        Đổi mật khẩu
-                      </span>
+                      <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                      <span>Trung tâm hỗ trợ</span>
+                    </button>
+
+                    {/* Item 4: Chủ đề giao diện */}
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={toggleTheme}
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                    >
+                      {isDark ? (
+                        <Sun className="h-4 w-4 text-amber-400" />
+                      ) : (
+                        <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                      )}
+                      <span>Chủ đề giao diện</span>
                     </button>
 
                     {/* Divider */}
-                    <div className="my-1.5 border-t border-slate-100 dark:border-slate-800" />
+                    <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
-                    {/* Item 4: Đăng xuất */}
+                    {/* Item 5: Đăng xuất */}
                     <button
                       type="button"
                       role="menuitem"
@@ -497,12 +556,10 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition-colors duration-150 active:scale-[0.98] cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
                     >
-                      <div className="flex items-center gap-3">
-                        <LogOut className="h-4 w-4 text-rose-600 group-hover:scale-105 transition-transform" />
-                        <span className="text-xs font-semibold text-rose-600">Đăng xuất</span>
-                      </div>
+                      <LogOut className="h-4 w-4 text-rose-600" />
+                      <span>Đăng xuất</span>
                     </button>
                   </div>
                 </div>
