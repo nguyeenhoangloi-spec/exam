@@ -519,15 +519,29 @@ export default function ContactSupportPage() {
               filteredFaqs.map((faq) => {
                 const isExpanded = expandedFaqId === faq.id;
                 return (
-                  <div key={faq.id} className="transition">
+                  <div key={faq.id} className="transition-colors">
                     <button
                       type="button"
                       onClick={() => setExpandedFaqId(isExpanded ? null : faq.id)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition cursor-pointer"
+                      className={`w-full flex items-center justify-between p-5 text-left transition-all duration-200 cursor-pointer ${
+                        isExpanded
+                          ? 'bg-blue-50/40 dark:bg-slate-800/60'
+                          : 'hover:bg-slate-50/70 dark:hover:bg-slate-800/50'
+                      }`}
                     >
                       <div className="flex items-center gap-3.5">
-                        <HelpCircle className="h-5 w-5 text-blue-600 shrink-0" />
-                        <span className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100">
+                        <HelpCircle
+                          className={`h-5 w-5 shrink-0 transition-colors duration-200 ${
+                            isExpanded ? 'text-blue-600' : 'text-blue-500'
+                          }`}
+                        />
+                        <span
+                          className={`text-[14.5px] font-bold transition-colors duration-200 ${
+                            isExpanded
+                              ? 'text-blue-700 dark:text-blue-300'
+                              : 'text-slate-900 dark:text-slate-100'
+                          }`}
+                        >
                           {faq.title}
                         </span>
                       </div>
@@ -536,36 +550,45 @@ export default function ContactSupportPage() {
                           {faq.categoryLabel}
                         </span>
                         <ChevronRight
-                          className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 shrink-0 ${
-                            isExpanded ? 'rotate-90 text-blue-600' : ''
+                          className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-300 ease-in-out shrink-0 ${
+                            isExpanded ? 'rotate-90 text-blue-600' : 'rotate-0'
                           }`}
                         />
                       </div>
                     </button>
 
-                    {isExpanded && (
-                      <div className="px-6 pb-6 pt-3 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-3.5">
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{faq.summary}</p>
-                        <div className="space-y-2 pl-3.5 border-l-2 border-blue-500">
-                          {faq.content.map((paragraph, i) => (
-                            <p key={i}>{paragraph}</p>
-                          ))}
-                        </div>
-                        <div className="pt-2 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
-                          <span className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5" /> {faq.readTime}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedArticle(faq)}
-                            className="font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
-                          >
-                            <span>Xem toàn bộ hướng dẫn</span>
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </button>
+                    {/* Smooth Animated Accordion Content */}
+                    <div
+                      className={`grid transition-all duration-300 ease-in-out ${
+                        isExpanded
+                          ? 'grid-rows-[1fr] opacity-100'
+                          : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="px-6 pb-6 pt-3 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-3.5">
+                          <p className="font-semibold text-slate-900 dark:text-slate-100">{faq.summary}</p>
+                          <div className="space-y-2 pl-3.5 border-l-2 border-blue-500">
+                            {faq.content.map((paragraph, i) => (
+                              <p key={i}>{paragraph}</p>
+                            ))}
+                          </div>
+                          <div className="pt-2 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
+                            <span className="flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5" /> {faq.readTime}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedArticle(faq)}
+                              className="font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+                            >
+                              <span>Xem toàn bộ hướng dẫn</span>
+                              <ExternalLink className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })
