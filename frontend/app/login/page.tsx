@@ -193,7 +193,7 @@ export default function LoginPage() {
         {/* Brand Logo with Status Indicator */}
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
-            <GraduationCap className="h-5.5 w-5.5" />
+            <GraduationCap className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -220,9 +220,9 @@ export default function LoginPage() {
           className="flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
         >
           {isDark ? (
-            <Sun className="h-4.5 w-4.5 text-amber-400" />
+            <Sun className="h-4 w-4 text-amber-400" />
           ) : (
-            <Moon className="h-4.5 w-4.5 text-slate-600" />
+            <Moon className="h-4 w-4 text-slate-600" />
           )}
         </button>
       </header>
@@ -524,7 +524,14 @@ export default function LoginPage() {
               disabled={loading}
               className="flex h-[44px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[13.5px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
             >
-              <svg className="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <svg
+                className="w-5 h-5 shrink-0"
+                width="20"
+                height="20"
+                style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
