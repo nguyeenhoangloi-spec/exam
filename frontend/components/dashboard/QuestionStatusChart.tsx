@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { DashboardOverview } from '../../types/dashboard';
-import { CheckCircle2, Clock, XCircle, Pencil } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, FileText } from 'lucide-react';
 import { FilterSelect } from '../ui/FilterSelect';
 
 export function QuestionStatusChart({ data }: { data?: DashboardOverview['questionStatus'] }) {
@@ -14,44 +14,35 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
     setMounted(true);
   }, []);
 
-  // Find counts from real API data or fallback to mockup values if API data missing
   const approvedCount = data?.find((x) => x.status === 'APPROVED')?.count ?? 0;
   const pendingCount = data?.find((x) => x.status === 'PENDING')?.count ?? 0;
   const rejectedCount = data?.find((x) => x.status === 'REJECTED')?.count ?? 0;
-  const editCount = data?.find((x) => String(x.status) === 'NEEDS_REVISION' || String(x.status) === 'EDIT')?.count ?? 0;
 
+  // 100% chuẩn sắc độ Xanh dương & Trắng & Xám Slate
   const rawItems = [
     {
       status: 'APPROVED',
       label: 'Đã duyệt',
       count: approvedCount,
-      color: '#10b981',
+      color: '#2563eb', // Blue-600
       icon: CheckCircle2,
-      iconColor: 'text-emerald-500',
+      iconBg: 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400',
     },
     {
       status: 'PENDING',
       label: 'Chờ duyệt',
       count: pendingCount,
-      color: '#f59e0b',
+      color: '#60a5fa', // Blue-400
       icon: Clock,
-      iconColor: 'text-amber-500',
+      iconBg: 'bg-blue-50 text-blue-500 dark:bg-blue-950/60 dark:text-blue-300',
     },
     {
       status: 'REJECTED',
       label: 'Bị từ chối',
       count: rejectedCount,
-      color: '#ef4444',
+      color: '#94a3b8', // Slate-400
       icon: XCircle,
-      iconColor: 'text-rose-500',
-    },
-    {
-      status: 'NEEDS_REVISION',
-      label: 'Cần sửa',
-      count: editCount,
-      color: '#3b82f6',
-      icon: Pencil,
-      iconColor: 'text-blue-500',
+      iconBg: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
     },
   ];
 
@@ -86,7 +77,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
 
       {/* Donut & Legend side by side */}
       <div className="flex-1 flex flex-row items-center justify-between gap-3 py-2 min-w-0 my-auto">
-        {/* Donut Canvas */}
+        {/* Donut Canvas with Center Total Display */}
         <div className="relative h-36 w-36 shrink-0">
           {mounted ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -100,21 +91,25 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                   paddingAngle={totalCount > 0 ? 3 : 0}
                   stroke="none"
                 >
-                  {(totalCount > 0 ? chartData : [{ color: '#e2e8f0' }]).map((item, idx) => (
-                    <Cell key={idx} fill={item.color} />
-                  ))}
+                  {totalCount > 0 ? (
+                    chartData.map((entry) => (
+                      <Cell key={`cell-${entry.status}`} fill={entry.color} />
+                    ))
+                  ) : (
+                    <Cell fill="#e2e8f0" />
+                  )}
                 </Pie>
                 <Tooltip
                   contentStyle={{
                     borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.3)',
-                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                    color: '#ffffff',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                    border: '1px solid #e2e8f0',
+                    backgroundColor: '#ffffff',
+                    color: '#0f172a',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
                     fontSize: '12.5px',
                     fontWeight: 600,
                   }}
-                  formatter={(value, name) => [`${Number(value).toLocaleString('vi-VN')} câu`, name]}
+                  formatter={(value, name) => [`${value} câu`, `${name}`]}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -122,37 +117,54 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
             <div className="h-full w-full rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse" />
           )}
 
-          {/* Center Text */}
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[11px] font-medium text-slate-400">Tổng cộng</span>
-            <span className="text-[19px] font-bold text-slate-900 dark:text-slate-100 leading-tight">
-              {totalCount.toLocaleString('vi-VN')}
+          {/* Center Info Text */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-[17px] font-bold text-slate-900 dark:text-slate-100 leading-tight">
+              {new Intl.NumberFormat('vi-VN').format(totalCount)}
             </span>
-            <span className="text-[11px] font-medium text-slate-400">câu hỏi</span>
+            <span className="text-[11px] font-medium text-slate-400">
+              Tổng số
+            </span>
           </div>
         </div>
 
-        {/* Legend List on Right */}
-        <div className="flex-1 min-w-0 space-y-2.5 py-1">
-          {chartData.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div key={item.status} className="flex items-center justify-between text-xs sm:text-sm gap-2">
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <Icon className={`h-4 w-4 shrink-0 ${item.iconColor}`} />
-                  <span className="font-medium text-slate-700 dark:text-slate-300 text-[13px]">{item.label}</span>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100 text-[13px]">{item.count.toLocaleString('vi-VN')}</span>
-                  <span className="w-10 text-right text-[11px] font-semibold text-slate-400 dark:text-slate-500">{item.percent}</span>
-                </div>
+        {/* Legend list */}
+        <div className="flex-1 space-y-2 min-w-0">
+          {chartData.map((item) => (
+            <div
+              key={item.status}
+              className="flex items-center justify-between gap-2 p-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <span
+                  className="h-2.5 w-2.5 rounded-full shrink-0"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 truncate">
+                  {item.label}
+                </span>
               </div>
-            );
-          })}
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[13px] font-bold text-slate-900 dark:text-slate-100">
+                  {new Intl.NumberFormat('vi-VN').format(item.count)}
+                </span>
+                <span className="text-[11.5px] font-semibold text-slate-400 w-10 text-right">
+                  {item.percent}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
+      </div>
+
+      {/* Footer info note */}
+      <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center justify-between text-[12px] text-slate-500">
+        <span>Ngân hàng câu hỏi</span>
+        <span className="font-semibold text-blue-600 dark:text-blue-400">
+          {totalCount > 0 ? Math.round((approvedCount / totalCount) * 100) : 100}% đạt chuẩn
+        </span>
       </div>
     </div>
   );
 }
-
-

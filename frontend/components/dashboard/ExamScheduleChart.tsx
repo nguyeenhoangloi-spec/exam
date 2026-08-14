@@ -96,10 +96,10 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
                 cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
                 contentStyle={{
                   borderRadius: '12px',
-                  border: '1px solid rgba(148, 163, 184, 0.3)',
-                  backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                  color: '#ffffff',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  border: '1px solid #e2e8f0',
+                  backgroundColor: '#ffffff',
+                  color: '#0f172a',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
                   fontSize: '12.5px',
                   fontWeight: 600,
                 }}
@@ -132,4 +132,3 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
     </div>
   );
 }
-
