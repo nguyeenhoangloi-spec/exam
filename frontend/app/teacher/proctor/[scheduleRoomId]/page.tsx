@@ -1,6 +1,7 @@
 'use client';
 import { FilterSelect } from '@/components/ui/FilterSelect';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
+import { TabBar } from '@/components/ui/TabBar';
 
 import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -371,145 +372,185 @@ export default function ProctorDashboardPage() {
  );
  }
 
- const KPI_CARDS = [
- { label: 'Tổng thí sinh', value: stats.total ?? 0, subtext: 'Trong danh sách phòng', icon: Users, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
- { label: 'Đang làm bài', value: stats.inProgress ?? 0, subtext: 'Đang thao tác trực tuyến', icon: Activity, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
- { label: 'Mất kết nối', value: stats.disconnected ?? 0, subtext: 'Cần hỗ trợ mạng / thiết bị', icon: WifiOff, iconBg: 'bg-amber-50 text-amber-600 border-amber-100' },
- { label: 'Đã nộp bài', value: stats.submitted ?? 0, subtext: 'Hoàn tất gửi bài thi', icon: CheckCircle2, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
- { label: 'Có cảnh báo', value: stats.flagged ?? 0, subtext: 'Vi phạm quy chế thi', icon: ShieldAlert, iconBg: 'bg-rose-50 text-rose-600 border-rose-100' },
- ];
+  const KPI_CARDS = [
+    {
+      label: 'Tổng thí sinh',
+      value: stats.total ?? 0,
+      subtext: 'Trong danh sách phòng',
+      progressPercent: stats.total > 0 ? 100 : 0,
+      icon: Users,
+    },
+    {
+      label: 'Đang làm bài',
+      value: stats.inProgress ?? 0,
+      subtext: 'Đang thao tác trực tuyến',
+      progressPercent: stats.total > 0 ? Math.round(((stats.inProgress || 0) / stats.total) * 100) : 0,
+      icon: Activity,
+    },
+    {
+      label: 'Mất kết nối',
+      value: stats.disconnected ?? 0,
+      subtext: 'Cần hỗ trợ mạng / thiết bị',
+      progressPercent: stats.total > 0 ? Math.round(((stats.disconnected || 0) / stats.total) * 100) : 0,
+      icon: WifiOff,
+    },
+    {
+      label: 'Đã nộp bài',
+      value: stats.submitted ?? 0,
+      subtext: 'Hoàn tất gửi bài thi',
+      progressPercent: stats.total > 0 ? Math.round(((stats.submitted || 0) / stats.total) * 100) : 0,
+      icon: CheckCircle2,
+    },
+    {
+      label: 'Có cảnh báo',
+      value: stats.flagged ?? 0,
+      subtext: 'Vi phạm quy chế thi',
+      progressPercent: stats.total > 0 ? Math.round(((stats.flagged || 0) / stats.total) * 100) : 0,
+      icon: ShieldAlert,
+    },
+  ];
 
- const actionMeta: Record<string, { title: string; desc: string; icon: React.ElementType; color: string; iconBg: string }> = {
- EXTEND: { title: 'Gia hạn thời gian làm bài', desc: 'Cộng thêm thời gian cho phiên đang thi hoặc vừa mất kết nối.', icon: Clock, color: 'text-blue-600', iconBg: 'bg-blue-50 border-blue-200' },
- REOPEN: { title: 'Mở lại phiên thi', desc: 'Cho phép sinh viên tiếp tục phiên thi đã kết thúc hoặc bị gián đoạn.', icon: RotateCcw, color: 'text-amber-600', iconBg: 'bg-amber-50 border-amber-200' },
- FLAG: { title: 'Lập biên bản sự cố vi phạm', desc: 'Ghi nhận sự cố; giám thị có thể xử lý và quyết định kết quả sau.', icon: Flag, color: 'text-rose-600', iconBg: 'bg-rose-50 border-rose-200' },
- RESOLVE: { title: 'Xử lý biên bản vi phạm', desc: 'Chọn mở lại, giữ điểm và trừ điểm, hoặc đình chỉ bài thi.', icon: ShieldAlert, color: 'text-blue-600', iconBg: 'bg-blue-50 border-blue-200' },
- };
+  const actionMeta: Record<string, { title: string; desc: string; icon: React.ElementType; color: string; iconBg: string }> = {
+    EXTEND: { title: 'Gia hạn thời gian làm bài', desc: 'Cộng thêm thời gian cho phiên đang thi hoặc vừa mất kết nối.', icon: Clock, color: 'text-blue-600', iconBg: 'bg-blue-50 border-blue-200' },
+    REOPEN: { title: 'Mở lại phiên thi', desc: 'Cho phép sinh viên tiếp tục phiên thi đã kết thúc hoặc bị gián đoạn.', icon: RotateCcw, color: 'text-amber-600', iconBg: 'bg-amber-50 border-amber-200' },
+    FLAG: { title: 'Lập biên bản sự cố vi phạm', desc: 'Ghi nhận sự cố; giám thị có thể xử lý và quyết định kết quả sau.', icon: Flag, color: 'text-rose-600', iconBg: 'bg-rose-50 border-rose-200' },
+    RESOLVE: { title: 'Xử lý biên bản vi phạm', desc: 'Chọn mở lại, giữ điểm và trừ điểm, hoặc đình chỉ bài thi.', icon: ShieldAlert, color: 'text-blue-600', iconBg: 'bg-blue-50 border-blue-200' },
+  };
 
- return (
- <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+  return (
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+      {/* ── 1. Standard Page Header ── */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 shadow-2xs transition hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 active:scale-95 cursor-pointer"
+            title="Quay lại danh sách phân công"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
 
- {/* ── 1. Standard Page Header ── */}
- <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
- <div className="flex items-center gap-3">
- <button
- type="button"
- onClick={() => router.back()}
- className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-2xs transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
- title="Quay lại danh sách phân công"
- >
- <ArrowLeft className="h-4 w-4" />
- </button>
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+                Giám Thị Phòng: <span className="text-blue-600 dark:text-blue-400">{data.roomName}</span>
+              </h1>
+              <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="relative flex w-2 h-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                Trực tiếp
+              </span>
+            </div>
 
- <div className="space-y-0.5">
- <div className="flex items-center gap-2.5 flex-wrap">
- <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
- Giám Thị Phòng: <span className="text-primary-600">{data.roomName}</span>
- </h1>
- <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-emerald-600">
- <span className="relative flex w-2 h-2">
- <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
- <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
- </span>
- Trực tiếp
- </span>
- </div>
+            <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+              Môn thi: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{data.subjectName}</strong> &nbsp;•&nbsp; Ngày thi: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong> &nbsp;•&nbsp; Ca thi: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{data.startTime} – {data.endTime}</strong>
+              {lastUpdated && (
+                <span className="ml-2 text-slate-400 font-normal">
+                  (Cập nhật lúc {lastUpdated.toLocaleTimeString('vi-VN')})
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
 
- <p className="text-[15px] font-normal leading-[22px] text-slate-500">
- Môn thi: <strong className="text-slate-900 font-semibold">{data.subjectName}</strong> &nbsp;•&nbsp; Ngày thi: <strong className="text-slate-900 font-semibold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong> &nbsp;•&nbsp; Ca thi: <strong className="text-slate-900 font-semibold">{data.startTime} – {data.endTime}</strong>
- {lastUpdated && (
- <span className="ml-2 text-slate-500 font-normal">
- (Cập nhật lúc {lastUpdated.toLocaleTimeString('vi-VN')})
- </span>
- )}
- </p>
- </div>
- </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            onClick={() => setShowReopenEntryModal(true)}
+            leftIcon={<PlusCircle className="h-4 w-4" />}
+          >
+            Cho vào trễ (+30p)
+          </Button>
 
- <div className="flex flex-wrap items-center gap-2.5">
- <Button
- type="button"
- variant="primary"
- size="md"
- onClick={() => setShowReopenEntryModal(true)}
- leftIcon={<PlusCircle className="h-4 w-4" />}
- >
- Cho vào trễ (+30p)
- </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={() => setShowBulkModal(true)}
+            leftIcon={<Clock className="h-4 w-4 text-slate-500" />}
+          >
+            Bù giờ toàn phòng (+15p)
+          </Button>
 
- <Button
- type="button"
- variant="secondary"
- size="md"
- onClick={() => setShowBulkModal(true)}
- leftIcon={<Clock className="h-4 w-4 text-slate-500" />}
- >
- Bù giờ toàn phòng (+15p)
- </Button>
+          <button
+            type="button"
+            onClick={() => loadDashboard(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 cursor-pointer select-none"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
 
- <button
- type="button"
- onClick={() => loadDashboard(false)}
- className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95 cursor-pointer select-none"
- title="Làm mới dữ liệu"
- >
- <RefreshCw className="h-4 w-4" />
- </button>
- </div>
- </div>
+      {/* ── Banner Cảnh Báo Sự Cố Ngắt Kết Nối Hàng Loạt ── */}
+      {(stats.disconnected ?? 0) > 0 && (
+        <div className="rounded-2xl border border-rose-200 dark:border-rose-900 bg-rose-50/90 dark:bg-rose-950/40 p-4 text-[15px] font-medium text-rose-950 dark:text-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-rose-600 text-white shadow-2xs">
+              <AlertTriangle className="w-5 h-5 shrink-0" />
+            </div>
+            <div>
+              <span className="text-[16px] font-semibold text-rose-950 dark:text-rose-100 block">Cảnh báo mất kết nối mạng</span>
+              <span className="text-rose-800 dark:text-rose-300 font-normal text-[14px]">
+                Hiện có <strong className="font-semibold">{stats.disconnected}</strong> sinh viên bị ngắt kết nối trong phòng thi. Vui lòng kiểm tra lại đường truyền mạng.
+              </span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setBulkMinutes(15);
+              setBulkReason('Sự cố gián đoạn kỹ thuật / mạng toàn phòng thi');
+              setShowBulkModal(true);
+            }}
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-[14px] rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
+          >
+            Bù giờ khẩn cấp toàn phòng (+15p)
+          </button>
+        </div>
+      )}
 
- {/* ── Banner Cảnh Báo Sự Cố Ngắt Kết Nối Hàng Loạt ── */}
- {(stats.disconnected ?? 0) > 0 && (
- <div className="rounded-2xl border border-rose-200 bg-rose-50/90 p-4 text-[15px] font-medium text-rose-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
- <div className="flex items-center gap-3">
- <div className="p-2 rounded-xl bg-rose-600 text-white shadow-2xs">
- <AlertTriangle className="w-5 h-5 shrink-0" />
- </div>
- <div>
- <span className="text-[18px] font-semibold text-rose-950 block">Cảnh báo mất kết nối mạng</span>
- <span className="text-rose-800 font-normal text-[15px]">
- Hiện có <strong className="font-semibold">{stats.disconnected}</strong> sinh viên bị ngắt kết nối trong phòng thi. Vui lòng kiểm tra lại đường truyền mạng.
- </span>
- </div>
- </div>
- <button
- type="button"
- onClick={() => {
- setBulkMinutes(15);
- setBulkReason('Sự cố gián đoạn kỹ thuật / mạng toàn phòng thi');
- setShowBulkModal(true);
- }}
- className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-[15px] rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
- >
-Bù giờ khẩn cấp toàn phòng (+15p)
- </button>
- </div>
- )}
-
-      {/* ── 2. Standard KPI Cards ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        {KPI_CARDS.map(({ label, value, subtext, icon: Icon, iconBg }) => (
+      {/* ── 2. Standard 5 KPI Cards With Micro Progress Tracks ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        {KPI_CARDS.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
           <div
             key={label}
-            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 min-w-0">
-                <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
+                <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {label}
                 </span>
-                <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
+                <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                   {value}
                 </div>
               </div>
 
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
-                <Icon className="h-5 w-5 stroke-[2]" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
+                <Icon className="h-5 w-5 stroke-[2.2]" />
               </div>
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-slate-100/80">
-              <span className="text-[13px] font-normal text-slate-500 block truncate">
+            {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
+            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+              <div
+                className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(Math.max(progressPercent, 5), 100)}%` }}
+              />
+            </div>
+
+            <div className="mt-2.5">
+              <span
+                title={subtext}
+                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+              >
                 {subtext}
               </span>
             </div>
@@ -517,129 +558,75 @@ Bù giờ khẩn cấp toàn phòng (+15p)
         ))}
       </div>
 
- {/* ── 3. Standard Filter Card Toolbar (Grid Inputs & TabBar) ── */}
- <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
- <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
- {/* Search Box */}
- <div className="relative">
- <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
- <input
- type="text"
- placeholder="Tìm theo tên, mã SV, SBD, ghế..."
- value={search}
- onChange={(e) => {
- setSearch(e.target.value);
- setPage(1);
- }}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-9 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
- />
- {search && (
- <button
- type="button"
- onClick={() => setSearch('')}
- className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
- >
- <X className="w-3.5 h-3.5" />
- </button>
- )}
- </div>
+      {/* ── 3. Status Tabs & Search Row (Identical to exam-papers) ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả', count: students.length },
+            { key: 'IN_PROGRESS', label: 'Đang làm bài', count: students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length },
+            { key: 'FLAGGED', label: 'Có cảnh báo', count: students.filter((s: any) => s.attempt?.isFlagged).length },
+            { key: 'SUBMITTED', label: 'Đã nộp bài', count: students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length },
+            { key: 'DISCONNECTED', label: 'Mất kết nối', count: students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length },
+          ]}
+          active={filter}
+          onChange={(k) => {
+            setFilter(k as any);
+            setPage(1);
+          }}
+          className="border-b-0 pt-0 w-auto"
+        />
 
- {/* Status Select */}
- <FilterSelect
- value={filter}
- onChange={(e) => {
- setFilter(e.target.value as any);
- setPage(1);
- }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
- >
- <option value="ALL">Tất cả trạng thái thi</option>
- <option value="IN_PROGRESS">Đang làm bài trực tuyến</option>
- <option value="FLAGGED">Có cảnh báo vi phạm</option>
- <option value="SUBMITTED">Đã hoàn thành nộp bài</option>
- <option value="DISCONNECTED">Mất kết nối đường truyền</option>
- </FilterSelect>
+        <div className="flex items-center gap-3 w-full md:w-auto shrink-0 pb-1 md:pb-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Mức rủi ro:</span>
+            <FilterSelect
+              value={riskFilter}
+              onChange={(e) => {
+                setRiskFilter(e.target.value as any);
+                setPage(1);
+              }}
+              size="md"
+            >
+              <option value="ALL">Tất cả mức rủi ro</option>
+              <option value="HIGH">Rủi ro cao (≥ 40đ)</option>
+              <option value="MEDIUM">Rủi ro trung bình (15 - 39đ)</option>
+              <option value="LOW">Rủi ro thấp (&lt; 15đ)</option>
+            </FilterSelect>
+          </div>
 
- {/* Risk Level Select */}
- <FilterSelect
- value={riskFilter}
- onChange={(e) => {
- setRiskFilter(e.target.value as any);
- setPage(1);
- }}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
- >
- <option value="ALL">Tất cả mức rủi ro</option>
- <option value="HIGH">Rủi ro cao (≥ 40 điểm)</option>
- <option value="MEDIUM">Rủi ro trung bình (15 - 39 điểm)</option>
- <option value="LOW">Rủi ro thấp (&lt; 15 điểm)</option>
- </FilterSelect>
+          <div className="relative w-full md:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo tên, mã SV, SBD, ghế..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="h-9 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setPage(1);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
- {/* Quick Sort Filter */}
- <FilterSelect
- value={sortOrder}
- onChange={(e) => setSortOrder(e.target.value)}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-3.5 pr-8 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none cursor-pointer transition"
- >
- <option value="seat_asc">Số ghế: Tăng dần (1 - 50)</option>
- <option value="seat_desc">Số ghế: Giảm dần</option>
- <option value="name_asc">Tên thí sinh: A - Z</option>
- <option value="name_desc">Tên thí sinh: Z - A</option>
- <option value="risk_desc">Mức rủi ro: Cao nhất trước</option>
- <option value="code_asc">Mã sinh viên: Tăng dần</option>
- </FilterSelect>
- </div>
-
- {/* TabBar Filter Buttons */}
- <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100">
- <div className="flex items-center gap-1.5 flex-wrap">
- <span className="text-[15px] font-medium text-slate-500 mr-1">Trạng thái:</span>
- {(['ALL', 'IN_PROGRESS', 'FLAGGED', 'SUBMITTED', 'DISCONNECTED'] as const).map((f) => {
- const isActive = filter === f;
- return (
- <button
- key={f}
- type="button"
- onClick={() => {
- setFilter(f);
- setPage(1);
- }}
- className={[
- 'px-3.5 py-1.5 rounded-xl text-[15px] font-medium transition cursor-pointer shadow-2xs',
- isActive
- ? 'bg-blue-600 text-white shadow-xs font-semibold'
- : 'bg-white text-slate-900 border border-slate-200/90 hover:bg-slate-50',
- ].join(' ')}
- >
- {FILTER_LABELS[f]}
- <span
- className={[
- 'ml-1.5 text-[13px] font-semibold',
- isActive ? 'text-blue-100' : 'text-slate-500',
- ].join(' ')}
- >
- {f === 'ALL' && students.length}
- {f === 'IN_PROGRESS' && students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length}
- {f === 'FLAGGED' && students.filter((s: any) => s.attempt?.isFlagged).length}
- {f === 'SUBMITTED' && students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length}
- {f === 'DISCONNECTED' && students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length}
- </span>
- </button>
- );
- })}
- </div>
-
- <span className="text-[15px] font-medium text-slate-500">
- Hiển thị <strong className="text-slate-900 font-semibold">{totalItems}</strong> / {students.length} thí sinh
- </span>
- </div>
- </div>
-
- {/* ── 4. Standard Table Toolbar (Item Count, Sort Dropdown, Column Chooser, ViewMode, Refresh) ── */}
- <div className="flex flex-wrap items-center justify-between gap-3 py-1">
- <span className="text-[15px] font-medium text-slate-700">
- <span className="font-semibold text-slate-900">{totalItems}</span> thí sinh trong phòng thi
- </span>
+      {/* ── 4. Standard Table Toolbar (Item Count, Sort Dropdown, Column Chooser, ViewMode, Refresh) ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+          Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems}</span> / {students.length} thí sinh trong phòng thi
+        </span>
 
  <div className="flex items-center gap-2">
  {/* Sort */}
@@ -706,40 +693,46 @@ Bù giờ khẩn cấp toàn phòng (+15p)
  </div>
 
  {/* View Mode Group */}
- <div className="flex items-center rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
- <button
- type="button"
- onClick={() => setViewMode('list')}
- className={`rounded-xl p-1.5 transition cursor-pointer ${
- viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
- }`}
- title="Dạng Danh sách chuẩn"
- >
- <List className="h-4 w-4" />
- </button>
- <button
- type="button"
- onClick={() => setViewMode('grid')}
- className={`rounded-xl p-1.5 transition cursor-pointer ${
- viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
- }`}
- title="Dạng Lưới card"
- >
- <LayoutGrid className="h-4 w-4" />
- </button>
- <button
- type="button"
- onClick={() => setViewMode('compact')}
- className={`rounded-xl p-1.5 transition cursor-pointer ${
- viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-700'
- }`}
- title="Dạng Thu gọn"
- >
- <Layers className="h-4 w-4" />
- </button>
- </div>
+            <div className="h-10 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+                  viewMode === 'list'
+                    ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
+                    : 'text-slate-400 hover:text-slate-700'
+                }`}
+                title="Dạng Danh sách chuẩn"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
+                    : 'text-slate-400 hover:text-slate-700'
+                }`}
+                title="Dạng Lưới card"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('compact')}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+                  viewMode === 'compact'
+                    ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200'
+                    : 'text-slate-400 hover:text-slate-700'
+                }`}
+                title="Dạng Thu gọn"
+              >
+                <Layers className="h-4 w-4" />
+              </button>
+            </div>
 
- {/* Refresh */}
+            {/* Refresh */}
           <button
             type="button"
             onClick={() => loadDashboard(false)}
@@ -753,196 +746,189 @@ Bù giờ khẩn cấp toàn phòng (+15p)
 
  {/* ── 5. Main Content (List / Grid / Compact) ── */}
  {totalItems === 0 ? (
- <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
- <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
- <Users className="w-7 h-7 text-slate-400" />
- </div>
- <h3 className="text-base font-semibold text-slate-800">Không tìm thấy thí sinh nào</h3>
- <p className="text-xs font-medium text-slate-500 max-w-sm">
- Không có thí sinh nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
- </p>
- </div>
+   <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
+     <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+       <Users className="w-7 h-7 text-slate-400" />
+     </div>
+     <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy thí sinh nào</h3>
+     <p className="text-xs font-medium text-slate-500 max-w-sm">
+       Không có thí sinh nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
+     </p>
+   </div>
  ) : viewMode === 'grid' ? (
- /* ── 5.1 Grid View Mode ── */
- <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
- {currentStudents.map((s: any) => {
- const att = s.attempt;
- const riskScore = att?.riskScore || 0;
- const { label: statusLabel, cls: statusCls } = statusMeta(att);
- const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
- const hasFlagged = att?.isFlagged;
- const isChecked = selectedIds.includes(s.student.id);
+   /* ── 5.1 Grid View Mode (Lưới Card) ── */
+   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+     {currentStudents.map((s: any) => {
+       const att = s.attempt;
+       const riskScore = att?.riskScore || 0;
+       const { label: statusLabel, cls: statusCls } = statusMeta(att);
+       const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
+       const hasFlagged = att?.isFlagged;
+       const isChecked = selectedIds.includes(s.student.id);
 
- return (
- <div
- key={s.student.id}
- className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
- isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
- }`}
- >
- <div className="space-y-2.5">
- <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
- <div className="flex items-center gap-2">
- <input
- type="checkbox"
- checked={isChecked}
- onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- <span className=" tabular-nums font-medium text-slate-900 text-xs">
- {s.examNumber}
- </span>
- </div>
+       return (
+         <div
+           key={s.student.id}
+           className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
+             isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+           }`}
+         >
+           <div className="space-y-2.5">
+             <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+               <div className="flex items-center gap-2">
+                 <input
+                   type="checkbox"
+                   checked={isChecked}
+                   onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
+                   className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                 />
+                 <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100 text-xs">
+                   {s.examNumber}
+                 </span>
+               </div>
 
- <span className="font-semibold text-xs text-slate-500">
- Ghế: <strong className="text-slate-900 font-semibold">{s.seatNumber}</strong>
- </span>
- </div>
+               <span className="font-semibold text-xs text-slate-500">
+                 Ghế: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{s.seatNumber}</strong>
+               </span>
+             </div>
 
- <div>
- <div className="flex items-center gap-1.5">
- <h4 className="text-sm font-semibold text-slate-900 leading-snug truncate">
- {s.student.fullName}
- </h4>
- {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
- </div>
+             <div>
+               <div className="flex items-center gap-1.5">
+                 <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug truncate">
+                   {s.student.fullName}
+                 </h4>
+                 {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
+               </div>
 
- <div className="mt-1"><IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge></div>
- </div>
+               <div className="mt-1"><IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge></div>
+             </div>
 
- <div className="space-y-1.5 text-xs text-slate-600 font-medium pt-1">
- <div className="flex items-center justify-between">
- <span className="text-slate-400">Trạng thái:</span>
- <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
- </div>
+             <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400 font-medium pt-1">
+               <div className="flex items-center justify-between">
+                 <span className="text-slate-400">Trạng thái:</span>
+                 <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
+               </div>
 
- <div className="flex items-center justify-between text-xs">
- <span className="text-slate-400">Mức rủi ro:</span>
- <span className={riskCls}>
- {riskScore}đ ({riskLevel})
- </span>
- </div>
- </div>
- </div>
+               <div className="flex items-center justify-between text-xs">
+                 <span className="text-slate-400">Mức rủi ro:</span>
+                 <span className={riskCls}>
+                   {riskScore}đ ({riskLevel})
+                 </span>
+               </div>
+             </div>
+           </div>
 
- <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 text-xs">
- {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
- <button
- type="button"
- onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
- className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
- >
- <Clock className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-blue-600 transition-colors" />
- <span>Gia hạn</span>
- </button>
- )}
- {att && (
- <button
- type="button"
- onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
- className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white hover:border-rose-300 hover:bg-rose-50 text-slate-700 hover:text-rose-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
- >
- <FileText className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-rose-600 transition-colors" />
- <span>Biên bản</span>
- </button>
- )}
- </div>
- </div>
- );
- })}
- </div>
+           <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+             {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
+               <button
+                 type="button"
+                 onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
+                 className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-300 hover:bg-blue-50 text-slate-700 dark:text-slate-300 hover:text-blue-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+               >
+                 <Clock className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-blue-600 transition-colors" />
+                 <span>Gia hạn</span>
+               </button>
+             )}
+             {att && (
+               <button
+                 type="button"
+                 onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
+                 className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-rose-300 hover:bg-rose-50 text-slate-700 dark:text-slate-300 hover:text-rose-700 px-3 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
+               >
+                 <FileText className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-rose-600 transition-colors" />
+                 <span>Biên bản</span>
+               </button>
+             )}
+           </div>
+         </div>
+       );
+     })}
+   </div>
  ) : viewMode === 'compact' ? (
- /* ── 5.2 Compact View Mode ── */
-  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
- <tr>
- <th scope="col" className="p-2 pl-3 text-center w-8">
- <input
- type="checkbox"
- checked={allSelected}
- onChange={(e) => handleSelectAll(e.target.checked)}
- className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </th>
- <th scope="col" className="p-2 whitespace-nowrap">SBD / Ghế</th>
- <th scope="col" className="p-2 min-w-[180px]">Họ tên thí sinh</th>
- <th scope="col" className="p-2 whitespace-nowrap">Mã SV</th>
- <th scope="col" className="p-2 whitespace-nowrap">Trạng thái thi</th>
- <th scope="col" className="p-2 text-center whitespace-nowrap">Cảnh báo</th>
- <th scope="col" className="p-2 pr-3 text-right whitespace-nowrap">Thao tác</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 font-normal">
- {currentStudents.map((s: any) => {
- const att = s.attempt;
- const riskScore = att?.riskScore || 0;
- const { label: statusLabel, cls: statusCls } = statusMeta(att);
- const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
- const hasFlagged = att?.isFlagged;
- const isChecked = selectedIds.includes(s.student.id);
+        /* ── 5.2 Compact View Mode (Dạng thẻ thanh ngang thu gọn như exam-papers) ── */
+        <div className="space-y-2.5">
+          {currentStudents.map((s: any) => {
+            const att = s.attempt;
+            const riskScore = att?.riskScore || 0;
+            const { label: statusLabel, cls: statusCls } = statusMeta(att);
+            const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
+            const hasFlagged = att?.isFlagged;
+            const isChecked = selectedIds.includes(s.student.id);
 
- return (
- <tr key={s.student.id} className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}>
- <td className="p-2 pl-3 text-center">
- <input
- type="checkbox"
- checked={isChecked}
- onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
- className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
- />
- </td>
- <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">{s.examNumber}</span>
- <span className="ml-1 text-slate-500 font-medium text-[15px] leading-[22px]">G:{s.seatNumber}</span>
- </td>
- <td className="p-2 min-w-[180px]">
- <div className="flex items-center gap-1.5">
- <span className="font-medium text-slate-900 text-[15px] leading-[22px] truncate">{s.student.fullName}</span>
- {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
- </div>
- </td>
- <td className="p-2 whitespace-nowrap">
- <IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge>
- </td>
- <td className="p-2 whitespace-nowrap">
- <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
- </td>
- <td className="p-2 text-center whitespace-nowrap">
- <span className={`text-[15px] leading-[22px] ${riskCls}`}>
- {riskScore}đ
- </span>
- </td>
- <td className="p-2 pr-3 text-right whitespace-nowrap">
- {att && (
- <div className="inline-flex items-center gap-1">
- <button
- type="button"
- onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
- className="p-1.5 rounded-xl border border-slate-200/90 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 transition cursor-pointer active:scale-95 shadow-2xs"
- title="Gia hạn"
- >
- <Clock className="w-3.5 h-3.5" />
- </button>
- <button
- type="button"
- onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
- className="p-1.5 rounded-xl border border-slate-200/90 bg-white text-slate-500 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer active:scale-95 shadow-2xs"
- title="Biên bản sự cố"
- >
- <FileText className="w-3.5 h-3.5" />
- </button>
- </div>
- )}
- </td>
- </tr>
- );
- })}
- </tbody>
- </table>
- </div>
- ) : (
- /* ── 5.3 Standard List View Mode (Default Table) ── */
+            return (
+              <div
+                key={s.student.id}
+                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xs transition duration-200 gap-3.5 ${
+                  isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
+              >
+                {/* Left: Checkbox + Seat Badge + Info */}
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
+                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold text-xs border border-blue-100 dark:border-blue-900">
+                    G:{s.seatNumber}
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        {s.student.fullName}
+                      </h4>
+                      {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
+                      <IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge>
+                      <span className="text-xs font-semibold text-slate-500 tabular-nums">
+                        SBD: {s.examNumber}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                      <span>Mức cảnh báo: <strong className={riskCls}>{riskScore}đ ({riskLevel})</strong></span>
+                      {att?.connectedIp && (
+                        <span className="text-slate-400">IP: {att.connectedIp}</span>
+                      )}
+                      {att?.startedAt && (
+                        <span className="text-slate-400">Bắt đầu: {new Date(att.startedAt).toLocaleTimeString('vi-VN')}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: StatusBadge + Action Buttons */}
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
+
+                  {att && (
+                    <div className="inline-flex items-center gap-1.5 pl-2 border-l border-slate-100 dark:border-slate-800">
+                      <Button
+                        variant="secondary"
+                        size="xs"
+                        onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('EXTEND'); }}
+                        leftIcon={<Clock className="w-3.5 h-3.5 text-blue-600" />}
+                      >
+                        Gia hạn
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="xs"
+                        onClick={() => { setActionError(null); setSelectedStudent(s); setActionType('FLAG'); }}
+                        leftIcon={<FileText className="w-3.5 h-3.5 text-rose-600" />}
+                      >
+                        Biên bản
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* ── 5.3 Standard List View Mode (Default Table) ── */
   <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
   <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
  <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">

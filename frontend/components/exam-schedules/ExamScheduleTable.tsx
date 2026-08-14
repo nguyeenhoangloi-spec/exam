@@ -99,21 +99,14 @@ export function computeShiftName(startTime?: string, fallbackShiftName?: string)
   const parts = startTime.split(':');
   if (parts.length < 2) return fallbackShiftName || 'Ca 1 - Sáng';
   const h = parseInt(parts[0], 10);
-  const m = parseInt(parts[1], 10);
   if (isNaN(h)) return fallbackShiftName || 'Ca 1 - Sáng';
-  const totalMins = h * 60 + (isNaN(m) ? 0 : m);
 
-  if (totalMins < 555) {
-    return 'Ca 1 - Sáng';
-  } else if (totalMins < 720) {
-    return 'Ca 2 - Sáng';
-  } else if (totalMins < 900) {
-    return 'Ca 1 - Chiều';
-  } else if (totalMins < 1080) {
-    return 'Ca 2 - Chiều';
-  } else {
-    return 'Ca Tối';
-  }
+  if (h >= 6 && h < 9) return 'Ca 1 - Sáng';
+  if (h >= 9 && h < 12) return 'Ca 2 - Sáng';
+  if (h >= 12 && h < 15) return 'Ca 3 - Chiều';
+  if (h >= 15 && h < 18) return 'Ca 4 - Chiều';
+  if (h >= 18) return 'Ca 5 - Tối';
+  return fallbackShiftName || 'Ca 1 - Sáng';
 }
 
 export function ExamScheduleTable({
@@ -141,13 +134,13 @@ export function ExamScheduleTable({
   onHardDelete,
   isAdmin,
 }: ExamScheduleTableProps) {
-  const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const allSelected = schedules.length > 0 && selected.length === schedules.length;
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '---';
     try {
       const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
       const dd = String(d.getDate()).padStart(2, '0');
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const yyyy = d.getFullYear();
@@ -157,8 +150,8 @@ export function ExamScheduleTable({
     }
   };
 
-  const getStatusBadge = (st?: string, sched?: ExamScheduleItemExtended) => {
-    const s = (sched ? computeScheduleStatus(sched) : st?.toUpperCase()) || 'UPCOMING';
+  const getStatusBadge = (statusBadge?: string, schedule?: ExamScheduleItemExtended) => {
+    const s = (schedule ? computeScheduleStatus(schedule) : statusBadge?.toUpperCase()) || 'UPCOMING';
     return <StatusBadge status={s} />;
   };
 
@@ -169,7 +162,7 @@ export function ExamScheduleTable({
         {schedules.map((s) => {
           const isChecked = selected.includes(s.id);
           const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
-          const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ II 2023-2024';
+          const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ';
           const shiftName = computeShiftName(s.startTime, s.shiftName);
           const roomName = s.roomName || 'P.101';
           const studentCount = s.studentCount || 45;
@@ -178,13 +171,13 @@ export function ExamScheduleTable({
           return (
             <div
               key={s.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20 dark:bg-blue-950/20' : ''
               }`}
             >
+              {/* Header Top row */}
               <div className="space-y-2.5">
-                {/* Header Row */}
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -195,50 +188,58 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="tabular-nums text-xs font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                      className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
                     >
-                      <IdentifierBadge>{codeText}</IdentifierBadge>
+                      <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
                     </button>
                   </div>
                   {getStatusBadge(s.statusBadge || s.status, s)}
                 </div>
 
-                {/* Period & Shift Info */}
+                {/* Subject & Period Title */}
                 <div>
-                  <span className="text-[13px] font-semibold text-blue-600">{shiftName}</span>
                   <h4
                     onClick={() => onDetail(s)}
-                    className="text-[15px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition line-clamp-2"
+                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
                   >
-                    {periodName}
+                    {s.subjectName || s.subject?.name || `Môn học mã #${s.subjectId || s.id}`}
                   </h4>
+                  <p className="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                    {periodName}
+                  </p>
                 </div>
 
-                {/* Details */}
-                <div className="grid grid-cols-2 gap-2 text-[15px] font-medium text-slate-700 pt-1">
-                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Building className="h-4 w-4 text-blue-500 shrink-0" />
-                    <span>Phòng {roomName}</span>
+                {/* Key metadata grid */}
+                <div className="grid grid-cols-2 gap-2 text-xs font-medium text-slate-600 dark:text-slate-400 pt-1">
+                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 p-2 border border-slate-100 dark:border-slate-700/60">
+                    <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                    <span>{formatDate(s.examDate)}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                    <Users className="h-4 w-4 text-slate-500 shrink-0" />
+                  <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 p-2 border border-slate-100 dark:border-slate-700/60">
+                    <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                    <span>{s.startTime || '07:00'} - {s.endTime || '09:00'}</span>
+                  </div>
+                </div>
+
+                {/* Room & Capacity info */}
+                <div className="text-[13px] font-normal text-slate-500 dark:text-slate-400 flex items-center justify-between pt-1">
+                  <span className="flex items-center gap-1">
+                    <Building className="h-3.5 w-3.5 text-slate-400" />
+                    <span>Phòng: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{roomName}</strong> ({shiftName})</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5 text-slate-400" />
                     <span>{studentCount} TS ({supervisorCount} GT)</span>
-                  </div>
-                </div>
-
-                {/* Date & Time */}
-                <div className="text-[14px] font-normal text-slate-500 flex items-center justify-between pt-1">
-                  <span>Ngày: <strong className="text-slate-900 font-semibold">{formatDate(s.examDate)}</strong></span>
-                  <span>{s.startTime || '07:00'} - {s.endTime || '09:00'}</span>
+                  </span>
                 </div>
               </div>
 
-              {/* Actions Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-semibold">
+              {/* Action Buttons at Bottom */}
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(s)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Xem chi tiết</span>
@@ -249,7 +250,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onEdit(s)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100"
+                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                       title="Sửa"
                     >
                       <Edit className="h-3.5 w-3.5" />
@@ -257,7 +258,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDelete(s.id)}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50"
+                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                       title="Xóa"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -280,62 +281,51 @@ export function ExamScheduleTable({
           const isChecked = selected.includes(s.id);
           const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
           const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ';
-          const title = s.subjectName ? `${s.subjectName} (${s.subjectCode || ''})` : periodName;
           const shiftName = computeShiftName(s.startTime, s.shiftName);
           const roomName = s.roomName || 'P.101';
           const studentCount = s.studentCount || 45;
+          const supervisorCount = s.supervisorCount || '2/2';
 
           return (
             <div
               key={s.id}
-              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20 dark:bg-blue-950/20' : ''
               }`}
             >
-              {/* Left: Checkbox + Avatar Code Badge */}
+              {/* Left: Checkbox + Code + Subject Title */}
               <div className="flex items-center gap-3 min-w-0">
                 <input
                   type="checkbox"
                   checked={isChecked}
                   onChange={(e) => onSelect(s.id, e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
-                  {s.subjectCode?.slice(0, 3) || 'LT'}
-                </div>
-
-                {/* Middle: Title + Code + Meta chips */}
+                <button
+                  type="button"
+                  onClick={() => onDetail(s)}
+                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition shrink-0"
+                >
+                  <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
+                </button>
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(s)}
-                      className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-primary-600 transition cursor-pointer text-left"
-                    >
-                      {title}
-                    </button>
-                    <IdentifierBadge>{codeText}</IdentifierBadge>
-                  </div>
-
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                      <span>{formatDate(s.examDate)}</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                      <span>{s.startTime || '07:00'} - {s.endTime || '09:00'} ({shiftName})</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>Phòng {roomName}</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>{studentCount} thí sinh</span>
-                    </span>
-                  </div>
+                  <h4
+                    onClick={() => onDetail(s)}
+                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
+                  >
+                    {s.subjectName || s.subject?.name || `Môn học #${s.subjectId || s.id}`}
+                  </h4>
+                  <p className="text-xs font-normal text-slate-500 dark:text-slate-400 truncate">
+                    {periodName} • {roomName} • {shiftName}
+                  </p>
                 </div>
+              </div>
+
+              {/* Middle: Date + Time */}
+              <div className="hidden lg:flex items-center gap-4 text-xs font-medium text-slate-600 dark:text-slate-400 shrink-0">
+                <span>{formatDate(s.examDate)}</span>
+                <span>{s.startTime || '07:00'} - {s.endTime || '09:00'}</span>
+                <span>{studentCount} TS</span>
               </div>
 
               {/* Right: Status & Actions */}
@@ -345,7 +335,7 @@ export function ExamScheduleTable({
                 <button
                   type="button"
                   onClick={() => onDetail(s)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 dark:hover:text-blue-400 transition cursor-pointer"
                   title="Xem chi tiết"
                 >
                   <Eye className="h-4 w-4" />
@@ -358,7 +348,7 @@ export function ExamScheduleTable({
                         <button
                           type="button"
                           onClick={() => { closeMenu(); onDetail(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-[15px] font-medium"
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
                         >
                           <Eye className="h-4 w-4 text-slate-500" />
                           <span>Xem chi tiết</span>
@@ -366,18 +356,18 @@ export function ExamScheduleTable({
                         <button
                           type="button"
                           onClick={() => { closeMenu(); onEdit(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-[15px] font-medium"
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
                         >
-                          <Edit className="h-4 w-4 text-primary-600" />
+                          <Edit className="h-4 w-4 text-blue-600" />
                           <span>Chỉnh sửa</span>
                         </button>
-                        <div className="my-1 border-t border-slate-200" />
+                        <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                         <button
                           type="button"
                           onClick={() => { closeMenu(); onDelete(s.id); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-[15px] font-medium"
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[14px] font-medium"
                         >
-                          <Trash2 className="h-4 w-4 text-danger-600" />
+                          <Trash2 className="h-4 w-4 text-rose-600" />
                           <span>Xóa lịch thi</span>
                         </button>
                       </>
@@ -392,11 +382,11 @@ export function ExamScheduleTable({
     );
   }
 
-  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default matching Mockup Image 100%)
+  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
-    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-200 border-collapse">
-        <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+      <table className="ui-table w-full text-left text-[14.5px] text-slate-700 dark:text-slate-300 border-collapse">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-semibold text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -407,10 +397,10 @@ export function ExamScheduleTable({
               />
             </th>
             {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã lịch thi</th>}
-            {visibleColumns.period !== false && <th scope="col" className="p-3.5 min-w-[240px] whitespace-nowrap">Kỳ thi</th>}
+            {visibleColumns.period !== false && <th scope="col" className="p-3.5 min-w-[240px] whitespace-nowrap">Kỳ thi / Môn thi</th>}
             {visibleColumns.shift !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ca thi</th>}
             {visibleColumns.room !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Phòng thi</th>}
-            {visibleColumns.date !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày thi ↕</th>}
+            {visibleColumns.date !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày thi</th>}
             {visibleColumns.time !== false && visibleColumns.startTime !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Thời gian</th>}
             {visibleColumns.students !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Số TS</th>}
             {visibleColumns.supervisors !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Giám thị</th>}
@@ -418,11 +408,11 @@ export function ExamScheduleTable({
             <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-700 font-normal">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
           {schedules.map((s) => {
             const isChecked = selected.includes(s.id);
             const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
-            const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ II 2023-2024';
+            const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ';
             const shiftName = computeShiftName(s.startTime, s.shiftName);
             const roomName = s.roomName || 'P.101';
             const studentCount = s.studentCount || 45;
@@ -431,8 +421,8 @@ export function ExamScheduleTable({
             return (
               <tr
                 key={s.id}
-                className={`transition hover:bg-blue-50/40 dark:hover:bg-slate-800/90 ${
-                  isChecked ? 'bg-blue-50/60 dark:bg-blue-950/60' : ''
+                className={`transition-colors hover:bg-blue-50/40 dark:hover:bg-blue-950/20 ${
+                  isChecked ? 'bg-blue-50/60 dark:bg-blue-950/30' : ''
                 }`}
               >
                 {/* Checkbox */}
@@ -451,73 +441,71 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="tabular-nums text-[15px] leading-[22px] font-medium text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                      className="cursor-pointer"
                     >
-                      <IdentifierBadge>{codeText}</IdentifierBadge>
+                      <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
                     </button>
                   </td>
                 )}
 
-                {/* Kỳ thi */}
+                {/* Kỳ thi / Môn thi */}
                 {visibleColumns.period !== false && (
                   <td className="p-3.5 min-w-[240px] whitespace-nowrap">
-                    <div className="space-y-0.5">
-                      <button
-                        type="button"
-                        className="font-medium text-slate-900 dark:text-slate-100 cursor-pointer hover:text-blue-600 transition text-[15px] leading-[22px] whitespace-nowrap block"
-                        onClick={() => onDetail(s)}
-                      >
-                        {periodName}
-                      </button>
-                      <p className="text-[15px] leading-[22px] font-normal text-slate-500">
-                        {formatExamType(s.examType)}
-                      </p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => onDetail(s)}
+                      className="font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition text-left block"
+                    >
+                      {s.subjectName || s.subject?.name || `Môn học #${s.subjectId || s.id}`}
+                    </button>
+                    <span className="text-xs font-normal text-slate-500 dark:text-slate-400 block truncate">
+                      {periodName}
+                    </span>
                   </td>
                 )}
 
                 {/* Ca thi */}
                 {visibleColumns.shift !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[14px]">
                     {shiftName}
                   </td>
                 )}
 
                 {/* Phòng thi */}
                 {visibleColumns.room !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-[14px]">
                     {roomName === 'Chưa xếp phòng' || !roomName ? (
-                      <span className="font-medium text-slate-500">Chưa xếp phòng</span>
+                      <span className="font-medium text-slate-400">Chưa xếp phòng</span>
                     ) : (
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{roomName}</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">{roomName}</span>
                     )}
                   </td>
                 )}
 
                 {/* Ngày thi */}
                 {visibleColumns.date !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[14px]">
                     {formatDate(s.examDate)}
                   </td>
                 )}
 
                 {/* Thời gian */}
                 {(visibleColumns.time !== false && visibleColumns.startTime !== false) && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[15px] tabular-nums">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[14px] tabular-nums">
                     {s.startTime || '07:00'} - {s.endTime || '09:00'}
                   </td>
                 )}
 
                 {/* Số TS */}
                 {visibleColumns.students !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
                     {studentCount}
                   </td>
                 )}
 
                 {/* Giám thị */}
                 {visibleColumns.supervisors !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 dark:text-slate-400 text-[14px]">
                     {supervisorCount}
                   </td>
                 )}
@@ -535,7 +523,7 @@ export function ExamScheduleTable({
                     <button
                       type="button"
                       onClick={() => onDetail(s)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 dark:hover:text-blue-400 transition cursor-pointer"
                       title="Xem chi tiết"
                     >
                       <Eye className="h-4 w-4" />
@@ -550,7 +538,7 @@ export function ExamScheduleTable({
                               closeMenu();
                               onDetail(s);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer text-[15px] font-medium"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
                           >
                             <Eye className="h-4 w-4 text-slate-500" />
                             <span>Xem chi tiết</span>
@@ -566,21 +554,21 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onRestore?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-primary-600 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-blue-600 dark:text-blue-400 cursor-pointer text-[14px] font-medium"
                                   >
-                                    <RotateCcw className="h-4 w-4 text-primary-600" />
+                                    <RotateCcw className="h-4 w-4 text-blue-600" />
                                     <span>Khôi phục lịch thi</span>
                                   </button>
-                                  <div className="my-1 border-t border-slate-200" />
+                                  <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                                   <button
                                     type="button"
                                     onClick={() => {
                                       closeMenu();
                                       onHardDelete?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[14px] font-medium"
                                   >
-                                    <Trash2 className="h-4 w-4 text-danger-600" />
+                                    <Trash2 className="h-4 w-4 text-rose-600" />
                                     <span>Xóa vĩnh viễn</span>
                                   </button>
                                 </>
@@ -592,22 +580,22 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onEdit(s);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
                                   >
-                                    <Edit className="h-4 w-4 text-primary-600" />
+                                    <Edit className="h-4 w-4 text-blue-600" />
                                     <span>Chỉnh sửa ca thi</span>
                                   </button>
-                                  <div className="my-1 border-t border-slate-200" />
+                                  <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                                   <button
                                     type="button"
                                     onClick={() => {
                                       closeMenu();
                                       onDelete(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[14px] font-medium"
                                   >
-                                    <Trash2 className="h-4 w-4 text-danger-600" />
-                                    <span>Xóa ca thi</span>
+                                    <Trash2 className="h-4 w-4 text-rose-600" />
+                                    <span>Xóa lịch thi</span>
                                   </button>
                                 </>
                               )}

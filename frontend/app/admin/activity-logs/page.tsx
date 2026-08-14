@@ -431,39 +431,43 @@ export default function ActivityLogsPage() {
             title: 'Tổng nhật ký thao tác',
             value: kpiData.total,
             subtext: 'Lịch sử ghi vết toàn hệ thống',
+            progressPercent: kpiData.total > 0 ? 100 : 0,
             icon: Activity,
         },
         {
             title: 'Phiên đăng nhập',
             value: kpiData.login,
             subtext: 'Đăng nhập & Google OAuth',
+            progressPercent: kpiData.total > 0 ? Math.round((kpiData.login / kpiData.total) * 100) : 0,
             icon: LogIn,
         },
         {
             title: 'Tạo & phê duyệt đề',
             value: kpiData.dataOps,
             subtext: 'Biên soạn ngân hàng đề',
+            progressPercent: kpiData.total > 0 ? Math.round((kpiData.dataOps / kpiData.total) * 100) : 0,
             icon: ShieldCheck,
         },
         {
             title: 'Phúc khảo & đổi điểm',
             value: kpiData.appeal,
             subtext: 'Khiếu nại điểm & thẩm định',
+            progressPercent: kpiData.total > 0 ? Math.round((kpiData.appeal / kpiData.total) * 100) : 0,
             icon: AlertCircle,
         },
     ];
 
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* ── 1. Page Header ── */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
-                <div className="space-y-1">
-                    <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
+                <div className="space-y-0.5">
+                    <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
                         Nhật ký hoạt động hệ thống
                     </h1>
-                    <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+                    <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Theo dõi, rà soát và ghi vết chi tiết mọi lịch sử thao tác của Quản trị viên, Giảng viên và Thí sinh
                     </p>
                 </div>
@@ -491,32 +495,43 @@ export default function ActivityLogsPage() {
                 </div>
             </div>
 
-            {/* ── 2. Top KPI Cards (Golden Master Standard) ── */}
+            {/* ── 2. Top KPI Cards With Micro Progress Tracks ── */}
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
                 {kpiItems.map((item) => {
                     const IconComponent = item.icon;
                     return (
                         <div
                             key={item.title}
-                            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+                            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer"
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-1 min-w-0">
-                                    <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
+                                    <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                         {item.title}
                                     </span>
-                                    <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
+                                    <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                                         {item.value.toLocaleString('vi-VN')}
                                     </div>
                                 </div>
 
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border bg-blue-50 text-blue-600 border-blue-100 transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
-                                    <IconComponent className="h-5 w-5 stroke-[2]" />
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
+                                    <IconComponent className="h-5 w-5 stroke-[2.2]" />
                                 </div>
                             </div>
 
-                            <div className="mt-2.5 pt-2 border-t border-slate-100/80">
-                                <span className="text-[13px] font-normal text-slate-500 block truncate">
+                            {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
+                            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                                <div
+                                    className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                                    style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
+                                />
+                            </div>
+
+                            <div className="mt-2.5">
+                                <span
+                                    title={item.subtext}
+                                    className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                                >
                                     {item.subtext}
                                 </span>
                             </div>

@@ -277,87 +277,122 @@ export default function TeacherAssignmentsPage() {
  idx + 1,
  a.subjectName,
  a.subjectCode,
- new Date(a.examDate).toLocaleDateString('vi-VN'),
+new Date(a.examDate).toLocaleDateString('vi-VN'),
  `${a.startTime} - ${a.endTime}`,
  a.roomName || a.roomCode,
  a.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
  a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận',
- ]),
- });
- };
+      ]),
+    });
+  };
 
- const KPI = [
- { label: 'Tổng ca coi thi', value: `${assignments.length} ca`, subtext: 'Học kỳ hiện tại', icon: Calendar, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
- { label: 'Giám thị 1 (Chính)', value: `${sup1Count} ca`, subtext: 'Chịu trách nhiệm phòng', icon: ShieldCheck, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
- { label: 'Đã xác nhận ca', value: `${confirmedCount}/${assignments.length} ca`, subtext: 'Sẵn sàng gác thi', icon: CheckCircle2, iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
- { label: 'Thời gian tập trung', value: 'Trước 15p', subtext: 'Chuẩn bị & điểm danh', icon: Clock, iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
- ];
+  const KPI = [
+    {
+      label: 'Tổng ca coi thi',
+      value: `${assignments.length} ca`,
+      subtext: 'Học kỳ hiện tại',
+      progressPercent: assignments.length > 0 ? 100 : 0,
+      icon: Calendar,
+    },
+    {
+      label: 'Giám thị 1 (Chính)',
+      value: `${sup1Count} ca`,
+      subtext: 'Chịu trách nhiệm phòng',
+      progressPercent: assignments.length > 0 ? Math.round((sup1Count / assignments.length) * 100) : 0,
+      icon: ShieldCheck,
+    },
+    {
+      label: 'Đã xác nhận ca',
+      value: `${confirmedCount}/${assignments.length} ca`,
+      subtext: 'Sẵn sàng gác thi',
+      progressPercent: assignments.length > 0 ? Math.round((confirmedCount / assignments.length) * 100) : 100,
+      icon: CheckCircle2,
+    },
+    {
+      label: 'Thời gian tập trung',
+      value: 'Trước 15p',
+      subtext: 'Chuẩn bị & điểm danh',
+      progressPercent: 100,
+      icon: Clock,
+    },
+  ];
 
- return (
- <>
- <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
- {/* ── 1. Standard Page Header ── */}
- <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
- <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
- Lịch Phân Công Coi Thi
- </h1>
- <p className="text-[15px] font-normal leading-[22px] text-slate-500">
- Giảng viên: <strong className="text-slate-900 font-semibold">{currentUser?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Danh sách ca coi thi được phân công trong học kỳ
- </p>
- </div>
+  return (
+    <>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
+        {/* ── 1. Standard Page Header ── */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+          <div className="space-y-0.5">
+            <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+              Lịch Phân Công Coi Thi
+            </h1>
+            <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+              Giảng viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> &nbsp;•&nbsp; Danh sách ca coi thi được phân công trong học kỳ
+            </p>
+          </div>
 
- <div className="flex flex-wrap items-center gap-2.5">
- <Button
- variant="secondary"
- size="md"
- onClick={exportCsv}
- leftIcon={<Download className="h-4 w-4" />}
- >
- Xuất CSV
- </Button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={exportCsv}
+              leftIcon={<Download className="h-4 w-4 text-slate-500" />}
+            >
+              Xuất CSV
+            </Button>
 
- <Button
- variant="secondary"
- size="md"
- onClick={handlePrintReport}
- leftIcon={<Printer className="h-4 w-4" />}
- >
- In Lịch Coi Thi
- </Button>
- </div>
- </div>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handlePrintReport}
+              leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
+            >
+              In Lịch Coi Thi
+            </Button>
+          </div>
+        </div>
 
- {/* KPI Cards — Standardized White Flat Cards */}
- <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
- {KPI.map(({ label, value, subtext, icon: Icon, iconBg }) => (
- <div
- key={label}
- className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
- >
- <div className="flex items-start justify-between gap-3">
- <div className="space-y-1 min-w-0">
- <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">
- {label}
- </span>
- <div className="text-[32px] font-bold text-slate-900 leading-[38px] tracking-tight tabular-nums">
- {value}
- </div>
- </div>
+        {/* KPI Cards — Standardized White Flat Cards with Micro Progress Tracks */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {KPI.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
+            <div
+              key={label}
+              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    {label}
+                  </span>
+                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    {value}
+                  </div>
+                </div>
 
- <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${iconBg} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
- <Icon className="h-5 w-5 stroke-[2]" />
- </div>
- </div>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
+                  <Icon className="h-5 w-5 stroke-[2.2]" />
+                </div>
+              </div>
 
- <div className="mt-2.5 pt-2 border-t border-slate-100/80">
- <span className="text-[13px] font-normal text-slate-500 block truncate">
- {subtext}
-</span>
- </div>
- </div>
- ))}
- </div>
+              {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
+              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                <div
+                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(Math.max(progressPercent, 5), 100)}%` }}
+                />
+              </div>
+
+              <div className="mt-2.5">
+                <span
+                  title={subtext}
+                  className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                >
+                  {subtext}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
 
   {/* Table Toolbar Action Group */}
   <div className="flex flex-wrap items-center justify-between gap-3 py-1">

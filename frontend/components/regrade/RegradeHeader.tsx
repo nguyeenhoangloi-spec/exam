@@ -19,11 +19,11 @@ export function RegradeHeader({
 }: RegradeHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
-      <div className="space-y-1">
-        <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900">
-          Quản lý phúc khảo & khiếu nại điểm
+      <div className="space-y-0.5">
+        <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
+          Quản Lý Phúc Khảo & Khiếu Nại Điểm
         </h1>
-        <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Tiếp nhận đơn khiếu nại từ sinh viên, thẩm định bài thi, điều chỉnh điểm số và công bố kết quả.
         </p>
       </div>

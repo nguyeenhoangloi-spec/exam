@@ -366,42 +366,123 @@ export default function AdminEssayReviewPage() {
  }
  return true;
  });
- }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery]);
+  }, [rows, statusFilter, subjectFilter, dateFilter, scheduleFilter, searchQuery]);
 
- return (
- <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900">
- {/* Page Header matching system standards */}
- <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
- <div className="space-y-1">
- <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
- Duyệt & Quản Lý Bài Thi Tự Luận
- </h1>
- <p className="text-[15px] font-normal leading-[22px] text-slate-500">
- Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.
- </p>
- </div>
+  const KPI_CARDS = [
+    {
+      title: 'Tổng bài thi',
+      value: counts.all,
+      subtext: 'Toàn bộ bài thi tự luận',
+      progressPercent: counts.all > 0 ? 100 : 0,
+      icon: FileText,
+      unit: ' bài',
+    },
+    {
+      title: 'Chờ Admin duyệt',
+      value: counts.waiting,
+      subtext: 'Cần thẩm định & duyệt điểm',
+      progressPercent: counts.all > 0 ? Math.round((counts.waiting / counts.all) * 100) : 0,
+      icon: ShieldCheck,
+      unit: ' bài',
+    },
+    {
+      title: 'Đang chấm',
+      value: counts.grading,
+      subtext: 'Giảng viên đang chấm điểm',
+      progressPercent: counts.all > 0 ? Math.round((counts.grading / counts.all) * 100) : 0,
+      icon: Clock,
+      unit: ' bài',
+    },
+    {
+      title: 'Đã công bố',
+      value: counts.published,
+      subtext: 'Điểm số chính thức đã công bố',
+      progressPercent: counts.all > 0 ? Math.round((counts.published / counts.all) * 100) : 0,
+      icon: CheckCircle2,
+      unit: ' bài',
+    },
+  ];
 
- <button
- type="button"
- onClick={loadAssignments}
- disabled={loading}
- title="Làm mới danh sách"
- className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer active:scale-95 shrink-0 select-none disabled:opacity-50"
- >
- <RotateCcw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
- </button>
- </div>
+  return (
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+      {/* ── 1. Standard Page Header ── */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+        <div className="space-y-0.5">
+          <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+            Duyệt & Quản Lý Bài Thi Tự Luận
+          </h1>
+          <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+            Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.
+          </p>
+        </div>
 
- {message && (
- <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5 text-xs font-semibold text-blue-800 flex items-center justify-between shadow-2xs">
- <span>{message}</span>
- <button onClick={() => setMessage('')} className="text-blue-500 hover:text-blue-700 font-semibold ml-4">
- ✕
- </button>
- </div>
- )}
+        <button
+          type="button"
+          onClick={loadAssignments}
+          disabled={loading}
+          title="Làm mới danh sách"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 cursor-pointer select-none disabled:opacity-50 shrink-0"
+        >
+          <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+        </button>
+      </div>
 
- <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      {/* ── 2. Standard 4 KPI Cards Row With Micro Progress Tracks ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {KPI_CARDS.map((item) => {
+          const IconComponent = item.icon;
+          return (
+            <div
+              key={item.title}
+              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    {item.title}
+                  </span>
+                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    {item.value.toLocaleString('vi-VN')}
+                    {item.unit ? <span className="text-xs font-normal text-slate-500 dark:text-slate-400 ml-1">{item.unit}</span> : ''}
+                  </div>
+                </div>
+
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
+                  <IconComponent className="h-5 w-5 stroke-[2.2]" />
+                </div>
+              </div>
+
+              {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
+              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                <div
+                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
+                />
+              </div>
+
+              <div className="mt-2.5">
+                <span
+                  title={item.subtext}
+                  className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                >
+                  {item.subtext}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {message && (
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 text-xs font-medium text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs">
+          <span>{message}</span>
+          <button onClick={() => setMessage('')} className="text-slate-400 hover:text-slate-600 font-semibold ml-4 cursor-pointer">
+            Đóng
+          </button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
  {/* Left panel: List */}
  <div className="lg:col-span-4 space-y-4">
  <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 space-y-3">

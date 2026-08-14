@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { Plus, Upload, Download, Zap, BarChart2, LayoutGrid, Database, ChevronRight } from 'lucide-react';
-
+import { Plus, Upload, Download, Database } from 'lucide-react';
 import { Question } from '../../types';
 
 interface QuestionBankTopChartsProps {
@@ -28,10 +27,11 @@ export function QuestionBankTopCharts({
 
   const pctLabel = (val: number) => total > 0 ? `${((val / total) * 100).toFixed(1)}%` : '0%';
 
+  // 100% chuẩn màu Xanh dương & Slate
   const statusData = [
-    { name: 'Đã duyệt', value: approved, color: 'var(--ui-chart-success)' },
-    { name: 'Chờ duyệt', value: pending, color: 'var(--ui-chart-warning)' },
-    { name: 'Từ chối', value: rejected, color: 'var(--ui-chart-danger)' },
+    { name: 'Đã duyệt', value: approved, color: '#2563eb' },
+    { name: 'Chờ duyệt', value: pending, color: '#60a5fa' },
+    { name: 'Từ chối', value: rejected, color: '#94a3b8' },
   ];
 
   const difficultyCounts = (counts.difficulty || {}) as Record<string, number>;
@@ -40,9 +40,9 @@ export function QuestionBankTopCharts({
   const hard = difficultyCounts.HARD ?? questions.filter((q) => q.difficulty === 'HARD').length;
 
   const difficultyData = [
-    { label: 'Dễ', value: easy, color: 'var(--ui-chart-success)', pct: total > 0 ? (easy / total) * 100 : 0, pill: 'bg-emerald-50 text-emerald-700' },
-    { label: 'Trung bình', value: medium, color: 'var(--ui-chart-warning)', pct: total > 0 ? (medium / total) * 100 : 0, pill: 'bg-amber-50 text-amber-700' },
-    { label: 'Khó', value: hard, color: 'var(--ui-chart-danger)', pct: total > 0 ? (hard / total) * 100 : 0, pill: 'bg-rose-50 text-rose-700' },
+    { label: 'Dễ', value: easy, color: '#2563eb', pct: total > 0 ? (easy / total) * 100 : 0 },
+    { label: 'Trung bình', value: medium, color: '#60a5fa', pct: total > 0 ? (medium / total) * 100 : 0 },
+    { label: 'Khó', value: hard, color: '#94a3b8', pct: total > 0 ? (hard / total) * 100 : 0 },
   ];
 
   const typeCounts = (counts.types || {}) as Record<string, number>;
@@ -53,63 +53,54 @@ export function QuestionBankTopCharts({
   const essay = typeCounts.ESSAY ?? questions.filter((q) => q.type === 'ESSAY').length;
 
   const allTypesData = [
-    { name: 'Trắc nghiệm', value: singleChoice, color: 'var(--ui-chart-primary)' },
-    { name: 'Nhiều đáp án', value: multipleChoice, color: 'var(--ui-chart-primary-light)' },
-    { name: 'Đúng/Sai', value: trueFalse, color: 'var(--ui-chart-info)' },
-    { name: 'Điền khuyết', value: fillBlank, color: 'var(--ui-chart-success-strong)' },
-    { name: 'Tự luận', value: essay, color: 'var(--ui-chart-danger-strong)' },
+    { name: 'Trắc nghiệm', value: singleChoice, color: '#2563eb' },
+    { name: 'Nhiều đáp án', value: multipleChoice, color: '#3b82f6' },
+    { name: 'Đúng/Sai', value: trueFalse, color: '#60a5fa' },
+    { name: 'Điền khuyết', value: fillBlank, color: '#93c5fd' },
+    { name: 'Tự luận', value: essay, color: '#94a3b8' },
   ];
   const typeData = allTypesData.filter((d) => d.value > 0).length > 0
     ? allTypesData.filter((d) => d.value > 0)
     : allTypesData;
 
-  // Shared class tokens (Synchronized with System KPI Standard)
-  const cardCls = 'group flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md overflow-hidden cursor-pointer';
-  const hdrCls = 'flex items-center gap-3 border-b border-slate-100 pb-3 mb-3';
-  const iconCls = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 text-blue-600 bg-blue-50 border-blue-100';
-  const titleCls = 'text-lg font-semibold text-slate-900 dark:text-slate-100';
-  const legendRowCls = 'flex items-center justify-between gap-1';
-  const legendNameCls = 'text-xs font-medium text-slate-600 dark:text-slate-400 truncate';
-  const legendValCls = 'text-sm font-semibold text-slate-900 dark:text-slate-100 shrink-0';
-  const legendPctCls = 'text-xs text-slate-500 dark:text-slate-400 font-normal ml-0.5';
+  const cardCls = 'group flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer';
+  const iconCls = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white';
+  const titleCls = 'text-[14px] font-semibold text-slate-900 dark:text-slate-100';
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
 
-      {/* ─── Card 1: Tổng quan ─── */}
+      {/* ─── Card 1: Tổng quan trạng thái ─── */}
       <div className={cardCls}>
-        <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
-            <span className={titleCls}>Tổng quan ngân hàng</span>
-            <span className={iconCls}>
-              <Database className="h-5 w-5" />
-            </span>
-          </div>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">
+          <span className={titleCls}>Tổng quan ngân hàng</span>
+          <span className={iconCls}>
+            <Database className="h-5 w-5" />
+          </span>
         </div>
-        <div className="flex flex-1 items-center gap-3 px-4 pb-4">
-          <div className="relative h-[84px] w-[84px] shrink-0">
+        <div className="flex flex-1 items-center gap-3">
+          <div className="relative h-[80px] w-[80px] shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={statusData} dataKey="value" innerRadius={28} outerRadius={42} paddingAngle={2} stroke="none">
+                <Pie data={statusData} dataKey="value" innerRadius={26} outerRadius={38} paddingAngle={2} stroke="none">
                   {statusData.map((e, i) => <Cell key={i} fill={e.color} />)}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-lg font-semibold text-slate-900 dark:text-slate-100 leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5">Tổng</span>
+              <span className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-none">{total.toLocaleString('vi-VN')}</span>
+              <span className="text-[11px] font-normal text-slate-400 mt-0.5">Tổng</span>
             </div>
           </div>
-          <div className="flex-1 space-y-2">
-            {statusData.map((item) => (
-              <div key={item.name} className={legendRowCls}>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className={legendNameCls}>{item.name}</span>
-                </span>
-                <span className={legendValCls}>
-                  {item.value.toLocaleString('vi-VN')}
-                  <span className={legendPctCls}>({pctLabel(item.value)})</span>
+          <div className="flex-1 space-y-1.5 min-w-0">
+            {statusData.map((s, idx) => (
+              <div key={idx} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                  <span className="text-slate-600 dark:text-slate-400 truncate">{s.name}</span>
+                </div>
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {s.value} <span className="font-normal text-slate-400 text-[11px]">({pctLabel(s.value)})</span>
                 </span>
               </div>
             ))}
@@ -117,33 +108,25 @@ export function QuestionBankTopCharts({
         </div>
       </div>
 
-      {/* ─── Card 2: Độ khó ─── */}
+      {/* ─── Card 2: Phân bố độ khó ─── */}
       <div className={cardCls}>
-        <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
-            <span className={titleCls}>Phân bố độ khó</span>
-            <span className={iconCls}>
-              <BarChart2 className="h-5 w-5" />
-            </span>
-          </div>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">
+          <span className={titleCls}>Phân bố độ khó</span>
+          <span className={iconCls}>
+            <span className="text-xs font-bold">LVL</span>
+          </span>
         </div>
-        <div className="flex flex-1 flex-col justify-center gap-3 px-4 pb-4">
-          {difficultyData.map((item) => (
-            <div key={item.label}>
-              <div className="flex items-center justify-between mb-1">
-                <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold ${item.pill}`}>
-                  {item.label}
-                </span>
-                <span className={legendValCls}>
-                  {item.value.toLocaleString('vi-VN')}
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-normal ml-1">({pctLabel(item.value)})</span>
+        <div className="flex-1 space-y-2.5 my-auto">
+          {difficultyData.map((d, idx) => (
+            <div key={idx} className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{d.label}</span>
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {d.value} <span className="font-normal text-slate-400 text-[11px]">({d.pct.toFixed(0)}%)</span>
                 </span>
               </div>
-              <div className="h-[5px] w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                <div
-                  className="h-full rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${item.pct}%`, backgroundColor: item.color }}
-                />
+              <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${d.pct}%`, backgroundColor: d.color }} />
               </div>
             </div>
           ))}
@@ -152,39 +135,34 @@ export function QuestionBankTopCharts({
 
       {/* ─── Card 3: Loại câu hỏi ─── */}
       <div className={cardCls}>
-        <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
-            <span className={titleCls}>Phân bố loại câu hỏi</span>
-            <span className={iconCls}>
-              <LayoutGrid className="h-5 w-5" />
-            </span>
-          </div>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">
+          <span className={titleCls}>Phân loại câu hỏi</span>
+          <span className={iconCls}>
+            <span className="text-xs font-bold">TYPE</span>
+          </span>
         </div>
-        <div className="flex flex-1 items-center gap-3 px-4 pb-4">
-          <div className="relative h-[84px] w-[84px] shrink-0">
+        <div className="flex flex-1 items-center gap-3">
+          <div className="relative h-[80px] w-[80px] shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={typeData} dataKey="value" innerRadius={28} outerRadius={42} paddingAngle={3} stroke="none">
+                <Pie data={typeData} dataKey="value" innerRadius={26} outerRadius={38} paddingAngle={2} stroke="none">
                   {typeData.map((e, i) => <Cell key={i} fill={e.color} />)}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-none">{total.toLocaleString('vi-VN')}</span>
-              <span className="edu-badge font-semibold text-slate-400 dark:text-slate-500 mt-0.5">Tổng</span>
+              <span className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-none">{typeData.length}</span>
+              <span className="text-[11px] font-normal text-slate-400 mt-0.5">Dạng</span>
             </div>
           </div>
-          <div className="flex-1 space-y-1.5 overflow-y-auto max-h-24">
-            {typeData.map((item) => (
-              <div key={item.name} className={legendRowCls}>
-                <span className="flex items-center gap-1.5 min-w-0">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className={legendNameCls}>{item.name}</span>
-                </span>
-                <span className={legendValCls}>
-                  {item.value.toLocaleString('vi-VN')}
-                  <span className={legendPctCls}>({pctLabel(item.value)})</span>
-                </span>
+          <div className="flex-1 space-y-1 min-w-0">
+            {typeData.slice(0, 3).map((t, idx) => (
+              <div key={idx} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
+                  <span className="text-slate-600 dark:text-slate-400 truncate">{t.name}</span>
+                </div>
+                <span className="font-semibold text-slate-900 dark:text-slate-100">{t.value}</span>
               </div>
             ))}
           </div>
@@ -193,53 +171,42 @@ export function QuestionBankTopCharts({
 
       {/* ─── Card 4: Thao tác nhanh ─── */}
       <div className={cardCls}>
-        <div className="p-4 pb-0">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-            <span className={titleCls}>Thao tác nhanh</span>
-            <span className={iconCls}>
-              <Zap className="h-5 w-5" />
-            </span>
-          </div>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">
+          <span className={titleCls}>Tác vụ ngân hàng</span>
+          <span className={iconCls}>
+            <Plus className="h-5 w-5" />
+          </span>
         </div>
-        <div className="flex flex-1 flex-col justify-center gap-1 px-3 pb-4">
+        <div className="flex flex-col gap-2 my-auto">
           <button
             type="button"
             onClick={onAdd}
-            className="group flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-2xs transition cursor-pointer"
           >
-            <span className="flex items-center gap-2">
-              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-slate-100">
-                <Plus className="h-3 w-3 text-slate-600" />
-              </span>
-              Thêm câu hỏi mới
-            </span>
-            <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+            <Plus className="h-3.5 w-3.5" />
+            <span>Tạo câu hỏi mới</span>
           </button>
-
-          {[
-            { label: 'Nhập từ file Excel', icon: <Upload className="h-3 w-3 text-slate-600" />, fn: onImport },
-            { label: 'Xuất ngân hàng câu hỏi', icon: <Download className="h-3 w-3 text-slate-600" />, fn: onExport },
-
-          ].map(({ label, icon, fn }) => (
+          <div className="grid grid-cols-2 gap-2">
             <button
-              key={label}
               type="button"
-              onClick={fn}
-              className="group flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all cursor-pointer"
+              onClick={onImport}
+              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 text-slate-700 dark:text-slate-300 text-xs font-medium transition cursor-pointer"
             >
-              <span className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-slate-100">
-                  {icon}
-                </span>
-                {label}
-              </span>
-              <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+              <Upload className="h-3 w-3 text-slate-400" />
+              <span>Nhập file</span>
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={onExport}
+              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 text-slate-700 dark:text-slate-300 text-xs font-medium transition cursor-pointer"
+            >
+              <Download className="h-3 w-3 text-slate-400" />
+              <span>Xuất Excel</span>
+            </button>
+          </div>
         </div>
       </div>
+
     </div>
   );
 }
-
-
