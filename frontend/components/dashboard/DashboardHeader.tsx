@@ -45,22 +45,22 @@ export function DashboardHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Subtitle */}
       <div className="space-y-1">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 tracking-tight">
+        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
           Tổng quan hệ thống
         </h1>
-        <p className="text-[15px] font-normal leading-[22px] text-slate-500">
+        <p className="text-[15px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Theo dõi tình hình tổ chức thi và các công việc cần xử lý
         </p>
       </div>
 
-      {/* Right Controls: Period Selector & Date Display */}
-      <div className="flex flex-wrap items-center gap-3 shrink-0">
+      {/* Right Controls: Date, Period Selector, Refresh & Export PDF */}
+      <div className="flex flex-wrap items-center gap-2.5 shrink-0">
         {/* Date & Timestamp Display */}
         {currentDateStr && (
-          <div className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium text-slate-500 select-none">
-            <span className="font-semibold text-slate-900">{currentDateStr}</span>
+          <div className="hidden sm:flex items-center gap-1.5 text-[13px] font-medium text-slate-500 dark:text-slate-400 select-none mr-1">
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{currentDateStr}</span>
             {lastUpdatedStr && (
-              <span className="text-[13px] text-slate-500 font-normal">
+              <span className="text-[13px] text-slate-400 font-normal">
                 ({lastUpdatedStr})
               </span>
             )}
@@ -82,8 +82,33 @@ export function DashboardHeader({
             <option value="HK_HE_2025">Học kỳ Hè (2024 - 2025)</option>
           </FilterSelect>
         )}
+
+        {/* Refresh Button */}
+        {onRefresh && (
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition shadow-2xs cursor-pointer active:scale-95 disabled:opacity-50"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+          </button>
+        )}
+
+        {/* Export Report PDF Button */}
+        {onExportPDF && (
+          <button
+            type="button"
+            onClick={onExportPDF}
+            className="flex items-center gap-2 h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 hover:border-blue-300 transition shadow-2xs cursor-pointer active:scale-95 font-semibold text-[13.5px]"
+            title="Xuất báo cáo PDF"
+          >
+            <Printer className="h-4 w-4 text-slate-500" />
+            <span className="hidden sm:inline">Xuất báo cáo</span>
+          </button>
+        )}
       </div>
     </div>
   );
 }
-

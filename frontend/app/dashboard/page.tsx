@@ -190,6 +190,7 @@ export default function DashboardPage() {
           isRefreshing={isRefreshing}
           selectedPeriod={selectedPeriod}
           onPeriodChange={setSelectedPeriod}
+          onExportPDF={handleExportPDF}
         />
 
         {loading ? (
@@ -208,45 +209,49 @@ export default function DashboardPage() {
               questionStatus={overview.questionStatus}
             />
 
-            {/* Section 4: Middle Row (Lịch thi 7 ngày 5 cols + Donut Trạng thái câu hỏi 4 cols + Công việc cần xử lý 3 cols) */}
+            {/* Section 4: Row 2 - Biểu đồ Lịch thi (7 cols) + Donut Trạng thái câu hỏi (5 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-              <div className="lg:col-span-5 flex flex-col min-w-0">
+              <div className="lg:col-span-7 flex flex-col min-w-0">
                 <ExamScheduleChart data={overview.examChart || []} />
               </div>
-              <div className="lg:col-span-4 flex flex-col min-w-0">
+              <div className="lg:col-span-5 flex flex-col min-w-0">
                 <QuestionStatusChart data={overview.questionStatus || []} />
-              </div>
-              <div className="lg:col-span-3 flex flex-col min-w-0">
-                <TaskAttention attention={overview.attention} />
               </div>
             </div>
 
-            {/* Section 5: Row 4 (Kỳ thi sắp tới 5 cols + Tiến độ tổ chức kỳ thi 4 cols + Hoạt động gần đây 3 cols) */}
+            {/* Section 5: Row 3 - Kỳ thi sắp tới (6 cols) + Tác vụ cần xử lý (3 cols) + Hoạt động gần đây (3 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-              <div className="lg:col-span-5 flex flex-col min-w-0">
+              <div className="lg:col-span-6 flex flex-col min-w-0">
                 <UpcomingExamList exams={overview.upcomingExams || []} />
               </div>
-              <div className="lg:col-span-4 flex flex-col min-w-0">
-                <ExamProgressOverview periods={overview.examProgress || []} />
+              <div className="lg:col-span-3 flex flex-col min-w-0">
+                <TaskAttention attention={overview.attention} />
               </div>
               <div className="lg:col-span-3 flex flex-col min-w-0">
                 <RecentActivityList activities={overview.recentActivities || []} />
               </div>
             </div>
 
-            {/* Section 6: Row 5 (Câu hỏi chờ duyệt full width table - 12 cols) */}
-            <PendingQuestionList
-              questions={overview.pendingQuestions || []}
-              canReview={user?.role === 'ADMIN'}
-              busyId={busyId}
-              onApprove={approve}
-              onReject={(id, code) => {
-                setRejecting({ id, code });
-                setReason('');
-                setReasonError('');
-              }}
-              onView={(id) => router.push(`/question-bank?view=${id}`)}
-            />
+            {/* Section 6: Row 4 - Tiến độ đợt thi (4 cols) + Câu hỏi chờ duyệt (8 cols) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+              <div className="lg:col-span-4 flex flex-col min-w-0">
+                <ExamProgressOverview periods={overview.examProgress || []} />
+              </div>
+              <div className="lg:col-span-8 flex flex-col min-w-0">
+                <PendingQuestionList
+                  questions={overview.pendingQuestions || []}
+                  canReview={user?.role === 'ADMIN'}
+                  busyId={busyId}
+                  onApprove={approve}
+                  onReject={(id, code) => {
+                    setRejecting({ id, code });
+                    setReason('');
+                    setReasonError('');
+                  }}
+                  onView={(id) => router.push(`/question-bank?view=${id}`)}
+                />
+              </div>
+            </div>
           </div>
         )}
       </main>

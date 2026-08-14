@@ -36,9 +36,6 @@ export function DashboardStatistics({
       value: summary?.upcomingExams?.total ?? 0,
       subtext: summary?.upcomingExams?.description || 'Theo lịch khảo thí',
       icon: Send,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
       route: '/exam-schedules',
     },
     {
@@ -47,9 +44,6 @@ export function DashboardStatistics({
       value: summary?.examRooms?.total ?? 0,
       subtext: summary?.examRooms?.description || 'Số lượng phòng thi',
       icon: Calendar,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
       route: '/exam-rooms',
     },
     {
@@ -58,9 +52,6 @@ export function DashboardStatistics({
       value: summary?.students?.total ?? 0,
       subtext: summary?.students?.description || 'Đã đăng ký hệ thống',
       icon: Users,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
       route: '/students',
     },
     {
@@ -69,9 +60,6 @@ export function DashboardStatistics({
       value: totalQuestionsCount,
       subtext: 'Trong ngân hàng',
       icon: FileText,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
       route: '/question-bank',
     },
     {
@@ -80,9 +68,6 @@ export function DashboardStatistics({
       value: pendingQuestionsCount,
       subtext: 'Cần phê duyệt',
       icon: Clock,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
       route: '/question-bank?status=PENDING',
     },
     {
@@ -91,9 +76,6 @@ export function DashboardStatistics({
       value: rejectedQuestionsCount,
       subtext: 'Cần chỉnh sửa lại',
       icon: XCircle,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
       route: '/question-bank?status=REJECTED',
     },
   ];
@@ -115,27 +97,27 @@ export function DashboardStatistics({
                 router.push(spec.route);
               }
             }}
-            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
           >
             {/* Top row: Title + Big Value on Left, Icon on Right */}
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 min-w-0">
-                <span className="text-[13px] font-semibold text-slate-500 block truncate">
+                <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {spec.title}
                 </span>
-                <div className="text-[32px] font-bold leading-[38px] tracking-tight text-slate-900">
+                <div className="text-[32px] font-bold leading-[38px] tracking-tight text-slate-900 dark:text-slate-100">
                   {formatNumber(spec.value)}
                 </div>
               </div>
 
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 ${spec.iconBg} ${spec.iconColor}`}>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
                 <Icon className="h-5 w-5 stroke-[2.2]" />
               </div>
             </div>
 
             {/* Bottom Subtext */}
-            <div className="mt-2.5 pt-2 border-t border-slate-100/80">
-              <span className="text-[13px] font-normal text-slate-500">
+            <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">
                 {spec.subtext}
               </span>
             </div>
