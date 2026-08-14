@@ -270,38 +270,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-16 left-0 bottom-0 z-30 flex flex-col bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200/80 dark:border-slate-800 transition-all duration-300 ease-in-out select-none ${
-        collapsed ? 'w-[72px]' : 'w-[252px]'
-      } ${mobileOpen ? 'translate-x-0 w-[252px] top-0 z-50 shadow-2xl' : '-translate-x-full md:translate-x-0'}`}
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200/90 dark:border-slate-800 transition-all duration-300 ease-in-out select-none ${collapsed ? 'w-[72px]' : 'w-[256px]'
+        } ${mobileOpen ? 'translate-x-0 w-[256px]' : '-translate-x-full md:translate-x-0'}`}
     >
-      {/* Mobile Drawer Header (chỉ hiển thị trên mobile khi mở drawer) */}
-      {mobileOpen && (
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 dark:border-slate-800 px-4 bg-white dark:bg-slate-900 md:hidden">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-md shadow-blue-500/25">
-              <GraduationCap className="h-5 w-5" />
+      {/* ── 1. Header Section: Brand Logo & Toggle ── */}
+      {collapsed ? (
+        <div className="relative flex h-[68px] shrink-0 items-center justify-center border-b border-slate-100 dark:border-slate-800/80 px-3 bg-white dark:bg-slate-900">
+          <button
+            type="button"
+            onClick={onToggle}
+            className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-all active:scale-95 cursor-pointer shadow-2xs"
+            aria-label="Mở rộng thanh bên"
+            title="Mở rộng thanh bên"
+          >
+            <PanelLeftOpen className="h-5 w-5" />
+          </button>
+        </div>
+      ) : (
+        <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-slate-100 dark:border-slate-800/80 px-4 bg-white dark:bg-slate-900">
+          <Link href="/dashboard" className="flex items-center gap-3 min-w-0 group cursor-pointer">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-md shadow-blue-500/25 ring-2 ring-blue-50 dark:ring-blue-950 transition-transform group-hover:scale-105">
+              <GraduationCap className="h-5.5 w-5.5" />
             </div>
-            <div>
-              <h1 className="text-[15.5px] font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <h1 className="truncate text-[16px] font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
                 Exam System
               </h1>
-              <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              <p className="truncate text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                 Hệ thống khảo thí
               </p>
             </div>
-          </div>
+          </Link>
+
           <button
             type="button"
-            onClick={onMobileClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+            onClick={onToggle}
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 cursor-pointer"
+            aria-label="Thu gọn thanh bên"
+            title="Thu gọn thanh bên"
           >
             <PanelLeft className="h-4.5 w-4.5" />
           </button>
         </div>
       )}
 
-      {/* ── Navigation Groups List ── */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4 no-scrollbar" aria-label="Điều hướng chính">
+      {/* ── 2. Navigation Groups List ── */}
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4 no-scrollbar" aria-label="Điều hướng chính">
         {filteredGroups.map((group, groupIdx) => {
           const groupName = group.group || `group_${groupIdx}`;
           const isExpanded = expandedGroups[groupName] ?? true;
