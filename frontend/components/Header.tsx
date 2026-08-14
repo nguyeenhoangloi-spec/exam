@@ -108,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
     setReadNotificationIds(allIds);
     try {
       localStorage.setItem('read_notifications', JSON.stringify(allIds));
-    } catch {}
+    } catch { }
   };
 
   const handleNotificationClick = (item: NotificationItem) => {
@@ -117,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
       setReadNotificationIds(updated);
       try {
         localStorage.setItem('read_notifications', JSON.stringify(updated));
-      } catch {}
+      } catch { }
     }
     setOpenPanel(null);
     if (item.href) {
@@ -316,7 +316,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Trang chủ</span>
               </button>
               <ChevronRight className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
-              <span className="font-semibold text-slate-900 dark:text-slate-100 px-2 py-0.5 rounded-lg bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 truncate shadow-2xs">
+              <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
                 {title === 'Hệ thống quản lý khảo thí' ? 'Tổng quan' : title}
               </span>
             </nav>
@@ -489,18 +489,18 @@ export const Header: React.FC<HeaderProps> = ({
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+10px)] w-56 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl"
+                  className="absolute right-0 top-[calc(100%+10px)] w-60 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl"
                 >
                   {/* Isometric Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-7 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
 
                   {/* Header Profile Info Card */}
                   <div className="relative z-20 flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
-                    <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[12.5px] font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
+                      <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
                       <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         Đang trực tuyến
@@ -517,7 +517,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/profile');
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                       <span>Hồ sơ cá nhân</span>
@@ -531,7 +531,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/settings');
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                       <span>Cài đặt hệ thống</span>
@@ -545,7 +545,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         router.push('/contact');
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                       <span>Trung tâm hỗ trợ</span>
@@ -556,7 +556,7 @@ export const Header: React.FC<HeaderProps> = ({
                       type="button"
                       role="menuitem"
                       onClick={toggleTheme}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       {isDark ? (
                         <Sun className="h-4 w-4 text-amber-400" />
@@ -577,7 +577,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[12.5px] text-rose-600 font-medium hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
                     >
                       <LogOut className="h-4 w-4 text-rose-600" />
                       <span>Đăng xuất</span>
