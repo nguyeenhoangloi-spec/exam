@@ -20,6 +20,7 @@ import {
   Headphones,
   Sun,
   Moon,
+  Home,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
@@ -288,8 +289,8 @@ export const Header: React.FC<HeaderProps> = ({
           }`}
       >
         <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
-          {/* Left Side: Navigation / Search / Sidebar Toggle / Breadcrumb */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Left Side: Navigation / Breadcrumb Pro / Command Search Bar */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             {/* Mobile Menu Button */}
             <button
               type="button"
@@ -300,35 +301,55 @@ export const Header: React.FC<HeaderProps> = ({
               <Menu className="h-4.5 w-4.5" />
             </button>
 
-            {/* Quick Search Button */}
-            <button
-              type="button"
-              aria-label="Tìm kiếm nhanh (Ctrl+K)"
-              onClick={() => setIsSearchOpen(true)}
-              className="hidden sm:flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-700/60 transition shadow-2xs cursor-pointer"
-              title="Tìm kiếm nhanh (Ctrl + K)"
-            >
-              <Search className="h-4 w-4" />
-            </button>
-
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 ml-1" aria-label="Breadcrumb">
+            {/* Breadcrumb Pro */}
+            <nav className="flex items-center gap-1.5 text-[13px] font-medium text-slate-400 dark:text-slate-500 min-w-0 truncate" aria-label="Breadcrumb">
               <button
                 type="button"
-                className="cursor-pointer text-slate-400/80 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                className="flex items-center gap-1.5 cursor-pointer text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors shrink-0 py-1"
                 onClick={() => {
                   if (user?.role === 'TEACHER') router.push('/teacher/assignments');
                   else if (user?.role === 'STUDENT') router.push('/student/exam-schedule');
                   else router.push('/dashboard');
                 }}
               >
-                Trang chủ
+                <Home className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+                <span>Trang chủ</span>
               </button>
-              <span className="text-slate-700 dark:text-slate-600">/</span>
-              <span className="font-medium text-slate-900 dark:text-slate-100">
+              <ChevronRight className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
+              <span className="font-semibold text-slate-900 dark:text-slate-100 px-2 py-0.5 rounded-lg bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 truncate shadow-2xs">
                 {title === 'Hệ thống quản lý khảo thí' ? 'Tổng quan' : title}
               </span>
             </nav>
+
+            {/* Linear / Raycast Style Command Search Bar */}
+            <button
+              type="button"
+              aria-label="Tìm kiếm nhanh (Ctrl+K)"
+              onClick={() => setIsSearchOpen(true)}
+              className="hidden lg:flex items-center justify-between gap-3 h-9 w-60 xl:w-72 px-3 rounded-xl border border-slate-200/80 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all shadow-2xs cursor-pointer group ml-2"
+              title="Tìm kiếm nhanh (Ctrl + K)"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Search className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                <span className="text-[13px] font-normal text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 truncate">
+                  Tìm kiếm nhanh...
+                </span>
+              </div>
+              <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 text-[10.5px] font-semibold text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-md shadow-2xs shrink-0 group-hover:border-slate-300 dark:group-hover:border-slate-600">
+                Ctrl K
+              </kbd>
+            </button>
+
+            {/* Compact Search Button on small/medium screens */}
+            <button
+              type="button"
+              aria-label="Tìm kiếm nhanh (Ctrl+K)"
+              onClick={() => setIsSearchOpen(true)}
+              className="hidden sm:flex lg:hidden h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-700/60 transition shadow-2xs cursor-pointer"
+              title="Tìm kiếm nhanh (Ctrl + K)"
+            >
+              <Search className="h-4 w-4" />
+            </button>
           </div>
 
           {/* Right Side: Notification bell & User Profile trigger */}
