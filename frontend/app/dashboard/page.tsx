@@ -184,13 +184,10 @@ export default function DashboardPage() {
     <>
       <main className="w-full space-y-5 px-6 py-6 bg-slate-50/50 min-h-screen">
 
-        {/* Section 1: Dashboard Header */}
+        {/* Section 1: Single-Row Compact Header */}
         <DashboardHeader
-          onRefresh={() => loadOverview(false)}
-          isRefreshing={isRefreshing}
           selectedPeriod={selectedPeriod}
           onPeriodChange={setSelectedPeriod}
-          onExportPDF={handleExportPDF}
         />
 
         {loading ? (
@@ -202,14 +199,13 @@ export default function DashboardPage() {
           />
         ) : (
           <div className="space-y-5 animate-fade-in">
-
-            {/* Section 3: 6 KPI Statistic Cards Grid */}
+            {/* Section 2: 6 KPI Statistic Cards Grid (High up near header) */}
             <DashboardStatistics
               summary={overview.summary}
               questionStatus={overview.questionStatus}
             />
 
-            {/* Section 4: Row 2 - Biểu đồ Lịch thi (7 cols) + Donut Trạng thái câu hỏi (5 cols) */}
+            {/* Section 3: Row 2 - Biểu đồ Lịch thi (7 cols) + Donut Trạng thái câu hỏi (5 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               <div className="lg:col-span-7 flex flex-col min-w-0">
                 <ExamScheduleChart data={overview.examChart || []} />
@@ -219,7 +215,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Section 5: Row 3 - Kỳ thi sắp tới (6 cols) + Tác vụ cần xử lý (3 cols) + Hoạt động gần đây (3 cols) */}
+            {/* Section 4: Row 3 - Kỳ thi sắp tới (6 cols) + Tác vụ cần xử lý (3 cols) + Hoạt động gần đây (3 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               <div className="lg:col-span-6 flex flex-col min-w-0">
                 <UpcomingExamList exams={overview.upcomingExams || []} />
@@ -232,7 +228,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Section 6: Row 4 - Tiến độ đợt thi (4 cols) + Câu hỏi chờ duyệt (8 cols) */}
+            {/* Section 5: Row 4 - Tiến độ đợt thi (4 cols) + Câu hỏi chờ duyệt (8 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               <div className="lg:col-span-4 flex flex-col min-w-0">
                 <ExamProgressOverview periods={overview.examProgress || []} />

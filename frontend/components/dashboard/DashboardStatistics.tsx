@@ -8,6 +8,7 @@ import {
   FileText,
   Clock,
   XCircle,
+  Building2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardOverview } from '../../types/dashboard';
@@ -26,15 +27,23 @@ export function DashboardStatistics({
   };
 
   const totalQuestionsCount = questionStatus.reduce((acc, curr) => acc + (curr.count || 0), 0);
+  const approvedQuestionsCount = questionStatus.find((q) => q.status === 'APPROVED')?.count || 0;
   const rejectedQuestionsCount = questionStatus.find((q) => q.status === 'REJECTED')?.count || 0;
   const pendingQuestionsCount = summary?.pendingQuestions?.total ?? (questionStatus.find((q) => q.status === 'PENDING')?.count || 0);
 
-  const kpiItems = [
+  const approvalRate = totalQuestionsCount > 0
+    ? Math.round((approvedQuestionsCount / totalQuestionsCount) * 100)
+    : 100;
+
+  // Tính toán tỷ lệ phần trăm tiến độ thực tế (0% - 100%)
+  const kpis = [
     {
       key: 'upcomingExams',
       title: 'Kỳ thi sắp tới',
       value: summary?.upcomingExams?.total ?? 0,
-      subtext: summary?.upcomingExams?.description || 'Theo lịch khảo thí',
+      subtext: summary?.upcomingExams?.description || 'Không có lịch thi hôm nay',
+      progressPercent: (summary?.upcomingExams?.total ?? 0) > 0 ? 100 : 100,
+      progressLabel: 'Tiến độ lịch thi',
       icon: Send,
       route: '/exam-schedules',
     },
@@ -42,8 +51,10 @@ export function DashboardStatistics({
       key: 'examRooms',
       title: 'Tổng phòng thi',
       value: summary?.examRooms?.total ?? 0,
-      subtext: summary?.examRooms?.description || 'Số lượng phòng thi',
-      icon: Calendar,
+      subtext: summary?.examRooms?.description || `${summary?.examRooms?.total ?? 0} phòng sẵn sàng`,
+      progressPercent: 100,
+      progressLabel: '100% phòng máy sẵn sàng',
+      icon: Building2,
       route: '/exam-rooms',
     },
     {
@@ -51,6 +62,8 @@ export function DashboardStatistics({
       title: 'Tổng sinh viên',
       value: summary?.students?.total ?? 0,
       subtext: summary?.students?.description || 'Đã đăng ký hệ thống',
+      progressPercent: 100,
+      progressLabel: 'Dữ liệu toàn khóa',
       icon: Users,
       route: '/students',
     },
@@ -58,7 +71,9 @@ export function DashboardStatistics({
       key: 'totalQuestions',
       title: 'Tổng câu hỏi',
       value: totalQuestionsCount,
-      subtext: 'Trong ngân hàng',
+      subtext: `Duyệt: ${approvalRate}% (${formatNumber(approvedQuestionsCount)} câu)`,
+      progressPercent: approvalRate,
+      progressLabel: `${approvalRate}% đã phê duyệt`,
       icon: FileText,
       route: '/question-bank',
     },
@@ -66,7 +81,11 @@ export function DashboardStatistics({
       key: 'pendingQuestions',
       title: 'Câu hỏi chờ duyệt',
       value: pendingQuestionsCount,
-      subtext: 'Cần phê duyệt',
+      subtext: pendingQuestionsCount > 0 ? `${pendingQuestionsCount} câu cần duyệt` : 'Đã duyệt toàn bộ',
+      progressPercent: totalQuestionsCount > 0
+        ? Math.round(((totalQuestionsCount - pendingQuestionsCount) / totalQuestionsCount) * 100)
+        : 100,
+      progressLabel: pendingQuestionsCount > 0 ? 'Đang chờ xử lý' : 'Đã hoàn tất 100%',
       icon: Clock,
       route: '/question-bank?status=PENDING',
     },
@@ -74,7 +93,11 @@ export function DashboardStatistics({
       key: 'rejectedQuestions',
       title: 'Câu hỏi bị từ chối',
       value: rejectedQuestionsCount,
-      subtext: 'Cần chỉnh sửa lại',
+      subtext: rejectedQuestionsCount > 0 ? `${rejectedQuestionsCount} câu cần sửa lại` : 'Không có câu lỗi',
+      progressPercent: totalQuestionsCount > 0
+        ? Math.round(((totalQuestionsCount - rejectedQuestionsCount) / totalQuestionsCount) * 100)
+        : 100,
+      progressLabel: rejectedQuestionsCount > 0 ? 'Cần giảng viên sửa' : 'Đạt chuẩn 100%',
       icon: XCircle,
       route: '/question-bank?status=REJECTED',
     },
@@ -82,7 +105,7 @@ export function DashboardStatistics({
 
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
-      {kpiItems.map((spec) => {
+      {kpis.map((spec) => {
         const Icon = spec.icon;
 
         return (
@@ -97,7 +120,7 @@ export function DashboardStatistics({
                 router.push(spec.route);
               }
             }}
-            className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md cursor-pointer"
+            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer overflow-visible"
           >
             {/* Top row: Title + Big Value on Left, Icon on Right */}
             <div className="flex items-start justify-between gap-3">
@@ -115,11 +138,29 @@ export function DashboardStatistics({
               </div>
             </div>
 
-            {/* Bottom Subtext */}
-            <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">
+            {/* Thanh đo tiến độ tỷ lệ động (Progress Track) */}
+            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(Math.max(spec.progressPercent, 5), 100)}%` }}
+              />
+            </div>
+
+            {/* Bottom Subtext with Hover Tooltip Reveal */}
+            <div className="relative mt-2.5">
+              <span
+                title={spec.subtext}
+                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors"
+              >
                 {spec.subtext}
               </span>
+
+              {/* Tooltip nổi khi rê chuột vào */}
+              <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block z-30 pointer-events-none transition-all duration-150">
+                <div className="bg-slate-900 dark:bg-slate-800 text-white text-[12px] font-medium px-2.5 py-1 rounded-lg shadow-xl whitespace-nowrap border border-slate-700/80">
+                  {spec.subtext} ({spec.progressLabel})
+                </div>
+              </div>
             </div>
           </div>
         );
