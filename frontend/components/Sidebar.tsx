@@ -538,15 +538,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-slate-400" />}
-                  <span>Chủ đề giao diện</span>
-                </div>
-                <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">
-                  {isDark ? 'Tối' : 'Sáng'}
-                </span>
+                {isDark ? (
+                  <Sun className="h-4 w-4 text-amber-400" />
+                ) : (
+                  <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                )}
+                <span>Chủ đề giao diện</span>
               </button>
 
               <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
@@ -560,7 +559,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-rose-600 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
               >
                 <LogOut className="h-4 w-4 text-rose-600" />
-                <span>Đăng xuất tài khoản</span>
+                <span>Đăng xuất</span>
               </button>
             </div>
           </div>
