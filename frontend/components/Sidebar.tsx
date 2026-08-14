@@ -504,7 +504,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                <span>Hồ sơ cá nhân</span>
+                <span className="text-xs font-normal">Hồ sơ cá nhân</span>
               </Link>
 
               <Link
@@ -513,7 +513,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                <span>Cài đặt hệ thống</span>
+                <span className="text-xs font-normal">Cài đặt hệ thống</span>
               </Link>
 
               <Link
@@ -522,7 +522,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
               >
                 <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                <span>Trung tâm hỗ trợ</span>
+                <span className="text-xs font-normal">Trung tâm hỗ trợ</span>
               </Link>
 
               <button
@@ -535,7 +535,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 ) : (
                   <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                 )}
-                <span>Chủ đề giao diện</span>
+                <span className="text-xs font-normal">Chủ đề giao diện</span>
               </button>
 
               <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
@@ -549,7 +549,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
               >
                 <LogOut className="h-4 w-4 text-rose-600" />
-                <span>Đăng xuất</span>
+                <span className="text-xs font-normal">Đăng xuất</span>
               </button>
             </div>
           </div>

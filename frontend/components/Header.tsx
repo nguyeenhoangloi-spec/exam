@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Bell,
   ChevronDown,
@@ -483,7 +484,7 @@ export const Header: React.FC<HeaderProps> = ({
                 />
               </button>
 
-              {/* Redesigned Account Dropdown Menu (Chữ thường font-normal tự nhiên) */}
+              {/* Redesigned Account Dropdown Menu (Đồng bộ chuẩn xác 100% với Sidebar) */}
               {openPanel === 'account' && (
                 <div
                   id="user-account-dropdown"
@@ -510,46 +511,34 @@ export const Header: React.FC<HeaderProps> = ({
 
                   <div className="relative z-20 space-y-0.5">
                     {/* Item 1: Hồ sơ cá nhân */}
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        setOpenPanel(null);
-                        router.push('/profile');
-                      }}
+                    <Link
+                      href="/profile"
+                      onClick={() => setOpenPanel(null)}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span>Hồ sơ cá nhân</span>
-                    </button>
+                      <span className="text-xs font-normal">Hồ sơ cá nhân</span>
+                    </Link>
 
                     {/* Item 2: Cài đặt hệ thống */}
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        setOpenPanel(null);
-                        router.push('/settings');
-                      }}
+                    <Link
+                      href="/settings"
+                      onClick={() => setOpenPanel(null)}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span>Cài đặt hệ thống</span>
-                    </button>
+                      <span className="text-xs font-normal">Cài đặt hệ thống</span>
+                    </Link>
 
                     {/* Item 3: Trung tâm hỗ trợ */}
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        setOpenPanel(null);
-                        router.push('/contact');
-                      }}
+                    <Link
+                      href="/contact"
+                      onClick={() => setOpenPanel(null)}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span>Trung tâm hỗ trợ</span>
-                    </button>
+                      <span className="text-xs font-normal">Trung tâm hỗ trợ</span>
+                    </Link>
 
                     {/* Item 4: Chủ đề giao diện */}
                     <button
@@ -563,7 +552,7 @@ export const Header: React.FC<HeaderProps> = ({
                       ) : (
                         <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                       )}
-                      <span>Chủ đề giao diện</span>
+                      <span className="text-xs font-normal">Chủ đề giao diện</span>
                     </button>
 
                     {/* Divider */}
@@ -580,7 +569,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
                     >
                       <LogOut className="h-4 w-4 text-rose-600" />
-                      <span>Đăng xuất</span>
+                      <span className="text-xs font-normal">Đăng xuất</span>
                     </button>
                   </div>
                 </div>
