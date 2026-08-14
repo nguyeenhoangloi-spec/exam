@@ -270,9 +270,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200/90 dark:border-slate-800 transition-all duration-300 ease-in-out select-none ${
-        collapsed ? 'w-[72px]' : 'w-[256px]'
-      } ${mobileOpen ? 'translate-x-0 w-[256px]' : '-translate-x-full md:translate-x-0'}`}
+      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-r border-slate-200/90 dark:border-slate-800 transition-all duration-300 ease-in-out select-none ${collapsed ? 'w-[72px]' : 'w-[256px]'
+        } ${mobileOpen ? 'translate-x-0 w-[256px]' : '-translate-x-full md:translate-x-0'}`}
     >
       {/* ── 1. Header Section: Brand Logo & Toggle ── */}
       {collapsed ? (
@@ -356,21 +355,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onClick={() => {
                               if (!collapsed) toggleSubMenu(item.href);
                             }}
-                            className={`w-full flex items-center ${
-                              collapsed ? 'justify-center px-0' : 'justify-between px-3'
-                            } py-2.5 rounded-2xl text-[13.5px] font-semibold transition-all duration-200 cursor-pointer ${
-                              isActive
+                            className={`w-full flex items-center ${collapsed ? 'justify-center px-0' : 'justify-between px-3'
+                              } py-2.5 rounded-2xl text-[13.5px] font-semibold transition-all duration-200 cursor-pointer ${isActive
                                 ? 'bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold'
                                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
                               <div
-                                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                                  isActive
-                                    ? 'bg-blue-600 text-white shadow-sm'
-                                    : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
-                                }`}
+                                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${isActive
+                                  ? 'bg-blue-600 text-white shadow-sm'
+                                  : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
+                                  }`}
                               >
                                 <Icon className="h-4.5 w-4.5" />
                               </div>
@@ -378,9 +374,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             </div>
                             {!collapsed && (
                               <ChevronDown
-                                className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                                  isSubOpen ? 'rotate-180 text-blue-600' : ''
-                                }`}
+                                className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${isSubOpen ? 'rotate-180 text-blue-600' : ''
+                                  }`}
                               />
                             )}
                           </button>
@@ -395,11 +390,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     onClick={onMobileClose}
-                                    className={`block rounded-xl px-3 py-1.5 text-[12.5px] font-medium transition-all ${
-                                      isSubActive
-                                        ? 'bg-blue-600 text-white font-bold shadow-xs'
-                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
-                                    }`}
+                                    className={`block rounded-xl px-3 py-1.5 text-[12.5px] font-medium transition-all ${isSubActive
+                                      ? 'bg-blue-600 text-white font-bold shadow-xs'
+                                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                                      }`}
                                   >
                                     {sub.name}
                                   </Link>
@@ -418,19 +412,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         href={item.href}
                         onClick={onMobileClose}
                         title={collapsed ? item.name : undefined}
-                        className={`group flex items-center ${
-                          collapsed ? 'justify-center px-0' : 'px-3'
-                        } py-2.5 rounded-2xl text-[13.5px] font-semibold transition-all duration-200 ${
-                          isActive
+                        className={`group flex items-center ${collapsed ? 'justify-center px-0' : 'px-3'
+                          } py-2.5 rounded-2xl text-[13.5px] font-semibold transition-all duration-200 ${isActive
                             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 font-bold'
                             : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white hover:translate-x-0.5'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105 ${
-                              isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'
-                            }`}
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'
+                              }`}
                           >
                             <Icon className="h-4.5 w-4.5" />
                           </div>
@@ -446,51 +437,48 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* ── 3. Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom (Đồng bộ với Header) ── */}
+      {/* ── 3. Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom ── */}
       <div ref={footerRef} className="relative border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shrink-0">
         <button
           type="button"
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`group flex w-full items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer text-left ${
-            showUserMenu ? 'bg-slate-100 dark:bg-slate-800' : ''
-          }`}
+          className={`group flex w-full items-center gap-3 px-2 py-2 rounded-xl transition-colors text-left cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800 ${showUserMenu ? 'bg-slate-100 dark:bg-slate-800' : ''
+            }`}
         >
-          {/* Avatar Circle — đồng bộ 100% với Header */}
-          {avatarUrl ? (
-            <DynamicImage
-              src={avatarUrl}
-              alt={displayName}
-              className="h-9 w-9 shrink-0 rounded-full object-cover border border-slate-200"
-            />
-          ) : (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 font-semibold text-white text-xs tracking-tight">
-              {displayName.charAt(0).toUpperCase()}
-            </div>
-          )}
-
-          {/* Text — Name & Role đồng bộ 100% với Header */}
-          <div className={`min-w-0 flex-1 overflow-hidden text-left leading-tight transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
-            <span className="block text-[13px] font-semibold text-slate-900 dark:text-slate-100 truncate">
-              {displayName}
-            </span>
-            <span className="block text-[12px] font-medium text-primary-600 truncate">
-              {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
-            </span>
+          {/* Avatar — luôn cố định tuyệt đối, không dịch chuyển */}
+          <div className="relative h-9 w-9 shrink-0">
+            {avatarUrl ? (
+              <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 rounded-full object-cover" />
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-[15px]">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+            )}
+            {/* Chấm xanh trực tuyến */}
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
           </div>
 
-          <ChevronDown
-            className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
-              collapsed ? 'opacity-0 w-0' : 'opacity-100'
-            } ${showUserMenu ? 'rotate-180 text-primary-600' : ''}`}
+          {/* Text — ẩn bằng overflow-hidden, không bao giờ unmount khỏi DOM để chống nhảy layout */}
+          <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
+            <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-snug whitespace-nowrap">
+              {displayName}
+            </p>
+            <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug whitespace-nowrap">
+              {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
+            </p>
+          </div>
+
+          <ChevronRight
+            className={`h-4 w-4 text-slate-400 shrink-0 transition-all duration-200 ${collapsed ? 'opacity-0 w-0' : 'opacity-100'
+              } ${showUserMenu ? 'rotate-90 text-blue-600' : ''}`}
           />
         </button>
 
         {/* User Popover Menu */}
         {showUserMenu && (
           <div
-            className={`absolute bottom-full mb-2 w-60 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl ${
-              collapsed ? 'left-14' : 'left-2'
-            }`}
+            className={`absolute bottom-full mb-2 w-60 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl ${collapsed ? 'left-14' : 'left-2'
+              }`}
           >
             {/* Header profile info */}
             <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
