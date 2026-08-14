@@ -188,7 +188,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Top Header Navigation ── */}
-      <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-5 pb-2 flex items-center justify-between">
+      <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-5 pb-1 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
@@ -196,41 +196,37 @@ export default function LoginPage() {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[18px] font-semibold tracking-tight text-slate-900 dark:text-white">
+              <span className="text-[18px] font-black tracking-tight text-slate-900 dark:text-white">
                 EXAMSYS
               </span>
             </div>
-            <p className="text-[12px] font-semibold tracking-wider text-blue-600 dark:text-blue-400">
+            <p className="text-[11px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
               HỆ THỐNG KHẢO THÍ
             </p>
           </div>
         </div>
 
-        {/* Theme Toggle Button */}
+        {/* Minimal Icon-Only Theme Toggle (No Box Frame) */}
         <button
           type="button"
           onClick={toggleDark}
           aria-label="Chuyển chủ đề sáng/tối"
-          className={`flex items-center gap-2 rounded-2xl border px-3.5 py-2 text-xs font-semibold shadow-2xs transition-all duration-200 cursor-pointer ${
-            isDark
-              ? 'border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800'
-              : 'border-slate-200/90 bg-white/90 backdrop-blur-sm text-slate-700 hover:bg-slate-50 hover:border-slate-300'
-          }`}
+          title={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
+          className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
         >
           {isDark ? (
-            <Sun className="h-4 w-4 text-amber-400" />
+            <Sun className="h-5 w-5 text-amber-400" />
           ) : (
-            <Moon className="h-4 w-4 text-slate-600" />
+            <Moon className="h-5 w-5 text-slate-600" />
           )}
-          <span>{isDark ? 'Chế độ sáng' : 'Chế độ tối'}</span>
         </button>
       </header>
 
-      {/* ── Main Section: 2-Column Desktop Grid ── */}
-      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 py-3 sm:py-5 lg:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-auto w-full">
+      {/* ── Main Section: 2-Column Desktop Grid (items-start ensures stable layout) ── */}
+      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 py-3 sm:py-5 lg:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start my-auto w-full">
         {/* ── Left Column: System Introduction & Academic 3D Art Scene (7 Cols ~ 58%) ── */}
         <section className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          {/* Main Headline (Direct & Tight to Header) */}
+          {/* Main Headline */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
               HỆ THỐNG <br />
@@ -241,57 +237,57 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* 4 Features List & 3D Isometric Art Centerpiece */}
+          {/* 4 Features List (Clean Minimalist, No Heavy Cards) & 3D Isometric Art */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
-            {/* 4 Key Features Column */}
-            <div className="sm:col-span-5 space-y-3">
+            {/* 4 Key Features Column (Frameless / Minimalist) */}
+            <div className="sm:col-span-5 space-y-4">
               {/* Feature 1 */}
-              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/50 border border-slate-100/90 dark:border-slate-800 shadow-2xs hover:shadow-xs transition duration-200 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105">
-                  <ShieldCheck className="h-4.5 w-4.5" />
+              <div className="flex items-start gap-3.5 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Dữ liệu được mã hóa và bảo vệ theo tiêu chuẩn quốc tế
                   </p>
                 </div>
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/50 border border-slate-100/90 dark:border-slate-800 shadow-2xs hover:shadow-xs transition duration-200 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105">
-                  <FileCheck2 className="h-4.5 w-4.5" />
+              <div className="flex items-start gap-3.5 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <FileCheck2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Từ tạo đề thi, tổ chức thi đến chấm điểm và báo cáo
                   </p>
                 </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/50 border border-slate-100/90 dark:border-slate-800 shadow-2xs hover:shadow-xs transition duration-200 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105">
-                  <BarChart3 className="h-4.5 w-4.5" />
+              <div className="flex items-start gap-3.5 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <BarChart3 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Thống kê và báo cáo chi tiết, biểu đồ trực quan
                   </p>
                 </div>
               </div>
 
               {/* Feature 4 */}
-              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/50 border border-slate-100/90 dark:border-slate-800 shadow-2xs hover:shadow-xs transition duration-200 group">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105">
-                  <Clock className="h-4.5 w-4.5" />
+              <div className="flex items-start gap-3.5 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Tự động hóa quy trình, tối ưu hiệu suất công việc
                   </p>
                 </div>
@@ -446,41 +442,41 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Bottom Trust Statistics Bar (Polished 3 Cards) */}
-          <div className="pt-2 grid grid-cols-3 gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 dark:bg-slate-900/60 border border-slate-100/90 dark:border-slate-800 shadow-2xs">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/80 dark:border-blue-900">
+          {/* Bottom Trust Statistics (Divided by single elegant line, No heavy card frames) */}
+          <div className="pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Users className="h-4.5 w-4.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
                   10,000+
                 </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Người dùng</p>
+                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">Người dùng</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 dark:bg-slate-900/60 border border-slate-100/90 dark:border-slate-800 shadow-2xs">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/80 dark:border-blue-900">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Award className="h-4.5 w-4.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
                   50,000+
                 </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi đã tổ chức</p>
+                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">Kỳ thi đã tổ chức</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 dark:bg-slate-900/60 border border-slate-100/90 dark:border-slate-800 shadow-2xs">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/80 dark:border-blue-900">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <ShieldCheck className="h-4.5 w-4.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
                   99.9%
                 </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Độ tin cậy hệ thống</p>
+                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">Độ tin cậy hệ thống</p>
               </div>
             </div>
           </div>
