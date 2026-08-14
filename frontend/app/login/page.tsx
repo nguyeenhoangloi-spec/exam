@@ -19,7 +19,6 @@ import {
   Mail,
   Moon,
   ShieldCheck,
-  Sparkles,
   Sun,
   User as UserIcon,
   Users,
@@ -70,8 +69,8 @@ export default function LoginPage() {
             user.role === 'ADMIN'
               ? '/dashboard'
               : user.role === 'TEACHER'
-                ? '/teacher/assignments'
-                : '/student/exam-schedule';
+              ? '/teacher/assignments'
+              : '/student/exam-schedule';
           router.replace(destination);
         })
         .catch(() => setError('Không thể hoàn tất phiên đăng nhập Google.'));
@@ -85,8 +84,8 @@ export default function LoginPage() {
         user.role === 'ADMIN'
           ? '/dashboard'
           : user.role === 'TEACHER'
-            ? '/teacher/assignments'
-            : '/student/exam-schedule';
+          ? '/teacher/assignments'
+          : '/student/exam-schedule';
       router.replace(destination);
     }
   }, [router]);
@@ -137,16 +136,16 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`h-screen max-h-screen w-full relative overflow-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-between transition-colors duration-300 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
-        }`}
+      className={`min-h-screen w-full relative overflow-x-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-between transition-colors duration-300 ${
+        isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
+      }`}
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* ── Ambient Background Vector Gradients & Meshes ── */}
+      {/* ── Background Decorative Vector Waves & Grids ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-        {/* Subtle grid pattern */}
         <div
-          className="absolute top-4 left-1/3 w-[600px] h-60 opacity-30 dark:opacity-10"
+          className="absolute top-6 left-1/4 w-[700px] h-72 opacity-30 dark:opacity-10"
           style={{
             backgroundImage: 'radial-gradient(#3B82F6 1.2px, transparent 1.2px)',
             backgroundSize: '24px 24px',
@@ -154,31 +153,31 @@ export default function LoginPage() {
         />
 
         {/* Ambient Glows */}
-        <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[110px]" />
-        <div className="absolute top-1/4 -right-28 w-[550px] h-[550px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[130px]" />
-        <div className="absolute -bottom-36 left-10 w-[600px] h-[350px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[90px]" />
+        <div className="absolute -top-28 -left-28 w-[550px] h-[550px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[110px]" />
+        <div className="absolute top-1/4 -right-28 w-[600px] h-[600px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[130px]" />
+        <div className="absolute -bottom-36 left-10 w-[600px] h-[400px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[100px]" />
 
-        {/* Bottom Flow Waves */}
+        {/* Abstract Flow Waves */}
         <svg
-          className="absolute bottom-0 left-0 w-full max-w-4xl h-52 opacity-30 dark:opacity-10"
-          viewBox="0 0 900 300"
+          className="absolute bottom-0 left-0 w-full max-w-5xl h-64 opacity-30 dark:opacity-10"
+          viewBox="0 0 1000 300"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M-50 220 C180 140, 350 290, 580 180 C750 100, 850 250, 1000 200"
+            d="M-50 220 C200 140, 400 290, 650 180 C820 100, 920 250, 1100 200"
             stroke="#93C5FD"
             strokeWidth="1.5"
             fill="none"
           />
           <path
-            d="M-50 250 C210 170, 380 320, 610 210 C780 130, 880 280, 1000 230"
+            d="M-50 250 C230 170, 430 320, 680 210 C850 130, 950 280, 1100 230"
             stroke="#60A5FA"
             strokeWidth="1.5"
             fill="none"
           />
           <path
-            d="M-50 280 C240 200, 410 340, 640 240 C810 160, 910 300, 1000 260"
+            d="M-50 280 C260 200, 460 340, 710 240 C880 160, 980 300, 1100 260"
             stroke="#3B82F6"
             strokeWidth="1"
             fill="none"
@@ -187,110 +186,106 @@ export default function LoginPage() {
       </div>
 
       {/* ── Top Header Navigation ── */}
-      <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-4 pb-1 shrink-0 flex items-center justify-between">
-        {/* Brand Logo & Status */}
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
-            <GraduationCap className="h-5 w-5" />
+      <header className="relative z-10 w-full max-w-[1360px] mx-auto px-6 sm:px-10 pt-6 pb-2 shrink-0 flex items-center justify-between">
+        {/* Brand Logo */}
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50">
+            <GraduationCap className="h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[18px] font-black tracking-tight text-slate-900 dark:text-white leading-none">
+              <span className="text-[20px] font-black tracking-tight text-slate-900 dark:text-white leading-none">
                 EXAMSYS
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800 text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-300">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Hệ thống sẵn sàng
               </span>
             </div>
-            <p className="text-[10.5px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase mt-0.5">
+            <p className="text-[11px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase mt-0.5">
               HỆ THỐNG KHẢO THÍ ĐIỆN TỬ
             </p>
           </div>
         </div>
 
-        {/* Minimal Icon Theme Toggle */}
+        {/* Minimal Theme Toggle */}
         <button
           type="button"
           onClick={toggleDark}
           aria-label="Chuyển chủ đề sáng/tối"
           title={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-          className="flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
+          className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-200 cursor-pointer"
         >
-          {isDark ? (
-            <Sun className="h-4 w-4 text-amber-400" />
-          ) : (
-            <Moon className="h-4 w-4 text-slate-600" />
-          )}
+          {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
         </button>
       </header>
 
-      {/* ── Main Section: 2-Column Desktop Grid (Fits 100vh Perfectly) ── */}
-      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 py-1 min-h-0 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
-        {/* ── Left Column: System Showcase (7 Cols ~ 58%) ── */}
-        <section className="lg:col-span-7 flex flex-col justify-between h-full py-1 space-y-3.5">
-          {/* Main Headline */}
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
+      {/* ── Main Section: Big Bold 2-Column Showcase Layout ── */}
+      <main className="relative z-10 max-w-[1360px] mx-auto px-6 sm:px-10 py-6 my-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center w-full">
+        {/* ── Left Column: Large Showcase (7 Cols ~ 58%) ── */}
+        <section className="lg:col-span-7 flex flex-col justify-between space-y-8">
+          {/* Main Large Headline */}
+          <div className="space-y-3">
+            <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
               HỆ THỐNG <br />
               <span className="text-blue-600 dark:text-blue-500">KHẢO THÍ TRỰC TUYẾN</span>
             </h1>
-            <p className="text-[13.5px] sm:text-[14px] text-slate-600 dark:text-slate-300 max-w-lg font-normal leading-relaxed">
-              Giải pháp toàn diện cho quản lý đề thi, tổ chức thi trắc nghiệm và đánh giá chuẩn mực học thuật.
+            <p className="text-[15px] sm:text-[16px] text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed">
+              Giải pháp toàn diện cho quản lý kỳ thi, tổ chức thi trắc nghiệm và phân tích kết quả học thuật chuẩn quốc tế.
             </p>
           </div>
 
-          {/* Center Area: 4 Features & 3D Centerpiece side-by-side */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center my-auto">
+          {/* Center 3D Isometric Art & Features Showcase */}
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
             {/* 4 Key Features Column */}
-            <div className="sm:col-span-5 space-y-2.5">
+            <div className="sm:col-span-5 space-y-3.5">
               {/* Feature 1 */}
-              <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <ShieldCheck className="h-4 w-4" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Bảo mật cao</h2>
+                  <p className="text-[12.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Mã hóa chuẩn quốc tế
                   </p>
                 </div>
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <FileCheck2 className="h-4 w-4" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <FileCheck2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Quản lý toàn diện</h2>
+                  <p className="text-[12.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Từ đề thi đến chấm điểm
                   </p>
                 </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <BarChart3 className="h-4 w-4" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <BarChart3 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Phân tích thông minh</h2>
+                  <p className="text-[12.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Thống kê & biểu đồ trực quan
                   </p>
                 </div>
               </div>
 
               {/* Feature 4 */}
-              <div className="flex items-start gap-2.5 group">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
-                  <Clock className="h-4 w-4" />
+              <div className="flex items-start gap-3 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition duration-200 group-hover:scale-105 shadow-2xs">
+                  <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-[13px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
-                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <h2 className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Tiết kiệm thời gian</h2>
+                  <p className="text-[12.5px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Tối ưu hiệu suất làm việc
                   </p>
                 </div>
@@ -298,24 +293,24 @@ export default function LoginPage() {
             </div>
 
             {/* Academic 3D Centerpiece */}
-            <div className="sm:col-span-7 flex justify-center items-center relative py-1">
-              <div className="relative w-full max-w-[320px] aspect-[4/3] flex items-center justify-center">
-                {/* Ambient Glow */}
-                <div className="absolute inset-0 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-xl" />
+            <div className="sm:col-span-7 flex justify-center items-center relative py-2">
+              <div className="relative w-full max-w-[380px] aspect-[4/3] flex items-center justify-center">
+                {/* Soft Ambient Glow */}
+                <div className="absolute inset-0 bg-blue-200/40 dark:bg-blue-900/20 rounded-full blur-2xl" />
 
-                {/* Floating Badge: Check */}
-                <div className="absolute -top-1 left-20 z-20 h-7 w-7 rounded-xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
-                  <FileCheck2 className="h-3.5 w-3.5" />
+                {/* Floating Micro Badge: Test Check */}
+                <div className="absolute -top-2 left-24 z-20 h-9 w-9 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                  <FileCheck2 className="h-4.5 w-4.5" />
                 </div>
 
-                {/* Floating Badge: Chart */}
-                <div className="absolute top-12 right-0 z-20 h-7 w-7 rounded-xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
-                  <BarChart3 className="h-3.5 w-3.5" />
+                {/* Floating Micro Badge: Chart */}
+                <div className="absolute top-14 right-2 z-20 h-9 w-9 rounded-2xl bg-white dark:bg-slate-800 shadow-md border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                  <BarChart3 className="h-4.5 w-4.5" />
                 </div>
 
                 {/* 3D Vector Isometric Exam Illustration */}
                 <svg
-                  className="w-full h-full relative z-10 drop-shadow-lg"
+                  className="w-full h-full relative z-10 drop-shadow-xl"
                   viewBox="0 0 420 320"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -446,69 +441,70 @@ export default function LoginPage() {
           </div>
 
           {/* Bottom Trust Statistics */}
-          <div className="pt-2.5 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-2">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Users className="h-4 w-4" />
+          <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <Users className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[13.5px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[15px] sm:text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate">
                   10,000+
                 </p>
-                <p className="text-[10.5px] text-slate-500 dark:text-slate-400 truncate">Người dùng</p>
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 truncate">Người dùng</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Award className="h-4 w-4" />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <Award className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[13.5px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[15px] sm:text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate">
                   50,000+
                 </p>
-                <p className="text-[10.5px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi đã tổ chức</p>
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi đã tổ chức</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <ShieldCheck className="h-4 w-4" />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <ShieldCheck className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[13.5px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[15px] sm:text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate">
                   99.9%
                 </p>
-                <p className="text-[10.5px] text-slate-500 dark:text-slate-400 truncate">Độ tin cậy</p>
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 truncate">Độ tin cậy</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── Right Column: Modern Academic Login Form Card (5 Cols ~ 42%) ── */}
+        {/* ── Right Column: Large Modern Academic Login Form Card (5 Cols ~ 42%) ── */}
         <section className="lg:col-span-5 flex justify-center w-full">
           <div
-            className={`w-full max-w-[420px] rounded-[26px] border p-5 sm:p-6 transition-all duration-300 ${isDark
+            className={`w-full max-w-[450px] rounded-[30px] border p-7 sm:p-8 transition-all duration-300 ${
+              isDark
                 ? 'border-slate-800 bg-slate-900/90 shadow-2xl shadow-black/50 backdrop-blur-xl'
-                : 'border-slate-100/90 bg-white shadow-[0_15px_40px_-10px_rgba(37,99,235,0.08),0_6px_16px_-3px_rgba(0,0,0,0.03)] backdrop-blur-sm'
-              }`}
+                : 'border-slate-100/90 bg-white shadow-[0_20px_50px_-10px_rgba(37,99,235,0.09),0_8px_20px_-3px_rgba(0,0,0,0.03)] backdrop-blur-sm'
+            }`}
           >
             {/* Top User Avatar Circle */}
-            <div className="text-center mb-3.5">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-1.5 border border-blue-100/80 dark:border-blue-900 shadow-inner">
-                <UserIcon className="h-6 w-6" />
+            <div className="text-center mb-5">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-2 border border-blue-100/80 dark:border-blue-900 shadow-inner">
+                <UserIcon className="h-7 w-7" />
               </div>
-              <h2 className="text-[21px] sm:text-[22px] font-bold text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-[23px] sm:text-[25px] font-bold text-slate-900 dark:text-white tracking-tight">
                 Đăng nhập hệ thống
               </h2>
-              <p className="text-[11.5px] text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
+              <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-normal">
                 Chào mừng bạn quay trở lại!
               </p>
             </div>
 
             {/* Error Notification Banner */}
             {error && (
-              <div className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
+              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
                 <span className="shrink-0 text-rose-600 font-bold">•</span>
                 <span>{error}</span>
               </div>
@@ -519,7 +515,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex h-[44px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[13.5px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
+              className="flex h-[48px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-300/90 bg-white px-4 text-[14px] font-bold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
             >
               <svg
                 className="w-5 h-5 shrink-0"
@@ -550,52 +546,55 @@ export default function LoginPage() {
             </button>
 
             {/* Subtle Divider */}
-            <div className="my-3 flex items-center gap-3 text-xs font-medium text-slate-400">
+            <div className="my-4 flex items-center gap-3 text-xs font-medium text-slate-400">
               <div className="h-px flex-1 bg-slate-200/90 dark:bg-slate-800" />
               <span>hoặc</span>
               <div className="h-px flex-1 bg-slate-200/90 dark:bg-slate-800" />
             </div>
 
             {/* ── Collapsible Internal Login Section ── */}
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {/* Trigger Button to Expand/Collapse Form */}
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className={`w-full h-10 rounded-2xl border px-3 flex items-center justify-between text-[12.5px] font-semibold transition-all duration-300 cursor-pointer ${showManualLogin
+                className={`w-full h-11 rounded-2xl border px-3.5 flex items-center justify-between text-[13px] font-semibold transition-all duration-300 cursor-pointer ${
+                  showManualLogin
                     ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
                     : isDark
-                      ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800'
-                      : 'border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                  }`}
+                    ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800'
+                    : 'border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
+                }`}
               >
                 <div className="flex items-center gap-2">
-                  <UserIcon className="h-3.5 w-3.5 text-slate-500" />
+                  <UserIcon className="h-4 w-4 text-slate-500" />
                   <span>Đăng nhập tài khoản nội bộ</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-normal text-slate-400">
+                  <span className="text-[11px] font-normal text-slate-400">
                     {showManualLogin ? 'Thu gọn' : 'Nhấn để mở form'}
                   </span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-300 ease-in-out ${showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
-                      }`}
+                    className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
+                      showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
+                    }`}
                   />
                 </div>
               </button>
 
               {/* Smooth Animated Collapsible Form Container */}
               <div
-                className={`grid transition-all duration-300 ease-in-out ${showManualLogin
+                className={`grid transition-all duration-300 ease-in-out ${
+                  showManualLogin
                     ? 'grid-rows-[1fr] opacity-100'
                     : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-                  }`}
+                }`}
               >
                 <div className="overflow-hidden">
-                  <form onSubmit={handleManualLogin} noValidate className="space-y-2.5 pt-2 pb-0.5">
+                  <form onSubmit={handleManualLogin} noValidate className="space-y-3 pt-3 pb-0.5">
                     {/* Username / Email Input (Spacious pl-11 to prevent text overlap) */}
-                    <div className="space-y-0.5">
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                    <div className="space-y-1">
+                      <label className="block text-[12px] font-medium text-slate-600 dark:text-slate-300">
                         Email hoặc tên đăng nhập
                       </label>
                       <div className="relative">
@@ -608,17 +607,18 @@ export default function LoginPage() {
                           onChange={(e) => setUsername(e.target.value)}
                           placeholder="Nhập email hoặc tên đăng nhập"
                           required
-                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-3.5 text-[13px] outline-none transition ${isDark
+                          className={`w-full h-[42px] rounded-2xl border pl-11 pr-3.5 text-[13.5px] outline-none transition ${
+                            isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                            }`}
+                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          }`}
                         />
                       </div>
                     </div>
 
                     {/* Password Input (Spacious pl-11 to prevent text overlap) */}
-                    <div className="space-y-0.5">
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                    <div className="space-y-1">
+                      <label className="block text-[12px] font-medium text-slate-600 dark:text-slate-300">
                         Mật khẩu
                       </label>
                       <div className="relative">
@@ -631,10 +631,11 @@ export default function LoginPage() {
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Nhập mật khẩu"
                           required
-                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-10 text-[13px] outline-none transition ${isDark
+                          className={`w-full h-[42px] rounded-2xl border pl-11 pr-10 text-[13.5px] outline-none transition ${
+                            isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                            }`}
+                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          }`}
                         />
                         <button
                           type="button"
@@ -648,7 +649,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Remember Me & Forgot Password Row */}
-                    <div className="flex items-center justify-between text-[11.5px] pt-0.5">
+                    <div className="flex items-center justify-between text-[12px] pt-0.5">
                       <label className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
                         <input
                           type="checkbox"
@@ -670,16 +671,16 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full h-[40px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[13.5px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
+                      className="w-full h-[44px] rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold text-[14px] shadow-sm shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           <span>Đang xác thực...</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <Lock className="h-3.5 w-3.5" />
+                          <Lock className="h-4 w-4" />
                           <span>Đăng nhập</span>
                         </div>
                       )}
@@ -690,7 +691,7 @@ export default function LoginPage() {
             </div>
 
             {/* Card Footer Help Link */}
-            <div className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-3 text-center text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-5 border-t border-slate-100 dark:border-slate-800 pt-4 text-center text-xs sm:text-[13px] text-slate-500 dark:text-slate-400">
               <p>
                 Chưa có tài khoản?{' '}
                 <button
@@ -707,12 +708,12 @@ export default function LoginPage() {
       </main>
 
       {/* ── Page Bottom Footer ── */}
-      <footer className="relative z-10 w-full py-2.5 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-0.5">
-        <p className="flex items-center justify-center gap-1.5 font-medium text-slate-700 dark:text-slate-300 text-[11.5px]">
-          <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
+      <footer className="relative z-10 w-full py-4 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
+        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[12px]">
+          <ShieldCheck className="h-4 w-4 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
         </p>
-        <p className="text-[10.5px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
     </div>
   );
