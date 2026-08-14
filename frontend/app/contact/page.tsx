@@ -295,10 +295,12 @@ export default function ContactSupportPage() {
       {/* ── Background Decorative Vector Waves & Glows ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
         <div
-          className="absolute top-6 left-1/4 w-[800px] h-96 opacity-30 dark:opacity-10"
+          className="absolute inset-0 w-full h-[600px] opacity-35 dark:opacity-10"
           style={{
             backgroundImage: 'radial-gradient(#3B82F6 1.2px, transparent 1.2px)',
             backgroundSize: '24px 24px',
+            maskImage: 'radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 100%)',
           }}
         />
         <div className="absolute -top-32 -left-32 w-[650px] h-[650px] bg-blue-200/50 dark:bg-blue-900/15 rounded-full blur-[130px]" />
@@ -310,7 +312,7 @@ export default function ContactSupportPage() {
         <div className="mx-auto flex py-3.5 max-w-[1380px] items-center justify-between px-6 sm:px-10">
           <Link href="/login" className="flex items-center gap-3.5 group cursor-pointer">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50 transition-transform duration-300 group-hover:scale-105">
-              <GraduationCap className="h-6.5 w-6.5" />
+              <GraduationCap className="h-6 w-6" />
             </div>
             <div>
               <span className="text-[20px] font-black tracking-tight text-slate-900 dark:text-white leading-none block">
@@ -323,11 +325,11 @@ export default function ContactSupportPage() {
           </Link>
 
           <div className="flex items-center gap-3">
-            {/* Creative Login Action Button */}
+            {/* Creative Login Action Button with Guaranteed Padding */}
             <button
               type="button"
               onClick={() => router.push('/login')}
-              className="group relative inline-flex items-center gap-2 px-4.5 py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-[13px] font-bold shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
+              className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-[13.5px] font-bold shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
             >
               <span>Đăng nhập</span>
               <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-white/20 text-white transition-transform duration-200 group-hover:translate-x-0.5">
@@ -363,9 +365,11 @@ export default function ContactSupportPage() {
           </p>
 
           {/* Big Search Bar with Autocomplete Suggestions */}
-          <div className="relative max-w-2xl mx-auto shadow-xl shadow-blue-500/5 rounded-3xl pt-2">
+          <div className="relative max-w-2xl mx-auto rounded-3xl pt-2">
             <div className="relative">
-              <Search className="absolute left-4.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
+              <div className="absolute inset-y-0 left-0 pl-4.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                <Search className="h-5 w-5" />
+              </div>
               <input
                 type="text"
                 value={searchQuery}
@@ -373,13 +377,13 @@ export default function ContactSupportPage() {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm quy chế thi, xử lý rớt mạng, phúc khảo..."
-                className="w-full rounded-2xl border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 py-4 pl-12 pr-11 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20 transition shadow-xs"
+                className="w-full h-14 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 py-3 pl-12 pr-12 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition shadow-sm backdrop-blur-sm"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer p-1"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                 >
                   <X className="h-4.5 w-4.5" />
                 </button>
