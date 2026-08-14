@@ -5,6 +5,7 @@ import { Eye, ArrowRight, ChevronLeft, ChevronRight, CalendarX } from 'lucide-re
 import { useRouter } from 'next/navigation';
 import { StatusBadge } from '../common/StatusBadge';
 import type { DashboardOverview } from '../../types/dashboard';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomingExams'] }) {
  const router = useRouter();
@@ -62,9 +63,7 @@ export function UpcomingExamList({ exams }: { exams?: DashboardOverview['upcomin
  {list.map((exam) => (
  <tr key={exam.id} className="hover:bg-slate-50/60 transition">
  <td className="py-2.5 px-2.5 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-900">
- {exam.code}
- </span>
+ <IdentifierBadge tone="neutral">{exam.code}</IdentifierBadge>
  </td>
  <td className="py-2.5 px-2.5 font-medium text-slate-900 whitespace-nowrap">{exam.name}</td>
  <td className="py-2.5 px-2 text-center whitespace-nowrap font-normal text-slate-500">{exam.date}</td>

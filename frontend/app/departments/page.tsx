@@ -692,9 +692,7 @@ export default function DepartmentsPage() {
 <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerDepartment.name}
  </h2>
- <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
- Mã khoa: {drawerDepartment.code}
- </p>
+ <div className="mt-1.5"><IdentifierBadge tone="inverse">Mã khoa: {drawerDepartment.code}</IdentifierBadge></div>
  </div>
  </div>
 
@@ -819,7 +817,7 @@ export default function DepartmentsPage() {
  <span className="text-[15px] font-semibold text-slate-900">{cls.name || cls.className}</span>
  <span className="rounded bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 text-[13px] font-semibold shrink-0">{cls._count?.students ?? 0} SV</span>
  </div>
- <span className="text-[13px] font-medium text-slate-500">Mã lớp: {cls.code || cls.classCode}</span>
+ <span className="text-[13px] font-medium text-slate-500">Mã lớp: <IdentifierBadge tone="neutral">{cls.code || cls.classCode}</IdentifierBadge></span>
  </div>
  ))
  ) : (

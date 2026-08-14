@@ -12,6 +12,7 @@ import { ConfirmModal } from '../../../components/ConfirmModal';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { Button } from '../../../components/ui/Button';
 import { StatusBadge } from '../../../components/common/StatusBadge';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import {
  ShieldCheck,
  Calendar,
@@ -517,7 +518,7 @@ export default function TeacherAssignmentsPage() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h4 className="text-[14px] font-semibold text-slate-900 truncate">{item.subjectName}</h4>
-                  <span className="text-xs text-slate-500 font-medium">({item.subjectCode})</span>
+                  <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
                   <span className="flex items-center gap-1">
@@ -530,7 +531,7 @@ export default function TeacherAssignmentsPage() {
                   </span>
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    {item.roomName || item.roomCode}
+                    {item.roomName || <IdentifierBadge tone="neutral">{item.roomCode}</IdentifierBadge>}
                   </span>
                 </div>
               </div>
@@ -591,7 +592,7 @@ export default function TeacherAssignmentsPage() {
                   {visibleColumns.subject !== false && (
                     <td className="py-3.5 px-4">
                       <div className="font-medium text-slate-900">{item.subjectName}</div>
-                      <div className="text-[15px] text-slate-500 font-medium">{item.subjectCode}</div>
+                      <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
                     </td>
                   )}
                   {visibleColumns.time !== false && (
@@ -602,7 +603,7 @@ export default function TeacherAssignmentsPage() {
                   )}
                   {visibleColumns.room !== false && (
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <div className="font-medium text-slate-900">{item.roomName || item.roomCode}</div>
+                      <div className="font-medium text-slate-900">{item.roomName || <IdentifierBadge tone="neutral">{item.roomCode}</IdentifierBadge>}</div>
                       <div className="text-[15px] text-slate-500">{item.building || 'Nhà A1'}</div>
                     </td>
                   )}
@@ -678,9 +679,7 @@ export default function TeacherAssignmentsPage() {
  <div className="space-y-3.5">
  {/* Card top badges */}
  <div className="flex items-center justify-between gap-2">
- <span className=" tabular-nums font-medium text-xs text-slate-600">
- {item.subjectCode}
- </span>
+ <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
  <div className="flex items-center gap-1.5">
  <StatusBadge
  status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
@@ -725,7 +724,7 @@ export default function TeacherAssignmentsPage() {
  Phòng thi:
  </span>
  <strong className="text-slate-700 font-semibold">
- {item.roomName || item.roomCode} {item.building ? `(${item.building})` : ''}
+ {item.roomName || <IdentifierBadge tone="neutral">{item.roomCode}</IdentifierBadge>} {item.building ? `(${item.building})` : ''}
  </strong>
  </div>
  </div>

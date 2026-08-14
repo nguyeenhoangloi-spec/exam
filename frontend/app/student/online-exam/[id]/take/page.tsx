@@ -10,6 +10,7 @@ import { Toast } from '@/components/Toast';
 import { FillBlankQuestionRenderer } from '@/components/question-bank/FillBlankQuestionRenderer';
 import { QuestionMediaPlayer } from '@/components/exam/QuestionMediaPlayer';
 import { DynamicImage } from '@/components/ui/DynamicImage';
+import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 
 export default function StudentExamTakePage() {
  const router = useRouter();
@@ -559,9 +560,7 @@ export default function StudentExamTakePage() {
  <span className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-semibold text-sm shadow-xs">
  {currentIdx + 1}
  </span>
- <span className="text-xs font-semibold tabular-nums text-slate-500 dark:text-slate-400">
- Mã: {currentQ.code}
- </span>
+ <IdentifierBadge tone="neutral">Mã: {currentQ.code}</IdentifierBadge>
  <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
  {currentQ.score} điểm
  </span>

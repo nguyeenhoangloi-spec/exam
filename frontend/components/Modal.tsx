@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { X, Sparkles } from 'lucide-react';
+import { IdentifierBadge } from './ui/IdentifierBadge';
 
 interface ModalProps {
   isOpen: boolean;
@@ -47,6 +48,7 @@ export const Modal: React.FC<ModalProps> = ({
   const defaultIcon = icon || <Sparkles className="h-5 w-5 text-white" />;
   const defaultBadge = badge || (typeof title === 'string' && (title.includes('Sửa') || title.includes('Chỉnh') || title.includes('Tạo') || title.includes('Thêm')) ? (title.includes('Sửa') || title.includes('Chỉnh') ? 'Cập nhật' : 'Tạo mới') : 'Hệ thống');
   const defaultSubtitle = subtitle || 'Quản lý thông tin trên hệ thống khảo thí';
+  const isIdentifierSubtitle = typeof defaultSubtitle === 'string' && /(^|\s)(mã|mssv|id|code|snapshot)/i.test(defaultSubtitle);
 
   return createPortal(
     <div
@@ -81,9 +83,13 @@ export const Modal: React.FC<ModalProps> = ({
                     )}
                   </div>
                   {defaultSubtitle && (
-                    <p className="text-[13px] leading-[18px] font-medium text-blue-100/90 line-clamp-1">
-                      {defaultSubtitle}
-                    </p>
+                    isIdentifierSubtitle ? (
+                      <div><IdentifierBadge tone="inverse" title={defaultSubtitle}>{defaultSubtitle}</IdentifierBadge></div>
+                    ) : (
+                      <p className="text-[13px] leading-[18px] font-medium text-blue-100/90 line-clamp-1">
+                        {defaultSubtitle}
+                      </p>
+                    )
                   )}
                 </div>
               </div>

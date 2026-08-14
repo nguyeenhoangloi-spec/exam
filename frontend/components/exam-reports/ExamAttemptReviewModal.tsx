@@ -299,10 +299,11 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
  )}
  </div>
  {data && (
- <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 line-clamp-2">
- Sinh viên: <strong className="font-semibold text-white">{data.student?.fullName}</strong> ({data.student?.studentCode})
- {data.paper?.subjectName ? ` • Môn: ${data.paper.subjectName}` : ''}
- </p>
+ <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-blue-100/90">
+  <span>Sinh viên: <strong className="font-semibold text-white">{data.student?.fullName}</strong></span>
+  <IdentifierBadge tone="inverse">{data.student?.studentCode}</IdentifierBadge>
+  {data.paper?.subjectName && <span>• Môn: {data.paper.subjectName}</span>}
+ </div>
  )}
  </div>
  </div>

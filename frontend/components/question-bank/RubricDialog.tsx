@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import api from '../../lib/api';
 import { HelpCircle, Plus, Trash2, Save, X, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface RubricCriterion {
   id?: string;
@@ -150,9 +151,10 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                 <h2 className="text-[18px] font-semibold leading-snug text-white">
                   Thiết Lập Rubric Chấm Điểm Tự Luận
                 </h2>
-                <p className="text-[13px] font-medium text-blue-100/90 tabular-nums mt-0.5">
-                  Mã câu: {question.code || 'Q'} · Điểm câu hỏi: <strong className="text-white font-semibold">{expectedScore}đ</strong>
-                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-blue-100/90">
+                  <IdentifierBadge tone="inverse">Mã câu: {question.code || 'Q'}</IdentifierBadge>
+                  <span>· Điểm câu hỏi: <strong className="text-white font-semibold">{expectedScore}đ</strong></span>
+                </div>
               </div>
             </div>
             <button

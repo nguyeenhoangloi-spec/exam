@@ -9,6 +9,7 @@ import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
 import { Button } from '../ui/Button';
 import { DynamicImage } from '../ui/DynamicImage';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 export function QuestionAIWizard({
   open,
@@ -333,7 +334,8 @@ export function QuestionAIWizard({
                     {q.duplicate && (
                       <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-warning-600">
                         <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                        Trùng câu {q.duplicate.code}
+                        <span>Trùng câu</span>
+                        <IdentifierBadge tone="neutral">{q.duplicate.code}</IdentifierBadge>
                       </span>
                     )}
                   </div>

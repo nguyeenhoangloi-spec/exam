@@ -892,7 +892,7 @@ export default function ExamArrangementPage() {
  >
  <div className="flex items-center gap-2 min-w-0">
  <DoorOpen className={`h-4 w-4 shrink-0 ${!r.isAvailable ? 'text-slate-700' : isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
- <span className="truncate font-semibold">{r.roomName || r.roomCode}</span>
+ <span className="truncate font-semibold">{r.roomName || <IdentifierBadge tone="neutral">{r.roomCode}</IdentifierBadge>}</span>
  </div>
  <div className="flex items-center gap-2 shrink-0">
  <span className="text-xs font-semibold text-slate-900">{r.capacity} chỗ</span>
@@ -994,7 +994,7 @@ export default function ExamArrangementPage() {
  <CheckCircle2 className="h-4 w-4 text-emerald-600" /> {result.message}
  </p>
  <p className="mt-1 text-slate-600 font-medium">
- Môn thi: <strong className="text-slate-800">{result.summary.subjectName}</strong> ({result.summary.subjectCode}) · Ngày: {result.summary.examDate} ({result.summary.timeSlot})
+ Môn thi: <strong className="text-slate-800">{result.summary.subjectName}</strong> <IdentifierBadge>{result.summary.subjectCode}</IdentifierBadge> · Ngày: {result.summary.examDate} ({result.summary.timeSlot})
  </p>
  <p className="mt-0.5 text-slate-600">
  Đã xếp: <strong className="text-slate-900">{result.summary.totalStudents} thí sinh</strong> vào <strong className="text-slate-900">{roomSummaries.length} phòng thi</strong>.
@@ -1080,7 +1080,7 @@ export default function ExamArrangementPage() {
  <div className="flex items-center gap-2">
  <DoorOpen className="h-4 w-4 text-blue-600" />
  <h4 className="font-semibold text-slate-900 text-sm">
- PHÒNG {room.roomName || room.roomCode} ({room.building})
+ PHÒNG {room.roomName || <IdentifierBadge tone="neutral">{room.roomCode}</IdentifierBadge>} ({room.building})
  </h4>
  </div>
  <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full">
@@ -1135,12 +1135,10 @@ export default function ExamArrangementPage() {
  <tbody className="divide-y divide-slate-100 font-normal">
  {filteredDetails.map((st, dIdx) => (
  <tr key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`} className="hover:bg-slate-50/60 transition">
- <td className="p-3.5 font-medium text-slate-900">{st.roomName || st.roomCode}</td>
+ <td className="p-3.5 font-medium text-slate-900">{st.roomName || <IdentifierBadge tone="neutral">{st.roomCode}</IdentifierBadge>}</td>
  <td className="p-3.5 text-center font-medium text-primary-600">Ghế #{st.seatNumber}</td>
  <td className="p-3.5">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-900">
- {st.studentCode}
- </span>
+ <IdentifierBadge tone="neutral">{st.studentCode}</IdentifierBadge>
  </td>
  <td className="p-3.5 font-medium text-slate-900">{st.fullName}</td>
  <td className="p-3.5 font-normal text-slate-700">

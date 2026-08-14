@@ -779,7 +779,7 @@ export default function TeachersPage() {
  <Building2 className="w-8 h-8" />
  </div>
  <h3 className="text-[20px] font-semibold text-slate-900">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
- <p className="text-[13px] font-semibold text-blue-600 tabular-nums">Mã khoa: {drawerTeacher.department?.code || 'N/A'}</p>
+ <p className="text-[13px] font-semibold text-blue-600">Mã khoa: <IdentifierBadge tone="neutral">{drawerTeacher.department?.code || 'N/A'}</IdentifierBadge></p>
  </div>
  )}
  </div>

@@ -8,6 +8,7 @@ import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
 import { Button } from '../../../components/ui/Button';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import {
  FileCheck,
  ShieldCheck,
@@ -546,9 +547,10 @@ export default function AdminEssayReviewPage() {
  <span className="font-semibold text-[15px] text-slate-900">{row.student?.fullName}</span>
  <StatusBadge status={row.gradingStatus} />
  </div>
- <p className="text-[13px] text-slate-500 tabular-nums font-normal">
- Mã SV: {row.student?.studentCode} · Điểm: <strong className="text-slate-900 font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
- </p>
+ <div className="flex flex-wrap items-center gap-1.5 text-[13px] text-slate-500 font-normal">
+  <span>Mã SV:</span><IdentifierBadge tone="neutral">{row.student?.studentCode}</IdentifierBadge>
+  <span>· Điểm: <strong className="text-slate-900 font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong></span>
+ </div>
  <div className="flex items-center justify-between gap-1 text-[13px] text-slate-500 font-normal border-t border-slate-100 pt-1.5 mt-0.5">
  <span className="truncate flex-1 font-medium text-slate-700">
  {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
@@ -580,9 +582,10 @@ export default function AdminEssayReviewPage() {
  <div className="flex justify-between items-start border-b border-slate-100 pb-4 flex-wrap gap-2">
  <div>
  <h2 className="text-lg font-semibold text-slate-900">{selected.student?.fullName}</h2>
- <p className="text-xs text-slate-500 tabular-nums">
- Mã SV: {selected.student?.studentCode} · Lớp: {selected.student?.className || 'N/A'}
- </p>
+ <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+  <span>Mã SV:</span><IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
+  <span>· Lớp: {selected.student?.className || 'N/A'}</span>
+ </div>
  </div>
  <div className="text-right">
  <span className="edu-kpi tabular-nums text-slate-900">

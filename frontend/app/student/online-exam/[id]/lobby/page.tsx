@@ -210,7 +210,7 @@ export default function StudentExamLobbyPage() {
                 </div>
 
                 <p className="text-xs sm:text-sm font-medium text-blue-100/90">
-                  Mã môn: <strong className="text-white font-semibold">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</strong>
+                  Mã môn: <IdentifierBadge tone="inverse">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</IdentifierBadge>
                   <span className="mx-2">•</span>
                   Kỳ thi: <strong className="text-white font-semibold">{schedule?.examPeriod?.name || examInfo?.examPeriodName || '---'}</strong>
                 </p>

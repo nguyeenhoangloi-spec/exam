@@ -1205,7 +1205,7 @@ export default function BackupsPage() {
                     {/* Frameless Selected Snapshot Info */}
                     <div className="space-y-0.5 pb-2 border-b border-slate-100">
                         <span className="text-xs font-semibold text-slate-500 block">Snapshot đã chọn</span>
-                        <p className=" tabular-nums text-sm font-semibold text-slate-900 break-all">{selectedJob?.snapshotId}</p>
+                        <IdentifierBadge tone="neutral" title={selectedJob?.snapshotId}>{selectedJob?.snapshotId}</IdentifierBadge>
                         <p className="text-xs font-semibold text-slate-500 mt-0.5">
                             {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
                         </p>

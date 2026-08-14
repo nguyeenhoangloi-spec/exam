@@ -372,7 +372,7 @@ if (!paginationPages.includes(totalPages)) paginationPages.push(totalPages);
  Khung Chương Trình Đào Tạo
  </h1>
  <p className="text-[15px] font-normal leading-[22px] text-slate-500">
- Sinh viên: <strong className="text-slate-900 font-semibold">{studentInfo?.fullName || '---'}</strong> ({studentInfo?.studentCode || '---'}) &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
+ Sinh viên: <strong className="text-slate-900 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
  </p>
  </div>
 

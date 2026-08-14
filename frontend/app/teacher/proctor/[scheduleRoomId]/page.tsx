@@ -1,5 +1,6 @@
 'use client';
 import { FilterSelect } from '@/components/ui/FilterSelect';
+import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 
 import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -806,9 +807,7 @@ Bù giờ khẩn cấp toàn phòng (+15p)
  {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
  </div>
 
- <span className=" tabular-nums font-medium text-[12px] text-slate-600 inline-block mt-1">
- {s.student.studentCode}
- </span>
+ <div className="mt-1"><IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge></div>
  </div>
 
  <div className="space-y-1.5 text-xs text-slate-600 font-medium pt-1">
@@ -904,9 +903,7 @@ Bù giờ khẩn cấp toàn phòng (+15p)
  </div>
  </td>
  <td className="p-2 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600">
- {s.student.studentCode}
- </span>
+ <IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge>
  </td>
  <td className="p-2 whitespace-nowrap">
  <StatusBadge status={att?.status || 'NOT_STARTED'} customLabel={statusLabel} />
@@ -1008,9 +1005,7 @@ Bù giờ khẩn cấp toàn phòng (+15p)
  {/* Student code */}
  {visibleColumns.code !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600">
- {s.student.studentCode}
- </span>
+ <IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge>
  </td>
  )}
 
@@ -1200,9 +1195,7 @@ Bù giờ khẩn cấp toàn phòng (+15p)
  {/* Student info */}
  <div className="mx-6 mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 flex items-center justify-between">
  <span>Thí sinh: <strong className="text-slate-900 font-semibold">{selectedStudent.student.fullName}</strong></span>
- <span className=" tabular-nums font-medium text-xs text-slate-600">
- {selectedStudent.student.studentCode}
- </span>
+ <IdentifierBadge tone="neutral">{selectedStudent.student.studentCode}</IdentifierBadge>
  </div>
 
  {/* Modal body */}

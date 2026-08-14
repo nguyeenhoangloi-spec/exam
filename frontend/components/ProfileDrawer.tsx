@@ -4,6 +4,7 @@ import React from 'react';
 import { X, User, Mail, Phone, Calendar, BookOpen, GraduationCap, Building2, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from './common/StatusBadge';
 import { Button } from './ui/Button';
+import { IdentifierBadge } from './ui/IdentifierBadge';
 
 interface ProfileDrawerProps {
  isOpen: boolean;
@@ -28,7 +29,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 }) => {
  if (!isOpen) return null;
 
- const shortAvatar = avatarText ? avatarText.trim().slice(0, 3).toUpperCase() : 'HD';
+const shortAvatar = avatarText ? avatarText.trim().slice(0, 3).toUpperCase() : 'HD';
+ const isIdentifierSubtitle = typeof subtitle === 'string' && /(^|\s)(mã|id|code|snapshot)/i.test(subtitle);
 
  return (
     <div role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" className="fixed inset-0 z-[100] overflow-hidden">
@@ -65,9 +67,13 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                   )}
 
                   {subtitle && (
-                    <p className="text-[13px] font-medium text-blue-100/90 mt-1.5 tabular-nums">
-                      {subtitle}
-                    </p>
+                    <div className="mt-1.5">
+                      {isIdentifierSubtitle ? (
+                        <IdentifierBadge tone="inverse" title={subtitle}>{subtitle}</IdentifierBadge>
+                      ) : (
+                        <p className="text-[13px] font-medium text-blue-100/90 tabular-nums">{subtitle}</p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -90,6 +96,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               <div className="grid gap-3.5">
                 {details.map((item, idx) => {
                   const Icon = item.icon;
+                  const isIdentifier = /(^|\s)(mã|id|code|snapshot)/i.test(item.label);
                   return (
                     <div key={idx} className="flex items-start justify-between gap-3 text-[14px]">
                       <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[13px] font-medium shrink-0 pt-0.5">
@@ -99,7 +106,9 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       <span className="font-medium text-slate-900 dark:text-slate-100 text-right text-[14px] leading-snug break-words max-w-[65%]">
                         {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái')
                           ? <StatusBadge status={item.value} />
-                          : item.value || '---'}
+                          : isIdentifier && typeof item.value === 'string'
+                            ? <IdentifierBadge tone="neutral" title={item.value}>{item.value}</IdentifierBadge>
+                            : item.value || '---'}
                       </span>
                     </div>
                   );

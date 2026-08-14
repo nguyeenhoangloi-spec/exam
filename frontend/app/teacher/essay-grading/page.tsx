@@ -12,6 +12,7 @@ import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
 import { Search, X, RotateCcw, Sparkles, Sliders, Save, CheckCircle2, FileText, User, AlertCircle, ChevronLeft, ChevronRight, Download, Loader2, SlidersHorizontal, ChevronDown, List, LayoutGrid, Layers, Check } from 'lucide-react';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 
 function TeacherEssayGradingContent() {
  usePageTitle('Chấm Bài Thi Tự Luận');
@@ -773,9 +774,10 @@ function TeacherEssayGradingContent() {
  <span className="font-semibold text-[15px] text-slate-900">{row.student?.fullName}</span>
  <StatusBadge status={row.gradingStatus} />
  </div>
- <p className="text-[13px] text-slate-500 font-normal tabular-nums">
- Mã SV: <strong className="text-slate-900 font-semibold">{row.student?.studentCode}</strong> · Điểm: <strong className="text-slate-900 font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong>
- </p>
+ <div className="flex flex-wrap items-center gap-1.5 text-[13px] text-slate-500 font-normal">
+  <span>Mã SV:</span><IdentifierBadge tone="neutral">{row.student?.studentCode}</IdentifierBadge>
+  <span>· Điểm: <strong className="text-slate-900 font-semibold">{row.totalScore ?? 'Chưa chấm'}</strong></span>
+ </div>
  <div className="flex items-center justify-between gap-1 text-[13px] text-slate-500 font-normal border-t border-slate-100 pt-1.5 mt-0.5">
  <span className="truncate flex-1 font-medium text-slate-700">
  Môn: {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
@@ -844,9 +846,10 @@ function TeacherEssayGradingContent() {
  <h2 className="text-base font-semibold text-slate-900">{selected.student?.fullName}</h2>
  <StatusBadge status={selected.gradingStatus} />
  </div>
- <p className="text-xs text-slate-500 tabular-nums mt-0.5">
-                        Mã SV: <strong className="text-slate-800">{selected.student?.studentCode}</strong> · Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong>
- </p>
+ <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+  <span>Mã SV:</span><IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
+  <span>· Môn: <strong className="text-slate-800">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong></span>
+ </div>
  </div>
  </div>
 

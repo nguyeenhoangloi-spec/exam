@@ -349,6 +349,7 @@ const toast = await readFile(join(root, 'components', 'Toast.tsx'), 'utf8');
 const filterSelect = await readFile(join(root, 'components', 'ui', 'FilterSelect.tsx'), 'utf8');
 const button = await readFile(join(root, 'components', 'ui', 'Button.tsx'), 'utf8');
 const input = await readFile(join(root, 'components', 'ui', 'Input.tsx'), 'utf8');
+const identifierBadge = await readFile(join(root, 'components', 'ui', 'IdentifierBadge.tsx'), 'utf8');
 const sharedUiPrimitiveFiles = [
   'components/ui/Button.tsx',
   'components/ui/Card.tsx',
@@ -426,6 +427,16 @@ if (!/appearance-none rounded-xl/.test(filterSelect) || !/dark:bg-slate-900/.tes
 }
 if (!/rounded-xl/.test(button) || !/rounded-xl/.test(input)) {
   violations.push('components/ui/Button.tsx and Input.tsx: shared controls must use rounded-xl');
+}
+
+if (!/rounded-lg/.test(identifierBadge)
+  || !/px-2 py-0\.5/.test(identifierBadge)
+  || !/text-\[13px\]/.test(identifierBadge)
+  || !/font-medium/.test(identifierBadge)
+  || !/tabular-nums/.test(identifierBadge)
+  || !/whitespace-nowrap/.test(identifierBadge)
+  || !/toneClasses/.test(identifierBadge)) {
+  violations.push('components/ui/IdentifierBadge.tsx: identifier badge phải dùng primitive chung và đủ contract typography/layout');
 }
 
 if (!/aria-busy=\{isLoading \|\| undefined\}/.test(button)) {

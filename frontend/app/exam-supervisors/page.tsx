@@ -761,7 +761,7 @@ export default function ExamSupervisorsPage() {
  }
  className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 cursor-pointer"
  />
- <span className="font-medium">{p.roomCode}</span> · {p.teacherName} · {p.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
+ <IdentifierBadge tone="neutral">{p.roomCode}</IdentifierBadge> · {p.teacherName} · {p.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
  </label>
  );
  })}

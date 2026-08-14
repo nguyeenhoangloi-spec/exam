@@ -565,9 +565,7 @@ export default function ClassesPage() {
 <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerClass.name}
  </h2>
- <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
- Mã lớp: {drawerClass.code}
- </p>
+ <div className="mt-1.5"><IdentifierBadge tone="inverse">Mã lớp: {drawerClass.code}</IdentifierBadge></div>
  </div>
  </div>
 

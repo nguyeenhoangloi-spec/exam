@@ -22,6 +22,7 @@ import { StudentTableToolbar } from '../../components/students/StudentTableToolb
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { StudentTable } from '../../components/students/StudentTable';
 import { StudentPaginationBar } from '../../components/students/StudentPaginationBar';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function StudentsPage() {
  usePageTitle('Quản lý sinh viên');
@@ -621,9 +622,10 @@ export default function StudentsPage() {
 <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
  {drawerStudent.fullName}
  </h2>
- <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
- MSSV: {drawerStudent.studentCode} • Lớp: {drawerStudent.class?.name || 'Chưa xếp lớp'}
- </p>
+ <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+  <IdentifierBadge tone="inverse">MSSV: {drawerStudent.studentCode}</IdentifierBadge>
+  <span className="text-[13px] font-semibold text-blue-100/90">Lớp: {drawerStudent.class?.name || 'Chưa xếp lớp'}</span>
+ </div>
  </div>
  </div>
 
@@ -672,7 +674,7 @@ export default function StudentsPage() {
  <div className="grid grid-cols-2 gap-4">
  <div>
  <span className="block text-xs font-semibold text-slate-500 mb-1">Mã sinh viên</span>
- <p className="text-sm font-medium text-slate-800">{drawerStudent.studentCode}</p>
+ <IdentifierBadge tone="neutral">{drawerStudent.studentCode}</IdentifierBadge>
  </div>
  <div>
  <span className="block text-xs font-semibold text-slate-500 mb-1">Họ và tên</span>
@@ -777,7 +779,7 @@ export default function StudentsPage() {
  </div>
  <div className="flex-1">
  <h4 className="text-sm font-semibold text-slate-800">{sub.subjectName || sub.name}</h4>
- <p className="text-xs text-slate-500 font-medium mt-0.5">Mã môn: <span className="font-semibold text-slate-700">{sub.subjectCode || sub.code}</span></p>
+ <p className="text-xs text-slate-500 font-medium mt-0.5">Mã môn: <IdentifierBadge tone="neutral">{sub.subjectCode || sub.code}</IdentifierBadge></p>
  {sub.department?.name && (
  <p className="text-xs text-slate-400 mt-0.5">{sub.department.name}</p>
  )}
@@ -826,16 +828,16 @@ export default function StudentsPage() {
  <div className="p-4 space-y-3">
  <div>
  <h4 className="text-sm font-semibold text-slate-900">{sched.subjectName || 'Môn thi'}</h4>
- <p className="text-xs font-medium text-slate-500 mt-0.5">Mã môn: {sched.subjectCode}</p>
+ <p className="text-xs font-medium text-slate-500 mt-0.5">Mã môn: <IdentifierBadge tone="neutral">{sched.subjectCode}</IdentifierBadge></p>
  </div>
  <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
  <div className="flex items-center gap-1.5 text-slate-600">
  <School className="h-3.5 w-3.5 text-slate-400 shrink-0" />
- <span>Phòng: <span className="font-semibold text-slate-800">{sched.roomCode || sched.roomName} ({sched.building})</span></span>
+ <span>Phòng: {sched.roomName || <IdentifierBadge tone="neutral">{sched.roomCode}</IdentifierBadge>} ({sched.building})</span>
  </div>
  <div className="flex items-center gap-1.5 text-slate-600">
  <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
- <span>SBD: <span className="font-semibold text-blue-600">{sched.examNumber || '---'}</span></span>
+ <span>SBD: <IdentifierBadge tone="neutral">{sched.examNumber || '---'}</IdentifierBadge></span>
  </div>
  <div className="flex items-center gap-1.5 text-slate-600">
  <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />

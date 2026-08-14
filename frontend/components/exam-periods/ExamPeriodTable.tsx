@@ -6,6 +6,7 @@ import { ExamPeriod } from '../../types';
 
 import { StatusBadge } from '../common/StatusBadge';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface ExamPeriodTableProps {
  periods: ExamPeriod[];
@@ -116,7 +117,7 @@ export function ExamPeriodTable({
  onClick={() => onDetail(p)}
  className=" tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
  >
- {codeText}
+ <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
  </button>
  </div>
  {getStatusBadge(p.status, p)}

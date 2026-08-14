@@ -1,5 +1,6 @@
 'use client';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -183,7 +184,7 @@ export default function StudentExamSchedulePage() {
  Lịch Thi Cá Nhân Sinh Viên
  </h1>
  <p className="text-[15px] font-normal leading-[22px] text-slate-500">
- Sinh viên: <strong className="text-slate-900 font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> ({currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}) &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
+ Sinh viên: <strong className="text-slate-900 font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
  </p>
  </div>
 
@@ -312,9 +313,7 @@ export default function StudentExamSchedulePage() {
  <div className="space-y-3.5">
  {/* Card top badges */}
  <div className="flex items-center justify-between gap-2">
- <span className=" tabular-nums font-medium text-xs text-slate-600">
- {item.subjectCode}
- </span>
+ <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
  <div className="flex items-center gap-2">
  <span className="text-[12px] font-medium text-slate-500 truncate max-w-[140px] sm:max-w-[180px]" title={item.periodName}>
  {item.periodName}
@@ -364,7 +363,7 @@ export default function StudentExamSchedulePage() {
  Phòng thi:
  </span>
  <strong className="text-slate-700 font-semibold">
- {item.roomName || item.roomCode || 'Tự do'} {item.building ? `(${item.building})` : ''}
+ {item.roomName || (item.roomCode ? <IdentifierBadge tone="neutral">{item.roomCode}</IdentifierBadge> : 'Tự do')} {item.building ? `(${item.building})` : ''}
  </strong>
  </div>
 

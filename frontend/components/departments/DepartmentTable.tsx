@@ -328,7 +328,7 @@ export function DepartmentTable({
                       onClick={() => onDetail(d)}
                       className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
                     >
-                      {d.code}
+                      <IdentifierBadge>{d.code}</IdentifierBadge>
                     </button>
                   </td>
                 )}

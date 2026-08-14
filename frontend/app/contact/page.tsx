@@ -571,13 +571,13 @@ export default function ContactSupportPage() {
                             {faq.summary}
                           </p>
 
-                          <div className="relative pl-6 space-y-2.5 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-blue-100 dark:before:bg-blue-950">
+                          <div className="space-y-2.5 pt-1">
                             {faq.content.map((paragraph, i) => (
-                              <div key={i} className="relative flex items-start gap-2.5">
-                                <div className="absolute -left-6 top-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-blue-600 text-white text-[10px] font-bold">
+                              <div key={i} className="flex items-start gap-3">
+                                <span className="flex h-5 w-5 min-w-[20px] min-h-[20px] shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold text-[11px] shadow-2xs mt-0.5">
                                   {i + 1}
-                                </div>
-                                <p className="text-[13px] text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-1">
+                                </span>
+                                <p className="text-[13.5px] text-slate-700 dark:text-slate-300 font-normal leading-relaxed">
                                   {paragraph.replace(/^[0-9]+\.\s*/, '')}
                                 </p>
                               </div>
@@ -750,20 +750,20 @@ export default function ContactSupportPage() {
               {selectedArticle.summary}
             </p>
 
-            {/* Step-by-Step Modern Connected List (No Clunky Boxes) */}
-            <div className="space-y-4 pt-1">
-              <h5 className="text-[14px] font-bold text-slate-900 dark:text-white uppercase tracking-wider text-xs">
+            {/* Step-by-Step Modern List */}
+            <div className="space-y-3.5 pt-1">
+              <h5 className="text-[13px] font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                 Các bước thực hiện:
               </h5>
-              <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-blue-100 dark:before:bg-blue-950">
+              <div className="space-y-3">
                 {selectedArticle.content.map((paragraph, idx) => (
-                  <div key={idx} className="relative flex items-start gap-3.5 group">
-                    {/* Step Number Dot */}
-                    <div className="absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-xs">
+                  <div key={idx} className="flex items-start gap-3.5">
+                    {/* Perfect Circle Number */}
+                    <span className="flex h-6 w-6 min-w-[24px] min-h-[24px] shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-[12px] font-bold shadow-xs mt-0.5">
                       {idx + 1}
-                    </div>
+                    </span>
                     {/* Paragraph Content */}
-                    <p className="text-[13.5px] text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-1">
+                    <p className="text-[14px] text-slate-700 dark:text-slate-200 font-normal leading-relaxed">
                       {paragraph.replace(/^[0-9]+\.\s*/, '')}
                     </p>
                   </div>

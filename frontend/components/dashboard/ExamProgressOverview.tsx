@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { ChevronRight, Layers, PieChart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DashboardOverview } from '../../types/dashboard';
@@ -48,7 +49,7 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
             <div key={item.code} className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-slate-800 truncate pr-2">
-                  <span className="font-semibold text-slate-900">{item.code}</span> - {item.name}
+                  <IdentifierBadge tone="neutral">{item.code}</IdentifierBadge> - {item.name}
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 shrink-0">
                   <PieChart className="h-3.5 w-3.5 text-blue-500" />

@@ -149,8 +149,8 @@ export function RegradeReviewDrawer({
  <BookOpen className="h-4 w-4 text-slate-400" />
  Môn thi:
  </span>
- <span className="font-semibold text-slate-900 text-right">
- {subjectName} {subjectCode ? `(${subjectCode})` : ''}
+ <span className="flex flex-wrap items-center justify-end gap-1.5 font-semibold text-slate-900 text-right">
+ {subjectName} {subjectCode && <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>}
  </span>
  </div>
 
