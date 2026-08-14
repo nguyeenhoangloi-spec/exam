@@ -713,6 +713,20 @@ html:not(.dark) .typography-scale :where(.placeholder\:text-slate-400, .placehol
   /* Firefox */
 }
 
+/* Triệt tiêu 100% viền xanh, outline và shadow khi focus */
+input.no-focus-outline,
+input.no-focus-outline:focus,
+input.no-focus-outline:focus-visible,
+input.no-focus-outline:focus-within,
+input.no-focus-outline:active {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
 /* Keep the persisted collapsed state from flashing on desktop.  Mobile uses a
    full-width drawer, so these overrides must never apply below md. */
 @media (min-width: 768px) {
