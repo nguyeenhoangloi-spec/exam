@@ -566,23 +566,34 @@ export default function ContactSupportPage() {
                       }`}
                     >
                       <div className="overflow-hidden">
-                        <div className="px-6 pb-6 pt-3 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-3.5">
-                          <p className="font-semibold text-slate-900 dark:text-slate-100">{faq.summary}</p>
-                          <div className="space-y-2 pl-3.5 border-l-2 border-blue-500">
+                        <div className="px-6 pb-6 pt-3 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/40 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                          <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
+                            {faq.summary}
+                          </p>
+
+                          <div className="relative pl-6 space-y-2.5 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-blue-100 dark:before:bg-blue-950">
                             {faq.content.map((paragraph, i) => (
-                              <p key={i}>{paragraph}</p>
+                              <div key={i} className="relative flex items-start gap-2.5">
+                                <div className="absolute -left-6 top-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-blue-600 text-white text-[10px] font-bold">
+                                  {i + 1}
+                                </div>
+                                <p className="text-[13px] text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-1">
+                                  {paragraph.replace(/^[0-9]+\.\s*/, '')}
+                                </p>
+                              </div>
                             ))}
                           </div>
-                          <div className="pt-2 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
+
+                          <div className="pt-2 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800/80">
                             <span className="flex items-center gap-1.5">
-                              <Clock className="h-3.5 w-3.5" /> {faq.readTime}
+                              <Clock className="h-3.5 w-3.5 text-blue-500" /> {faq.readTime}
                             </span>
                             <button
                               type="button"
                               onClick={() => setSelectedArticle(faq)}
                               className="font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
                             >
-                              <span>Xem toàn bộ hướng dẫn</span>
+                              <span>Đọc bài viết đầy đủ</span>
                               <ExternalLink className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -712,44 +723,71 @@ export default function ContactSupportPage() {
         </section>
       </main>
 
-      {/* MODAL: Đọc bài viết chi tiết */}
+      {/* MODAL: Đọc bài viết chi tiết (Sleek Modern Article Reader) */}
       <Modal
         isOpen={Boolean(selectedArticle)}
         onClose={() => setSelectedArticle(null)}
         title={selectedArticle?.title || 'Chi tiết bài viết'}
       >
         {selectedArticle && (
-          <div className="space-y-5">
-            <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-              <span className="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-950 px-2.5 py-1 rounded-md">
+          <div className="space-y-6 pt-1">
+            {/* Article Meta Header */}
+            <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span className="text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/60 px-3 py-1 rounded-full border border-blue-100 dark:border-blue-900/50">
                 {selectedArticle.categoryLabel}
               </span>
-              <div className="flex items-center gap-3 text-xs font-semibold text-slate-400 dark:text-slate-500">
-                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {selectedArticle.readTime}</span>
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5 text-blue-500" />
+                  {selectedArticle.readTime}
+                </span>
                 <span>Cập nhật: {selectedArticle.updatedAt}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 p-4 text-xs font-semibold text-blue-900 dark:text-blue-200 border border-blue-100 dark:border-blue-900 leading-relaxed">
+            {/* Summary Lede */}
+            <p className="text-[14.5px] leading-relaxed text-slate-700 dark:text-slate-200 font-medium">
               {selectedArticle.summary}
-            </div>
+            </p>
 
-            <div className="space-y-3 text-xs font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
-              <h5 className="font-bold text-slate-900 dark:text-slate-100 text-sm">Nội dung chi tiết hướng dẫn:</h5>
-              <div className="space-y-2.5 pl-2 border-l-2 border-blue-500">
+            {/* Step-by-Step Modern Connected List (No Clunky Boxes) */}
+            <div className="space-y-4 pt-1">
+              <h5 className="text-[14px] font-bold text-slate-900 dark:text-white uppercase tracking-wider text-xs">
+                Các bước thực hiện:
+              </h5>
+              <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-blue-100 dark:before:bg-blue-950">
                 {selectedArticle.content.map((paragraph, idx) => (
-                  <p key={idx} className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 text-slate-800 dark:text-slate-200">
-                    {paragraph}
-                  </p>
+                  <div key={idx} className="relative flex items-start gap-3.5 group">
+                    {/* Step Number Dot */}
+                    <div className="absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-xs">
+                      {idx + 1}
+                    </div>
+                    {/* Paragraph Content */}
+                    <p className="text-[13.5px] text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-1">
+                      {paragraph.replace(/^[0-9]+\.\s*/, '')}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
+            {/* Tags & Actions */}
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {selectedArticle.tags.map((t) => (
+                  <span
+                    key={t}
+                    className="text-[12px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg"
+                  >
+                    #{t}
+                  </span>
+                ))}
+              </div>
+
               <button
                 type="button"
                 onClick={() => setSelectedArticle(null)}
-                className="px-5 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-semibold transition cursor-pointer"
+                className="px-5 py-2 rounded-xl text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold transition cursor-pointer"
               >
                 Đóng bài viết
               </button>
