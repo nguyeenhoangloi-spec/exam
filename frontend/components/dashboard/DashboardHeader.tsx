@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Calendar } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Calendar, Clock } from 'lucide-react';
 import { FilterSelect } from '../ui/FilterSelect';
 
 export function DashboardHeader({
@@ -11,6 +11,37 @@ export function DashboardHeader({
   selectedPeriod?: string;
   onPeriodChange?: (period: string) => void;
 }) {
+  const [currentDateStr, setCurrentDateStr] = useState('');
+  const [lastUpdatedStr, setLastUpdatedStr] = useState('');
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      const formattedDate = new Intl.DateTimeFormat('vi-VN', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'Asia/Ho_Chi_Minh',
+      }).format(now);
+
+      const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+      setCurrentDateStr(capitalizedDate);
+
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      setLastUpdatedStr(`${hours}:${minutes}:${seconds} - ${dd}/${mm}/${yyyy}`);
+    };
+
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Left: Page Title & Executive Subtitle */}
@@ -23,9 +54,9 @@ export function DashboardHeader({
         </p>
       </div>
 
-      {/* Right: Clean Semester Filter Selector only (No reload button, No export button) */}
+      {/* Right: Semester Filter & Current Date/Time right underneath */}
       {onPeriodChange && (
-        <div className="shrink-0">
+        <div className="flex flex-col items-start sm:items-end gap-1 shrink-0">
           <FilterSelect
             size="md"
             variant="ghost"
@@ -38,6 +69,18 @@ export function DashboardHeader({
             <option value="HK1_2025_2026">Học kỳ 1 (2025 - 2026)</option>
             <option value="HK_HE_2025">Học kỳ Hè (2024 - 2025)</option>
           </FilterSelect>
+
+          {/* Real-time Date and Time right below the dropdown */}
+          {currentDateStr && (
+            <div className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 select-none px-1">
+              <span className="text-slate-600 dark:text-slate-300">{currentDateStr}</span>
+              {lastUpdatedStr && (
+                <span className="text-slate-400 font-normal">
+                  ({lastUpdatedStr})
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

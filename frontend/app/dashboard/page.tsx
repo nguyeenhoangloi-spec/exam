@@ -20,6 +20,7 @@ import { PendingQuestionList } from '../../components/dashboard/PendingQuestionL
 import { RecentActivityList } from '../../components/dashboard/RecentActivityList';
 import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton';
 import { DashboardErrorState } from '../../components/dashboard/DashboardErrorState';
+import { QuickActionsBar } from '../../components/dashboard/QuickActionsBar';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { printReport } from '../../lib/export-print';
 import { DashboardOverview } from '../../types/dashboard';
@@ -205,7 +206,10 @@ export default function DashboardPage() {
               questionStatus={overview.questionStatus}
             />
 
-            {/* Section 3: Row 2 - Biểu đồ Lịch thi (7 cols) + Donut Trạng thái câu hỏi (5 cols) */}
+            {/* Section 3: Quick Action Launchpad Bar (1-click shortcuts) */}
+            <QuickActionsBar />
+
+            {/* Section 4: Row 2 - Biểu đồ Lịch thi (7 cols) + Donut Trạng thái câu hỏi (5 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               <div className="lg:col-span-7 flex flex-col min-w-0">
                 <ExamScheduleChart data={overview.examChart || []} />
