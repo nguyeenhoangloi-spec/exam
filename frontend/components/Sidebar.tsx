@@ -446,75 +446,61 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* ── 3. Feature 5: Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom ── */}
-      <div ref={footerRef} className="relative border-t border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 p-2.5 shrink-0">
+      {/* ── 3. Khối Profile & Trạng Thái Hệ Thống Tinh Tế ở Bottom ── */}
+      <div ref={footerRef} className="relative border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shrink-0">
         <button
           type="button"
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className={`group flex w-full items-center gap-3 p-1.5 rounded-2xl transition-all text-left cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800 ${
+          className={`group flex w-full items-center gap-3 px-2 py-2 rounded-xl transition-colors text-left cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800 ${
             showUserMenu ? 'bg-slate-100 dark:bg-slate-800' : ''
           }`}
         >
-          {/* Avatar with Active Green Pulse Status Dot */}
-          <div className="relative shrink-0">
+          {/* Avatar — luôn cố định tuyệt đối, không dịch chuyển */}
+          <div className="relative h-9 w-9 shrink-0">
             {avatarUrl ? (
-              <DynamicImage src={avatarUrl} alt={displayName} className="h-10 w-10 rounded-2xl object-cover ring-2 ring-blue-500/20" />
+              <DynamicImage src={avatarUrl} alt={displayName} className="h-9 w-9 rounded-full object-cover" />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-sm shadow-sm">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-[15px]">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
-            {/* Realtime Online Indicator */}
-            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
+            {/* Chấm xanh trực tuyến */}
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 animate-pulse" />
           </div>
 
-          {/* Name and Role Info */}
-          {!collapsed && (
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <p className="truncate text-[13.5px] font-bold text-slate-900 dark:text-slate-100 leading-tight">
-                {displayName}
-              </p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span
-                  className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold border ${
-                    role === 'ADMIN'
-                      ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/80 dark:text-blue-300 dark:border-blue-800/60'
-                      : role === 'TEACHER'
-                      ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/80 dark:text-indigo-300 dark:border-indigo-800/60'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-800/60'
-                  }`}
-                >
-                  {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
-                </span>
-              </div>
-            </div>
-          )}
+          {/* Text — ẩn bằng overflow-hidden, không bao giờ unmount khỏi DOM để chống nhảy layout */}
+          <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0 max-w-0' : 'opacity-100 max-w-full'}`}>
+            <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 leading-snug whitespace-nowrap">
+              {displayName}
+            </p>
+            <p className="truncate text-[12px] font-medium text-slate-500 dark:text-slate-400 leading-snug whitespace-nowrap">
+              {role === 'ADMIN' ? 'Quản trị viên' : role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}
+            </p>
+          </div>
 
-          {!collapsed && (
-            <ChevronRight
-              className={`h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                showUserMenu ? 'rotate-90 text-blue-600' : ''
-              }`}
-            />
-          )}
+          <ChevronRight
+            className={`h-4 w-4 text-slate-400 shrink-0 transition-all duration-200 ${
+              collapsed ? 'opacity-0 w-0' : 'opacity-100'
+            } ${showUserMenu ? 'rotate-90 text-blue-600' : ''}`}
+          />
         </button>
 
         {/* User Popover Menu */}
         {showUserMenu && (
           <div
-            className={`absolute bottom-full mb-2 w-64 rounded-3xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2.5 shadow-2xl shadow-slate-300/40 dark:shadow-black/70 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl ${
-              collapsed ? 'left-14' : 'left-3'
+            className={`absolute bottom-full mb-2 w-60 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl ${
+              collapsed ? 'left-14' : 'left-2'
             }`}
           >
             {/* Header profile info */}
-            <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 mb-1.5 border border-slate-100 dark:border-slate-700/60">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white font-bold text-xs shadow-xs">
+            <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-semibold text-xs shadow-xs">
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-bold text-slate-900 dark:text-slate-100">{displayName}</p>
-                <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
+                <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   Đang trực tuyến
                 </p>
               </div>
