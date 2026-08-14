@@ -294,11 +294,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <GraduationCap className="h-5.5 w-5.5" />
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
-              <h1 className="truncate text-[17px] font-black tracking-tight text-slate-900 dark:text-slate-100 leading-none">
-                EXAMSYS
+              <h1 className="truncate text-[16px] font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
+                Exam System
               </h1>
-              <p className="truncate text-[11px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase mt-1">
-                HỆ THỐNG KHẢO THÍ
+              <p className="truncate text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                Hệ thống khảo thí
               </p>
             </div>
           </Link>
@@ -327,7 +327,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => toggleAccordionGroup(groupName)}
-                  className="w-full flex items-center justify-between px-3 py-1.5 text-[12px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition cursor-pointer select-none"
+                  className="w-full flex items-center justify-between px-3 py-1.5 text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer select-none"
                 >
                   <span className="truncate">{group.group}</span>
                   {isExpanded ? (
@@ -476,7 +476,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span
-                  className={`inline-block px-2 py-0.5 rounded-md text-[10.5px] font-bold uppercase tracking-wider border ${
+                  className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold border ${
                     role === 'ADMIN'
                       ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/80 dark:text-blue-300 dark:border-blue-800/60'
                       : role === 'TEACHER'

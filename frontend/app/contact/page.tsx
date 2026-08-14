@@ -752,7 +752,7 @@ export default function ContactSupportPage() {
 
             {/* Step-by-Step Modern List */}
             <div className="space-y-3.5 pt-1">
-              <h5 className="text-[13px] font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+              <h5 className="text-[13.5px] font-bold text-slate-900 dark:text-white">
                 Các bước thực hiện:
               </h5>
               <div className="space-y-3">
