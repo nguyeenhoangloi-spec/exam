@@ -70,8 +70,8 @@ export default function LoginPage() {
             user.role === 'ADMIN'
               ? '/dashboard'
               : user.role === 'TEACHER'
-              ? '/teacher/assignments'
-              : '/student/exam-schedule';
+                ? '/teacher/assignments'
+                : '/student/exam-schedule';
           router.replace(destination);
         })
         .catch(() => setError('Không thể hoàn tất phiên đăng nhập Google.'));
@@ -85,8 +85,8 @@ export default function LoginPage() {
         user.role === 'ADMIN'
           ? '/dashboard'
           : user.role === 'TEACHER'
-          ? '/teacher/assignments'
-          : '/student/exam-schedule';
+            ? '/teacher/assignments'
+            : '/student/exam-schedule';
       router.replace(destination);
     }
   }, [router]);
@@ -137,9 +137,8 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`h-screen max-h-screen w-full relative overflow-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-between transition-colors duration-300 ${
-        isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
-      }`}
+      className={`h-screen max-h-screen w-full relative overflow-hidden [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-between transition-colors duration-300 ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
+        }`}
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
@@ -489,11 +488,10 @@ export default function LoginPage() {
         {/* ── Right Column: Modern Academic Login Form Card (5 Cols ~ 42%) ── */}
         <section className="lg:col-span-5 flex justify-center w-full">
           <div
-            className={`w-full max-w-[420px] rounded-[26px] border p-5 sm:p-6 transition-all duration-300 ${
-              isDark
+            className={`w-full max-w-[420px] rounded-[26px] border p-5 sm:p-6 transition-all duration-300 ${isDark
                 ? 'border-slate-800 bg-slate-900/90 shadow-2xl shadow-black/50 backdrop-blur-xl'
                 : 'border-slate-100/90 bg-white shadow-[0_15px_40px_-10px_rgba(37,99,235,0.08),0_6px_16px_-3px_rgba(0,0,0,0.03)] backdrop-blur-sm'
-            }`}
+              }`}
           >
             {/* Top User Avatar Circle */}
             <div className="text-center mb-3.5">
@@ -564,13 +562,12 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className={`w-full h-10 rounded-2xl border px-3 flex items-center justify-between text-[12.5px] font-semibold transition-all duration-300 cursor-pointer ${
-                  showManualLogin
+                className={`w-full h-10 rounded-2xl border px-3 flex items-center justify-between text-[12.5px] font-semibold transition-all duration-300 cursor-pointer ${showManualLogin
                     ? 'border-blue-300 bg-blue-50/40 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
                     : isDark
-                    ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800'
-                    : 'border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                }`}
+                      ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800'
+                      : 'border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <UserIcon className="h-3.5 w-3.5 text-slate-500" />
@@ -581,20 +578,18 @@ export default function LoginPage() {
                     {showManualLogin ? 'Thu gọn' : 'Nhấn để mở form'}
                   </span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-300 ease-in-out ${
-                      showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
-                    }`}
+                    className={`h-3.5 w-3.5 transition-transform duration-300 ease-in-out ${showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
+                      }`}
                   />
                 </div>
               </button>
 
               {/* Smooth Animated Collapsible Form Container */}
               <div
-                className={`grid transition-all duration-300 ease-in-out ${
-                  showManualLogin
+                className={`grid transition-all duration-300 ease-in-out ${showManualLogin
                     ? 'grid-rows-[1fr] opacity-100'
                     : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-                }`}
+                  }`}
               >
                 <div className="overflow-hidden">
                   <form onSubmit={handleManualLogin} noValidate className="space-y-2.5 pt-2 pb-0.5">
@@ -613,11 +608,10 @@ export default function LoginPage() {
                           onChange={(e) => setUsername(e.target.value)}
                           placeholder="Nhập email hoặc tên đăng nhập"
                           required
-                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-3.5 text-[13px] outline-none transition ${
-                            isDark
+                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-3.5 text-[13px] outline-none transition ${isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                          }`}
+                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                            }`}
                         />
                       </div>
                     </div>
@@ -637,11 +631,10 @@ export default function LoginPage() {
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Nhập mật khẩu"
                           required
-                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-10 text-[13px] outline-none transition ${
-                            isDark
+                          className={`w-full h-[40px] rounded-2xl border pl-11 pr-10 text-[13px] outline-none transition ${isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                          }`}
+                              : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                            }`}
                         />
                         <button
                           type="button"
