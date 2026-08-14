@@ -443,6 +443,16 @@ export default function ExamReportsPage() {
     };
   }, [report]);
 
+  // Tab Counts for Candidate Status TabBar
+  const tabCounts = useMemo(() => {
+    const list = report?.candidates || [];
+    const total = list.length;
+    const submitted = list.filter((c) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(c.status)).length;
+    const absent = list.filter((c) => c.status === 'ABSENT').length;
+    const flagged = list.filter((c) => c.status === 'UNDER_REVIEW' || c.violationCount > 0).length;
+    return { total, submitted, absent, flagged };
+  }, [report]);
+
   // Filter & Sort Candidates
   const filteredCandidates = useMemo(() => {
     if (!report?.candidates) return [];
@@ -641,7 +651,7 @@ export default function ExamReportsPage() {
           passCount={summary?.stats.passCount ?? kpiData.passCount}
         />
 
-        {/* ── 3. Integrated Filters & Active Schedule Card ── */}
+        {/* ── 3. Active Exam Session Strip ── */}
         {(() => {
           const activeSched = schedules.find((x) => String(x.id) === selectedScheduleId);
           const typeBadge = activeSched ? getScheduleTypeBadge(activeSched) : null;
@@ -875,9 +885,24 @@ export default function ExamReportsPage() {
           </>
         )}
 
-        {/* Search & Status Filter Row (Standard Edu Layout) */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
-          <div className="relative w-full sm:w-80">
+        {/* ── 4. Candidate Status Tabs & Search Row ── */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
+          <TabBar
+            tabs={[
+              { key: 'ALL', label: 'Tất cả thí sinh', count: tabCounts.total },
+              { key: 'SUBMITTED', label: 'Đã nộp bài', count: tabCounts.submitted },
+              { key: 'ABSENT', label: 'Vắng thi', count: tabCounts.absent },
+              ...(tabCounts.flagged > 0 ? [{ key: 'FLAGGED', label: 'Có cảnh báo', count: tabCounts.flagged }] : []),
+            ]}
+            active={statusFilter}
+            onChange={(key) => {
+              setStatusFilter(key);
+              setPage(1);
+            }}
+            className="border-b-0 pt-0 w-auto"
+          />
+
+          <div className="relative w-full md:w-80 shrink-0 pb-1 md:pb-0">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
@@ -897,46 +922,15 @@ export default function ExamReportsPage() {
                   setPage(1);
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                title="Xóa tìm kiếm"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
-
-          <div className="flex items-center gap-2">
-            <FilterSelect
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              size="md"
-            >
-              <option value="ALL">Tất cả thí sinh</option>
-              <option value="SUBMITTED">Đã nộp bài</option>
-              <option value="ABSENT">Vắng thi</option>
-              <option value="FLAGGED">Có cảnh báo vi phạm</option>
-            </FilterSelect>
-
-            {(search || statusFilter !== 'ALL') && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
-                  setStatusFilter('ALL');
-                  setPage(1);
-                }}
-                className="h-10 px-3 flex items-center gap-1.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                title="Xóa lọc thí sinh"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>Xóa lọc</span>
-              </button>
-            )}
-          </div>
         </div>
 
-        {/* Dynamic Table Action Toolbar */}
+        {/* ── 5. Table Utility Toolbar (Sort, Columns, ViewMode, Refresh) ── */}
         <ExamReportTableToolbar
           totalCount={filteredCandidates.length}
           sortOrder={sortOrder}
