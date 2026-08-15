@@ -22,6 +22,7 @@ import { ExamPeriodTableToolbar } from '../../components/exam-periods/ExamPeriod
 import { ExamPeriodTable, computePeriodStatus } from '../../components/exam-periods/ExamPeriodTable';
 import { ExamPeriodPaginationBar } from '../../components/exam-periods/ExamPeriodPaginationBar';
 import { FilterSelect } from '../../components/ui/FilterSelect';
+import { ExamPeriodFilterPopover } from '../../components/exam-periods/ExamPeriodFilterPopover';
 
 export default function ExamPeriodsPage() {
 
@@ -301,121 +302,82 @@ export default function ExamPeriodsPage() {
           cancelled={kpiData.cancelled}
         />
 
-        {/* Search & Filter Bar (No outer container card) */}
+        {/* Search & Unified Smart Filter Popover Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Search Input Field */}
-          <div className="relative w-full sm:w-72 md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Tìm theo tên kỳ thi, học kỳ, năm học..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+          {/* Left: Search input + 1 Unified Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            {/* Search Input Field */}
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Tìm theo tên kỳ thi, học kỳ, năm học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                title="Xóa tìm kiếm"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* 1 Nút Bộ Lọc Duy Nhất (Gom toàn bộ Học kỳ, Năm học, Trạng thái) */}
+            <ExamPeriodFilterPopover
+              selectedSemester={selectedSemester}
+              onSemesterChange={(val) => {
+                setSelectedSemester(val);
+                setPage(1);
+              }}
+              selectedSchoolYear={selectedSchoolYear}
+              onSchoolYearChange={(val) => {
+                setSelectedSchoolYear(val);
+                setPage(1);
+              }}
+              selectedStatus={selectedStatus}
+              onStatusChange={(val) => {
+                setSelectedStatus(val);
+                setPage(1);
+              }}
+              schoolYearsList={schoolYearsList}
+              periods={periods}
+              totalFilteredCount={filteredPeriods.length}
+              onResetAll={() => {
+                setSelectedSemester('');
+                setSelectedSchoolYear('');
+                setSelectedStatus('');
+                setPage(1);
+              }}
+            />
           </div>
 
-          {/* Filter Select Dropdowns Group */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Học kỳ */}
-            <FilterSelect
-              size="md"
-              value={selectedSemester}
-              onChange={(e) => {
-                setSelectedSemester(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">Tất cả học kỳ</option>
-              <option value="HK1">Học kỳ I</option>
-              <option value="HK2">Học kỳ II</option>
-              <option value="HK3">Học kỳ Hè</option>
-            </FilterSelect>
-
-            {/* Năm học */}
-            {schoolYearsList.length > 0 && (
-              <FilterSelect
-                size="md"
-                value={selectedSchoolYear}
-                onChange={(e) => {
-                  setSelectedSchoolYear(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="">Tất cả năm học</option>
-                {schoolYearsList.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </FilterSelect>
-            )}
-
-            {/* Trạng thái */}
-            <FilterSelect
-              size="md"
-              value={selectedStatus}
-              onChange={(e) => {
-                setSelectedStatus(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">Tất cả trạng thái</option>
-              <option value="UPCOMING">Sắp diễn ra</option>
-              <option value="ONGOING">Đang diễn ra</option>
-              <option value="COMPLETED">Đã hoàn thành</option>
-              <option value="CANCELLED">Đã hủy</option>
-            </FilterSelect>
-
-            {/* Clear Filters Button (nút phụ, nhẹ nhàng) */}
-            {(search || selectedSemester || selectedSchoolYear || selectedStatus) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
-                  setSelectedSemester('');
-                  setSelectedSchoolYear('');
-                  setSelectedStatus('');
-                  setPage(1);
-                }}
-                className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                title="Xóa tất cả bộ lọc"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>Xóa lọc</span>
-              </button>
-            )}
+          {/* Right: Table Action Controls (Sort, Column Toggle, View Mode Switch, Refresh) */}
+          <div className="shrink-0">
+            <ExamPeriodTableToolbar
+              totalCount={filteredPeriods.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={fetchData}
+              loading={loading}
+            />
           </div>
         </div>
-
-        {/* Dynamic Table Action Toolbar */}
-        <ExamPeriodTableToolbar
-          totalCount={filteredPeriods.length}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-          onRefresh={fetchData}
-          loading={loading}
-        />
 
         {/* Full-Width DataGrid Table */}
         {loading ? (

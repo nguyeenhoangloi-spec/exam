@@ -18,13 +18,12 @@ import { ExamSchedule, ExamPeriod, ExamRoom } from '../../types';
 
 import { ExamScheduleHeader } from '../../components/exam-schedules/ExamScheduleHeader';
 import { ExamScheduleKPICards } from '../../components/exam-schedules/ExamScheduleKPICards';
-import { ExamScheduleFiltersCard, ExamScheduleFilterValues } from '../../components/exam-schedules/ExamScheduleFiltersCard';
-import { ExamScheduleTabsBar } from '../../components/exam-schedules/ExamScheduleTabsBar';
+import { ExamScheduleFilterPopover, ExamScheduleFilterValues } from '../../components/exam-schedules/ExamScheduleFilterPopover';
 import { ExamScheduleTableToolbar } from '../../components/exam-schedules/ExamScheduleTableToolbar';
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
 import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeScheduleStatus } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
-import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet } from 'lucide-react';
+import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X } from 'lucide-react';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
   if (!startTime) return '08:30';
@@ -198,6 +197,29 @@ export default function ExamSchedulesPage() {
 
       if (filterValues.examPeriodId) {
         if (String(s.examPeriodId) !== filterValues.examPeriodId) return false;
+      }
+
+      if (filterValues.roomId) {
+        const targetRoom = rooms.find((r) => String(r.id) === filterValues.roomId);
+        const rName = targetRoom?.roomCode || targetRoom?.code || targetRoom?.name || '';
+        const matchesRoom =
+          s.examScheduleRooms?.some((r: any) => String(r.examRoomId || r.roomId || r.id) === filterValues.roomId) ||
+          Boolean(s.roomName && (s.roomName.includes(rName) || (targetRoom?.name && s.roomName.includes(targetRoom.name))));
+        if (!matchesRoom) return false;
+      }
+
+      if (filterValues.shift) {
+        const targetShift =
+          filterValues.shift === 'CA_1'
+            ? 'Ca 1'
+            : filterValues.shift === 'CA_2'
+            ? 'Ca 2'
+            : filterValues.shift === 'CA_3'
+            ? 'Ca 3'
+            : filterValues.shift === 'CA_4'
+            ? 'Ca 4'
+            : filterValues.shift;
+        if (!s.shiftName?.toLowerCase().includes(targetShift.toLowerCase())) return false;
       }
 
       return true;
@@ -429,39 +451,81 @@ export default function ExamSchedulesPage() {
           cancelled={counts.cancelled}
         />
 
-        {/* Filter Card */}
-        <ExamScheduleFiltersCard
-          filters={filterValues}
-          periods={periods}
-          rooms={rooms}
-          onChange={(next) => {
-            setFilterValues(next);
-            setPage(1);
-          }}
-        />
+        {/* Search & Unified Smart Filter Popover Row */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Left: Search input + 1 Unified Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            {/* Search Input Field */}
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Tìm theo mã lịch thi, môn học, phòng thi, kỳ thi..."
+                value={filterValues.search}
+                onChange={(e) => {
+                  setFilterValues({ ...filterValues, search: e.target.value });
+                  setPage(1);
+                }}
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {filterValues.search && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterValues({ ...filterValues, search: '' });
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
 
-        {/* Status Tabs Bar */}
-        <ExamScheduleTabsBar
-          activeStatus={filterValues.status}
-          counts={counts}
-          onSelectStatus={(status) => {
-            setFilterValues({ ...filterValues, status });
-            setPage(1);
-          }}
-        />
+            {/* 1 Nút Bộ Lọc Duy Nhất Đa Chiều */}
+            <ExamScheduleFilterPopover
+              filters={filterValues}
+              onChange={(next) => {
+                setFilterValues(next);
+                setPage(1);
+              }}
+              periods={periods}
+              rooms={rooms}
+              schedules={schedules}
+              totalFilteredCount={filteredSchedules.length}
+              onResetAll={() => {
+                setFilterValues({
+                  search: '',
+                  examPeriodId: '',
+                  shift: '',
+                  roomId: '',
+                  examDate: '',
+                  status: '',
+                  semester: '',
+                  schoolYear: '',
+                  supervisorId: '',
+                });
+                setPage(1);
+              }}
+            />
+          </div>
 
-        {/* Dynamic Table Action Toolbar */}
-        <ExamScheduleTableToolbar
-          totalCount={filteredSchedules.length}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-          onRefresh={handleRefresh}
-          loading={loading}
-        />
+          {/* Right: Table Action Controls (Sort, Column Toggle, View Mode Switch, Refresh) */}
+          <div className="shrink-0">
+            <ExamScheduleTableToolbar
+              totalCount={filteredSchedules.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={handleRefresh}
+              loading={loading}
+            />
+          </div>
+        </div>
 
         {/* DataGrid Table */}
         {loading ? (
