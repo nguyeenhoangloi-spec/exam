@@ -185,20 +185,18 @@ export function ProctorFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
-          activeFilterCount > 0
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-        }`}
+          }`}
         title="Mở bảng điều khiển bộ lọc giám thị"
       >
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
-              activeFilterCount > 0
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
                 ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
                 : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-            }`}
+              }`}
           />
           <span>Bộ lọc</span>
         </div>
@@ -219,9 +217,8 @@ export function ProctorFilterPopover({
             </div>
           ) : (
             <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-              }`}
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                }`}
             />
           )}
         </div>
@@ -288,11 +285,10 @@ export function ProctorFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -335,11 +331,10 @@ export function ProctorFilterPopover({
                         onStatusFilterChange('ALL');
                         onRiskFilterChange('ALL');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        statusFilter === 'ALL' && riskFilter === 'ALL'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${statusFilter === 'ALL' && riskFilter === 'ALL'
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${statusFilter === 'ALL' && riskFilter === 'ALL' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -351,11 +346,10 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          statusFilter === 'ALL' && riskFilter === 'ALL'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${statusFilter === 'ALL' && riskFilter === 'ALL'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                          }`}>
                           {counts.all}
                         </span>
                         {statusFilter === 'ALL' && riskFilter === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -365,11 +359,10 @@ export function ProctorFilterPopover({
                     <button
                       type="button"
                       onClick={() => onStatusFilterChange('FLAGGED')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        statusFilter === 'FLAGGED'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${statusFilter === 'FLAGGED'
                           ? 'border-rose-500 bg-rose-50/80 dark:bg-rose-950/60 text-rose-900 dark:text-rose-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-rose-200 dark:hover:border-rose-900 hover:bg-rose-50/30 dark:hover:bg-rose-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${statusFilter === 'FLAGGED' ? 'text-rose-700 dark:text-rose-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -381,11 +374,10 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          statusFilter === 'FLAGGED'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${statusFilter === 'FLAGGED'
                             ? 'bg-rose-600 text-white'
                             : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300'
-                        }`}>
+                          }`}>
                           {counts.flagged}
                         </span>
                         {statusFilter === 'FLAGGED' && <Check className="h-4 w-4 text-rose-600 dark:text-rose-400" />}
@@ -395,11 +387,10 @@ export function ProctorFilterPopover({
                     <button
                       type="button"
                       onClick={() => onStatusFilterChange('DISCONNECTED')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        statusFilter === 'DISCONNECTED'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${statusFilter === 'DISCONNECTED'
                           ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/60 text-amber-900 dark:text-amber-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-amber-200 dark:hover:border-amber-900 hover:bg-amber-50/30 dark:hover:bg-amber-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${statusFilter === 'DISCONNECTED' ? 'text-amber-700 dark:text-amber-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -411,11 +402,10 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          statusFilter === 'DISCONNECTED'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${statusFilter === 'DISCONNECTED'
                             ? 'bg-amber-600 text-white'
                             : 'bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-300'
-                        }`}>
+                          }`}>
                           {counts.disconnected}
                         </span>
                         {statusFilter === 'DISCONNECTED' && <Check className="h-4 w-4 text-amber-600 dark:text-amber-400" />}
@@ -425,11 +415,10 @@ export function ProctorFilterPopover({
                     <button
                       type="button"
                       onClick={() => onRiskFilterChange('HIGH')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        riskFilter === 'HIGH'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${riskFilter === 'HIGH'
                           ? 'border-rose-500 bg-rose-50/80 dark:bg-rose-950/60 text-rose-900 dark:text-rose-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-rose-200 dark:hover:border-rose-900 hover:bg-rose-50/30 dark:hover:bg-rose-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${riskFilter === 'HIGH' ? 'text-rose-700 dark:text-rose-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -441,11 +430,10 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          riskFilter === 'HIGH'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${riskFilter === 'HIGH'
                             ? 'bg-rose-600 text-white'
                             : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300'
-                        }`}>
+                          }`}>
                           {counts.highRisk}
                         </span>
                         {riskFilter === 'HIGH' && <Check className="h-4 w-4 text-rose-600 dark:text-rose-400" />}
@@ -473,11 +461,10 @@ export function ProctorFilterPopover({
                           key={st.key}
                           type="button"
                           onClick={() => onStatusFilterChange(st.key)}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            isSel
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${isSel
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                               : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-bold ${isSel ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -489,11 +476,10 @@ export function ProctorFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSel
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSel
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                            }`}>
+                              }`}>
                               {st.count}
                             </span>
                             {isSel && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -522,11 +508,10 @@ export function ProctorFilterPopover({
                           key={r.key}
                           type="button"
                           onClick={() => onRiskFilterChange(r.key)}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            isSel
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${isSel
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                               : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-bold ${isSel ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -538,11 +523,10 @@ export function ProctorFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSel
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSel
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                            }`}>
+                              }`}>
                               {r.count}
                             </span>
                             {isSel && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}

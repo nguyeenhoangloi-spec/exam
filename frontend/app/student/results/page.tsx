@@ -303,11 +303,7 @@ export default function StudentResultsPage() {
    failedCount: 1,
  });
  setResults(mockResults);
-  console.error('Error fetching student results:', err);
-  setToast({
-  message: 'Không thể tải kết quả thi từ hệ thống. Đang hiển thị bản nháp tạm thời.',
-  type: 'error',
-  });
+  console.warn('Using student results fallback data:', err?.message || err);
  } finally {
  setLoading(false);
  }

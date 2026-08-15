@@ -79,21 +79,9 @@ export function RegradeFilterPopover({
     const vh = window.innerHeight;
     const margin = 12;
 
-    const popoverWidth = Math.min(480, vw - margin * 2);
-    const spaceBelow = vh - rect.bottom - margin;
-    const spaceAbove = rect.top - margin;
-    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
-
-    let top: number;
-    let availableMaxHeight: number;
-
-    if (preferUpward) {
-      availableMaxHeight = Math.min(460, spaceAbove - 8);
-      top = Math.max(margin, rect.top - availableMaxHeight - 8);
-    } else {
-      top = rect.bottom + 8;
-      availableMaxHeight = Math.min(460, spaceBelow - 8);
-    }
+    const popoverWidth = Math.min(500, vw - margin * 2);
+    const top = rect.bottom + 8;
+    const availableMaxHeight = Math.min(480, Math.max(260, vh - top - margin));
 
     let left = rect.left;
     if (left + popoverWidth > vw - margin) {
@@ -105,10 +93,10 @@ export function RegradeFilterPopover({
 
     setPopoverStyle({
       position: 'fixed',
-      top: `${Math.max(margin, top)}px`,
+      top: `${top}px`,
       left: `${left}px`,
       width: `${popoverWidth}px`,
-      maxHeight: `${Math.max(280, availableMaxHeight)}px`,
+      maxHeight: `${availableMaxHeight}px`,
       maxWidth: `calc(100vw - ${margin * 2}px)`,
       zIndex: 99999,
     });
@@ -422,9 +410,14 @@ export function RegradeFilterPopover({
                         <div className={`text-xs font-semibold ${statusTab === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả trạng thái
                         </div>
+                        <div className={`text-[10.5px] truncate ${statusTab === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Toàn bộ đơn khiếu nại & phúc khảo
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="rounded-md px-1.5 py-0.5 text-[11px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          statusTab === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
                           {counts.all}
                         </span>
                         {statusTab === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -443,9 +436,14 @@ export function RegradeFilterPopover({
                         <div className={`text-xs font-semibold ${statusTab === 'PENDING' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Chờ thẩm định
                         </div>
+                        <div className={`text-[10.5px] truncate ${statusTab === 'PENDING' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Đơn mới gửi cần giảng viên xử lý
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="rounded-md px-1.5 py-0.5 text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          statusTab === 'PENDING' ? 'bg-blue-600 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                        }`}>
                           {counts.pending}
                         </span>
                         {statusTab === 'PENDING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -464,9 +462,14 @@ export function RegradeFilterPopover({
                         <div className={`text-xs font-semibold ${statusTab === 'APPROVED_REGRADE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Đã duyệt & Đổi điểm
                         </div>
+                        <div className={`text-[10.5px] truncate ${statusTab === 'APPROVED_REGRADE' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Đơn đã được chấp thuận cập nhật điểm
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="rounded-md px-1.5 py-0.5 text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          statusTab === 'APPROVED_REGRADE' ? 'bg-blue-600 text-white' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                        }`}>
                           {counts.approved}
                         </span>
                         {statusTab === 'APPROVED_REGRADE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -485,9 +488,14 @@ export function RegradeFilterPopover({
                         <div className={`text-xs font-semibold ${statusTab === 'REJECTED' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Bị từ chối
                         </div>
+                        <div className={`text-[10.5px] truncate ${statusTab === 'REJECTED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Đơn không đủ điều kiện thay đổi điểm
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="rounded-md px-1.5 py-0.5 text-[11px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          statusTab === 'REJECTED' ? 'bg-blue-600 text-white' : 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                        }`}>
                           {counts.rejected}
                         </span>
                         {statusTab === 'REJECTED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -511,6 +519,9 @@ export function RegradeFilterPopover({
                         <div className={`text-xs font-semibold ${subjectFilter === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả môn học
                         </div>
+                        <div className={`text-[10.5px] truncate ${subjectFilter === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Mọi môn thi có đơn phúc khảo
+                        </div>
                       </div>
                       {subjectFilter === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                     </button>
@@ -529,6 +540,9 @@ export function RegradeFilterPopover({
                           <div className={`text-xs font-semibold ${subjectFilter === String(id) ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
                             {name}
                           </div>
+                          <div className={`text-[10.5px] truncate ${subjectFilter === String(id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            Lọc các đơn phúc khảo thuộc môn này
+                          </div>
                         </div>
                         {subjectFilter === String(id) && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </button>
@@ -540,26 +554,11 @@ export function RegradeFilterPopover({
 
             {/* 3. Footer */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <div className="space-y-1">
-                <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
-                  {totalFilteredCount !== undefined ? (
-                    <>
-                      Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
-                      {appeals.length > 0 && (
-                        <span className="text-slate-400 dark:text-slate-500 font-normal"> / {appeals.length} đơn ({Math.round((totalFilteredCount / Math.max(1, appeals.length)) * 100)}%)</span>
-                      )}
-                    </>
-                  ) : (
-                    'Đã áp dụng bộ lọc'
-                  )}
-                </div>
-                {totalFilteredCount !== undefined && appeals.length > 0 && (
-                  <div className="h-1 w-28 rounded-full bg-slate-200/80 dark:bg-slate-700 overflow-hidden">
-                    <div
-                      className="h-full bg-blue-600 transition-all duration-300 rounded-full"
-                      style={{ width: `${Math.min(100, Math.round((totalFilteredCount / Math.max(1, appeals.length)) * 100))}%` }}
-                    />
-                  </div>
+              <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                {activeFilterCount > 0 ? (
+                  <>Đang áp dụng <strong className="font-bold text-blue-600 dark:text-blue-400">{activeFilterCount}</strong> tiêu chí lọc</>
+                ) : (
+                  'Toàn bộ đơn phúc khảo'
                 )}
               </div>
 

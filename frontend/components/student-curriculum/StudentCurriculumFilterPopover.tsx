@@ -92,20 +92,8 @@ export function StudentCurriculumFilterPopover({
     const margin = 12;
 
     const popoverWidth = Math.min(500, vw - margin * 2);
-    const spaceBelow = vh - rect.bottom - margin;
-    const spaceAbove = rect.top - margin;
-    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
-
-    let top: number;
-    let availableMaxHeight: number;
-
-    if (preferUpward) {
-      availableMaxHeight = Math.min(460, spaceAbove - 8);
-      top = Math.max(margin, rect.top - availableMaxHeight - 8);
-    } else {
-      top = rect.bottom + 8;
-      availableMaxHeight = Math.min(460, spaceBelow - 8);
-    }
+    const top = rect.bottom + 8;
+    const availableMaxHeight = Math.min(480, Math.max(260, vh - top - margin));
 
     let left = rect.left;
     if (left + popoverWidth > vw - margin) {
@@ -117,10 +105,10 @@ export function StudentCurriculumFilterPopover({
 
     setPopoverStyle({
       position: 'fixed',
-      top: `${Math.max(margin, top)}px`,
+      top: `${top}px`,
       left: `${left}px`,
       width: `${popoverWidth}px`,
-      maxHeight: `${Math.max(280, availableMaxHeight)}px`,
+      maxHeight: `${availableMaxHeight}px`,
       maxWidth: `calc(100vw - ${margin * 2}px)`,
       zIndex: 99999,
     });
@@ -197,20 +185,18 @@ export function StudentCurriculumFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
-          activeFilterCount > 0
-            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
-            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-        }`}
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
+          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
+          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
         title="Mở bảng điều khiển bộ lọc khung chương trình"
       >
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
-              activeFilterCount > 0
-                ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
-                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-            }`}
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
+              ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
+              : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
+              }`}
           />
           <span>Bộ lọc</span>
         </div>
@@ -231,9 +217,8 @@ export function StudentCurriculumFilterPopover({
             </div>
           ) : (
             <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-              }`}
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                }`}
             />
           )}
         </div>
@@ -300,11 +285,10 @@ export function StudentCurriculumFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
-                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
-                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
+                        ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
+                        : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -344,11 +328,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterStatusChange('COMPLETED')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterStatus === 'COMPLETED'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'COMPLETED'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterStatus === 'COMPLETED' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -359,9 +342,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.completed}
                         </span>
                         {filterStatus === 'COMPLETED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -371,11 +353,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterStatusChange('INCOMPLETE')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterStatus === 'INCOMPLETE'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'INCOMPLETE'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterStatus === 'INCOMPLETE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -386,9 +367,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.incomplete}
                         </span>
                         {filterStatus === 'INCOMPLETE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -398,11 +378,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterTypeChange('MANDATORY')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterType === 'MANDATORY'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterType === 'MANDATORY'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterType === 'MANDATORY' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -413,9 +392,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.mandatory}
                         </span>
                         {filterType === 'MANDATORY' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -430,11 +408,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterSemesterChange('ALL')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterSemester === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterSemester === 'ALL'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterSemester === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -445,9 +422,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterSemester === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterSemester === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.all}
                         </span>
                         {filterSemester === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -463,11 +439,10 @@ export function StudentCurriculumFilterPopover({
                           key={semStr}
                           type="button"
                           onClick={() => onFilterSemesterChange(semStr)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -478,9 +453,8 @@ export function StudentCurriculumFilterPopover({
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                              }`}>
                               {c}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -497,11 +471,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterTypeChange('ALL')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterType === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterType === 'ALL'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterType === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -512,9 +485,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterType === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterType === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.all}
                         </span>
                         {filterType === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -524,11 +496,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterTypeChange('MANDATORY')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterType === 'MANDATORY'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterType === 'MANDATORY'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterType === 'MANDATORY' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -539,9 +510,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.mandatory}
                         </span>
                         {filterType === 'MANDATORY' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -551,11 +521,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterTypeChange('ELECTIVE')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterType === 'ELECTIVE'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterType === 'ELECTIVE'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterType === 'ELECTIVE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -566,9 +535,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterType === 'ELECTIVE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterType === 'ELECTIVE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.elective}
                         </span>
                         {filterType === 'ELECTIVE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -583,11 +551,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterStatusChange('ALL')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterStatus === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'ALL'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterStatus === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -598,9 +565,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterStatus === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterStatus === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.all}
                         </span>
                         {filterStatus === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -610,11 +576,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterStatusChange('COMPLETED')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterStatus === 'COMPLETED'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'COMPLETED'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterStatus === 'COMPLETED' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -625,9 +590,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.completed}
                         </span>
                         {filterStatus === 'COMPLETED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -637,11 +601,10 @@ export function StudentCurriculumFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterStatusChange('INCOMPLETE')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filterStatus === 'INCOMPLETE'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'INCOMPLETE'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filterStatus === 'INCOMPLETE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -652,9 +615,8 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {counts.incomplete}
                         </span>
                         {filterStatus === 'INCOMPLETE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}

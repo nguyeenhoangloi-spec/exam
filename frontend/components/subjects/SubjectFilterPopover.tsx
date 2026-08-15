@@ -93,21 +93,9 @@ export function SubjectFilterPopover({
     const vh = window.innerHeight;
     const margin = 12;
 
-    const popoverWidth = Math.min(480, vw - margin * 2);
-    const spaceBelow = vh - rect.bottom - margin;
-    const spaceAbove = rect.top - margin;
-    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
-
-    let top: number;
-    let availableMaxHeight: number;
-
-    if (preferUpward) {
-      availableMaxHeight = Math.min(460, spaceAbove - 8);
-      top = Math.max(margin, rect.top - availableMaxHeight - 8);
-    } else {
-      top = rect.bottom + 8;
-      availableMaxHeight = Math.min(460, spaceBelow - 8);
-    }
+    const popoverWidth = Math.min(500, vw - margin * 2);
+    const top = rect.bottom + 8;
+    const availableMaxHeight = Math.min(480, Math.max(260, vh - top - margin));
 
     let left = rect.left;
     if (left + popoverWidth > vw - margin) {
@@ -119,10 +107,10 @@ export function SubjectFilterPopover({
 
     setPopoverStyle({
       position: 'fixed',
-      top: `${Math.max(margin, top)}px`,
+      top: `${top}px`,
       left: `${left}px`,
       width: `${popoverWidth}px`,
-      maxHeight: `${Math.max(280, availableMaxHeight)}px`,
+      maxHeight: `${availableMaxHeight}px`,
       maxWidth: `calc(100vw - ${margin * 2}px)`,
       zIndex: 99999,
     });
