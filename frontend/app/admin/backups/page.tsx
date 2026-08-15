@@ -22,6 +22,7 @@ import {
     HardDrive,
     Info,
     LockKeyhole,
+    LockOpen,
     RefreshCw,
     RotateCcw,
     Search,
@@ -112,6 +113,7 @@ interface RestoreRequest {
     backupJob: BackupJob;
     requestedBy?: { id: number; username: string };
     approvedBy?: { id: number; username: string } | null;
+    errorMessage?: string | null;
 }
 
 const formatDate = (value?: string | null) =>
@@ -202,6 +204,8 @@ export default function BackupsPage() {
     const [criticalModalOpen, setCriticalModalOpen] = useState(false);
     const [activeRestoreRequest, setActiveRestoreRequest] = useState<RestoreRequest | null>(null);
     const [dynamicPhrase, setDynamicPhrase] = useState<string>('');
+    const [rejectRequest, setRejectRequest] = useState<RestoreRequest | null>(null);
+    const [rejectReason, setRejectReason] = useState('');
 
     const fetchData = useCallback(async (silent = false) => {
         if (!silent) setLoading(true);
@@ -299,6 +303,33 @@ export default function BackupsPage() {
         setActiveRestoreRequest(request);
         setDynamicPhrase(request.confirmationPhrase);
         setCriticalModalOpen(true);
+    };
+
+    const openRejectModal = (request: RestoreRequest) => {
+        setRejectRequest(request);
+        setRejectReason(request.status === 'FAILED' ? 'Đã kiểm tra lỗi restore và xác nhận mở khóa hệ thống.' : '');
+    };
+
+    const handleRejectRequest = async () => {
+        if (!rejectRequest || !rejectReason.trim()) {
+            setToast({ message: 'Vui lòng nhập lý do từ chối hoặc mở khóa.', type: 'error' });
+            return;
+        }
+        setActionLoading(true);
+        try {
+            await api.post(`/backups/restore-requests/${rejectRequest.id}/reject`, { reason: rejectReason.trim() });
+            setToast({
+                message: rejectRequest.status === 'FAILED' ? 'Đã mở khóa maintenance. Hệ thống có thể hoạt động lại.' : 'Đã từ chối yêu cầu khôi phục.',
+                type: 'success',
+            });
+            setRejectRequest(null);
+            setRejectReason('');
+            await fetchData(true);
+        } catch (error: any) {
+            setToast({ message: error?.message || 'Không thể xử lý yêu cầu restore.', type: 'error' });
+        } finally {
+            setActionLoading(false);
+        }
     };
 
     const handleRequestRestore = async () => {
@@ -1061,24 +1092,42 @@ export default function BackupsPage() {
                                             {/* Actions */}
                                             <td className="px-4 py-3.5 text-right whitespace-nowrap">
                                                 {request.status === 'PENDING_APPROVAL' ? (
-                                                    selfBlocked ? (
-                                                        <span
-                                                            title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
-                                                            className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-400 cursor-default select-none"
-                                                        >
-                                                            <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
-                                                            Cần Admin khác phê duyệt
-                                                        </span>
-                                                    ) : (
+                                                    <div className="inline-flex items-center gap-3">
+                                                        {selfBlocked ? (
+                                                            <span
+                                                                title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
+                                                                className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-400 cursor-default select-none"
+                                                            >
+                                                                <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
+                                                                Cần Admin khác phê duyệt
+                                                            </span>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => openCriticalApproveModal(request)}
+                                                                className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-amber-600 hover:text-amber-700 transition cursor-pointer"
+                                                            >
+                                                                <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
+                                                                Phê duyệt an toàn
+                                                            </button>
+                                                        )}
                                                         <button
                                                             type="button"
-                                                            onClick={() => openCriticalApproveModal(request)}
-                                                            className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-amber-600 hover:text-amber-700 transition cursor-pointer"
+                                                            onClick={() => openRejectModal(request)}
+                                                            className="table-action text-[15px] font-medium text-danger-600 hover:text-danger-700 transition cursor-pointer"
                                                         >
-                                                            <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
-                                                            Phê duyệt an toàn
+                                                            Từ chối
                                                         </button>
-                                                    )
+                                                    </div>
+                                                ) : request.status === 'FAILED' && request.errorMessage?.startsWith('[MAINTENANCE_LOCKED]') ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openRejectModal(request)}
+                                                        className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-danger-600 hover:text-danger-700 transition cursor-pointer"
+                                                    >
+                                                        <LockOpen className="h-3.5 w-3.5 shrink-0" />
+                                                        Mở khóa hệ thống
+                                                    </button>
                                                 ) : (
                                                     getBackupStatusBadge(request.status as any)
                                                 )}

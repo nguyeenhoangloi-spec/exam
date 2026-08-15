@@ -14,6 +14,7 @@ import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
 
 const ACTIVE_ATTEMPT_STATUSES = ['DEVICE_CHECK', 'READY', 'IN_PROGRESS', 'DISCONNECTED'] as const;
+export const PRODUCTION_MAINTENANCE_LOCK_PREFIX = '[MAINTENANCE_LOCKED]';
 type BackupDb = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
@@ -188,7 +189,12 @@ export class BackupService {
 
   async listRestoreRequests() {
     const requests = await this.prisma.backupRestoreRequest.findMany({
-      where: { status: { in: [BackupRestoreStatus.PENDING_APPROVAL, BackupRestoreStatus.APPROVED, BackupRestoreStatus.RUNNING] } },
+      where: {
+        OR: [
+          { status: { in: [BackupRestoreStatus.PENDING_APPROVAL, BackupRestoreStatus.APPROVED, BackupRestoreStatus.RUNNING] } },
+          { target: BackupRestoreTarget.PRODUCTION, status: BackupRestoreStatus.FAILED, errorMessage: { startsWith: PRODUCTION_MAINTENANCE_LOCK_PREFIX } },
+        ],
+      },
       orderBy: { createdAt: 'desc' },
       take: 50,
       include: {
@@ -308,7 +314,12 @@ export class BackupService {
   async rejectRestoreRequest(actorId: number, id: string, dto: RejectRestoreRequestDto) {
     const request = await this.prisma.backupRestoreRequest.findUnique({ where: { id }, include: { backupJob: true } });
     if (!request) throw new NotFoundException('Không tìm thấy yêu cầu restore.');
-    if (request.status !== BackupRestoreStatus.PENDING_APPROVAL) throw new ConflictException('Yêu cầu restore không còn chờ duyệt.');
+    const isMaintenanceUnlock = request.target === BackupRestoreTarget.PRODUCTION
+      && request.status === BackupRestoreStatus.FAILED
+      && request.errorMessage?.startsWith(PRODUCTION_MAINTENANCE_LOCK_PREFIX);
+    if (request.status !== BackupRestoreStatus.PENDING_APPROVAL && !isMaintenanceUnlock) {
+      throw new ConflictException('Yêu cầu restore không còn chờ duyệt hoặc không cần mở khóa.');
+    }
     const updated = await this.prisma.backupRestoreRequest.update({
       where: { id },
       data: { status: BackupRestoreStatus.REJECTED, errorMessage: dto.reason },
@@ -316,7 +327,7 @@ export class BackupService {
     });
     await this.audit.write({
       actorId,
-      action: 'BACKUP_RESTORE_REJECTED',
+      action: isMaintenanceUnlock ? 'BACKUP_MAINTENANCE_UNLOCKED' : 'BACKUP_RESTORE_REJECTED',
       entityType: 'BACKUP_RESTORE_REQUEST',
       entityId: id,
       description: `Đã từ chối restore từ ${request.backupJob.snapshotId}.`,
@@ -385,8 +396,11 @@ export class BackupService {
     return db.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.SUCCEEDED, completedAt: new Date() } });
   }
 
-  async failRestore(id: string, message: string, db: BackupDb = this.prisma) {
-    return db.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.FAILED, completedAt: new Date(), errorMessage: message.slice(0, 2000) } });
+  async failRestore(id: string, message: string, db: BackupDb = this.prisma, keepMaintenanceLock = false) {
+    const errorMessage = keepMaintenanceLock
+      ? `${PRODUCTION_MAINTENANCE_LOCK_PREFIX} ${message}`
+      : message;
+    return db.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.FAILED, completedAt: new Date(), errorMessage: errorMessage.slice(0, 2000) } });
   }
 
   async hasActiveOfficialAttempt(db: BackupDb = this.prisma) {

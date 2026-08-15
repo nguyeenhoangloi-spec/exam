@@ -741,15 +741,26 @@ export default function ExamArrangementPage() {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-semibold bg-blue-600 text-white tracking-wide ">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-600 text-white tracking-wide">
                     {(currentSchedule as any)?.mode === 'MOCK' ? 'THI THỬ' : 'CHÍNH THỨC'}
                   </span>
                   <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
                     {currentSchedule?.subject?.subjectName || 'Chưa chọn ca thi'}
                   </h3>
-                  <span className="text-xs font-normal font-medium text-slate-400">
+                  <span className="text-xs font-medium text-slate-400">
                     #{currentSchedule?.subject?.subjectCode || 'MH'}
                   </span>
+
+                  {/* Nút Đổi Ca thuần icon, không chữ, không khung, không nền */}
+                  <button
+                    type="button"
+                    onClick={() => setShowSchedulePicker(true)}
+                    className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center justify-center"
+                    title="Đổi ca thi"
+                    aria-label="Đổi ca thi"
+                  >
+                    <ArrowLeftRight className="h-3.5 w-3.5" />
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
@@ -776,20 +787,7 @@ export default function ExamArrangementPage() {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap shrink-0">
-              {/* Nút 1: Đổi Ca (Icon Button đổi ca thi) */}
-              <Button
-                type="button"
-                variant="ghost"
-                size="md"
-                className="p-2.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                onClick={() => setShowSchedulePicker(true)}
-                title="Đổi ca thi"
-                aria-label="Đổi ca thi"
-              >
-                <ArrowLeftRight className="w-4 h-4" />
-              </Button>
-
-              {/* Nút 2: Chọn / Thu Gọn Phòng (Tầng 2: Soft Tint Pill) */}
+              {/* Nút 1: Chọn / Thu Gọn Phòng (Tầng 2: Soft Tint Pill) */}
               <Button
                 type="button"
                 variant="ghost"
