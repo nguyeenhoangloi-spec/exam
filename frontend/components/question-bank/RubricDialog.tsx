@@ -2,9 +2,10 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import api from '../../lib/api';
-import { HelpCircle, Plus, Trash2, Save, X, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import { HelpCircle, Plus, Trash2, X, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
+import { Toast } from '../Toast';
 
 interface RubricCriterion {
   id?: string;
@@ -74,13 +75,13 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
       ...prev,
       {
         label: `Tiêu chí ${prev.length + 1}`,
-          description: '',
-          fullCreditGuide: '',
-          partialCreditGuide: '',
-          zeroCreditGuide: '',
-          acceptedConcepts: '',
-          commonMistakes: '',
-          scoreStep: 0.25,
+        description: '',
+        fullCreditGuide: '',
+        partialCreditGuide: '',
+        zeroCreditGuide: '',
+        acceptedConcepts: '',
+        commonMistakes: '',
+        scoreStep: 0.25,
         maxScore: 0.5,
         sortOrder: nextOrder,
       },
@@ -162,195 +163,205 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
   if (!isOpen || !question) return null;
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Quản lý rubric chấm điểm" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header - Modern Gradient Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3.5 min-w-0 flex-1">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
-                <HelpCircle className="h-6 w-6 text-white" />
-              </div>
-              <div className="min-w-0 flex-1 pr-2">
-                <h2 className="text-[18px] font-semibold leading-snug text-white">
-                  Thiết Lập Rubric Chấm Điểm Tự Luận
-                </h2>
-                <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-blue-100/90">
-                  <IdentifierBadge tone="inverse">Mã câu: {question.code || 'Q'}</IdentifierBadge>
-                  <span>· Điểm câu hỏi: <strong className="text-white font-semibold">{expectedScore}đ</strong></span>
+    <>
+      <div role="dialog" aria-modal="true" aria-label="Quản lý rubric chấm điểm" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
+          {/* Header - Modern Gradient Header */}
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
+                  <HelpCircle className="h-6 w-6 text-white" />
+                </div>
+                <div className="min-w-0 flex-1 pr-2">
+                  <h2 className="text-[18px] font-semibold leading-snug text-white">
+                    Thiết Lập Rubric Chấm Điểm Tự Luận
+                  </h2>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-blue-100/90">
+                    <IdentifierBadge tone="inverse">Mã câu: {question.code || 'Q'}</IdentifierBadge>
+                    <span>· Điểm câu hỏi: <strong className="text-white font-semibold">{expectedScore}đ</strong></span>
+                  </div>
                 </div>
               </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
+                title="Đóng"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
-              title="Đóng"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-white dark:bg-slate-900">
-          {/* Question preview */}
-          <div className="p-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200">
-            <span className="font-semibold text-slate-900">Nội dung câu hỏi: </span>
-            {question.content}
           </div>
 
-          {message && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-700 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
-              <span>{message}</span>
+          {/* Content Body */}
+          <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-white dark:bg-slate-900">
+            {/* Question preview */}
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">Nội dung câu hỏi: </span>
+              {question.content}
             </div>
-          )}
 
-          {/* Real-time score balance status badge */}
-          <div className={`inline-flex w-full items-center justify-between gap-3 text-[14px] leading-5 font-semibold ${isMatched
-            ? 'text-success-600'
-            : 'text-warning-600'
-            }`}>
-            <span className="inline-flex items-center gap-[6px]">
-              {isMatched ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
-              {isMatched ? 'Tổng điểm Rubric đã khớp hoàn hảo với điểm câu hỏi' : 'Tổng điểm Rubric CHƯA khớp với điểm câu hỏi'}
-            </span>
-            <span className=" tabular-nums text-sm font-semibold">
-              {totalRubricScore} / {expectedScore}đ
-            </span>
-          </div>
-
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+            {/* Real-time score balance status badge */}
+            <div className={`inline-flex w-full items-center justify-between gap-3 text-[14px] leading-5 font-semibold ${isMatched
+              ? 'text-success-600'
+              : 'text-warning-600'
+              }`}>
+              <span className="inline-flex items-center gap-[6px]">
+                {isMatched ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
+                {isMatched ? 'Tổng điểm Rubric đã khớp hoàn hảo với điểm câu hỏi' : 'Tổng điểm Rubric CHƯA khớp với điểm câu hỏi'}
+              </span>
+              <span className="tabular-nums text-sm font-semibold">
+                {totalRubricScore} / {expectedScore}đ
+              </span>
             </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Danh sách tiêu chí Rubric</h3>
-                <button
-                  type="button"
-                  onClick={handleAddCriterion}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition"
-                >
-                  <Plus className="w-3.5 h-3.5" /> Thêm tiêu chí
-                </button>
+
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
               </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-[14px] leading-5 font-semibold tracking-wider text-slate-500">Danh sách tiêu chí Rubric</h3>
+                  <button
+                    type="button"
+                    onClick={handleAddCriterion}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Thêm tiêu chí
+                  </button>
+                </div>
 
-              {criteria.map((c, idx) => (
-                <div key={idx} className="p-3.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl space-y-2.5 relative">
-                  <div className="grid grid-cols-12 gap-3">
-                    <div className="col-span-6 space-y-1">
-                      <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Tên tiêu chí *</label>
-                      <input
-                        type="text"
-                        placeholder="Nhập tên tiêu chí..."
-                        value={c.label}
-                        onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-normal focus:outline-none focus:border-blue-500"
-                      />
-                    </div>
-                    <div className="col-span-3 space-y-1">
-                      <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Điểm tối đa *</label>
-                      <input
-                        type="number"
-                        step={0.1}
-                        min={0.01}
-                        max={100}
-                        value={c.maxScore}
-                        onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-medium tabular-nums focus:outline-none focus:border-blue-500"
-                      />
-                    </div>
-                    <div className="col-span-3 flex justify-between items-end">
-                      <div className="space-y-1">
-                         <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Thứ tự *</label>
+                {criteria.map((c, idx) => (
+                  <div key={idx} className="p-3.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl space-y-2.5 relative">
+                    <div className="grid grid-cols-12 gap-3">
+                      <div className="col-span-6 space-y-1">
+                        <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Tên tiêu chí *</label>
                         <input
-                          type="number"
-                          min={1}
-                          value={c.sortOrder}
-                          onChange={(e) => handleFieldChange(idx, 'sortOrder', Number(e.target.value))}
-                           className="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2 py-2 text-[15px] font-normal text-center focus:outline-none focus:border-blue-500"
+                          type="text"
+                          placeholder="Nhập tên tiêu chí..."
+                          value={c.label}
+                          onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-normal focus:outline-none focus:border-blue-500"
                         />
                       </div>
-                      {criteria.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveCriterion(idx)}
-                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition cursor-pointer"
-                          title="Xóa tiêu chí này"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
+                      <div className="col-span-3 space-y-1">
+                        <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Điểm tối đa *</label>
+                        <input
+                          type="number"
+                          step={0.1}
+                          min={0.01}
+                          max={100}
+                          value={c.maxScore}
+                          onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-medium tabular-nums focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div className="col-span-3 flex justify-between items-end">
+                        <div className="space-y-1 w-full">
+                          <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Thứ tự</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={c.sortOrder}
+                            onChange={(e) => handleFieldChange(idx, 'sortOrder', Number(e.target.value))}
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-medium tabular-nums text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                        {criteria.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCriterion(idx)}
+                            className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition cursor-pointer"
+                            title="Xóa tiêu chí này"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-200">Mô tả chi tiết tiêu chuẩn chấm</label>
+                      <textarea
+                        rows={2}
+                        placeholder="Mô tả tiêu chuẩn..."
+                        value={c.description}
+                        onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                      <div className="space-y-1">
+                        <label className="block text-[15px] font-medium text-emerald-600">Hướng dẫn đạt điểm tối đa</label>
+                        <textarea
+                          rows={2}
+                          placeholder="Ý chính cần có để đạt full điểm..."
+                          value={c.fullCreditGuide || ''}
+                          onChange={(e) => handleFieldChange(idx, 'fullCreditGuide', e.target.value)}
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-[15px] font-normal focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="block text-[15px] font-medium text-amber-600">Hướng dẫn đạt điểm một phần</label>
+                        <textarea
+                          rows={2}
+                          placeholder="Trả lời thiếu sót hoặc chưa đầy đủ..."
+                          value={c.partialCreditGuide || ''}
+                          onChange={(e) => handleFieldChange(idx, 'partialCreditGuide', e.target.value)}
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-[15px] font-normal focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="block text-[15px] font-medium text-rose-600">Hướng dẫn không đạt điểm</label>
+                        <textarea
+                          rows={2}
+                          placeholder="Không trả lời hoặc sai hoàn toàn..."
+                          value={c.zeroCreditGuide || ''}
+                          onChange={(e) => handleFieldChange(idx, 'zeroCreditGuide', e.target.value)}
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-[15px] font-normal focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="max-w-[12rem] space-y-1">
+                      <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-200">Bước điểm</label>
+                      <input
+                        type="number"
+                        step={0.05}
+                        min={0.01}
+                        max={c.maxScore}
+                        value={c.scoreStep || 0.25}
+                        onChange={(e) => handleFieldChange(idx, 'scoreStep', Number(e.target.value))}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-medium tabular-nums text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
+                      />
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-                   <div className="space-y-1">
-                     <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">Mô tả tiêu chí</label>
-                     <textarea
-                       rows={2}
-                       placeholder="Nội dung kiến thức hoặc kỹ năng cần đánh giá..."
-                       value={c.description}
-                       onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
-                       className="w-full resize-y bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-                     />
-                   </div>
-                   <div className="grid gap-2 sm:grid-cols-2">
-                     {[
-                       ['fullCreditGuide', 'Đạt đầy đủ', 'Điều kiện nhận toàn bộ điểm...'],
-                       ['partialCreditGuide', 'Đạt một phần', 'Điều kiện nhận một phần điểm...'],
-                       ['zeroCreditGuide', 'Không đạt', 'Trường hợp không được điểm...'],
-                       ['acceptedConcepts', 'Ý/khái niệm chấp nhận', 'Các cách diễn đạt tương đương...'],
-                       ['commonMistakes', 'Lỗi cần lưu ý', 'Lỗi nghiêm trọng hoặc hay gặp...'],
-                     ].map(([field, label, placeholder]) => (
-                       <label key={field} className="space-y-1 text-[15px] font-medium text-slate-700 dark:text-slate-200">
-                         {label}
-                         <textarea
-                           rows={2}
-                           placeholder={placeholder}
-                           value={String(c[field as keyof RubricCriterion] || '')}
-                           onChange={(e) => handleFieldChange(idx, field as keyof RubricCriterion, e.target.value)}
-                           className="w-full resize-y bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-                         />
-                       </label>
-                     ))}
-                   </div>
-                   <div className="max-w-[12rem] space-y-1">
-                     <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-200">Bước điểm</label>
-                     <input
-                       type="number"
-                       step={0.05}
-                       min={0.01}
-                       max={c.maxScore}
-                       value={c.scoreStep || 0.25}
-                       onChange={(e) => handleFieldChange(idx, 'scoreStep', Number(e.target.value))}
-                       className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-medium tabular-nums text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-                     />
-                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/70 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Hủy
-          </Button>
-          <Button
-            type="button"
-            variant="primary"
-            onClick={handleSave}
-            disabled={saving || !isMatched}
-            isLoading={saving}
-          >
-            Lưu rubric
-          </Button>
+          {/* Footer */}
+          <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/70 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Hủy
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleSave}
+              disabled={saving || !isMatched}
+              isLoading={saving}
+            >
+              Lưu rubric
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+      {message && <Toast message={message} type="error" onClose={() => setMessage('')} />}
+    </>
   );
 }

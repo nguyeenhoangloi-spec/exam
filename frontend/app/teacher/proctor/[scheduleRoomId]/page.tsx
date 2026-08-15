@@ -201,18 +201,17 @@ export default function ProctorDashboardPage() {
 
   const handleBulkExtend = async () => {
     try {
-      setBulkError(null);
-      setBulkSuccessMsg(null);
       setBulkProcessing(true);
       const res = await onlineExamService.bulkExtendTime(scheduleRoomId, bulkMinutes, bulkReason);
-      setBulkSuccessMsg(res.message || `Đã bù giờ +${bulkMinutes} phút cho tất cả thí sinh thành công!`);
-      setTimeout(() => {
-        setShowBulkModal(false);
-        setBulkSuccessMsg(null);
-        void loadDashboard(true);
-      }, 1500);
+      setShowBulkModal(false);
+      setToast({
+        message: res.message || `Đã bù giờ +${bulkMinutes} phút cho tất cả thí sinh thành công!`,
+        type: 'success',
+      });
+      void loadDashboard(true);
     } catch (err: any) {
-      setBulkError(err?.response?.data?.message || err?.message || 'Không thể bù giờ toàn phòng.');
+      const msg = err?.response?.data?.message || err?.message || 'Không thể bù giờ toàn phòng.';
+      setToast({ message: msg, type: 'error' });
     } finally {
       setBulkProcessing(false);
     }
@@ -234,7 +233,6 @@ export default function ProctorDashboardPage() {
     setConfirmModal((prev) => ({ ...prev, isOpen: false }));
     try {
       setReopenEntryProcessing(true);
-      setReopenEntryError(null);
       const res = await onlineExamService.reopenEntry(data.scheduleId, lateWindowMinutes);
       setShowReopenEntryModal(false);
       setToast({
@@ -244,7 +242,6 @@ export default function ProctorDashboardPage() {
       void loadDashboard(true);
     } catch (e: any) {
       const errText = e?.response?.data?.message || e?.message || 'Không thể gia hạn giờ vào thi';
-      setReopenEntryError(errText);
       setToast({ message: errText, type: 'error' });
     } finally {
       setReopenEntryProcessing(false);
@@ -254,7 +251,6 @@ export default function ProctorDashboardPage() {
   const handleAction = async () => {
     if (!selectedStudent?.attempt?.id) return;
     try {
-      setActionError(null);
       setProcessing(true);
       if (actionType === 'EXTEND')
         await onlineExamService.extendTime(selectedStudent.attempt.id, extraMinutes, reason);
@@ -275,11 +271,8 @@ export default function ProctorDashboardPage() {
       setToast({ message: 'Thao tác cập nhật thành công!', type: 'success' });
       loadDashboard(true);
     } catch (err: any) {
-      setActionError(
-        err?.response?.data?.message ||
-        err?.message ||
-        'Thao tác thất bại. Vui lòng kiểm tra lại dữ liệu và thử lại.'
-      );
+      const msg = err?.response?.data?.message || err?.message || 'Thao tác thất bại. Vui lòng kiểm tra lại dữ liệu và thử lại.';
+      setToast({ message: msg, type: 'error' });
     } finally {
       setProcessing(false);
     }
@@ -1421,13 +1414,6 @@ export default function ProctorDashboardPage() {
 
               {/* Modal body */}
               <div className="p-6 space-y-4 text-xs font-semibold">
-                {actionError && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-semibold flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 shrink-0" />
-                    <span>{actionError}</span>
-                  </div>
-                )}
-
                 {actionType === 'EXTEND' && (
                   <div>
                     <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Số phút cộng thêm vào bài thi:</label>
@@ -1729,20 +1715,6 @@ export default function ProctorDashboardPage() {
             </div>
 
             <div className="p-6 space-y-4 text-xs font-semibold">
-              {bulkError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-semibold flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{bulkError}</span>
-                </div>
-              )}
-
-              {bulkSuccessMsg && (
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>{bulkSuccessMsg}</span>
-                </div>
-              )}
-
               <div>
                 <label className="block text-slate-700 font-medium mb-1.5">Chọn số phút cộng bù hàng loạt:</label>
                 <div className="flex gap-2">
@@ -1822,14 +1794,7 @@ export default function ProctorDashboardPage() {
             </div>
 
             <div className="p-6 space-y-4 text-xs font-semibold">
-              {reopenEntryError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-semibold flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{reopenEntryError}</span>
-                </div>
-              )}
-
-              <div>
+                            <div>
                 <label className="block text-slate-700 font-medium mb-1.5">Số phút cho phép vào thi kể từ bây giờ:</label>
                 <div className="flex gap-2">
                   {[15, 30, 45, 60].map((m) => (

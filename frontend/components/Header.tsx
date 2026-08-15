@@ -287,7 +287,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       <header
         style={{ left: collapsed ? '72px' : '252px' }}
-        className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all duration-300 ease-in-out border-b border-slate-200/70 dark:border-slate-700/70 shadow-2xs"
+        className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-[left] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-[left] border-b border-slate-200/40 dark:border-slate-800/60 shadow-xs"
       >
         <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
           {/* Left Side: Navigation / Breadcrumb Pro / Command Search Bar */}
@@ -312,9 +312,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Search className="h-5 w-5" />
             </button>
-
-            {/* Phân cách mảnh tinh tế */}
-            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 shrink-0 mx-0.5" />
 
             {/* 2. Breadcrumb Navigation (Đứng sau nút tìm kiếm) */}
             <nav className="flex items-center gap-1.5 text-[13px] font-medium text-slate-400 dark:text-slate-500 min-w-0 truncate" aria-label="Breadcrumb">
@@ -421,9 +418,6 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Vertical Divider */}
-            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
 
             {/* Header User Profile Trigger Button */}
             <div className="relative">

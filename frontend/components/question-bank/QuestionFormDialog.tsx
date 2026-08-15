@@ -1,14 +1,15 @@
 'use client';
-import { FilterSelect } from '../ui/FilterSelect';
-import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '../../lib/api';
 import { Question, QuestionMedia, Subject } from '../../types';
 import { Modal } from '../Modal';
+import { Toast } from '../Toast';
 import { RichQuestionEditor } from './RichQuestionEditor';
 import { Button, controlClassName } from '../ui';
+import { FilterSelect } from '../ui/FilterSelect';
 import {
   QUESTION_TYPE_LABELS,
   DIFFICULTY_LABELS,
@@ -90,6 +91,7 @@ export function QuestionFormDialog({
   const [existingMedia, setExistingMedia] = useState<QuestionMedia[]>([]);
   const [removedMediaIds, setRemovedMediaIds] = useState<string[]>([]);
   const [maxPlays, setMaxPlays] = useState<number>((question?.media?.[0] as any)?.maxPlays ?? 2);
+  const [toastError, setToastError] = useState<string | null>(null);
 
   const addMediaFiles = (incoming: File[]) => {
     const urls = incoming.map((f) => URL.createObjectURL(f));
@@ -131,6 +133,7 @@ export function QuestionFormDialog({
 
   useEffect(() => {
     if (!open) return;
+    setToastError(null);
     // Revoke old URLs via ref to avoid dep-array warning
     mediaUrlsRef.current.forEach((u) => URL.revokeObjectURL(u));
     mediaUrlsRef.current = [];
@@ -170,371 +173,368 @@ export function QuestionFormDialog({
   }, [watchType, question, setValue]);
 
   const submit = async (data: Form) => {
-    const html = data.contentRich?.html || '';
-    let plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;
-    if (data.type === 'FILL_BLANK' && !plain.includes('{{blank_')) {
-      plain = `${plain} {{blank_1}}`;
+    try {
+      const html = data.contentRich?.html || '';
+      let plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || data.content;
+      if (data.type === 'FILL_BLANK' && !plain.includes('{{blank_')) {
+        plain = `${plain} {{blank_1}}`;
+      }
+      const payload = {
+        ...data,
+        content: plain,
+        contentRich: html ? { html } : undefined,
+        fillBlankAnswers: data.type === 'FILL_BLANK'
+          ? (data.fillBlankAnswers?.length ? data.fillBlankAnswers : [{ blankIndex: 1, answer: 'đáp_án_đúng', score: data.score || 0.25 }]).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
+          : [],
+      };
+      const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
+      const savedId = question?.id || response.data?.id;
+      // Xóa các media đã đánh dấu xóa
+      if (removedMediaIds.length) {
+        await Promise.all(removedMediaIds.map((id) => api.delete(`/questions/media/${id}`).catch(() => { })));
+      }
+      // Upload media mới
+      if (savedId && mediaFiles.length) {
+        const form = new FormData();
+        form.append('questionId', savedId);
+        mediaFiles.forEach((file) => form.append('files', file));
+        await api.post('/questions/media/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      }
+      onSaved(question ? 'Đã cập nhật thông tin câu hỏi thành công!' : 'Đã tạo thành công câu hỏi mới vào ngân hàng!');
+      onClose();
+    } catch (err: any) {
+      setToastError(err?.response?.data?.message || err?.message || 'Có lỗi xảy ra khi lưu câu hỏi.');
     }
-    const payload = {
-      ...data,
-      content: plain,
-      contentRich: html ? { html } : undefined,
-      fillBlankAnswers: data.type === 'FILL_BLANK'
-        ? (data.fillBlankAnswers?.length ? data.fillBlankAnswers : [{ blankIndex: 1, answer: 'đáp_án_đúng', score: data.score || 0.25 }]).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
-        : [],
-    };
-    const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
-    const savedId = question?.id || response.data?.id;
-    // Xóa các media đã đánh dấu xóa
-    if (removedMediaIds.length) {
-      await Promise.all(removedMediaIds.map((id) => api.delete(`/questions/media/${id}`).catch(() => { })));
-    }
-    // Upload media mới
-    if (savedId && mediaFiles.length) {
-      const form = new FormData();
-      form.append('questionId', savedId);
-      mediaFiles.forEach((file) => form.append('files', file));
-      await api.post('/questions/media/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
-    }
-    onSaved(question ? 'Đã cập nhật thông tin câu hỏi thành công!' : 'Đã tạo thành công câu hỏi mới vào ngân hàng!');
-    onClose();
+  };
+
+  const onInvalid = () => {
+    setToastError('Vui lòng kiểm tra các trường thông tin còn thiếu hoặc chưa hợp lệ trước khi lưu.');
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'} size="2xl">
-      <form onSubmit={handleSubmit(submit)} className="space-y-4">
-        {/* Thuộc tính cơ bản câu hỏi */}
-        <div className="grid gap-3 md:grid-cols-2">
-          {/* Môn */}
-          <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">
-              Môn học / Học phần <span className="text-rose-500">*</span>
-            </label>
-            <FilterSelect fullWidth {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
-              {subjects.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.subjectName}
-                </option>
-              ))}
-            </FilterSelect>
+    <>
+      <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'} size="2xl">
+        <form onSubmit={handleSubmit(submit, onInvalid)} className="space-y-4">
+          {/* Thuộc tính cơ bản câu hỏi */}
+          <div className="grid gap-3 md:grid-cols-2">
+            {/* Môn */}
+            <div>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+                Môn học / Học phần <span className="text-rose-500">*</span>
+              </label>
+              <FilterSelect fullWidth {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+                {subjects.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.subjectName}
+                  </option>
+                ))}
+              </FilterSelect>
+            </div>
+
+            {/* Loại câu hỏi */}
+            <div>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+                Loại câu hỏi <span className="text-rose-500">*</span>
+              </label>
+              <FilterSelect fullWidth {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+                {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
+                ))}
+              </FilterSelect>
+            </div>
+
+            {/* Độ khó */}
+            <div>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+                Mức độ khó <span className="text-rose-500">*</span>
+              </label>
+              <FilterSelect fullWidth {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+                {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
+                ))}
+              </FilterSelect>
+            </div>
+
+            {/* Mức độ Bloom */}
+            <div>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+                Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
+              </label>
+              <FilterSelect fullWidth {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+                {Object.entries(BLOOM_LABELS).map(([k, v]) => (
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
+                ))}
+              </FilterSelect>
+            </div>
+
+            {/* Điểm số */}
+            <div className="md:col-span-2">
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+                Điểm số mặc định câu hỏi <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.25"
+                {...register('score', { valueAsNumber: true })}
+                placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+              />
+            </div>
           </div>
 
-          {/* Loại câu hỏi */}
+          {/* Nội dung câu hỏi */}
           <div>
             <label className="block text-[15px] font-medium text-slate-500 mb-1">
-              Loại câu hỏi <span className="text-rose-500">*</span>
+              Nội dung câu hỏi <span className="text-rose-500">*</span>
             </label>
-            <FilterSelect fullWidth {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
-              {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </FilterSelect>
-          </div>
-
-          {/* Độ khó */}
-          <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">
-              Mức độ khó <span className="text-rose-500">*</span>
-            </label>
-            <FilterSelect fullWidth {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
-              {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </FilterSelect>
-          </div>
-
-          {/* Mức độ Bloom */}
-          <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">
-              Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
-            </label>
-            <FilterSelect fullWidth {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
-              {Object.entries(BLOOM_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </FilterSelect>
-          </div>
-
-          {/* Điểm số */}
-          <div className="md:col-span-2">
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">
-              Điểm số mặc định câu hỏi <span className="text-rose-500">*</span>
-            </label>
-            <input
-              type="number"
-              step="0.25"
-              {...register('score', { valueAsNumber: true })}
-              placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-medium text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+            <input type="hidden" {...register('content')} />
+            <RichQuestionEditor
+              value={watch('contentRich')}
+              fallback={watch('content')}
+              onFiles={(files) => addMediaFiles(files)}
+              onChange={(html) => {
+                setValue('contentRich', { html }, { shouldDirty: true });
+                const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                const hasMedia = html.includes('<img') || html.includes('<video') || html.includes('<audio') || mediaFiles.length > 0;
+                setValue('content', plain || (hasMedia ? '[Hình ảnh / Media]' : ''), { shouldValidate: true });
+              }}
+              placeholder="Nhập nội dung câu hỏi..."
             />
           </div>
-        </div>
 
-        {/* Nội dung câu hỏi */}
-        <div>
-          <label className="block text-[15px] font-medium text-slate-500 mb-1">
-            Nội dung câu hỏi <span className="text-rose-500">*</span>
-          </label>
-          <input type="hidden" {...register('content')} />
-          <RichQuestionEditor
-            value={watch('contentRich')}
-            fallback={watch('content')}
-            onFiles={(files) => addMediaFiles(files)}
-            onChange={(html) => {
-              setValue('contentRich', { html }, { shouldDirty: true });
-              const plain = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-              const hasMedia = html.includes('<img') || html.includes('<video') || html.includes('<audio') || mediaFiles.length > 0;
-              setValue('content', plain || (hasMedia ? '[Hình ảnh / Media]' : ''), { shouldValidate: true });
-            }}
-            placeholder="Nhập nội dung câu hỏi..."
-          />
-        </div>
+          {/* Media Upload Section */}
+          <div className="space-y-2 pt-1">
+            <div className="flex items-center justify-between">
+              <span className="block text-[15px] font-medium text-slate-500">
+                Tệp đính kèm đa phương tiện (Hình ảnh, Video, Audio)
+              </span>
+              <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[15px] font-medium rounded-xl transition">
+                <span>+ Thêm tệp</span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,video/*,audio/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files?.length) {
+                      addMediaFiles(Array.from(e.target.files));
+                      e.target.value = '';
+                    }
+                  }}
+                />
+              </label>
+            </div>
 
-        {/* Media Upload Section */}
-        <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">Đính kèm media (Tùy chọn)</span>
-            <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-2xs">
-              <input
-                type="file"
-                multiple
-                accept="image/*,video/mp4,video/webm,audio/*"
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files) addMediaFiles(Array.from(e.target.files));
-                  e.target.value = '';
-                }}
-              />
-              + Thêm ảnh / video / audio
-            </label>
+            {/* Danh sách media đã upload trước đó */}
+            {existingMedia.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-slate-400">Tệp hiện có trên hệ thống:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {existingMedia.map((m, idx) => (
+                    <div key={m.id || idx} className="relative group flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                      {(m.mimeType?.startsWith('image/') || (m as any).mediaType === 'IMAGE') && <DynamicImage src={getImageUrl(m.url)} alt={m.fileName} className="w-10 h-10 object-cover rounded-xl shrink-0" />}
+                      {(m.mimeType?.startsWith('video/') || (m as any).mediaType === 'VIDEO') && <div className="w-10 h-10 bg-slate-200 rounded-xl flex items-center justify-center shrink-0"><Video className="w-5 h-5 text-slate-500" /></div>}
+                      {(m.mimeType?.startsWith('audio/') || (m as any).mediaType === 'AUDIO') && <div className="w-10 h-10 bg-slate-200 rounded-xl flex items-center justify-center shrink-0"><Volume2 className="w-5 h-5 text-slate-500" /></div>}
+                      <span className="text-xs text-slate-700 truncate flex-1 font-medium">{m.fileName}</span>
+                      {m.id && (
+                        <button
+                          type="button"
+                          onClick={() => removeExistingMedia(m.id!)}
+                          className="p-1 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition"
+                          title="Xóa tệp này"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Danh sách tệp mới chuẩn bị upload */}
+            {mediaFiles.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-blue-600">Tệp mới sẽ được tải lên:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {mediaFiles.map((f, i) => (
+                    <div key={i} className="relative group flex items-center gap-2 p-2 bg-blue-50/60 border border-blue-200 rounded-xl">
+                      {f.type.startsWith('image/') && <DynamicImage src={mediaUrls[i] || ''} alt={f.name} className="w-10 h-10 object-cover rounded-xl shrink-0" />}
+                      {f.type.startsWith('video/') && <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0"><Video className="w-5 h-5 text-blue-600" /></div>}
+                      {f.type.startsWith('audio/') && <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0"><Volume2 className="w-5 h-5 text-blue-600" /></div>}
+                      <span className="text-xs text-blue-900 truncate flex-1 font-medium">{f.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeMediaFile(i)}
+                        className="p-1 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition"
+                        title="Hủy tệp này"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Ảnh/media cũ đã tồn tại (khi edit) */}
-          {existingMedia.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-1">
-              {existingMedia.map((media) => {
-                const fullUrl = getImageUrl(media.url);
-                const mime = media.mimeType || '';
-                return (
-                  <div key={media.id} className="relative group rounded-xl border border-blue-200 bg-blue-50/50 overflow-hidden shadow-2xs" title={media.fileName || 'Ảnh đã tải lên'}>
-                    {mime.startsWith('image/') && (
-                      <DynamicImage src={fullUrl} alt={media.altText || media.fileName} className="h-20 w-28 object-cover" />
-                    )}
-                    {mime.startsWith('video/') && (
-                      <div className="flex flex-col items-center justify-center h-20 w-28 bg-slate-800 gap-1">
-                        <Video className="h-6 w-6 text-slate-700" />
-                        <span className="text-[13px] text-slate-700 truncate max-w-[100px]">{media.fileName}</span>
-                      </div>
-                    )}
-                    {mime.startsWith('audio/') && (
-                      <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
-                        <span className="text-[13px] font-semibold text-slate-700 max-w-[120px] truncate">{media.fileName}</span>
-                        <audio src={fullUrl} controls className="h-8 w-36" />
-                      </div>
-                    )}
-                    {!mime.startsWith('image/') && !mime.startsWith('video/') && !mime.startsWith('audio/') && (
-                      <div className="flex flex-col items-center justify-center h-20 w-28 gap-1">
-                        <ImageIcon className="h-6 w-6 text-slate-400" />
-                        <span className="text-[13px] text-slate-500 truncate max-w-[100px]">{media.fileName}</span>
-                      </div>
-                    )}
-                    {/* Badge 'đã lưu' */}
-                    <span className="absolute bottom-1 left-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[13px] font-semibold text-white">Đã lưu</span>
+          {/* Đáp án trắc nghiệm */}
+          {(type === 'SINGLE_CHOICE' || type === 'MULTIPLE_CHOICE' || type === 'TRUE_FALSE') && (
+            <div className="space-y-3 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <label className="block text-[15px] font-medium text-slate-500">
+                  Danh sách đáp án lựa chọn <span className="text-rose-500">*</span>
+                </label>
+                {type !== 'TRUE_FALSE' && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      append({
+                        label: String.fromCharCode(65 + fields.length),
+                        content: '',
+                        isCorrect: false,
+                        order: fields.length,
+                      })
+                    }
+                    className="text-xs font-semibold text-blue-600 hover:underline"
+                  >
+                    + Thêm phương án
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                {fields.map((f, i) => (
+                  <div key={f.id} className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => media.id && removeExistingMedia(media.id)}
-                      className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-semibold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
-                      title="Xóa ảnh này"
+                      onClick={() => {
+                        if (type === 'SINGLE_CHOICE' || type === 'TRUE_FALSE') {
+                          fields.forEach((_, idx) => setValue(`options.${idx}.isCorrect`, idx === i));
+                        } else {
+                          setValue(`options.${i}.isCorrect`, !watch(`options.${i}.isCorrect`));
+                        }
+                      }}
+                      className={`w-7 h-7 rounded-xl font-medium text-xs flex items-center justify-center transition border ${watch(`options.${i}.isCorrect`)
+                        ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs'
+                        : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'
+                        }`}
+                      title={watch(`options.${i}.isCorrect`) ? 'Đáp án Đúng' : 'Đánh dấu là đáp án Đúng'}
                     >
-                      <Trash2 className="h-3 w-3" />
+                      {f.label}
                     </button>
+                    <input
+                      {...register(`options.${i}.content`)}
+                      placeholder={`Nội dung lựa chọn ${f.label}...`}
+                      className="flex-1 rounded-xl border border-slate-200 px-3.5 py-1.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+                    />
+                    {type !== 'TRUE_FALSE' && fields.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => remove(i)}
+                        className="p-1.5 text-rose-500 hover:text-rose-700 font-semibold cursor-pointer rounded-xl hover:bg-rose-50"
+                        title="Xóa lựa chọn này"
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* File media mới upload */}
-          {mediaFiles.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-1">
-              {mediaFiles.map((file, idx) => (
-                <div key={idx} className="relative group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden shadow-2xs">
-                  {file.type.startsWith('image/') && (
-                    <DynamicImage src={mediaUrls[idx]} alt={file.name} className="h-20 w-28 object-cover" />
-                  )}
-                  {file.type.startsWith('video/') && (
-                    <video src={mediaUrls[idx]} controls className="h-20 w-36 object-cover bg-black" />
-                  )}
-                  {file.type.startsWith('audio/') && (
-                    <div className="flex flex-col items-center justify-center px-3 py-2 gap-1">
-                      <span className="text-[13px] font-semibold text-slate-700 max-w-[120px] truncate">{file.name}</span>
-                      <audio src={mediaUrls[idx]} controls className="h-8 w-36" />
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => removeMediaFile(idx)}
-                    aria-label={`Xóa tệp ${file.name}`}
-                    title={`Xóa tệp ${file.name}`}
-                    className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-semibold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Danh sách đáp án */}
-        {!['FILL_BLANK', 'ESSAY'].includes(type) && (
-          <div className="space-y-3 border-t border-slate-100 pt-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[18px] leading-[26px] font-semibold text-slate-900 tracking-tight">Danh sách đáp án</span>
-              <span className="text-[13px] font-normal text-slate-500">Tích chọn để đánh dấu đáp án ĐÚNG</span>
-            </div>
-
-            <div className="space-y-2">
-              {fields.map((field, i) => (
-                <div key={field.id} className="flex items-center gap-2.5 bg-slate-50/80 p-2 rounded-xl border border-slate-200/90 hover:border-slate-300 transition">
-                  <input
-                    type={type === 'MULTIPLE_CHOICE' ? 'checkbox' : 'radio'}
-                    name={type === 'MULTIPLE_CHOICE' ? `options.${i}.isCorrect` : 'options-isCorrect-radio'}
-                    checked={Boolean(watch(`options.${i}.isCorrect`))}
-                    onChange={(e) => {
-                      if (type === 'MULTIPLE_CHOICE') {
-                        // Checkbox: toggle boolean
-                        setValue(`options.${i}.isCorrect`, e.target.checked, { shouldValidate: true });
-                      } else {
-                        // Radio: chỉ một đáp án đúng — set tất cả false, riêng cái này true
-                        fields.forEach((_, fi) => setValue(`options.${fi}.isCorrect`, fi === i, { shouldValidate: fi === i }));
-                      }
-                    }}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0 ml-1"
-                    title="Đánh dấu đáp án đúng"
-                  />
-                  <input
-                    {...register(`options.${i}.label`)}
-                    className="w-10 rounded-xl border border-slate-200 bg-white p-2 text-center text-[15px] font-semibold text-slate-900 shrink-0"
-                  />
-                  <input
-                    {...register(`options.${i}.content`)}
-                    className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none"
-                    placeholder={`Nội dung đáp án ${field.label}...`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => i > 0 && move(i, i - 1)}
-                    disabled={i === 0}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-30 font-semibold cursor-pointer rounded-xl hover:bg-slate-200/60"
-                    title="Di chuyển lên"
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => remove(i)}
-                    className="p-1.5 text-rose-500 hover:text-rose-700 font-semibold cursor-pointer rounded-xl hover:bg-rose-50"
-                    title="Xóa đáp án"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                append({
-                  label: String.fromCharCode(65 + fields.length),
-                  content: '',
-                  isCorrect: false,
-                  order: fields.length,
-                })
-              }
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer pt-1"
-            >
-              + Thêm lựa chọn đáp án
-            </button>
-          </div>
-        )}
-
-        {type === 'FILL_BLANK' && (
-          <div className="space-y-3 border-t border-slate-100 pt-4">
-            <div className="rounded-xl bg-blue-50/80 p-3 text-xs leading-5 text-blue-900 font-semibold border border-blue-100">
-              Đặt chỗ trống trong nội dung theo mẫu <b>{'{{blank_1}}'}</b>, <b>{'{{blank_2}}'}</b>. Tổng điểm các ô phải bằng điểm của câu hỏi.
-            </div>
-            {fillBlankFields.fields.map((field, index) => (
-              <div key={field.id} className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[70px_1fr_100px_auto]">
-                <input type="number" readOnly {...register(`fillBlankAnswers.${index}.blankIndex`, { valueAsNumber: true })} className="rounded-xl border bg-slate-50 p-2 text-[15px] font-semibold text-center" />
-                <input {...register(`fillBlankAnswers.${index}.answer`)} placeholder="Đáp án chính" className="rounded-xl border p-2 text-[15px] font-semibold" />
-                <input type="number" step="0.25" {...register(`fillBlankAnswers.${index}.score`, { valueAsNumber: true })} placeholder="Điểm" className="rounded-xl border p-2 text-[15px] font-semibold" />
-                <button type="button" onClick={() => fillBlankFields.remove(index)} className="px-2 text-rose-600 font-semibold">×</button>
-                <input {...register(`fillBlankAnswers.${index}.acceptedAnswersText`)} placeholder="Đáp án chấp nhận thêm, ngăn cách bằng dấu phẩy" className="md:col-span-4 rounded-xl border p-2 text-[15px]" />
+                ))}
               </div>
-            ))}
-            <button type="button" onClick={() => {
-              const index = fillBlankFields.fields.length + 1;
-              const currentScore = Number(watch('score')) || 0;
-              fillBlankFields.append({ blankIndex: index, answer: '', acceptedAnswersText: '', score: index === 1 ? currentScore : 0, ignoreWhitespace: true, caseSensitive: false, ignoreVietnameseTone: false });
-              const raw = watch('contentRich')?.html || watch('content') || '';
-              if (!raw.includes(`{{blank_${index}}}`)) setValue('contentRich', { html: `${raw}${raw ? ' ' : ''}{{blank_${index}}}` });
-            }} className="text-xs font-semibold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
-          </div>
-        )}
+            </div>
+          )}
 
-        <div className="grid gap-3 md:grid-cols-2 pt-3 border-t border-slate-100">
-          <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
-            <input
-              {...register('keywords')}
-              placeholder="Ví dụ: RSA, ma hoa, security..."
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
-            />
+          {/* Điền khuyết */}
+          {type === 'FILL_BLANK' && (
+            <div className="space-y-3 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <label className="block text-[15px] font-medium text-slate-500">
+                  Cấu hình các ô điền khuyết
+                </label>
+              </div>
+              <div className="space-y-2">
+                {fillBlankFields.fields.map((f, i) => (
+                  <div key={f.id} className="p-3 border border-slate-200 rounded-xl space-y-2 bg-slate-50/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-700">Ô trống #{watch(`fillBlankAnswers.${i}.blankIndex`) || i + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => fillBlankFields.remove(i)}
+                        className="text-xs font-semibold text-rose-600 hover:underline"
+                      >
+                        Xóa ô này
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[15px] font-medium text-slate-500 mb-0.5">Đáp án chính xác *</label>
+                        <input
+                          {...register(`fillBlankAnswers.${i}.answer`)}
+                          placeholder="Ví dụ: photosynthesis"
+                          className="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-[15px] font-normal text-slate-800 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[15px] font-medium text-slate-500 mb-0.5">Điểm số cho ô này *</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          {...register(`fillBlankAnswers.${i}.score`, { valueAsNumber: true })}
+                          placeholder="Điểm (VD: 0.25)"
+                          className="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-[15px] font-normal text-blue-700 bg-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button type="button" onClick={() => {
+                const index = fillBlankFields.fields.length + 1;
+                fillBlankFields.append({ blankIndex: index, answer: '', score: 0.25, acceptedAnswersText: '' });
+                const raw = watch('contentRich')?.html || '';
+                if (!raw.includes(`{{blank_${index}}}`)) setValue('contentRich', { html: `${raw}${raw ? ' ' : ''}{{blank_${index}}}` });
+              }} className="text-xs font-semibold text-blue-600 hover:underline">+ Thêm chỗ trống</button>
+            </div>
+          )}
+
+          <div className="grid gap-3 md:grid-cols-2 pt-3 border-t border-slate-100">
+            <div>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">Từ khóa tìm kiếm (Tùy chọn)</label>
+              <input
+                {...register('keywords')}
+                placeholder="Ví dụ: RSA, ma hoa, security..."
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[15px] font-medium text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
+              <textarea
+                {...register('explanation')}
+                rows={2}
+                placeholder="Giải thích lý do đáp án đúng..."
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Giải thích đáp án (Tùy chọn)</label>
-            <textarea
-              {...register('explanation')}
-              rows={2}
-              placeholder="Giải thích lý do đáp án đúng..."
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
-            />
+          <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <Button type="button" variant="secondary" size="md" onClick={onClose}>
+              Hủy
+            </Button>
+            <Button type="submit" isLoading={isSubmitting} variant="primary" size="md">
+              Lưu câu hỏi
+            </Button>
           </div>
-        </div>
-
-        {Object.keys(errors).length > 0 && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 space-y-1">
-            <p className="text-xs font-semibold text-rose-700">
-              Vui lòng kiểm tra các thông tin sau trước khi lưu câu hỏi:
-            </p>
-            <ul className="list-disc list-inside text-xs font-medium text-rose-600 space-y-0.5">
-              {errors.subjectId && <li>Vui lòng chọn Môn học / Học phần.</li>}
-              {errors.content && <li>Nội dung câu hỏi không được để trống.</li>}
-              {errors.score && <li>Điểm số câu hỏi phải hợp lệ (lớn hơn 0).</li>}
-              {errors.options && <li>Vui lòng kiểm tra và điền nội dung cho danh sách các đáp án.</li>}
-              {errors.fillBlankAnswers && <li>Vui lòng kiểm tra thông tin đáp án cho các ô điền khuyết.</li>}
-            </ul>
-          </div>
-        )}
-
-        <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
-          <Button type="button" variant="secondary" size="md" onClick={onClose}>
-            Hủy
-          </Button>
-          <Button type="submit" isLoading={isSubmitting} variant="primary" size="md">
-            Lưu câu hỏi
-          </Button>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </Modal>
+      {toastError && <Toast message={toastError} type="error" onClose={() => setToastError(null)} />}
+    </>
   );
 }

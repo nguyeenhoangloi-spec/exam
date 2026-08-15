@@ -24,6 +24,7 @@ Nút/control       = rounded-xl
 Nút chính         = cao 44px
 Control/filter    = cao 40px
 Nút phụ           = cao 36px
+Nhóm 2-3 nút      = Chỉ 1 Primary, cùng chiều cao, tách nút Danger sang trái
 Mobile            = vùng chạm tối thiểu 44px
 ```
 
@@ -242,7 +243,106 @@ Ví dụ:
 Tạo bản Backup ngay         → Tạo bản sao lưu
 ```
 
-## 10. Icon-only và accessibility
+## 10. Bố cục và phân chia nhóm nút (2 nút / 3 nút trên một hàng)
+
+### Quy tắc cốt lõi:
+1. **Chỉ có DUY NHẤT 1 nút Primary** trong một cụm nhóm nút.
+2. **Đồng nhất kích thước:** Tất cả các nút trong cùng một hàng phải có **cùng chiều cao** (`h-10` hoặc `h-11`) và **cùng bo góc** `rounded-xl`.
+3. **Khoảng cách:** Dùng `gap-2` (8px) cho toolbar danh sách hoặc `gap-3` (12px) cho modal footer / form actions.
+
+---
+
+### A. Khi có 2 nút (Modal Footer / Form Actions)
+
+- **Thứ tự chuẩn:** Nút phụ (Secondary/Ghost) đứng trước ➔ Nút chính (Primary) đứng sau (ngoài cùng bên phải).
+- **Phân cấp:** Nút Hủy dùng `secondary` hoặc `ghost`; nút Hành động chính dùng `primary`.
+
+```text
+[ Hủy (Secondary) ]   [ Lưu thay đổi (Primary) ]
+```
+
+```tsx
+<div className="flex items-center justify-end gap-3 pt-4">
+  <Button variant="secondary" onClick={onClose}>Hủy</Button>
+  <Button variant="primary" onClick={onSave}>Lưu thay đổi</Button>
+</div>
+```
+
+---
+
+### B. Khi có 3 nút
+
+#### 1. Mô hình Tiến trình Form (Hủy ➔ Lưu nháp ➔ Xuất bản/Lưu)
+- Căn phải (`justify-end`), độ ưu tiên tăng dần từ trái sang phải: `Ghost` ➔ `Secondary` ➔ `Primary`.
+
+```text
+[ Hủy (Ghost) ]   [ Lưu nháp (Secondary) ]   [ Xuất bản (Primary) ]
+```
+
+```tsx
+<div className="flex items-center justify-end gap-2.5">
+  <Button variant="ghost" onClick={onCancel}>Hủy</Button>
+  <Button variant="secondary" onClick={onSaveDraft}>Lưu nháp</Button>
+  <Button variant="primary" onClick={onPublish}>Xuất bản</Button>
+</div>
+```
+
+#### 2. Mô hình có Thao tác Nguy hiểm (Xóa vs Hủy / Lưu)
+- **Quy tắc an toàn:** Nút `Danger` (Xóa) PHẢI nằm tách biệt hẳn về bên trái (`justify-between`), cách xa cụm nút Xác nhận để tránh bấm nhầm.
+
+```text
+[ 🗑️ Xóa bản ghi (Danger) ]                  [ Hủy (Secondary) ] [ Cập nhật (Primary) ]
+|<----------- Trái ----------->|             |<---------------- Phải ---------------->|
+```
+
+```tsx
+<div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+  <Button variant="danger-outline" onClick={onDelete}>Xóa bản ghi</Button>
+  <div className="flex items-center gap-2">
+    <Button variant="secondary" onClick={onClose}>Hủy</Button>
+    <Button variant="primary" onClick={onUpdate}>Cập nhật</Button>
+  </div>
+</div>
+```
+
+#### 3. Mô hình Toolbar / Bộ lọc trang danh sách
+- Các nút bổ trợ là `secondary`, nút thêm mới chính là `primary`.
+
+```text
+[ Xuất Excel (Secondary) ]   [ Nhập CSV (Secondary) ]   [ + Tạo mới (Primary) ]
+```
+
+```tsx
+<div className="flex items-center gap-2">
+  <Button variant="secondary" leftIcon={<Download className="w-4 h-4" />}>Xuất Excel</Button>
+  <Button variant="secondary" leftIcon={<Upload className="w-4 h-4" />}>Nhập CSV</Button>
+  <Button variant="primary" leftIcon={<Plus className="w-4 h-4" />}>Tạo mới</Button>
+</div>
+```
+
+---
+
+### C. Xử lý trên Mobile (< 768px)
+- **Modal footer:** Dùng `flex-col-reverse` (Nút Primary lên trên cùng để ngón tay cái dễ thao tác nhất, nút Hủy nằm dưới cùng).
+- **Toolbar:** Gom các nút `secondary` vào menu `...` (More Actions), chỉ giữ lại nút `Primary` trên hàng.
+
+## 11. Phân định vai trò Header & Sidebar (Header-First Profile)
+
+Để tránh hiện tượng **trùng lặp Avatar và Menu người dùng gây rối mắt**, hệ thống tuân theo chuẩn **Header-First Profile**:
+
+1. **Header (Góc trên bên phải):**
+   - Là **Trung tâm tài khoản duy nhất** của toàn hệ thống (Global User Account Hub).
+   - Chứa: Avatar người dùng + Tên + Role label, Chuông thông báo (Notifications), Tìm kiếm nhanh (Ctrl+K).
+   - Dropdown tài khoản: Hồ sơ cá nhân, Cài đặt, Trung tâm hỗ trợ, Chủ đề giao diện (Dark mode), Đăng xuất.
+
+2. **Sidebar (Thanh bên trái):**
+   - Chức năng cốt lõi thuần túy là **Điều hướng danh mục hệ thống (Navigation Bar)**.
+   - **Chân Sidebar (Footer):** Thiết kế tối giản (Minimal Footer):
+     - Chỉ hiển thị trạng thái hệ thống (`● Hệ thống trực tuyến`) và liên kết hỗ trợ nhanh khi mở rộng.
+     - Thu gọn thành chấm xanh hiển thị trạng thái khi Sidebar ở chế độ `collapsed`.
+     - **Tuyệt đối KHÔNG** lặp lại khối Avatar + Popover Menu người dùng ở chân Sidebar.
+
+## 12. Icon-only và accessibility
 
 Button chỉ có icon bắt buộc có một trong các thông tin sau:
 
@@ -257,7 +357,7 @@ Toggle nên có:
 
 Không dùng icon để thay thế label khi hành động không rõ nghĩa.
 
-## 11. Ngoại lệ được phép
+## 12. Ngoại lệ được phép
 
 `rounded-full` chỉ được dùng có chủ đích cho:
 
@@ -270,7 +370,7 @@ Không dùng icon để thay thế label khi hành động không rõ nghĩa.
 
 Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần tử tương tác.
 
-## 12. Hiệu ứng và phản hồi
+## 13. Hiệu ứng và phản hồi
 
 - Transition ngắn, khoảng 150–200ms.
 - Ưu tiên transition màu nền, border, shadow, opacity và transform.
@@ -279,7 +379,7 @@ Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần t�
 - Hỗ trợ `prefers-reduced-motion`.
 - Không dùng hiệu ứng chớp, rung hoặc gradient quá mạnh cho thao tác thông thường.
 
-## 13. Checklist trước khi hoàn thành màn hình
+## 14. Checklist trước khi hoàn thành màn hình
 
 ### Typography
 
@@ -297,6 +397,7 @@ Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần t�
 - [ ] Nút phụ cao 36px.
 - [ ] Nút icon cao 36 hoặc 40px.
 - [ ] Tất cả dùng `rounded-xl`, trừ ngoại lệ được nêu rõ.
+- [ ] Nhóm 2-3 nút: Chỉ có 1 Primary, cùng chiều cao, nút Danger tách biệt sang trái.
 - [ ] Có hover, focus-visible, active, disabled và loading.
 - [ ] Loading khóa nút.
 - [ ] Icon-only có nhãn hoặc tooltip.
@@ -310,7 +411,7 @@ Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần t�
 - [ ] Mobile đạt vùng chạm tối thiểu 44px.
 - [ ] Không bị tràn chữ hoặc vỡ layout ở text dài.
 
-## 14. Lệnh kiểm tra kỹ thuật
+## 15. Lệnh kiểm tra kỹ thuật
 
 Chạy trong thư mục `frontend`:
 
@@ -330,7 +431,7 @@ Khi kiểm tra thủ công, dùng DevTools → Computed Styles và xác nhận:
 - Chiều cao đúng variant.
 - Focus-visible hiển thị rõ.
 
-## 15. Nguyên tắc ưu tiên
+## 16. Nguyên tắc ưu tiên
 
 Khi có xung đột, ưu tiên theo thứ tự:
 

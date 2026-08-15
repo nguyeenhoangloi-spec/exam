@@ -7,351 +7,298 @@ description: >
   Đây là nguồn chuẩn DUY NHẤT cho toàn bộ token, component contract và shell layout.
 ---
 
-# 🎨 Exam Design System — Nguồn Chuẩn UI
+# 🎨 Exam Design System — Nguồn Chuẩn UI Toàn Hệ Thống
 
-> **Đã xác minh theo codebase hiện tại** (kiểm tra ngày 2026-08-12).
-> Stack: Next.js App Router · TypeScript · Tailwind CSS · Inter font.
-
----
-
-## 1. Quy mô & cấu trúc codebase
-
-| Chỉ số | Giá trị |
-|---|---|
-| Route pages | 38 (trong `frontend/app/**`) |
-| File TSX | 174 |
-| UI components dùng chung | 10 (trong `frontend/components/ui/`) |
-| Shared components | `frontend/components/` (Header, Sidebar, RouteShell, Toast, ConfirmModal, Modal, v.v.) |
-
-**Paths quan trọng:**
-- Token: `frontend/tailwind.config.js` + `frontend/app/globals.css`
-- UI primitives: `frontend/components/ui/` (Button, Input, Card, Badge, Tabs, FilterSelect, Skeleton, TabBar, EmptyState, index)
-- StatusBadge: `frontend/components/common/StatusBadge.tsx` → re-exported qua `ui/index.tsx`
-- Shell: `frontend/components/RouteShell.tsx`, `Sidebar.tsx`, `Header.tsx`
+> **Đã đồng bộ và cập nhật theo bộ quy chuẩn chuẩn mực của hệ thống** ([ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md) & `scripts/audit-ui.mjs`).
+> Stack: Next.js App Router · TypeScript · Tailwind CSS · Inter Font.
 
 ---
 
-## 2. Token màu — CHỈ dùng các token này
+## 1. Quy tắc nhớ nhanh
 
-### Tailwind config đã có sẵn (tailwind.config.js)
-
-Token primary (blue):
-- primary-50  = #EFF6FF  → nền highlight, active nhẹ
-- primary-600 = #2563EB  → hành động chính, link, focus ← CHUẨN
-- primary-700 = #1D4ED8  → hover
-- primary-800 = #1E40AF  → active/pressed
-
-Token success (green):
-- success-600 = #15803D  → duyệt, hoàn thành, thành công ← CHUẨN
-
-Token warning (amber):
-- warning-600 = #D97706  → chờ duyệt, cảnh báo ← CHUẨN
-
-Token danger (red):
-- danger-600  = #DC2626  → lỗi, từ chối, xóa ← CHUẨN
-
-### Text colors
-
-| Vai trò | Hex | Dùng cho |
-|---|---|---|
-| text-primary | #0F172A | tiêu đề, dữ liệu quan trọng |
-| text-body | #1F2937 | nội dung chính |
-| text-secondary | #334155 | nhãn, icon trung tính |
-| text-muted | #475569 | helper, metadata |
-| text-disabled | #64748B | placeholder, disabled |
-| border-default | #E2E8F0 (slate-200) | viền card, input, table |
-| surface-page | #F8FAFC (slate-50) | nền trang |
-| surface | #FFFFFF | card, modal, table |
-
-### Quy tắc màu TUYỆT ĐỐI
-
-- KHÔNG thêm màu hex trực tiếp trong page/component mới
-- KHÔNG dùng purple/violet cho hành động thông thường
-- KHÔNG dùng màu duy nhất để truyền đạt trạng thái — phải kèm icon hoặc text
-- Biểu đồ và SVG dữ liệu phải dùng các biến `--ui-chart-*`; không gán hex trực tiếp trong TSX.
-- Màu nhận diện Google dùng biến `--ui-brand-google-*` và chỉ dành cho logo thương hiệu.
-- Các chuỗi màu/font riêng trong `print/export` là ngoại lệ có phạm vi, không được áp dụng cho Web UI.
-
----
-
-## 3. Typography Scale
-
-Dùng class utility .edu-* hoặc Tailwind tương đương:
-
-| Class | Size | Line-h | Weight | Dùng cho |
-|---|---|---|---|---|
-| .edu-page-title | 28px (mobile: 24px) | 36px | 600 | h1 mỗi page |
-| .edu-section-title | 20px (mobile: 18px) | 28px | 600 | h2 section |
-| .edu-card-title | 18px | 26px | 600 | Tiêu đề card |
-| .edu-body | 15px | 24px | 400 | Nội dung chính |
-| .edu-body-important | 15px | 24px | 500-600 | Dữ liệu quan trọng |
-| .edu-secondary | 14px | 20px | 400-500 | Label, mô tả phụ |
-| .edu-helper | 13px | 18px | 400-500 | Helper text, error |
-| .edu-badge | 12px | 18px | 600 | Badge, tag |
-| .edu-kpi | 32px | 38px | 700 | Số KPI (+ tabular-nums) |
-| .edu-table-header | 14px | 20px | 500 | th trong bảng |
-| .edu-table-content | 15px | 22px | 400 | td trong bảng |
-
-Quy tắc:
-- Không dùng text nhỏ hơn 12px cho nội dung chức năng
-- Ngoại lệ duy nhất: dòng brand phụ `HỆ THỐNG QUẢN LÝ THI` trong header Sidebar dùng 10px để vừa lockup cố định; không áp dụng ngoại lệ này cho dữ liệu, form, bảng, trạng thái hoặc nội dung nghiệp vụ.
-- Số liệu/điểm/KPI: thêm font-variant-numeric: tabular-nums (.edu-numeric)
-- Font weight tối đa: 700 (Inter chỉ load 400-700)
-- `code`, `pre`, `kbd`, `samp` trong Web UI vẫn kế thừa Inter; không dùng monospace.
-
----
-
-## 4. Spacing & Layout
-
-Lưới 4px/8px: 4, 8, 12, 16, 20, 24, 32px
-
-| Mục | Desktop | Mobile |
-|---|---|---|
-| Page padding | p-6 (24px) | p-4 (16px) |
-| Section gap | gap-6 (24px) | gap-4 |
-| Card padding | p-6 | p-4 hoặc p-5 |
-| Form field gap | gap-4 (16px) | — |
-| Label → control | space-y-1.5 (6px) | — |
-| Nút nhóm | gap-2 (8px) | — |
-| KPI grid | gap-4, 4 cột → 2 cột → 1 cột | — |
-
----
-
-## 5. Radius, Border, Shadow (Chuẩn hóa 4 Tầng Border Radius)
-
-| Phân loại | Tỷ lệ bo góc | Class Tailwind | Dùng cho các thành phần |
-|---|---|---|---|
-| **Thao tác (Controls)** | **8px** | `rounded-lg` | Button, Input, Search, Select, Date Picker, Textarea, Badge thao tác |
-| **Chứa nội dung (Containers)** | **12px** | `rounded-xl` | Table container, Card, Panel, Dropdown menu, Icon container |
-| **Nổi lớn (Overlays)** | **16px** | `rounded-2xl` | Modal, Dialog, ConfirmModal, CriticalConfirmModal, Popup lớn |
-| **Hình tròn thực sự** | **Full** | `rounded-full` | Avatar, Status Dot, Indicator tròn |
-
-### Quy tắc Border Radius bắt buộc:
-1. **Không dùng `rounded-full`** cho Button thông thường, Input, Select hoặc Badge chỉ để tạo dạng viên thuốc.
-2. **Thứ tự phân cấp chuẩn**: `8px (Thao tác)` ➔ `12px (Chứa nội dung)` ➔ `16px (Nổi lớn overlay)`.
-3. **Không tạo radius tùy ý** như `7px`, `10px`, `14px`, `18px`.
-4. Thành phần thao tác nhỏ sử dụng radius nhỏ hơn thành phần chứa nội dung (Inner Radius <= Outer Radius).
-
-Border: 1px border-slate-200/90. Không dùng border đậm trang trí.
-
-Shadow:
-- Card bình thường: shadow-2xs
-- Card hover: shadow-md
-- Không trộn rounded-xl, rounded-2xl, rounded-3xl cùng loại component
-
----
-
-## 6. Component Contract
-
-### 6.1 Button (components/ui/Button.tsx)
-
-Variants: primary | secondary | outline | ghost | danger | danger-outline | success | warning
-(secondary và outline là alias — ưu tiên dùng secondary)
-
-Sizes:
-- xs = h-7 (28px)
-- sm = h-8 (32px)
-- md = h-[38px] ← mặc định
-- lg = h-[42px]
-- icon = h-8 w-8
-- icon-lg = h-[34px] w-[34px]
-
-Props: isLoading, leftIcon, rightIcon, icon, disabled
-
-Checklist:
-- hover, active, disabled, loading, focus-visible đều có sẵn trong component
-- Nút nguy hiểm (xóa/thay đổi không thể đảo ngược) PHẢI dùng ConfirmModal
-- Mobile: hit-area tối thiểu 44×44px
-
-### 6.2 Input / Select / Textarea (components/ui/Input.tsx)
-
-Spec chuẩn:
-- Height: h-10 (40px desktop) — mobile tối thiểu 44px
-- Border mặc định: border-slate-200/90
-- Focus: focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20
-- Radius: rounded-[10px]
-- Label: text-[15px] font-medium
-- Helper/Error: text-[13px]
-
-Checklist:
-- Luôn có label — không dùng placeholder thay label
-- Error state: màu danger + text giải thích
-- Disabled: disabled:opacity-50 disabled:bg-slate-50 disabled:cursor-not-allowed
-
-### 6.3 Card (components/ui/Card.tsx)
-
-Import: import { Card, CardHeader, CardBody, CardFooter, StatisticCard } from '@/components/ui';
-
-Spec:
-- Class gốc: rounded-2xl border border-slate-200/90 bg-white shadow-2xs
-- Padding mặc định: p-6 (dùng prop noPadding để bỏ)
-- Hover: thêm hover:shadow-md transition
-- Header: border-bottom border-slate-100, pb-4 mb-4
-
-### 6.4 StatusBadge (components/common/StatusBadge.tsx)
-
-Import: import { StatusBadge } from '@/components/ui';
-
-LUÔN dùng StatusBadge — không tự tạo status mapping trong page.
-
-Icon mapping chuẩn:
-- Success/Active: CheckCircle2 + emerald/success color
-- In progress: PlayCircle/Clock + blue/primary
-- Pending/Review: Clock/Eye + amber/warning
-- Danger/Rejected: XCircle/AlertCircle + red/danger
-- Draft/Locked/Neutral: slate
-
-### 6.5 Table
-
-Wrapper bắt buộc:
+```text
+Font Web UI       = Inter (không dùng serif hoặc monospace trong Web UI)
+Màu chữ chính     = Black-forward (#0F172A, #111827, #1F2937), không dùng xám lợt
+Cỡ chữ chuẩn      = 15px (Button, Control, Input, Label, Table body)
+Weight chuẩn      = 400 (Body/Table cell), 500 (Label/Table header), 600 (Button/Title), 700 (KPI/H1)
+Bo góc controls   = rounded-xl (12px cho Button, Input, Select, Textarea, Filter)
+Nút chính (lg)    = cao 44px (h-11)
+Control/Filter(md)= cao 40px (h-10)
+Nút phụ (sm)      = cao 36px (h-9)
+Nút phụ gọn (xs)  = cao 32px (h-8)
+Nhóm 2-3 nút      = Chỉ 1 Primary, cùng chiều cao, nút Danger tách biệt hẳn sang trái
+Icon button       = 36×36px (icon) hoặc 40×40px (icon-lg)
+Mobile            = vùng chạm tối thiểu 44px
+Modal / Drawer    = z-[100]
+Toast             = fixed bottom-5 right-5, z-[110], rounded-2xl, tự đóng sau 4s
+ConfirmModal      = z-[9999], rounded-2xl, max-w-sm / max-w-lg
 ```
+
+---
+
+## 2. Font Family & Typography Scale
+
+### 2.1 Font Family
+
+Chỉ dùng Inter làm font chính cho toàn bộ Web UI:
+
+```css
+font-family:
+  var(--font-inter),
+  Inter,
+  ui-sans-serif,
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
+```
+
+**Tuyệt đối cấm trong Web UI:**
+- Times New Roman, Georgia, Cambria, `serif`, `font-serif`.
+- `font-mono` / monospace cho nội dung thông thường (các thẻ `code`, `pre`, `kbd` trong UI kế thừa Inter).
+
+*(Ngoại lệ file xuất: Word/Báo cáo in dùng Times New Roman; Excel dùng Arial).*
+
+### 2.2 Thang cỡ chữ Semantic
+
+| Token | Cỡ chữ | Line-height | Weight | Vai trò | Ví dụ |
+|---|---:|---:|---|---|---|
+| `fs-kpi` | 32px | 38px | 700 | KPI, tổng số nổi bật (+ tabular-nums) | `2.219` |
+| `fs-page-title` | 28px (mobile: 24px) | 36px | 600–700 | Tiêu đề trang (h1) | `Ngân hàng câu hỏi` |
+| `fs-section-title` | 20px (mobile: 18px) | 28px | 600 | Tiêu đề khu vực (h2) | `Thống kê trạng thái` |
+| `fs-card-title` | 18px | 26px | 600 | Tiêu đề card | `Thông tin kỳ thi` |
+| `fs-body` | 15px | 24px | 400 | Nội dung thường, button, input, label | `Tạo lịch thi` |
+| `fs-body-sm` | 14px | 20px | 500 | Nội dung phụ, header bảng | `Thời gian` |
+| `fs-helper` | 13px | 18px | 400–500 | Hướng dẫn, ghi chú, error | `Tối đa 10MB` |
+| `fs-badge` | 12px | 18px | 600 | Badge, trạng thái nhỏ | `Đã duyệt` |
+
+### 2.3 Phân cấp Font Weight
+
+- **400 (`font-normal`)**: Nội dung thường, mô tả, tbody cell dữ liệu.
+- **500 (`font-medium`)**: Label, header bảng (`thead th`), navigation, mã, ngày tháng, giá trị quét nhanh.
+- **600 (`font-semibold`)**: Tiêu đề card, button, action chính, trạng thái semantic.
+- **700 (`font-bold`)**: KPI, tổng số hoặc tiêu đề h1 trang.
+- **Cấm**: `font-light`, `font-thin`, `font-extralight`, hoặc font-weight < 400 / > 700 trong UI thông thường.
+- Không dùng utility `uppercase` cho button, table header hoặc label thông thường.
+
+---
+
+## 3. Bảng màu chuẩn (Black-forward Palette)
+
+### 3.1 Text Colors (Light Mode)
+
+| Token | Hex | Vai trò |
+|---|---|---|
+| `ui-text-primary` | `#0F172A` | Tiêu đề, nội dung chính |
+| `ui-text-body` | `#111827` | Nội dung thường |
+| `ui-text-secondary` | `#1F2937` | Label, dữ liệu phụ, header bảng |
+| `ui-text-muted-soft` | `#374151` | Metadata, mô tả, thông tin phụ |
+| `ui-text-disabled` | `#64748B` | Disabled hoặc không khả dụng |
+
+### 3.2 Semantic Brand & Status Colors
+
+- **Primary (Blue)**: `primary-50` (#EFF6FF), `primary-600` (#2563EB - chuẩn action chính), `primary-700` (#1D4ED8 - hover), `primary-800` (#1E40AF - active).
+- **Success (Green)**: `success-600` (#15803D), Toast/Badge emerald (#10B981) — Duyệt, hoàn thành, thành công.
+- **Warning (Amber)**: `warning-600` (#D97706), amber (#F59E0B) — Chờ duyệt, cảnh báo.
+- **Danger (Red)**: `danger-600` (#DC2626), Toast/Alert red (#EF4444) — Lỗi, từ chối, xóa.
+- **Neutral Surface**: `surface-page` (`#F8FAFC` / `slate-50`), `surface` (`#FFFFFF`), `border-default` (`#E2E8F0` / `slate-200`).
+
+### 3.3 Quy tắc màu TUYỆT ĐỐI
+
+- KHÔNG thêm màu hex trực tiếp trong JSX/TSX (trừ các trường hợp print/export có phạm vi riêng).
+- Biểu đồ và SVG dùng biến `--ui-chart-*`.
+- KHÔNG dùng accent tím/indigo/pink ngoài hệ màu chuẩn.
+- KHÔNG truyền đạt trạng thái chỉ bằng màu sắc (phải kèm icon hoặc text).
+
+---
+
+## 4. Quy chuẩn Button & Control
+
+### 4.1 Button ([components/ui/Button.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/Button.tsx))
+
+- **Bo góc**: `rounded-xl` (12px). Tuyệt đối không dùng `rounded-lg` hay `rounded-full` cho button thông thường.
+- **Kích thước**:
+  - `lg`: cao **44px** (`h-11`) — Đăng nhập, Tạo lịch thi...
+  - `md`: cao **40px** (`h-10`) — Lọc kết quả, Bộ lọc, Xuất Excel...
+  - `sm`: cao **36px** (`h-9`) — Đóng, Hủy...
+  - `xs`: cao **32px** (`h-8`) — Action phụ rất gọn
+  - `icon`: **36×36px** (`h-9 w-9`) — Chuông thông báo, icon đơn
+  - `icon-lg`: **40×40px** (`h-10 w-10`) — Làm mới, xem lưới
+- **Typography button**: 15px, `font-semibold` (weight 600).
+- **Nội dung button**: Cấu trúc `Động từ + Đối tượng` (Ví dụ: `Tạo lịch thi`, `Xuất Excel`, `Đăng nhập`). Không viết câu dài, không IN HOA toàn bộ.
+- **State bắt buộc**: Hover, focus-visible, active (`scale-[0.98]`), disabled, loading (`disabled={isLoading}` + `aria-busy={isLoading}`).
+- **Icon-only button**: Bắt buộc có `aria-label` hoặc tooltip/title.
+
+### 4.2 Control (Input / Select / Textarea / Filter)
+
+- Bo góc: `rounded-xl` (12px).
+- Chiều cao mặc định: **40px** (mobile tối thiểu 44px).
+- Font: 15px, Inter.
+- Label: 15px, `font-medium` (weight 500), `text-slate-800 dark:text-slate-200`.
+- Helper/Error: 13px.
+- Select/Dropdown: Chỉ có 1 mũi tên, không lồng 2 lớp khung ngoài. Căn cùng trục với nút action.
+
+---
+
+## 5. Bố cục & Phân chia Nhóm Nút (2 nút / 3 nút trên một hàng)
+
+### 5.1 Quy tắc cốt lõi:
+1. **Chỉ có DUY NHẤT 1 nút Primary** trong một cụm nhóm nút.
+2. **Đồng nhất kích thước:** Tất cả các nút trong cùng một hàng phải có **cùng chiều cao** (`h-10` hoặc `h-11`) và **cùng bo góc** `rounded-xl`.
+3. **Khoảng cách:** Dùng `gap-2` (8px) cho toolbar danh sách hoặc `gap-3` (12px) cho modal footer / form actions.
+
+### 5.2 Nhóm 2 nút (Modal Footer / Form Actions)
+- **Thứ tự chuẩn:** Nút phụ (Secondary/Ghost) đứng trước ➔ Nút chính (Primary) đứng sau (ngoài cùng bên phải).
+```text
+[ Hủy (Secondary) ]   [ Lưu thay đổi (Primary) ]
+```
+```tsx
+<div className="flex items-center justify-end gap-3 pt-4">
+  <Button variant="secondary" onClick={onClose}>Hủy</Button>
+  <Button variant="primary" onClick={onSave}>Lưu thay đổi</Button>
+</div>
+```
+
+### 5.3 Nhóm 3 nút
+1. **Tiến trình Form (Hủy ➔ Lưu nháp ➔ Xuất bản):**
+   Căn phải (`justify-end`), độ ưu tiên tăng dần từ trái sang phải: `Ghost` ➔ `Secondary` ➔ `Primary`.
+   ```tsx
+   <div className="flex items-center justify-end gap-2.5">
+     <Button variant="ghost" onClick={onCancel}>Hủy</Button>
+     <Button variant="secondary" onClick={onSaveDraft}>Lưu nháp</Button>
+     <Button variant="primary" onClick={onPublish}>Xuất bản</Button>
+   </div>
+   ```
+2. **Có Thao tác Nguy hiểm (Xóa vs Hủy / Lưu):**
+   Nút `Danger` (Xóa) PHẢI nằm tách biệt hẳn về bên trái (`justify-between`), cách xa cụm nút Xác nhận.
+   ```tsx
+   <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+     <Button variant="danger-outline" onClick={onDelete}>Xóa bản ghi</Button>
+     <div className="flex items-center gap-2">
+       <Button variant="secondary" onClick={onClose}>Hủy</Button>
+       <Button variant="primary" onClick={onUpdate}>Cập nhật</Button>
+     </div>
+   </div>
+   ```
+3. **Toolbar / Bộ lọc danh sách:**
+   Các nút bổ trợ là `secondary`, nút thêm mới chính là `primary`.
+   ```tsx
+   <div className="flex items-center gap-2">
+     <Button variant="secondary" leftIcon={<Download className="w-4 h-4" />}>Xuất Excel</Button>
+     <Button variant="secondary" leftIcon={<Upload className="w-4 h-4" />}>Nhập CSV</Button>
+     <Button variant="primary" leftIcon={<Plus className="w-4 h-4" />}>Tạo mới</Button>
+   </div>
+   ```
+
+### 5.4 Xử lý trên Mobile (< 768px)
+- **Modal footer:** Dùng `flex-col-reverse` (Nút Primary lên trên cùng để ngón tay cái dễ thao tác nhất, nút Hủy nằm dưới cùng).
+- **Toolbar:** Gom các nút `secondary` vào menu `...` (More Actions), chỉ giữ lại nút `Primary` trên hàng.
+
+---
+
+## 6. Popup, Modal, Toast & Hộp thoại
+
+### 6.1 Toast ([components/Toast.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/Toast.tsx))
+
+- **Vị trí**: Cố định góc dưới bên phải `fixed bottom-5 right-5` (CẤM đặt góc trái hoặc phía trên).
+- **Z-Index**: `z-[110]`.
+- **Hình dạng & Màu sắc**: `rounded-2xl`, `px-4 py-3`, chữ trắng 14px font-semibold.
+  - Success: nền `#10B981` (emerald-500), icon `CheckCircle2`.
+  - Error: nền `#EF4444` (red-500), icon `AlertCircle`.
+- **Thời gian**: Tự đóng sau 4000ms.
+- **Accessibility**: `role="status"`, `aria-live="polite"`.
+
+### 6.2 Modal ([components/Modal.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/Modal.tsx)) & Drawer
+
+- **Overlay**: `fixed inset-0 z-[100]`, nền `bg-slate-950/55 backdrop-blur-[2px]`.
+- **Hộp**: `rounded-2xl`, `max-w-2xl`, `bg-white dark:bg-slate-900`, `shadow-2xl`.
+- **Header**: `bg-slate-50 dark:bg-slate-800`, tiêu đề `text-lg font-semibold`. Đóng khi click ngoài hoặc ESC.
+
+### 6.3 ConfirmModal ([components/ConfirmModal.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ConfirmModal.tsx)) & CriticalConfirmModal
+
+- **Z-Index**: `z-[9999]` (nổi cao nhất).
+- **Overlay**: `fixed inset-0 bg-slate-950/60 backdrop-blur-sm`.
+- **Hộp**: `rounded-2xl`, `max-w-sm` (ConfirmModal) hoặc `max-w-lg` (CriticalConfirmModal).
+- Dùng cho mọi thao tác nguy hiểm, xóa dữ liệu hoặc thay đổi không thể đảo ngược.
+
+---
+
+## 7. Table & Danh sách Dữ liệu
+
+### 7.1 Wrapper bắt buộc
+
+```tsx
 <div className="ui-table-wrap">
   <table className="ui-table">
-    <thead>...</thead>
-    <tbody>...</tbody>
+    <thead>
+      <tr>
+        <th>Mã SV</th>
+        <th>Họ và tên</th>
+        <th>Trạng thái</th>
+      </tr>
+    </thead>
+    <tbody>
+      {/* rows */}
+    </tbody>
   </table>
 </div>
 ```
 
-Spec (từ globals.css):
-- Header: bg-slate-50 text-[14px] font-semibold
-- Cell: text-[15px] px-4 py-3.5
-- Row hover: hover:bg-slate-50/60
-- LUÔN có: loading skeleton, empty state, error state, pagination
+### 7.2 Chuẩn Typography Table
 
-### 6.6 Toast (components/Toast.tsx)
-
-Vị trí: fixed bottom-5 right-5 — KHÔNG đặt ở vị trí khác!
-
-Spec:
-- z-index: z-[110]
-- Border radius: rounded-2xl
-- Padding: px-4 py-3
-- Tự đóng sau: 4000ms
-- Success: bg #10B981 + icon CheckCircle2
-- Error: bg #EF4444 + icon AlertCircle
-- Accessibility: role="status" + aria-live="polite"
-
-### 6.7 ConfirmModal (components/ConfirmModal.tsx)
-
-Dùng cho mọi action nguy hiểm hoặc không thể đảo ngược.
-
-Props:
-- isOpen, onClose, onConfirm(reason?)
-- title, message
-- type: 'danger' | 'success' | 'warning' | 'info' (default: 'danger')
-- requireReason, confirmText, cancelText, isLoading
-
-Spec: z-[9999], overlay bg-slate-950/60 backdrop-blur-sm, rounded-2xl, max-w-sm
-
-### 6.8 Modal (components/Modal.tsx)
-
-Overlay: fixed inset-0 z-[100], bg-slate-950/55 backdrop-blur-[2px]
-Spec: rounded-2xl, max-w-2xl, close khi click overlay, ESC để đóng
+- **Header (`th`)**: Cỡ chữ **14px**, `font-medium` (weight 500), `bg-slate-50 dark:bg-slate-800`.
+- **Cell (`td`)**: Cỡ chữ **15px**, `font-normal` (weight 400).
+- **Trạng thái**: Dùng [StatusBadge](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/common/StatusBadge.tsx) (`import { StatusBadge } from '@/components/ui'`).
+- **Mã định danh / Số báo danh**: Dùng [IdentifierBadge](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/IdentifierBadge.tsx) (`rounded-lg`, 13px, `tabular-nums`).
+- **Luôn có**: Skeleton loading, EmptyState khi rỗng, Pagination khi nhiều trang.
 
 ---
 
-## 7. Shell Layout
+## 8. Dark Mode & Responsive
 
-### 7.1 RouteShell (components/RouteShell.tsx)
+### 8.1 Dark Mode
 
-Desktop:
-- Sidebar fixed left: 252px expanded / 72px collapsed
-- Header fixed top: 64px (h-16)
-- main: margin-left 252/72px, padding-top 64px (pt-16)
+- Sử dụng class `.dark` trên `<html>`.
+- Mọi component UI/JSX phải tự cung cấp `dark:` variant đầy đủ (ví dụ: `bg-white dark:bg-slate-900`, `text-slate-900 dark:text-slate-100`, `border-slate-200 dark:border-slate-700`).
 
-Mobile (< 768px):
-- Sidebar = drawer 252px + overlay button
-- Header: full width, left: 0
-- main: no margin-left
+### 8.2 Responsive Breakpoints
 
-Full-screen routes (KHÔNG có sidebar/header):
-/login, /student/online-exam, /contact, /forgot-password
-
-### 7.2 Sidebar states
-
-- Expanded: md:ml-[252px]
-- Collapsed: ml-[72px] + sidebar-text-node ẩn
-- State lưu: localStorage key "sidebar-collapsed"
-- Collapsed class trên html: "sidebar-collapsed"
-
-### 7.3 Active navigation style
-
-Active: bg-primary-50 text-primary-600 font-bold
-Inactive: text-slate-700 hover:bg-slate-100
-Group label: text-[13px] font-semibold text-slate-400 uppercase tracking-wider
-
----
-
-## 8. Dark Mode
-
-Dark mode dùng class .dark trên html.
-Theme lưu trong localStorage key "theme".
-
-Quy tắc khi viết component mới:
-- bg-white → dark:bg-slate-900
-- bg-slate-50 → dark:bg-slate-800
-- text-slate-900 → dark:text-slate-100
-- border-slate-200 → dark:border-slate-700
-- Không dùng light-only hex nếu chưa có dark counterpart
-
-Lưu ý: Legacy dark override trong globals.css dưới .app-shell-main.
-Component mới KHÔNG được phụ thuộc vào override này — phải tự có dark: variant.
-
----
-
-## 9. Responsive Breakpoints
-
-| Breakpoint | Width | Hành vi |
+| Breakpoint | Chiều rộng | Hành vi |
 |---|---|---|
-| Mobile | < 768px | Sidebar = drawer, padding 16px, table scroll ngang |
-| Tablet | 768px-1023px | Sidebar collapsed, KPI grid 2 cột |
-| Desktop | >= 1024px | Sidebar expanded, KPI grid 4 cột |
-| Wide | >= 1440px | Content max-w nếu cần căn giữa |
-
-Hit target mobile: tối thiểu 44×44px cho mọi button/icon/menu item.
+| Mobile | < 768px | Sidebar dạng drawer, padding p-4, table cuộn ngang, touch target 44px |
+| Tablet | 768px–1023px | Sidebar collapsed (72px), KPI grid 2 cột |
+| Desktop | >= 1024px | Sidebar expanded (252px), Header 64px, KPI grid 4 cột |
+| Wide | >= 1440px | Nội dung mở rộng hoặc max-w căn giữa |
 
 ---
 
-## 10. Page Template Chuẩn
+## 9. Lệnh kiểm tra kỹ thuật trước khi bàn giao
 
-Mỗi page mới phải có đủ:
-1. Page Header: h1 (edu-page-title) + mô tả + action button
-2. Filter/Search card
-3. Loading state (Skeleton)
-4. Error state (EmptyState với description lỗi)
-5. Empty state (EmptyState tiêu chuẩn)
-6. Data table/list
-7. Pagination
-8. Toast feedback cho mọi CUD action
+Chạy trong thư mục `frontend`:
 
----
-
-## 11. Checklist Nghiệm thu
-
-Trước khi hoàn thành bất kỳ màn hình nào:
-
-- [ ] Màu chỉ qua token Tailwind, không thêm hex tùy ý
-- [ ] Typography dùng đúng .edu-* scale
-- [ ] Card/table/modal dùng rounded-2xl, border-slate-200/90, shadow-2xs
-- [ ] Button: hover/active/disabled/loading/focus-visible đủ
-- [ ] Form: label, helper/error, focus, disabled đủ
-- [ ] Status dùng StatusBadge hoặc Badge từ ui
-- [ ] Mọi page: loading + empty + error + success feedback
-- [ ] Responsive: 375px, 768px, 1024px, 1440px
-- [ ] Dark mode: dark: variant cho mọi color class
-- [ ] Keyboard nav, focus-visible, aria-label
-- [ ] KHÔNG thay đổi API, database, route, phân quyền, nghiệp vụ
+```bash
+npm run audit:ui
+npx tsc --noEmit --incremental false --pretty false
+npm run lint -- --no-cache
+npm run build
+```
 
 ---
 
-## 12. Anti-patterns — TUYỆT ĐỐI KHÔNG làm
+## 10. Anti-patterns — TUYỆT ĐỐI KHÔNG làm
 
-❌ Dùng hex trực tiếp: style={{ color: '#2563EB' }}
-❌ Tự tạo status color mapping trong page
-❌ Dùng purple/violet cho hành động thông thường
-❌ Bỏ qua dark mode (thiếu dark: variant)
-❌ Text nhỏ hơn 12px trong nội dung chức năng
-❌ Trộn radius vi phạm phân cấp 4 tầng: Controls = 8px (rounded-lg), Containers = 12px (rounded-xl), Modals = 16px (rounded-2xl)
-❌ Toast ở vị trí khác fixed bottom-5 right-5
-❌ Status badge tự tạo không qua StatusBadge component
+❌ Dùng mã màu hex trực tiếp trong style hoặc class: `style={{ color: '#2563EB' }}` hay `bg-[#2563EB]`  
+❌ Dùng `rounded-lg` (8px) hoặc `rounded` cho Button/Input/Select (phải dùng `rounded-xl` / 12px)  
+❌ Dùng `rounded-full` cho button thông thường hoặc input  
+❌ Dùng font serif (`font-serif`) hoặc monospace (`font-mono`) trong Web UI  
+❌ Dùng cỡ chữ 10px, 11px, 12px, 14px, 16px cho nội dung body/button (chuẩn là 15px)  
+❌ Dùng font-weight < 400 (`font-light`, `font-thin`) hoặc > 700 (`font-black`) trong UI thông thường  
+❌ Viết in hoa toàn bộ (`uppercase`) cho button hoặc label  
+❌ Đặt Toast ở vị trí khác ngoài `fixed bottom-5 right-5`  
+❌ Tự viết status mapping màu tùy tiện thay vì dùng `StatusBadge`  
+❌ Để 2 nút Primary cùng xuất hiện trên 1 hàng / nhóm  
+❌ Đặt nút Danger liền kề ngay cạnh nút Primary mà không tách biệt sang bên trái  
+❌ Bỏ qua dark mode (`dark:`) hoặc bỏ qua trạng thái disabled khi `isLoading`  
+❌ Trùng lặp khối Avatar / Menu tài khoản ở cả Header và chân Sidebar (phải áp dụng chuẩn Header-First Profile)
+

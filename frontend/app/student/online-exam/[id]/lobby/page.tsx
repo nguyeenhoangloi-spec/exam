@@ -42,15 +42,21 @@ export default function StudentExamLobbyPage() {
           router.push(`/student/online-exam/${attempt.id}/result`);
           return;
         } else if (attempt.status === 'UNDER_REVIEW' || attempt.isFlagged) {
-          setError(res.reason || 'Bài thi đang bị tạm khóa để xem xét do vi phạm quy chế. Vui lòng liên hệ giám thị hoặc quản trị viên.');
+          const msg = res.reason || 'Bài thi đang bị tạm khóa để xem xét do vi phạm quy chế. Vui lòng liên hệ giám thị hoặc quản trị viên.';
+          setError(msg);
+          setToast({ message: msg, type: 'error' });
         }
       }
 
       if (!res.isEligible) {
-        setError(res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.');
+        const msg = res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.';
+        setError(msg);
+        setToast({ message: msg, type: 'error' });
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Không thể kiểm tra điều kiện dự thi');
+      const msg = err.response?.data?.message || err.message || 'Không thể kiểm tra điều kiện dự thi';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -207,16 +213,6 @@ export default function StudentExamLobbyPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* System Error / Waiting Alert */}
-            {error && (
-              <div className="p-4 bg-rose-50/80 dark:bg-rose-950/30 border-l-4 border-rose-500 text-rose-900 dark:text-rose-100 space-y-1">
-                <div className="font-semibold text-xs text-rose-900 dark:text-rose-200">
-                  Thông báo từ hệ thống khảo thí:
-                </div>
-                <p className="text-xs text-rose-700 dark:text-rose-300 font-normal leading-relaxed">{error}</p>
-              </div>
-            )}
-
             {/* ── Section 2: Thông tin Thí sinh & Phòng thi ── */}
             <div className="space-y-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
               <div className="text-[12px] font-bold  tracking-wider text-slate-400 dark:text-slate-500">

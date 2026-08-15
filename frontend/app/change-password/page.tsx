@@ -158,13 +158,6 @@ export default function ChangePasswordPage() {
             <span>Biểu mẫu cập nhật mật khẩu</span>
           </h2>
 
-          {error && (
-            <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs font-semibold text-rose-700 flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
           {/* Current Password */}
           <div className="space-y-1.5">
             <label className="block text-[15px] font-medium text-slate-800">Mật khẩu hiện tại</label>

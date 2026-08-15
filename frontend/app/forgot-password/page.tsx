@@ -489,14 +489,6 @@ export default function ForgotPasswordPage() {
               </p>
             </div>
 
-            {/* Error Notification */}
-            {error && (
-              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
-                <span className="shrink-0 text-rose-600 font-semibold">•</span>
-                <span>{error}</span>
-              </div>
-            )}
-
             {/* STEP 1: Request OTP Form */}
             {step === 1 && (
               <form onSubmit={handleRequestOtp} noValidate className="space-y-4">
@@ -740,6 +732,7 @@ export default function ForgotPasswordPage() {
         </p>
         <p className="text-[12px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
+      {error && <Toast message={error} type="error" onClose={() => setError('')} />}
     </div>
   );
 }

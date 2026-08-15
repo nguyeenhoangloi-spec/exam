@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound } from 'lucide-react';
+import { Eye, EyeOff, KeyRound } from 'lucide-react';
 import api from '../lib/api';
 import { Modal } from './Modal';
+import { Toast } from './Toast';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -56,17 +57,14 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
   const fieldClass = 'h-10 w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 text-[15px] leading-6 font-normal text-slate-900 dark:text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder:text-slate-400';
 
   return (
-    <Modal isOpen={isOpen} onClose={close} title="Đổi mật khẩu tài khoản">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs font-medium text-blue-900">
-          <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
-          <span>Mật khẩu mới phải có ít nhất 6 ký tự và khác mật khẩu hiện tại.</span>
-        </div>
+    <>
+      <Modal isOpen={isOpen} onClose={close} title="Đổi mật khẩu tài khoản">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
+            Mật khẩu mới phải có ít nhất 6 ký tự và khác mật khẩu hiện tại.
+          </p>
 
-        {errorMsg && <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{errorMsg}</span></div>}
-        {successMsg && <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /><span>{successMsg}</span></div>}
-
-        <PasswordField label="Mật khẩu hiện tại" value={currentPassword} onChange={setCurrentPassword} visible={showCurrent} onToggle={() => setShowCurrent((v) => !v)} placeholder="Nhập mật khẩu hiện tại" />
+          <PasswordField label="Mật khẩu hiện tại" value={currentPassword} onChange={setCurrentPassword} visible={showCurrent} onToggle={() => setShowCurrent((v) => !v)} placeholder="Nhập mật khẩu hiện tại" />
         <PasswordField label="Mật khẩu mới" value={newPassword} onChange={setNewPassword} visible={showNew} onToggle={() => setShowNew((v) => !v)} placeholder="Nhập mật khẩu mới" />
         <div className="space-y-1">
           <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">Xác nhận mật khẩu mới <span className="text-rose-500">*</span></label>
@@ -79,6 +77,9 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
         </div>
       </form>
     </Modal>
+    {errorMsg && <Toast message={errorMsg} type="error" onClose={() => setErrorMsg('')} />}
+    {successMsg && <Toast message={successMsg} type="success" onClose={() => setSuccessMsg('')} />}
+  </>
   );
 };
 

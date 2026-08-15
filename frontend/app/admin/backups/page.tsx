@@ -1356,11 +1356,11 @@ export default function BackupsPage() {
                 size="md"
             >
                 <div className="space-y-4 py-1">
-                    <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm leading-relaxed text-rose-900">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                         {rejectRequest?.status === 'FAILED'
                             ? 'Restore Production đã thất bại. Hệ thống đang giữ maintenance lock để tránh tiếp tục ghi dữ liệu. Chỉ mở khóa sau khi đã kiểm tra safety snapshot và nguyên nhân lỗi.'
                             : 'Yêu cầu này sẽ không được worker thực hiện. Hãy nhập lý do để lưu vào audit log.'}
-                    </div>
+                    </p>
                     <label className="block text-[15px] font-medium text-slate-700">
                         Lý do <span className="text-rose-500">*</span>
                     </label>

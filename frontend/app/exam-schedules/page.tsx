@@ -804,15 +804,6 @@ export default function ExamSchedulesPage() {
             </div>
           </div>
 
-
-
-          {isPastTime && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2 mt-2">
-              <AlertTriangle className="w-4.5 h-4.5 text-rose-600 shrink-0" />
-              <span>Thời gian thi không thể nằm trong quá khứ! Vui lòng chọn ngày và giờ bắt đầu lớn hơn thời điểm hiện tại.</span>
-            </div>
-          )}
-
           <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
             {!editingSchedule ? (
               <Button
