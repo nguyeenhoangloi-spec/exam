@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import api from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
@@ -12,6 +12,7 @@ import { Search, X, RotateCcw, ChevronDown } from 'lucide-react';
 
 import { RegradeHeader } from '../../../components/regrade/RegradeHeader';
 import { RegradeKPICards } from '../../../components/regrade/RegradeKPICards';
+import { RegradeFilterPopover } from '../../../components/regrade/RegradeFilterPopover';
 import { RegradeTableToolbar } from '../../../components/regrade/RegradeTableToolbar';
 import { RegradeTable } from '../../../components/regrade/RegradeTable';
 import { RegradePaginationBar } from '../../../components/regrade/RegradePaginationBar';
@@ -54,6 +55,19 @@ export default function RegradeManagementPage() {
   const [reviewerNote, setReviewerNote] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const fetchAppeals = useCallback(async () => {
     try {
@@ -291,19 +305,14 @@ export default function RegradeManagementPage() {
         rejected={counts.rejected}
       />
 
-      {/* ── 3. Status Tabs & Search Row (Chuẩn giống /exam-papers) ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
-        <TabBar
-          tabs={tabs}
-          active={statusTab}
-          onChange={(key) => { setStatusTab(key); setPage(1); }}
-          className="border-b-0 pt-0 w-auto"
-        />
-
-        <div className="flex items-center gap-2 shrink-0 pb-1 xl:pb-0">
-          <div className="relative w-full sm:w-64 md:w-72">
+      {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Left: Search input + 1 Unified Filter Popover */}
+        <div className="flex items-center gap-2 flex-1 max-w-xl">
+          <div className="relative flex-1 min-w-[240px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Tìm theo mã SV, họ tên, lý do..."
               value={search}
@@ -311,68 +320,78 @@ export default function RegradeManagementPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
-            {search && (
+            {search ? (
               <button
                 type="button"
                 onClick={() => {
                   setSearch('');
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
                 title="Xóa tìm kiếm"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
+            ) : (
+              <kbd
+                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                onClick={() => searchInputRef.current?.focus()}
+                title="Nhấn phím / để tìm nhanh"
+              >
+                /
+              </kbd>
             )}
           </div>
 
-          {subjectsList.length > 0 && (
-            <FilterSelect
-              value={subjectFilter}
-              onChange={(e) => { setSubjectFilter(e.target.value); setPage(1); }}
-              size="sm"
-            >
-              <option value="ALL">Tất cả môn học</option>
-              {subjectsList.map(([id, name]) => (
-                <option key={id} value={id}>
-                  {name}
-                </option>
-              ))}
-            </FilterSelect>
-          )}
+          <RegradeFilterPopover
+            statusTab={statusTab}
+            onStatusTabChange={(val) => {
+              setStatusTab(val);
+              setPage(1);
+            }}
+            subjectFilter={subjectFilter}
+            onSubjectFilterChange={(val) => {
+              setSubjectFilter(val);
+              setPage(1);
+            }}
+            appeals={appeals}
+            subjectsList={subjectsList}
+            totalFilteredCount={filteredAppeals.length}
+            onResetAll={() => {
+              setSearch('');
+              setStatusTab('ALL');
+              setSubjectFilter('ALL');
+              setPage(1);
+            }}
+          />
+        </div>
 
-          {(search || subjectFilter !== 'ALL' || statusTab !== 'ALL') && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearch('');
-                setSubjectFilter('ALL');
-                setStatusTab('ALL');
-                setPage(1);
-              }}
-              className="h-9 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-              title="Xóa tất cả bộ lọc"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>Xóa lọc</span>
-            </button>
-          )}
+        {/* Right: Table Action Controls */}
+        <div className="shrink-0">
+          <RegradeTableToolbar
+            totalCount={filteredAppeals.length}
+            sortOrder={sortOrder}
+            onSortChange={setSortOrder}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            visibleColumns={visibleColumns}
+            onColumnToggle={handleColumnToggle}
+            onRefresh={handleRefresh}
+          />
         </div>
       </div>
 
-      {/* ── 4. Table Action Toolbar (Multi-view & Column selection) ── */}
-      <RegradeTableToolbar
-        totalCount={filteredAppeals.length}
-        sortOrder={sortOrder}
-        onSortChange={setSortOrder}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        visibleColumns={visibleColumns}
-        onColumnToggle={handleColumnToggle}
-        onRefresh={handleRefresh}
-      />
+      {/* ── 4. Status Filter TabBar ── */}
+      <div className="border-b border-slate-200/80 dark:border-slate-800">
+        <TabBar
+          tabs={tabs}
+          active={statusTab}
+          onChange={(key) => { setStatusTab(key); setPage(1); }}
+          className="border-b-0 pt-0"
+        />
+      </div>
 
       {/* ── 5. Main Data Table Container ── */}
       <div>

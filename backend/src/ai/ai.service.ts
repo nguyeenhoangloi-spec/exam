@@ -60,7 +60,7 @@ QUY TẮC CHẤM BẮT BUỘC:
     const rubricText = dto.criteria
       .map(
         (c, idx) =>
-          `${idx + 1}. [ID: ${c.criterionId}] Tên tiêu chí: "${c.label}" (Điểm tối đa: ${c.maxScore})${c.description ? ` - Mô tả: ${c.description}` : ''}`,
+          `${idx + 1}. [ID: ${c.criterionId}] Tên tiêu chí: "${c.label}" (Điểm tối đa: ${c.maxScore})${c.description ? ` - Mô tả: ${c.description}` : ''}${c.fullCreditGuide ? ` - Đạt đầy đủ: ${c.fullCreditGuide}` : ''}${c.partialCreditGuide ? ` - Đạt một phần: ${c.partialCreditGuide}` : ''}${c.zeroCreditGuide ? ` - Không đạt: ${c.zeroCreditGuide}` : ''}${c.acceptedConcepts ? ` - Ý/khái niệm chấp nhận: ${c.acceptedConcepts}` : ''}${c.commonMistakes ? ` - Lỗi cần lưu ý: ${c.commonMistakes}` : ''}`,
       )
       .join('\n');
 
@@ -82,7 +82,9 @@ Vui lòng chấm điểm và trả về kết quả theo cấu trúc JSON như s
     {
       "criterionId": "string (khớp chính xác với ID tiêu chí)",
       "score": number (không âm, không quá điểm tối đa của tiêu chí. Nếu làm sai hoặc gõ linh tinh thì ghi 0),
-      "comment": "nhận xét chi tiết đúng/sai ngắn gọn"
+      "comment": "nhận xét chi tiết đúng/sai ngắn gọn",
+      "evidenceQuote": "đoạn ngắn trích nguyên văn từ bài làm, hoặc chuỗi rỗng",
+      "achievementLevel": "FULL | PARTIAL | NOT_MET | NEEDS_REVIEW"
     }
   ],
   "totalScore": number,

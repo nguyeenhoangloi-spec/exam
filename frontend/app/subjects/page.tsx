@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -17,6 +17,7 @@ import { BookOpen, Building2, Search, X, Award, ChevronDown, Users, GraduationCa
 
 import { SubjectHeader } from '../../components/subjects/SubjectHeader';
 import { SubjectKPICards } from '../../components/subjects/SubjectKPICards';
+import { SubjectFilterPopover } from '../../components/subjects/SubjectFilterPopover';
 import { SubjectTableToolbar } from '../../components/subjects/SubjectTableToolbar';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SubjectTable } from '../../components/subjects/SubjectTable';
@@ -24,39 +25,50 @@ import { SubjectPaginationBar } from '../../components/subjects/SubjectPaginatio
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function SubjectsPage() {
- usePageTitle('Quản lý môn học');
- const router = useRouter();
+  usePageTitle('Quản lý môn học');
+  const router = useRouter();
 
- const [currentUser, setCurrentUser] = useState<any>(null);
- const [subjects, setSubjects] = useState<Subject[]>([]);
- const [departments, setDepartments] = useState<Department[]>([]);
- const [classes, setClasses] = useState<any[]>([]);
- const [search, setSearch] = useState('');
- const [selectedDeptId, setSelectedDeptId] = useState('');
- const [filterCredits, setFilterCredits] = useState('');
- const [filterHasStudents, setFilterHasStudents] = useState('');
- const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [search, setSearch] = useState('');
+  const [selectedDeptId, setSelectedDeptId] = useState('');
+  const [filterCredits, setFilterCredits] = useState('');
+  const [filterHasStudents, setFilterHasStudents] = useState('');
+  const [loading, setLoading] = useState(true);
 
- const [page, setPage] = useState(1);
- const [limit, setLimit] = useState(8);
- const [sortOrder, setSortOrder] = useState('newest');
- const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
- const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
- subjectCode: true,
- subjectName: true,
- credits: true,
- department: true,
- });
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
- const handleColumnToggle = (key: string) => {
- setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
- };
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
- const [selected, setSelected] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    subjectCode: true,
+    subjectName: true,
+    credits: true,
+    department: true,
+  });
 
- // Drawer state
- const [drawerSubject, setDrawerSubject] = useState<Subject | null>(null);
- const [drawerTab, setDrawerTab] = useState<'info' | 'classes' | 'students'>('info');
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const [selected, setSelected] = useState<number[]>([]);
+  const [drawerSubject, setDrawerSubject] = useState<Subject | null>(null);
+  const [drawerTab, setDrawerTab] = useState<'info' | 'classes' | 'students'>('info');
  const [drawerEnrollments, setDrawerEnrollments] = useState<any[]>([]);
  const [drawerClassSummary, setDrawerClassSummary] = useState<any[]>([]);
  const [drawerLoading, setDrawerLoading] = useState(false);
@@ -375,124 +387,91 @@ export default function SubjectsPage() {
  questionCount={kpiData.questionCount}
  />
 
- {/* Filter Card Toolbar */}
- <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
- {/* Search Input Field */}
- <div className="relative w-full sm:w-72 md:w-80">
- <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
- <input
- type="text"
- placeholder="Tìm theo mã môn, tên môn học..."
- value={search}
- onChange={(e) => {
- setSearch(e.target.value);
- setPage(1);
- }}
- className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
- />
- {search && (
- <button
- type="button"
- onClick={() => {
- setSearch('');
- setPage(1);
- }}
- className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
- >
- <X className="h-4 w-4" />
- </button>
- )}
- </div>
+        {/* Search & Unified Smart Filter Popover Row */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Left: Search input + 1 Unified Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            {/* Search Input Field */}
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã môn, tên môn học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
+            </div>
 
- {/* Filter Select Dropdowns Group */}
- <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
-  {/* Khoa */}
-  <div className="flex items-center gap-2">
-  <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Khoa:</span>
-  <FilterSelect
-  value={selectedDeptId}
-  onChange={(e) => {
-  setSelectedDeptId(e.target.value);
-  setPage(1);
-  }}
-  size="md"
-  >
-  <option value="">Tất cả</option>
-  {departments.map((d) => (
-  <option key={d.id} value={String(d.id)}>
-  {d.name}
-  </option>
-  ))}
-  </FilterSelect>
-  </div>
+            {/* 1 Nút Bộ Lọc Duy Nhất Đa Chiều */}
+            <SubjectFilterPopover
+              selectedDeptId={selectedDeptId}
+              onDeptChange={(val) => {
+                setSelectedDeptId(val);
+                setPage(1);
+              }}
+              filterCredits={filterCredits}
+              onCreditsChange={(val) => {
+                setFilterCredits(val);
+                setPage(1);
+              }}
+              filterHasStudents={filterHasStudents}
+              onHasStudentsChange={(val) => {
+                setFilterHasStudents(val);
+                setPage(1);
+              }}
+              departments={departments}
+              subjects={subjects}
+              totalFilteredCount={filteredSubjects.length}
+              onResetAll={() => {
+                setSelectedDeptId('');
+                setFilterCredits('');
+                setFilterHasStudents('');
+                setPage(1);
+              }}
+            />
+          </div>
 
-  {/* Tín chỉ */}
-  <div className="flex items-center gap-2">
-  <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Tín chỉ:</span>
-  <FilterSelect
-  value={filterCredits}
-  onChange={(e) => {
-  setFilterCredits(e.target.value);
-  setPage(1);
-  }}
-  size="md"
-  >
-  <option value="">Tất cả</option>
-  {[1, 2, 3, 4, 5, 6].map((c) => (
-  <option key={c} value={String(c)}>
-  {c} TC
-  </option>
-  ))}
-  </FilterSelect>
-  </div>
-
-  {/* Sinh viên */}
-  <div className="flex items-center gap-2">
-  <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Sinh viên:</span>
-  <FilterSelect
-  value={filterHasStudents}
-  onChange={(e) => {
-  setFilterHasStudents(e.target.value);
-  setPage(1);
-  }}
-  size="md"
-  >
-  <option value="">Tất cả</option>
-  <option value="yes">Đã có SV</option>
-  <option value="no">Chưa có SV</option>
-  </FilterSelect>
-  </div>
-
- {/* Reset filters */}
- {(selectedDeptId || filterCredits || filterHasStudents || search) && (
- <button
- type="button"
- onClick={() => {
- setSearch('');
- setSelectedDeptId('');
- setFilterCredits('');
- setFilterHasStudents('');
- setPage(1);
- }}
- className="h-9 px-3 inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition cursor-pointer"
- >
- Xóa bộ lọc
- </button>
- )}
- </div>
- </div>
-
- <SubjectTableToolbar
- totalCount={filteredSubjects.length}
- sortOrder={sortOrder}
- onSortChange={setSortOrder}
- viewMode={viewMode}
- onViewModeChange={setViewMode}
- visibleColumns={visibleColumns}
- onColumnToggle={handleColumnToggle}
- onRefresh={handleRefresh}
- loading={loading}
- />
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <SubjectTableToolbar
+              totalCount={filteredSubjects.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={handleRefresh}
+              loading={loading}
+            />
+          </div>
+        </div>
 
  {loading ? (
  <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -13,6 +13,7 @@ import { Button } from '../../../components/ui/Button';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
+import { StudentCurriculumFilterPopover } from '../../../components/student-curriculum/StudentCurriculumFilterPopover';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import {
@@ -107,6 +108,19 @@ export default function StudentCurriculumPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Detail Modal
   const [detailItem, setDetailItem] = useState<CurriculumItem | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -140,42 +154,40 @@ export default function StudentCurriculumPage() {
     }
   }, []);
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
-    await fetchData();
-    setTimeout(() => setIsRefreshing(false), 600);
-    setToast({ message: 'Đã làm mới dữ liệu khung đào tạo', type: 'success' });
+    try {
+      await fetchData();
+      setToast({ message: 'Đã làm mới dữ liệu khung chương trình đào tạo!', type: 'success' });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 600);
+    }
   };
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
-      return;
-    }
-    fetchData();
-  }, [router, fetchData]);
-
-  const semesters = useMemo(
-    () => Array.from(new Set(curriculumList.map((i) => i.recommendedSemester))).sort((a, b) => a - b),
-    [curriculumList]
-  );
+  const semesters = useMemo(() => {
+    const sems = Array.from(new Set(curriculumList.map((item) => item.recommendedSemester)));
+    return sems.sort((a, b) => a - b);
+  }, [curriculumList]);
 
   // Filtered & Sorted list
   const filteredList = useMemo(() => {
     let result = curriculumList.filter((item) => {
       const matchSearch =
         item.subjectCode.toLowerCase().includes(search.toLowerCase()) ||
-        item.subjectName.toLowerCase().includes(search.toLowerCase()) ||
-        (item.note || '').toLowerCase().includes(search.toLowerCase());
+        item.subjectName.toLowerCase().includes(search.toLowerCase());
       const matchType = filterType === 'ALL' || item.type === filterType;
-      const matchSemester = filterSemester === 'ALL' || String(item.recommendedSemester) === filterSemester;
+      const matchSemester = filterSemester === 'ALL' || item.recommendedSemester === Number(filterSemester);
       const matchStatus =
         filterStatus === 'ALL' ||
-        (filterStatus === 'COMPLETED' && item.isCompleted) ||
-        (filterStatus === 'INCOMPLETE' && !item.isCompleted);
+        (filterStatus === 'COMPLETED' ? item.isCompleted : !item.isCompleted);
+
       return matchSearch && matchType && matchSemester && matchStatus;
     });
 
@@ -187,7 +199,7 @@ export default function StudentCurriculumPage() {
       if (sortOrder === 'name_desc') return b.subjectName.localeCompare(a.subjectName, 'vi');
       if (sortOrder === 'credits_desc') return b.credits - a.credits;
       if (sortOrder === 'credits_asc') return a.credits - b.credits;
-      return a.id - b.id;
+      return 0;
     });
 
     return result;
@@ -243,7 +255,7 @@ export default function StudentCurriculumPage() {
       unit: ' TC',
     },
     {
-      title: 'Môn bắt buộc',
+      title: 'Tín chỉ bắt buộc',
       value: stats?.totalMandatoryCredits ?? 0,
       subtext: 'Khối kiến thức cốt lõi',
       progressPercent: stats?.totalCredits ? Math.round(((stats.totalMandatoryCredits || 0) / stats.totalCredits) * 100) : 0,
@@ -251,7 +263,7 @@ export default function StudentCurriculumPage() {
       unit: ' TC',
     },
     {
-      title: 'Môn tự chọn',
+      title: 'Tín chỉ tự chọn',
       value: stats?.totalElectiveCredits ?? 0,
       subtext: 'Chuyên ngành tự chọn',
       progressPercent: stats?.totalCredits ? Math.round(((stats.totalElectiveCredits || 0) / stats.totalCredits) * 100) : 0,
@@ -375,7 +387,7 @@ export default function StudentCurriculumPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <Button
               variant="secondary"
               size="md"
@@ -396,8 +408,8 @@ export default function StudentCurriculumPage() {
           </div>
         </div>
 
-        {/* ── 2. Standard 5 KPI Cards Row With Micro Progress Tracks ── */}
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
+        {/* ── 2. Standard 4 KPI Cards Row With Micro Progress Tracks ── */}
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
           {KPI_CARDS.map((item) => {
             const IconComponent = item.icon;
             return (
@@ -421,7 +433,7 @@ export default function StudentCurriculumPage() {
                   </div>
                 </div>
 
-                {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
+                {/* Micro Progress Track */}
                 <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                   <div
                     className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
@@ -442,177 +454,157 @@ export default function StudentCurriculumPage() {
           })}
         </div>
 
-        {/* ── 3. Search & Filter Bar ── */}
+        {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="relative w-full sm:w-72 md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã môn, tên môn học..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+          {/* Left: Search input + 1 Unified Filter Popover */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã môn, tên môn học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                title="Xóa tìm kiếm"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterSelect
-              size="md"
-              value={filterSemester}
-              onChange={(e) => {
-                setFilterSemester(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="ALL">Tất cả học kỳ</option>
-              {semesters.map((sem) => (
-                <option key={sem} value={String(sem)}>
-                  Học kỳ {sem}
-                </option>
-              ))}
-            </FilterSelect>
-
-            <FilterSelect
-              size="md"
-              value={filterType}
-              onChange={(e) => {
-                setFilterType(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="ALL">Tất cả loại môn</option>
-              <option value="MANDATORY">Môn bắt buộc</option>
-              <option value="ELECTIVE">Môn tự chọn</option>
-            </FilterSelect>
-
-            <FilterSelect
-              size="md"
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="ALL">Tất cả trạng thái</option>
-              <option value="COMPLETED">Đã hoàn thành</option>
-              <option value="INCOMPLETE">Chưa tích lũy</option>
-            </FilterSelect>
-
-            {(search || filterSemester !== 'ALL' || filterType !== 'ALL' || filterStatus !== 'ALL') && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
-                  setFilterSemester('ALL');
-                  setFilterType('ALL');
-                  setFilterStatus('ALL');
-                  setPage(1);
-                }}
-                className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                title="Xóa tất cả bộ lọc"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>Xóa lọc</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-              Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> môn học
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Sort */}
-            <SortDropdown
-              value={sortOrder}
-              onChange={(val) => setSortOrder(val)}
-              options={[
-                { value: 'semester_asc', label: 'Học kỳ: Tăng dần' },
-                { value: 'semester_desc', label: 'Học kỳ: Giảm dần' },
-                { value: 'name_asc', label: 'Tên môn: A - Z' },
-                { value: 'name_desc', label: 'Tên môn: Z - A' },
-                { value: 'credits_desc', label: 'Số tín chỉ: Cao nhất' },
-                { value: 'credits_asc', label: 'Số tín chỉ: Thấp nhất' },
-              ]}
-            />
-
-            {/* Column Selector */}
-            <ColumnToggleDropdown
-              columns={columnsList}
-              visibleColumns={visibleColumns}
-              onToggle={handleColumnToggle}
-            />
-
-            {/* View Mode Pills */}
-            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                  viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng danh sách"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thẻ"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('compact')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                  viewMode === 'compact'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thu gọn"
-              >
-                <Layers className="h-4 w-4" />
-              </button>
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
             </div>
 
-            {/* Refresh */}
-            <button
-              type="button"
-              onClick={handleManualRefresh}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
-              title="Làm mới dữ liệu"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading || isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
+            <StudentCurriculumFilterPopover
+              filterSemester={filterSemester}
+              onFilterSemesterChange={(val) => {
+                setFilterSemester(val);
+                setPage(1);
+              }}
+              filterType={filterType}
+              onFilterTypeChange={(val) => {
+                setFilterType(val);
+                setPage(1);
+              }}
+              filterStatus={filterStatus}
+              onFilterStatusChange={(val) => {
+                setFilterStatus(val);
+                setPage(1);
+              }}
+              semesters={semesters}
+              curriculumList={curriculumList}
+              totalFilteredCount={totalItems}
+              onResetAll={() => {
+                setSearch('');
+                setFilterSemester('ALL');
+                setFilterType('ALL');
+                setFilterStatus('ALL');
+                setPage(1);
+              }}
+            />
+          </div>
+
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                  Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> môn học
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Sort */}
+                <SortDropdown
+                  value={sortOrder}
+                  onChange={(val) => setSortOrder(val)}
+                  options={[
+                    { value: 'semester_asc', label: 'Học kỳ: Tăng dần' },
+                    { value: 'semester_desc', label: 'Học kỳ: Giảm dần' },
+                    { value: 'name_asc', label: 'Tên môn: A - Z' },
+                    { value: 'name_desc', label: 'Tên môn: Z - A' },
+                    { value: 'credits_desc', label: 'Số tín chỉ: Cao nhất' },
+                    { value: 'credits_asc', label: 'Số tín chỉ: Thấp nhất' },
+                  ]}
+                />
+
+                {/* Column Selector */}
+                <ColumnToggleDropdown
+                  columns={columnsList}
+                  visibleColumns={visibleColumns}
+                  onToggle={handleColumnToggle}
+                />
+
+                {/* View Mode Pills */}
+                <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('list')}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                      viewMode === 'list'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                    title="Dạng danh sách"
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('grid')}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                      viewMode === 'grid'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                    title="Dạng thẻ"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('compact')}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                      viewMode === 'compact'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                    title="Dạng thu gọn"
+                  >
+                    <Layers className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Refresh Button */}
+                <button
+                  type="button"
+                  onClick={handleManualRefresh}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+                  title="Làm mới dữ liệu"
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading || isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

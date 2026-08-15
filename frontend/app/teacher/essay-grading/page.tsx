@@ -49,6 +49,7 @@ function TeacherEssayGradingContent() {
   const [scores, setScores] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [teacherComments, setTeacherComments] = useState<Record<string, string>>({});
+  const [aiEvidence, setAiEvidence] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -58,6 +59,19 @@ function TeacherEssayGradingContent() {
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
   const [dateFilter, setDateFilter] = useState<string>('ALL');
   const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   const [sortOrder, setSortOrder] = useState<string>('newest');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
@@ -106,7 +120,6 @@ function TeacherEssayGradingContent() {
       const initScores: Record<string, number> = {};
       const initComments: Record<string, string> = {};
       const initTeacherComments: Record<string, string> = {};
-      const answersToAiSuggest: any[] = [];
 
       (attemptData.attemptAnswers || []).forEach((ans: any) => {
         if (ans.teacherComment) initTeacherComments[ans.questionId] = ans.teacherComment;
@@ -115,13 +128,6 @@ function TeacherEssayGradingContent() {
           if (grade.comment) initComments[grade.criterionId] = grade.comment;
         });
 
-        // Nếu chưa có điểm Rubric -> Xếp hàng để tự động gọi AI suggest
-        if (!ans.essayGrades || ans.essayGrades.length === 0) {
-          const q = (attemptData.questions || []).find((item: any) => item.questionId === ans.questionId);
-          if (q && q.type === 'ESSAY') {
-            answersToAiSuggest.push({ answer: ans, question: q });
-          }
-        }
       });
 
       // Mặc định tự động gán 0 điểm cho bất kỳ câu hỏi tự luận nào chưa có điểm hoặc sinh viên không làm
@@ -148,29 +154,6 @@ function TeacherEssayGradingContent() {
       setComments(initComments);
       setTeacherComments(initTeacherComments);
 
-      // Tự động gọi AI gợi ý chấm cho các câu tự luận chưa có điểm và cập nhật lên UI
-      if (answersToAiSuggest.length > 0) {
-        for (const item of answersToAiSuggest) {
-          try {
-            const aiRes = await api.post(`/essay-grading/answers/${item.answer.id}/ai-suggest`);
-            const aiData = aiRes.data;
-            if (aiData && Array.isArray(aiData.criteria)) {
-              aiData.criteria.forEach((c: any) => {
-                initScores[c.criterionId] = c.score;
-                if (c.comment) initComments[c.criterionId] = c.comment;
-              });
-            }
-            if (aiData.overallComment && !initTeacherComments[item.question.questionId]) {
-              initTeacherComments[item.question.questionId] = aiData.overallComment;
-            }
-          } catch (aiErr) {
-            // Background AI fallback
-          }
-        }
-        setScores({ ...initScores });
-        setComments({ ...initComments });
-        setTeacherComments({ ...initTeacherComments });
-      }
     } catch (e: any) {
       setMessage(e?.response?.data?.message || 'Không thể tải chi tiết bài làm.');
     }
@@ -213,6 +196,26 @@ function TeacherEssayGradingContent() {
       return;
     }
     setScores((prev) => ({ ...prev, [criterionId]: num }));
+  };
+
+  const requestAiSuggestion = async (answerId: string, questionId: string) => {
+    if (!answerId) return;
+    setAiLoading(answerId);
+    setMessage('');
+    try {
+      const response = await api.post(`/essay-grading/answers/${answerId}/ai-suggest`);
+      const data = response.data;
+      if (!Array.isArray(data?.criteria)) throw new Error('AI không trả đủ tiêu chí chấm.');
+      setScores((previous) => ({ ...previous, ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.score])) }));
+      setComments((previous) => ({ ...previous, ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.comment || ''])) }));
+      setAiEvidence((previous) => ({ ...previous, ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.evidenceQuote || 'Không có minh chứng rõ ràng'])) }));
+      if (data.overallComment) setTeacherComments((previous) => ({ ...previous, [questionId]: previous[questionId] || data.overallComment }));
+      setMessage('AI đã tạo đề xuất. Hãy kiểm tra minh chứng và xác nhận hoặc điều chỉnh điểm từng tiêu chí.');
+    } catch (error: any) {
+      setMessage(error?.response?.data?.message || error?.message || 'Không thể tạo đề xuất AI. Bạn vẫn có thể chấm thủ công.');
+    } finally {
+      setAiLoading(null);
+    }
   };
 
   const [batchAiLoading, setBatchAiLoading] = useState(false);
@@ -671,20 +674,30 @@ function TeacherEssayGradingContent() {
             <div className="relative w-full">
               <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Tìm mã SV, tên SV, môn, ca thi..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
               />
-              {searchQuery && (
+              {searchQuery ? (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  title="Xóa tìm kiếm"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 border border-slate-200 font-mono text-[9px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
               )}
             </div>
 
@@ -902,6 +915,16 @@ function TeacherEssayGradingContent() {
                           <div className="flex items-center gap-2 shrink-0">
                             <button
                               type="button"
+                              disabled={!ans?.id || aiLoading === ans.id}
+                              onClick={() => ans?.id && requestAiSuggestion(ans.id, q.questionId)}
+                              className="inline-flex items-center gap-1 text-[15px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 px-3 py-1.5 rounded-xl hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60 transition cursor-pointer shadow-2xs"
+                              title="AI chỉ đề xuất điểm; giảng viên vẫn quyết định điểm chính thức"
+                            >
+                              {aiLoading === ans?.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                              <span>{aiLoading === ans?.id ? 'Đang phân tích' : 'AI đề xuất'}</span>
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: q.rubric || [] })}
                               className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
                             >
@@ -960,8 +983,8 @@ function TeacherEssayGradingContent() {
                                     <span className="tabular-nums text-[15px] font-semibold text-slate-500 shrink-0 ml-2">Tối đa {r.maxScore}đ</span>
                                   </div>
 
-                                  <div className="flex gap-2 items-center flex-wrap">
-                                    <input
+                                   <div className="flex gap-2 items-center flex-wrap">
+                                     <input
                                       type="number"
                                       step={0.25}
                                       min={0}
@@ -996,9 +1019,14 @@ function TeacherEssayGradingContent() {
                                       value={comments[r.id] || ''}
                                       onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
                                       className="flex-1 min-w-[200px] bg-slate-50/50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:bg-white focus:border-blue-500 focus:outline-none"
-                                    />
-                                  </div>
-                                </div>
+                                     />
+                                   </div>
+                                   {aiEvidence[r.id] && (
+                                     <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-[13px] leading-relaxed text-blue-950 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-100">
+                                       <span className="font-semibold">Minh chứng AI: </span>{aiEvidence[r.id]}
+                                     </div>
+                                   )}
+                                 </div>
                               ))}
                             </div>
                           </div>

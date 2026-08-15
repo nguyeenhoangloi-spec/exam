@@ -93,12 +93,27 @@ export class EssayService {
 
   async getRubric(actor: any, questionId: string) {
     await this.assertRubricAccess(actor, questionId);
+    const version = await this.prisma.essayRubricVersion.findFirst({
+      where: { questionId },
+      include: { criteria: { orderBy: { sortOrder: 'asc' } } },
+      orderBy: { version: 'desc' },
+    });
+    if (version) return version.criteria;
     return this.prisma.essayRubricCriterion.findMany({ where: { questionId }, orderBy: { sortOrder: 'asc' } });
+  }
+
+  async getRubricVersions(actor: any, questionId: string) {
+    await this.assertRubricAccess(actor, questionId);
+    return this.prisma.essayRubricVersion.findMany({
+      where: { questionId },
+      include: { criteria: { orderBy: { sortOrder: 'asc' } } },
+      orderBy: { version: 'desc' },
+    });
   }
 
   async saveRubric(actor: any, questionId: string, dto: RubricDto) {
     await this.assertRubricAccess(actor, questionId);
-    const question = await this.prisma.question.findUnique({ where: { id: questionId }, select: { type: true, score: true, content: true } });
+    const question = await this.prisma.question.findUnique({ where: { id: questionId }, select: { type: true, score: true, content: true, explanation: true } });
     if (!question) throw new NotFoundException('Không tìm thấy câu hỏi.');
     if (question.type !== 'ESSAY') throw new BadRequestException('Chỉ câu hỏi tự luận (ESSAY) mới được tạo Rubric chấm điểm.');
     if (!dto.criteria || !dto.criteria.length) throw new BadRequestException('Rubric phải có ít nhất 1 tiêu chí.');
@@ -125,14 +140,37 @@ export class EssayService {
     }
 
     const result = await this.prisma.$transaction(async (tx) => {
-      await tx.essayRubricCriterion.deleteMany({ where: { questionId } });
-      const rows = await Promise.all(
-        dto.criteria.map((item) =>
-          tx.essayRubricCriterion.create({
-            data: { questionId, label: item.label, description: item.description || '', maxScore: item.maxScore, sortOrder: item.sortOrder },
-          }),
-        ),
-      );
+      const latest = await tx.essayRubricVersion.findFirst({
+        where: { questionId },
+        orderBy: { version: 'desc' },
+        select: { version: true },
+      });
+      const version = await tx.essayRubricVersion.create({
+        data: {
+          questionId,
+          version: (latest?.version || 0) + 1,
+          referenceAnswer: dto.referenceAnswer?.trim() || question.explanation || null,
+          gradingGuidance: dto.gradingGuidance?.trim() || null,
+          totalScore: totalRubricScore,
+          createdById: actor.id,
+          criteria: {
+            create: dto.criteria.map((item) => ({
+              questionId,
+              label: item.label.trim(),
+              description: item.description?.trim() || null,
+              fullCreditGuide: item.fullCreditGuide?.trim() || null,
+              partialCreditGuide: item.partialCreditGuide?.trim() || null,
+              zeroCreditGuide: item.zeroCreditGuide?.trim() || null,
+              acceptedConcepts: item.acceptedConcepts?.trim() || null,
+              commonMistakes: item.commonMistakes?.trim() || null,
+              scoreStep: item.scoreStep || 0.25,
+              maxScore: item.maxScore,
+              sortOrder: item.sortOrder,
+            })),
+          },
+        },
+        include: { criteria: { orderBy: { sortOrder: 'asc' } } },
+      });
       await this.audit.write(
         {
           actorId: actor.id,
@@ -140,11 +178,11 @@ export class EssayService {
           entityType: 'Question',
           entityId: questionId,
           description: 'Cập nhật Rubric câu hỏi tự luận',
-          metadata: { totalRubricScore, criteriaCount: rows.length },
+          metadata: { totalRubricScore, criteriaCount: version.criteria.length, rubricVersion: version.version },
         },
         tx,
       );
-      return rows;
+      return version.criteria;
     });
 
     return result.sort((a, b) => a.sortOrder - b.sortOrder);
@@ -547,6 +585,13 @@ export class EssayService {
           `Điểm tiêu chí "${criterion.label}" (${item.score}) không được vượt điểm tối đa (${criterion.maxScore}).`,
         );
       }
+      const scoreStep = Number(criterion.scoreStep || 0.25);
+      const stepRatio = item.score / scoreStep;
+      if (Math.abs(stepRatio - Math.round(stepRatio)) > 0.000001) {
+        throw new BadRequestException(
+          `Điểm tiêu chí "${criterion.label}" phải theo bước ${scoreStep} điểm.`,
+        );
+      }
     }
 
     const totalScore = Number(
@@ -687,6 +732,16 @@ export class EssayService {
       };
     }
 
+    const aiRun = await this.prisma.essayAiGradingRun.create({
+      data: {
+        attemptAnswerId: answer.id,
+        rubricVersionId: answer.rubricVersionId || null,
+        requestedById: actor.id,
+        status: 'RUNNING',
+        startedAt: new Date(),
+      },
+    });
+
     const prompt = `Bạn là trợ lý AI chấm thi. Nhiệm vụ của bạn là phân tích bài làm của sinh viên và đề xuất điểm số theo đúng Rubric. Bạn CHỈ ĐỀ XUẤT, không tự quyết định điểm số chính thức.
 
 CÂU HỎI:
@@ -732,6 +787,11 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
             label: r.label,
             maxScore: r.maxScore,
             description: r.description,
+            fullCreditGuide: r.fullCreditGuide || undefined,
+            partialCreditGuide: r.partialCreditGuide || undefined,
+            zeroCreditGuide: r.zeroCreditGuide || undefined,
+            acceptedConcepts: r.acceptedConcepts || undefined,
+            commonMistakes: r.commonMistakes || undefined,
           })),
         });
 
@@ -746,6 +806,10 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
                 criterionId: r.id,
                 score: Number(score.toFixed(2)),
                 comment: String(item.comment || '').trim(),
+                evidenceQuote: String(item.evidenceQuote || '').trim().slice(0, 500),
+                achievementLevel: ['FULL', 'PARTIAL', 'NOT_MET', 'NEEDS_REVIEW'].includes(String(item.achievementLevel))
+                  ? String(item.achievementLevel)
+                  : 'NEEDS_REVIEW',
               };
             })
             .filter(Boolean);
@@ -758,52 +822,18 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
           }
         }
       } catch (aiErr: any) {
-        this.logger.warn(`AiService gradeEssay failed: ${aiErr?.message || aiErr}. Fallback to Heuristic.`);
+        this.logger.warn(`AiService gradeEssay failed: ${aiErr?.message || aiErr}.`);
+        warningMsg = 'Dịch vụ AI không phản hồi. Giảng viên cần chấm thủ công hoặc thử lại sau.';
       }
 
-      // Nếu AI API không khả dụng -> Kích hoạt Heuristic AI Engine kiểm tra nội dung
+      // Do not turn a keyword/length heuristic into a grading decision.  A failed
+      // provider must leave the official marking workflow available for lecturers.
       if (!criteria.length) {
-        this.logger.warn('Dịch vụ Cloud AI không phản hồi. Kích hoạt Heuristic AI Scoring...');
-        const rawAns = (answer.textAnswer || '').trim();
-        const textLen = rawAns.length;
-        const isNoiseText = textLen < 15 || /^[0-9a-zA-Z\s.,!-]{1,10}$/.test(rawAns) || /^(1|a|b|c|test|abc|xxx|123)$/i.test(rawAns);
-
-        criteria = rubric.map((r) => {
-          let scoreFactor = 0;
-          let cm = 'Bài làm không đúng nội dung câu hỏi hoặc chưa trả lời.';
-
-          if (textLen === 0 || isNoiseText) {
-            scoreFactor = 0;
-            cm = 'Bài làm không có nội dung hợp lệ hoặc chưa đạt yêu cầu.';
-          } else {
-            const refText = (snapshot.content + ' ' + (snapshot.explanation || '')).toLowerCase();
-            const ansWords = rawAns.toLowerCase().split(/\s+/).filter((w) => w.length > 2);
-            const matched = ansWords.filter((w) => refText.includes(w));
-            const matchRatio = ansWords.length > 0 ? matched.length / ansWords.length : 0;
-
-            if (matchRatio > 0.25 || textLen > 80) {
-              scoreFactor = 0.8;
-              cm = 'Bài làm trình bày đúng nội dung tiêu chí liên quan đề bài.';
-            } else if (matchRatio > 0.1 || textLen > 30) {
-              scoreFactor = 0.4;
-              cm = 'Bài làm sơ lược, cần phân tích chi tiết hơn.';
-            } else {
-              scoreFactor = 0;
-              cm = 'Nội dung bài làm chưa khớp với yêu cầu đề bài.';
-            }
-          }
-
-          const sc = Number(Math.min(r.maxScore * scoreFactor, r.maxScore).toFixed(2));
-          return {
-            criterionId: r.id,
-            score: sc,
-            comment: cm,
-          };
+        await this.prisma.essayAiGradingRun.update({
+          where: { id: aiRun.id },
+          data: { status: 'FAILED', errorMessage: warningMsg || 'Không nhận được kết quả AI hợp lệ.', completedAt: new Date() },
         });
-
-        const totalSc = criteria.reduce((sum, c) => sum + c.score, 0);
-        overallComment = totalSc > 0 ? 'Bài làm trình bày nội dung có căn cứ theo câu hỏi.' : 'Bài làm không đúng yêu cầu đề bài (0 điểm).';
-        warningMsg = 'AI đã gợi ý tự động (Chế độ AI nội bộ). Vui lòng kiểm tra lại điểm số trước khi bấm Lưu.';
+        throw new BadRequestException(warningMsg || 'Không nhận được kết quả AI hợp lệ. Vui lòng chấm thủ công hoặc thử lại sau.');
       }
 
       const aiSuggestedTotal = Number(criteria.reduce((sum: number, c: any) => sum + c.score, 0).toFixed(2));
@@ -819,6 +849,30 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
         },
       });
 
+      await this.prisma.$transaction(async (tx) => {
+        await tx.essayAiGradingRun.update({
+          where: { id: aiRun.id },
+          data: {
+            status: 'SUCCEEDED',
+            suggestedScore: aiSuggestedTotal,
+            overallComment,
+            confidence,
+            warning: warningMsg || null,
+            completedAt: new Date(),
+          },
+        });
+        await tx.essayAiCriterionResult.createMany({
+          data: criteria.map((item: any) => ({
+            aiGradingRunId: aiRun.id,
+            criterionId: item.criterionId,
+            suggestedScore: item.score,
+            achievementLevel: item.achievementLevel || 'NEEDS_REVIEW',
+            comment: item.comment || null,
+            evidenceQuote: item.evidenceQuote || null,
+          })),
+        });
+      });
+
       await this.audit.write({
         actorId: actor.id,
         action: 'ESSAY_AI_SUGGEST',
@@ -829,6 +883,7 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
       });
 
       return {
+        runId: aiRun.id,
         criteria,
         overallComment,
         confidence,
@@ -836,6 +891,10 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
         requiresTeacherConfirmation: true,
       };
     } catch (error: any) {
+      await this.prisma.essayAiGradingRun.update({
+        where: { id: aiRun.id },
+        data: { status: 'FAILED', errorMessage: error?.message || 'Không thể tạo đề xuất AI.', completedAt: new Date() },
+      }).catch(() => undefined);
       if (error instanceof BadRequestException) throw error;
       this.logger.error(`Lỗi AI chấm bài: ${error?.message}`);
       throw new BadRequestException('Không thể kết nối dịch vụ AI chấm bài. Vui lòng thử lại sau.');

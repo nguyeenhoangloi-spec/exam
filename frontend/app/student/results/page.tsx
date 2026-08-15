@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -13,6 +13,7 @@ import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
+import { StudentResultFilterPopover } from '../../../components/student-results/StudentResultFilterPopover';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { downloadCsv } from '../../../lib/export-csv';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
@@ -126,8 +127,22 @@ export default function StudentResultsPage() {
  const [page, setPage] = useState<number>(1);
  const [limit, setLimit] = useState<number>(8);
 
+ const searchInputRef = useRef<HTMLInputElement>(null);
+
+ useEffect(() => {
+   const handleKeyDown = (e: KeyboardEvent) => {
+     if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+       e.preventDefault();
+       searchInputRef.current?.focus();
+     }
+   };
+   window.addEventListener('keydown', handleKeyDown);
+   return () => window.removeEventListener('keydown', handleKeyDown);
+ }, []);
+
  // Modal State
  const [detailItem, setDetailItem] = useState<ExamResultItem | null>(null);
+ const [selectedExamForAppeal, setSelectedExamForAppeal] = useState<ExamResultItem | null>(null);
  const [showAppealModal, setShowAppealModal] = useState<boolean>(false);
  const [appealReason, setAppealReason] = useState<string>('');
  const [submittingAppeal, setSubmittingAppeal] = useState<boolean>(false);
@@ -281,12 +296,17 @@ export default function StudentResultsPage() {
 
  setStudentInfo(mockStudent);
  setStats({
- totalExams: 5,
- avgScore: 6.6,
- passedCount: 2,
- failedCount: 1,
+   totalExams: 5,
+   avgScore: 6.6,
+   passedCount: 2,
+   failedCount: 1,
  });
  setResults(mockResults);
+  console.error('Error fetching student results:', err);
+  setToast({
+  message: 'Không thể tải kết quả thi từ hệ thống. Đang hiển thị bản nháp tạm thời.',
+  type: 'error',
+  });
  } finally {
  setLoading(false);
  }
@@ -297,25 +317,22 @@ export default function StudentResultsPage() {
  const fetchMyAppeals = useCallback(async () => {
  try {
  const res = await api.get('/grade-appeals/my-appeals');
- setMyAppeals(res.data || []);
+ if (res.data) {
+   setMyAppeals(Array.isArray(res.data) ? res.data : []);
+ }
  } catch {
  // fallback silent
  }
  }, []);
 
  useEffect(() => {
- const u = getAuthUser();
- if (!u) {
- router.push('/login');
- return;
- }
  fetchData();
  fetchMyAppeals();
- }, [router, fetchData, fetchMyAppeals]);
+ }, [fetchData, fetchMyAppeals]);
 
  const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
- const handleRefreshClick = async () => {
+ const handleRefresh = async () => {
    setIsSpinning(true);
    try {
      await Promise.all([fetchData(), fetchMyAppeals()]);
@@ -328,7 +345,7 @@ export default function StudentResultsPage() {
  };
 
  const handleSubmitAppeal = async () => {
- if (!detailItem || !detailItem.attemptId) {
+ if (!selectedExamForAppeal || !selectedExamForAppeal.attemptId) {
  setToast({ message: 'Không thể gửi đơn do không tìm thấy thông tin lượt thi.', type: 'error' });
  return;
  }
@@ -340,7 +357,7 @@ export default function StudentResultsPage() {
  try {
  setSubmittingAppeal(true);
  await api.post('/grade-appeals', {
- attemptId: detailItem.attemptId,
+ attemptId: selectedExamForAppeal.attemptId,
  reason: appealReason.trim(),
  });
 
@@ -385,9 +402,9 @@ export default function StudentResultsPage() {
  // Sorting
  result = [...result].sort((a, b) => {
  if (sortOrder === 'date_desc') return new Date(b.examDate).getTime() - new Date(a.examDate).getTime();
- if (sortOrder === 'date_asc') return new Date(a.examDate).getTime() - new Date(b.examDate).getTime();
+ if (sortOrder === 'date_asc') return new Date(a.examDate).getTime() - new Date(a.examDate).getTime();
  if (sortOrder === 'score_desc') return (b.score || 0) - (a.score || 0);
- if (sortOrder === 'score_asc') return (a.score || 0) - (b.score || 0);
+ if (sortOrder === 'score_asc') return (a.score || 0) - (a.score || 0);
  if (sortOrder === 'code_asc') return a.subjectCode.localeCompare(b.subjectCode, 'vi');
  if (sortOrder === 'name_asc') return a.subjectName.localeCompare(b.subjectName, 'vi');
  return 0;
@@ -397,36 +414,36 @@ export default function StudentResultsPage() {
  }, [results, search, filterYear, filterSemester, filterStatus, sortOrder]);
 
  // Pagination calculations
- const totalItems = filteredList.length;
- const totalPages = Math.max(1, Math.ceil(totalItems / limit));
- const currentItems = useMemo(() => {
- const start = (page - 1) * limit;
- return filteredList.slice(start, start + limit);
- }, [filteredList, page, limit]);
+  const totalItems = filteredList.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+  const currentItems = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredList.slice(start, start + limit);
+  }, [filteredList, page, limit]);
 
- const allSelected = currentItems.length > 0 && currentItems.every((i) => selected.includes(i.id));
+  const allSelected = currentItems.length > 0 && currentItems.every((i) => selected.includes(i.id));
 
- const handleSelectAll = (checked: boolean) => {
- if (checked) {
- const pageIds = currentItems.map((i) => i.id);
- setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
- } else {
- const pageIds = new Set(currentItems.map((i) => i.id));
- setSelected((prev) => prev.filter((id) => !pageIds.has(id)));
- }
- };
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const pageIds = currentItems.map((i) => i.id);
+      setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
+    } else {
+      const pageIds = new Set(currentItems.map((i) => i.id));
+      setSelected((prev) => prev.filter((id) => !pageIds.has(id)));
+    }
+  };
 
- const handleSelectOne = (id: string, checked: boolean) => {
- if (checked) {
- setSelected((prev) => [...prev, id]);
- } else {
- setSelected((prev) => prev.filter((item) => item !== id));
- }
- };
+  const handleSelectOne = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelected((prev) => [...prev, id]);
+    } else {
+      setSelected((prev) => prev.filter((item) => item !== id));
+    }
+  };
 
- const passRate = stats.totalExams > 0 ? Math.round((stats.passedCount / stats.totalExams) * 100) : 0;
+  const passRate = stats.totalExams > 0 ? Math.round((stats.passedCount / stats.totalExams) * 100) : 0;
 
-  // 5 KPI Cards Row matching Curriculum Page
+  // 4 KPI Cards
   const KPI_CARDS = [
     {
       title: 'Số môn đã thi',
@@ -459,14 +476,6 @@ export default function StudentResultsPage() {
       progressPercent: stats.totalExams > 0 ? Math.round((stats.failedCount / stats.totalExams) * 100) : 0,
       icon: XCircle,
       unit: ' môn',
-    },
-    {
-      title: 'Tỷ lệ hoàn thành',
-      value: passRate,
-      subtext: `${stats.passedCount}/${stats.totalExams} môn đạt`,
-      progressPercent: Math.min(Math.max(passRate, 0), 100),
-      icon: GraduationCap,
-      unit: '%',
     },
   ];
 
@@ -535,20 +544,6 @@ export default function StudentResultsPage() {
  });
  };
 
- const exportCsv = () => {
- const headers = 'Mã môn,Tên môn thi,Kỳ thi,Ngày thi,Hình thức thi,Điểm,Kết quả\n';
- const rows = filteredList
- .map(
- (r) =>
- `"${r.subjectCode}","${r.subjectName}","${r.periodName}","${new Date(r.examDate).toLocaleDateString(
- 'vi-VN',
- )}","${r.examType}","${r.score !== null ? r.score : 'N/A'}","${r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố'
- }"`,
- )
- .join('\n');
- downloadCsv('ket_qua_thi_sinh_vien.csv', headers + rows);
- };
-
  const columnsList = [
  { key: 'code', label: 'Mã môn học' },
  { key: 'name', label: 'Tên môn học' },
@@ -563,7 +558,6 @@ export default function StudentResultsPage() {
  setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
  };
 
- // Render Inline Status (NO BADGE, NO BORDER, NO PILL)
  const renderInlineStatus = (status: ExamResultItem['status']) => {
  switch (status) {
  case 'PASSED':
@@ -612,27 +606,9 @@ export default function StudentResultsPage() {
  }
  };
 
- const startItem = totalItems > 0 ? (page - 1) * limit + 1 : 0;
- const endItem = Math.min(page * limit, totalItems);
-
- const paginationPages: (number | string)[] = [];
- if (totalPages <= 7) {
- for (let i = 1; i <= totalPages; i++) paginationPages.push(i);
- } else {
- paginationPages.push(1);
- if (page > 3) paginationPages.push('...');
- const start = Math.max(2, page - 1);
- const end = Math.min(totalPages - 1, page + 1);
- for (let i = start; i <= end; i++) {
- if (!paginationPages.includes(i)) paginationPages.push(i);
- }
- if (page < totalPages - 2) paginationPages.push('...');
- if (!paginationPages.includes(totalPages)) paginationPages.push(totalPages);
- }
-
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
@@ -644,7 +620,7 @@ export default function StudentResultsPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <Button
               variant="secondary"
               size="md"
@@ -665,8 +641,8 @@ export default function StudentResultsPage() {
           </div>
         </div>
 
-        {/* ── 2. Standard 5 KPI Cards Row With Micro Progress Tracks ── */}
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
+        {/* ── 2. Standard 4 KPI Cards Row With Micro Progress Tracks ── */}
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
           {KPI_CARDS.map((item) => {
             const IconComponent = item.icon;
             return (
@@ -690,7 +666,6 @@ export default function StudentResultsPage() {
                   </div>
                 </div>
 
-                {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
                 <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                   <div
                     className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
@@ -711,168 +686,157 @@ export default function StudentResultsPage() {
           })}
         </div>
 
- {/* ── 3. Search & Filter Bar ── */}
+        {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="relative w-full sm:w-72 md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã môn, tên môn học..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+          {/* Left: Search input + 1 Unified Filter Popover */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã môn, tên môn học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                title="Xóa tìm kiếm"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterSelect
-              size="md"
-              value={filterYear}
-              onChange={(e) => { setFilterYear(e.target.value); setPage(1); }}
-            >
-              <option value="ALL">Tất cả năm học</option>
-              {academicYears.map((yr) => (
-                <option key={yr} value={yr}>Năm học {yr}</option>
-              ))}
-            </FilterSelect>
-
-            <FilterSelect
-              size="md"
-              value={filterSemester}
-              onChange={(e) => { setFilterSemester(e.target.value); setPage(1); }}
-            >
-              <option value="ALL">Tất cả học kỳ</option>
-              <option value="HK1">Học kỳ I</option>
-              <option value="HK2">Học kỳ II</option>
-            </FilterSelect>
-
-            <FilterSelect
-              size="md"
-              value={filterStatus}
-              onChange={(e) => { setFilterStatus(e.target.value); setPage(1); }}
-            >
-              <option value="ALL">Tất cả trạng thái</option>
-              <option value="PASSED">Môn Đạt</option>
-              <option value="FAILED">Chưa đạt</option>
-              <option value="GRADING">Đang chấm</option>
-              <option value="UNPUBLISHED">Chờ công bố</option>
-            </FilterSelect>
-
-            {(search || filterYear !== 'ALL' || filterSemester !== 'ALL' || filterStatus !== 'ALL') && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
-                  setFilterYear('ALL');
-                  setFilterSemester('ALL');
-                  setFilterStatus('ALL');
-                  setPage(1);
-                }}
-                className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                title="Xóa tất cả bộ lọc"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>Xóa lọc</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* ── 4. Standard Table Toolbar (Total Count, Sort, Column Toggle, View Mode, Refresh) ── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-              Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Sort */}
-            <SortDropdown
-              value={sortOrder}
-              onChange={(val) => setSortOrder(val)}
-              options={[
-                { value: 'date_desc', label: 'Ngày thi: Mới nhất' },
-                { value: 'date_asc', label: 'Ngày thi: Cũ nhất' },
-                { value: 'score_desc', label: 'Điểm số: Cao nhất' },
-                { value: 'score_asc', label: 'Điểm số: Thấp nhất' },
-                { value: 'code_asc', label: 'Mã môn: A - Z' },
-                { value: 'name_asc', label: 'Tên môn: A - Z' },
-              ]}
-            />
-
-            {/* Column Selector */}
-            <ColumnToggleDropdown
-              columns={columnsList}
-              visibleColumns={visibleColumns}
-              onToggle={handleColumnToggle}
-            />
-
-            {/* View Mode Pills */}
-            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                  viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng danh sách"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thẻ"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('compact')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                  viewMode === 'compact'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thu gọn"
-              >
-                <Layers className="h-4 w-4" />
-              </button>
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
             </div>
 
-            {/* Refresh */}
-            <button
-              type="button"
-              onClick={handleRefreshClick}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
-              title="Làm mới dữ liệu"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
+            <StudentResultFilterPopover
+              filterYear={filterYear}
+              onFilterYearChange={(val) => {
+                setFilterYear(val);
+                setPage(1);
+              }}
+              filterSemester={filterSemester}
+              onFilterSemesterChange={(val) => {
+                setFilterSemester(val);
+                setPage(1);
+              }}
+              filterStatus={filterStatus}
+              onFilterStatusChange={(val) => {
+                setFilterStatus(val);
+                setPage(1);
+              }}
+              academicYears={academicYears}
+              results={results}
+              totalFilteredCount={totalItems}
+              onResetAll={() => {
+                setSearch('');
+                setFilterYear('ALL');
+                setFilterSemester('ALL');
+                setFilterStatus('ALL');
+                setPage(1);
+              }}
+            />
+          </div>
+
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                  Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Sort */}
+                <SortDropdown
+                  value={sortOrder}
+                  onChange={(val) => setSortOrder(val)}
+                  options={[
+                    { value: 'date_desc', label: 'Ngày thi: Mới nhất' },
+                    { value: 'date_asc', label: 'Ngày thi: Cũ nhất' },
+                    { value: 'score_desc', label: 'Điểm số: Cao nhất' },
+                    { value: 'score_asc', label: 'Điểm số: Thấp nhất' },
+                    { value: 'code_asc', label: 'Mã môn: A - Z' },
+                    { value: 'name_asc', label: 'Tên môn: A - Z' },
+                  ]}
+                />
+
+                {/* Column Selector */}
+                <ColumnToggleDropdown
+                  columns={columnsList}
+                  visibleColumns={visibleColumns}
+                  onToggle={handleColumnToggle}
+                />
+
+                {/* View Mode Pills */}
+                <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('list')}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                      viewMode === 'list'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                    title="Dạng danh sách"
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('grid')}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                      viewMode === 'grid'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                    title="Dạng thẻ"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('compact')}
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                      viewMode === 'compact'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                    title="Dạng thu gọn"
+                  >
+                    <Layers className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Refresh Button */}
+                <button
+                  type="button"
+                  onClick={handleRefresh}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+                  title="Làm mới dữ liệu"
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

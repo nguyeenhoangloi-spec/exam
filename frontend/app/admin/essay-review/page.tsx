@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import api from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { ConfirmModal } from '../../../components/ConfirmModal';
@@ -38,6 +38,19 @@ export default function AdminEssayReviewPage() {
  const [statusFilter, setStatusFilter] = useState<string>('ALL');
  const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
  const [searchQuery, setSearchQuery] = useState<string>('');
+
+ const searchInputRef = useRef<HTMLInputElement>(null);
+
+ useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+   if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    searchInputRef.current?.focus();
+   }
+  };
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+ }, []);
 
  // Action inputs
  const [actionReason, setActionReason] = useState<string>('');
@@ -524,6 +537,7 @@ export default function AdminEssayReviewPage() {
  <div className="relative w-full">
  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
  <input
+ ref={searchInputRef}
  type="text"
  placeholder="Tìm mã SV, tên SV, môn, ca thi..."
  value={searchQuery}

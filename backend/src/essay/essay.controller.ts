@@ -24,6 +24,12 @@ export class EssayController {
     return this.essay.getRubric(req.user, questionId);
   }
 
+  @Get('questions/:questionId/rubric/versions')
+  @Roles('ADMIN', 'TEACHER')
+  getRubricVersions(@Request() req: any, @Param('questionId', ParseUUIDPipe) questionId: string) {
+    return this.essay.getRubricVersions(req.user, questionId);
+  }
+
   @Post('questions/:questionId/rubric')
   @Patch('questions/:questionId/rubric')
   @Roles('ADMIN', 'TEACHER')

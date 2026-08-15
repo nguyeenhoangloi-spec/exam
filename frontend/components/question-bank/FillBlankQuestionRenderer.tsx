@@ -31,11 +31,13 @@ export function FillBlankQuestionRenderer({
 
   // Collect all detected blank indices
   const detectedIndices = new Set<number>();
-  const matches = sourceText.match(tagRegex) || [];
-  matches.forEach((m) => {
-    const num = m.match(/blank_(\d+)/i)?.[1];
-    if (num) detectedIndices.add(Number(num));
-  });
+  const matches = sourceText.match(tagRegex);
+  if (matches) {
+    matches.forEach((m: string) => {
+      const num = m.match(/blank_(\d+)/i)?.[1];
+      if (num) detectedIndices.add(Number(num));
+    });
+  }
 
   // If no indices were found in text, default to blank #1
   const allIndices = detectedIndices.size > 0 

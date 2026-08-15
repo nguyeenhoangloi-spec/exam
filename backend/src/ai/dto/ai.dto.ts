@@ -17,6 +17,26 @@ export class RubricCriterionInputDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  fullCreditGuide?: string;
+
+  @IsString()
+  @IsOptional()
+  partialCreditGuide?: string;
+
+  @IsString()
+  @IsOptional()
+  zeroCreditGuide?: string;
+
+  @IsString()
+  @IsOptional()
+  acceptedConcepts?: string;
+
+  @IsString()
+  @IsOptional()
+  commonMistakes?: string;
 }
 
 export class GradeEssayDto {

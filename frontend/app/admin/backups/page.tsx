@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
     AlertCircle,
@@ -51,6 +51,7 @@ import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../component
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
+import { BackupFilterPopover } from '../../../components/backups/BackupFilterPopover';
 
 type BackupJobType = 'FULL' | 'DATABASE' | 'UPLOADS' | 'SAFETY';
 type BackupStatus = 'QUEUED' | 'RUNNING' | 'VERIFYING' | 'SUCCEEDED' | 'FAILED' | 'VERIFY_FAILED' | 'CANCELLED';
@@ -162,6 +163,19 @@ export default function BackupsPage() {
     const [filterTimeRange, setFilterTimeRange] = useState<string>('');
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
+
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     // Toolbar Controls State
     const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
@@ -373,26 +387,21 @@ export default function BackupsPage() {
 
     {/* Shared control sizing is applied globally; keep this page behavior unchanged. */}
     return (
-        <div className="w-full px-6 py-6 space-y-5">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* Header matching standard page header across all management pages */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-0.5">
-                    <div className="flex flex-wrap items-center gap-2.5">
-                        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-                            Sao lưu & khôi phục dữ liệu
-                        </h1>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold shadow-2xs">
-                            <ShieldCheck className="h-3.5 w-3.5" /> Hệ thống bảo vệ
-                        </span>
-                    </div>
+                    <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+                        Sao lưu & khôi phục dữ liệu
+                    </h1>
                     <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Màn hình vận hành an toàn database, file upload và các snapshot hệ thống khảo thí
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                     <Button
                         type="button"
                         variant="secondary"
@@ -413,16 +422,6 @@ export default function BackupsPage() {
                     >
                         Backup ngay
                     </Button>
-
-                    <button
-                        type="button"
-                        onClick={() => void fetchData(true)}
-                        disabled={refreshing}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer select-none disabled:opacity-50 shrink-0"
-                        title="Làm mới dữ liệu"
-                    >
-                        <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin text-blue-600' : ''}`} />
-                    </button>
                 </div>
             </div>
 
@@ -435,7 +434,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Backup Worker
                             </span>
-                            <div className="text-[20px] font-bold text-slate-900 dark:text-slate-100 leading-[28px] truncate flex items-center gap-2 pt-0.5">
+                            <div className="h-[38px] flex items-center text-[20px] font-bold text-slate-900 dark:text-slate-100 leading-[28px] truncate gap-2">
                                 {overview?.worker?.enabled ? (
                                     <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
                                         <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
@@ -473,7 +472,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Nơi lưu trữ (Storage)
                             </span>
-                            <div className="text-[20px] font-bold text-slate-900 dark:text-slate-100 leading-[28px] truncate pt-0.5">
+                            <div className="h-[38px] flex items-center text-[20px] font-bold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
                                 {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa máy chủ (Local)'}
                             </div>
                         </div>
@@ -503,7 +502,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Công cụ Database CLI
                             </span>
-                            <div className="flex items-center gap-3 text-xs font-semibold pt-1.5">
+                            <div className="h-[38px] flex items-center gap-3 text-xs font-semibold">
                                 <span className={`inline-flex items-center gap-1 ${overview?.tools?.pgDumpAvailable ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`}>
                                     {overview?.tools?.pgDumpAvailable ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />} pg_dump
                                 </span>
@@ -538,7 +537,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Dung lượng tổng
                             </span>
-                            <div className="text-[28px] font-bold text-slate-900 dark:text-slate-100 leading-[36px] tracking-tight tabular-nums truncate">
+                            <div className="h-[38px] flex items-center text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
                                 {formatBytes(overview?.totalBytes)}
                             </div>
                         </div>
@@ -562,152 +561,139 @@ export default function BackupsPage() {
                 </div>
             </div>
 
-            {/* Search & Filter Bar */}
+            {/* Search & Action Toolbar (Single Unified Row) */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                <div className="relative w-full sm:w-72 md:w-80">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                    <input
-                        type="text"
-                        placeholder="Tìm theo Snapshot ID, mã lỗi..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-                    />
-                    {search && (
-                        <button
-                            type="button"
-                            onClick={() => setSearch('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                            title="Xóa tìm kiếm"
-                        >
-                            <X className="h-3.5 w-3.5" />
-                        </button>
-                    )}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                    <FilterSelect
-                        size="md"
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                    >
-                        <option value="">Tất cả loại sao lưu</option>
-                        <option value="FULL">Sao lưu Toàn bộ (FULL)</option>
-                        <option value="DATABASE">Chỉ Cơ sở dữ liệu (DATABASE)</option>
-                        <option value="UPLOADS">Chỉ Tập tin tải lên (UPLOADS)</option>
-                        <option value="SAFETY">Snapshot An toàn (SAFETY)</option>
-                    </FilterSelect>
-
-                    <FilterSelect
-                        size="md"
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                    >
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="SUCCEEDED">Thành công</option>
-                        <option value="RUNNING">Đang chạy</option>
-                        <option value="VERIFYING">Đang kiểm tra</option>
-                        <option value="QUEUED">Đang chờ</option>
-                        <option value="FAILED">Thất bại</option>
-                    </FilterSelect>
-
-                    {(search || filterType || filterStatus) && (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setSearch('');
-                                setFilterType('');
-                                setFilterStatus('');
-                            }}
-                            className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                            title="Xóa tất cả bộ lọc"
-                        >
-                            <X className="w-3.5 h-3.5" />
-                            <span>Xóa lọc</span>
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            {/* Table Toolbar Action Group */}
-            <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-                <span className="text-xs font-semibold text-slate-600">
-                    Hiển thị <span className="font-semibold text-slate-900">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
-                </span>
-
-                <div className="flex items-center gap-2">
-                    {/* Sort */}
-                    <SortDropdown
-                        value={sortOrder}
-                        onChange={(val) => setSortOrder(val as 'newest' | 'oldest')}
-                        options={[
-                            { value: 'newest', label: 'Mới nhất' },
-                            { value: 'oldest', label: 'Cũ nhất' },
-                        ]}
-                    />
-
-                    {/* Column Selector */}
-                    <ColumnToggleDropdown
-                        columns={[
-                            { key: 'snapshotId', label: 'Mã Snapshot' },
-                            { key: 'type', label: 'Loại sao lưu' },
-                            { key: 'size', label: 'Kích thước' },
-                            { key: 'status', label: 'Trạng thái' },
-                            { key: 'createdAt', label: 'Thời gian tạo' },
-                            { key: 'actions', label: 'Thao tác' },
-                        ]}
-                        visibleColumns={visibleColumns}
-                        onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
-                    />
-
-                    {/* View Mode Toggle Pill */}
-                    <div className="flex h-10 items-center rounded-xl border border-slate-200 bg-slate-50/80 p-0.5 shadow-2xs">
-                        <button
-                            type="button"
-                            onClick={() => setViewMode('list')}
-                            className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
-                                viewMode === 'list'
-                                    ? 'bg-white text-blue-600 shadow-xs font-semibold'
-                                    : 'text-slate-500 hover:text-slate-800'
-                            }`}
-                            title="Xem dạng danh sách"
-                        >
-                            <List className="h-4 w-4" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setViewMode('grid')}
-                            className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
-                                viewMode === 'grid'
-                                    ? 'bg-white text-blue-600 shadow-xs font-semibold'
-                                    : 'text-slate-500 hover:text-slate-800'
-                            }`}
-                            title="Xem dạng lưới"
-                        >
-                            <LayoutGrid className="h-4 w-4" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setViewMode('compact')}
-                            className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs transition cursor-pointer ${
-                                viewMode === 'compact'
-                                    ? 'bg-white text-blue-600 shadow-xs font-semibold'
-                                    : 'text-slate-500 hover:text-slate-800'
-                            }`}
-                            title="Xem dạng thẻ gọn"
-                        >
-                            <Layers className="h-4 w-4" />
-                        </button>
+                {/* Left: Search Input Field + Popover Button */}
+                <div className="flex items-center gap-2 flex-1 max-w-xl">
+                    <div className="relative flex-1 min-w-[240px]">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Tìm theo Snapshot ID, mã lỗi..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                        />
+                        {search ? (
+                            <button
+                                type="button"
+                                onClick={() => setSearch('')}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                                title="Xóa tìm kiếm"
+                            >
+                                <X className="h-3.5 w-3.5" />
+                            </button>
+                        ) : (
+                            <kbd
+                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                                onClick={() => searchInputRef.current?.focus()}
+                                title="Nhấn phím / để tìm nhanh"
+                            >
+                                /
+                            </kbd>
+                        )}
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleRefreshClick}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-                        title="Làm mới dữ liệu"
-                    >
-                        <RefreshCw className={`h-4 w-4 ${loading || refreshing || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-                    </button>
+                    <BackupFilterPopover
+                        filterType={filterType}
+                        onFilterTypeChange={setFilterType}
+                        filterStatus={filterStatus}
+                        onFilterStatusChange={setFilterStatus}
+                        jobs={jobs}
+                        totalFilteredCount={sortedJobs.length}
+                        onResetAll={() => {
+                            setSearch('');
+                            setFilterType('');
+                            setFilterStatus('');
+                        }}
+                    />
+                </div>
+
+                {/* Right: Table Action Controls */}
+                <div className="shrink-0">
+                    <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Sort */}
+                            <SortDropdown
+                                value={sortOrder}
+                                onChange={(val) => setSortOrder(val as 'newest' | 'oldest')}
+                                options={[
+                                    { value: 'newest', label: 'Mới nhất' },
+                                    { value: 'oldest', label: 'Cũ nhất' },
+                                ]}
+                            />
+
+                            {/* Column Selector */}
+                            <ColumnToggleDropdown
+                                columns={[
+                                    { key: 'snapshotId', label: 'Mã Snapshot' },
+                                    { key: 'type', label: 'Loại sao lưu' },
+                                    { key: 'size', label: 'Kích thước' },
+                                    { key: 'status', label: 'Trạng thái' },
+                                    { key: 'createdAt', label: 'Thời gian tạo' },
+                                    { key: 'actions', label: 'Thao tác' },
+                                ]}
+                                visibleColumns={visibleColumns}
+                                onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
+                            />
+
+                            {/* View Mode Toggle Pill */}
+                            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('list')}
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                        viewMode === 'list'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    }`}
+                                    title="Xem dạng danh sách"
+                                >
+                                    <List className="h-4 w-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('grid')}
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                        viewMode === 'grid'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    }`}
+                                    title="Xem dạng lưới"
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('compact')}
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                        viewMode === 'compact'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    }`}
+                                    title="Xem dạng thẻ gọn"
+                                >
+                                    <Layers className="h-4 w-4" />
+                                </button>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={handleRefreshClick}
+                                className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+                                title="Làm mới dữ liệu"
+                            >
+                                <RefreshCw className={`h-4 w-4 ${loading || refreshing || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1347,6 +1333,6 @@ DATABASE_URL="postgresql://..." # Chuỗi kết nối cơ sở dữ liệu`}
                     </div>
                 </div>
             </Modal>
-        </div>
+        </main>
     );
 }

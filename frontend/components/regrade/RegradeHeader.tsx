@@ -52,19 +52,6 @@ export function RegradeHeader({
             In Báo cáo
           </Button>
         )}
-
-        {onRefresh && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onRefresh}
-            disabled={loading}
-            title="Làm mới dữ liệu"
-          >
-            <RefreshCw className={`h-4 w-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
-          </Button>
-        )}
       </div>
     </div>
   );

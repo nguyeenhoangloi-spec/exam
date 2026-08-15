@@ -16,19 +16,19 @@ export function QuestionBankHeader({
   onImport,
 }: QuestionBankHeaderProps) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Subtitle */}
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
           Ngân hàng câu hỏi
         </h1>
-        <p className="text-[15px] font-normal leading-[24px] text-slate-500 dark:text-slate-400">
+        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Quản lý, tạo mới và tổ chức hệ thống câu hỏi cho kỳ thi
         </p>
       </div>
 
       {/* Right Action Buttons: 1 Primary Blue Filled + Secondary Buttons */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      <div className="flex flex-wrap items-center gap-2.5 shrink-0">
         <Button
           type="button"
           variant="secondary"

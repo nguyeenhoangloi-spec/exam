@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -17,6 +17,7 @@ import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, B
 
 import { ClassHeader } from '../../components/classes/ClassHeader';
 import { ClassKPICards } from '../../components/classes/ClassKPICards';
+import { ClassFilterPopover } from '../../components/classes/ClassFilterPopover';
 import { ClassTableToolbar } from '../../components/classes/ClassTableToolbar';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ClassTable } from '../../components/classes/ClassTable';
@@ -24,302 +25,323 @@ import { ClassPaginationBar } from '../../components/classes/ClassPaginationBar'
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function ClassesPage() {
- usePageTitle('Quản lý lớp học');
- const router = useRouter();
+  usePageTitle('Quản lý lớp học');
+  const router = useRouter();
 
- const [currentUser, setCurrentUser] = useState<any>(null);
- const [classes, setClasses] = useState<ClassItem[]>([]);
- const [departments, setDepartments] = useState<Department[]>([]);
- const [search, setSearch] = useState('');
- const [selectedDeptId, setSelectedDeptId] = useState('');
- const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [search, setSearch] = useState('');
+  const [selectedDeptId, setSelectedDeptId] = useState('');
+  const [selectedSizeRange, setSelectedSizeRange] = useState('');
+  const [loading, setLoading] = useState(true);
 
- const [page, setPage] = useState(1);
- const [limit, setLimit] = useState(8);
- const [sortOrder, setSortOrder] = useState('newest');
- const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
- const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
- code: true,
- name: true,
- department: true,
- studentCount: true,
- });
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
- const handleColumnToggle = (key: string) => {
- setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
- };
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
- const [selected, setSelected] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    code: true,
+    name: true,
+    department: true,
+    studentCount: true,
+  });
 
- // Drawer State
- const [drawerClass, setDrawerClass] = useState<ClassItem | null>(null);
- const [drawerTab, setDrawerTab] = useState<'info' | 'students' | 'enrollments'>('info');
- const [drawerDetail, setDrawerDetail] = useState<any>(null);
- const [drawerEnrollments, setDrawerEnrollments] = useState<any[] | null>(null);
- const [isLoadingDrawer, setIsLoadingDrawer] = useState(false);
- const [drawerStudentSearch, setDrawerStudentSearch] = useState('');
+  const handleColumnToggle = (key: string) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
- // Modal State
- const [isModalOpen, setIsModalOpen] = useState(false);
- const [isImportModalOpen, setIsImportModalOpen] = useState(false);
- const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
- const [formData, setFormData] = useState({
- code: '',
- name: '',
- departmentId: '',
- });
+  const [selected, setSelected] = useState<number[]>([]);
 
- const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
- const [confirmModal, setConfirmModal] = useState<{
- isOpen: boolean;
- title: string;
- message: string;
- type: 'danger' | 'warning' | 'info' | 'success';
- onConfirm: () => void;
- }>({
- isOpen: false,
- title: '',
- message: '',
- type: 'danger',
- onConfirm: () => { },
- });
+  // Drawer State
+  const [drawerClass, setDrawerClass] = useState<ClassItem | null>(null);
+  const [drawerTab, setDrawerTab] = useState<'info' | 'students' | 'enrollments'>('info');
+  const [drawerDetail, setDrawerDetail] = useState<any>(null);
+  const [drawerEnrollments, setDrawerEnrollments] = useState<any[] | null>(null);
+  const [isLoadingDrawer, setIsLoadingDrawer] = useState(false);
+  const [drawerStudentSearch, setDrawerStudentSearch] = useState('');
 
- const fetchData = useCallback(async () => {
- setLoading(true);
- try {
- const [resClasses, resDepts] = await Promise.all([
- api.get('/classes').catch(() => ({ data: [] })),
- api.get('/departments').catch(() => ({ data: [] })),
- ]);
- setClasses(resClasses.data || []);
- setDepartments(resDepts.data || []);
- } catch (err: any) {
- setToast({ message: err.message || 'Lỗi tải danh sách lớp học', type: 'error' });
- } finally {
- setLoading(false);
- }
- }, []);
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
+  const [formData, setFormData] = useState({
+    code: '',
+    name: '',
+    departmentId: '',
+  });
 
- const handleRefresh = async () => {
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info' | 'success';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'danger',
+    onConfirm: () => { },
+  });
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [resClasses, resDepts] = await Promise.all([
+        api.get('/classes').catch(() => ({ data: [] })),
+        api.get('/departments').catch(() => ({ data: [] })),
+      ]);
+      setClasses(resClasses.data || []);
+      setDepartments(resDepts.data || []);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải danh sách lớp học', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleRefresh = async () => {
     await fetchData();
     setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
- useEffect(() => {
- const u = getAuthUser();
- if (!u) {
- router.push('/login');
- return;
- }
- setCurrentUser(u);
- fetchData();
- }, [fetchData, router]);
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      router.push('/login');
+      return;
+    }
+    setCurrentUser(u);
+    fetchData();
+  }, [fetchData, router]);
 
- // Handle opening drawer
- const handleOpenDrawer = (c: ClassItem) => {
- setDrawerClass(c);
- setDrawerTab('info');
- setDrawerDetail(null);
- setDrawerEnrollments(null);
- setDrawerStudentSearch('');
- };
+  // Handle opening drawer
+  const handleOpenDrawer = (c: ClassItem) => {
+    setDrawerClass(c);
+    setDrawerTab('info');
+    setDrawerDetail(null);
+    setDrawerEnrollments(null);
+    setDrawerStudentSearch('');
+  };
 
- // Fetch Drawer Data based on Tabs
- useEffect(() => {
- const fetchDrawerData = async () => {
- if (!drawerClass?.id) return;
+  // Fetch Drawer Data based on Tabs
+  useEffect(() => {
+    const fetchDrawerData = async () => {
+      if (!drawerClass?.id) return;
 
- if (drawerTab === 'students' && !drawerDetail) {
- setIsLoadingDrawer(true);
- try {
- const res = await api.get(`/classes/${drawerClass.id}`);
- setDrawerDetail(res.data);
- } catch (err) {
- console.error(err);
- } finally {
- setIsLoadingDrawer(false);
- }
- } else if (drawerTab === 'enrollments' && !drawerEnrollments) {
- setIsLoadingDrawer(true);
- try {
- const res = await api.get(`/classes/${drawerClass.id}/subjects`);
- setDrawerEnrollments(res.data || []);
- } catch (err) {
- setDrawerEnrollments([]);
- } finally {
- setIsLoadingDrawer(false);
- }
- }
- };
- fetchDrawerData();
- }, [drawerClass, drawerTab, drawerDetail, drawerEnrollments]);
+      if (drawerTab === 'students' && !drawerDetail) {
+        setIsLoadingDrawer(true);
+        try {
+          const res = await api.get(`/classes/${drawerClass.id}`);
+          setDrawerDetail(res.data);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsLoadingDrawer(false);
+        }
+      } else if (drawerTab === 'enrollments' && !drawerEnrollments) {
+        setIsLoadingDrawer(true);
+        try {
+          const res = await api.get(`/classes/${drawerClass.id}/subjects`);
+          setDrawerEnrollments(res.data || []);
+        } catch (err) {
+          setDrawerEnrollments([]);
+        } finally {
+          setIsLoadingDrawer(false);
+        }
+      }
+    };
+    fetchDrawerData();
+  }, [drawerClass, drawerTab, drawerDetail, drawerEnrollments]);
 
- // Compute DYNAMIC KPI Metrics from real API data
- const kpiData = useMemo(() => {
- const total = classes.length;
- const setDept = new Set(classes.map((c) => c.departmentId).filter(Boolean));
- const totalStudents = classes.reduce((acc, curr: any) => acc + (curr._count?.students ?? curr.studentsCount ?? curr.students?.length ?? 0), 0);
- const avgStudents = total > 0 ? Math.round(totalStudents / total) : 0;
- const maxClassStudents = classes.reduce(
- (max, curr: any) => Math.max(max, curr._count?.students ?? curr.studentsCount ?? curr.students?.length ?? 0),
- 0,
- );
+  // Compute DYNAMIC KPI Metrics from real API data
+  const kpiData = useMemo(() => {
+    const total = classes.length;
+    const setDept = new Set(classes.map((c) => c.departmentId).filter(Boolean));
+    const totalStudents = classes.reduce((acc, curr: any) => acc + (curr._count?.students ?? curr.studentsCount ?? curr.students?.length ?? 0), 0);
+    const avgStudents = total > 0 ? Math.round(totalStudents / total) : 0;
+    const maxClassStudents = classes.reduce(
+      (max, curr: any) => Math.max(max, curr._count?.students ?? curr.studentsCount ?? curr.students?.length ?? 0),
+      0,
+    );
 
- return {
- total,
- totalDepartments: setDept.size || departments.length,
- totalStudents,
- avgStudents,
- maxClassStudents,
- };
- }, [classes, departments]);
+    return {
+      total,
+      totalDepartments: setDept.size || departments.length,
+      totalStudents,
+      avgStudents,
+      maxClassStudents,
+    };
+  }, [classes, departments]);
 
- // Filter & Sort Classes
- const filteredClasses = useMemo(() => {
- return classes
- .filter((c) => {
- const matchSearch =
- c.name.toLowerCase().includes(search.toLowerCase()) ||
- c.code.toLowerCase().includes(search.toLowerCase());
- const matchDept = selectedDeptId ? String(c.departmentId) === selectedDeptId : true;
- return matchSearch && matchDept;
- })
- .sort((a: any, b: any) => {
- if (sortOrder === 'oldest') return a.id - b.id;
- if (sortOrder === 'name_asc') return a.name.localeCompare(b.name, 'vi');
- if (sortOrder === 'students_desc') {
- const sA = a._count?.students ?? a.studentsCount ?? a.students?.length ?? 0;
- const sB = b._count?.students ?? b.studentsCount ?? b.students?.length ?? 0;
- return sB - sA;
- }
- return b.id - a.id;
- });
- }, [classes, search, selectedDeptId, sortOrder]);
+  // Filter & Sort Classes
+  const filteredClasses = useMemo(() => {
+    return classes
+      .filter((c: any) => {
+        const matchSearch =
+          c.name.toLowerCase().includes(search.toLowerCase()) ||
+          c.code.toLowerCase().includes(search.toLowerCase());
+        const matchDept = selectedDeptId ? String(c.departmentId) === selectedDeptId : true;
+        
+        let matchSize = true;
+        const count = c._count?.students ?? c.studentsCount ?? c.students?.length ?? 0;
+        if (selectedSizeRange === 'over40') matchSize = count > 40;
+        else if (selectedSizeRange === '20to40') matchSize = count >= 20 && count <= 40;
+        else if (selectedSizeRange === 'under20') matchSize = count < 20;
 
- // Pagination Slice
- const totalPages = Math.max(1, Math.ceil(filteredClasses.length / limit));
- const paginatedClasses = useMemo(() => {
- const start = (page - 1) * limit;
- return filteredClasses.slice(start, start + limit);
- }, [filteredClasses, page, limit]);
+        return matchSearch && matchDept && matchSize;
+      })
+      .sort((a: any, b: any) => {
+        if (sortOrder === 'oldest') return a.id - b.id;
+        if (sortOrder === 'name_asc') return a.name.localeCompare(b.name, 'vi');
+        if (sortOrder === 'students_desc') {
+          const sA = a._count?.students ?? a.studentsCount ?? a.students?.length ?? 0;
+          const sB = b._count?.students ?? b.studentsCount ?? b.students?.length ?? 0;
+          return sB - sA;
+        }
+        return b.id - a.id;
+      });
+  }, [classes, search, selectedDeptId, selectedSizeRange, sortOrder]);
 
- // Class Actions
- const openAddModal = () => {
- setEditingClass(null);
- setFormData({
- code: `CNTT-K66`,
- name: '',
- departmentId: departments[0]?.id ? String(departments[0].id) : '',
- });
- setIsModalOpen(true);
- };
+  // Pagination Slice
+  const totalPages = Math.max(1, Math.ceil(filteredClasses.length / limit));
+  const paginatedClasses = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredClasses.slice(start, start + limit);
+  }, [filteredClasses, page, limit]);
 
- const openEditModal = (c: ClassItem) => {
- setEditingClass(c);
- setFormData({
- code: c.code,
- name: c.name,
- departmentId: c.departmentId ? String(c.departmentId) : '',
- });
- setIsModalOpen(true);
- };
+  // Class Actions
+  const openAddModal = () => {
+    setEditingClass(null);
+    setFormData({
+      code: `CNTT-K66`,
+      name: '',
+      departmentId: departments[0]?.id ? String(departments[0].id) : '',
+    });
+    setIsModalOpen(true);
+  };
 
- const handleSubmit = async (e: React.FormEvent) => {
- e.preventDefault();
- try {
- const payload = {
- code: formData.code,
- name: formData.name,
- departmentId: Number(formData.departmentId),
- };
+  const openEditModal = (c: ClassItem) => {
+    setEditingClass(c);
+    setFormData({
+      code: c.code,
+      name: c.name,
+      departmentId: c.departmentId ? String(c.departmentId) : '',
+    });
+    setIsModalOpen(true);
+  };
 
- if (editingClass) {
- await api.patch(`/classes/${editingClass.id}`, payload);
- setToast({ message: 'Cập nhật thông tin lớp thành công!', type: 'success' });
- } else {
- await api.post('/classes', payload);
- setToast({ message: 'Tạo lớp học mới thành công!', type: 'success' });
- }
- setIsModalOpen(false);
- fetchData();
- } catch (err: any) {
- setToast({ message: err.message || 'Lỗi lưu thông tin lớp học', type: 'error' });
- setIsModalOpen(false);
- }
- };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        code: formData.code,
+        name: formData.name,
+        departmentId: Number(formData.departmentId),
+      };
 
- const handleDelete = (id: number) => {
- const item = classes.find((c) => c.id === id);
- setConfirmModal({
- isOpen: true,
- title: 'Xóa lớp học',
- message: `Bạn có chắc chắn muốn xóa lớp ${item?.name || ''}?`,
- type: 'danger',
- onConfirm: async () => {
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.delete(`/classes/${id}`);
- setToast({ message: 'Đã xóa lớp học thành công!', type: 'success' });
- fetchData();
- } catch (err: any) {
- setToast({ message: err.message || 'Lỗi xóa lớp học', type: 'error' });
- }
- },
- });
- };
+      if (editingClass) {
+        await api.patch(`/classes/${editingClass.id}`, payload);
+        setToast({ message: 'Cập nhật thông tin lớp thành công!', type: 'success' });
+      } else {
+        await api.post('/classes', payload);
+        setToast({ message: 'Tạo lớp học mới thành công!', type: 'success' });
+      }
+      setIsModalOpen(false);
+      fetchData();
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi lưu thông tin lớp học', type: 'error' });
+      setIsModalOpen(false);
+    }
+  };
 
- const exportExcel = () => {
- const columns = [
- { header: 'STT', width: 8, align: 'center' as const },
- { header: 'Mã Lớp', width: 15 },
- { header: 'Tên Lớp học', width: 35 },
- { header: 'Khoa trực thuộc', width: 25 },
- { header: 'Sĩ số Sinh viên', width: 15, align: 'center' as const },
- ];
+  const handleDelete = (id: number) => {
+    const item = classes.find((c) => c.id === id);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xóa lớp học',
+      message: `Bạn có chắc chắn muốn xóa lớp ${item?.name || ''}?`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.delete(`/classes/${id}`);
+          setToast({ message: 'Đã xóa lớp học thành công!', type: 'success' });
+          fetchData();
+        } catch (err: any) {
+          setToast({ message: err.message || 'Lỗi xóa lớp học', type: 'error' });
+        }
+      },
+    });
+  };
 
- const rows = filteredClasses.map((c: any, idx) => [
- idx + 1,
- c.code,
- c.name,
- c.department?.name || c.departmentName || '',
- c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0,
- ]);
+  const exportExcel = () => {
+    const columns = [
+      { header: 'STT', width: 8, align: 'center' as const },
+      { header: 'Mã Lớp', width: 15 },
+      { header: 'Tên Lớp học', width: 35 },
+      { header: 'Khoa trực thuộc', width: 25 },
+      { header: 'Sĩ số Sinh viên', width: 15, align: 'center' as const },
+    ];
 
- exportToFormattedExcel({
- filename: 'Danh_sach_lop_hoc.xls',
- title: 'DANH SÁCH LỚP HỌC HỆ THỐNG',
- subtitle: 'Trích xuất dữ liệu danh mục các lớp sinh viên',
- columns,
- rows,
- });
- };
+    const rows = filteredClasses.map((c: any, idx) => [
+      idx + 1,
+      c.code,
+      c.name,
+      c.department?.name || c.departmentName || '',
+      c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0,
+    ]);
 
- const handlePrintReport = () => {
- printReport({
- title: 'BÁO CÁO DANH SÁCH LỚP HỌC',
- subtitle: 'Danh sách lớp học và quy mô sĩ số sinh viên',
- metaInfo: [
- { label: 'Tổng số lớp', value: String(classes.length) },
- { label: 'Tổng số sinh viên', value: `${kpiData.totalStudents} SV` },
- ],
- columns: [
- { header: 'STT', width: '40px' },
- { header: 'Mã Lớp', width: '90px' },
- { header: 'Tên Lớp học', width: '220px' },
- { header: 'Khoa trực thuộc', width: '180px' },
- { header: 'Sĩ số', width: '80px', align: 'center' },
- ],
- rows: filteredClasses.map((c: any, idx) => [
- idx + 1,
- c.code,
- c.name,
- c.department?.name || c.departmentName || '',
- `${c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0} SV`,
- ]),
- });
- };
+    exportToFormattedExcel({
+      filename: 'Danh_sach_lop_hoc.xls',
+      title: 'DANH SÁCH LỚP HỌC HỆ THỐNG',
+      subtitle: 'Trích xuất dữ liệu danh mục các lớp sinh viên',
+      columns,
+      rows,
+    });
+  };
 
-   return (
+  const handlePrintReport = () => {
+    printReport({
+      title: 'BÁO CÁO DANH SÁCH LỚP HỌC',
+      subtitle: 'Danh sách lớp học và quy mô sĩ số sinh viên',
+      metaInfo: [
+        { label: 'Tổng số lớp', value: String(classes.length) },
+        { label: 'Tổng số sinh viên', value: `${kpiData.totalStudents} SV` },
+      ],
+      columns: [
+        { header: 'STT', width: '40px' },
+        { header: 'Mã Lớp', width: '90px' },
+        { header: 'Tên Lớp học', width: '220px' },
+        { header: 'Khoa trực thuộc', width: '180px' },
+        { header: 'Sĩ số', width: '80px', align: 'center' },
+      ],
+      rows: filteredClasses.map((c: any, idx) => [
+        idx + 1,
+        c.code,
+        c.name,
+        c.department?.name || c.departmentName || '',
+        `${c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0} SV`,
+      ]),
+    });
+  };
+
+  return (
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
@@ -339,478 +361,213 @@ export default function ClassesPage() {
           maxClassStudents={kpiData.maxClassStudents}
         />
 
-        {/* Search & Filter Bar */}
+        {/* Search & Unified Smart Filter Popover Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="relative w-full sm:w-72 md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã lớp, tên lớp học..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+          {/* Left: Search input + 1 Unified Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            {/* Search Input Field */}
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã lớp, tên lớp học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                title="Xóa tìm kiếm"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
+            </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterSelect
-              value={selectedDeptId}
-              onChange={(e) => {
-                setSelectedDeptId(e.target.value);
+            {/* 1 Nút Bộ Lọc Duy Nhất Đa Chiều */}
+            <ClassFilterPopover
+              selectedDeptId={selectedDeptId}
+              onDeptChange={(val) => {
+                setSelectedDeptId(val);
                 setPage(1);
               }}
+              selectedSizeRange={selectedSizeRange}
+              onSizeRangeChange={(val) => {
+                setSelectedSizeRange(val);
+                setPage(1);
+              }}
+              departments={departments}
+              classes={classes}
+              totalFilteredCount={filteredClasses.length}
+              onResetAll={() => {
+                setSelectedDeptId('');
+                setSelectedSizeRange('');
+                setPage(1);
+              }}
+            />
+          </div>
+
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <ClassTableToolbar
+              totalCount={filteredClasses.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={handleRefresh}
+              loading={loading}
+            />
+          </div>
+        </div>
+
+        {/* Full-Width DataGrid Table */}
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : !paginatedClasses.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+            Không tìm thấy lớp học phù hợp.
+          </div>
+        ) : (
+          <ClassTable
+            classes={paginatedClasses}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? paginatedClasses.map((c) => c.id) : [])
+            }
+            onDetail={handleOpenDrawer}
+            onEdit={openEditModal}
+            onDelete={handleDelete}
+            isAdmin={currentUser?.role === 'ADMIN'}
+          />
+        )}
+
+        {/* Dynamic Pagination Footer */}
+        <ClassPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={filteredClasses.length}
+          onPage={setPage}
+          onLimit={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
+      </main>
+
+      {/* Add/Edit Class Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingClass ? 'Chỉnh sửa thông tin lớp' : 'Tạo lớp học mới'}
+        subtitle={editingClass ? `Mã lớp: ${editingClass.code}` : 'Thêm mới lớp học vào danh mục quản lý'}
+        icon={<GraduationCap className="h-6 w-6 text-white" />}
+        badge={editingClass ? 'Chỉnh sửa' : 'Tạo mới'}
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã lớp</label>
+            <input
+              type="text"
+              required
+              placeholder="VD: CNTT-K66A"
+              value={formData.code}
+              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên lớp học</label>
+            <input
+              type="text"
+              required
+              placeholder="VD: Công nghệ thông tin K66 - Lớp A"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
+            <FilterSelect
+              value={formData.departmentId}
+              onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
               size="md"
+              className="w-full"
             >
-              <option value="">Tất cả các Khoa</option>
+              <option value="">-- Chọn Khoa --</option>
               {departments.map((d) => (
                 <option key={d.id} value={String(d.id)}>
                   {d.name} ({d.code})
                 </option>
               ))}
             </FilterSelect>
-
-            {(search || selectedDeptId) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
-                  setSelectedDeptId('');
-                  setPage(1);
-                }}
-                className="h-10 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-                title="Xóa tất cả bộ lọc"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>Xóa lọc</span>
-              </button>
-            )}
           </div>
-        </div>
 
-        {/* Dynamic Table Action Toolbar */}
- <ClassTableToolbar
- totalCount={filteredClasses.length}
- sortOrder={sortOrder}
- onSortChange={setSortOrder}
- viewMode={viewMode}
- onViewModeChange={setViewMode}
- visibleColumns={visibleColumns}
- onColumnToggle={handleColumnToggle}
- onRefresh={handleRefresh}
- loading={loading}
- />
+          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+            <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
+              Hủy bỏ
+            </Button>
+            <Button variant="primary" type="submit">
+              {editingClass ? 'Lưu thay đổi' : 'Tạo lớp học'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
- {/* Full-Width DataGrid Table */}
- {loading ? (
- <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
- {[1, 2, 3, 4, 5].map((i) => (
- <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
- ))}
- </div>
- ) : !paginatedClasses.length ? (
- <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
- Không tìm thấy lớp học phù hợp.
- </div>
- ) : (
- <ClassTable
- classes={paginatedClasses}
- selected={selected}
- viewMode={viewMode}
- visibleColumns={visibleColumns}
- onSelect={(id, checked) =>
- setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
- }
- onSelectAll={(checked) =>
- setSelected(checked ? paginatedClasses.map((c) => c.id) : [])
- }
- onDetail={handleOpenDrawer}
- onEdit={openEditModal}
- onDelete={handleDelete}
- isAdmin={currentUser?.role === 'ADMIN'}
- />
- )}
+      {/* Excel Import Modal */}
+      <ExcelImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Nhập danh sách lớp học từ Excel"
+        templateFileName="mau_danh_sach_lop.csv"
+        onImportSuccess={fetchData}
+      />
 
- {/* Dynamic Pagination Footer */}
- <ClassPaginationBar
- page={page}
- totalPages={totalPages}
- limit={limit}
- totalItems={filteredClasses.length}
- onPage={setPage}
- onLimit={(v) => {
- setLimit(v);
- setPage(1);
- }}
- />
- </main>
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+      />
 
-  {/* Edit/Add Class Modal */}
-  <Modal
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)}
-    title={editingClass ? 'Chỉnh sửa lớp học' : 'Tạo lớp học mới'}
-    subtitle={editingClass ? `Mã lớp: ${editingClass.code}` : 'Thiết lập mã lớp, ngành đào tạo và khóa sinh viên'}
-    icon={<School className="h-6 w-6 text-white" />}
-    badge={editingClass ? 'Chỉnh sửa' : 'Tạo mới'}
-  >
- <form onSubmit={handleSubmit} className="space-y-4">
- <div>
- <label className="block text-[15px] font-medium text-slate-900 mb-1">Mã lớp</label>
- <input
- type="text"
- required
- placeholder="VD: CNTT-K65A"
- value={formData.code}
- onChange={(e) => setFormData({ ...formData, code: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
- />
- </div>
-
- <div>
-                    <label className="block text-[15px] font-medium text-slate-900 mb-1">Tên lớp học</label>
- <input
- type="text"
- required
- placeholder="VD: Công nghệ thông tin 1 - K65"
- value={formData.name}
- onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
- />
- </div>
-
- <div>
- <label className="block text-[15px] font-medium text-slate-900 mb-1">Khoa trực thuộc</label>
- <FilterSelect containerClassName="w-full"
- required
- value={formData.departmentId}
- onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
- className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none"
- >
- <option value="">-- Chọn Khoa --</option>
- {departments.map((d) => (
- <option key={d.id} value={d.id}>
- {d.name} ({d.code})
- </option>
- ))}
- </FilterSelect>
- </div>
-
- <div className="flex items-center justify-between pt-4 border-t border-slate-100">
- {!editingClass ? (
- <Button
- type="button"
- variant="secondary"
- size="md"
- onClick={() => {
- setIsModalOpen(false);
- setIsImportModalOpen(true);
- }}
- leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
- >
- Import Excel
- </Button>
- ) : (
- <div />
- )}
- <div className="flex items-center gap-2.5">
- <Button
- type="button"
- variant="secondary"
- size="md"
- onClick={() => setIsModalOpen(false)}
- >
- Hủy
- </Button>
- <Button
- type="submit"
- variant="primary"
- size="md"
- >
- {editingClass ? 'Cập nhật lớp học' : 'Lưu lớp học'}
- </Button>
- </div>
- </div>
- </form>
- </Modal>
-
- {/* Excel Import Modal */}
- <ExcelImportModal
- isOpen={isImportModalOpen}
- onClose={() => setIsImportModalOpen(false)}
- title="Import danh sách lớp học từ Excel"
- templateFileName="danh_sach_lop_hoc_mau.csv"
- onImportSuccess={async () => {
- await fetchData();
- setToast({ message: 'Nhập danh sách lớp học từ file thành công!', type: 'success' });
- }}
- />
-
- {/* Custom Profile Drawer */}
- {drawerClass && (
- <div role="dialog" aria-modal="true" aria-label="Thông tin lớp học" className="fixed inset-0 z-[100] flex justify-end">
- <div
- className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity"
- onClick={() => setDrawerClass(null)}
- />
-
-  <div className="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
- {/* Header - Modern Gradient matching system standard */}
-<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3 min-w-0 flex-1">
-<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-base text-white border border-white/25 shadow-2xs">
- {drawerClass.code.substring(0, 3).toUpperCase()}
- </div>
- <div className="min-w-0 flex-1 pr-2">
-<h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
- {drawerClass.name}
- </h2>
- <div className="mt-1.5"><IdentifierBadge tone="inverse">Mã lớp: {drawerClass.code}</IdentifierBadge></div>
- </div>
- </div>
-
- <button
- type="button"
- onClick={() => setDrawerClass(null)}
- className="shrink-0 rounded-xl p-1.5 text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
- title="Đóng"
- >
- <X className="h-5 w-5" />
- </button>
- </div>
- </div>
-
- {/* Tabs */}
-  <div className="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
- <button
- onClick={() => setDrawerTab('info')}
- className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'info'
- ? 'border-blue-600 text-blue-600 font-semibold'
- : 'border-transparent text-slate-500 hover:text-slate-800'
- }`}
- >
- Thông tin
- </button>
- <button
- onClick={() => setDrawerTab('students')}
- className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'students'
- ? 'border-blue-600 text-blue-600 font-semibold'
- : 'border-transparent text-slate-500 hover:text-slate-800'
- }`}
- >
- Sinh viên
- </button>
- <button
- onClick={() => setDrawerTab('enrollments')}
- className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer ${drawerTab === 'enrollments'
- ? 'border-blue-600 text-blue-600 font-semibold'
- : 'border-transparent text-slate-500 hover:text-slate-800'
- }`}
- >
- Môn đăng ký
- </button>
- </div>
-
- {/* Drawer Body */}
-  <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-slate-900">
- {drawerTab === 'info' && (
- <div className="space-y-6 animate-in fade-in duration-300">
- <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
- <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
- <GraduationCap className="h-5 w-5" />
- </div>
- <div>
- <p className="text-[13px] font-semibold text-slate-500 ">Tên lớp học</p>
- <p className="text-[15px] font-semibold text-slate-900">{drawerClass.name}</p>
- </div>
- </div>
-
- <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
- <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
- <Building2 className="h-5 w-5" />
- </div>
- <div>
- <p className="text-[13px] font-semibold text-slate-500 ">Khoa trực thuộc</p>
- <p className="text-[15px] font-semibold text-slate-900">{drawerClass.department?.name || (drawerClass as any).departmentName || 'Chưa gán Khoa'}</p>
- </div>
- </div>
-
- <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
- <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
- <Users className="h-5 w-5" />
- </div>
- <div>
- <p className="text-[13px] font-semibold text-slate-500 ">Sĩ số Sinh viên</p>
- <p className="text-[15px] font-semibold text-slate-900">{(drawerClass as any)._count?.students ?? (drawerClass as any).studentsCount ?? (drawerClass as any).students?.length ?? 0} sinh viên</p>
- </div>
- </div>
- </div>
- )}
-
- {drawerTab === 'students' && (
- <div className="space-y-4 flex flex-col h-full animate-in fade-in duration-300">
- <div className="relative shrink-0">
- <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
- <input
- type="text"
- placeholder="Tìm sinh viên..."
- value={drawerStudentSearch}
- onChange={(e) => setDrawerStudentSearch(e.target.value)}
- className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-[15px] font-normal text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none transition"
- />
- </div>
-
- {isLoadingDrawer ? (
- <div className="space-y-3 mt-4">
- {[1, 2, 3].map((i) => (
- <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
- ))}
- </div>
- ) : (
- <div className="flex-1 overflow-y-auto space-y-3 pb-4">
- {drawerDetail?.students
- ?.filter((sv: any) =>
- (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) ||
- (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
- )
- .map((sv: any) => (
- <div key={sv.id} className="p-3 rounded-xl border border-slate-100 hover:border-blue-200 bg-slate-50 hover:bg-blue-50/30 transition-colors flex gap-3">
- <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold shrink-0">
- {sv.fullName?.charAt(0) || 'U'}
- </div>
- <div className="flex-1 min-w-0">
- <p className="text-[15px] font-semibold text-slate-900 truncate">{sv.fullName}</p>
- <IdentifierBadge tone="neutral">{sv.studentCode}</IdentifierBadge>
- <div className="flex items-center gap-3 mt-1.5 text-[13px] font-normal text-slate-500">
- {sv.email && (
- <span className="flex items-center gap-1">
- <Mail className="h-3.5 w-3.5" />
- <span className="truncate max-w-[100px]">{sv.email}</span>
- </span>
- )}
- {sv.phone && (
- <span className="flex items-center gap-1">
- <Phone className="h-3.5 w-3.5" />
- {sv.phone}
- </span>
- )}
- </div>
- </div>
- </div>
- )) || (
- <div className="text-center text-[15px] font-normal text-slate-500 mt-10">
- Không có sinh viên nào.
- </div>
- )}
-
- {drawerDetail?.students?.length > 0 &&
- drawerDetail?.students?.filter((sv: any) =>
- (sv.fullName || '').toLowerCase().includes(drawerStudentSearch.toLowerCase()) ||
- (sv.studentCode || '').toLowerCase().includes(drawerStudentSearch.toLowerCase())
- ).length === 0 && (
- <div className="text-center text-[15px] font-normal text-slate-500 mt-10">
- Không tìm thấy kết quả phù hợp.
- </div>
- )}
- </div>
- )}
- </div>
- )}
-
- {drawerTab === 'enrollments' && (
- <div className="space-y-4 animate-in fade-in duration-300">
- <div className="flex items-center justify-between border-b border-slate-100 pb-3">
- <h3 className="text-[18px] leading-[26px] font-semibold text-slate-900">Danh sách môn học đã đăng ký</h3>
- <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
- {drawerEnrollments?.length || 0} môn
- </span>
- </div>
-
- {isLoadingDrawer ? (
- <div className="space-y-3 mt-4">
- {[1, 2, 3].map((i) => (
- <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
- ))}
- </div>
- ) : drawerEnrollments && drawerEnrollments.length > 0 ? (
- <div className="space-y-3">
- {drawerEnrollments.map((sub: any, idx: number) => (
- <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs hover:border-emerald-300 transition-all">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3">
- <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-semibold text-xs shrink-0 border border-blue-100">
- <BookOpen className="h-5 w-5" />
- </div>
- <div>
- <div className="flex items-center gap-2 mb-1">
- <IdentifierBadge>{sub.subjectCode}</IdentifierBadge>
- <span className="text-[13px] font-normal text-slate-500">{sub.credits} tín chỉ</span>
- </div>
- <p className="text-[15px] font-semibold text-slate-900">{sub.subjectName}</p>
- {sub.departmentName && (
- <p className="text-[13px] font-normal text-slate-500 mt-0.5">{sub.departmentName}</p>
- )}
- </div>
- </div>
- <div className="text-right shrink-0">
- <span className="text-[13px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
- {sub.semester} ({sub.schoolYear})
- </span>
- <p className="text-[13px] font-normal text-slate-500 mt-1">
- <span className="font-semibold text-blue-600">{sub.studentCount}</span> SV học
- </p>
- </div>
- </div>
- </div>
- ))}
- </div>
- ) : (
- <div className="py-12 text-center text-slate-400">
- <BookOpen className="h-10 w-10 text-slate-700 mx-auto mb-2" />
- <p className="text-[15px] font-semibold text-slate-900">Lớp chưa có sinh viên nào đăng ký môn.</p>
- <p className="text-[13px] font-normal text-slate-500 mt-1">Bạn có thể gán lớp vào môn học tại trang Quản lý môn học.</p>
- <button
- onClick={() => router.push('/subjects')}
- className="mt-4 px-4 py-2 rounded-xl bg-primary-600 text-white text-[15px] font-medium hover:bg-blue-700 transition cursor-pointer"
- >
- Đến trang quản lý môn học
- </button>
- </div>
- )}
- </div>
- )}
- </div>
- </div>
- </div>
- )}
-
- {/* Confirm Popup */}
- <ConfirmModal
- isOpen={confirmModal.isOpen}
- onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
- onConfirm={confirmModal.onConfirm}
- title={confirmModal.title}
- message={confirmModal.message}
- type={confirmModal.type}
- />
-
- {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
- </>
- );
+      {/* Toast Notification */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    </>
+  );
 }

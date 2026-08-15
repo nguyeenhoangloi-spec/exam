@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { Search, X } from 'lucide-react';
 import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
@@ -18,7 +19,8 @@ import { QuestionImportWizard } from '../../components/question-bank/QuestionImp
 // Newly Designed SaaS 2026 Components
 import { QuestionBankHeader } from '../../components/question-bank/QuestionBankHeader';
 import { QuestionBankTopCharts } from '../../components/question-bank/QuestionBankTopCharts';
-import { QuestionBankFiltersCard, QuestionBankFilterValues } from '../../components/question-bank/QuestionBankFiltersCard';
+import { QuestionBankFilterPopover } from '../../components/question-bank/QuestionBankFilterPopover';
+import { QuestionBankFilterValues } from '../../components/question-bank/QuestionBankFiltersCard';
 import { QuestionBankTabsBar } from '../../components/question-bank/QuestionBankTabsBar';
 import { QuestionBankTableToolbar } from '../../components/question-bank/QuestionBankTableToolbar';
 import { QuestionBankTable } from '../../components/question-bank/QuestionBankTable';
@@ -82,6 +84,19 @@ export default function QuestionBankPage() {
   const [loading, setLoading] = useState(!initialQList.length);
   const [error, setError] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Confirm Modal state
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -411,7 +426,7 @@ export default function QuestionBankPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900 dark:text-slate-100">
         {/* Header Section */}
         <QuestionBankHeader
           onAdd={() => {
@@ -423,7 +438,7 @@ export default function QuestionBankPage() {
           onPrint={exportCsv}
         />
 
-        {/* Top Charts Row: 4 Cards in 1 Row at Top */}
+        {/* Top KPI Cards Row */}
         <QuestionBankTopCharts
           counts={counts}
           questions={questions}
@@ -435,40 +450,86 @@ export default function QuestionBankPage() {
           onExport={exportCsv}
         />
 
-        {/* Full-Width Main Content Section (100% width for Table & Options display) */}
+        {/* Search & Action Toolbar Row (Single Horizontal Unified Row) */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Left: Search input + 1 Unified Filter Popover */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={filterValues.search}
+                onChange={(e) => {
+                  setFilterValues({ ...filterValues, search: e.target.value });
+                  setPage(1);
+                }}
+                placeholder="Tìm theo nội dung, mã câu hỏi..."
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              />
+              {filterValues.search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterValues({ ...filterValues, search: '' });
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
+            </div>
+
+            <QuestionBankFilterPopover
+              filters={filterValues}
+              onChange={(next) => {
+                setFilterValues(next);
+                setPage(1);
+              }}
+              subjects={subjects}
+              questions={questions}
+              totalFilteredCount={questions.length}
+              onResetAll={handleResetFilters}
+            />
+          </div>
+
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <QuestionBankTableToolbar
+              totalCount={counts.total || questions.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={handleRefresh}
+            />
+          </div>
+        </div>
+
+        {/* Status Tabs Bar */}
+        <QuestionBankTabsBar
+          activeStatus={filterValues.status}
+          counts={counts}
+          onSelectStatus={(status) => {
+            setFilterValues({ ...filterValues, status });
+            setPage(1);
+          }}
+        />
+
+        {/* Main Table Content Section */}
         <div className="space-y-4">
-          {/* Multi-row Filter Card */}
-          <QuestionBankFiltersCard
-            filters={filterValues}
-            subjects={subjects}
-            onChange={(next) => {
-              setFilterValues(next);
-              setPage(1);
-            }}
-            onReset={handleResetFilters}
-          />
-
-          {/* Status Tabs Bar */}
-          <QuestionBankTabsBar
-            activeStatus={filterValues.status}
-            counts={counts}
-            onSelectStatus={(status) => {
-              setFilterValues({ ...filterValues, status });
-              setPage(1);
-            }}
-          />
-
-          {/* Table Action Toolbar */}
-          <QuestionBankTableToolbar
-            totalCount={counts.total || questions.length}
-            sortOrder={sortOrder}
-            onSortChange={setSortOrder}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-            visibleColumns={visibleColumns}
-            onColumnToggle={handleColumnToggle}
-            onRefresh={handleRefresh}
-          />
 
           {/* Floating Bulk Action Bar when items selected */}
           {(() => {

@@ -10,6 +10,32 @@ export class RubricCriterionDto {
   @IsOptional()
   description?: string;
 
+  @IsString()
+  @IsOptional()
+  fullCreditGuide?: string;
+
+  @IsString()
+  @IsOptional()
+  partialCreditGuide?: string;
+
+  @IsString()
+  @IsOptional()
+  zeroCreditGuide?: string;
+
+  @IsString()
+  @IsOptional()
+  acceptedConcepts?: string;
+
+  @IsString()
+  @IsOptional()
+  commonMistakes?: string;
+
+  @IsNumber({}, { message: 'Bước điểm phải là số.' })
+  @Min(0.01, { message: 'Bước điểm phải lớn hơn 0.' })
+  @Max(100, { message: 'Bước điểm không vượt quá 100.' })
+  @IsOptional()
+  scoreStep?: number;
+
   @IsNumber({}, { message: 'Điểm tối đa phải là số.' })
   @Min(0.01, { message: 'Điểm tối đa của tiêu chí phải lớn hơn 0.' })
   @Max(100, { message: 'Điểm tối đa không vượt quá 100.' })
@@ -26,6 +52,14 @@ export class RubricDto {
   @ValidateNested({ each: true })
   @Type(() => RubricCriterionDto)
   criteria!: RubricCriterionDto[];
+
+  @IsString()
+  @IsOptional()
+  referenceAnswer?: string;
+
+  @IsString()
+  @IsOptional()
+  gradingGuidance?: string;
 }
 
 export class GradeCriterionDto {

@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -15,6 +15,7 @@ import { Toast } from '../../../components/Toast';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { printReport } from '../../../lib/export-print';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
+import { ActivityLogFilterPopover } from '../../../components/activity-logs/ActivityLogFilterPopover';
 import {
     Activity,
     Search,
@@ -223,6 +224,20 @@ export default function ActivityLogsPage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>('');
     const [entityFilter, setEntityFilter] = useState<string>('');
+    const [actionFilter, setActionFilter] = useState<string>('');
+
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     // Bulk Selection State
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -337,6 +352,14 @@ export default function ActivityLogsPage() {
                 if (!matchActor && !matchAction && !matchDesc) return false;
             }
             if (entityFilter && item.entityType !== entityFilter) return false;
+            if (actionFilter) {
+                const act = item.action.toUpperCase();
+                if (actionFilter === 'CREATE' && !act.includes('CREATE') && !act.includes('ADD') && !act.includes('NEW')) return false;
+                if (actionFilter === 'UPDATE' && !act.includes('UPDATE') && !act.includes('EDIT') && !act.includes('PATCH')) return false;
+                if (actionFilter === 'DELETE' && !act.includes('DELETE') && !act.includes('REMOVE') && !act.includes('TRASH')) return false;
+                if (actionFilter === 'LOGIN' && !act.includes('LOGIN')) return false;
+                if (actionFilter === 'APPROVE' && !act.includes('APPROVE') && !act.includes('REGRADE')) return false;
+            }
             return true;
         });
 
@@ -347,7 +370,7 @@ export default function ActivityLogsPage() {
         }
 
         return list;
-    }, [logs, search, entityFilter, sortOrder]);
+    }, [logs, search, entityFilter, actionFilter, sortOrder]);
 
     const totalPages = Math.ceil(filteredLogs.length / limit) || 1;
     const paginatedLogs = useMemo(() => {
@@ -540,120 +563,150 @@ export default function ActivityLogsPage() {
                 })}
             </div>
 
-            {/* Filter Card Toolbar */}
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
-                {/* Search Input Field */}
-                <div className="relative w-full sm:w-72 md:w-80">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                    <input
-                        type="text"
-                        placeholder="Tìm theo mô tả, người thực hiện, thực thể..."
-                        value={search}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
+            {/* Search & Action Toolbar (Single Unified Row) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                {/* Left: Search Input Field + Popover Button */}
+                <div className="flex items-center gap-2 flex-1 max-w-xl">
+                    <div className="relative flex-1 min-w-[240px]">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Tìm theo mô tả, người thực hiện, thực thể..."
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1);
+                            }}
+                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                        />
+                        {search ? (
+                            <button
+                                type="button"
+                                onClick={() => { setSearch(''); setPage(1); }}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                                title="Xóa tìm kiếm"
+                            >
+                                <X className="h-3.5 w-3.5" />
+                            </button>
+                        ) : (
+                            <kbd
+                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                                onClick={() => searchInputRef.current?.focus()}
+                                title="Nhấn phím / để tìm nhanh"
+                            >
+                                /
+                            </kbd>
+                        )}
+                    </div>
+
+                    <ActivityLogFilterPopover
+                        entityFilter={entityFilter}
+                        onEntityFilterChange={(val) => {
+                            setEntityFilter(val);
                             setPage(1);
                         }}
-                        className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+                        actionFilter={actionFilter}
+                        onActionFilterChange={(val) => {
+                            setActionFilter(val);
+                            setPage(1);
+                        }}
+                        entityTypes={entityTypes}
+                        logs={logs}
+                        totalFilteredCount={filteredLogs.length}
+                        onResetAll={() => {
+                            setSearch('');
+                            setEntityFilter('');
+                            setActionFilter('');
+                            setPage(1);
+                        }}
                     />
-                    {search && (
-                        <button
-                            type="button"
-                            onClick={() => { setSearch(''); setPage(1); }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        >
-                            <X className="h-4 w-4" />
-                        </button>
-                    )}
                 </div>
 
-                {/* Filter Select Dropdowns Group */}
-                <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Thực thể:</span>
-                        <FilterSelect
-                            value={entityFilter}
-                            onChange={(e) => { setEntityFilter(e.target.value); setPage(1); }}
-                            size="md"
-                        >
-                            <option value="">Tất cả các thực thể</option>
-                            {entityTypes.map((et) => (
-                                <option key={et} value={et}>{et}</option>
-                            ))}
-                        </FilterSelect>
+                {/* Right: Table Action Controls */}
+                <div className="shrink-0">
+                    <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{filteredLogs.length.toLocaleString('vi-VN')}</span> nhật ký
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Sort selector */}
+                            <SortDropdown
+                                value={sortOrder}
+                                onChange={(val) => setSortOrder(val)}
+                                options={[
+                                    { value: 'newest', label: 'Mới nhất' },
+                                    { value: 'oldest', label: 'Cũ nhất' },
+                                ]}
+                            />
+
+                            {/* Column selector */}
+                            <ColumnToggleDropdown
+                                columns={[
+                                    { key: 'createdAt', label: 'Thời gian' },
+                                    { key: 'actor', label: 'Người thực hiện' },
+                                    { key: 'action', label: 'Hành động' },
+                                    { key: 'entity', label: 'Đối tượng' },
+                                    { key: 'description', label: 'Mô tả thao tác' },
+                                ]}
+                                visibleColumns={visibleColumns}
+                                onToggle={(key) => handleColumnToggle(key)}
+                            />
+
+                            {/* View Mode Pills */}
+                            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('list')}
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                        viewMode === 'list'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    }`}
+                                    title="Dạng danh sách"
+                                >
+                                    <List className="h-4 w-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('grid')}
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                        viewMode === 'grid'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    }`}
+                                    title="Dạng thẻ"
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('compact')}
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                        viewMode === 'compact'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    }`}
+                                    title="Dạng thu gọn"
+                                >
+                                    <Layers className="h-4 w-4" />
+                                </button>
+                            </div>
+
+                            {/* Refresh button */}
+                            <button
+                                type="button"
+                                onClick={handleRefreshClick}
+                                className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+                                title="Làm mới dữ liệu"
+                            >
+                                <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            {/* ── 4. Table Action Toolbar ── */}
-            <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-                <span className="text-[14px] font-medium text-slate-600">
-                    <span className="font-semibold text-slate-900">{filteredLogs.length.toLocaleString('vi-VN')}</span> kết quả
-                </span>
-
-                <div className="flex items-center gap-2">
-                    {/* Sort selector */}
-                    <SortDropdown
-                        value={sortOrder}
-                        onChange={(val) => setSortOrder(val)}
-                        options={[
-                            { value: 'newest', label: 'Mới nhất' },
-                            { value: 'oldest', label: 'Cũ nhất' },
-                        ]}
-                    />
-
-                    {/* Column selector */}
-                    <ColumnToggleDropdown
-                        columns={[
-                            { key: 'createdAt', label: 'Thời gian' },
-                            { key: 'actor', label: 'Người thực hiện' },
-                            { key: 'action', label: 'Hành động' },
-                            { key: 'entity', label: 'Đối tượng' },
-                            { key: 'description', label: 'Mô tả thao tác' },
-                        ]}
-                        visibleColumns={visibleColumns}
-                        onToggle={(key) => handleColumnToggle(key)}
-                    />
-
-                    {/* View mode toggle */}
-                    <div className="flex h-10 items-center gap-0.5 rounded-xl border border-slate-200 bg-white p-0.5 shadow-2xs">
-                        <button
-                            type="button"
-                            onClick={() => setViewMode('list')}
-                            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
-                                }`}
-                            title="Danh sách"
-                        >
-                            <List className="h-4 w-4" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setViewMode('grid')}
-                            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
-                                }`}
-                            title="Dạng thẻ"
-                        >
-                            <LayoutGrid className="h-4 w-4" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setViewMode('compact')}
-                            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:text-slate-600'
-                                }`}
-                            title="Thu gọn"
-                        >
-                            <Layers className="h-4 w-4" />
-                        </button>
-                    </div>
-
-                    {/* Refresh button */}
-                    <button
-                        type="button"
-                        onClick={handleRefreshClick}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-                        title="Làm mới dữ liệu"
-                    >
-                        <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-                    </button>
                 </div>
             </div>
 
@@ -737,9 +790,8 @@ export default function ActivityLogsPage() {
                             return (
                                 <div
                                     key={item.id}
-                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                                        isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                                    }`}
+                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                                        }`}
                                 >
                                     {/* Left: Checkbox + Avatar */}
                                     <div className="flex items-center gap-3 min-w-0">
@@ -979,8 +1031,8 @@ export default function ActivityLogsPage() {
                                 type="button"
                                 onClick={() => setPage(1)}
                                 className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 1
-                                        ? 'bg-primary-600 text-white shadow-xs font-semibold'
-                                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
+                                    ? 'bg-primary-600 text-white shadow-xs font-semibold'
+                                    : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                     }`}
                             >
                                 1
@@ -991,8 +1043,8 @@ export default function ActivityLogsPage() {
                                     type="button"
                                     onClick={() => setPage(2)}
                                     className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 2
-                                            ? 'bg-primary-600 text-white shadow-xs font-semibold'
-                                            : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
+                                        ? 'bg-primary-600 text-white shadow-xs font-semibold'
+                                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                         }`}
                                 >
                                     2
@@ -1006,8 +1058,8 @@ export default function ActivityLogsPage() {
                                     type="button"
                                     onClick={() => setPage(totalPages)}
                                     className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === totalPages
-                                            ? 'bg-primary-600 text-white shadow-xs font-semibold'
-                                            : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
+                                        ? 'bg-primary-600 text-white shadow-xs font-semibold'
+                                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                         }`}
                                 >
                                     {totalPages}
@@ -1128,7 +1180,7 @@ export default function ActivityLogsPage() {
                                                 ID Thực thể
                                             </span>
                                             <p className=" text-[14px] font-medium tabular-nums text-slate-700">
-                                            #{selectedLog.entityId || 'N/A'}
+                                                #{selectedLog.entityId || 'N/A'}
                                             </p>
                                         </div>
                                     </div>

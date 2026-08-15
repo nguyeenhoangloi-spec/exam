@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEvent, useCallback, useEffect, useState, useMemo } from 'react';
+import React, { FormEvent, useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -19,6 +19,7 @@ import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, C
 import { ExamPaperHeader } from '../../components/exam-papers/ExamPaperHeader';
 import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICards';
 import { ExamPaperMatrixForm, ExamPaperMatrixFormData } from '../../components/exam-papers/ExamPaperMatrixForm';
+import { ExamPaperFilterPopover } from '../../components/exam-papers/ExamPaperFilterPopover';
 import { ExamPaperTableToolbar } from '../../components/exam-papers/ExamPaperTableToolbar';
 import { ExamPaperTable } from '../../components/exam-papers/ExamPaperTable';
 import { ChangeExamPasswordModal } from '../../components/exam-papers/ChangeExamPasswordModal';
@@ -117,6 +118,21 @@ export default function ExamPapersPage() {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [selectedScheduleId, setSelectedScheduleId] = useState('');
+  const [selectedExamType, setSelectedExamType] = useState('');
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
@@ -592,8 +608,21 @@ export default function ExamPapersPage() {
         const matchesSearch =
           p.paperCode.toLowerCase().includes(search.toLowerCase()) ||
           subjectName.toLowerCase().includes(search.toLowerCase());
+        
         const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter;
-        return matchesSearch && matchesStatus;
+        
+        const matchesSchedule = selectedScheduleId
+          ? String(p.examScheduleId || (p.examSchedule as any)?.id) === selectedScheduleId
+          : true;
+
+        let matchesExamType = true;
+        if (selectedExamType === 'TRAC_NGHIEM') {
+          matchesExamType = (p as any).examType !== 'TU_LUAN' && (p.examSchedule as any)?.examType !== 'TU_LUAN';
+        } else if (selectedExamType === 'TU_LUAN') {
+          matchesExamType = (p as any).examType === 'TU_LUAN' || (p.examSchedule as any)?.examType === 'TU_LUAN';
+        }
+
+        return matchesSearch && matchesStatus && matchesSchedule && matchesExamType;
       })
       .sort((a: any, b: any) => {
         if (sortOrder === 'oldest') return a.id - b.id;
@@ -605,7 +634,7 @@ export default function ExamPapersPage() {
         }
         return b.id - a.id;
       });
-  }, [papers, search, statusFilter, sortOrder]);
+  }, [papers, search, statusFilter, selectedScheduleId, selectedExamType, sortOrder]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPapers.length / limit));
   const paginatedPapers = useMemo(() => {
@@ -649,25 +678,23 @@ export default function ExamPapersPage() {
       subtitle: 'Danh sách đề thi và phân bổ ma trận câu hỏi',
       metaInfo: [
         { label: 'Tổng số đề thi', value: String(papers.length) },
-        { label: 'Đã phát hành', value: String(kpiData.publishedCount) },
+        { label: 'Đề thi đang lọc', value: String(filteredPapers.length) },
       ],
       columns: [
         { header: 'STT', width: '40px' },
-        { header: 'Mã Đề', width: '80px' },
-        { header: 'Tên Môn học', width: '220px' },
-        { header: 'Trạng thái', width: '110px' },
+        { header: 'Mã Đề', width: '90px', align: 'center' },
+        { header: 'Môn học', width: '220px' },
+        { header: 'Trạng thái', width: '110px', align: 'center' },
         { header: 'Số câu', width: '70px', align: 'center' },
         { header: 'Thời gian', width: '90px', align: 'center' },
-        { header: 'Điểm', width: '70px', align: 'center' },
       ],
       rows: filteredPapers.map((p: any, idx) => [
         idx + 1,
         p.paperCode,
-        p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '',
-        p.status,
+        p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---',
+        p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status,
         `${p.questionCount ?? p.questions?.length ?? 0} câu`,
-        `${p.durationMinutes} ph`,
-        `${p.totalScore} đ`,
+        `${p.durationMinutes} phút`,
       ]),
     });
   };
@@ -706,58 +733,91 @@ export default function ExamPapersPage() {
           />
         )}
 
-        {/* Status Tabs & Search Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-1">
-          <TabBar
-            tabs={[
-              { key: 'ALL', label: 'Tất cả đề thi', count: kpiData.total },
-              { key: 'PUBLISHED', label: 'Đã phát hành', count: kpiData.publishedCount },
-              { key: 'DRAFT', label: 'Bản nháp', count: kpiData.draftCount },
-              { key: 'ARCHIVED', label: 'Lưu trữ', count: kpiData.archivedCount },
-            ]}
-            active={statusFilter}
-            onChange={(key) => { setStatusFilter(key); setPage(1); }}
-            className="border-b-0 pt-0 w-auto"
-          />
-
-          <div className="relative w-full md:w-80 shrink-0 pb-1 md:pb-0">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã đề, tên môn học..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+        {/* Search & Unified Smart Filter Popover Row */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Left: Search input + 1 Unified Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            {/* Search Input Field */}
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã đề, tên môn học..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
+            </div>
+
+            {/* 1 Nút Bộ Lọc Duy Nhất Đa Chiều */}
+            <ExamPaperFilterPopover
+              statusFilter={statusFilter}
+              onStatusChange={(val) => {
+                setStatusFilter(val);
+                setPage(1);
+              }}
+              selectedScheduleId={selectedScheduleId}
+              onScheduleChange={(val) => {
+                setSelectedScheduleId(val);
+                setPage(1);
+              }}
+              selectedExamType={selectedExamType}
+              onExamTypeChange={(val) => {
+                setSelectedExamType(val);
+                setPage(1);
+              }}
+              papers={papers}
+              schedules={schedules}
+              totalFilteredCount={filteredPapers.length}
+              onResetAll={() => {
+                setStatusFilter('ALL');
+                setSelectedScheduleId('');
+                setSelectedExamType('');
+                setPage(1);
+              }}
+            />
+          </div>
+
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <ExamPaperTableToolbar
+              totalCount={filteredPapers.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={handleRefresh}
+              loading={loading}
+            />
           </div>
         </div>
-
-        <ExamPaperTableToolbar
-          totalCount={filteredPapers.length}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-          onRefresh={handleRefresh}
-          loading={loading}
-        />
 
         {loading ? (
           <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">

@@ -372,6 +372,7 @@ model Question {
   histories          QuestionHistory[]
   statistic          QuestionStatistic?
   essayRubrics       EssayRubricCriterion[]
+  essayRubricVersions EssayRubricVersion[]
   fillBlankAnswers   FillBlankAnswer[]
 
   @@index([subjectId, chapterId, status])
@@ -548,6 +549,20 @@ enum EssayAttemptGradingStatus {
   UNDER_GRADING
   WAITING_APPROVAL
   PUBLISHED
+}
+
+enum EssayAiGradingStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+enum EssayCriterionAchievementLevel {
+  FULL
+  PARTIAL
+  NOT_MET
+  NEEDS_REVIEW
 }
 
 enum EventSeverity {
@@ -752,6 +767,9 @@ model AttemptAnswer {
   aiGeneratedAt      DateTime?
   aiConfirmedById    Int?
   aiConfirmedAt      DateTime?
+  rubricVersionId    String?
+  rubricVersion      EssayRubricVersion? @relation(fields: [rubricVersionId], references: [id], onDelete: SetNull)
+  aiGradingRuns      EssayAiGradingRun[]
 
   gradeHistories     EssayGradeHistory[]
 
@@ -788,15 +806,86 @@ model EssayRubricCriterion {
   question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   label       String
   description String?
+  fullCreditGuide    String?
+  partialCreditGuide String?
+  zeroCreditGuide    String?
+  acceptedConcepts   String?
+  commonMistakes     String?
+  scoreStep          Float    @default(0.25)
   maxScore    Float
   sortOrder   Int
+  rubricVersionId String?
+  rubricVersion   EssayRubricVersion? @relation(fields: [rubricVersionId], references: [id], onDelete: SetNull)
   grades      EssayGrade[]
+  aiResults   EssayAiCriterionResult[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@unique([questionId, sortOrder])
   @@index([questionId])
   @@map("essay_rubric_criteria")
+}
+
+model EssayRubricVersion {
+  id              String   @id @default(uuid())
+  questionId      String
+  question        Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  version         Int
+  referenceAnswer String?
+  gradingGuidance String?
+  totalScore      Float
+  isLocked        Boolean  @default(false)
+  createdById     Int?
+  createdAt       DateTime @default(now())
+  criteria        EssayRubricCriterion[]
+  attemptAnswers  AttemptAnswer[]
+  aiGradingRuns   EssayAiGradingRun[]
+
+  @@unique([questionId, version])
+  @@index([questionId, createdAt])
+  @@map("essay_rubric_versions")
+}
+
+model EssayAiGradingRun {
+  id              String               @id @default(uuid())
+  attemptAnswerId String
+  attemptAnswer   AttemptAnswer        @relation(fields: [attemptAnswerId], references: [id], onDelete: Cascade)
+  rubricVersionId String?
+  rubricVersion   EssayRubricVersion?  @relation(fields: [rubricVersionId], references: [id], onDelete: SetNull)
+  status          EssayAiGradingStatus @default(QUEUED)
+  provider        String?
+  model           String?
+  suggestedScore  Float?
+  overallComment  String?
+  confidence      Float?
+  warning         String?
+  errorMessage    String?
+  requestedById   Int
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime             @default(now())
+  criteria        EssayAiCriterionResult[]
+
+  @@index([attemptAnswerId, createdAt])
+  @@index([status, createdAt])
+  @@map("essay_ai_grading_runs")
+}
+
+model EssayAiCriterionResult {
+  id               String                         @id @default(uuid())
+  aiGradingRunId   String
+  aiGradingRun     EssayAiGradingRun              @relation(fields: [aiGradingRunId], references: [id], onDelete: Cascade)
+  criterionId      String
+  criterion        EssayRubricCriterion           @relation(fields: [criterionId], references: [id], onDelete: Restrict)
+  suggestedScore   Float
+  achievementLevel EssayCriterionAchievementLevel @default(NEEDS_REVIEW)
+  comment          String?
+  evidenceQuote    String?
+  createdAt        DateTime                       @default(now())
+
+  @@unique([aiGradingRunId, criterionId])
+  @@index([criterionId])
+  @@map("essay_ai_criterion_results")
 }
 
 model EssayGrade {

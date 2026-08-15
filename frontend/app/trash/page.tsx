@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Check } from 'lucide-react';
 import api from '../../lib/api';
@@ -10,6 +10,7 @@ import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
 import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
+import { TrashFilterPopover } from '../../components/trash/TrashFilterPopover';
 import {
   Trash2, RotateCcw, Search, CalendarCheck, FileText, X,
   HelpCircle, RefreshCw, ChevronDown, Clock, Users, Building2, GraduationCap, BookOpen, CheckCircle2, SlidersHorizontal, Eye, MoreVertical, List, LayoutGrid, Layers, ChevronLeft, ChevronRight
@@ -77,8 +78,22 @@ function TrashPageContent() {
   const [items, setItems] = useState<TrashItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [expiryFilter, setExpiryFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -132,8 +147,22 @@ function TrashPageContent() {
     }
   };
 
+  const getRemainingDays = useCallback((deletedAt?: string) => {
+    if (!deletedAt) return 30;
+    const deletedDate = new Date(deletedAt).getTime();
+    const now = Date.now();
+    const diffDays = Math.floor((now - deletedDate) / (1000 * 60 * 60 * 24));
+    return Math.max(0, 30 - diffDays);
+  }, []);
+
   const sortedItems = useMemo(() => {
     let result = [...items];
+    if (expiryFilter === 'URGENT') {
+      result = result.filter((i) => getRemainingDays(i.deletedAt) < 7);
+    } else if (expiryFilter === 'RECENT') {
+      result = result.filter((i) => getRemainingDays(i.deletedAt) > 20);
+    }
+
     if (sortOrder === 'newest') {
       result.sort((a, b) => new Date(b.deletedAt || 0).getTime() - new Date(a.deletedAt || 0).getTime());
     } else if (sortOrder === 'oldest') {
@@ -142,11 +171,11 @@ function TrashPageContent() {
       result.sort((a, b) => a.title.localeCompare(b.title));
     }
     return result;
-  }, [items, sortOrder]);
+  }, [items, expiryFilter, sortOrder, getRemainingDays]);
 
   useEffect(() => {
     setPage(1);
-  }, [activeCategory, search, sortOrder]);
+  }, [activeCategory, search, expiryFilter, sortOrder]);
 
   const totalPages = Math.max(1, Math.ceil(sortedItems.length / pageSize));
   const paginatedItems = useMemo(() => {
@@ -202,14 +231,6 @@ function TrashPageContent() {
         }
       },
     });
-  };
-
-  const getRemainingDays = (deletedAt?: string) => {
-    if (!deletedAt) return 30;
-    const deletedDate = new Date(deletedAt).getTime();
-    const now = Date.now();
-    const diffDays = Math.floor((now - deletedDate) / (1000 * 60 * 60 * 24));
-    return Math.max(0, 30 - diffDays);
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -296,7 +317,7 @@ function TrashPageContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <Button
             type="button"
             variant="secondary"
@@ -307,14 +328,6 @@ function TrashPageContent() {
           >
             Dọn dẹp tự động (&gt; 30 ngày)
           </Button>
-          <button
-            type="button"
-            onClick={handleRefreshClick}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all active:scale-95 cursor-pointer select-none shrink-0"
-            title="Làm mới dữ liệu"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-          </button>
         </div>
       </div>
 
@@ -412,118 +425,147 @@ function TrashPageContent() {
         })}
       </div>
 
-      {/* Filter Card Toolbar */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-3.5">
-        {/* Search Input Field */}
-        <div className="relative w-full sm:w-72 md:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
-            className="h-9 w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900/50 pl-10 pr-9 text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
+      {/* Search & Action Toolbar Row (Single Unified Row) */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Left: Search Input Field + Popover Button */}
+        <div className="flex items-center gap-2 flex-1 max-w-xl">
+          <div className="relative flex-1 min-w-[240px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+            />
+            {search ? (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                title="Xóa tìm kiếm"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            ) : (
+              <kbd
+                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                onClick={() => searchInputRef.current?.focus()}
+                title="Nhấn phím / để tìm nhanh"
+              >
+                /
+              </kbd>
+            )}
+          </div>
+
+          <TrashFilterPopover
+            activeCategory={activeCategory}
+            onActiveCategoryChange={(val) => {
+              setActiveCategory(val);
+              setPage(1);
+            }}
+            expiryFilter={expiryFilter}
+            onExpiryFilterChange={(val) => {
+              setExpiryFilter(val);
+              setPage(1);
+            }}
+            stats={stats}
+            totalFilteredCount={sortedItems.length}
+            onResetAll={() => {
+              setSearch('');
+              setActiveCategory('schedules');
+              setExpiryFilter('');
+              setPage(1);
+            }}
           />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
         </div>
 
-        {/* Filter Select Dropdowns Group */}
-        <div className="flex flex-wrap items-center gap-3.5 w-full lg:w-auto">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">Danh mục:</span>
-            <FilterSelect
-              value={activeCategory}
-              onChange={(e) => setActiveCategory(e.target.value)}
-              size="md"
-            >
-              <option value="schedules">Lịch thi đã xóa ({stats.schedules})</option>
-              <option value="papers">Đề thi đã xóa ({stats.papers})</option>
-              <option value="questions">Ngân hàng câu hỏi ({stats.questions})</option>
-              <option value="users">Tài khoản / Sinh viên ({stats.users || 0})</option>
-              <option value="subjects">Môn học ({stats.subjects || 0})</option>
-              <option value="classes">Lớp học ({stats.classes || 0})</option>
-            </FilterSelect>
+        {/* Right: Table Action Controls */}
+        <div className="shrink-0">
+          <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{sortedItems.length.toLocaleString('vi-VN')}</span> kết quả
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Sort Dropdown */}
+              <SortDropdown
+                value={sortOrder}
+                onChange={(val) => setSortOrder(val)}
+                options={[
+                  { value: 'newest', label: 'Mới nhất' },
+                  { value: 'oldest', label: 'Cũ nhất' },
+                  { value: 'title_asc', label: 'Tên: A - Z' },
+                ]}
+              />
+
+              {/* Column Selector */}
+              <ColumnToggleDropdown
+                columns={[
+                  { key: 'deletedAt', label: 'Thời điểm xóa' },
+                  { key: 'expiresIn', label: 'Tự động hủy' },
+                  { key: 'deletedBy', label: 'Người xóa' },
+                ]}
+                visibleColumns={visibleColumns}
+                onToggle={(key) => setVisibleColumns((prev: any) => ({ ...prev, [key]: !prev[key] }))}
+              />
+
+              {/* View Mode Pills */}
+              <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                    viewMode === 'list'
+                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                  title="Xem dạng danh sách"
+                >
+                  <List className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                    viewMode === 'grid'
+                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                  title="Xem dạng lưới"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('compact')}
+                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                    viewMode === 'compact'
+                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                  title="Xem dạng thu gọn"
+                >
+                  <Layers className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Refresh Button */}
+              <button
+                type="button"
+                onClick={handleRefreshClick}
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+                title="Làm mới dữ liệu"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Main Data Table Header & Actions Chuẩn Hệ Thống */}
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-1">
-          <p className="text-[15px] font-normal text-slate-700">
-            <span className="font-semibold text-slate-900">{sortedItems.length}</span> kết quả
-          </p>
-
-          <div className="flex items-center gap-2">
-            {/* Sort Dropdown */}
-            <SortDropdown
-              value={sortOrder}
-              onChange={(val) => setSortOrder(val)}
-              options={[
-                { value: 'newest', label: 'Mới nhất' },
-                { value: 'oldest', label: 'Cũ nhất' },
-                { value: 'title_asc', label: 'Tên: A - Z' },
-              ]}
-            />
-
-            {/* Column Selector */}
-            <ColumnToggleDropdown
-              columns={[
-                { key: 'deletedAt', label: 'Thời điểm xóa' },
-                { key: 'expiresIn', label: 'Tự động hủy' },
-                { key: 'deletedBy', label: 'Người xóa' },
-              ]}
-              visibleColumns={visibleColumns}
-              onToggle={(key) => setVisibleColumns((prev: any) => ({ ...prev, [key]: !prev[key] }))}
-            />
-
-            {/* View Mode Switcher 3 Icon */}
-            <div className="flex items-center h-9 rounded-xl border border-slate-200 bg-white px-1 shadow-2xs gap-0.5">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={`h-9 w-9 flex items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list' ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200' : 'text-slate-400 hover:text-slate-700'}`}
-                title="Xem dạng danh sách"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`h-9 w-9 flex items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200' : 'text-slate-400 hover:text-slate-700'}`}
-                title="Xem dạng lưới"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('compact')}
-                className={`h-9 w-9 flex items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact' ? 'bg-blue-50 text-blue-600 font-semibold border border-blue-200' : 'text-slate-400 hover:text-slate-700'}`}
-                title="Xem dạng thu gọn"
-              >
-                <Layers className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Refresh Button */}
-            <button
-              type="button"
-              onClick={handleRefreshClick}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-              title="Làm mới dữ liệu"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
-          </div>
-        </div>
 
         {/* Render Dữ Liệu Thực Tế Theo 3 Chế Độ Xem (View Mode) */}
         {loading ? (
@@ -810,7 +852,6 @@ function TrashPageContent() {
             }}
           />
         )}
-      </div>
     </main>
   );
 }
