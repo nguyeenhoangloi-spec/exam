@@ -177,14 +177,21 @@ export function ExamScheduleFilterPopover({
     };
   }, [isOpen, updatePosition]);
 
-  // ── Khóa cuộn trang nền khi mở popup: Giữ vững popup, cuộn bên trong thoải mái 100% không lo bị trôi hay bị mất ──
+  // ── Khóa cuộn trang nền khi mở popup CÓ BÙ TRỪ THANH CUỘN (Triệt tiêu 100% hiện tượng đẩy khung/giật màn hình) ──
   useEffect(() => {
     if (!isOpen) return;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     const prevOverflow = document.body.style.overflow;
+    const prevPaddingRight = document.body.style.paddingRight;
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
     document.body.style.overflow = 'hidden';
 
     return () => {
       document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
     };
   }, [isOpen]);
 
@@ -322,12 +329,20 @@ export function ExamScheduleFilterPopover({
           <span>Bộ lọc</span>
         </div>
 
-        {/* Cột phải kích thước cố định: Khi có lọc hiện số đếm, khi chưa lọc hiện mũi tên ⌵ */}
+        {/* Cột phải kích thước cố định: Khi có lọc hiện số đếm (rê chuột đổi thành ✕ để xóa nhanh), khi chưa lọc hiện mũi tên ⌵ */}
         <div className="flex h-5 w-5 items-center justify-center shrink-0">
           {activeFilterCount > 0 ? (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10.5px] font-bold text-white shadow-2xs animate-in zoom-in-75 duration-150">
-              {activeFilterCount}
-            </span>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                onResetAll();
+              }}
+              title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
+              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[10.5px] font-bold text-white shadow-2xs transition-colors cursor-pointer"
+            >
+              <span className="group-hover/badge:hidden">{activeFilterCount}</span>
+              <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
+            </div>
           ) : (
             <ChevronDown
               className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
@@ -759,15 +774,28 @@ export function ExamScheduleFilterPopover({
 
             {/* 3. Footer chuẩn mực */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
-                {totalFilteredCount !== undefined ? (
-                  <>
-                    Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong> lịch thi
-                  </>
-                ) : (
-                  'Đã áp dụng bộ lọc'
+              <div className="space-y-1">
+                <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                  {totalFilteredCount !== undefined ? (
+                    <>
+                      Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
+                      {schedules.length > 0 && (
+                        <span className="text-slate-400 dark:text-slate-500 font-normal"> / {schedules.length} lịch thi ({Math.round((totalFilteredCount / Math.max(1, schedules.length)) * 100)}%)</span>
+                      )}
+                    </>
+                  ) : (
+                    'Đã áp dụng bộ lọc'
+                  )}
+                </div>
+                {totalFilteredCount !== undefined && schedules.length > 0 && (
+                  <div className="h-1 w-28 rounded-full bg-slate-200/80 dark:bg-slate-700 overflow-hidden">
+                    <div
+                      className="h-full bg-blue-600 transition-all duration-300 rounded-full"
+                      style={{ width: `${Math.min(100, Math.round((totalFilteredCount / Math.max(1, schedules.length)) * 100))}%` }}
+                    />
+                  </div>
                 )}
-              </span>
+              </div>
 
               <button
                 type="button"
