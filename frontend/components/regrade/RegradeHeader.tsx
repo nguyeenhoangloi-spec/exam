@@ -21,7 +21,7 @@ export function RegradeHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-0.5">
         <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
-          Quản Lý Phúc Khảo & Khiếu Nại Điểm
+          Quản lý phúc khảo & khiếu nại điểm
         </h1>
         <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Tiếp nhận đơn khiếu nại từ sinh viên, thẩm định bài thi, điều chỉnh điểm số và công bố kết quả.
@@ -49,7 +49,7 @@ export function RegradeHeader({
             onClick={onPrintReport}
             leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
           >
-            In Báo cáo
+            In báo cáo
           </Button>
         )}
       </div>

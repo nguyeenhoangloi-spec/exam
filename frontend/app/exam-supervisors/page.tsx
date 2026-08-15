@@ -604,7 +604,7 @@ export default function ExamSupervisorsPage() {
 
               {currentUser?.role === 'ADMIN' && (
                 <>
-                  {/* Nút 2: Tự Động (Soft Tint Pill) */}
+                  {/* Nút 2: Tự động */}
                   <Button
                     type="button"
                     variant="ghost"
@@ -616,17 +616,18 @@ export default function ExamSupervisorsPage() {
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80'
                     }
                   >
-                    Tự Động
+                    Tự động
                   </Button>
 
-                  {/* Nút 3: Phân Công (Primary Solid Blue - Nút đậm duy nhất) */}
+                  {/* Nút 3: Phân công */}
                   <Button
                     type="button"
                     variant="primary"
                     size="md"
+                    leftIcon={<Plus className="h-4 w-4" />}
                     onClick={() => setActiveInlinePanel((p) => (p === 'create' ? null : 'create'))}
                   >
-                    Phân Công
+                    Phân công
                   </Button>
                 </>
               )}

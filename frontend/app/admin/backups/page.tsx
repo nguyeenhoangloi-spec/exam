@@ -178,6 +178,7 @@ export default function BackupsPage() {
 
     // Toolbar Controls State
     const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [openColumnMenu, setOpenColumnMenu] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
         snapshotId: true,
@@ -274,6 +275,21 @@ export default function BackupsPage() {
             return sortOrder === 'newest' ? tB - tA : tA - tB;
         });
     }, [jobs, sortOrder]);
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+    };
+
+    const toggleSelectAll = () => {
+        const allSelected = sortedJobs.length > 0 && sortedJobs.every((j) => selectedIds.includes(j.id));
+        if (allSelected) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(sortedJobs.map((j) => j.id));
+        }
+    };
 
     const createBackup = async (type: BackupJobType = 'FULL') => {
         setActionLoading(true);
@@ -451,7 +467,7 @@ export default function BackupsPage() {
                         isLoading={actionLoading}
                         leftIcon={<DatabaseBackup className="h-4 w-4" />}
                     >
-                        Backup ngay
+                        Tạo bản sao lưu
                     </Button>
                 </div>
             </div>
@@ -759,161 +775,192 @@ export default function BackupsPage() {
                 /* Data Grid Table */
                 viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                        {sortedJobs.map((job) => (
-                            <article key={job.id} className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition hover:shadow-md">
-                                <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setDetailJob(job)}
-                                        className="min-w-0 truncate text-left text-[15px] font-medium text-slate-900 hover:text-blue-700"
-                                    >
-                                        <IdentifierBadge title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
-                                    </button>
-                                    {getBackupStatusBadge(job.status)}
-                                </div>
-                                <div className="mt-3 grid grid-cols-2 gap-3 text-[14px]">
-                                    <div>
-                                        <p className="text-slate-500">Loại</p>
-                                        <p className="mt-0.5 font-medium text-slate-900">{job.type}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-slate-500">Dung lượng</p>
-                                        <p className="mt-0.5 font-medium text-slate-900">{formatBytes(job.sizeBytes)}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-slate-500">Hoàn thành</p>
-                                        <p className="mt-0.5 font-medium text-slate-900">{formatDate(job.completedAt || job.createdAt)}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-slate-500">Phương thức</p>
-                                        <p className="mt-0.5 font-medium text-slate-900">{job.initiatedBy?.username || 'Tự động'}</p>
-                                    </div>
-                                </div>
-                                <div className="mt-4 flex items-center justify-end gap-1 border-t border-slate-100 pt-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setDetailJob(job)}
-                                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600"
-                                        title="Xem chi tiết bản sao lưu"
-                                    >
-                                        <Eye className="h-4 w-4" />
-                                    </button>
-                                    {job.status === 'SUCCEEDED' && job.retained !== false && (
-                                        <button
-                                            type="button"
-                                            onClick={() => openRestoreModal(job)}
-                                            className="flex h-9 w-9 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50"
-                                            title="Khôi phục bản sao lưu này"
-                                        >
-                                            <RotateCcw className="h-4 w-4" />
-                                        </button>
-                                    )}
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-                ) : viewMode === 'compact' ? (
-                    <div className="space-y-2.5">
-                        {sortedJobs.map((job) => (
-                            <div
-                                key={job.id}
-                                className="flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5"
-                            >
-                                {/* Left: Avatar Icon */}
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
-                                        <Database className="h-5 w-5 text-blue-600" />
-                                    </div>
-
-                                    {/* Middle: SnapshotId + Type + Meta chips */}
-                                    <div className="min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap">
+                        {sortedJobs.map((job) => {
+                            const isChecked = selectedIds.includes(job.id);
+                            return (
+                                <article
+                                    key={job.id}
+                                    className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition hover:shadow-md ${
+                                        isChecked ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked}
+                                                onChange={() => toggleSelect(job.id)}
+                                                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                                            />
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="text-[15px] font-semibold text-slate-900 truncate hover:text-blue-600 transition cursor-pointer text-left"
+                                                className="min-w-0 truncate text-left text-[14px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
                                             >
-                                                <IdentifierBadge title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                                <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
                                             </button>
-                                            <span
-                                                className={`text-xs font-semibold px-2 py-0.5 rounded-md tabular-nums border ${
-                                                    job.type === 'FULL'
-                                                        ? 'bg-blue-600 text-white border-blue-600'
-                                                        : job.type === 'DATABASE'
-                                                            ? 'bg-blue-50 text-blue-700 border-blue-200/80'
-                                                            : job.type === 'UPLOADS'
-                                                                ? 'bg-sky-50 text-sky-700 border-sky-200/80'
-                                                                : 'bg-amber-50 text-amber-700 border-amber-200/80'
-                                                }`}
-                                            >
-                                                {job.type}
-                                            </span>
                                         </div>
-
-                                        <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
-                                            <span className="flex items-center gap-1">
-                                                <HardDrive className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                <span className="text-slate-800 font-medium">{formatBytes(job.sizeBytes)}</span>
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                {job.initiatedBy ? (
-                                                    <>
-                                                        <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                        <span className="text-slate-700 font-medium">{job.initiatedBy.username}</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                        <span>Tự động (Cron)</span>
-                                                    </>
-                                                )}
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                <span>{formatDate(job.completedAt || job.createdAt)}</span>
-                                            </span>
-                                            {job.checksum && (
-                                                <span className="text-slate-400 tabular-nums">
-                                                    SHA-256: {job.checksum.slice(0, 8)}…
-                                                </span>
-                                            )}
+                                        {getBackupStatusBadge(job.status)}
+                                    </div>
+                                    <div className="mt-3 grid grid-cols-2 gap-3 text-[14px]">
+                                        <div>
+                                            <p className="text-slate-500 dark:text-slate-400">Loại</p>
+                                            <p className="mt-0.5 font-medium text-slate-900 dark:text-slate-100">{job.type}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-500 dark:text-slate-400">Dung lượng</p>
+                                            <p className="mt-0.5 font-medium text-slate-900 dark:text-slate-100">{formatBytes(job.sizeBytes)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-500 dark:text-slate-400">Hoàn thành</p>
+                                            <p className="mt-0.5 font-medium text-slate-900 dark:text-slate-100">{formatDate(job.completedAt || job.createdAt)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-500 dark:text-slate-400">Phương thức</p>
+                                            <p className="mt-0.5 font-medium text-slate-900 dark:text-slate-100">{job.initiatedBy?.username || 'Tự động'}</p>
                                         </div>
                                     </div>
-                                </div>
-
-                                {/* Right: Status & Actions */}
-                                <div className="flex items-center gap-2 shrink-0">
-                                    {getBackupStatusBadge(job.status)}
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setDetailJob(job)}
-                                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
-                                        title="Xem chi tiết bản sao lưu"
-                                    >
-                                        <Eye className="h-4 w-4" />
-                                    </button>
-
-                                    {job.status === 'SUCCEEDED' && job.retained !== false && (
+                                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
                                         <button
                                             type="button"
-                                            onClick={() => openRestoreModal(job)}
-                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
-                                            title="Khôi phục bản sao lưu này"
+                                            onClick={() => setDetailJob(job)}
+                                            className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
                                         >
-                                            <RotateCcw className="h-4 w-4" />
+                                            <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                                            <span>Xem chi tiết</span>
                                         </button>
-                                    )}
+                                        {job.status === 'SUCCEEDED' && job.retained !== false && (
+                                            <button
+                                                type="button"
+                                                onClick={() => openRestoreModal(job)}
+                                                className="flex h-8 w-8 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition cursor-pointer"
+                                                title="Khôi phục bản sao lưu này"
+                                            >
+                                                <RotateCcw className="h-4 w-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
+                ) : viewMode === 'compact' ? (
+                    <div className="space-y-2.5">
+                        {sortedJobs.map((job) => {
+                            const isChecked = selectedIds.includes(job.id);
+                            return (
+                                <div
+                                    key={job.id}
+                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                                        isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                                    }`}
+                                >
+                                    {/* Left: Checkbox + IdentifierBadge + Meta chips */}
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <input
+                                            type="checkbox"
+                                            checked={isChecked}
+                                            onChange={() => toggleSelect(job.id)}
+                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setDetailJob(job)}
+                                            className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                                        >
+                                            <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                        </button>
+
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span
+                                                    className={`text-xs font-semibold px-2 py-0.5 rounded-md tabular-nums border ${
+                                                        job.type === 'FULL'
+                                                            ? 'bg-blue-600 text-white border-blue-600'
+                                                            : job.type === 'DATABASE'
+                                                                ? 'bg-blue-50 text-blue-700 border-blue-200/80'
+                                                                : job.type === 'UPLOADS'
+                                                                    ? 'bg-sky-50 text-sky-700 border-sky-200/80'
+                                                                    : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                                                    }`}
+                                                >
+                                                    {job.type}
+                                                </span>
+                                                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                                    {formatBytes(job.sizeBytes)}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                                                <span className="flex items-center gap-1">
+                                                    {job.initiatedBy ? (
+                                                        <>
+                                                            <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                            <span className="text-slate-700 dark:text-slate-300 font-medium">{job.initiatedBy.username}</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                            <span>Tự động (Cron)</span>
+                                                        </>
+                                                    )}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                    <span>{formatDate(job.completedAt || job.createdAt)}</span>
+                                                </span>
+                                                {job.checksum && (
+                                                    <span className="text-slate-400 tabular-nums">
+                                                        SHA-256: {job.checksum.slice(0, 8)}…
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right: Status & Actions */}
+                                    <div className="flex items-center gap-1.5 shrink-0">
+                                        {getBackupStatusBadge(job.status)}
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setDetailJob(job)}
+                                            className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                                            title="Xem chi tiết"
+                                        >
+                                            <Eye className="h-4 w-4" />
+                                        </button>
+
+                                        {job.status === 'SUCCEEDED' && job.retained !== false && (
+                                            <button
+                                                type="button"
+                                                onClick={() => openRestoreModal(job)}
+                                                className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl transition cursor-pointer"
+                                                title="Khôi phục bản sao lưu này"
+                                            >
+                                                <RotateCcw className="h-4 w-4" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-                    <table className="ui-table w-full text-left border-collapse text-slate-700 text-[15px]">
-                        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+                <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                    <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-[15px]">
+                        <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                             <tr>
-                                <th scope="col" className="p-3.5 pl-4 min-w-[200px]">Snapshot ID</th>
+                                <th scope="col" className="p-3.5 pl-4 text-center w-10">
+                                    <input
+                                        type="checkbox"
+                                        checked={sortedJobs.length > 0 && sortedJobs.every((j) => selectedIds.includes(j.id))}
+                                        onChange={toggleSelectAll}
+                                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                    />
+                                </th>
+                                <th scope="col" className="p-3.5 min-w-[200px]">Snapshot ID</th>
                                 <th scope="col" className="p-3.5 whitespace-nowrap">Loại</th>
                                 <th scope="col" className="p-3.5 whitespace-nowrap">Phương thức</th>
                                 <th scope="col" className="p-3.5 whitespace-nowrap">Thời gian hoàn thành</th>
@@ -922,93 +969,104 @@ export default function BackupsPage() {
                                 <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 font-normal">
-                            {sortedJobs.map((job) => (
-                                <tr key={job.id} className="transition hover:bg-slate-50/60">
-                                    <td className="p-3.5 pl-4 min-w-[200px]">
-                                        <button
-                                            type="button"
-                                            onClick={() => setDetailJob(job)}
-                                            className=" tabular-nums text-[15px] leading-[22px] font-medium text-blue-700 hover:text-blue-900 transition text-left cursor-pointer"
-                                        >
-                                            <IdentifierBadge title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
-                                        </button>
-                                        {job.checksum && (
-                                            <div className="mt-0.5 text-[15px] leading-[22px] tabular-nums text-slate-500">
-                                                SHA-256: {job.checksum.slice(0, 12)}…
-                                            </div>
-                                        )}
-                                    </td>
-
-                                    <td className="p-3.5 whitespace-nowrap">
-                                        <span
-                                            className={`table-badge font-medium text-[15px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
-                                                ? 'bg-blue-600 text-white shadow-2xs'
-                                                : job.type === 'DATABASE'
-                                                    ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
-                                                    : job.type === 'UPLOADS'
-                                                        ? 'bg-sky-50 text-sky-700 border border-sky-200/80'
-                                                        : 'bg-amber-50 text-amber-700 border border-amber-200/80'
-                                                }`}
-                                        >
-                                            {job.type}
-                                        </span>
-                                    </td>
-
-                                    <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700">
-                                        {job.initiatedBy ? (
-                                            <span className="inline-flex items-center gap-1 text-blue-700 font-medium">
-                                                <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1 text-slate-600 font-medium">
-                                                <Clock className="h-3 w-3 text-slate-400" /> Tự động (Cron)
-                                            </span>
-                                        )}
-                                    </td>
-
-                                    <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700">
-                                        {formatDate(job.completedAt || job.createdAt)}
-                                        <span className="block text-[15px] leading-[22px] text-slate-400 mt-0.5">
-                                            Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
-                                        </span>
-                                    </td>
-
-                                    <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 text-[15px]">
-                                        {formatBytes(job.sizeBytes)}
-                                    </td>
-
-                                    <td className="p-3.5 whitespace-nowrap">{getBackupStatusBadge(job.status)}</td>
-
-                                    <td className="p-3.5 pr-4 text-right whitespace-nowrap">
-                                        <div className="flex items-center justify-end gap-1">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
+                            {sortedJobs.map((job) => {
+                                const isChecked = selectedIds.includes(job.id);
+                                return (
+                                    <tr key={job.id} className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${isChecked ? 'bg-blue-50/20' : ''}`}>
+                                        <td className="p-3.5 pl-4 text-center w-10">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked}
+                                                onChange={() => toggleSelect(job.id)}
+                                                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                            />
+                                        </td>
+                                        <td className="p-3.5 min-w-[200px]">
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
-                                                title="Xem chi tiết bản sao lưu"
+                                                className="tabular-nums text-[15px] leading-[22px] font-medium text-blue-700 dark:text-blue-400 hover:text-blue-900 transition text-left cursor-pointer"
                                             >
-                                                <Eye className="h-4 w-4" />
+                                                <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
                                             </button>
+                                            {job.checksum && (
+                                                <div className="mt-0.5 text-[13px] leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
+                                                    SHA-256: {job.checksum.slice(0, 12)}…
+                                                </div>
+                                            )}
+                                        </td>
 
-                                            {job.status === 'SUCCEEDED' && job.retained !== false ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => openRestoreModal(job)}
-                                                    className="flex h-9 w-9 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
-                                                    title="Khôi phục bản sao lưu này"
-                                                >
-                                                    <RotateCcw className="h-4 w-4" />
-                                                </button>
+                                        <td className="p-3.5 whitespace-nowrap">
+                                            <span
+                                                className={`table-badge font-medium text-[13px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
+                                                    ? 'bg-blue-600 text-white shadow-2xs'
+                                                    : job.type === 'DATABASE'
+                                                        ? 'bg-blue-50 text-blue-700 border border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-400'
+                                                        : job.type === 'UPLOADS'
+                                                            ? 'bg-sky-50 text-sky-700 border border-sky-200/80 dark:bg-sky-950/60 dark:text-sky-400'
+                                                            : 'bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/60 dark:text-amber-400'
+                                                    }`}
+                                            >
+                                                {job.type}
+                                            </span>
+                                        </td>
+
+                                        <td className="p-3.5 whitespace-nowrap text-[14px] font-medium text-slate-700 dark:text-slate-300">
+                                            {job.initiatedBy ? (
+                                                <span className="inline-flex items-center gap-1 text-blue-700 dark:text-blue-400 font-medium">
+                                                    <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
+                                                </span>
                                             ) : (
-                                                <span className="table-badge text-[15px] font-medium text-slate-400">
-                                                    {job.status === 'SUCCEEDED' ? 'Hết retention' : 'Không khả dụng'}
+                                                <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400 font-medium">
+                                                    <Clock className="h-3 w-3 text-slate-400" /> Tự động (Cron)
                                                 </span>
                                             )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+
+                                        <td className="p-3.5 whitespace-nowrap text-[14px] font-medium text-slate-700 dark:text-slate-300">
+                                            {formatDate(job.completedAt || job.createdAt)}
+                                            <span className="block text-[13px] leading-[20px] text-slate-400 mt-0.5">
+                                                Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
+                                            </span>
+                                        </td>
+
+                                        <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[14px]">
+                                            {formatBytes(job.sizeBytes)}
+                                        </td>
+
+                                        <td className="p-3.5 whitespace-nowrap">{getBackupStatusBadge(job.status)}</td>
+
+                                        <td className="p-3.5 pr-4 text-right whitespace-nowrap">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setDetailJob(job)}
+                                                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                                                    title="Xem chi tiết"
+                                                >
+                                                    <Eye className="h-4 w-4" />
+                                                </button>
+
+                                                {job.status === 'SUCCEEDED' && job.retained !== false ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openRestoreModal(job)}
+                                                        className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl transition cursor-pointer"
+                                                        title="Khôi phục bản sao lưu này"
+                                                    >
+                                                        <RotateCcw className="h-4 w-4" />
+                                                    </button>
+                                                ) : (
+                                                    <span className="table-badge text-[13px] font-medium text-slate-400">
+                                                        {job.status === 'SUCCEEDED' ? 'Hết retention' : 'Không khả dụng'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

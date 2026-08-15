@@ -330,10 +330,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <Home className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                 <span>Trang chủ</span>
               </button>
-              <ChevronRight className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
-              <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 truncate">
-                {title === 'Hệ thống quản lý khảo thí' ? 'Tổng quan' : title}
-              </span>
             </nav>
           </div>
 

@@ -169,141 +169,13 @@ export default function StudentResultsPage() {
  setResults(res.data.results || []);
  }
  } catch (err: any) {
- // Mock Data fallback if unseeded
- const mockStudent: StudentInfo = defaultStudent;
-
- const mockResults: ExamResultItem[] = [
- {
- id: '1',
- attemptId: 'att-1',
- subjectId: 101,
- subjectCode: 'CSDL01',
- subjectName: 'Cơ sở dữ liệu',
- credits: 3,
- schoolYear: '2025-2026',
- semester: 'HK2',
- periodName: 'Cuối kỳ HK2 (2025-2026)',
- examDate: '2026-06-12T08:00:00.000Z',
- examType: 'HON_HOP',
- roomName: 'P.302 - Nhà A1',
- submissionTime: '2026-06-12T09:25:00.000Z',
- status: 'PASSED',
- score: 8.5,
- mcqScore: 6.5,
- mcqMax: 7.0,
- essayScore: 2.0,
- essayMax: 3.0,
- lecturerComments: 'Bài làm trình bày mạch lạc, phần lập trình SQL chính xác.',
- canAppeal: true,
- publishedAt: '2026-06-15T10:00:00.000Z',
- },
- {
- id: '2',
- attemptId: 'att-2',
- subjectId: 102,
- subjectCode: 'LTHDT02',
- subjectName: 'Lập trình hướng đối tượng',
- credits: 4,
- schoolYear: '2025-2026',
- semester: 'HK2',
- periodName: 'Cuối kỳ HK2 (2025-2026)',
- examDate: '2026-06-10T13:30:00.000Z',
- examType: 'TRAC_NGHIEM',
- roomName: 'P.Lab 04 - Nhà B2',
- submissionTime: '2026-06-10T14:45:00.000Z',
- status: 'PASSED',
- score: 7.8,
- mcqScore: 7.8,
- mcqMax: 10.0,
- essayScore: null,
- essayMax: null,
- lecturerComments: null,
- canAppeal: true,
- publishedAt: '2026-06-14T09:00:00.000Z',
- },
- {
- id: '3',
- attemptId: 'att-3',
- subjectId: 103,
- subjectCode: 'CTDL03',
- subjectName: 'Cấu trúc dữ liệu & Giải thuật',
- credits: 3,
- schoolYear: '2025-2026',
- semester: 'HK1',
- periodName: 'Cuối kỳ HK1 (2025-2026)',
- examDate: '2026-01-18T08:00:00.000Z',
- examType: 'TU_LUAN',
- roomName: 'P.201 - Nhà A2',
- submissionTime: '2026-01-18T09:30:00.000Z',
- status: 'FAILED',
- score: 3.5,
- mcqScore: null,
- mcqMax: null,
- essayScore: 3.5,
- essayMax: 10.0,
- lecturerComments: 'Bài làm thiếu phần phân tích độ phức tạp thuật toán.',
- canAppeal: false,
- publishedAt: '2026-01-22T14:00:00.000Z',
- },
- {
- id: '4',
- attemptId: 'att-4',
- subjectId: 104,
- subjectCode: 'MANG04',
- subjectName: 'Mạng máy tính nâng cao',
- credits: 3,
- schoolYear: '2025-2026',
- semester: 'HK2',
- periodName: 'Cuối kỳ HK2 (2025-2026)',
- examDate: '2026-06-20T08:00:00.000Z',
- examType: 'HON_HOP',
- roomName: 'P.405 - Nhà C1',
- submissionTime: '2026-06-20T09:30:00.000Z',
- status: 'GRADING',
- score: null,
- mcqScore: null,
- mcqMax: null,
- essayScore: null,
- essayMax: null,
- lecturerComments: null,
- canAppeal: false,
- publishedAt: null,
- },
- {
- id: '5',
- attemptId: 'att-5',
- subjectId: 105,
- subjectCode: 'ANM05',
- subjectName: 'An toàn thông tin & Bảo mật mạng',
- credits: 3,
- schoolYear: '2025-2026',
- semester: 'HK2',
- periodName: 'Cuối kỳ HK2 (2025-2026)',
- examDate: '2026-06-25T14:00:00.000Z',
- examType: 'TRAC_NGHIEM',
- roomName: 'P.102 - Nhà D3',
- submissionTime: '2026-06-25T15:00:00.000Z',
- status: 'UNPUBLISHED',
- score: null,
- mcqScore: null,
- mcqMax: null,
- essayScore: null,
- essayMax: null,
- lecturerComments: null,
- canAppeal: false,
- publishedAt: null,
- },
- ];
-
- setStudentInfo(mockStudent);
- setStats({
-   totalExams: 5,
-   avgScore: 6.6,
-   passedCount: 2,
-   failedCount: 1,
+ setStudentInfo(defaultStudent);
+ setStats({ totalExams: 0, avgScore: 0, passedCount: 0, failedCount: 0 });
+ setResults([]);
+ setToast({
+   message: err?.message || 'Không thể tải kết quả thi. Vui lòng thử lại sau.',
+   type: 'error',
  });
- setResults(mockResults);
-  console.warn('Using student results fallback data:', err?.message || err);
  } finally {
  setLoading(false);
  }
@@ -399,9 +271,9 @@ export default function StudentResultsPage() {
  // Sorting
  result = [...result].sort((a, b) => {
  if (sortOrder === 'date_desc') return new Date(b.examDate).getTime() - new Date(a.examDate).getTime();
- if (sortOrder === 'date_asc') return new Date(a.examDate).getTime() - new Date(a.examDate).getTime();
+ if (sortOrder === 'date_asc') return new Date(a.examDate).getTime() - new Date(b.examDate).getTime();
  if (sortOrder === 'score_desc') return (b.score || 0) - (a.score || 0);
- if (sortOrder === 'score_asc') return (a.score || 0) - (a.score || 0);
+ if (sortOrder === 'score_asc') return (a.score || 0) - (b.score || 0);
  if (sortOrder === 'code_asc') return a.subjectCode.localeCompare(b.subjectCode, 'vi');
  if (sortOrder === 'name_asc') return a.subjectName.localeCompare(b.subjectName, 'vi');
  return 0;
@@ -606,19 +478,28 @@ export default function StudentResultsPage() {
  }
  };
 
- const formatExamType = (type: string) => {
- switch (type) {
- case 'TRAC_NGHIEM':
- return 'Trắc nghiệm';
- case 'TU_LUAN':
- return 'Tự luận';
- case 'HON_HOP':
- case 'MIXED':
- return 'Trắc nghiệm & Tự luận';
- default:
- return type;
- }
- };
+  const formatExamType = (type: string) => {
+    switch (type) {
+      case 'TRAC_NGHIEM':
+        return 'Trắc nghiệm';
+      case 'TU_LUAN':
+        return 'Tự luận';
+      case 'DIEN_LO':
+      case 'FILL_IN':
+        return 'Điền khuyết';
+      case 'HON_HOP':
+      case 'MIXED':
+        return 'Trắc nghiệm & Tự luận';
+      case 'VAN_DAP':
+      case 'ORAL':
+        return 'Vấn đáp';
+      case 'THUC_HANH':
+      case 'PRACTICE':
+        return 'Thực hành';
+      default:
+        return type;
+    }
+  };
 
   return (
     <>
@@ -627,7 +508,7 @@ export default function StudentResultsPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-              Kết Quả Thi Sinh Viên
+              Kết quả thi sinh viên
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
@@ -878,34 +759,34 @@ export default function StudentResultsPage() {
     </div>
   ) : viewMode === 'grid' ? (
  /* ── 5.1 Grid View Mode ── */
- <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+ <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
  {currentItems.map((item) => {
  const isChecked = selected.includes(item.id);
  return (
  <div
  key={item.id}
- className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+ className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
  }`}
  >
  <div className="space-y-2.5">
- <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
- <div className="flex items-center gap-2">
+ <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+ <div className="flex items-center gap-2 min-w-0">
  <input
  type="checkbox"
  checked={isChecked}
  onChange={(e) => handleSelectOne(item.id, e.target.checked)}
- className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
  />
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-xs text-slate-600 hover:text-blue-600 transition cursor-pointer"
+ className="tabular-nums font-medium text-xs text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
  >
- <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
+ <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
  </button>
  </div>
 
- <span className="text-[13px] font-semibold text-slate-500">
+ <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
  {item.schoolYear}
  </span>
  </div>
@@ -913,38 +794,47 @@ export default function StudentResultsPage() {
  <div>
  <h4
  onClick={() => setDetailItem(item)}
- className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+ className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
  >
  {item.subjectName}
  </h4>
  <p className="text-xs text-slate-400 font-normal mt-0.5 truncate">{item.periodName}</p>
  </div>
 
- <div className="space-y-1 text-xs text-slate-600 font-medium pt-1">
- <div className="flex items-center justify-between">
- <span className="text-slate-400">Hình thức:</span>
- <strong className="font-semibold text-slate-900">{formatExamType(item.examType)}</strong>
+ <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
+ <div>
+ <span className="text-slate-400 text-[11px] block">Hình thức</span>
+ <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block truncate">{formatExamType(item.examType)}</strong>
  </div>
- <div className="flex items-center justify-between">
- <span className="text-slate-400">Điểm số:</span>
- <span className="font-semibold text-sm text-slate-900">
- {item.score !== null ? item.score.toFixed(1) : '---'}
+ <div>
+ <span className="text-slate-400 text-[11px] block">Ngày thi</span>
+ <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
+ </div>
+ <div>
+ <span className="text-slate-400 text-[11px] block">Số tín chỉ</span>
+ <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{item.credits} tín chỉ</span>
+ </div>
+ <div>
+ <span className="text-slate-400 text-[11px] block">Điểm số</span>
+ <span className={`font-bold text-xs block ${item.score !== null && item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : item.score !== null ? 'text-rose-600' : 'text-slate-400'}`}>
+ {item.score !== null ? `${item.score.toFixed(1)} / 10` : '---'}
  </span>
  </div>
  </div>
  </div>
 
- <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
- {renderInlineStatus(item.status)}
-
- <Button
- variant="ghost"
- size="sm"
- onClick={() => setDetailItem(item)}
- leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
+ <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+ <button
+   type="button"
+   onClick={() => setDetailItem(item)}
+   className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
  >
- Chi tiết
- </Button>
+   <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+   <span>Xem chi tiết</span>
+ </button>
+ <div>
+   {renderInlineStatus(item.status)}
+ </div>
  </div>
  </div>
  );
@@ -958,11 +848,11 @@ export default function StudentResultsPage() {
             return (
               <div
                 key={item.id}
-                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
                   isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
                 }`}
               >
-                {/* Left: Checkbox + Score/Status Avatar Badge */}
+                {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
                 <div className="flex items-center gap-3 min-w-0">
                   <input
                     type="checkbox"
@@ -970,69 +860,66 @@ export default function StudentResultsPage() {
                     onChange={(e) => handleSelectOne(item.id, e.target.checked)}
                     className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                   />
-                  <div
-                    className={`flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl font-semibold border ${
-                      item.status === 'PASSED'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80'
-                        : item.status === 'FAILED'
-                        ? 'bg-rose-50 text-rose-700 border-rose-200/80'
-                        : 'bg-blue-50 text-blue-700 border-blue-100/80'
-                    }`}
-                  >
-                    {item.score !== null ? (
-                      <>
-                        <span className="text-xs font-semibold leading-none">{item.score.toFixed(1)}</span>
-                        <span className="text-[12px] font-medium opacity-70 leading-none mt-0.5">điểm</span>
-                      </>
-                    ) : (
-                      <Clock className="w-4 h-4 text-slate-400" />
-                    )}
-                  </div>
 
-                  {/* Middle: Subject Name + Code Badge + Meta Chips */}
+                  <button
+                    type="button"
+                    onClick={() => setDetailItem(item)}
+                    className="shrink-0"
+                  >
+                    <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
+                  </button>
+
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <button
                         type="button"
                         onClick={() => setDetailItem(item)}
-                        className="text-[15px] font-semibold text-slate-900 truncate hover:text-blue-600 transition cursor-pointer text-left"
+                        className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                       >
                         {item.subjectName}
                       </button>
-                      <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
-                      <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                         {formatExamType(item.examType)}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
-                      <span className="text-slate-800 font-medium">{item.periodName}</span>
+                    <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                      <span className="text-slate-800 dark:text-slate-200 font-medium">{item.periodName}</span>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
                       </span>
                       {item.roomName && (
-                        <span className="text-slate-500">
-                          Phòng: <strong className="text-slate-700 font-medium">{item.roomName}</strong>
+                        <span className="text-slate-500 dark:text-slate-400">
+                          Phòng: <strong className="text-slate-700 dark:text-slate-300 font-medium">{item.roomName}</strong>
                         </span>
                       )}
-                      <span className="text-slate-400">
-                        {item.semester} • {item.schoolYear}
+                      <span className="text-slate-600 dark:text-slate-400 font-medium">
+                        {item.credits} tín chỉ
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Right: Status & Actions */}
-                <div className="flex items-center gap-2.5 shrink-0">
-                  <div className="text-right">
+                {/* Right: Score, Status & Action */}
+                <div className="flex items-center gap-3 shrink-0">
+                  {item.score !== null && (
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border tabular-nums ${
+                      item.score >= 4.0
+                        ? 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
+                        : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300'
+                    }`}>
+                      {item.score.toFixed(1)} điểm
+                    </span>
+                  )}
+                  <div>
                     {renderInlineStatus(item.status)}
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setDetailItem(item)}
-                    className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
+                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
                     title="Xem chi tiết kết quả thi"
                   >
                     <Eye className="h-4 w-4" />
@@ -1044,9 +931,9 @@ export default function StudentResultsPage() {
         </div>
       ) : (
  /* ── 5.3 Standard List View Mode (Default Table) ── */
-  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-  <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+  <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
+ <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -1057,7 +944,7 @@ export default function StudentResultsPage() {
  />
  </th>
  {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã môn</th>}
- {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[240px]">Môn học & Kỳ thi</th>}
+ {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[240px]">Môn học</th>}
  {visibleColumns.period !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Kỳ thi</th>}
  {visibleColumns.date !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Ngày thi</th>}
  {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Hình thức thi</th>}
@@ -1066,13 +953,13 @@ export default function StudentResultsPage() {
  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-slate-100 font-normal">
+ <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
  {currentItems.map((item) => {
  const isChecked = selected.includes(item.id);
  return (
  <tr
  key={item.id}
- className={`transition hover:bg-blue-50/40 ${isChecked ? 'bg-blue-50/60' : ''}`}
+ className={`transition hover:bg-blue-50/40 dark:hover:bg-slate-800/40 ${isChecked ? 'bg-blue-50/60 dark:bg-blue-950/40' : ''}`}
  >
  {/* Checkbox */}
  <td className="p-3.5 pl-4 text-center">
@@ -1090,9 +977,9 @@ export default function StudentResultsPage() {
  <button
  type="button"
  onClick={() => setDetailItem(item)}
- className=" tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 hover:text-blue-600 transition cursor-pointer"
+ className="tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer"
  >
- <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
+ <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
  </button>
  </td>
  )}
@@ -1102,18 +989,18 @@ export default function StudentResultsPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-medium text-slate-900 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 transition"
+ className="font-semibold text-slate-900 dark:text-slate-100 text-[14.5px] leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
  >
  {item.subjectName}
  </p>
- <p className="text-[15px] leading-[22px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
+ <p className="text-[13px] leading-[20px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
  </td>
  )}
 
  {/* Period */}
  {visibleColumns.period !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-[15px] leading-[22px] font-medium text-slate-700">
+ <span className="text-[14px] leading-[22px] font-medium text-slate-700 dark:text-slate-300">
  {item.periodName}
  </span>
  </td>
@@ -1122,7 +1009,7 @@ export default function StudentResultsPage() {
  {/* Date */}
  {visibleColumns.date !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="text-[15px] leading-[22px] font-medium text-slate-600">
+ <span className="text-[14px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
  {new Date(item.examDate).toLocaleDateString('vi-VN')}
  </span>
  </td>
@@ -1131,7 +1018,7 @@ export default function StudentResultsPage() {
  {/* Type */}
  {visibleColumns.type !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-[15px] leading-[22px] font-medium text-slate-600">
+ <span className="text-[14px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
  {formatExamType(item.examType)}
  </span>
  </td>
@@ -1141,11 +1028,11 @@ export default function StudentResultsPage() {
  {visibleColumns.score !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {item.score !== null ? (
- <span className={`font-medium text-[15px] leading-[22px] ${item.score >= 4.0 ? 'text-slate-900' : 'text-rose-600'}`}>
+ <span className={`font-semibold text-[15px] leading-[22px] ${item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : 'text-rose-600 dark:text-rose-400'}`}>
  {item.score.toFixed(1)}
  </span>
  ) : (
- <span className="text-slate-400 font-normal text-[15px] leading-[22px] italic">---</span>
+ <span className="text-slate-400 font-normal text-[14px] leading-[22px] italic">---</span>
  )}
  </td>
  )}
@@ -1160,14 +1047,14 @@ export default function StudentResultsPage() {
  {/* Actions */}
  <td className="p-3.5 pr-4 text-right whitespace-nowrap">
  <div className="flex items-center justify-end gap-1">
- <Button
- variant="ghost"
- size="sm"
+ <button
+ type="button"
  onClick={() => setDetailItem(item)}
- leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
+ className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+ title="Xem chi tiết"
  >
- Chi tiết
- </Button>
+ <Eye className="w-4 h-4" />
+ </button>
  </div>
  </td>
  </tr>

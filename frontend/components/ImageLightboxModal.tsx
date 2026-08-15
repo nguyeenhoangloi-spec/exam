@@ -72,7 +72,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-label="Xem ảnh phóng to"
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all animate-fade-in"
+      className="ui-dark-surface fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all animate-fade-in"
       onClick={onClose}
     >
       {/* Control Bar Top - Bỏ toàn bộ chữ, chỉ giữ icon điều khiển */}

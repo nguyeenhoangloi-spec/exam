@@ -3,7 +3,7 @@ import { FilterSelect } from '../ui/FilterSelect';
 
 import React, { FormEvent, useState } from 'react';
 import {
-  AlertTriangle, X, ArrowLeftRight,
+  AlertTriangle, X, ArrowLeftRight, Sparkles,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 import { Button } from '../ui/Button';
@@ -487,29 +487,29 @@ export function ExamPaperMatrixForm({
               Ma trận phân bổ đề thi
             </h4>
 
-            {/* Switch Mode */}
-            <div className="flex items-center gap-4 text-xs font-semibold border-b border-slate-200 dark:border-slate-700 shrink-0">
+            {/* Switch Mode: Pill Tabs */}
+            <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 shrink-0">
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
-                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   formData.selectionMode !== 'BY_SCORE'
-                    ? 'text-blue-600 border-blue-600 font-semibold'
-                    : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-800 dark:hover:text-slate-200'
+                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
-                Theo Số câu
+                Theo số câu
               </button>
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
-                className={`pb-1.5 transition-all duration-200 cursor-pointer border-b-2 -mb-px ${
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   formData.selectionMode === 'BY_SCORE'
-                    ? 'text-blue-600 border-blue-600 font-semibold'
-                    : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-800 dark:hover:text-slate-200'
+                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
-                Theo Thang điểm
+                Theo thang điểm
               </button>
             </div>
           </div>
@@ -602,14 +602,15 @@ export function ExamPaperMatrixForm({
             type="submit"
             variant="primary"
             size="md"
+            leftIcon={<Sparkles className="h-4 w-4" />}
             disabled={creating || !isValidMatrix || isPublished}
             isLoading={creating}
           >
             {creating
               ? 'Đang sinh đề...'
               : isPublished
-                ? 'Đã Có Đề Công Bố'
-                : 'Tạo đề chung'}
+                ? 'Đã có đề công bố'
+                : 'Tạo đề thi chung'}
           </Button>
         </div>
       </div>

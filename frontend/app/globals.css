@@ -498,7 +498,7 @@ html.dark {
   .edu-page-title {
     font-size: var(--fs-page-title);
     line-height: var(--lh-page-title);
-    @apply font-semibold tracking-tight;
+    @apply font-bold tracking-tight;
     color: var(--ui-text-primary);
   }
 
@@ -617,6 +617,13 @@ html.dark {
   font-weight: 600;
 }
 
+/* Page titles are the strongest heading level in the shared typography
+ * contract. Keep this rule at the shell level so every route uses the same
+ * readable emphasis even when a page still carries font-semibold locally. */
+.typography-scale :where(h1) {
+  font-weight: 700;
+}
+
 .typography-scale :where(label) {
   font-weight: 500;
 }
@@ -652,6 +659,13 @@ html:not(.dark) .typography-scale :where(.text-slate-400, .text-gray-400) {
   color: var(--ui-text-muted-soft) !important;
 }
 
+/* Very light neutral text is still readable in dark overlays, but is too
+ * faint for normal light-theme surfaces. Promote it to the same readable
+ * muted tier used by the rest of the black-forward palette. */
+html:not(.dark) .typography-scale :where(.text-slate-300, .text-gray-300) {
+  color: var(--ui-text-muted-soft) !important;
+}
+
 html:not(.dark) .typography-scale :where(.text-slate-500, .text-gray-500) {
   color: var(--ui-text-secondary) !important;
 }
@@ -666,6 +680,12 @@ html:not(.dark) .typography-scale :where(.text-slate-900, .text-gray-900) {
 
 html:not(.dark) .typography-scale :where(.placeholder\:text-slate-400, .placeholder\:text-gray-400)::placeholder {
   color: var(--ui-text-disabled) !important;
+}
+
+/* Media lightboxes intentionally use a dark surface while the application
+ * shell remains in light mode. Preserve their high-contrast light controls. */
+html:not(.dark) .typography-scale .ui-dark-surface :where(.text-slate-300, .text-gray-300) {
+  color: #cbd5e1 !important;
 }
 
 /* Inter is intentionally loaded only at 400–700. Keep the visual weight

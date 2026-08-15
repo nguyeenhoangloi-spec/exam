@@ -56,7 +56,7 @@ export const VideoLightboxModal: React.FC<VideoLightboxModalProps> = ({ videoUrl
       role="dialog"
       aria-modal="true"
       aria-label="Trình phát video"
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4 animate-fade-in"
+      className="ui-dark-surface fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4 animate-fade-in"
       onClick={onClose}
     >
       {/* Top bar controls - Bỏ chữ, chỉ gồm nút chức năng */}

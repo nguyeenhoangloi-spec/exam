@@ -120,14 +120,14 @@ export function TeacherTable({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-[14px] font-medium">
                 <button
                   type="button"
                   onClick={() => onDetail(t)}
-                  className="flex items-center gap-1 text-primary-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
                 >
-                  <Eye className="h-3.5 w-3.5" />
-                  <span>Xem hồ sơ</span>
+                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                  <span>Xem chi tiết</span>
                 </button>
 
                 {isAdmin && (
@@ -173,7 +173,7 @@ export function TeacherTable({
                 isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
               }`}
             >
-              {/* Left: Checkbox + Avatar Code Badge */}
+              {/* Left: Checkbox + Identifier Code Badge */}
               <div className="flex items-center gap-3 min-w-0">
                 <input
                   type="checkbox"
@@ -181,30 +181,34 @@ export function TeacherTable({
                   onChange={(e) => onSelect(t.id, e.target.checked)}
                   className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                 />
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
-                  {t.teacherCode?.slice(0, 3) || 'GV'}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => onDetail(t)}
+                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                >
+                  <IdentifierBadge tone="blue">{t.teacherCode}</IdentifierBadge>
+                </button>
 
-                {/* Middle: Name + TeacherCode + Degree + Meta chips */}
+                {/* Middle: Name + Degree + Meta chips */}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
+                    <h4
                       onClick={() => onDetail(t)}
-                      className="text-[15px] font-semibold text-slate-900 truncate hover:text-primary-600 transition cursor-pointer text-left"
+                      className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                     >
                       {t.fullName}
-                    </button>
-                    <IdentifierBadge>{t.teacherCode}</IdentifierBadge>
-                    <Badge tone="blue" leftIcon={<GraduationCap className="h-3 w-3" />}>
-                      {t.degree || 'TS'}
-                    </Badge>
+                    </h4>
+                    {t.degree && (
+                      <Badge tone="blue" leftIcon={<GraduationCap className="h-3 w-3" />}>
+                        {t.degree}
+                      </Badge>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 font-medium">{t.department?.name || 'Chưa phân khoa'}</span>
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">{t.department?.name || 'Chưa phân khoa'}</span>
                     </span>
                     <span className="flex items-center gap-1">
                       <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -213,7 +217,7 @@ export function TeacherTable({
                     {t.phone && (
                       <span className="flex items-center gap-1">
                         <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="text-slate-600">{t.phone}</span>
+                        <span className="text-slate-600 dark:text-slate-400">{t.phone}</span>
                       </span>
                     )}
                   </div>
@@ -221,71 +225,51 @@ export function TeacherTable({
               </div>
 
               {/* Right: Status Badge & Action Buttons */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {isLocked && <StatusBadge status="LOCKED" customLabel="Đã khóa" />}
 
                 <button
                   type="button"
                   onClick={() => onDetail(t)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                  className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
                   title="Xem hồ sơ"
                 >
                   <Eye className="h-4 w-4" />
                 </button>
 
                 {isAdmin && (
-                  <ActionDropdownPortal>
-                    {(closeMenu) => (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onDetail(t); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <Eye className="h-4 w-4 text-slate-500" />
-                          <span>Xem hồ sơ</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onEdit(t); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <Edit className="h-4 w-4 text-primary-600" />
-                          <span>Chỉnh sửa</span>
-                        </button>
-                        {onToggleLock && (
-                          <button
-                            type="button"
-                            onClick={() => { closeMenu(); onToggleLock(t); }}
-                            className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-xs font-medium ${
-                              t.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 text-emerald-600' : 'hover:bg-amber-50 text-amber-600'
-                            }`}
-                          >
-                            {t.user?.status === 'LOCKED' ? (
-                              <>
-                                <Unlock className="h-4 w-4 text-emerald-600" />
-                                <span>Mở khóa tài khoản</span>
-                              </>
-                            ) : (
-                              <>
-                                <Lock className="h-4 w-4 text-amber-600" />
-                                <span>Khóa đăng nhập</span>
-                              </>
-                            )}
-                          </button>
-                        )}
-                        <div className="my-1 border-t border-slate-200" />
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onDelete(t.id); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-xs font-medium"
-                        >
-                          <Trash2 className="h-4 w-4 text-danger-600" />
-                          <span>Xóa giảng viên</span>
-                        </button>
-                      </>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onEdit(t)}
+                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                      title="Chỉnh sửa"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    {onToggleLock && (
+                      <button
+                        type="button"
+                        onClick={() => onToggleLock(t)}
+                        className={`p-1.5 rounded-xl transition cursor-pointer ${
+                          t.user?.status === 'LOCKED'
+                            ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                            : 'text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                        }`}
+                        title={t.user?.status === 'LOCKED' ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
+                      >
+                        {t.user?.status === 'LOCKED' ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                      </button>
                     )}
-                  </ActionDropdownPortal>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(t.id)}
+                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                      title="Xóa giảng viên"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </>
                 )}
               </div>
             </div>

@@ -122,9 +122,9 @@ export function ExamRoomTable({
                 <button
                   type="button"
                   onClick={() => onDetail(r)}
-                  className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
+                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
                 >
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                   <span>Xem chi tiết</span>
                 </button>
 

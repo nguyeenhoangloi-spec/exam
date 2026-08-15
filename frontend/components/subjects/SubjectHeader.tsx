@@ -61,7 +61,7 @@ export function SubjectHeader({
             onClick={onAdd}
             leftIcon={<Plus className="h-4 w-4" />}
           >
-            Tạo môn học
+            Thêm môn học
           </Button>
         )}
       </div>

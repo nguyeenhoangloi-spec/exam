@@ -80,13 +80,13 @@ export function ExamSupervisorTableToolbar({
       />
 
       {/* 3. View Mode Pills */}
-      <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+      <div className="h-10 flex items-center gap-1 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
         <button
           type="button"
           onClick={() => onViewModeChange?.('list')}
           className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
             viewMode === 'list'
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold border border-blue-200 dark:border-blue-800/80'
               : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
           title="Dạng danh sách"
@@ -99,7 +99,7 @@ export function ExamSupervisorTableToolbar({
           onClick={() => onViewModeChange?.('grid')}
           className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
             viewMode === 'grid'
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold border border-blue-200 dark:border-blue-800/80'
               : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
           title="Dạng thẻ"
@@ -112,7 +112,7 @@ export function ExamSupervisorTableToolbar({
           onClick={() => onViewModeChange?.('compact')}
           className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
             viewMode === 'compact'
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold border border-blue-200 dark:border-blue-800/80'
               : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
           title="Dạng thu gọn"

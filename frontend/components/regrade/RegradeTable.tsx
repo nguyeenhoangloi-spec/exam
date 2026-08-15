@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { StatusBadge } from '../common/StatusBadge';
 import { GradeAppealItem } from './RegradeReviewDrawer';
-import { Edit3, RefreshCw, BookOpen, Award, FileText } from 'lucide-react';
+import { Edit3, RefreshCw, BookOpen, Award, FileText, Eye } from 'lucide-react';
 
 interface RegradeTableProps {
   appeals: GradeAppealItem[];
@@ -13,6 +13,9 @@ interface RegradeTableProps {
   viewMode?: 'list' | 'grid' | 'compact';
   visibleColumns?: Record<string, boolean>;
   onReview: (appeal: GradeAppealItem) => void;
+  selected?: string[];
+  onSelectAll?: (checked: boolean) => void;
+  onSelectOne?: (id: string, checked: boolean) => void;
 }
 
 export function RegradeTable({
@@ -28,10 +31,13 @@ export function RegradeTable({
     status: true,
   },
   onReview,
+  selected = [],
+  onSelectAll,
+  onSelectOne,
 }: RegradeTableProps) {
   if (loading) {
     return (
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-12 text-center text-slate-500 shadow-2xs font-normal">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 shadow-2xs font-normal">
         <RefreshCw className="h-5 w-5 animate-spin mx-auto mb-2 text-blue-600" />
         Đang tải danh sách đơn phúc khảo...
       </div>
@@ -40,17 +46,20 @@ export function RegradeTable({
 
   if (appeals.length === 0) {
     return (
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-12 text-center text-slate-500 font-normal shadow-2xs">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 font-normal shadow-2xs">
         Không tìm thấy đơn phúc khảo nào phù hợp.
       </div>
     );
   }
 
-  // 1. Grid View Mode
+  const allSelected = appeals.length > 0 && appeals.every((i) => selected.includes(i.id));
+
+  // 1. Grid View Mode (3 cột chuẩn)
   if (viewMode === 'grid') {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {appeals.map((item) => {
+          const isChecked = selected.includes(item.id);
           const subjectName = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Không xác định';
           const subjectCode = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectCode || '';
           const badgeStatus = item.status === 'APPROVED_REGRADE' ? 'APPROVED' : item.status === 'REJECTED' ? 'REJECTED' : 'PENDING';
@@ -58,50 +67,83 @@ export function RegradeTable({
           return (
             <div
               key={item.id}
-              className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-blue-400 transition-all duration-200 space-y-3.5"
+              className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              }`}
             >
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-semibold text-xs border border-blue-100 shrink-0">
-                      {item.student.fullName.slice(0, 1).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900 text-sm leading-snug">{item.student.fullName}</p>
-                      <IdentifierBadge>{item.student.studentCode}</IdentifierBadge>
-                    </div>
+              <div className="space-y-3">
+                {/* Card Header: Checkbox + ID Badge + Class + Status */}
+                <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => onSelectOne?.(item.id, e.target.checked)}
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                    />
+                    <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
+                    {item.student.class && (
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700 truncate">
+                        {item.student.class.code || item.student.class.name}
+                      </span>
+                    )}
                   </div>
-                  <StatusBadge status={badgeStatus} className="table-badge" />
+                  <StatusBadge status={badgeStatus} className="table-badge shrink-0" />
                 </div>
 
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 space-y-0.5">
-                  <p className="font-semibold text-slate-900 text-xs">{subjectName}</p>
-                  {subjectCode && <IdentifierBadge>{subjectCode}</IdentifierBadge>}
+                {/* Student Full Name */}
+                <div>
+                  <h3
+                    onClick={() => onReview(item)}
+                    className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-1"
+                  >
+                    {item.student.fullName}
+                  </h3>
                 </div>
 
+                {/* Subject Box */}
+                <div className="bg-slate-50/80 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 space-y-0.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs truncate">{subjectName}</span>
+                    {subjectCode && <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>}
+                  </div>
+                </div>
+
+                {/* Reason & Time */}
                 <div className="space-y-1">
-                  <p className="text-xs text-slate-700 line-clamp-2 leading-relaxed font-normal">{item.reason}</p>
-                  <span className="text-xs text-slate-400 block font-normal">
+                  <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 leading-relaxed font-normal">
+                    {item.reason}
+                  </p>
+                  <span className="text-[11px] text-slate-400 block font-normal">
                     {new Date(item.createdAt).toLocaleString('vi-VN')}
                   </span>
                 </div>
-              </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                <div className="text-xs font-normal text-slate-700">
-                  <span>Điểm ban đầu: </span>
-                  <strong className="text-slate-900 font-semibold">{item.originalScore.toFixed(1)} đ</strong>
+                {/* Scores Box */}
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400">Điểm ban đầu: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{item.originalScore.toFixed(1)} đ</strong></span>
                   {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null && (
-                    <span className="ml-2 font-semibold text-emerald-600">→ {item.revisedScore.toFixed(1)} đ</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">➔ Sau PK: {item.revisedScore.toFixed(1)} đ</span>
                   )}
                 </div>
+              </div>
+
+              {/* Card Footer: Xem chi tiết (Slate) + Nút Chấm lại */}
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => onReview(item)}
+                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                >
+                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                  <span>Xem chi tiết</span>
+                </button>
 
                 <Button
-                  variant="secondary"
+                  variant="primary"
                   size="xs"
                   onClick={() => onReview(item)}
-                  leftIcon={<Edit3 className="h-3.5 w-3.5 text-blue-600" />}
-                  className="h-8 px-3 text-xs font-semibold text-blue-600 bg-white border border-slate-200 hover:bg-blue-50 shadow-2xs"
+                  leftIcon={<Edit3 className="h-3.5 w-3.5" />}
                 >
                   Thẩm định & Chấm lại
                 </Button>
@@ -113,56 +155,70 @@ export function RegradeTable({
     );
   }
 
-  // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
+  // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact View Mode)
   if (viewMode === 'compact') {
     return (
       <div className="space-y-2.5">
         {appeals.map((item) => {
+          const isChecked = selected.includes(item.id);
           const subjectName = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Không xác định';
           const badgeStatus = item.status === 'APPROVED_REGRADE' ? 'APPROVED' : item.status === 'REJECTED' ? 'REJECTED' : 'PENDING';
 
           return (
             <div
               key={item.id}
-              className="flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5"
+              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+              }`}
             >
-              {/* Left: Avatar Code Badge */}
+              {/* Left: Checkbox + Mã SV + Tên sinh viên + Lớp + Meta */}
               <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
-                  {item.student.studentCode?.slice(0, 3) || 'SV'}
-                </div>
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) => onSelectOne?.(item.id, e.target.checked)}
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                />
 
-                {/* Middle: Student + Subject + Scores + Reason */}
+                <button
+                  type="button"
+                  onClick={() => onReview(item)}
+                  className="shrink-0"
+                >
+                  <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
+                </button>
+
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[15px] font-semibold text-slate-900 truncate">
+                    <button
+                      type="button"
+                      onClick={() => onReview(item)}
+                      className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                    >
                       {item.student.fullName}
-                    </span>
-                    <IdentifierBadge>
-                      {item.student.studentCode}
-                    </IdentifierBadge>
+                    </button>
                     {item.student.class && (
-                      <span className="text-xs text-slate-500 font-normal">
-                        ({item.student.class.code || item.student.class.name})
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
+                        {item.student.class.code || item.student.class.name}
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
-                    <span className="flex items-center gap-1">
-                      <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 font-medium">{subjectName}</span>
+                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                    <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
+                      <BookOpen className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                      <span>{subjectName}</span>
                     </span>
                     <span className="flex items-center gap-1">
                       <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span>
-                        Điểm gốc: <strong className="font-semibold text-slate-800">{item.originalScore.toFixed(1)}đ</strong>
+                        Điểm gốc: <strong className="font-semibold text-slate-800 dark:text-slate-200">{item.originalScore.toFixed(1)}đ</strong>
                         {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null && (
-                      <span className="ml-1 text-emerald-600 font-semibold">➔ Sau PK: {item.revisedScore.toFixed(1)}đ</span>
+                          <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-semibold">➔ Sau PK: {item.revisedScore.toFixed(1)}đ</span>
                         )}
                       </span>
                     </span>
-                    <span className="text-slate-500 truncate max-w-[280px]" title={item.reason}>
+                    <span className="text-slate-500 dark:text-slate-400 truncate max-w-[280px]" title={item.reason}>
                       Lý do: &ldquo;{item.reason}&rdquo;
                     </span>
                   </div>
@@ -174,14 +230,22 @@ export function RegradeTable({
                 <StatusBadge status={badgeStatus} className="table-badge" />
 
                 <Button
-                  variant="secondary"
+                  variant="primary"
                   size="xs"
                   onClick={() => onReview(item)}
-                  leftIcon={<Edit3 className="h-3.5 w-3.5 text-blue-600" />}
-                  className="h-8 px-3 text-xs font-semibold text-blue-600 border-slate-200 hover:bg-blue-50 shadow-2xs"
+                  leftIcon={<Edit3 className="h-3.5 w-3.5" />}
                 >
-                  Chấm lại
+                  Thẩm định
                 </Button>
+
+                <button
+                  type="button"
+                  onClick={() => onReview(item)}
+                  className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                  title="Xem chi tiết"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
               </div>
             </div>
           );
@@ -190,42 +254,69 @@ export function RegradeTable({
     );
   }
 
-  // 3. Default List View Mode (Matching ExamReportTable 100%)
+  // 3. Default List View Mode (Table)
   return (
-    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] leading-[22px] text-slate-700 border-collapse">
-        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+      <table className="ui-table w-full text-left text-[15px] leading-[22px] text-slate-700 dark:text-slate-300 border-collapse">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800 select-none">
           <tr>
-            {visibleColumns.student !== false && <th scope="col" className="p-3.5 pl-4 whitespace-nowrap">Sinh viên</th>}
-            {visibleColumns.subject !== false && <th scope="col" className="p-3.5 min-w-[200px]">Môn học</th>}
-            {visibleColumns.reason !== false && <th scope="col" className="p-3.5 min-w-[280px]">Nội dung xin phúc khảo</th>}
-            {visibleColumns.originalScore !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Điểm ban đầu</th>}
-            {visibleColumns.revisedScore !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Điểm sau phúc khảo</th>}
-            {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap text-center">Trạng thái</th>}
-            <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
+            <th scope="col" className="py-3 px-4 w-12 text-center">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={(e) => onSelectAll?.(e.target.checked)}
+                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              />
+            </th>
+            {visibleColumns.student !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap">Sinh viên</th>}
+            {visibleColumns.subject !== false && <th scope="col" className="p-3.5 font-medium min-w-[200px]">Môn học</th>}
+            {visibleColumns.reason !== false && <th scope="col" className="p-3.5 font-medium min-w-[280px]">Nội dung xin phúc khảo</th>}
+            {visibleColumns.originalScore !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap text-center">Điểm ban đầu</th>}
+            {visibleColumns.revisedScore !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap text-center">Điểm sau phúc khảo</th>}
+            {visibleColumns.status !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap text-center">Trạng thái</th>}
+            <th scope="col" className="p-3.5 pr-4 font-medium text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 font-normal">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
           {appeals.map((item) => {
+            const isChecked = selected.includes(item.id);
             const subjectName = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || 'Không xác định';
             const subjectCode = item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectCode || '';
             const badgeStatus = item.status === 'APPROVED_REGRADE' ? 'APPROVED' : item.status === 'REJECTED' ? 'REJECTED' : 'PENDING';
 
             return (
-              <tr key={item.id} className="transition hover:bg-blue-50/40">
+              <tr
+                key={item.id}
+                className={`transition hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${
+                  isChecked ? 'bg-blue-50/20' : ''
+                }`}
+              >
+                <td className="py-3.5 px-4 text-center">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={(e) => onSelectOne?.(item.id, e.target.checked)}
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                </td>
+
                 {/* Sinh viên */}
                 {visibleColumns.student !== false && (
-                  <td className="p-3.5 pl-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="table-avatar flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-medium text-[15px] border border-blue-100 shrink-0">
-                        {item.student.fullName.slice(0, 1).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900 text-[15px] leading-[22px]">{item.student.fullName}</p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-                          <IdentifierBadge tone="neutral">{item.student.studentCode}</IdentifierBadge>
-                          {item.student.class && <IdentifierBadge tone="neutral">{item.student.class.code}</IdentifierBadge>}
-                        </div>
+                  <td className="p-3.5 whitespace-nowrap">
+                    <div>
+                      <p
+                        onClick={() => onReview(item)}
+                        className="font-semibold text-slate-900 dark:text-slate-100 text-[14.5px] leading-[22px] hover:text-blue-600 cursor-pointer transition"
+                      >
+                        {item.student.fullName}
+                      </p>
+                      <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                        <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
+                        {item.student.class && (
+                          <span className="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
+                            {item.student.class.code || item.student.class.name}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -234,7 +325,7 @@ export function RegradeTable({
                 {/* Môn học */}
                 {visibleColumns.subject !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <p className="font-medium text-slate-900 text-[15px] leading-[22px]">{subjectName}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14.5px] leading-[22px]">{subjectName}</p>
                     {subjectCode && (
                       <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>
                     )}
@@ -244,10 +335,10 @@ export function RegradeTable({
                 {/* Nội dung */}
                 {visibleColumns.reason !== false && (
                   <td className="p-3.5 min-w-[280px]">
-                    <p className="text-slate-700 text-[15px] leading-[22px] font-normal line-clamp-2 max-w-sm" title={item.reason}>
+                    <p className="text-slate-700 dark:text-slate-300 text-[14px] leading-[22px] font-normal line-clamp-2 max-w-sm" title={item.reason}>
                       {item.reason}
                     </p>
-                    <span className="text-[15px] leading-[22px] font-normal text-slate-500 block mt-1">
+                    <span className="text-[12px] font-normal text-slate-400 block mt-0.5">
                       {new Date(item.createdAt).toLocaleString('vi-VN')}
                     </span>
                   </td>
@@ -255,18 +346,18 @@ export function RegradeTable({
 
                 {/* Điểm ban đầu */}
                 {visibleColumns.originalScore !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center font-medium text-slate-900 text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-center font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
                     {item.originalScore.toFixed(1)} đ
                   </td>
                 )}
 
                 {/* Điểm sau phúc khảo */}
                 {visibleColumns.revisedScore !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-center text-[14px]">
                     {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
-                      <span className="font-medium text-emerald-600">{item.revisedScore.toFixed(1)} đ</span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">{item.revisedScore.toFixed(1)} đ</span>
                     ) : (
-                      <span className="text-slate-500 font-normal">--</span>
+                      <span className="text-slate-400 font-normal">--</span>
                     )}
                   </td>
                 )}
@@ -282,15 +373,24 @@ export function RegradeTable({
 
                 {/* Thao tác */}
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap">
-                  <Button
-                    variant="secondary"
-                    size="xs"
-                    onClick={() => onReview(item)}
-                    leftIcon={<Edit3 className="h-3.5 w-3.5 text-blue-600" />}
-                    className="h-8 px-3 text-[15px] leading-[22px] font-medium text-blue-600 border-slate-200 hover:bg-blue-50 shadow-2xs"
-                  >
-                    Thẩm định & Chấm lại
-                  </Button>
+                  <div className="flex items-center justify-end gap-1.5">
+                    <Button
+                      variant="primary"
+                      size="xs"
+                      onClick={() => onReview(item)}
+                      leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                    >
+                      Thẩm định & Chấm lại
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => onReview(item)}
+                      className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                      title="Xem chi tiết"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             );

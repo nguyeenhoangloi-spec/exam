@@ -61,7 +61,7 @@ export function StudentHeader({
             onClick={onAdd}
             leftIcon={<Plus className="h-4 w-4" />}
           >
-            Thêm Sinh viên
+            Thêm sinh viên
           </Button>
         )}
       </div>

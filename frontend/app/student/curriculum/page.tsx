@@ -13,6 +13,7 @@ import { TabBar } from '../../../components/ui/TabBar';
 import { Button } from '../../../components/ui/Button';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { StudentCurriculumFilterPopover } from '../../../components/student-curriculum/StudentCurriculumFilterPopover';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
@@ -381,7 +382,7 @@ export default function StudentCurriculumPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-              Khung Chương Trình Đào Tạo
+              Khung chương trình đào tạo
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
@@ -404,7 +405,7 @@ export default function StudentCurriculumPage() {
               onClick={handlePrintReport}
               leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
             >
-              In Khung Đào Tạo
+              In khung đào tạo
             </Button>
           </div>
         </div>
@@ -631,35 +632,35 @@ export default function StudentCurriculumPage() {
           </div>
         ) : viewMode === 'grid' ? (
           /* ── 5.1 Grid View Mode ── */
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {currentItems.map((item) => {
               const isChecked = selected.includes(item.id);
               return (
                 <div
                   key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-200 space-y-3 flex flex-col justify-between ${
+                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
                     isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
                   }`}
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                         />
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="tabular-nums font-medium text-xs text-slate-600 hover:text-blue-600 transition cursor-pointer"
+                          className="tabular-nums font-medium text-xs text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
                         >
-                          <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
+                          <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                         </button>
                       </div>
 
-                      <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
                         HK {item.recommendedSemester}
                       </span>
                     </div>
@@ -667,63 +668,149 @@ export default function StudentCurriculumPage() {
                     <div>
                       <h4
                         onClick={() => setDetailItem(item)}
-                        className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 transition"
+                        className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-1"
                       >
                         {item.subjectName}
                       </h4>
                       {item.note && <p className="text-xs text-slate-400 font-normal mt-0.5 italic truncate">{item.note}</p>}
                     </div>
 
-                    <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300 font-medium pt-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400">Số tín chỉ:</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100">{item.credits} TC</strong>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
+                      <div>
+                        <span className="text-slate-400 text-[11px] block">Số tín chỉ</span>
+                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{item.credits} TC</strong>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400">Loại môn:</span>
-                        {item.type === 'MANDATORY' ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
-                            <Award className="h-3.5 w-3.5 text-blue-600" /> Bắt buộc
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
-                            <GraduationCap className="h-3.5 w-3.5 text-blue-500" /> Tự chọn
-                          </span>
-                        )}
+                      <div>
+                        <span className="text-slate-400 text-[11px] block">Học kỳ</span>
+                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">Học kỳ {item.recommendedSemester}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[11px] block">Loại môn</span>
+                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs block">
+                          {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[11px] block">Trạng thái</span>
+                        <span className="font-semibold text-xs block">
+                          {item.isCompleted ? (
+                            <span className="text-blue-600 dark:text-blue-400">Đã học</span>
+                          ) : (
+                            <span className="text-slate-400">Chưa tích lũy</span>
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                    {item.isCompleted ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" /> Đã học
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
-                        <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
-                      </span>
-                    )}
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
+                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                    <button
+                      type="button"
                       onClick={() => setDetailItem(item)}
-                      leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
-                      className="ml-auto"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
                     >
-                      Chi tiết
-                    </Button>
+                      <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                      <span>Xem chi tiết</span>
+                    </button>
+                    <div>
+                      {item.isCompleted ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" /> Đã học
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400">
+                          <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : viewMode === 'compact' ? (
+          /* ── 5.2 Compact View Mode (Dạng Thẻ Thanh Ngang Thu Gọn) ── */
+          <div className="space-y-2.5">
+            {currentItems.map((item) => {
+              const isChecked = selected.includes(item.id);
+              return (
+                <div
+                  key={item.id}
+                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                  }`}
+                >
+                  {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setDetailItem(item)}
+                      className="shrink-0"
+                    >
+                      <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
+                    </button>
+
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={() => setDetailItem(item)}
+                          className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        >
+                          {item.subjectName}
+                        </button>
+                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
+                          {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                        <span className="text-slate-800 dark:text-slate-200 font-medium">Học kỳ {item.recommendedSemester}</span>
+                        <span className="text-slate-600 dark:text-slate-400 font-medium">{item.credits} tín chỉ</span>
+                        {item.note && <span className="text-slate-400 italic truncate max-w-xs">{item.note}</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Status & Action */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div>
+                      {item.isCompleted ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                          <CheckCircle2 className="h-4 w-4 text-blue-600" /> Đã học
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400">
+                          <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setDetailItem(item)}
+                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                      title="Xem chi tiết"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          /* ── 5.2 List & Compact Table Mode ── */
+          /* ── 5.3 Standard List View Mode (Default Table) ── */
           <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="ui-table w-full text-left text-sm border-collapse">
+              <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-[14px] font-medium text-slate-600 dark:text-slate-400 select-none">
                     <th className="py-3 px-4 w-12 text-center">
@@ -734,13 +821,13 @@ export default function StudentCurriculumPage() {
                         className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
-                    {visibleColumns.code && <th className="py-3 px-4 font-medium">Mã môn học</th>}
-                    {visibleColumns.name && <th className="py-3 px-4 font-medium">Tên môn học</th>}
-                    {visibleColumns.semester && <th className="py-3 px-4 font-medium text-center">Học kỳ</th>}
-                    {visibleColumns.credits && <th className="py-3 px-4 font-medium text-center">Số TC</th>}
-                    {visibleColumns.type && <th className="py-3 px-4 font-medium">Loại môn</th>}
-                    {visibleColumns.status && <th className="py-3 px-4 font-medium text-center">Trạng thái</th>}
-                    <th className="py-3 px-4 text-right font-medium">Thao tác</th>
+                    {visibleColumns.code && <th className="py-3.5 px-4 font-medium whitespace-nowrap">Mã môn học</th>}
+                    {visibleColumns.name && <th className="py-3.5 px-4 font-medium min-w-[240px]">Tên môn học</th>}
+                    {visibleColumns.semester && <th className="py-3.5 px-4 font-medium text-center whitespace-nowrap">Học kỳ</th>}
+                    {visibleColumns.credits && <th className="py-3.5 px-4 font-medium text-center whitespace-nowrap">Số TC</th>}
+                    {visibleColumns.type && <th className="py-3.5 px-4 font-medium whitespace-nowrap">Loại môn</th>}
+                    {visibleColumns.status && <th className="py-3.5 px-4 font-medium text-center whitespace-nowrap">Trạng thái</th>}
+                    <th className="py-3.5 pr-4 text-right font-medium whitespace-nowrap">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -762,63 +849,71 @@ export default function StudentCurriculumPage() {
                           />
                         </td>
                         {visibleColumns.code && (
-                          <td className="py-3.5 px-4">
-                            <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
+                          <td className="py-3.5 px-4 whitespace-nowrap">
+                            <button
+                              type="button"
+                              onClick={() => setDetailItem(item)}
+                              className="tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer"
+                            >
+                              <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
+                            </button>
                           </td>
                         )}
                         {visibleColumns.name && (
-                          <td className="py-3.5 px-4">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition" onClick={() => setDetailItem(item)}>
+                          <td className="py-3.5 px-4 min-w-[240px]">
+                            <div className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[14.5px]" onClick={() => setDetailItem(item)}>
                               {item.subjectName}
                             </div>
-                            {item.note && <p className="text-[15px] text-slate-400 italic truncate max-w-md">{item.note}</p>}
+                            {item.note && <p className="text-[13px] text-slate-400 italic truncate max-w-md mt-0.5">{item.note}</p>}
                           </td>
                         )}
                         {visibleColumns.semester && (
-                          <td className="py-3.5 px-4 text-center font-medium text-slate-600 dark:text-slate-400">
+                          <td className="py-3.5 px-4 text-center font-medium text-slate-600 dark:text-slate-400 text-[14px]">
                             HK {item.recommendedSemester}
                           </td>
                         )}
                         {visibleColumns.credits && (
-                          <td className="py-3.5 px-4 text-center font-semibold text-slate-900 dark:text-slate-100">
+                          <td className="py-3.5 px-4 text-center font-semibold text-slate-900 dark:text-slate-100 text-[14.5px]">
                             {item.credits}
                           </td>
                         )}
                         {visibleColumns.type && (
-                          <td className="py-3.5 px-4">
+                          <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.type === 'MANDATORY' ? (
-                              <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 <Award className="h-3.5 w-3.5" /> Bắt buộc
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 <GraduationCap className="h-3.5 w-3.5" /> Tự chọn
                               </span>
                             )}
                           </td>
                         )}
                         {visibleColumns.status && (
-                          <td className="py-3.5 px-4 text-center">
+                          <td className="py-3.5 px-4 text-center whitespace-nowrap">
                             {item.isCompleted ? (
-                              <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 <CheckCircle2 className="h-4 w-4 text-blue-600" /> Đã học
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-400">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
                                 <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa học
                               </span>
                             )}
                           </td>
                         )}
-                        <td className="py-3.5 px-4 text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setDetailItem(item)}
-                            leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
-                          >
-                            Chi tiết
-                          </Button>
+                        <td className="py-3.5 pr-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setDetailItem(item)}
+                              className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                              title="Xem chi tiết"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -830,51 +925,19 @@ export default function StudentCurriculumPage() {
         )}
 
         {/* ── 6. Pagination Bar ── */}
-        {totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              Hiển thị <strong className="text-slate-900 dark:text-slate-100">{startItem}</strong> - <strong className="text-slate-900 dark:text-slate-100">{endItem}</strong> trên tổng số <strong className="text-slate-900 dark:text-slate-100">{totalItems}</strong> môn học
-            </p>
-
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition shadow-2xs"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              {paginationPages.map((pg, idx) => (
-                typeof pg === 'number' ? (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setPage(pg)}
-                    className={`h-8 min-w-[32px] px-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-2xs ${
-                      page === pg
-                        ? 'bg-blue-600 text-white'
-                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    {pg}
-                  </button>
-                ) : (
-                  <span key={idx} className="px-1 text-slate-400 text-xs">...</span>
-                )
-              ))}
-
-              <button
-                type="button"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition shadow-2xs"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+        {totalItems > 0 && (
+          <PaginationBar
+            page={page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            limit={limit}
+            onPage={(p) => setPage(p)}
+            onLimit={(l) => {
+              setLimit(l);
+              setPage(1);
+            }}
+            unit="môn học"
+          />
         )}
 
         {/* ── 7. Detail Course Drawer ── */}

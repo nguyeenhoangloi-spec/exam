@@ -15,7 +15,7 @@ import { RegradeKPICards } from '../../../components/regrade/RegradeKPICards';
 import { RegradeFilterPopover } from '../../../components/regrade/RegradeFilterPopover';
 import { RegradeTableToolbar } from '../../../components/regrade/RegradeTableToolbar';
 import { RegradeTable } from '../../../components/regrade/RegradeTable';
-import { RegradePaginationBar } from '../../../components/regrade/RegradePaginationBar';
+import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrade/RegradeReviewDrawer';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 
@@ -27,6 +27,7 @@ export default function RegradeManagementPage() {
   const [search, setSearch] = useState<string>('');
   const [statusTab, setStatusTab] = useState<string>('ALL');
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
+  const [selected, setSelected] = useState<string[]>([]);
 
   // Multi-view & Toolbar State
   const [sortOrder, setSortOrder] = useState<string>('newest');
@@ -401,16 +402,36 @@ export default function RegradeManagementPage() {
           viewMode={viewMode}
           visibleColumns={visibleColumns}
           onReview={openReviewDrawer}
+          selected={selected}
+          onSelectAll={(checked) => {
+            if (checked) {
+              const pageIds = paginatedAppeals.map((i) => i.id);
+              setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
+            } else {
+              const pageIds = new Set(paginatedAppeals.map((i) => i.id));
+              setSelected((prev) => prev.filter((id) => !pageIds.has(id)));
+            }
+          }}
+          onSelectOne={(id, checked) => {
+            if (checked) setSelected((prev) => [...prev, id]);
+            else setSelected((prev) => prev.filter((item) => item !== id));
+          }}
         />
 
-        <RegradePaginationBar
-          page={page}
-          totalPages={totalPages}
-          limit={limit}
-          totalItems={filteredAppeals.length}
-          onPage={setPage}
-          onLimit={(l) => { setLimit(l); setPage(1); }}
-        />
+        {filteredAppeals.length > 0 && (
+          <PaginationBar
+            page={page}
+            totalPages={totalPages}
+            limit={limit}
+            totalItems={filteredAppeals.length}
+            onPage={setPage}
+            onLimit={(l) => {
+              setLimit(l);
+              setPage(1);
+            }}
+            unit="đơn phúc khảo"
+          />
+        )}
       </div>
 
       {/* ── 6. Review Drawer Modal ── */}

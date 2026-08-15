@@ -106,14 +106,14 @@ export function StudentTable({
  </div>
  </div>
 
- <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
+ <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-[14px] font-medium">
  <button
  type="button"
  onClick={() => onDetail(s)}
- className="flex items-center gap-1 text-primary-600 hover:text-blue-700 cursor-pointer"
+ className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
  >
- <Eye className="h-3.5 w-3.5" />
- <span>Xem hồ sơ</span>
+ <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+ <span>Xem chi tiết</span>
  </button>
 
  {isAdmin && (
@@ -159,7 +159,7 @@ export function StudentTable({
                 isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
               }`}
             >
-              {/* Left: Checkbox + Avatar Code Badge */}
+              {/* Left: Checkbox + Identifier Code Badge */}
               <div className="flex items-center gap-3 min-w-0">
                 <input
                   type="checkbox"
@@ -167,30 +167,30 @@ export function StudentTable({
                   onChange={(e) => onSelect(s.id, e.target.checked)}
                   className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                 />
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
-                  {s.studentCode?.slice(0, 3) || 'SV'}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => onDetail(s)}
+                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                >
+                  <IdentifierBadge tone="blue">{s.studentCode}</IdentifierBadge>
+                </button>
 
-                {/* Middle: Name + StudentCode + Meta chips */}
+                {/* Middle: Name + Meta chips */}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
+                    <h4
                       onClick={() => onDetail(s)}
-                      className="text-[15px] font-semibold text-slate-900 truncate hover:text-primary-600 transition cursor-pointer text-left"
+                      className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                     >
                       {s.fullName}
-                    </button>
-                    <IdentifierBadge>
-                      {s.studentCode}
-                    </IdentifierBadge>
+                    </h4>
                     <span className="text-xs text-slate-400 font-normal">({s.gender || 'Nam'})</span>
                   </div>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <School className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 font-medium">{s.class?.name || 'Chưa xếp lớp'}</span>
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">{s.class?.name || 'Chưa xếp lớp'}</span>
                     </span>
                     <span className="flex items-center gap-1">
                       <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -199,7 +199,7 @@ export function StudentTable({
                     {s.phone && (
                       <span className="flex items-center gap-1">
                         <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="text-slate-600">{s.phone}</span>
+                        <span className="text-slate-600 dark:text-slate-400">{s.phone}</span>
                       </span>
                     )}
                   </div>
@@ -207,71 +207,51 @@ export function StudentTable({
               </div>
 
               {/* Right: Status Badge & Action Buttons */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 <StatusBadge status={isLocked ? 'LOCKED' : 'CONFIRMED'} customLabel={isLocked ? 'Đã khóa' : 'Đang học'} />
 
                 <button
                   type="button"
                   onClick={() => onDetail(s)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                  className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
                   title="Xem hồ sơ"
                 >
                   <Eye className="h-4 w-4" />
                 </button>
 
                 {isAdmin && (
-                  <ActionDropdownPortal>
-                    {(closeMenu) => (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onDetail(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <Eye className="h-4 w-4 text-slate-500" />
-                          <span>Xem hồ sơ</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onEdit(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <Edit className="h-4 w-4 text-primary-600" />
-                          <span>Chỉnh sửa</span>
-                        </button>
-                        {onToggleLock && (
-                          <button
-                            type="button"
-                            onClick={() => { closeMenu(); onToggleLock(s); }}
-                            className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-xs font-medium ${
-                              s.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 text-emerald-600' : 'hover:bg-amber-50 text-amber-600'
-                            }`}
-                          >
-                            {s.user?.status === 'LOCKED' ? (
-                              <>
-                                <Unlock className="h-4 w-4 text-emerald-600" />
-                                <span>Mở khóa tài khoản</span>
-                              </>
-                            ) : (
-                              <>
-                                <Lock className="h-4 w-4 text-amber-600" />
-                                <span>Khóa đăng nhập</span>
-                              </>
-                            )}
-                          </button>
-                        )}
-                        <div className="my-1 border-t border-slate-200" />
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onDelete(s.id); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-xs font-medium"
-                        >
-                          <Trash2 className="h-4 w-4 text-danger-600" />
-                          <span>Xóa sinh viên</span>
-                        </button>
-                      </>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onEdit(s)}
+                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                      title="Chỉnh sửa"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    {onToggleLock && (
+                      <button
+                        type="button"
+                        onClick={() => onToggleLock(s)}
+                        className={`p-1.5 rounded-xl transition cursor-pointer ${
+                          s.user?.status === 'LOCKED'
+                            ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                            : 'text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                        }`}
+                        title={s.user?.status === 'LOCKED' ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
+                      >
+                        {s.user?.status === 'LOCKED' ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                      </button>
                     )}
-                  </ActionDropdownPortal>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(s.id)}
+                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                      title="Xóa sinh viên"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </>
                 )}
               </div>
             </div>

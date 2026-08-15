@@ -80,6 +80,7 @@ function TrashPageContent() {
   const [search, setSearch] = useState('');
   const [expiryFilter, setExpiryFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
+  const [detailItem, setDetailItem] = useState<TrashItem | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -306,10 +307,10 @@ function TrashPageContent() {
       {/* Page Header Động Theo Đúng Mục Đang Chọn */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-1">
         <div className="space-y-0.5">
-          <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+          <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2.5">
             <span>{currentCategoryInfo.title}</span>
-            <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-              ({items.length} mục)
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700">
+              {items.length} mục
             </span>
           </h1>
           <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
@@ -586,62 +587,86 @@ function TrashPageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginatedItems.map((item) => {
               const remainingDays = getRemainingDays(item.deletedAt);
+              const isSelected = selectedIds.includes(item.id);
+
               return (
                 <div
                   key={`${item.type}-${item.id}`}
-                  className="bg-white border border-slate-200 hover:border-blue-300 rounded-2xl p-5 shadow-2xs hover:shadow-md transition space-y-4 flex flex-col justify-between"
+                  className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 rounded-2xl p-5 shadow-2xs hover:shadow-md transition space-y-4 flex flex-col justify-between ${
+                    isSelected ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
+                  }`}
                 >
                   <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
-                        <Trash2 className="w-5 h-5" />
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                        />
+                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700 truncate">
+                          {categoryLabelMap[item.type] || item.type}
+                        </span>
                       </div>
-                      <span className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold ${remainingDays <= 5 ? 'text-danger-600' : 'text-warning-600'
-                        }`}>
+                      <span className={`inline-flex items-center gap-[6px] text-[13px] leading-5 font-semibold ${
+                        remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
+                      }`}>
                         <Clock className="w-3.5 h-3.5" />
                         Còn {remainingDays} ngày
                       </span>
                     </div>
 
                     <div>
-                      <h4 className="font-semibold text-slate-900 text-[18px] leading-[26px] line-clamp-2">{item.title}</h4>
-                      <p className="text-[14px] font-normal text-slate-500 mt-1 line-clamp-2">{item.subTitle}</p>
+                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-[16px] leading-[24px] line-clamp-2">{item.title}</h4>
+                      {item.subTitle && (
+                        <p className="text-[13.5px] font-normal text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{item.subTitle}</p>
+                      )}
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 text-[14px] space-y-1 text-slate-600 font-normal">
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[13px] space-y-1 text-slate-600 dark:text-slate-400 font-normal">
                       {visibleColumns.deletedAt && (
                         <p className="flex justify-between">
-                          <span className="text-slate-500">Thời điểm xóa:</span>
-                          <span className="font-medium text-slate-900">{item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}</span>
+                          <span className="text-slate-500 dark:text-slate-400">Thời điểm xóa:</span>
+                          <span className="font-medium text-slate-900 dark:text-slate-100">{item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}</span>
                         </p>
                       )}
                       {visibleColumns.deletedBy && (
                         <p className="flex justify-between">
-                          <span className="text-slate-500">Người xóa:</span>
-                          <span className="font-medium text-slate-900">{item.deletedBy}</span>
+                          <span className="text-slate-500 dark:text-slate-400">Người xóa:</span>
+                          <span className="font-medium text-slate-900 dark:text-slate-100">{item.deletedBy}</span>
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-1.5">
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                     <button
                       type="button"
-                      onClick={() => handleRestore(item)}
-                      title="Khôi phục"
-                      className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95"
+                      onClick={() => setDetailItem(item)}
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
                     >
-                      <RotateCcw className="w-5 h-5" />
+                      <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                      <span>Xem chi tiết</span>
                     </button>
-                    <Button
-                      type="button"
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleHardDelete(item)}
-                      leftIcon={<Trash2 className="w-4 h-4" />}
-                    >
-                      Xóa vĩnh viễn
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleRestore(item)}
+                        title="Khôi phục"
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl transition cursor-pointer select-none"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleHardDelete(item)}
+                        title="Xóa vĩnh viễn"
+                        className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl transition cursor-pointer select-none"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -653,46 +678,41 @@ function TrashPageContent() {
             {paginatedItems.map((item) => {
               const remainingDays = getRemainingDays(item.deletedAt);
               const isSelected = selectedIds.includes(item.id);
-              const typeShort = item.type === 'schedules' ? 'LT' : item.type === 'papers' ? 'ĐT' : item.type === 'questions' ? 'CH' : item.type === 'users' ? 'TK' : item.type === 'subjects' ? 'MH' : 'TR';
 
               return (
                 <div
                   key={`${item.type}-${item.id}`}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
                     isSelected ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
                   }`}
                 >
-                  {/* Left: Checkbox + Avatar Code Badge */}
+                  {/* Left: Checkbox + Title + Meta chips */}
                   <div className="flex items-center gap-3 min-w-0">
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                     />
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200/80">
-                      {typeShort}
-                    </div>
 
-                    {/* Middle: Title + SubTitle + Meta chips */}
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[15px] font-semibold text-slate-900 truncate">
+                        <span className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate">
                           {item.title}
                         </span>
-                        <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md tabular-nums border border-slate-200">
+                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
                           {categoryLabelMap[item.type] || item.type}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                      <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                         {item.subTitle && (
-                          <span className="text-slate-600 truncate max-w-sm">
+                          <span className="text-slate-600 dark:text-slate-300 truncate max-w-sm">
                             {item.subTitle}
                           </span>
                         )}
                         <span className={`inline-flex items-center gap-1 font-medium ${
-                          remainingDays <= 5 ? 'text-danger-600' : 'text-warning-600'
+                          remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
                         }`}>
                           <Clock className="w-3.5 h-3.5" />
                           <span>Còn {remainingDays} ngày</span>
@@ -704,7 +724,7 @@ function TrashPageContent() {
                         )}
                         {item.deletedBy && (
                           <span className="text-slate-400">
-                            Bởi: <strong className="text-slate-600 font-medium">{item.deletedBy}</strong>
+                            Bởi: <strong className="text-slate-600 dark:text-slate-300 font-medium">{item.deletedBy}</strong>
                           </span>
                         )}
                       </div>
@@ -712,12 +732,20 @@ function TrashPageContent() {
                   </div>
 
                   {/* Right: Actions */}
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setDetailItem(item)}
+                      title="Xem chi tiết"
+                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleRestore(item)}
                       title="Khôi phục dữ liệu"
-                      className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 select-none"
+                      className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl transition cursor-pointer active:scale-95 select-none"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
@@ -725,7 +753,7 @@ function TrashPageContent() {
                       type="button"
                       onClick={() => handleHardDelete(item)}
                       title="Xóa vĩnh viễn"
-                      className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 select-none"
+                      className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl transition cursor-pointer active:scale-95 select-none"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -736,27 +764,27 @@ function TrashPageContent() {
           </div>
         ) : (
           /* CHẾ ĐỘ XEM TABLE (LIST MODE) */
-          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-2xs overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
              <div className="ui-table-wrap overflow-x-auto">
-               <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-                <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+               <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
+                <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                   <tr>
-                    <th className="px-5 w-10 py-3.5">
+                    <th className="px-5 w-10 py-3.5 text-center">
                       <input
                         type="checkbox"
                         checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
                         onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="h-4 w-4 rounded-xl border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
+                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
                     <th className="px-5 py-3.5">Nội dung / Dữ liệu đã xóa</th>
-                    {visibleColumns.deletedAt && <th className="px-5 py-3.5">Thời điểm xóa</th>}
-                    {visibleColumns.expiresIn && <th className="px-5 py-3.5">Tự động hủy</th>}
-                    {visibleColumns.deletedBy && <th className="px-5 py-3.5">Người xóa</th>}
-                    {visibleColumns.actions && <th className="px-5 text-right py-3.5">Thao tác</th>}
+                    {visibleColumns.deletedAt && <th className="px-5 py-3.5 whitespace-nowrap">Thời điểm xóa</th>}
+                    {visibleColumns.expiresIn && <th className="px-5 py-3.5 whitespace-nowrap">Tự động hủy</th>}
+                    {visibleColumns.deletedBy && <th className="px-5 py-3.5 whitespace-nowrap">Người xóa</th>}
+                    {visibleColumns.actions && <th className="px-5 text-right py-3.5 whitespace-nowrap">Thao tác</th>}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-normal">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
                   {paginatedItems.map((item) => {
                     const remainingDays = getRemainingDays(item.deletedAt);
                     const isSelected = selectedIds.includes(item.id);
@@ -764,64 +792,67 @@ function TrashPageContent() {
                     return (
                       <tr
                         key={`${item.type}-${item.id}`}
-                        className={`transition hover:bg-slate-50/60 ${isSelected ? 'bg-blue-50/50' : ''}`}
+                        className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${isSelected ? 'bg-blue-50/30' : ''}`}
                       >
-                        <td className="px-5 py-4">
+                        <td className="px-5 py-3.5 text-center w-10">
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                            className="h-4 w-4 rounded-xl border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
+                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                           />
                         </td>
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
-                              <Trash2 className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-slate-900 text-[15px] leading-snug">{item.title}</p>
-                              <p className="text-[15px] leading-[22px] text-slate-500 font-normal mt-0.5">{item.subTitle}</p>
-                            </div>
+                        <td className="px-5 py-3.5 min-w-[240px]">
+                          <div>
+                            <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14.5px] leading-snug">{item.title}</p>
+                            {item.subTitle && (
+                              <p className="text-[13px] leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
+                            )}
                           </div>
                         </td>
                         {visibleColumns.deletedAt && (
-                          <td className="px-5 font-normal text-slate-700 whitespace-nowrap py-4">
+                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[14px]">
                             {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
                           </td>
                         )}
                         {visibleColumns.expiresIn && (
-                          <td className="px-5 whitespace-nowrap py-4">
-                            <span className={`inline-flex items-center gap-[6px] text-[15px] leading-[22px] font-medium ${remainingDays <= 5
-                                ? 'text-danger-600'
-                                : 'text-warning-600'
-                              }`}>
+                          <td className="px-5 whitespace-nowrap py-3.5">
+                            <span className={`inline-flex items-center gap-[6px] text-[13.5px] leading-[20px] font-medium ${
+                              remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
+                            }`}>
                               <Clock className="w-3.5 h-3.5" />
                               Còn {remainingDays} ngày
                             </span>
                           </td>
                         )}
                         {visibleColumns.deletedBy && (
-                          <td className="px-5 font-normal text-slate-700 whitespace-nowrap py-4">
-                            <span className="text-[15px] leading-[22px] font-medium text-slate-700">
+                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[14px]">
+                            <span className="font-medium text-slate-700 dark:text-slate-300">
                               {item.deletedBy}
                             </span>
                           </td>
                         )}
                         {visibleColumns.actions && (
-                          <td className="px-5 text-right whitespace-nowrap py-4">
-                            <div className="inline-flex items-center gap-2">
+                          <td className="px-5 text-right whitespace-nowrap py-3.5">
+                            <div className="inline-flex items-center gap-1 justify-end">
+                              <button
+                                onClick={() => setDetailItem(item)}
+                                title="Xem chi tiết"
+                                className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
                               <button
                                 onClick={() => handleRestore(item)}
                                 title="Khôi phục dữ liệu"
-                                className="p-1.5 rounded-xl text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 select-none"
+                                className="p-1.5 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer active:scale-95 select-none"
                               >
                                 <RotateCcw className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleHardDelete(item)}
                                 title="Xóa vĩnh viễn"
-                                className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 select-none"
+                                className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer active:scale-95 select-none"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -851,6 +882,103 @@ function TrashPageContent() {
               setPage(1);
             }}
           />
+        )}
+
+        {/* Modal Xem Chi Tiết Bản Ghi Đã Xóa */}
+        {detailItem && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-[2px]">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Chi tiết bản ghi trong Thùng rác
+                  </span>
+                  <h3 className="text-[17px] font-semibold text-slate-900 dark:text-slate-100 line-clamp-2">
+                    {detailItem.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDetailItem(null)}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-[14px]">
+                <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
+                  <span className="text-slate-500 dark:text-slate-400">Danh mục:</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    {categoryLabelMap[detailItem.type] || detailItem.type}
+                  </span>
+                </div>
+                {detailItem.subTitle && (
+                  <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
+                    <span className="text-slate-500 dark:text-slate-400">Mô tả/Kỳ thi:</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-200 text-right max-w-xs truncate">
+                      {detailItem.subTitle}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
+                  <span className="text-slate-500 dark:text-slate-400">Thời điểm xóa:</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-100">
+                    {detailItem.deletedAt ? new Date(detailItem.deletedAt).toLocaleString('vi-VN') : '---'}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
+                  <span className="text-slate-500 dark:text-slate-400">Người thực hiện xóa:</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-100">
+                    {detailItem.deletedBy || 'Hệ thống'}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500 dark:text-slate-400">Thời gian tự động hủy:</span>
+                  <span className="font-semibold text-amber-600 dark:text-amber-400">
+                    Còn {getRemainingDays(detailItem.deletedAt)} ngày
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="md"
+                  onClick={() => setDetailItem(null)}
+                >
+                  Đóng
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={() => {
+                    const item = detailItem;
+                    setDetailItem(null);
+                    handleRestore(item);
+                  }}
+                  leftIcon={<RotateCcw className="w-4 h-4" />}
+                >
+                  Khôi phục
+                </Button>
+                <Button
+                  type="button"
+                  variant="danger"
+                  size="md"
+                  onClick={() => {
+                    const item = detailItem;
+                    setDetailItem(null);
+                    handleHardDelete(item);
+                  }}
+                  leftIcon={<Trash2 className="w-4 h-4" />}
+                >
+                  Xóa vĩnh viễn
+                </Button>
+              </div>
+            </div>
+          </div>
         )}
     </main>
   );

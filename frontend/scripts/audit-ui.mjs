@@ -368,6 +368,15 @@ if (!/font-family:\s*var\(--font-ui\)/.test(globalCss)) {
   violations.push('app/globals.css: body phải kế thừa font Inter dùng chung');
 }
 
+if (!/\.typography-scale\s+:where\(h1\)\s*\{[\s\S]*?font-weight:\s*700/.test(globalCss)) {
+  violations.push('app/globals.css: page title h1 phải dùng font-weight 700');
+}
+
+if (!/html:not\(\.dark\)\s+\.typography-scale\s+:where\(\.text-slate-300,\s*\.text-gray-300\)[\s\S]*?color:\s*var\(--ui-text-muted-soft\)/.test(globalCss)
+  || !/\.ui-dark-surface\s+:where\(\.text-slate-300,\s*\.text-gray-300\)/.test(globalCss)) {
+  violations.push('app/globals.css: light-theme neutral text must be readable with a dark-surface exception');
+}
+
 if (!/code,\s*kbd,\s*pre,\s*samp\s*\{[\s\S]*font-family:\s*inherit/i.test(globalCss)) {
   violations.push('globals.css: code/pre/log metadata must inherit Inter instead of browser monospace');
 }

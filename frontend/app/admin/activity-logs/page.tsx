@@ -76,76 +76,6 @@ interface AuditLogRecord {
     } | null;
 }
 
-const MOCK_AUDIT_LOGS: AuditLogRecord[] = [
-    {
-        id: 'log-001',
-        actorId: 1,
-        action: 'BACKUP_QUEUED',
-        entityType: 'BackupJob',
-        entityId: 'snap-20260811-1345',
-        description: 'Đã tạo yêu cầu sao lưu Snapshot CSDL môi trường STAGING',
-        metadata: { environment: 'STAGING', requester: 'admin' },
-        createdAt: '2026-08-11T13:45:00.000Z',
-        actor: { id: 1, username: 'admin', email: 'admin@exam.edu.vn', role: 'ADMIN' },
-    },
-    {
-        id: 'log-002',
-        actorId: 1,
-        action: 'BACKUP_RESTORE_APPROVED',
-        entityType: 'BackupJob',
-        entityId: 'snap-20260811-1341',
-        description: 'Đã phê duyệt Restore môi trường STAGING từ bản sao lưu',
-        metadata: { environment: 'STAGING', approvedBy: 'admin' },
-        createdAt: '2026-08-11T13:41:00.000Z',
-        actor: { id: 1, username: 'admin', email: 'admin@exam.edu.vn', role: 'ADMIN' },
-    },
-    {
-        id: 'log-003',
-        actorId: 2,
-        action: 'APPROVED_REGRADE',
-        entityType: 'GradeAppeal',
-        entityId: 'appeal-102',
-        description: 'Thẩm định & Chấp nhận phúc khảo điểm cho sinh viên Trần Thị Bình (6.5đ -> 8.5đ)',
-        metadata: { originalScore: 6.5, revisedScore: 8.5, subject: 'WEB02' },
-        createdAt: '2026-08-11T11:20:00.000Z',
-        actor: { id: 2, username: 'teacher_nam', email: 'nam.nv@exam.edu.vn', role: 'TEACHER' },
-    },
-    {
-        id: 'log-004',
-        actorId: 1,
-        action: 'APPROVE_QUESTION',
-        entityType: 'Question',
-        entityId: 'q-2733',
-        description: 'Đã phê duyệt câu hỏi trắc nghiệm CSDL nâng cao vào ngân hàng đề',
-        metadata: { questionCode: 'CSDL-TN-05', difficulty: 'MEDIUM' },
-        createdAt: '2026-08-11T10:15:00.000Z',
-        actor: { id: 1, username: 'admin', email: 'admin@exam.edu.vn', role: 'ADMIN' },
-    },
-    {
-        id: 'log-005',
-        actorId: 4,
-        action: 'CREATE_GRADE_APPEAL',
-        entityType: 'GradeAppeal',
-        entityId: 'appeal-104',
-        description: 'Sinh viên Phạm Minh Đức gửi đơn xin phúc khảo bài thi tự luận CSDL',
-        metadata: { originalScore: 7.5, subjectCode: 'CSDL01' },
-        createdAt: '2026-08-11T09:30:00.000Z',
-        actor: { id: 4, username: 'sv_duc', email: 'duc.pm@student.edu.vn', role: 'STUDENT' },
-    },
-    {
-        id: 'log-006',
-        actorId: 1,
-        action: 'USER_LOGIN',
-        entityType: 'User',
-        entityId: '1',
-        description: 'Đăng nhập hệ thống thành công qua tài khoản Google OAuth2',
-        metadata: { ip: '127.0.0.1', userAgent: 'Chrome/127.0.0.0' },
-        createdAt: '2026-08-11T08:00:00.000Z',
-        actor: { id: 1, username: 'admin', email: 'admin@exam.edu.vn', role: 'ADMIN' },
-    },
-];
-
-
 function EntityTarget({ entityType, entityId }: { entityType: string; entityId?: string | null }) {
     const typeMap: Record<string, { label: string; Icon: React.ElementType }> = {
         AUTH: { label: 'Xác thực', Icon: ShieldCheck },
@@ -265,33 +195,36 @@ export default function ActivityLogsPage() {
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
-    const fetchLogs = useCallback(async () => {
+    const fetchLogs = useCallback(async (): Promise<boolean> => {
         try {
             setLoading(true);
             const params: any = { page, limit };
             if (search.trim()) params.search = search.trim();
             if (entityFilter) params.entityType = entityFilter;
+            if (actionFilter) params.action = actionFilter;
+            params.sort = sortOrder;
 
             const res = await api.get('/audit-logs', { params });
-            if (res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
-                setLogs(res.data.items);
-                setTotalCount(res.data.total || res.data.items.length);
-            } else {
-                setLogs(MOCK_AUDIT_LOGS);
-                setTotalCount(MOCK_AUDIT_LOGS.length);
-            }
-        } catch {
-            setLogs(MOCK_AUDIT_LOGS);
-            setTotalCount(MOCK_AUDIT_LOGS.length);
+            setLogs(Array.isArray(res.data?.items) ? res.data.items : []);
+            setTotalCount(Number(res.data?.total) || 0);
+            return true;
+        } catch (error: any) {
+            setLogs([]);
+            setTotalCount(0);
+            setToast({
+                message: error?.response?.data?.message || error?.message || 'Không thể tải nhật ký hoạt động.',
+                type: 'error',
+            });
+            return false;
         } finally {
             setLoading(false);
         }
-    }, [page, limit, search, entityFilter]);
+    }, [page, limit, search, entityFilter, actionFilter, sortOrder]);
 
     const handleRefreshClick = async () => {
         setIsSpinning(true);
-        await fetchLogs();
-        setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+        const refreshed = await fetchLogs();
+        if (refreshed) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
         setTimeout(() => setIsSpinning(false), 600);
     };
 
@@ -310,10 +243,11 @@ export default function ActivityLogsPage() {
     };
 
     const toggleSelectAll = () => {
-        if (selectedIds.length === paginatedLogs.length) {
+        const allVisibleSelected = paginatedLogs.length > 0 && paginatedLogs.every((log) => selectedIds.includes(log.id));
+        if (allVisibleSelected) {
             setSelectedIds([]);
         } else {
-            setSelectedIds(paginatedLogs.map((l) => l.id));
+            setSelectedIds((prev) => Array.from(new Set([...prev, ...paginatedLogs.map((l) => l.id)])));
         }
     };
 
@@ -352,31 +286,15 @@ export default function ActivityLogsPage() {
                 if (!matchActor && !matchAction && !matchDesc) return false;
             }
             if (entityFilter && item.entityType !== entityFilter) return false;
-            if (actionFilter) {
-                const act = item.action.toUpperCase();
-                if (actionFilter === 'CREATE' && !act.includes('CREATE') && !act.includes('ADD') && !act.includes('NEW')) return false;
-                if (actionFilter === 'UPDATE' && !act.includes('UPDATE') && !act.includes('EDIT') && !act.includes('PATCH')) return false;
-                if (actionFilter === 'DELETE' && !act.includes('DELETE') && !act.includes('REMOVE') && !act.includes('TRASH')) return false;
-                if (actionFilter === 'LOGIN' && !act.includes('LOGIN')) return false;
-                if (actionFilter === 'APPROVE' && !act.includes('APPROVE') && !act.includes('REGRADE')) return false;
-            }
             return true;
         });
 
-        if (sortOrder === 'oldest') {
-            list = [...list].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        } else {
-            list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        }
-
         return list;
-    }, [logs, search, entityFilter, actionFilter, sortOrder]);
+    }, [logs, search, entityFilter]);
 
-    const totalPages = Math.ceil(filteredLogs.length / limit) || 1;
-    const paginatedLogs = useMemo(() => {
-        const start = (page - 1) * limit;
-        return filteredLogs.slice(start, start + limit);
-    }, [filteredLogs, page, limit]);
+    const totalPages = Math.ceil(totalCount / limit) || 1;
+    // The API already paginates the current page. Do not slice it again on the client.
+    const paginatedLogs = filteredLogs;
 
     const exportExcel = () => {
         exportToFormattedExcel({
@@ -613,7 +531,7 @@ export default function ActivityLogsPage() {
                         }}
                         entityTypes={entityTypes}
                         logs={logs}
-                        totalFilteredCount={filteredLogs.length}
+                        totalFilteredCount={totalCount}
                         onResetAll={() => {
                             setSearch('');
                             setEntityFilter('');
@@ -628,7 +546,7 @@ export default function ActivityLogsPage() {
                     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
                         <div className="flex items-center gap-2">
                             <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{filteredLogs.length.toLocaleString('vi-VN')}</span> nhật ký
+                                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> nhật ký
                             </span>
                         </div>
 
@@ -736,52 +654,75 @@ export default function ActivityLogsPage() {
             {/* ── 5. Full-Width DataGrid Table (Exact StudentTable Match 1-1) ── */}
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {paginatedLogs.map((item) => (
-                        <div key={item.id} className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3 hover:shadow-md transition">
-                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                                <span className="text-[14px] font-medium text-slate-700">{new Date(item.createdAt).toLocaleString('vi-VN')}</span>
-                                <ActionCode action={item.action} />
-                            </div>
-                            <div className="flex items-center gap-2.5">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-[12px] font-medium text-slate-700">
-                                    {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
+                    {paginatedLogs.map((item) => {
+                        const isChecked = selectedIds.includes(item.id);
+                        return (
+                            <div
+                                key={item.id}
+                                className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3 hover:shadow-md transition ${
+                                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
+                                }`}
+                            >
+                                {/* Header: Checkbox + Time & ActionCode */}
+                                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={isChecked}
+                                            onChange={() => toggleSelect(item.id)}
+                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                                        />
+                                        <span className="text-[13px] font-medium text-slate-600 dark:text-slate-400">
+                                            {new Date(item.createdAt).toLocaleString('vi-VN')}
+                                        </span>
+                                    </div>
+                                    <ActionCode action={item.action} />
                                 </div>
-                                <div>
-                                    <p className="text-[15px] font-semibold text-slate-900">{item.actor?.username || 'Hệ thống'}</p>
-                                    <p className="text-[15px] leading-[22px] font-normal text-slate-500">{item.actor?.email}</p>
+
+                                {/* Actor info */}
+                                <div className="flex items-center gap-2.5">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[12px] font-bold text-slate-700 dark:text-slate-300">
+                                        {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                                            {item.actor?.username || 'Hệ thống'}
+                                        </p>
+                                        <p className="text-[13px] leading-tight font-normal text-slate-500 dark:text-slate-400 truncate">
+                                            {item.actor?.email || 'N/A'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Description */}
+                                <p className="text-[14px] leading-relaxed font-normal text-slate-700 dark:text-slate-300 line-clamp-2">
+                                    {item.description}
+                                </p>
+
+                                {/* Footer: Xem chi tiết */}
+                                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                                    <button
+                                        type="button"
+                                        onClick={() => setSelectedLog(item)}
+                                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                                    >
+                                        <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                                        <span>Xem chi tiết</span>
+                                    </button>
                                 </div>
                             </div>
-                            <p className="text-[15px] leading-[22px] font-normal text-slate-700">{item.description}</p>
-                            <div className="pt-2 flex justify-end gap-1">
-                                <button
-                                    type="button"
-                                    onClick={() => setSelectedLog(item)}
-                                    className="p-1 text-slate-400 hover:text-blue-600 transition cursor-pointer"
-                                    title="Chi tiết JSON"
-                                >
-                                    <Eye className="h-4 w-4" />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setSelectedLog(item)}
-                                    className="p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer"
-                                    title="Tùy chọn khác"
-                                >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             ) : viewMode === 'compact' ? (
                 <div className="space-y-2.5">
                     {loading ? (
-                        <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 shadow-2xs">
+                        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 shadow-2xs">
                             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
                             <p className="text-[15px] font-semibold text-slate-500">Đang tải nhật ký hoạt động...</p>
                         </div>
                     ) : paginatedLogs.length === 0 ? (
-                        <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 shadow-2xs">
+                        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 shadow-2xs">
                             Chưa có nhật ký hoạt động nào phù hợp.
                         </div>
                     ) : (
@@ -790,10 +731,11 @@ export default function ActivityLogsPage() {
                             return (
                                 <div
                                     key={item.id}
-                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                                        }`}
+                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+                                        isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                                    }`}
                                 >
-                                    {/* Left: Checkbox + Avatar */}
+                                    {/* Left: Checkbox + Description & ActionCode + Meta chips */}
                                     <div className="flex items-center gap-3 min-w-0">
                                         <input
                                             type="checkbox"
@@ -801,39 +743,34 @@ export default function ActivityLogsPage() {
                                             onChange={() => toggleSelect(item.id)}
                                             className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                                         />
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-bold text-xs border border-blue-100/80">
-                                            {(item.actor?.username || 'HT').slice(0, 2).toUpperCase()}
-                                        </div>
 
-                                        {/* Middle: Description + ActionCode + Meta chips */}
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2 flex-wrap">
-                                                <button
-                                                    type="button"
+                                                <h4
                                                     onClick={() => setSelectedLog(item)}
-                                                    className="text-[15px] font-semibold text-slate-900 truncate hover:text-blue-600 transition cursor-pointer text-left max-w-xl"
+                                                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left max-w-xl"
                                                 >
                                                     {item.description}
-                                                </button>
+                                                </h4>
                                                 <ActionCode action={item.action} />
                                             </div>
 
-                                            <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                                            <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                                                 <span className="flex items-center gap-1">
                                                     <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                    <span className="text-slate-700 font-medium">{item.actor?.username || 'Hệ thống'}</span>
+                                                    <span className="text-slate-700 dark:text-slate-300 font-medium">{item.actor?.username || 'Hệ thống'}</span>
                                                     {item.actor?.role && (
-                                                        <span className="table-badge bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded text-[12px] font-medium border border-slate-200">
+                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[11px] font-medium border border-slate-200 dark:border-slate-700">
                                                             {item.actor.role}
                                                         </span>
                                                     )}
                                                 </span>
                                                 <span className="flex items-center gap-1">
                                                     <Database className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                    <span className="text-slate-600 font-medium">{item.entityType}</span>
+                                                    <span className="text-slate-600 dark:text-slate-400 font-medium">{item.entityType}</span>
                                                     {item.entityId && (
                                                         <IdentifierBadge tone="neutral" title={item.entityId}>
-                                                            ({item.entityId})
+                                                            #{item.entityId.length > 10 ? `${item.entityId.slice(0, 4)}...${item.entityId.slice(-4)}` : item.entityId}
                                                         </IdentifierBadge>
                                                     )}
                                                 </span>
@@ -845,23 +782,15 @@ export default function ActivityLogsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Right: Actions */}
+                                    {/* Right: Direct 1-touch Action */}
                                     <div className="flex items-center gap-1 shrink-0">
                                         <button
                                             type="button"
                                             onClick={() => setSelectedLog(item)}
-                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
-                                            title="Xem chi tiết JSON"
+                                            className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                                            title="Xem chi tiết"
                                         >
                                             <Eye className="h-4 w-4" />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedLog(item)}
-                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
-                                            title="Tùy chọn khác"
-                                        >
-                                            <MoreHorizontal className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </div>
@@ -878,7 +807,7 @@ export default function ActivityLogsPage() {
                                     <th className="w-10 text-center py-3.5 px-4">
                                         <input
                                             type="checkbox"
-                                            checked={paginatedLogs.length > 0 && selectedIds.length === paginatedLogs.length}
+                                            checked={paginatedLogs.length > 0 && paginatedLogs.every((log) => selectedIds.includes(log.id))}
                                             onChange={toggleSelectAll}
                                             className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                         />
@@ -1007,12 +936,12 @@ export default function ActivityLogsPage() {
             )}
 
             {/* ── 6. Pagination Bar (Standalone Custom Inline - Fully Isolated) ── */}
-            {filteredLogs.length > 0 && (
+            {totalCount > 0 && (
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3">
                     <p className="text-[14px] font-normal text-slate-500">
                         Hiển thị <span className="font-semibold text-slate-900">{(page - 1) * limit + 1}</span> -{' '}
-                        <span className="font-semibold text-slate-900">{Math.min(page * limit, filteredLogs.length)}</span> trong{' '}
-                        <span className="font-semibold text-slate-900">{filteredLogs.length.toLocaleString('vi-VN')}</span> Nhật ký
+                        <span className="font-semibold text-slate-900">{Math.min(page * limit, totalCount)}</span> trong{' '}
+                        <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> Nhật ký
                     </p>
 
                     <div className="flex items-center gap-3">

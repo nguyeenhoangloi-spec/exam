@@ -93,37 +93,48 @@ export function SubjectTable({
  </div>
  </div>
 
- <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
- <button
- type="button"
- onClick={() => onEnroll(s)}
- className="flex items-center gap-1 text-primary-600 hover:text-blue-700 cursor-pointer"
- >
- <UserPlus className="h-3.5 w-3.5" />
- <span>Gán sinh viên</span>
- </button>
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-[14px] font-medium">
+                <button
+                  type="button"
+                  onClick={() => onDetail(s)}
+                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
+                >
+                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                  <span>Xem chi tiết</span>
+                </button>
 
- {isAdmin && (
- <div className="flex items-center gap-1">
- <button
- type="button"
- onClick={() => onEdit(s)}
- className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100"
- title="Sửa"
- >
- <Edit className="h-3.5 w-3.5" />
- </button>
- <button
- type="button"
- onClick={() => onDelete(s.id)}
- className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50"
- title="Xóa"
- >
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </div>
- )}
- </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => onEnroll(s)}
+                    className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                    title="Gán sinh viên"
+                  >
+                    <UserPlus className="h-3.5 w-3.5" />
+                  </button>
+
+                  {isAdmin && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => onEdit(s)}
+                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                        title="Chỉnh sửa môn học"
+                      >
+                        <Edit className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDelete(s.id)}
+                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                        title="Xóa môn học"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
  </div>
  );
  })}
@@ -146,7 +157,7 @@ export function SubjectTable({
                 isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
               }`}
             >
-              {/* Left: Checkbox + Avatar Code Badge */}
+              {/* Left: Checkbox + Identifier Code Badge */}
               <div className="flex items-center gap-3 min-w-0">
                 <input
                   type="checkbox"
@@ -154,44 +165,42 @@ export function SubjectTable({
                   onChange={(e) => onSelect(s.id, e.target.checked)}
                   className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                 />
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
-                  {s.subjectCode?.slice(0, 3) || 'MH'}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => onDetail(s)}
+                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                >
+                  <IdentifierBadge tone="blue">{s.subjectCode}</IdentifierBadge>
+                </button>
 
-                {/* Middle: Name + SubjectCode + Meta chips */}
+                {/* Middle: Name + Meta chips */}
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(s)}
-                      className="text-[15px] font-semibold text-slate-900 truncate hover:text-primary-600 transition cursor-pointer text-left"
-                    >
-                      {s.subjectName}
-                    </button>
-                    <IdentifierBadge>
-                      {s.subjectCode}
-                    </IdentifierBadge>
-                  </div>
+                  <h4
+                    onClick={() => onDetail(s)}
+                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                  >
+                    {s.subjectName}
+                  </h4>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span><strong className="font-semibold text-slate-800">{s.credits}</strong> Tín chỉ</span>
+                      <span><strong className="font-semibold text-slate-800 dark:text-slate-200">{s.credits}</strong> Tín chỉ</span>
                     </span>
                     <span className="flex items-center gap-1">
                       <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 font-medium">{deptName}</span>
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">{deptName}</span>
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Right: Actions */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => onEnroll(s)}
-                  className="hidden sm:flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
+                  className="hidden sm:flex items-center gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-2xs hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 transition cursor-pointer"
                 >
                   <UserPlus className="h-3.5 w-3.5 text-blue-600" />
                   <span>Gán SV</span>
@@ -200,52 +209,31 @@ export function SubjectTable({
                 <button
                   type="button"
                   onClick={() => onDetail(s)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                  className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
                   title="Xem chi tiết"
                 >
                   <Eye className="h-4 w-4" />
                 </button>
 
                 {isAdmin && (
-                  <ActionDropdownPortal>
-                    {(closeMenu) => (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onDetail(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <Eye className="h-4 w-4 text-slate-500" />
-                          <span>Xem chi tiết</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onEnroll(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <UserPlus className="h-4 w-4 text-blue-600" />
-                          <span>Gán sinh viên</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onEdit(s); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-xs font-medium"
-                        >
-                          <Edit className="h-4 w-4 text-primary-600" />
-                          <span>Chỉnh sửa</span>
-                        </button>
-                        <div className="my-1 border-t border-slate-200" />
-                        <button
-                          type="button"
-                          onClick={() => { closeMenu(); onDelete(s.id); }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-xs font-medium"
-                        >
-                          <Trash2 className="h-4 w-4 text-danger-600" />
-                          <span>Xóa môn học</span>
-                        </button>
-                      </>
-                    )}
-                  </ActionDropdownPortal>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onEdit(s)}
+                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                      title="Chỉnh sửa môn"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(s.id)}
+                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                      title="Xóa môn học"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </>
                 )}
               </div>
             </div>
