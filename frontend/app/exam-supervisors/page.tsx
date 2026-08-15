@@ -49,7 +49,7 @@ export default function ExamSupervisorsPage() {
 
   // Pagination, Sort & View Mode
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(8);
+  const [limit, setLimit] = useState<number>(10);
   const [sortOrder, setSortOrder] = useState<string>('newest');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
@@ -811,12 +811,12 @@ export default function ExamSupervisorsPage() {
 
         {/* ── 7. Pagination Bar ── */}
         <ExamSupervisorPaginationBar
-          currentPage={page}
+          page={page}
           totalPages={totalPages}
           totalItems={filteredSupervisors.length}
-          itemsPerPage={limit}
-          onPageChange={setPage}
-          onItemsPerPageChange={(l) => {
+          limit={limit}
+          onPage={setPage}
+          onLimit={(l) => {
             setLimit(l);
             setPage(1);
           }}
