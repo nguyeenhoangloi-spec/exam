@@ -15,6 +15,8 @@ import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, 
 
 const ACTIVE_ATTEMPT_STATUSES = ['DEVICE_CHECK', 'READY', 'IN_PROGRESS', 'DISCONNECTED'] as const;
 export const PRODUCTION_MAINTENANCE_LOCK_PREFIX = '[MAINTENANCE_LOCKED]';
+export const BACKUP_WORKER_ADVISORY_KEY = 84921031;
+export const PRODUCTION_MAINTENANCE_ADVISORY_KEY = 84921032;
 type BackupDb = PrismaService | Prisma.TransactionClient;
 
 @Injectable()

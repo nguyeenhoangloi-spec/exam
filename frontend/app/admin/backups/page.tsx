@@ -22,7 +22,7 @@ import {
     HardDrive,
     Info,
     LockKeyhole,
-    LockOpen,
+    Unlock,
     RefreshCw,
     RotateCcw,
     Search,
@@ -1125,7 +1125,7 @@ export default function BackupsPage() {
                                                         onClick={() => openRejectModal(request)}
                                                         className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-danger-600 hover:text-danger-700 transition cursor-pointer"
                                                     >
-                                                        <LockOpen className="h-3.5 w-3.5 shrink-0" />
+                                                        <Unlock className="h-3.5 w-3.5 shrink-0" />
                                                         Mở khóa hệ thống
                                                     </button>
                                                 ) : (

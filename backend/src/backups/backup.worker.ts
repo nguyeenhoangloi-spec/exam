@@ -6,7 +6,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/
 import { dirname, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
-import { BackupService } from './backup.service';
+import { BackupService, BACKUP_WORKER_ADVISORY_KEY, PRODUCTION_MAINTENANCE_ADVISORY_KEY } from './backup.service';
 import { BackupStorageService } from './backup-storage.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
@@ -65,7 +65,7 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
       const configuredTimeout = Number(process.env.BACKUP_LOCK_TIMEOUT_MS);
       const lockTimeout = Number.isFinite(configuredTimeout) && configuredTimeout >= 30_000 ? configuredTimeout : 7_200_000;
       await this.prisma.$transaction(async (tx) => {
-        const lock = await tx.$queryRaw<{ locked: boolean }[]>`SELECT pg_try_advisory_xact_lock(84921031) AS locked`;
+        const lock = await tx.$queryRaw<{ locked: boolean }[]>`SELECT pg_try_advisory_xact_lock(${BACKUP_WORKER_ADVISORY_KEY}) AS locked`;
         if (!lock[0]?.locked) return;
         const job = await this.backup.claimNextJob(tx);
         if (job) await this.runJob(job, tx);
@@ -171,6 +171,7 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
         if (await this.backup.hasActiveOfficialAttempt(db)) {
           throw new Error('Không thể restore production khi đang có bài thi hoạt động.');
         }
+        await db.$executeRaw`SELECT pg_advisory_xact_lock(${PRODUCTION_MAINTENANCE_ADVISORY_KEY})`;
         productionMaintenanceLocked = true;
         if (!(await this.createSafetySnapshot(db))) {
           const message = 'Không tạo được safety snapshot trước production restore.';
