@@ -29,7 +29,6 @@ export function InlineCreateAssignmentPanel({
   const [roomId, setRoomId] = useState<string>('');
   const [supervisor1Id, setSupervisor1Id] = useState<string>('');
   const [supervisor2Id, setSupervisor2Id] = useState<string>('');
-  const [note, setNote] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -41,7 +40,6 @@ export function InlineCreateAssignmentPanel({
       }
       setSupervisor1Id('');
       setSupervisor2Id('');
-      setNote('');
     }
   }, [isOpen, defaultRoomId, rooms]);
 
@@ -78,7 +76,6 @@ export function InlineCreateAssignmentPanel({
         examScheduleRoomId: Number(roomId),
         supervisor1Id: supervisor1Id ? Number(supervisor1Id) : undefined,
         supervisor2Id: supervisor2Id ? Number(supervisor2Id) : undefined,
-        note,
       });
       onClose();
     } finally {
@@ -183,20 +180,6 @@ export function InlineCreateAssignmentPanel({
               options={supervisor2Options}
             />
           </div>
-        </div>
-
-        {/* Ô ghi chú thêm */}
-        <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Ghi chú (tùy chọn)
-          </label>
-          <input
-            type="text"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Nhập ghi chú phân công..."
-            className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-          />
         </div>
       </div>
 

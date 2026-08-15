@@ -1,27 +1,27 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '../ui/Button';
 
-interface SchedulePickerModalProps {
+interface ArrangementSchedulePickerModalProps {
   isOpen: boolean;
   onClose: () => void;
   schedules: any[];
   selectedScheduleId: string;
-  onSelectSchedule: (scheduleId: number) => void;
+  onSelectSchedule: (scheduleId: string) => void;
 }
 
-export function SchedulePickerModal({
+export function ArrangementSchedulePickerModal({
   isOpen,
   onClose,
   schedules,
   selectedScheduleId,
   onSelectSchedule,
-}: SchedulePickerModalProps) {
+}: ArrangementSchedulePickerModalProps) {
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'ALL' | 'PENDING' | 'COMPLETED' | 'EXPIRED'>('ALL');
+  const [activeTab, setActiveTab] = useState<'ALL' | 'PENDING' | 'ARRANGED' | 'EXPIRED'>('ALL');
 
   useEffect(() => {
     setMounted(true);
@@ -53,28 +53,16 @@ export function SchedulePickerModal({
     }
   };
 
-  const getSupervisionStats = (s: any) => {
-    const rooms = s.examScheduleRooms || [];
-    const totalRooms = rooms.length;
-    const required = totalRooms * 2;
-    const assigned = rooms.reduce(
-      (acc: number, r: any) => acc + (r._count?.supervisors || r.supervisors?.length || 0),
-      0
-    );
-    const isFull = totalRooms > 0 && assigned >= required;
-    return { totalRooms, required, assigned, isFull };
-  };
-
-  const pendingList = schedules.filter((s) => !isScheduleExpired(s) && !getSupervisionStats(s).isFull);
-  const completedList = schedules.filter((s) => !isScheduleExpired(s) && getSupervisionStats(s).isFull);
+  const pendingList = schedules.filter((s) => !isScheduleExpired(s) && (!s.examScheduleRooms || s.examScheduleRooms.length === 0));
+  const arrangedList = schedules.filter((s) => !isScheduleExpired(s) && s.examScheduleRooms && s.examScheduleRooms.length > 0);
   const expiredList = schedules.filter((s) => isScheduleExpired(s));
 
   const filteredSchedules = schedules.filter((s) => {
     const isExpired = isScheduleExpired(s);
-    const { isFull } = getSupervisionStats(s);
+    const isArranged = Boolean(s.examScheduleRooms && s.examScheduleRooms.length > 0);
 
-    if (activeTab === 'PENDING' && (isExpired || isFull)) return false;
-    if (activeTab === 'COMPLETED' && (isExpired || !isFull)) return false;
+    if (activeTab === 'PENDING' && (isExpired || isArranged)) return false;
+    if (activeTab === 'ARRANGED' && (isExpired || !isArranged)) return false;
     if (activeTab === 'EXPIRED' && !isExpired) return false;
 
     if (searchQuery.trim()) {
@@ -99,10 +87,10 @@ export function SchedulePickerModal({
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80">
           <div>
             <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
-              Chọn Ca Thi Khảo Thí
+              Chọn Ca Thi Xếp Phòng
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Tổng cộng {schedules.length} ca thi trong hệ thống
+              Tổng cộng {schedules.length} ca thi trong kỳ thi
             </p>
           </div>
           <button
@@ -152,14 +140,14 @@ export function SchedulePickerModal({
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('COMPLETED')}
+              onClick={() => setActiveTab('ARRANGED')}
               className={`h-8 px-3 rounded-lg font-semibold transition cursor-pointer shrink-0 ${
-                activeTab === 'COMPLETED'
+                activeTab === 'ARRANGED'
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
               }`}
             >
-              Đã đủ ({completedList.length})
+              Đã xếp phòng ({arrangedList.length})
             </button>
             <button
               type="button"
@@ -185,18 +173,20 @@ export function SchedulePickerModal({
             filteredSchedules.map((s) => {
               const isSelected = String(s.id) === String(selectedScheduleId);
               const isExpired = isScheduleExpired(s);
-              const { totalRooms, required, assigned, isFull } = getSupervisionStats(s);
+              const roomCount = s.examScheduleRooms?.length || 0;
+              const isArranged = roomCount > 0;
 
               const subName = s.subject?.subjectName || s.subjectName || 'Ca thi';
               const subCode = s.subject?.subjectCode || s.subjectCode || 'MH';
               const dateStr = s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '';
+              const isMock = s.mode === 'MOCK';
 
               return (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => {
-                    onSelectSchedule(s.id);
+                    onSelectSchedule(String(s.id));
                     onClose();
                   }}
                   className={`w-full text-left p-3.5 rounded-xl border transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
@@ -214,6 +204,11 @@ export function SchedulePickerModal({
                       <span className="text-xs font-mono text-slate-400">
                         #{subCode}
                       </span>
+                      {isMock && (
+                        <span className="px-1.5 py-0.2 rounded text-xs font-semibold bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300">
+                          Thi thử
+                        </span>
+                      )}
                       {isSelected && (
                         <span className="px-1.5 py-0.2 rounded text-xs font-bold bg-blue-600 text-white">
                           Đang chọn
@@ -226,7 +221,6 @@ export function SchedulePickerModal({
                         {s.startTime} - {s.endTime}
                       </span>
                       {dateStr && <span>• Ngày: {dateStr}</span>}
-                      <span>• {totalRooms} phòng thi</span>
                     </div>
                   </div>
 
@@ -236,13 +230,13 @@ export function SchedulePickerModal({
                       <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                         Đã kết thúc
                       </span>
-                    ) : isFull ? (
+                    ) : isArranged ? (
                       <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
-                        Đủ {assigned}/{required} GT
+                        Đã xếp {roomCount} phòng
                       </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
-                        Có: {assigned}/{required} GT
+                        Chưa xếp phòng
                       </span>
                     )}
                   </div>
