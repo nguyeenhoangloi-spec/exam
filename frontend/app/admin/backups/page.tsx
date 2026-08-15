@@ -991,7 +991,7 @@ export default function BackupsPage() {
                                                 <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
                                             </button>
                                             {job.checksum && (
-                                                <div className="mt-0.5 text-[13px] leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
+                                                <div className="table-meta mt-0.5 text-[13px] leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
                                                     SHA-256: {job.checksum.slice(0, 12)}…
                                                 </div>
                                             )}
@@ -1012,7 +1012,7 @@ export default function BackupsPage() {
                                             </span>
                                         </td>
 
-                                        <td className="p-3.5 whitespace-nowrap text-[14px] font-medium text-slate-700 dark:text-slate-300">
+                                        <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700 dark:text-slate-300">
                                             {job.initiatedBy ? (
                                                 <span className="inline-flex items-center gap-1 text-blue-700 dark:text-blue-400 font-medium">
                                                     <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
@@ -1024,14 +1024,14 @@ export default function BackupsPage() {
                                             )}
                                         </td>
 
-                                        <td className="p-3.5 whitespace-nowrap text-[14px] font-medium text-slate-700 dark:text-slate-300">
+                                        <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700 dark:text-slate-300">
                                             {formatDate(job.completedAt || job.createdAt)}
-                                            <span className="block text-[13px] leading-[20px] text-slate-400 mt-0.5">
+                                            <span className="table-meta block text-[13px] leading-[20px] text-slate-400 mt-0.5">
                                                 Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
                                             </span>
                                         </td>
 
-                                        <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[14px]">
+                                        <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[15px]">
                                             {formatBytes(job.sizeBytes)}
                                         </td>
 

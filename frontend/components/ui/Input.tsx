@@ -77,6 +77,8 @@ export function PasswordInput({ className = '', ...props }: Omit<InputProps, 'ty
         <button
           type="button"
           tabIndex={-1}
+          aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+          aria-pressed={showPassword}
           onClick={() => setShowPassword((prev) => !prev)}
           className="ui-pressable text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer p-1"
         >

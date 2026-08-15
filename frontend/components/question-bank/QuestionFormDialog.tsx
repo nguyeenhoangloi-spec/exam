@@ -380,6 +380,8 @@ export function QuestionFormDialog({
                   <button
                     type="button"
                     onClick={() => removeMediaFile(idx)}
+                    aria-label={`Xóa tệp ${file.name}`}
+                    title={`Xóa tệp ${file.name}`}
                     className="absolute top-1 right-1 rounded-full bg-slate-900/70 text-white w-5 h-5 flex items-center justify-center text-xs font-semibold hover:bg-rose-600 transition opacity-0 group-hover:opacity-100 cursor-pointer"
                   >
                     ×

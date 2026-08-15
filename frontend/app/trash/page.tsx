@@ -618,7 +618,7 @@ function TrashPageContent() {
                     </div>
 
                     <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-[16px] leading-[24px] line-clamp-2">{item.title}</h4>
+                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-[18px] leading-[26px] line-clamp-2">{item.title}</h4>
                       {item.subTitle && (
                         <p className="text-[13.5px] font-normal text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{item.subTitle}</p>
                       )}
@@ -804,20 +804,20 @@ function TrashPageContent() {
                         </td>
                         <td className="px-5 py-3.5 min-w-[240px]">
                           <div>
-                            <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14.5px] leading-snug">{item.title}</p>
+                            <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-snug">{item.title}</p>
                             {item.subTitle && (
-                              <p className="text-[13px] leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
+                              <p className="table-meta text-[13px] leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
                             )}
                           </div>
                         </td>
                         {visibleColumns.deletedAt && (
-                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[14px]">
+                          <td className="table-meta px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[14px]">
                             {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
                           </td>
                         )}
                         {visibleColumns.expiresIn && (
                           <td className="px-5 whitespace-nowrap py-3.5">
-                            <span className={`inline-flex items-center gap-[6px] text-[13.5px] leading-[20px] font-medium ${
+                            <span className={`table-badge inline-flex items-center gap-[6px] text-[13.5px] leading-[20px] font-medium ${
                               remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
                             }`}>
                               <Clock className="w-3.5 h-3.5" />
@@ -826,7 +826,7 @@ function TrashPageContent() {
                           </td>
                         )}
                         {visibleColumns.deletedBy && (
-                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[14px]">
+                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[15px]">
                             <span className="font-medium text-slate-700 dark:text-slate-300">
                               {item.deletedBy}
                             </span>
@@ -890,7 +890,7 @@ function TrashPageContent() {
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
               <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div className="space-y-1 min-w-0">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
                     Chi tiết bản ghi trong Thùng rác
                   </span>
                   <h3 className="text-[17px] font-semibold text-slate-900 dark:text-slate-100 line-clamp-2">

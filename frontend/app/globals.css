@@ -137,6 +137,9 @@ html.dark {
   button,
   [role='button'] {
     min-height: 2.25rem;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: 600;
   }
 
   button:not(:disabled),
@@ -446,9 +449,11 @@ html.dark {
     line-height: var(--lh-helper);
   }
 
+  /* Button text is a control-level semantic token, not helper text. Legacy
+   * text-xs utilities must not reduce it below the 15px interaction scale. */
   .typography-scale button.text-xs {
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--fs-body) !important;
+    line-height: var(--lh-body) !important;
   }
 
   .ui-page {
@@ -1012,6 +1017,26 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 .typography-scale button[class~='h-8'][class~='min-w-[32px]'] {
   height: 2.25rem !important;
   min-width: 2.25rem !important;
+}
+
+/* Mobile controls keep a 44px touch target even when their desktop semantic
+ * size is compact. The visual typography and radius remain unchanged. */
+@media (max-width: 767px) {
+  .typography-scale :where(button, [role='button']) {
+    min-height: 2.75rem !important;
+  }
+
+  .typography-scale :where(
+    input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not([type='range']),
+    select
+  ) {
+    min-height: 2.75rem !important;
+  }
+
+  .typography-scale button[data-ui-control='filter-select'] {
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
+  }
 }
 
 .typography-scale :where(label) {

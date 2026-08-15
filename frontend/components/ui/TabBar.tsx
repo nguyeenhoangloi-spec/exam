@@ -35,7 +35,7 @@ export function TabBar<T extends string = string>({
                 onChange(tab.key);
               });
             }}
-            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-base font-medium transition-colors duration-150 cursor-pointer whitespace-nowrap shrink-0 select-none ${
+            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer whitespace-nowrap shrink-0 select-none ${
               isActive
                 ? 'text-primary-600 dark:text-blue-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'

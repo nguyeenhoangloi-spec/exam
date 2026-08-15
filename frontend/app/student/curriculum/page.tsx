@@ -677,21 +677,21 @@ export default function StudentCurriculumPage() {
 
                     <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
                       <div>
-                        <span className="text-slate-400 text-[11px] block">Số tín chỉ</span>
+                        <span className="text-slate-400 text-[12px] block">Số tín chỉ</span>
                         <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{item.credits} TC</strong>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[11px] block">Học kỳ</span>
+                        <span className="text-slate-400 text-[12px] block">Học kỳ</span>
                         <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">Học kỳ {item.recommendedSemester}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[11px] block">Loại môn</span>
+                        <span className="text-slate-400 text-[12px] block">Loại môn</span>
                         <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs block">
                           {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[11px] block">Trạng thái</span>
+                        <span className="text-slate-400 text-[12px] block">Trạng thái</span>
                         <span className="font-semibold text-xs block">
                           {item.isCompleted ? (
                             <span className="text-blue-600 dark:text-blue-400">Đã học</span>
@@ -861,30 +861,30 @@ export default function StudentCurriculumPage() {
                         )}
                         {visibleColumns.name && (
                           <td className="py-3.5 px-4 min-w-[240px]">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[14.5px]" onClick={() => setDetailItem(item)}>
+                            <div className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[15px]" onClick={() => setDetailItem(item)}>
                               {item.subjectName}
                             </div>
-                            {item.note && <p className="text-[13px] text-slate-400 italic truncate max-w-md mt-0.5">{item.note}</p>}
+                            {item.note && <p className="table-meta text-[13px] text-slate-400 italic truncate max-w-md mt-0.5">{item.note}</p>}
                           </td>
                         )}
                         {visibleColumns.semester && (
-                          <td className="py-3.5 px-4 text-center font-medium text-slate-600 dark:text-slate-400 text-[14px]">
+                          <td className="py-3.5 px-4 text-center font-medium text-slate-600 dark:text-slate-400 text-[15px]">
                             HK {item.recommendedSemester}
                           </td>
                         )}
                         {visibleColumns.credits && (
-                          <td className="py-3.5 px-4 text-center font-semibold text-slate-900 dark:text-slate-100 text-[14.5px]">
+                          <td className="py-3.5 px-4 text-center font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
                             {item.credits}
                           </td>
                         )}
                         {visibleColumns.type && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.type === 'MANDATORY' ? (
-                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 <Award className="h-3.5 w-3.5" /> Bắt buộc
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 <GraduationCap className="h-3.5 w-3.5" /> Tự chọn
                               </span>
                             )}
@@ -893,11 +893,11 @@ export default function StudentCurriculumPage() {
                         {visibleColumns.status && (
                           <td className="py-3.5 px-4 text-center whitespace-nowrap">
                             {item.isCompleted ? (
-                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 <CheckCircle2 className="h-4 w-4 text-blue-600" /> Đã học
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
                                 <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa học
                               </span>
                             )}

@@ -492,7 +492,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   formData.selectionMode !== 'BY_SCORE'
                     ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -503,7 +503,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   formData.selectionMode === 'BY_SCORE'
                     ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'

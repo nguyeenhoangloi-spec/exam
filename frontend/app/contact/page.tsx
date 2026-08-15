@@ -502,7 +502,7 @@ export default function ContactSupportPage() {
                   key={pill.id}
                   type="button"
                   onClick={() => setActiveCategory(pill.id)}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
+                  className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
                     activeCategory === pill.id
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
@@ -704,7 +704,7 @@ export default function ContactSupportPage() {
               <button
                 type="submit"
                 disabled={sending}
-                className="h-[46px] px-7 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[14.5px] shadow-md shadow-blue-600/25 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                className="h-11 px-7 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
               >
                 {sending ? (
                   <>
@@ -802,6 +802,7 @@ export default function ContactSupportPage() {
           <button
             type="button"
             onClick={() => setIsChatOpen(true)}
+            aria-label="Mở chat hỗ trợ tự động"
             className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-500/25 transition-transform hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-blue-100 dark:ring-blue-950"
             title="Chat hỗ trợ tự động"
           >

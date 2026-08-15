@@ -760,7 +760,7 @@ export default function ActivityLogsPage() {
                                                     <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                                     <span className="text-slate-700 dark:text-slate-300 font-medium">{item.actor?.username || 'Hệ thống'}</span>
                                                     {item.actor?.role && (
-                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[11px] font-medium border border-slate-200 dark:border-slate-700">
+                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[12px] font-medium border border-slate-200 dark:border-slate-700">
                                                             {item.actor.role}
                                                         </span>
                                                     )}

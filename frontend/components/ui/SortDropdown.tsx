@@ -110,7 +110,7 @@ export function SortDropdown({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         onClick={() => setIsOpen(!isOpen)}
-        className={`ui-pressable h-10 flex items-center gap-1.5 rounded-xl border px-3 text-[15px] font-medium transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out shadow-2xs cursor-pointer select-none ${
+        className={`ui-pressable h-10 flex items-center gap-1.5 rounded-xl border px-3 text-[15px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out shadow-2xs cursor-pointer select-none ${
           isOpen
             ? 'border-blue-500 ring-2 ring-blue-500/20 text-slate-900 bg-white dark:bg-slate-900 dark:border-blue-500 dark:ring-blue-500/30 dark:text-slate-100'
             : 'border-slate-200/90 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600'
@@ -146,7 +146,7 @@ export function SortDropdown({
                       onChange?.(option.value);
                       setIsOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-[15px] leading-5 transition-colors duration-150 cursor-pointer select-none text-left ${
+                    className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-[15px] leading-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none text-left ${
                       isSelected
                         ? 'text-slate-900 dark:text-slate-100 font-semibold bg-transparent'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium'

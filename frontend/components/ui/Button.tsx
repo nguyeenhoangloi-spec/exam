@@ -18,30 +18,30 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-blue-500/30 focus:outline-none font-semibold cursor-pointer rounded-xl',
+    'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 border border-transparent shadow-2xs focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   secondary:
-    'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-semibold cursor-pointer rounded-xl shadow-2xs',
+    'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:outline-none font-semibold cursor-pointer rounded-xl shadow-2xs',
   outline:
-    'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-semibold cursor-pointer rounded-xl shadow-2xs',
+    'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:outline-none font-semibold cursor-pointer rounded-xl shadow-2xs',
   ghost:
-    'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 dark:active:bg-slate-700 border border-transparent focus:ring-2 focus:ring-slate-400/20 focus:outline-none font-semibold cursor-pointer rounded-xl',
+    'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 dark:active:bg-slate-700 border border-transparent focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   danger:
-    'bg-danger-600 text-white hover:bg-danger-700 active:bg-red-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-red-500/30 focus:outline-none font-semibold cursor-pointer rounded-xl',
+    'bg-danger-600 text-white hover:bg-danger-700 active:bg-red-800 border border-transparent shadow-2xs focus-visible:ring-2 focus-visible:ring-red-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   'danger-outline':
-    'bg-white text-danger-600 hover:bg-danger-50 active:bg-rose-100 dark:bg-slate-900 dark:text-rose-400 dark:hover:bg-rose-950/30 dark:active:bg-rose-950/50 dark:border-rose-800/70 border border-rose-200 hover:border-rose-300 focus:ring-2 focus:ring-rose-400/20 focus:outline-none font-semibold cursor-pointer rounded-xl',
+    'bg-white text-danger-600 hover:bg-danger-50 active:bg-rose-100 dark:bg-slate-900 dark:text-rose-400 dark:hover:bg-rose-950/30 dark:active:bg-rose-950/50 dark:border-rose-800/70 border border-rose-200 hover:border-rose-300 focus-visible:ring-2 focus-visible:ring-rose-400/20 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   success:
-    'bg-success-500 text-white hover:bg-success-600 active:bg-success-700 border border-transparent shadow-2xs focus:ring-2 focus:ring-green-500/30 focus:outline-none font-semibold cursor-pointer rounded-xl',
+    'bg-success-500 text-white hover:bg-success-600 active:bg-success-700 border border-transparent shadow-2xs focus-visible:ring-2 focus-visible:ring-green-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   warning:
-    'bg-warning-600 text-white hover:bg-warning-700 active:bg-amber-800 border border-transparent shadow-2xs focus:ring-2 focus:ring-amber-500/30 focus:outline-none font-semibold cursor-pointer rounded-xl',
+    'bg-warning-600 text-white hover:bg-warning-700 active:bg-amber-800 border border-transparent shadow-2xs focus-visible:ring-2 focus-visible:ring-amber-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: 'h-8 px-2.5 text-[15px] font-semibold rounded-xl gap-1.5',
-  sm: 'h-9 px-3 text-[15px] font-semibold rounded-xl gap-1.5',
-  md: 'h-10 px-3.5 text-[15px] font-semibold rounded-xl gap-2',
-  lg: 'h-10 px-[18px] text-[15px] font-semibold rounded-xl gap-2',
-  icon: 'h-9 w-9 p-0 rounded-xl justify-center items-center shrink-0',
-  'icon-lg': 'h-10 w-10 p-0 rounded-xl justify-center items-center shrink-0',
+  xs: 'h-8 min-h-0 px-2.5 text-[15px] font-semibold rounded-xl gap-1.5',
+  sm: 'h-9 min-h-0 px-3 text-[15px] font-semibold rounded-xl gap-1.5',
+  md: 'h-10 min-h-0 px-3.5 text-[15px] font-semibold rounded-xl gap-2',
+  lg: 'h-11 min-h-0 px-[18px] text-[15px] font-semibold rounded-xl gap-2',
+  icon: 'h-9 min-h-0 w-9 p-0 rounded-xl justify-center items-center shrink-0',
+  'icon-lg': 'h-10 min-h-0 w-10 p-0 rounded-xl justify-center items-center shrink-0',
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -61,7 +61,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
-    const isBtnDisabled = disabled;
+    const isBtnDisabled = disabled || isLoading;
     const effectiveLeftIcon = leftIcon || icon;
 
     return (
@@ -70,7 +70,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={isBtnDisabled}
         aria-busy={isLoading || undefined}
-        className={`relative ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none ${isLoading ? 'pointer-events-none' : ''} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        aria-disabled={isBtnDisabled || undefined}
+        className={`relative ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...props}
       >
         {/* Spinner overlay — absolute, does NOT affect button width */}

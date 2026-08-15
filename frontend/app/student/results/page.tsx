@@ -803,20 +803,20 @@ export default function StudentResultsPage() {
 
  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
  <div>
- <span className="text-slate-400 text-[11px] block">Hình thức</span>
+ <span className="text-slate-400 text-[12px] block">Hình thức</span>
  <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block truncate">{formatExamType(item.examType)}</strong>
  </div>
  <div>
- <span className="text-slate-400 text-[11px] block">Ngày thi</span>
+ <span className="text-slate-400 text-[12px] block">Ngày thi</span>
  <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
  </div>
  <div>
- <span className="text-slate-400 text-[11px] block">Số tín chỉ</span>
+ <span className="text-slate-400 text-[12px] block">Số tín chỉ</span>
  <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{item.credits} tín chỉ</span>
  </div>
  <div>
- <span className="text-slate-400 text-[11px] block">Điểm số</span>
- <span className={`font-bold text-xs block ${item.score !== null && item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : item.score !== null ? 'text-rose-600' : 'text-slate-400'}`}>
+ <span className="text-slate-400 text-[12px] block">Điểm số</span>
+ <span className={`font-semibold text-xs block ${item.score !== null && item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : item.score !== null ? 'text-rose-600' : 'text-slate-400'}`}>
  {item.score !== null ? `${item.score.toFixed(1)} / 10` : '---'}
  </span>
  </div>
@@ -904,7 +904,7 @@ export default function StudentResultsPage() {
                 {/* Right: Score, Status & Action */}
                 <div className="flex items-center gap-3 shrink-0">
                   {item.score !== null && (
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border tabular-nums ${
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border tabular-nums ${
                       item.score >= 4.0
                         ? 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
                         : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300'
@@ -989,18 +989,18 @@ export default function StudentResultsPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-semibold text-slate-900 dark:text-slate-100 text-[14.5px] leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
+ className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
  >
  {item.subjectName}
  </p>
- <p className="text-[13px] leading-[20px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
+ <p className="table-meta text-[13px] leading-[20px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
  </td>
  )}
 
  {/* Period */}
  {visibleColumns.period !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-[14px] leading-[22px] font-medium text-slate-700 dark:text-slate-300">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-700 dark:text-slate-300">
  {item.periodName}
  </span>
  </td>
@@ -1009,7 +1009,7 @@ export default function StudentResultsPage() {
  {/* Date */}
  {visibleColumns.date !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
- <span className="text-[14px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
  {new Date(item.examDate).toLocaleDateString('vi-VN')}
  </span>
  </td>
@@ -1018,7 +1018,7 @@ export default function StudentResultsPage() {
  {/* Type */}
  {visibleColumns.type !== false && (
  <td className="p-3.5 whitespace-nowrap">
- <span className="text-[14px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
+ <span className="text-[15px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
  {formatExamType(item.examType)}
  </span>
  </td>
@@ -1032,7 +1032,7 @@ export default function StudentResultsPage() {
  {item.score.toFixed(1)}
  </span>
  ) : (
- <span className="text-slate-400 font-normal text-[14px] leading-[22px] italic">---</span>
+ <span className="table-meta text-slate-400 font-normal text-[14px] leading-[22px] italic">---</span>
  )}
  </td>
  )}

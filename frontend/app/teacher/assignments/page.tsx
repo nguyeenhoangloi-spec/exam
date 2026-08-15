@@ -826,21 +826,21 @@ export default function TeacherAssignmentsPage() {
                     {/* Details grid box */}
                     <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
                       <div>
-                        <span className="text-slate-400 text-[11px] block">Ngày thi</span>
+                        <span className="text-slate-400 text-[12px] block">Ngày thi</span>
                         <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">
                           {new Date(item.examDate).toLocaleDateString('vi-VN')}
                         </strong>
                       </div>
 
                       <div>
-                        <span className="text-slate-400 text-[11px] block">Khung giờ</span>
+                        <span className="text-slate-400 text-[12px] block">Khung giờ</span>
                         <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs block">
                           {item.startTime} - {item.endTime}
                         </span>
                       </div>
 
                       <div className="col-span-2">
-                        <span className="text-slate-400 text-[11px] block">Phòng thi & Địa điểm</span>
+                        <span className="text-slate-400 text-[12px] block">Phòng thi & Địa điểm</span>
                         <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block truncate">
                           {item.roomName || item.roomCode} {item.building ? `(${item.building})` : ''}
                         </span>
@@ -934,7 +934,7 @@ export default function TeacherAssignmentsPage() {
                           <td className="py-3.5 px-4">
                             <div
                               onClick={() => setDrawerDuty(item)}
-                              className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[14.5px]"
+                              className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[15px]"
                             >
                               {item.subjectName}
                             </div>
@@ -943,20 +943,20 @@ export default function TeacherAssignmentsPage() {
                         )}
                         {visibleColumns.time !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
+                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
                               {new Date(item.examDate).toLocaleDateString('vi-VN')}
                             </div>
-                            <div className="text-[13px] font-medium text-blue-600 dark:text-blue-400">
+                            <div className="table-meta text-[13px] font-medium text-blue-600 dark:text-blue-400">
                               {item.startTime} - {item.endTime}
                             </div>
                           </td>
                         )}
                         {visibleColumns.room !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
+                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
                               {item.roomName || item.roomCode}
                             </div>
-                            <div className="text-[13px] text-slate-400 font-normal">
+                            <div className="table-meta text-[13px] text-slate-400 font-normal">
                               {item.building || 'Nhà A1'}
                             </div>
                           </td>
@@ -964,11 +964,11 @@ export default function TeacherAssignmentsPage() {
                         {visibleColumns.role !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.role === 'SUPERVISOR_1' ? (
-                              <span className="inline-flex items-center text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                              <span className="table-badge inline-flex items-center text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
                                 Giám thị 1
                               </span>
                             ) : (
-                              <span className="inline-flex items-center text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                              <span className="table-badge inline-flex items-center text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                                 Giám thị 2
                               </span>
                             )}

@@ -438,6 +438,43 @@ if (!/rounded-xl/.test(button) || !/rounded-xl/.test(input)) {
   violations.push('components/ui/Button.tsx and Input.tsx: shared controls must use rounded-xl');
 }
 
+if (!/lg:\s*'[^']*\bh-11\b/.test(button)
+  || !/icon:\s*'[^']*\bh-9\b[^']*\bw-9\b/.test(button)
+  || !/['"]icon-lg['"]:\s*'[^']*\bh-10\b[^']*\bw-10\b/.test(button)
+  || !/text-\[15px\] font-semibold/.test(button)) {
+  violations.push('components/ui/Button.tsx: button sizes and typography must follow xs32/sm36/md40/lg44 and 15px/600');
+}
+
+if (!/const isBtnDisabled = disabled \|\| isLoading/.test(button)
+  || !/disabled=\{isBtnDisabled\}/.test(button)
+  || !/aria-disabled=\{isBtnDisabled \|\| undefined\}/.test(button)
+  || !/focus-visible:ring/.test(button)) {
+  violations.push('components/ui/Button.tsx: loading must disable the button and the focus contract must use focus-visible');
+}
+
+if (!/button:not\(\.rounded-full\)[\s\S]*border-radius:\s*var\(--ui-radius\)/.test(globalCss)
+  || !/button,\s*\[role='button'\]\s*\{[\s\S]*min-height:\s*2\.25rem/.test(globalCss)
+  || !/button,\s*\[role='button'\]\s*\{[\s\S]*font-size:\s*var\(--fs-body\)/.test(globalCss)
+  || !/button,\s*\[role='button'\]\s*\{[\s\S]*font-weight:\s*600/.test(globalCss)
+  || !/@media \(max-width: 767px\)[\s\S]*min-height:\s*2\.75rem !important/.test(globalCss)
+  || !/\.typography-scale button\.text-xs[\s\S]*font-size:\s*var\(--fs-body\) !important/.test(globalCss)
+  || !/\.typography-scale :where\(button, \[role='button'\]\)[\s\S]*font-size:\s*var\(--fs-body\) !important/.test(globalCss)) {
+  violations.push('app/globals.css: native buttons must share radius, touch target, and 15px control typography');
+}
+
+for (const interactivePrimitive of [
+  'components/ui/FilterSelect.tsx',
+  'components/ui/SortDropdown.tsx',
+  'components/ui/ColumnToggleDropdown.tsx',
+  'components/ui/Tabs.tsx',
+  'components/ui/TabBar.tsx',
+]) {
+  const primitive = await readFile(join(root, interactivePrimitive), 'utf8');
+  if (!/focus-visible:ring/.test(primitive)) {
+    violations.push(`${interactivePrimitive}: interactive controls must expose a focus-visible state`);
+  }
+}
+
 if (!/rounded-lg/.test(identifierBadge)
   || !/px-2 py-0\.5/.test(identifierBadge)
   || !/text-\[13px\]/.test(identifierBadge)

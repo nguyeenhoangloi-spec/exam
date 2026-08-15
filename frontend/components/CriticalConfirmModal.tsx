@@ -318,14 +318,14 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="h-[38px] px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-base font-medium transition cursor-pointer disabled:opacity-50"
+              className="h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-[15px] font-semibold transition cursor-pointer disabled:opacity-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`h-[38px] px-4 rounded-xl text-white font-medium text-base transition flex items-center gap-2 cursor-pointer ${
+              className={`h-10 px-4 rounded-xl text-white font-semibold text-[15px] transition flex items-center gap-2 cursor-pointer ${
                 loading ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700 active:bg-red-800'
               }`}
             >
