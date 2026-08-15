@@ -5,6 +5,7 @@ import React, { FormEvent, useState } from 'react';
 import {
   Sparkles, Calendar, AlertTriangle, CheckCircle2,
   FileText, CheckSquare, ChevronDown, X, ArrowLeftRight, Volume2,
+  GraduationCap, Clock,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 import { Button } from '../ui/Button';
@@ -260,51 +261,79 @@ export function ExamPaperMatrixForm({
           </label>
 
           {selectedSchedule ? (
-            <div className="flex flex-wrap items-center justify-between gap-3 py-2">
-              <div className="flex-1 min-w-0 space-y-1">
+            <div className="flex items-center gap-3.5 min-w-0 py-1">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+                <GraduationCap className="h-5 w-5 stroke-[2]" />
+              </div>
+
+              <div className="space-y-0.5 min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[12px] font-semibold tracking-wide text-slate-600">
-                    {(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-600 text-white tracking-wide">
+                    {(selectedSchedule as any)?.mode === 'MOCK' ? 'THI THỬ' : 'CHÍNH THỨC'}
                   </span>
-                  <span className="text-sm font-semibold text-slate-900 truncate">
+                  <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
                     {(selectedSchedule as any).subjectName || (selectedSchedule as any).subject?.subjectName || 'Môn thi'}
+                  </h4>
+                  <span className="text-xs font-medium text-slate-400">
+                    #{(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}
                   </span>
-                  <span className="text-xs font-semibold text-slate-500">
-                    — {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name || 'Kỳ thi'}
-                  </span>
+                  {((selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name) && (
+                    <span className="text-xs font-normal text-slate-400 hidden sm:inline">
+                      — {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name}
+                    </span>
+                  )}
+
+                  {/* Nút Đổi Ca thuần icon, không chữ, không khung, không nền */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPanel(true)}
+                    className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center justify-center"
+                    title="Đổi ca thi khác"
+                    aria-label="Đổi ca thi khác"
+                  >
+                    <ArrowLeftRight className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                <div className="flex items-center gap-3 text-xs font-semibold text-slate-600 flex-wrap">
-                  <span className="text-slate-800 font-semibold">
-                    {fmt(selectedSchedule.examDate)}
-                  </span>
-                  <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
+
+                <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
+                  {selectedSchedule.examDate && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                      {fmt(selectedSchedule.examDate)}
+                    </span>
+                  )}
+                  {selectedSchedule.startTime && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5 text-slate-400" />
+                      {selectedSchedule.startTime} – {selectedSchedule.endTime}
+                    </span>
+                  )}
                   {scheduleDuration > 0 && (
-                    <span className="text-[13px] font-semibold text-slate-600">
-                      {scheduleDuration} phút
+                    <span className="font-medium text-slate-700 dark:text-slate-300">
+                      ⏱️ {scheduleDuration} phút
                     </span>
                   )}
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowPanel(!showPanel)}
-                className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-2 rounded-xl transition cursor-pointer shadow-2xs shrink-0 active:scale-95"
-              >
-                <ArrowLeftRight className="h-3.5 w-3.5" />
-                Đổi ca thi
-              </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setShowPanel(!showPanel)}
-              className="w-full flex items-center justify-between gap-2 rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/40 p-3.5 text-left hover:bg-blue-50/80 hover:border-blue-400 transition cursor-pointer"
-            >
-              <span className="text-xs font-semibold text-blue-700">Chưa chọn ca thi — Nhấn để chọn Lịch thi</span>
-              <span className="inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-600 px-4 py-1.5 rounded-xl shrink-0">
-                Chọn ca
-              </span>
-            </button>
+            <div className="flex items-center gap-3.5 min-w-0 py-1">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+                <GraduationCap className="h-5 w-5 stroke-[2]" />
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-medium text-slate-500">Chưa chọn ca thi</span>
+                <button
+                  type="button"
+                  onClick={() => setShowPanel(true)}
+                  className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center justify-center"
+                  title="Nhấn để chọn ca thi"
+                  aria-label="Nhấn để chọn ca thi"
+                >
+                  <ArrowLeftRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Modal popup overlay */}

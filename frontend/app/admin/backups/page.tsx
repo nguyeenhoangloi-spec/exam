@@ -1290,6 +1290,41 @@ export default function BackupsPage() {
                 </div>
             </Modal>
 
+            {/* Reject restore / release production maintenance lock */}
+            <Modal
+                isOpen={Boolean(rejectRequest)}
+                onClose={() => !actionLoading && setRejectRequest(null)}
+                title={rejectRequest?.status === 'FAILED' ? 'Mở khóa hệ thống sau restore lỗi' : 'Từ chối yêu cầu khôi phục'}
+                size="md"
+            >
+                <div className="space-y-4 py-1">
+                    <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm leading-relaxed text-rose-900">
+                        {rejectRequest?.status === 'FAILED'
+                            ? 'Restore Production đã thất bại. Hệ thống đang giữ maintenance lock để tránh tiếp tục ghi dữ liệu. Chỉ mở khóa sau khi đã kiểm tra safety snapshot và nguyên nhân lỗi.'
+                            : 'Yêu cầu này sẽ không được worker thực hiện. Hãy nhập lý do để lưu vào audit log.'}
+                    </div>
+                    <label className="block text-[15px] font-medium text-slate-700">
+                        Lý do <span className="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                        rows={3}
+                        maxLength={500}
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                        placeholder="Nhập lý do cụ thể..."
+                        className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition"
+                    />
+                    <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
+                        <Button variant="secondary" size="md" onClick={() => setRejectRequest(null)} disabled={actionLoading}>
+                            Hủy bỏ
+                        </Button>
+                        <Button variant="danger" size="md" onClick={() => void handleRejectRequest()} isLoading={actionLoading}>
+                            {rejectRequest?.status === 'FAILED' ? 'Xác nhận mở khóa' : 'Từ chối yêu cầu'}
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+
             {/* Critical Confirm Modal for High-Security Restore Approval (GEMINI.md Rule) */}
             {activeRestoreRequest && (
                 <CriticalConfirmModal
