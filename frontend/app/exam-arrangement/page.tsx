@@ -38,6 +38,7 @@ import {
   Trash2,
   Edit3,
   Activity,
+  ArrowLeftRight,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 import { ArrangementSchedulePickerModal } from '../../components/exam-arrangement/ArrangementSchedulePickerModal';
@@ -775,14 +776,17 @@ export default function ExamArrangementPage() {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap shrink-0">
-              {/* Nút 1: Đổi Ca (Tầng 3: Ghost nhẹ nhàng) */}
+              {/* Nút 1: Đổi Ca (Icon Button đổi ca thi) */}
               <Button
                 type="button"
                 variant="ghost"
                 size="md"
+                className="p-2.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 onClick={() => setShowSchedulePicker(true)}
+                title="Đổi ca thi"
+                aria-label="Đổi ca thi"
               >
-                Đổi Ca
+                <ArrowLeftRight className="w-4 h-4" />
               </Button>
 
               {/* Nút 2: Chọn / Thu Gọn Phòng (Tầng 2: Soft Tint Pill) */}

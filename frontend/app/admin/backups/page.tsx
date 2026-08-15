@@ -62,8 +62,6 @@ interface BackupJob {
     snapshotId: string;
     type: BackupJobType;
     status: BackupStatus;
-    storageKey?: string | null;
-    manifestKey?: string | null;
     checksum?: string | null;
     sizeBytes?: string | null;
     startedAt?: string | null;
@@ -90,7 +88,6 @@ interface Overview {
     storage: {
         provider: 'LOCAL' | 'S3';
         isLocal: boolean;
-        bucketName: string | null;
         warning: string | null;
     };
     tools: {
@@ -204,7 +201,7 @@ export default function BackupsPage() {
     // Critical Approval Modal State
     const [criticalModalOpen, setCriticalModalOpen] = useState(false);
     const [activeRestoreRequest, setActiveRestoreRequest] = useState<RestoreRequest | null>(null);
-    const [dynamicPhrase, setDynamicPhrase] = useState<string>('RESTORE DATABASE');
+    const [dynamicPhrase, setDynamicPhrase] = useState<string>('');
 
     const fetchData = useCallback(async (silent = false) => {
         if (!silent) setLoading(true);
@@ -295,9 +292,12 @@ export default function BackupsPage() {
     };
 
     const openCriticalApproveModal = (request: RestoreRequest) => {
+        if (!request.confirmationPhrase) {
+            setToast({ message: 'Yêu cầu restore này được tạo trước cơ chế cụm xác nhận mới. Hãy từ chối và tạo lại yêu cầu.', type: 'error' });
+            return;
+        }
         setActiveRestoreRequest(request);
-        // Use confirmation phrase from backend if available, or fall back
-        setDynamicPhrase(request.confirmationPhrase || 'RESTORE DATABASE');
+        setDynamicPhrase(request.confirmationPhrase);
         setCriticalModalOpen(true);
     };
 
@@ -329,7 +329,7 @@ export default function BackupsPage() {
                     confirmationPhrase: response.data.confirmationPhrase,
                 };
                 setActiveRestoreRequest(createdReq);
-                setDynamicPhrase(response.data.confirmationPhrase || 'RESTORE DATABASE');
+                setDynamicPhrase(response.data.confirmationPhrase);
                 setCriticalModalOpen(true);
             }
             await fetchData(true);
@@ -490,7 +490,7 @@ export default function BackupsPage() {
 
                     <div className="mt-2.5">
                         <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate">
-                            {overview?.storage?.bucketName ? `Bucket: ${overview.storage.bucketName}` : 'Thư mục máy chủ cục bộ'}
+                            {overview?.storage?.provider === 'S3' ? 'Lưu trữ offsite đã cấu hình' : 'Thư mục máy chủ cục bộ'}
                         </span>
                     </div>
                 </div>
@@ -1290,7 +1290,7 @@ export default function BackupsPage() {
                             <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
                             <span>Quy định An toàn & Khôi phục (Security Policy)</span>
                         </h4>
-                        <ul className="text-xs space-y-2 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
+                        <ul className="text-sm space-y-2 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
                             <li>
                                 <strong>Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
                             </li>
@@ -1309,18 +1309,17 @@ export default function BackupsPage() {
                             <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
                             <span>Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
                         </h4>
-                        <p className="text-xs text-slate-600 leading-relaxed pl-6">
+                        <p className="text-sm text-slate-600 leading-relaxed pl-6">
                             Các thông số thiết lập trong tập tin cấu hình môi trường server:
                         </p>
                         <div className="pl-6 pt-1">
-                            <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 tabular-nums text-[12px] leading-relaxed overflow-x-auto border-l-4 border-blue-500">
+                            <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 tabular-nums text-sm leading-relaxed overflow-x-auto border-l-4 border-blue-500">
                                 {`BACKUP_WORKER_ENABLED="true" # Bật/tắt tiến trình tự động
 BACKUP_SCHEDULE="02:00" # Khung giờ chạy sao lưu hàng ngày
 BACKUP_TIMEZONE="Asia/Ho_Chi_Minh" # Múi giờ hệ thống
 BACKUP_RETENTION_DAILY="14" # Số ngày lưu trữ
 BACKUP_RETENTION_WEEKLY="8" # Số tuần lưu trữ
-BACKUP_RETENTION_MONTHLY="12" # Số tháng lưu trữ
-DATABASE_URL="postgresql://..." # Chuỗi kết nối cơ sở dữ liệu`}
+ BACKUP_RETENTION_MONTHLY="12" # Số tháng lưu trữ`}
                             </pre>
                         </div>
                     </div>

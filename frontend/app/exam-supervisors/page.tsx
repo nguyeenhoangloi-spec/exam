@@ -12,7 +12,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
-import { Search, X, Calendar, Clock, DoorOpen, GraduationCap, ShieldCheck, Trash2, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { Search, X, Calendar, Clock, DoorOpen, GraduationCap, ShieldCheck, Trash2, ChevronDown, ChevronUp, Plus, ArrowLeftRight } from 'lucide-react';
 
 import { ExamSupervisorHeader } from '../../components/exam-supervisors/ExamSupervisorHeader';
 import { ExamSupervisorKPICards } from '../../components/exam-supervisors/ExamSupervisorKPICards';
@@ -591,14 +591,16 @@ export default function ExamSupervisorsPage() {
                 />
               </div>
 
-              {/* Nút 1: Đổi Ca (Ghost / Borderless nhẹ nhàng, không viền) */}
+              {/* Nút Đổi Ca: Icon button không dùng chữ, tinh gọn sang trọng */}
               <Button
                 type="button"
-                variant="ghost"
-                size="md"
+                variant="secondary"
+                size="icon-lg"
                 onClick={() => setShowSchedulePicker(true)}
+                title="Đổi ca thi khác"
+                aria-label="Đổi ca thi"
               >
-                Đổi Ca
+                <ArrowLeftRight className="h-4 w-4 text-slate-600 dark:text-slate-300" />
               </Button>
 
               {currentUser?.role === 'ADMIN' && (

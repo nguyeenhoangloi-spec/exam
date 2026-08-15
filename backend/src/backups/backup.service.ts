@@ -7,13 +7,14 @@ import {
 } from '@nestjs/common';
 import { BackupJobStatus, BackupJobType, BackupRestoreStatus, BackupRestoreTarget, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
 
 const ACTIVE_ATTEMPT_STATUSES = ['DEVICE_CHECK', 'READY', 'IN_PROGRESS', 'DISCONNECTED'] as const;
+type BackupDb = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
 export class BackupService {
@@ -22,20 +23,29 @@ export class BackupService {
     private readonly audit: AuditService,
   ) {}
 
+  private restoreConfirmationPhrase(requestId: string) {
+    return `RESTORE ${requestId.slice(0, 8).toUpperCase()}`;
+  }
+
   private serializeJob(job: any) {
+    const { storageKey: _storageKey, manifestKey: _manifestKey, restoreRequests: _restoreRequests, ...safeJob } = job;
     return {
-      ...job,
-      sizeBytes: job.sizeBytes == null ? null : String(job.sizeBytes),
+      ...safeJob,
+      sizeBytes: safeJob.sizeBytes == null ? null : String(safeJob.sizeBytes),
     };
   }
 
   private serializeRestore(request: any) {
+    const { confirmationHash: _confirmationHash, ...safeRequest } = request;
+    const confirmationPhrase = typeof request.confirmationHash === 'string' && request.confirmationHash.startsWith('v2:')
+      ? this.restoreConfirmationPhrase(request.id)
+      : undefined;
     return {
-      ...request,
+      ...safeRequest,
       // BackupJob.sizeBytes is a Prisma BigInt. Normalize the nested job too
       // or JSON serialization makes GET /backups/restore-requests return 500.
       backupJob: request.backupJob ? this.serializeJob(request.backupJob) : request.backupJob,
-      confirmationPhrase: undefined,
+      confirmationPhrase,
     };
   }
 
@@ -100,7 +110,6 @@ export class BackupService {
       storage: {
         provider: isLocal ? 'LOCAL' : 'S3',
         isLocal,
-        bucketName: process.env.BACKUP_STORAGE_BUCKET || null,
         warning: isLocal ? 'Backup hiện chỉ lưu trên máy local, chưa có bản sao offsite.' : null,
       },
       tools: {
@@ -230,14 +239,16 @@ export class BackupService {
       }
     }
 
-    const phrase = `RESTORE ${randomBytes(4).toString('hex').toUpperCase()}`;
+    const requestId = randomUUID();
+    const phrase = this.restoreConfirmationPhrase(requestId);
     const request = await this.prisma.backupRestoreRequest.create({
       data: {
+        id: requestId,
         backupJobId: job.id,
         target: dto.target,
         reason: dto.reason,
         requestedById: actorId,
-        confirmationHash: createHash('sha256').update(phrase).digest('hex'),
+        confirmationHash: `v2:${createHash('sha256').update(phrase).digest('hex')}`,
         expiresAt: new Date(Date.now() + 30 * 60 * 1000),
       },
       include: { backupJob: true, requestedBy: { select: { id: true, username: true } } },
@@ -272,7 +283,10 @@ export class BackupService {
       throw new UnauthorizedException('Mật khẩu xác thực không chính xác.');
     }
     const confirmationHash = createHash('sha256').update(dto.confirmationPhrase.trim()).digest('hex');
-    if (confirmationHash !== request.confirmationHash) {
+    const expectedConfirmationHash = request.confirmationHash?.startsWith('v2:')
+      ? request.confirmationHash.slice(3)
+      : request.confirmationHash;
+    if (confirmationHash !== expectedConfirmationHash) {
       throw new BadRequestException('Cụm xác nhận restore không chính xác.');
     }
 
@@ -311,65 +325,71 @@ export class BackupService {
     return this.serializeRestore(updated);
   }
 
-  async claimNextJob() {
-    return this.prisma.$transaction(async (tx) => {
-      const job = await tx.backupJob.findFirst({ where: { status: BackupJobStatus.QUEUED }, orderBy: { createdAt: 'asc' } });
-      if (!job) return null;
-      return tx.backupJob.update({ where: { id: job.id }, data: { status: BackupJobStatus.RUNNING, startedAt: new Date() } });
+  async claimNextJob(db: BackupDb = this.prisma) {
+    const job = await db.backupJob.findFirst({ where: { status: BackupJobStatus.QUEUED }, orderBy: { createdAt: 'asc' } });
+    if (!job) return null;
+    const claimed = await db.backupJob.updateMany({
+      where: { id: job.id, status: BackupJobStatus.QUEUED },
+      data: { status: BackupJobStatus.RUNNING, startedAt: new Date() },
     });
+    if (claimed.count !== 1) return null;
+    return db.backupJob.findUnique({ where: { id: job.id } });
   }
 
-  async claimNextRestore() {
-    return this.prisma.$transaction(async (tx) => {
-      const request = await tx.backupRestoreRequest.findFirst({
-        where: { status: BackupRestoreStatus.APPROVED, expiresAt: { gt: new Date() } },
-        orderBy: { createdAt: 'asc' },
-        include: { backupJob: true },
-      });
-      if (!request) return null;
-      return tx.backupRestoreRequest.update({ where: { id: request.id }, data: { status: BackupRestoreStatus.RUNNING, startedAt: new Date() }, include: { backupJob: true } });
+  async claimNextRestore(db: BackupDb = this.prisma) {
+    const request = await db.backupRestoreRequest.findFirst({
+      where: { status: BackupRestoreStatus.APPROVED, expiresAt: { gt: new Date() } },
+      orderBy: { createdAt: 'asc' },
+      include: { backupJob: true },
     });
+    if (!request) return null;
+    const claimed = await db.backupRestoreRequest.updateMany({
+      where: { id: request.id, status: BackupRestoreStatus.APPROVED },
+      data: { status: BackupRestoreStatus.RUNNING, startedAt: new Date() },
+    });
+    if (claimed.count !== 1) return null;
+    return db.backupRestoreRequest.findUnique({ where: { id: request.id }, include: { backupJob: true } });
   }
 
-  async markJobVerifying(id: string) {
-    return this.prisma.backupJob.update({ where: { id }, data: { status: BackupJobStatus.VERIFYING } });
+  async markJobVerifying(id: string, db: BackupDb = this.prisma) {
+    return db.backupJob.update({ where: { id }, data: { status: BackupJobStatus.VERIFYING } });
   }
 
-  async completeJob(id: string, data: { storageKey: string; manifestKey: string; checksum: string; sizeBytes: bigint; migration?: string; appCommit?: string }) {
-    return this.prisma.backupJob.update({
+  async completeJob(id: string, data: { storageKey: string; manifestKey: string; checksum: string; sizeBytes: bigint; migration?: string; appCommit?: string }, db: BackupDb = this.prisma) {
+    return db.backupJob.update({
       where: { id },
       data: { status: BackupJobStatus.SUCCEEDED, completedAt: new Date(), ...data },
     });
   }
 
-  async getRetainedSucceededJobs() {
-    return this.prisma.backupJob.findMany({
+  async getRetainedSucceededJobs(db: BackupDb = this.prisma) {
+    return db.backupJob.findMany({
       where: { status: BackupJobStatus.SUCCEEDED, retained: true, type: { not: BackupJobType.SAFETY } },
       orderBy: { completedAt: 'desc' },
       select: { id: true, snapshotId: true },
     });
   }
 
-  async markJobPruned(id: string) {
-    return this.prisma.backupJob.update({ where: { id }, data: { retained: false, storageKey: null, manifestKey: null } });
+  async markJobPruned(id: string, db: BackupDb = this.prisma) {
+    return db.backupJob.update({ where: { id }, data: { retained: false, storageKey: null, manifestKey: null } });
   }
 
-  async failJob(id: string, message: string, verifyFailed = false) {
-    return this.prisma.backupJob.update({
+  async failJob(id: string, message: string, verifyFailed = false, db: BackupDb = this.prisma) {
+    return db.backupJob.update({
       where: { id },
       data: { status: verifyFailed ? BackupJobStatus.VERIFY_FAILED : BackupJobStatus.FAILED, completedAt: new Date(), errorMessage: message.slice(0, 2000) },
     });
   }
 
-  async completeRestore(id: string) {
-    return this.prisma.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.SUCCEEDED, completedAt: new Date() } });
+  async completeRestore(id: string, db: BackupDb = this.prisma) {
+    return db.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.SUCCEEDED, completedAt: new Date() } });
   }
 
-  async failRestore(id: string, message: string) {
-    return this.prisma.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.FAILED, completedAt: new Date(), errorMessage: message.slice(0, 2000) } });
+  async failRestore(id: string, message: string, db: BackupDb = this.prisma) {
+    return db.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.FAILED, completedAt: new Date(), errorMessage: message.slice(0, 2000) } });
   }
 
-  async hasActiveOfficialAttempt() {
-    return (await this.prisma.examAttempt.count({ where: { mode: 'OFFICIAL', status: { in: [...ACTIVE_ATTEMPT_STATUSES] } } })) > 0;
+  async hasActiveOfficialAttempt(db: BackupDb = this.prisma) {
+    return (await db.examAttempt.count({ where: { mode: 'OFFICIAL', status: { in: [...ACTIVE_ATTEMPT_STATUSES] } } })) > 0;
   }
 }
