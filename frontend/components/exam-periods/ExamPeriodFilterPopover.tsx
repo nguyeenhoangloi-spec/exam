@@ -279,20 +279,18 @@ export function ExamPeriodFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
-          activeFilterCount > 0
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-        }`}
+          }`}
         title="Mở bảng điều khiển bộ lọc"
       >
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
-              activeFilterCount > 0
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
                 ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
                 : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-            }`}
+              }`}
           />
           <span>Bộ lọc</span>
         </div>
@@ -313,9 +311,8 @@ export function ExamPeriodFilterPopover({
             </div>
           ) : (
             <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-              }`}
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                }`}
             />
           )}
         </div>
@@ -382,11 +379,10 @@ export function ExamPeriodFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -426,11 +422,10 @@ export function ExamPeriodFilterPopover({
                     <button
                       type="button"
                       onClick={() => applyPreset('ONGOING_NOW')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        selectedStatus === 'ONGOING'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${selectedStatus === 'ONGOING'
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${selectedStatus === 'ONGOING' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -442,11 +437,10 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          selectedStatus === 'ONGOING'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${selectedStatus === 'ONGOING'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                          }`}>
                           {optionCounts.ongoing}
                         </span>
                         {selectedStatus === 'ONGOING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -456,11 +450,10 @@ export function ExamPeriodFilterPopover({
                     <button
                       type="button"
                       onClick={() => applyPreset('UPCOMING_SOON')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        selectedStatus === 'UPCOMING'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${selectedStatus === 'UPCOMING'
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${selectedStatus === 'UPCOMING' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -472,11 +465,10 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          selectedStatus === 'UPCOMING'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${selectedStatus === 'UPCOMING'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                          }`}>
                           {optionCounts.upcoming}
                         </span>
                         {selectedStatus === 'UPCOMING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -486,11 +478,10 @@ export function ExamPeriodFilterPopover({
                     <button
                       type="button"
                       onClick={() => applyPreset('LATEST_YEAR')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        selectedSchoolYear === (schoolYearsList[0] || '2025-2026')
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${selectedSchoolYear === (schoolYearsList[0] || '2025-2026')
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${selectedSchoolYear === (schoolYearsList[0] || '2025-2026') ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -502,11 +493,10 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          selectedSchoolYear === (schoolYearsList[0] || '2025-2026')
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${selectedSchoolYear === (schoolYearsList[0] || '2025-2026')
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                          }`}>
                           {optionCounts.yearCounts[schoolYearsList[0] || '2025-2026'] || optionCounts.total}
                         </span>
                         {selectedSchoolYear === (schoolYearsList[0] || '2025-2026') && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -525,11 +515,10 @@ export function ExamPeriodFilterPopover({
                           key={item.value}
                           type="button"
                           onClick={() => onStatusChange(item.value)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                               : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -541,11 +530,10 @@ export function ExamPeriodFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                              }`}>
                               {item.count}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -566,11 +554,10 @@ export function ExamPeriodFilterPopover({
                           key={item.value}
                           type="button"
                           onClick={() => onSemesterChange(item.value)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                               : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -582,11 +569,10 @@ export function ExamPeriodFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                              }`}>
                               {item.count}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -603,11 +589,10 @@ export function ExamPeriodFilterPopover({
                     <button
                       type="button"
                       onClick={() => onSchoolYearChange('')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        selectedSchoolYear === ''
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${selectedSchoolYear === ''
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                           : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${selectedSchoolYear === '' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -619,11 +604,10 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          selectedSchoolYear === ''
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${selectedSchoolYear === ''
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                          }`}>
                           {optionCounts.total}
                         </span>
                         {selectedSchoolYear === '' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -639,11 +623,10 @@ export function ExamPeriodFilterPopover({
                           key={year}
                           type="button"
                           onClick={() => onSchoolYearChange(year)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                               : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -655,11 +638,10 @@ export function ExamPeriodFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                              }`}>
                               {count}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}

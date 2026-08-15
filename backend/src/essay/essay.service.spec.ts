@@ -11,6 +11,7 @@ describe('EssayService', () => {
     prisma = {
       question: { findUnique: jest.fn() },
       essayRubricCriterion: { findMany: jest.fn(), deleteMany: jest.fn(), create: jest.fn() },
+      essayRubricVersion: { findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn() },
       examAttempt: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn() },
       attemptAnswer: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn() },
       essayGrade: { upsert: jest.fn() },
@@ -58,7 +59,12 @@ describe('EssayService', () => {
 
     it('tạo Rubric thành công khi tổng điểm bằng điểm câu hỏi', async () => {
       prisma.question.findUnique.mockResolvedValue({ id: 'q1', type: 'ESSAY', score: 2.0 });
-      prisma.essayRubricCriterion.create.mockImplementation(({ data }) => Promise.resolve({ id: 'r1', ...data }));
+      prisma.essayRubricVersion.findFirst.mockResolvedValue(null);
+      prisma.essayRubricVersion.create.mockImplementation(({ data }) => Promise.resolve({
+        id: 'v1',
+        version: data.version,
+        criteria: data.criteria.create.map((criterion: any, index: number) => ({ id: `r${index + 1}`, ...criterion })),
+      }));
       const result = await service.saveRubric({ id: 1, role: 'ADMIN' }, 'q1', {
         criteria: [
           { label: 'Ý 1', maxScore: 1.0, sortOrder: 1 },

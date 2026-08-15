@@ -1,35 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Calendar, Clock, GraduationCap, RotateCcw } from 'lucide-react';
+import { Calendar, Clock, GraduationCap } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
-import { ExamReportFilterPopover } from './ExamReportFilterPopover';
 
 interface ExamReportFiltersCardProps {
-  summaryFilters: {
-    examPeriodId: string;
-    subjectId: string;
-    departmentId: string;
-    classId: string;
-    fromDate: string;
-    toDate: string;
-  };
-  setSummaryFilters: React.Dispatch<React.SetStateAction<{
-    examPeriodId: string;
-    subjectId: string;
-    departmentId: string;
-    classId: string;
-    fromDate: string;
-    toDate: string;
-  }>>;
-  summaryOptions?: {
-    classes?: Array<{ id: number; name: string }>;
-    periods?: Array<{ id: number; name: string }>;
-    subjects?: Array<{ id: number; code: string; name: string }>;
-    departments?: Array<{ id: number; name: string }>;
-  };
-  summaryLoading?: boolean;
   reportSchedule?: any;
   activeTypeBadge?: { label: string; key: string } | null;
   activeFormatBadge?: { label: string; key: string } | null;
@@ -38,26 +14,11 @@ interface ExamReportFiltersCardProps {
 }
 
 export function ExamReportFiltersCard({
-  summaryFilters,
-  setSummaryFilters,
-  summaryOptions,
-  summaryLoading = false,
   reportSchedule,
   activeTypeBadge,
   loadingSchedules = false,
   onOpenSchedulePicker,
 }: ExamReportFiltersCardProps) {
-  const resetFilters = () => {
-    setSummaryFilters({
-      examPeriodId: 'ALL',
-      subjectId: 'ALL',
-      departmentId: 'ALL',
-      classId: 'ALL',
-      fromDate: '',
-      toDate: '',
-    });
-  };
-
   let formattedDate = reportSchedule?.examDate || '';
   if (formattedDate.includes('T')) {
     formattedDate = formattedDate.split('T')[0];
@@ -70,9 +31,9 @@ export function ExamReportFiltersCard({
   }
 
   return (
-    <div className="space-y-3 pt-1">
-      {/* ── 1. Dải Ca Thi Hiện Tại Tinh Gọn (Clean Frameless Session Row) ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="pt-1">
+      {/* ── Dải Ca Thi Hiện Tại Tinh Gọn (Clean Frameless Session Row) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
         {/* Left: Icon Avatar + Subject & Schedule Meta */}
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold shadow-2xs">
@@ -126,14 +87,6 @@ export function ExamReportFiltersCard({
           >
             Đổi ca thi khác
           </Button>
-
-          {/* Popover Bộ lọc thống kê 2 cột */}
-          <ExamReportFilterPopover
-            summaryFilters={summaryFilters}
-            setSummaryFilters={setSummaryFilters}
-            summaryOptions={summaryOptions}
-            onResetAll={resetFilters}
-          />
         </div>
       </div>
     </div>

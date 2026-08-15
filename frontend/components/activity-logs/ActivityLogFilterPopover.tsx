@@ -12,10 +12,10 @@ import {
   Filter,
   CheckCheck,
   Layers,
-  Database,
-  LogIn,
   Activity,
+  LogIn,
   FileCheck,
+  HardDrive,
 } from 'lucide-react';
 
 interface ActivityLogFilterPopoverProps {
@@ -53,6 +53,28 @@ export function ActivityLogFilterPopover({
     setMounted(true);
   }, []);
 
+  const counts = useMemo(() => {
+    const total = logs.length;
+    const loginCount = logs.filter((l) => l.action === 'LOGIN').length;
+    const gradeAppealCount = logs.filter((l) => l.entityType === 'GradeAppeal').length;
+    const backupCount = logs.filter((l) => l.entityType === 'BackupJob' || l.entityType === 'BackupRestoreRequest').length;
+
+    const entityCounts: Record<string, number> = {};
+    entityTypes.forEach((et) => {
+      entityCounts[et] = logs.filter((l) => l.entityType === et).length;
+    });
+
+    const actionCounts: Record<string, number> = {
+      CREATE: logs.filter((l) => l.action === 'CREATE').length,
+      UPDATE: logs.filter((l) => l.action === 'UPDATE').length,
+      DELETE: logs.filter((l) => l.action === 'DELETE').length,
+      LOGIN: loginCount,
+      APPROVE: logs.filter((l) => l.action === 'APPROVE').length,
+    };
+
+    return { total, loginCount, gradeAppealCount, backupCount, entityCounts, actionCounts };
+  }, [logs, entityTypes]);
+
   const activeFilterCount = [
     Boolean(entityFilter),
     Boolean(actionFilter),
@@ -61,12 +83,11 @@ export function ActivityLogFilterPopover({
   const updatePosition = useCallback(() => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
-
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const margin = 12;
 
-    const popoverWidth = Math.min(480, vw - margin * 2);
+    const popoverWidth = Math.min(500, vw - margin * 2);
     const spaceBelow = vh - rect.bottom - margin;
     const spaceAbove = rect.top - margin;
     const preferUpward = spaceBelow < 370 && spaceAbove > spaceBelow;
@@ -113,7 +134,6 @@ export function ActivityLogFilterPopover({
     };
 
     const handleResize = () => updatePosition();
-
     window.addEventListener('resize', handleResize);
     window.addEventListener('keydown', handleKeyDown);
 
@@ -123,73 +143,61 @@ export function ActivityLogFilterPopover({
     };
   }, [isOpen, updatePosition]);
 
-  // Khóa cuộn trang nền có bù trừ thanh cuộn (0 layout shift)
   useEffect(() => {
     if (!isOpen) return;
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = document.body.style.overflow;
-    const prevPaddingRight = document.body.style.paddingRight;
-
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPaddingRight;
-    };
-  }, [isOpen]);
-
-  // Đóng popover khi click ra ngoài
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+    const handleClickOutside = (e: MouseEvent) => {
       if (
-        buttonRef.current && !buttonRef.current.contains(target) &&
-        popoverRef.current && !popoverRef.current.contains(target)
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
       ) {
         setIsOpen(false);
       }
     };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
   const categories = [
-    { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap, badge: null },
-    { id: 'entities' as FilterCategory, label: 'Thực thể', shortcut: '2', icon: Layers, badge: entityFilter ? '1' : null },
-    { id: 'actions' as FilterCategory, label: 'Loại thao tác', shortcut: '3', icon: Activity, badge: actionFilter ? '1' : null },
+    { id: 'presets' as FilterCategory, label: 'Lọc nhanh', icon: Zap, shortcut: '1' },
+    {
+      id: 'entities' as FilterCategory,
+      label: 'Thực thể',
+      icon: Layers,
+      shortcut: '2',
+      badge: entityFilter ? 1 : undefined,
+    },
+    {
+      id: 'actions' as FilterCategory,
+      label: 'Loại thao tác',
+      icon: Activity,
+      shortcut: '3',
+      badge: actionFilter ? 1 : undefined,
+    },
   ];
 
   return (
     <div className="relative inline-block">
-      {/* ── Nút kích hoạt Bộ lọc cố định chiều rộng 100% ── */}
+      {/* ── Nút kích hoạt Bộ lọc chuẩn w-[116px] ── */}
       <button
         ref={buttonRef}
         type="button"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
-          activeFilterCount > 0
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-        }`}
-        title="Mở bảng điều khiển bộ lọc nhật ký hệ thống"
+          }`}
+        title="Mở bảng điều khiển bộ lọc nhật ký"
       >
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
-              activeFilterCount > 0
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
                 ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
                 : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-            }`}
+              }`}
           />
           <span>Bộ lọc</span>
         </div>
@@ -210,15 +218,14 @@ export function ActivityLogFilterPopover({
             </div>
           ) : (
             <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-              }`}
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                }`}
             />
           )}
         </div>
       </button>
 
-      {/* ── Bảng Popover 2 Cột Đồng Bộ & Chuẩn Mực ── */}
+      {/* ── Bảng Popover 2 Cột Đồng Bộ Chuẩn Question Bank ── */}
       {isOpen && mounted &&
         createPortal(
           <div
@@ -228,7 +235,7 @@ export function ActivityLogFilterPopover({
             aria-label="Bảng bộ lọc nhật ký hệ thống"
             className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden"
           >
-            {/* 1. Header */}
+            {/* 1. Header chuẩn sắc xanh chủ đạo */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-600/20">
@@ -259,16 +266,16 @@ export function ActivityLogFilterPopover({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* 2. Thân bảng */}
+            {/* 2. Thân bảng: Bố cục 2 Cột Đồng Bộ Tuyệt Đối */}
             <div className="grid grid-cols-12 min-h-0 flex-1 overflow-hidden">
-              {/* Cột Trái */}
+              {/* Cột Trái (Sidebar Danh mục Tabs) */}
               <div className="col-span-4 border-r border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-2 space-y-1 overflow-y-auto custom-scrollbar">
                 {categories.map((cat) => {
                   const isActive = activeCategory === cat.id;
@@ -279,11 +286,10 @@ export function ActivityLogFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -326,21 +332,28 @@ export function ActivityLogFilterPopover({
                         onActionFilterChange?.('LOGIN');
                         onEntityFilterChange('');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        actionFilter === 'LOGIN'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${actionFilter === 'LOGIN' && !entityFilter
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${actionFilter === 'LOGIN' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-bold ${actionFilter === 'LOGIN' && !entityFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Nhật ký đăng nhập
                         </div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                           Theo dõi lượt đăng nhập hệ thống của người dùng
                         </div>
                       </div>
-                      {actionFilter === 'LOGIN' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${actionFilter === 'LOGIN' && !entityFilter
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
+                          {counts.loginCount}
+                        </span>
+                        {actionFilter === 'LOGIN' && !entityFilter && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      </div>
                     </button>
 
                     <button
@@ -349,11 +362,10 @@ export function ActivityLogFilterPopover({
                         onEntityFilterChange('GradeAppeal');
                         onActionFilterChange?.('');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        entityFilter === 'GradeAppeal'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${entityFilter === 'GradeAppeal'
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${entityFilter === 'GradeAppeal' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -363,7 +375,15 @@ export function ActivityLogFilterPopover({
                           Lịch sử thẩm định và thay đổi điểm thi
                         </div>
                       </div>
-                      {entityFilter === 'GradeAppeal' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${entityFilter === 'GradeAppeal'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
+                          {counts.gradeAppealCount}
+                        </span>
+                        {entityFilter === 'GradeAppeal' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      </div>
                     </button>
 
                     <button
@@ -372,11 +392,10 @@ export function ActivityLogFilterPopover({
                         onEntityFilterChange('BackupJob');
                         onActionFilterChange?.('');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        entityFilter === 'BackupJob'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${entityFilter === 'BackupJob'
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${entityFilter === 'BackupJob' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -386,7 +405,15 @@ export function ActivityLogFilterPopover({
                           Nhật ký backup, snapshot và restore
                         </div>
                       </div>
-                      {entityFilter === 'BackupJob' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${entityFilter === 'BackupJob'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
+                          {counts.backupCount}
+                        </span>
+                        {entityFilter === 'BackupJob' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      </div>
                     </button>
                   </div>
                 )}
@@ -397,18 +424,28 @@ export function ActivityLogFilterPopover({
                     <button
                       type="button"
                       onClick={() => onEntityFilterChange('')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        entityFilter === ''
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${entityFilter === ''
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${entityFilter === '' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-bold ${entityFilter === '' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả các thực thể
                         </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          Toàn bộ danh mục hoạt động
+                        </div>
                       </div>
-                      {entityFilter === '' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${entityFilter === ''
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
+                          {counts.total}
+                        </span>
+                        {entityFilter === '' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                      </div>
                     </button>
 
                     {entityTypes.map((et) => (
@@ -416,18 +453,28 @@ export function ActivityLogFilterPopover({
                         key={et}
                         type="button"
                         onClick={() => onEntityFilterChange(et)}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                          entityFilter === et
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                        }`}
+                        className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${entityFilter === et
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${entityFilter === et ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-xs font-bold ${entityFilter === et ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                             {et}
                           </div>
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                            Thực thể dữ liệu {et}
+                          </div>
                         </div>
-                        {entityFilter === et && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${entityFilter === et
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            }`}>
+                            {counts.entityCounts[et] || 0}
+                          </span>
+                          {entityFilter === et && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -437,29 +484,39 @@ export function ActivityLogFilterPopover({
                 {activeCategory === 'actions' && (
                   <div className="space-y-1.5">
                     {[
-                      { key: '', label: 'Tất cả thao tác' },
-                      { key: 'CREATE', label: 'Tạo mới (CREATE)' },
-                      { key: 'UPDATE', label: 'Cập nhật (UPDATE)' },
-                      { key: 'DELETE', label: 'Xóa dữ liệu (DELETE)' },
-                      { key: 'LOGIN', label: 'Đăng nhập (LOGIN)' },
-                      { key: 'APPROVE', label: 'Phê duyệt (APPROVE)' },
+                      { key: '', label: 'Tất cả thao tác', desc: 'Mọi phân loại hoạt động', count: counts.total },
+                      { key: 'CREATE', label: 'Tạo mới (CREATE)', desc: 'Thêm bản ghi mới vào CSDL', count: counts.actionCounts['CREATE'] || 0 },
+                      { key: 'UPDATE', label: 'Cập nhật (UPDATE)', desc: 'Thay đổi thông tin dữ liệu', count: counts.actionCounts['UPDATE'] || 0 },
+                      { key: 'DELETE', label: 'Xóa dữ liệu (DELETE)', desc: 'Xóa bản ghi khỏi hệ thống', count: counts.actionCounts['DELETE'] || 0 },
+                      { key: 'LOGIN', label: 'Đăng nhập (LOGIN)', desc: 'Lượt xác thực tài khoản', count: counts.actionCounts['LOGIN'] || 0 },
+                      { key: 'APPROVE', label: 'Phê duyệt (APPROVE)', desc: 'Duyệt bài thi hoặc phục hồi', count: counts.actionCounts['APPROVE'] || 0 },
                     ].map((item) => (
                       <button
                         key={item.key}
                         type="button"
                         onClick={() => onActionFilterChange?.(item.key)}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                          actionFilter === item.key
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                        }`}
+                        className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${actionFilter === item.key
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${actionFilter === item.key ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-xs font-bold ${actionFilter === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.label}
                           </div>
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                            {item.desc}
+                          </div>
                         </div>
-                        {actionFilter === item.key && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${actionFilter === item.key
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            }`}>
+                            {item.count}
+                          </span>
+                          {actionFilter === item.key && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -469,11 +526,26 @@ export function ActivityLogFilterPopover({
 
             {/* 3. Footer */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
-                {totalFilteredCount !== undefined ? (
-                  <>Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong> nhật ký</>
-                ) : (
-                  'Đã áp dụng bộ lọc'
+              <div className="space-y-1">
+                <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                  {totalFilteredCount !== undefined ? (
+                    <>
+                      Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
+                      {logs.length > 0 && (
+                        <span className="text-slate-400 dark:text-slate-500 font-normal"> / {logs.length} nhật ký ({Math.round((totalFilteredCount / Math.max(1, logs.length)) * 100)}%)</span>
+                      )}
+                    </>
+                  ) : (
+                    'Đã áp dụng bộ lọc'
+                  )}
+                </div>
+                {totalFilteredCount !== undefined && logs.length > 0 && (
+                  <div className="h-1 w-28 rounded-full bg-slate-200/80 dark:bg-slate-700 overflow-hidden">
+                    <div
+                      className="h-full bg-blue-600 transition-all duration-300 rounded-full"
+                      style={{ width: `${Math.min(100, Math.round((totalFilteredCount / Math.max(1, logs.length)) * 100))}%` }}
+                    />
+                  </div>
                 )}
               </div>
 

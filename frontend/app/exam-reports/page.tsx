@@ -1,7 +1,7 @@
 'use client';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -18,6 +18,7 @@ import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle
 import { ExamReportHeader } from '../../components/exam-reports/ExamReportHeader';
 import { ExamReportKPICards } from '../../components/exam-reports/ExamReportKPICards';
 import { ExamReportFiltersCard } from '../../components/exam-reports/ExamReportFiltersCard';
+import { ExamReportFilterPopover } from '../../components/exam-reports/ExamReportFilterPopover';
 import { ExamReportTableToolbar } from '../../components/exam-reports/ExamReportTableToolbar';
 import { ExamReportTable, CandidateReport } from '../../components/exam-reports/ExamReportTable';
 import { ExamReportPaginationBar } from '../../components/exam-reports/ExamReportPaginationBar';
@@ -232,6 +233,29 @@ export default function ExamReportsPage() {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const resetSummaryFilters = () => {
+    setSummaryFilters({
+      examPeriodId: 'ALL',
+      subjectId: 'ALL',
+      departmentId: 'ALL',
+      classId: 'ALL',
+      fromDate: '',
+      toDate: '',
+    });
+  };
 
   // Modal filter states for schedule picker
   const [modalSearch, setModalSearch] = useState('');
@@ -655,17 +679,11 @@ export default function ExamReportsPage() {
         {(() => {
           const activeSched = schedules.find((x) => String(x.id) === selectedScheduleId);
           const typeBadge = activeSched ? getScheduleTypeBadge(activeSched) : null;
-          const fmtBadge = activeSched ? getExamFormatBadge(activeSched) : null;
 
           return (
             <ExamReportFiltersCard
-              summaryFilters={summaryFilters}
-              setSummaryFilters={setSummaryFilters}
-              summaryOptions={summary?.options}
-              summaryLoading={summaryLoading}
               reportSchedule={report?.schedule}
               activeTypeBadge={typeBadge}
-              activeFormatBadge={fmtBadge}
               loadingSchedules={loadingSchedules}
               onOpenSchedulePicker={() => setShowSchedulePicker(true)}
             />
@@ -885,61 +903,80 @@ export default function ExamReportsPage() {
           </>
         )}
 
-        {/* ── 4. Candidate Status Tabs & Search Row ── */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">
-          <TabBar
-            tabs={[
-              { key: 'ALL', label: 'Tất cả thí sinh', count: tabCounts.total },
-              { key: 'SUBMITTED', label: 'Đã nộp bài', count: tabCounts.submitted },
-              { key: 'ABSENT', label: 'Vắng thi', count: tabCounts.absent },
-              ...(tabCounts.flagged > 0 ? [{ key: 'FLAGGED', label: 'Có cảnh báo', count: tabCounts.flagged }] : []),
-            ]}
-            active={statusFilter}
-            onChange={(key) => {
-              setStatusFilter(key);
-              setPage(1);
-            }}
-            className="border-b-0 pt-0 w-auto"
-          />
-
-          <div className="relative w-full md:w-80 shrink-0 pb-1 md:pb-0">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã SV, họ tên, lớp..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+        {/* ── 4. Search & Action Toolbar Row (Single Unified Row) ── */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Left: Search input + 1 Unified Filter Popover */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã SV, họ tên, lớp..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                title="Xóa tìm kiếm"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
+            </div>
+
+            <ExamReportFilterPopover
+              summaryFilters={summaryFilters}
+              setSummaryFilters={setSummaryFilters}
+              summaryOptions={summary?.options}
+              onResetAll={resetSummaryFilters}
+            />
           </div>
+
+          {/* Right: Sort, Columns, ViewMode, Refresh */}
+          <ExamReportTableToolbar
+            totalCount={filteredCandidates.length}
+            sortOrder={sortOrder}
+            onSortChange={setSortOrder}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            visibleColumns={visibleColumns}
+            onColumnToggle={handleColumnToggle}
+            onRefresh={handleRefresh}
+          />
         </div>
 
-        {/* ── 5. Table Utility Toolbar (Sort, Columns, ViewMode, Refresh) ── */}
-        <ExamReportTableToolbar
-          totalCount={filteredCandidates.length}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-          onRefresh={handleRefresh}
+        {/* ── 5. Candidate Status Tabs ── */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả thí sinh', count: tabCounts.total },
+            { key: 'SUBMITTED', label: 'Đã nộp bài', count: tabCounts.submitted },
+            { key: 'ABSENT', label: 'Vắng thi', count: tabCounts.absent },
+            ...(tabCounts.flagged > 0 ? [{ key: 'FLAGGED', label: 'Có cảnh báo', count: tabCounts.flagged }] : []),
+          ]}
+          active={statusFilter}
+          onChange={(key) => {
+            setStatusFilter(key);
+            setPage(1);
+          }}
         />
 
         {/* Full-Width DataGrid Table */}

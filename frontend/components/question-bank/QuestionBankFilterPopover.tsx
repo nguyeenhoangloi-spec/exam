@@ -248,20 +248,18 @@ export function QuestionBankFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
-          activeFilterCount > 0
-            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
-            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-        }`}
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
+          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
+          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
         title="Mở bảng điều khiển bộ lọc câu hỏi"
       >
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
-              activeFilterCount > 0
-                ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
-                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-            }`}
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
+              ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
+              : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
+              }`}
           />
           <span>Bộ lọc</span>
         </div>
@@ -282,9 +280,8 @@ export function QuestionBankFilterPopover({
             </div>
           ) : (
             <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-              }`}
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                }`}
             />
           )}
         </div>
@@ -351,11 +348,10 @@ export function QuestionBankFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
-                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
-                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
+                        ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
+                        : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -395,11 +391,10 @@ export function QuestionBankFilterPopover({
                     <button
                       type="button"
                       onClick={() => applyPreset('SINGLE_CHOICE')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        filters.type === 'SINGLE_CHOICE'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${filters.type === 'SINGLE_CHOICE'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${filters.type === 'SINGLE_CHOICE' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -411,11 +406,10 @@ export function QuestionBankFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filters.type === 'SINGLE_CHOICE'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filters.type === 'SINGLE_CHOICE'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
                           {optionCounts.typeCounts['SINGLE_CHOICE'] || 0}
                         </span>
                         {filters.type === 'SINGLE_CHOICE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -425,11 +419,10 @@ export function QuestionBankFilterPopover({
                     <button
                       type="button"
                       onClick={() => applyPreset('EASY')}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        filters.difficulty === 'EASY'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${filters.difficulty === 'EASY'
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-bold ${filters.difficulty === 'EASY' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -441,11 +434,10 @@ export function QuestionBankFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filters.difficulty === 'EASY'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filters.difficulty === 'EASY'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
                           {optionCounts.diffCounts['EASY'] || 0}
                         </span>
                         {filters.difficulty === 'EASY' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -456,11 +448,10 @@ export function QuestionBankFilterPopover({
                       <button
                         type="button"
                         onClick={() => applyPreset('FIRST_SUBJECT')}
-                        className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                          filters.subjectId === String(subjects[0].id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                        }`}
+                        className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${filters.subjectId === String(subjects[0].id)
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          }`}
                       >
                         <div className="min-w-0 pr-2">
                           <div className={`text-xs font-bold truncate ${filters.subjectId === String(subjects[0].id) ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -472,11 +463,10 @@ export function QuestionBankFilterPopover({
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                            filters.subjectId === String(subjects[0].id)
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                          }`}>
+                          <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filters.subjectId === String(subjects[0].id)
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            }`}>
                             {optionCounts.subjectCounts[String(subjects[0].id)] || 0}
                           </span>
                           {filters.subjectId === String(subjects[0].id) && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -492,11 +482,10 @@ export function QuestionBankFilterPopover({
                     <button
                       type="button"
                       onClick={() => setFilter('subjectId', '')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filters.subjectId === ''
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filters.subjectId === ''
+                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${filters.subjectId === '' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -508,11 +497,10 @@ export function QuestionBankFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                          filters.subjectId === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${filters.subjectId === ''
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
                           {optionCounts.total}
                         </span>
                         {filters.subjectId === '' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -528,11 +516,10 @@ export function QuestionBankFilterPopover({
                           key={s.id}
                           type="button"
                           onClick={() => setFilter('subjectId', String(s.id))}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -544,11 +531,10 @@ export function QuestionBankFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                              }`}>
                               {count}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -569,11 +555,10 @@ export function QuestionBankFilterPopover({
                           key={item.value}
                           type="button"
                           onClick={() => setFilter('difficulty', item.value)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -585,11 +570,10 @@ export function QuestionBankFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                              }`}>
                               {item.count}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -610,11 +594,10 @@ export function QuestionBankFilterPopover({
                           key={item.value}
                           type="button"
                           onClick={() => setFilter('type', item.value)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -626,11 +609,10 @@ export function QuestionBankFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                              isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                            }`}>
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                              }`}>
                               {item.count}
                             </span>
                             {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -651,11 +633,10 @@ export function QuestionBankFilterPopover({
                           key={item.value}
                           type="button"
                           onClick={() => setFilter('bloomLevel', item.value)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
