@@ -36,19 +36,19 @@ export function ExamReportFiltersCard({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
         {/* Left: Icon Avatar + Subject & Schedule Meta */}
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold shadow-2xs">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold shadow-2xs">
             <GraduationCap className="h-5 w-5" />
           </div>
 
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[11px] font-bold tracking-wider shrink-0 uppercase shadow-2xs">
+              <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[12px] font-semibold tracking-wider shrink-0  shadow-2xs">
                 {activeTypeBadge?.label || 'Chính thức'}
               </span>
 
               {reportSchedule ? (
                 <>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 tracking-tight truncate">
+                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight truncate">
                     {reportSchedule.subjectName}
                   </h2>
                   <IdentifierBadge>{reportSchedule.subjectCode}</IdentifierBadge>

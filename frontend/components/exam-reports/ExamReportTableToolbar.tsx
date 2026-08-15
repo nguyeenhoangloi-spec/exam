@@ -86,9 +86,9 @@ export function ExamReportTableToolbar({
         <button
           type="button"
           onClick={() => onViewModeChange?.('list')}
-          className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+          className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
             viewMode === 'list'
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
               : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
           title="Dạng danh sách"
@@ -98,9 +98,9 @@ export function ExamReportTableToolbar({
         <button
           type="button"
           onClick={() => onViewModeChange?.('grid')}
-          className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+          className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
             viewMode === 'grid'
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
               : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
           title="Dạng thẻ"
@@ -110,9 +110,9 @@ export function ExamReportTableToolbar({
         <button
           type="button"
           onClick={() => onViewModeChange?.('compact')}
-          className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+          className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
             viewMode === 'compact'
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
               : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
           title="Dạng rút gọn"

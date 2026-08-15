@@ -669,7 +669,7 @@ export default function StudentResultsPage() {
                     <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                       {item.title}
                     </span>
-                    <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    <div className="text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                       {item.value}
                       {item.unit || ''}
                     </div>
@@ -715,7 +715,7 @@ export default function StudentResultsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -731,7 +731,7 @@ export default function StudentResultsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -797,9 +797,9 @@ export default function StudentResultsPage() {
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                   viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                     : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
                 title="Dạng danh sách"
@@ -809,9 +809,9 @@ export default function StudentResultsPage() {
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                     : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
                 title="Dạng thẻ"
@@ -821,9 +821,9 @@ export default function StudentResultsPage() {
               <button
                 type="button"
                 onClick={() => setViewMode('compact')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                   viewMode === 'compact'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                     : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
                 title="Dạng thu gọn"
@@ -894,7 +894,7 @@ export default function StudentResultsPage() {
  type="checkbox"
  checked={isChecked}
  onChange={(e) => handleSelectOne(item.id, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  <button
  type="button"
@@ -968,10 +968,10 @@ export default function StudentResultsPage() {
                     type="checkbox"
                     checked={isChecked}
                     onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                   />
                   <div
-                    className={`flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl font-bold border ${
+                    className={`flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl font-semibold border ${
                       item.status === 'PASSED'
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80'
                         : item.status === 'FAILED'
@@ -981,7 +981,7 @@ export default function StudentResultsPage() {
                   >
                     {item.score !== null ? (
                       <>
-                        <span className="text-xs font-bold leading-none">{item.score.toFixed(1)}</span>
+                        <span className="text-xs font-semibold leading-none">{item.score.toFixed(1)}</span>
                         <span className="text-[12px] font-medium opacity-70 leading-none mt-0.5">điểm</span>
                       </>
                     ) : (
@@ -1053,7 +1053,7 @@ export default function StudentResultsPage() {
  type="checkbox"
  checked={allSelected}
  onChange={(e) => handleSelectAll(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </th>
  {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã môn</th>}
@@ -1080,7 +1080,7 @@ export default function StudentResultsPage() {
  type="checkbox"
  checked={isChecked}
  onChange={(e) => handleSelectOne(item.id, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </td>
 

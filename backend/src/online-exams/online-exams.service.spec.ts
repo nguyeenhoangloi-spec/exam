@@ -9,6 +9,9 @@ describe('OnlineExamsService review visibility', () => {
       examAttempt: {
         findUnique: jest.fn().mockResolvedValue(attempt),
       },
+      proctoringEvent: {
+        count: jest.fn().mockResolvedValue(0),
+      },
     };
 
     return new OnlineExamsService(prisma as any, {} as any, {} as any, {} as any);

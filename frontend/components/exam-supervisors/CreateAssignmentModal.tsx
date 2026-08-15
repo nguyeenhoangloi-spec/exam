@@ -111,7 +111,7 @@ export function CreateAssignmentModal({
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
         {/* 1. Phòng Thi */}
         <div className="space-y-1.5">
-          <label className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+          <label className="flex items-center gap-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-300">
             <DoorOpen className="h-4 w-4 text-blue-600" />
             Phòng thi <span className="text-rose-500">*</span>
           </label>
@@ -119,10 +119,10 @@ export function CreateAssignmentModal({
           {isPreselectedSingleRoom ? (
             <div className="flex items-center justify-between h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold text-slate-800 dark:text-slate-200">
               <span className="flex items-center gap-2">
-                <span className="font-bold text-blue-600">{selectedRoomName}</span>
+                <span className="font-semibold text-blue-600">{selectedRoomName}</span>
                 {selectedRoomCap && <span className="text-slate-400 font-normal">{selectedRoomCap}</span>}
               </span>
-              <span className="text-[11px] font-semibold text-slate-500 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">
+              <span className="text-[12px] font-semibold text-slate-500 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">
                 Hiện có: {currentSupCount}/2 giám thị
               </span>
             </div>
@@ -149,12 +149,12 @@ export function CreateAssignmentModal({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           {/* Giám thị 1 */}
           <div className="space-y-1.5 rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/30 dark:bg-blue-950/20 p-3">
-            <label className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-slate-100">
+            <label className="flex items-center justify-between text-[15px] font-medium text-slate-900 dark:text-slate-100">
               <span className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300">
                 <ShieldCheck className="h-4 w-4" />
                 Giám thị 1 (Chính)
               </span>
-              <span className="text-[11px] text-rose-500 font-semibold">* Trưởng phòng</span>
+              <span className="text-[12px] text-rose-500 font-semibold">* Trưởng phòng</span>
             </label>
             <FilterSelect
               containerClassName="w-full"
@@ -171,12 +171,12 @@ export function CreateAssignmentModal({
 
           {/* Giám thị 2 */}
           <div className="space-y-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-3">
-            <label className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-slate-100">
+            <label className="flex items-center justify-between text-[15px] font-medium text-slate-900 dark:text-slate-100">
               <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                 <UserCheck className="h-4 w-4 text-slate-500" />
                 Giám thị 2 (Phụ)
               </span>
-              <span className="text-[11px] text-slate-400 font-normal">Cán bộ phối hợp</span>
+              <span className="text-[12px] text-slate-400 font-normal">Cán bộ phối hợp</span>
             </label>
             <FilterSelect
               containerClassName="w-full"
@@ -189,7 +189,7 @@ export function CreateAssignmentModal({
 
         {/* 3. Ghi Chú */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
             Ghi chú phân công
           </label>
           <textarea
@@ -197,7 +197,7 @@ export function CreateAssignmentModal({
             onChange={(e) => setNote(e.target.value)}
             placeholder="Nhập ghi chú phân công hoặc yêu cầu đặc biệt..."
             rows={2}
-            className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none shadow-2xs"
+            className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-[15px] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none shadow-2xs"
           />
         </div>
 

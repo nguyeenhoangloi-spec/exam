@@ -494,7 +494,7 @@ export function QuestionImportWizard({
                 type="checkbox"
                 checked={meta.applyDefaultsToMissingOnly}
                 onChange={(e) => updateMeta('applyDefaultsToMissingOnly', e.target.checked)}
-                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4 cursor-pointer"
+                className="rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4 cursor-pointer"
               />
               Chỉ sử dụng các giá trị thiết lập trên cho ô dữ liệu còn thiếu trong tệp
             </label>
@@ -714,7 +714,7 @@ export function QuestionImportWizard({
                                 : selected.filter((x) => x !== r.row),
                             )
                           }
-                          className="rounded border-slate-300 text-blue-600"
+                          className="rounded-xl border-slate-300 text-blue-600"
                         />
                         <span>Câu #{r.row}</span>
                       </label>

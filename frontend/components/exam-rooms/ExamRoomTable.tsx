@@ -82,7 +82,7 @@ export function ExamRoomTable({
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(r.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                     <button
                       type="button"
@@ -178,7 +178,7 @@ export function ExamRoomTable({
                   type="checkbox"
                   checked={isChecked}
                   onChange={(e) => onSelect(r.id, e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
                 <button
                   type="button"
@@ -238,14 +238,14 @@ export function ExamRoomTable({
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
       <table className="ui-table w-full text-left text-[14.5px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-semibold text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
           <tr>
             <th className="p-3.5 pl-4 text-center whitespace-nowrap w-10">
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
-                className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </th>
             {visibleColumns.code !== false && <th className="p-3.5 whitespace-nowrap">Mã phòng</th>}
@@ -274,7 +274,7 @@ export function ExamRoomTable({
                     type="checkbox"
                     checked={isChecked}
                     onChange={(e) => onSelect(r.id, e.target.checked)}
-                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </td>
 
@@ -295,7 +295,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition leading-[22px] text-[14.5px]"
+                      className="font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition leading-[22px] text-[15px]"
                     >
                       {nameText}
                     </button>
@@ -303,13 +303,13 @@ export function ExamRoomTable({
                 )}
 
                 {visibleColumns.capacity !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center text-[14.5px]">
+                  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
                     <span className="font-semibold text-slate-900 dark:text-slate-100">{r.capacity} chỗ</span>
                   </td>
                 )}
 
                 {visibleColumns.building !== false && (
-                  <td className="p-3.5 min-w-[140px] text-[14.5px] font-medium text-slate-700 dark:text-slate-300">
+                  <td className="p-3.5 min-w-[140px] text-[15px] font-medium text-slate-700 dark:text-slate-300">
                     {locText}
                   </td>
                 )}
@@ -347,7 +347,7 @@ export function ExamRoomTable({
                               closeMenu();
                               onDetail(r);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium"
                           >
                             <Eye className="h-4 w-4 text-slate-500" />
                             <span>Xem chi tiết</span>
@@ -361,7 +361,7 @@ export function ExamRoomTable({
                                   closeMenu();
                                   onEdit(r);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium"
                               >
                                 <Edit className="h-4 w-4 text-blue-600" />
                                 <span>Chỉnh sửa phòng thi</span>
@@ -373,7 +373,7 @@ export function ExamRoomTable({
                                   closeMenu();
                                   onDelete(r.id);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[14px] font-medium"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium"
                               >
                                 <Trash2 className="h-4 w-4 text-rose-600" />
                                 <span>Xóa phòng thi</span>

@@ -1,73 +1,71 @@
 'use client';
 
 import React from 'react';
-import { UserCheck, CheckCircle2, Clock, RefreshCw, ShieldCheck } from 'lucide-react';
+import { Calendar, DoorOpen, Users, UserCheck, CheckCircle2 } from 'lucide-react';
 
-interface ExamSupervisorKPICardsProps {
-  totalAssignments: number;
-  changeRequestedCount: number;
-  confirmedCount: number;
-  completedCount: number;
+interface ExamArrangementKPICardsProps {
+  totalSchedules: number;
+  availableRooms: number;
   totalRooms: number;
+  selectedCapacity: number;
+  selectedRoomCount: number;
+  totalStudents: number;
+  totalAssignedRooms: number;
 }
 
-export function ExamSupervisorKPICards({
-  totalAssignments,
-  changeRequestedCount,
-  confirmedCount,
-  completedCount,
+export function ExamArrangementKPICards({
+  totalSchedules,
+  availableRooms,
   totalRooms,
-}: ExamSupervisorKPICardsProps) {
-  const pendingCount = Math.max(
-    0,
-    totalAssignments - confirmedCount - changeRequestedCount - completedCount,
-  );
+  selectedCapacity,
+  selectedRoomCount,
+  totalStudents,
+  totalAssignedRooms,
+}: ExamArrangementKPICardsProps) {
+  const fillPercent =
+    selectedCapacity > 0 ? Math.min(100, Math.round((totalStudents / selectedCapacity) * 100)) : 0;
 
-  const cards = [
+  const items = [
     {
-      title: 'Tổng phân công',
-      value: totalAssignments,
-      subtext: `Lịch thi: ${totalRooms} phòng`,
-      progressPercent: totalAssignments > 0 ? 100 : 0,
+      title: 'Tổng số ca thi',
+      value: totalSchedules,
+      subtext: 'Tất cả ca thi',
+      progressPercent: 100,
+      icon: Calendar,
+    },
+    {
+      title: 'Phòng khả dụng',
+      value: availableRooms,
+      subtext: `Tổng: ${totalRooms} phòng`,
+      progressPercent: totalRooms > 0 ? Math.round((availableRooms / totalRooms) * 100) : 100,
+      icon: DoorOpen,
+    },
+    {
+      title: 'Tổng sức chứa',
+      value: selectedCapacity,
+      subtext: `${selectedRoomCount} phòng đã chọn`,
+      progressPercent: totalRooms > 0 ? Math.round((selectedRoomCount / totalRooms) * 100) : 100,
+      icon: Users,
+    },
+    {
+      title: 'Thí sinh đã xếp',
+      value: totalStudents,
+      subtext: totalStudents > 0 ? `${totalAssignedRooms} phòng đã gán` : 'Chưa xếp chỗ',
+      progressPercent: totalStudents > 0 ? 100 : 0,
       icon: UserCheck,
     },
     {
-      title: 'Đã xác nhận',
-      value: confirmedCount,
-      subtext: 'Sẵn sàng gác thi',
-      progressPercent:
-        totalAssignments > 0 ? Math.round((confirmedCount / totalAssignments) * 100) : 0,
+      title: 'Tỷ lệ lấp đầy',
+      value: `${fillPercent}%`,
+      subtext: 'Hiệu suất chỗ ngồi',
+      progressPercent: fillPercent,
       icon: CheckCircle2,
-    },
-    {
-      title: 'Chờ xác nhận',
-      value: pendingCount,
-      subtext: 'Chờ phản hồi từ GV',
-      progressPercent:
-        totalAssignments > 0 ? Math.round((pendingCount / totalAssignments) * 100) : 0,
-      icon: Clock,
-    },
-    {
-      title: 'Yêu cầu đổi ca',
-      value: changeRequestedCount,
-      subtext: changeRequestedCount > 0 ? 'Cần duyệt đổi ca' : 'Không có yêu cầu',
-      progressPercent:
-        totalAssignments > 0 ? Math.round((changeRequestedCount / totalAssignments) * 100) : 0,
-      icon: RefreshCw,
-    },
-    {
-      title: 'Đã hoàn thành',
-      value: completedCount,
-      subtext: 'Đã kết thúc gác thi',
-      progressPercent:
-        totalAssignments > 0 ? Math.round((completedCount / totalAssignments) * 100) : 0,
-      icon: ShieldCheck,
     },
   ];
 
   return (
     <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
-      {cards.map((item) => {
+      {items.map((item) => {
         const IconComponent = item.icon;
         return (
           <div

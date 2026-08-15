@@ -86,7 +86,7 @@ export function ArrangementSchedulePickerModal({
         {/* Header Chuẩn Design System */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80">
           <div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
               Chọn Ca Thi Xếp Phòng
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -110,7 +110,7 @@ export function ArrangementSchedulePickerModal({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm theo tên môn, mã môn, ngày thi..."
-            className="w-full h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+            className="w-full h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-[15px] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             autoFocus
           />
 
@@ -119,7 +119,7 @@ export function ArrangementSchedulePickerModal({
             <button
               type="button"
               onClick={() => setActiveTab('ALL')}
-              className={`h-8 px-3 rounded-lg font-semibold transition cursor-pointer shrink-0 ${
+              className={`h-8 px-3 rounded-xl font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'ALL'
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
@@ -130,7 +130,7 @@ export function ArrangementSchedulePickerModal({
             <button
               type="button"
               onClick={() => setActiveTab('PENDING')}
-              className={`h-8 px-3 rounded-lg font-semibold transition cursor-pointer shrink-0 ${
+              className={`h-8 px-3 rounded-xl font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'PENDING'
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
@@ -141,7 +141,7 @@ export function ArrangementSchedulePickerModal({
             <button
               type="button"
               onClick={() => setActiveTab('ARRANGED')}
-              className={`h-8 px-3 rounded-lg font-semibold transition cursor-pointer shrink-0 ${
+              className={`h-8 px-3 rounded-xl font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'ARRANGED'
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
@@ -152,7 +152,7 @@ export function ArrangementSchedulePickerModal({
             <button
               type="button"
               onClick={() => setActiveTab('EXPIRED')}
-              className={`h-8 px-3 rounded-lg font-semibold transition cursor-pointer shrink-0 ${
+              className={`h-8 px-3 rounded-xl font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'EXPIRED'
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
@@ -198,19 +198,19 @@ export function ArrangementSchedulePickerModal({
                   {/* Left: Info */}
                   <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+                      <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
                         {subName}
                       </span>
-                      <span className="text-xs font-mono text-slate-400">
+                      <span className="text-xs font-normal text-slate-400">
                         #{subCode}
                       </span>
                       {isMock && (
-                        <span className="px-1.5 py-0.2 rounded text-xs font-semibold bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300">
+                        <span className="px-1.5 py-0.2 rounded text-xs font-semibold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
                           Thi thử
                         </span>
                       )}
                       {isSelected && (
-                        <span className="px-1.5 py-0.2 rounded text-xs font-bold bg-blue-600 text-white">
+                        <span className="px-1.5 py-0.2 rounded text-xs font-semibold bg-blue-600 text-white">
                           Đang chọn
                         </span>
                       )}

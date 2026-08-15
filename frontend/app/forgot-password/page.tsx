@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
   return (
     <div
       className={`min-h-screen w-full relative overflow-y-auto [scrollbar-gutter:stable] font-sans antialiased flex flex-col justify-between transition-colors duration-300 ${
-        isDark ? 'bg-slate-950 text-slate-100' : 'bg-[#FAFCFF] text-slate-900'
+        isDark ? 'bg-slate-950 text-slate-100' : 'bg-[var(--ui-page)] text-slate-900'
       }`}
     >
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
@@ -136,14 +136,14 @@ export default function ForgotPasswordPage() {
         <div
           className="absolute top-6 left-1/4 w-[750px] h-80 opacity-30 dark:opacity-10"
           style={{
-            backgroundImage: 'radial-gradient(#3B82F6 1.2px, transparent 1.2px)',
+            backgroundImage: 'radial-gradient(var(--ui-chart-primary-light) 1.2px, transparent 1.2px)',
             backgroundSize: '24px 24px',
           }}
         />
 
         {/* Ambient Glows */}
         <div className="absolute -top-28 -left-28 w-[600px] h-[600px] bg-blue-100/70 dark:bg-blue-900/15 rounded-full blur-[120px]" />
-        <div className="absolute top-1/4 -right-28 w-[650px] h-[650px] bg-sky-100/60 dark:bg-indigo-950/15 rounded-full blur-[140px]" />
+        <div className="absolute top-1/4 -right-28 w-[650px] h-[650px] bg-sky-100/60 dark:bg-blue-950/15 rounded-full blur-[140px]" />
         <div className="absolute -bottom-36 left-10 w-[650px] h-[450px] bg-blue-50/80 dark:bg-slate-900/40 rounded-full blur-[110px]" />
 
         {/* Abstract Flow Waves */}
@@ -155,19 +155,19 @@ export default function ForgotPasswordPage() {
         >
           <path
             d="M-50 220 C200 140, 400 290, 650 180 C820 100, 920 250, 1100 200"
-            stroke="#93C5FD"
+            stroke="var(--ui-chart-primary-light)"
             strokeWidth="1.5"
             fill="none"
           />
           <path
             d="M-50 250 C230 170, 430 320, 680 210 C850 130, 950 280, 1100 230"
-            stroke="#60A5FA"
+            stroke="var(--ui-chart-primary-light)"
             strokeWidth="1.5"
             fill="none"
           />
           <path
             d="M-50 280 C260 200, 460 340, 710 240 C880 160, 980 300, 1100 260"
-            stroke="#3B82F6"
+            stroke="var(--ui-chart-primary-light)"
             strokeWidth="1"
             fill="none"
           />
@@ -182,10 +182,10 @@ export default function ForgotPasswordPage() {
             <GraduationCap className="h-6.5 w-6.5" />
           </div>
           <div>
-            <span className="text-[21px] font-black tracking-tight text-slate-900 dark:text-white leading-none block">
+            <span className="text-[21px] font-semibold tracking-tight text-slate-900 dark:text-white leading-none block">
               EXAMSYS
             </span>
-            <p className="text-[11.5px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase mt-0.5">
+            <p className="text-[12px] font-semibold tracking-wider text-blue-600 dark:text-blue-400  mt-0.5">
               HỆ THỐNG KHẢO THÍ ĐIỆN TỬ
             </p>
           </div>
@@ -197,7 +197,7 @@ export default function ForgotPasswordPage() {
           <button
             type="button"
             onClick={() => router.push('/login')}
-            className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/40 text-[13.5px] font-bold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
+            className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/40 text-[13.5px] font-semibold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
           >
             <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 transition-transform duration-200 group-hover:-translate-x-0.5">
               <ArrowLeft className="h-3.5 w-3.5" />
@@ -223,9 +223,9 @@ export default function ForgotPasswordPage() {
         <section className="lg:col-span-7 flex flex-col justify-start space-y-9">
           {/* Headline */}
           <div className="space-y-3.5">
-            <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black tracking-tight leading-[1.15] text-slate-900 dark:text-white">
+            <h1 className="text-xl sm:text-xl lg:text-[46px] font-semibold tracking-tight leading-[1.15] text-slate-900 dark:text-white">
               KHÔI PHỤC <br />
-              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
+              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
                 MẬT KHẨU TÀI KHOẢN
               </span>
             </h1>
@@ -243,7 +243,7 @@ export default function ForgotPasswordPage() {
                   <Fingerprint className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Xác thực 2 lớp OTP
                   </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
@@ -257,7 +257,7 @@ export default function ForgotPasswordPage() {
                   <ShieldCheck className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Bảo mật tuyệt đối
                   </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
@@ -271,7 +271,7 @@ export default function ForgotPasswordPage() {
                   <Zap className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Tức thì & Tự động
                   </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
@@ -285,7 +285,7 @@ export default function ForgotPasswordPage() {
                   <Headphones className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Hỗ trợ kỹ thuật 24/7
                   </h2>
                   <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
@@ -298,7 +298,7 @@ export default function ForgotPasswordPage() {
             {/* 3D Security Art Canvas */}
             <div className="sm:col-span-7 flex justify-center items-center relative py-2">
               <div className="relative w-full max-w-[440px] aspect-[4/3] flex items-center justify-center transition-transform duration-500 hover:scale-[1.02]">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-300/30 via-sky-200/25 to-indigo-300/20 dark:from-blue-900/25 dark:to-indigo-950/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-300/30 via-sky-200/25 to-blue-300/20 dark:from-blue-900/25 dark:to-blue-950/20 rounded-full blur-3xl animate-pulse" />
 
                 {/* Floating Key Badge */}
                 <div className="absolute -top-3 left-28 z-20 h-11 w-11 rounded-2xl bg-white/95 dark:bg-slate-800/95 shadow-lg shadow-blue-500/10 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-blue-600 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:-translate-y-1">
@@ -319,48 +319,48 @@ export default function ForgotPasswordPage() {
                 >
                   <defs>
                     <linearGradient id="shieldMainGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#3B82F6" />
-                      <stop offset="100%" stopColor="#1E40AF" />
+                      <stop offset="0%" stopColor="var(--ui-chart-primary-light)" />
+                      <stop offset="100%" stopColor="var(--ui-primary-hover)" />
                     </linearGradient>
                     <linearGradient id="keyGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#F59E0B" />
-                      <stop offset="100%" stopColor="#FBBF24" />
+                      <stop offset="0%" stopColor="var(--ui-chart-warning)" />
+                      <stop offset="100%" stopColor="var(--ui-chart-warning)" />
                     </linearGradient>
                     <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#FFFFFF" />
-                      <stop offset="100%" stopColor="#F8FAFC" />
+                      <stop offset="0%" stopColor="var(--ui-surface)" />
+                      <stop offset="100%" stopColor="var(--ui-surface-muted)" />
                     </linearGradient>
                   </defs>
 
                   {/* Shadow */}
-                  <ellipse cx="210" cy="270" rx="95" ry="16" fill="#CBD5E1" opacity="0.4" />
+                  <ellipse cx="210" cy="270" rx="95" ry="16" fill="var(--ui-border)" opacity="0.4" />
 
                   {/* Base Security Card */}
-                  <rect x="75" y="70" width="270" height="170" rx="20" fill="url(#cardGrad)" stroke="#E2E8F0" strokeWidth="4" />
-                  <rect x="95" y="95" width="230" height="12" rx="6" fill="#2563EB" opacity="0.8" />
-                  <rect x="95" y="120" width="160" height="8" rx="4" fill="#94A3B8" opacity="0.5" />
-                  <rect x="95" y="138" width="120" height="8" rx="4" fill="#CBD5E1" opacity="0.6" />
+                  <rect x="75" y="70" width="270" height="170" rx="20" fill="url(#cardGrad)" stroke="var(--ui-border)" strokeWidth="4" />
+                  <rect x="95" y="95" width="230" height="12" rx="6" fill="var(--ui-primary)" opacity="0.8" />
+                  <rect x="95" y="120" width="160" height="8" rx="4" fill="var(--ui-text-disabled)" opacity="0.5" />
+                  <rect x="95" y="138" width="120" height="8" rx="4" fill="var(--ui-border)" opacity="0.6" />
 
                   {/* Password Dots Box */}
-                  <rect x="95" y="160" width="180" height="36" rx="10" fill="#F1F5F9" stroke="#CBD5E1" strokeWidth="2" />
-                  <circle cx="115" cy="178" r="4" fill="#2563EB" />
-                  <circle cx="135" cy="178" r="4" fill="#2563EB" />
-                  <circle cx="155" cy="178" r="4" fill="#2563EB" />
-                  <circle cx="175" cy="178" r="4" fill="#2563EB" />
-                  <circle cx="195" cy="178" r="4" fill="#2563EB" />
-                  <circle cx="215" cy="178" r="4" fill="#2563EB" />
+                  <rect x="95" y="160" width="180" height="36" rx="10" fill="var(--ui-surface-muted)" stroke="var(--ui-border)" strokeWidth="2" />
+                  <circle cx="115" cy="178" r="4" fill="var(--ui-primary)" />
+                  <circle cx="135" cy="178" r="4" fill="var(--ui-primary)" />
+                  <circle cx="155" cy="178" r="4" fill="var(--ui-primary)" />
+                  <circle cx="175" cy="178" r="4" fill="var(--ui-primary)" />
+                  <circle cx="195" cy="178" r="4" fill="var(--ui-primary)" />
+                  <circle cx="215" cy="178" r="4" fill="var(--ui-primary)" />
 
                   {/* Big 3D Security Shield */}
                   <g transform="translate(230, 95)">
                     <path
                       d="M50 0 L100 20 L100 65 C100 105 50 125 50 125 C50 125 0 105 0 65 L0 20 Z"
                       fill="url(#shieldMainGrad)"
-                      stroke="#FFFFFF"
+                      stroke="var(--ui-surface)"
                       strokeWidth="5"
                     />
                     <path
                       d="M30 60 L45 75 L75 40"
-                      stroke="#FFFFFF"
+                      stroke="var(--ui-surface)"
                       strokeWidth="6"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -370,11 +370,11 @@ export default function ForgotPasswordPage() {
 
                   {/* 3D Golden Key */}
                   <g transform="translate(65, 175) rotate(-20)">
-                    <circle cx="35" cy="35" r="25" fill="url(#keyGrad)" stroke="#D97706" strokeWidth="3" />
-                    <circle cx="35" cy="35" r="10" fill="#FFFFFF" />
-                    <rect x="60" y="28" width="70" height="14" rx="3" fill="url(#keyGrad)" stroke="#D97706" strokeWidth="2" />
-                    <rect x="105" y="42" width="10" height="18" rx="2" fill="url(#keyGrad)" stroke="#D97706" strokeWidth="2" />
-                    <rect x="120" y="42" width="10" height="12" rx="2" fill="url(#keyGrad)" stroke="#D97706" strokeWidth="2" />
+                    <circle cx="35" cy="35" r="25" fill="url(#keyGrad)" stroke="var(--ui-chart-warning)" strokeWidth="3" />
+                    <circle cx="35" cy="35" r="10" fill="var(--ui-surface)" />
+                    <rect x="60" y="28" width="70" height="14" rx="3" fill="url(#keyGrad)" stroke="var(--ui-chart-warning)" strokeWidth="2" />
+                    <rect x="105" y="42" width="10" height="18" rx="2" fill="url(#keyGrad)" stroke="var(--ui-chart-warning)" strokeWidth="2" />
+                    <rect x="120" y="42" width="10" height="12" rx="2" fill="url(#keyGrad)" stroke="var(--ui-chart-warning)" strokeWidth="2" />
                   </g>
                 </svg>
               </div>
@@ -388,7 +388,7 @@ export default function ForgotPasswordPage() {
                 <ShieldCheck className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[16px] sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   100%
                 </p>
                 <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Bảo mật định danh</p>
@@ -400,7 +400,7 @@ export default function ForgotPasswordPage() {
                 <Clock className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[16px] sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   {'< 60s'}
                 </p>
                 <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Thời gian cấp lại</p>
@@ -412,7 +412,7 @@ export default function ForgotPasswordPage() {
                 <Headphones className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[16px] sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   24/7
                 </p>
                 <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Hỗ trợ khẩn cấp</p>
@@ -437,7 +437,7 @@ export default function ForgotPasswordPage() {
                   step === 1
                     ? 'bg-blue-600 text-white shadow-xs'
                     : step > 1
-                    ? 'text-blue-600 dark:text-blue-400 font-bold'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
                     : 'text-slate-400'
                 }`}
               >
@@ -448,7 +448,7 @@ export default function ForgotPasswordPage() {
                   step === 2
                     ? 'bg-blue-600 text-white shadow-xs'
                     : step > 2
-                    ? 'text-blue-600 dark:text-blue-400 font-bold'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
                     : 'text-slate-400'
                 }`}
               >
@@ -459,7 +459,7 @@ export default function ForgotPasswordPage() {
                   step === 3
                     ? 'bg-blue-600 text-white shadow-xs'
                     : step > 3
-                    ? 'text-blue-600 dark:text-blue-400 font-bold'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
                     : 'text-slate-400'
                 }`}
               >
@@ -475,7 +475,7 @@ export default function ForgotPasswordPage() {
                 {step === 3 && <KeyRound className="h-7 w-7" />}
                 {step === 4 && <CheckCircle2 className="h-7 w-7 text-emerald-500" />}
               </div>
-              <h2 className="text-[23px] sm:text-[25px] font-bold text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-[23px] sm:text-[25px] font-semibold text-slate-900 dark:text-white tracking-tight">
                 {step === 1 && 'Quên mật khẩu?'}
                 {step === 2 && 'Xác thực mã OTP'}
                 {step === 3 && 'Đặt mật khẩu mới'}
@@ -492,7 +492,7 @@ export default function ForgotPasswordPage() {
             {/* Error Notification */}
             {error && (
               <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium leading-5 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 flex items-start gap-2">
-                <span className="shrink-0 text-rose-600 font-bold">•</span>
+                <span className="shrink-0 text-rose-600 font-semibold">•</span>
                 <span>{error}</span>
               </div>
             )}
@@ -501,7 +501,7 @@ export default function ForgotPasswordPage() {
             {step === 1 && (
               <form onSubmit={handleRequestOtp} noValidate className="space-y-4">
                 <div className="space-y-1">
-                  <label className="block text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
                     Mã số hoặc Email đăng ký
                   </label>
                   <div className="relative">
@@ -517,7 +517,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="Ví dụ: SV2026 hoặc nguyenvana@exam.edu.vn"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[14px] outline-none transition ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[15px] outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -550,7 +550,7 @@ export default function ForgotPasswordPage() {
             {step === 2 && (
               <form onSubmit={handleVerifyOtp} noValidate className="space-y-4">
                 <div className="space-y-1">
-                  <label className="block text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
                     Mã xác thực OTP (6 chữ số)
                   </label>
                   <div className="relative">
@@ -567,7 +567,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="123456"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-center tracking-widest text-[18px] font-bold outline-none transition tabular-nums ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-center tracking-widest text-[18px] font-semibold outline-none transition tabular-nums ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -618,7 +618,7 @@ export default function ForgotPasswordPage() {
             {step === 3 && (
               <form onSubmit={handleResetPassword} noValidate className="space-y-3.5">
                 <div className="space-y-1">
-                  <label className="block text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
                     Mật khẩu mới
                   </label>
                   <div className="relative">
@@ -634,7 +634,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-[14px] outline-none transition ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-[15px] outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -652,7 +652,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
                     Xác nhận mật khẩu mới
                   </label>
                   <div className="relative">
@@ -668,7 +668,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="Nhập lại mật khẩu mới"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[14px] outline-none transition ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[15px] outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -738,7 +738,7 @@ export default function ForgotPasswordPage() {
           <ShieldCheck className="h-4 w-4 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
         </p>
-        <p className="text-[11px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
+        <p className="text-[12px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
     </div>
   );

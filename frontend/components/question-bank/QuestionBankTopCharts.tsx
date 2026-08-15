@@ -67,7 +67,7 @@ export function QuestionBankTopCharts({
                 <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {item.title}
                 </span>
-                <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                <div className="text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                   {item.value.toLocaleString('vi-VN')}
                 </div>
               </div>

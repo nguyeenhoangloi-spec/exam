@@ -183,7 +183,7 @@ export function ExamScheduleTable({
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(s.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                     <button
                       type="button"
@@ -299,7 +299,7 @@ export function ExamScheduleTable({
                   type="checkbox"
                   checked={isChecked}
                   onChange={(e) => onSelect(s.id, e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
                 <button
                   type="button"
@@ -386,14 +386,14 @@ export function ExamScheduleTable({
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
       <table className="ui-table w-full text-left text-[14.5px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-semibold text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
-                className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </th>
             {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã lịch thi</th>}
@@ -431,7 +431,7 @@ export function ExamScheduleTable({
                     type="checkbox"
                     checked={isChecked}
                     onChange={(e) => onSelect(s.id, e.target.checked)}
-                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </td>
 
@@ -458,7 +458,7 @@ export function ExamScheduleTable({
                     >
                       {s.subjectName || s.subject?.name || `Môn học #${s.subjectId || s.id}`}
                     </button>
-                    <span className="text-xs font-normal text-slate-500 dark:text-slate-400 block truncate">
+                    <span className="text-[15px] font-normal text-slate-500 dark:text-slate-400 block truncate">
                       {periodName}
                     </span>
                   </td>
@@ -466,14 +466,14 @@ export function ExamScheduleTable({
 
                 {/* Ca thi */}
                 {visibleColumns.shift !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[14px]">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[15px]">
                     {shiftName}
                   </td>
                 )}
 
                 {/* Phòng thi */}
                 {visibleColumns.room !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[14px]">
+                  <td className="p-3.5 whitespace-nowrap text-[15px]">
                     {roomName === 'Chưa xếp phòng' || !roomName ? (
                       <span className="font-medium text-slate-400">Chưa xếp phòng</span>
                     ) : (
@@ -484,28 +484,28 @@ export function ExamScheduleTable({
 
                 {/* Ngày thi */}
                 {visibleColumns.date !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[14px]">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[15px]">
                     {formatDate(s.examDate)}
                   </td>
                 )}
 
                 {/* Thời gian */}
                 {(visibleColumns.time !== false && visibleColumns.startTime !== false) && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[14px] tabular-nums">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300 text-[15px] tabular-nums">
                     {s.startTime || '07:00'} - {s.endTime || '09:00'}
                   </td>
                 )}
 
                 {/* Số TS */}
                 {visibleColumns.students !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
+                  <td className="p-3.5 whitespace-nowrap font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
                     {studentCount}
                   </td>
                 )}
 
                 {/* Giám thị */}
                 {visibleColumns.supervisors !== false && (
-                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 dark:text-slate-400 text-[14px]">
+                  <td className="p-3.5 whitespace-nowrap font-medium text-slate-500 dark:text-slate-400 text-[15px]">
                     {supervisorCount}
                   </td>
                 )}
@@ -538,7 +538,7 @@ export function ExamScheduleTable({
                               closeMenu();
                               onDetail(s);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium"
                           >
                             <Eye className="h-4 w-4 text-slate-500" />
                             <span>Xem chi tiết</span>
@@ -554,7 +554,7 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onRestore?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-blue-600 dark:text-blue-400 cursor-pointer text-[14px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-blue-600 dark:text-blue-400 cursor-pointer text-[15px] font-medium"
                                   >
                                     <RotateCcw className="h-4 w-4 text-blue-600" />
                                     <span>Khôi phục lịch thi</span>
@@ -566,7 +566,7 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onHardDelete?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[14px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium"
                                   >
                                     <Trash2 className="h-4 w-4 text-rose-600" />
                                     <span>Xóa vĩnh viễn</span>
@@ -580,7 +580,7 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onEdit(s);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[14px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium"
                                   >
                                     <Edit className="h-4 w-4 text-blue-600" />
                                     <span>Chỉnh sửa ca thi</span>
@@ -592,7 +592,7 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onDelete(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[14px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium"
                                   >
                                     <Trash2 className="h-4 w-4 text-rose-600" />
                                     <span>Xóa lịch thi</span>

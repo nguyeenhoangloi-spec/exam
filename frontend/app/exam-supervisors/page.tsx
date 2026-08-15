@@ -24,18 +24,21 @@ import { InlineCreateAssignmentPanel } from '../../components/exam-supervisors/I
 import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
 
+// ── Module-level cache: survives tab switch, renders instantly on remount ──
+let _cache: { schedules: any[]; teachers: any[]; selectedSchedule: any; supervisors: any[] } | null = null;
+
 export default function ExamSupervisorsPage() {
   usePageTitle('Quản lý & Phân công Giám thị');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [schedules, setSchedules] = useState<any[]>([]);
-  const [teachers, setTeachers] = useState<any[]>([]);
-  const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
+  const [loading, setLoading] = useState(!_cache); // no loading if cache exists
+  const [schedules, setSchedules] = useState<any[]>(_cache?.schedules ?? []);
+  const [teachers, setTeachers] = useState<any[]>(_cache?.teachers ?? []);
+  const [selectedSchedule, setSelectedSchedule] = useState<any>(_cache?.selectedSchedule ?? null);
   const [selectedScheduleRoomId, setSelectedScheduleRoomId] = useState<string>('ALL');
 
-  const [allScheduleSupervisors, setAllScheduleSupervisors] = useState<any[]>([]);
+  const [allScheduleSupervisors, setAllScheduleSupervisors] = useState<any[]>(_cache?.supervisors ?? []);
   const [drawerSupervisor, setDrawerSupervisor] = useState<any | null>(null);
 
   // Search & Filter State
@@ -77,7 +80,7 @@ export default function ExamSupervisorsPage() {
     isOpen: false,
     title: '',
     message: '',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -123,8 +126,8 @@ export default function ExamSupervisorsPage() {
     [fetchSupervisors]
   );
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  const fetchData = useCallback(async (background = false) => {
+    if (!background) setLoading(true);
     try {
       const [resSchedules, resTeachers] = await Promise.all([
         api.get('/exam-schedules'),
@@ -139,14 +142,23 @@ export default function ExamSupervisorsPage() {
       setTeachers(resTeachers.data || []);
 
       if (sortedSchedules.length > 0) {
-        await selectSchedule(sortedSchedules[0].id);
+        const firstSched = sortedSchedules[0];
+        setSelectedSchedule(firstSched);
+        setSelectedScheduleRoomId('ALL');
+        const resSupv = await api.get(`/exam-supervisors?examScheduleId=${firstSched.id}`);
+        const supervisors = resSupv.data || [];
+        setAllScheduleSupervisors(supervisors);
+        // update cache
+        _cache = { schedules: sortedSchedules, teachers: resTeachers.data || [], selectedSchedule: firstSched, supervisors };
+      } else {
+        _cache = { schedules: sortedSchedules, teachers: resTeachers.data || [], selectedSchedule: null, supervisors: [] };
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu hệ thống', type: 'error' });
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
-  }, [selectSchedule]);
+  }, []);
 
   useEffect(() => {
     const u = getAuthUser();
@@ -155,7 +167,12 @@ export default function ExamSupervisorsPage() {
       return;
     }
     setCurrentUser(u);
-    void fetchData();
+    if (_cache) {
+      // data already in cache → render instantly, refetch silently in background
+      void fetchData(true);
+    } else {
+      void fetchData(false);
+    }
   }, [fetchData, router]);
 
   // Current Rooms
@@ -483,8 +500,8 @@ export default function ExamSupervisorsPage() {
               drawerSupervisor?.status === 'CONFIRMED'
                 ? 'Đã xác nhận tham gia'
                 : drawerSupervisor?.status === 'CHANGE_REQUESTED'
-                ? 'Đang gửi yêu cầu đổi ca'
-                : 'Đang chờ phản hồi',
+                  ? 'Đang gửi yêu cầu đổi ca'
+                  : 'Đang chờ phản hồi',
           },
           { label: 'Ghi chú phân công', value: drawerSupervisor?.note || 'Không có ghi chú' },
         ]}
@@ -517,36 +534,36 @@ export default function ExamSupervisorsPage() {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-blue-600 text-white tracking-wide uppercase">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-semibold bg-blue-600 text-white tracking-wide ">
                     {selectedSchedule?.type || 'CHÍNH THỨC'}
                   </span>
-                  <h3 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 truncate">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
                     {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
                   </h3>
-                  <span className="text-xs font-mono font-medium text-slate-400">
+                  <span className="text-xs font-normal font-medium text-slate-400">
                     #{selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5 text-slate-400" />
-                    {selectedSchedule?.startTime} - {selectedSchedule?.endTime}
-                  </span>
-                  {selectedSchedule?.examDate && (
+                <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
+                  {selectedSchedule && (
                     <>
-                      <span>•</span>
                       <span className="flex items-center gap-1">
-                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                        {new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}
+                        <Clock className="h-3.5 w-3.5 text-slate-400" />
+                        {selectedSchedule.startTime} - {selectedSchedule.endTime}
+                      </span>
+                      {selectedSchedule.examDate && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                          {new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
+                        <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
+                        {currentRooms.length} phòng thi
                       </span>
                     </>
                   )}
-                  <span>•</span>
-                  <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                    <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
-                    {currentRooms.length} phòng thi
-                  </span>
                 </div>
               </div>
             </div>
@@ -594,7 +611,7 @@ export default function ExamSupervisorsPage() {
                     onClick={previewAutoAssign}
                     className={
                       activeInlinePanel === 'auto'
-                        ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold'
+                        ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80'
                     }
                   >
@@ -617,11 +634,10 @@ export default function ExamSupervisorsPage() {
 
           {/* Inline Expandable Panels Container */}
           <div
-            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
-              activeInlinePanel === 'create'
-                ? 'grid-rows-[1fr] opacity-100'
-                : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-            }`}
+            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${activeInlinePanel === 'create'
+              ? 'grid-rows-[1fr] opacity-100'
+              : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+              }`}
           >
             <div className="min-h-0 overflow-hidden">
               <div className="pt-2.5">
@@ -638,11 +654,10 @@ export default function ExamSupervisorsPage() {
           </div>
 
           <div
-            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
-              activeInlinePanel === 'auto'
-                ? 'grid-rows-[1fr] opacity-100'
-                : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-            }`}
+            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${activeInlinePanel === 'auto'
+              ? 'grid-rows-[1fr] opacity-100'
+              : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+              }`}
           >
             <div className="min-h-0 overflow-hidden">
               <div className="pt-2.5">
@@ -675,7 +690,7 @@ export default function ExamSupervisorsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -691,7 +706,7 @@ export default function ExamSupervisorsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -749,7 +764,7 @@ export default function ExamSupervisorsPage() {
         {/* ── 5. Bulk Actions Bar ── */}
         {selected.length > 0 && currentUser?.role === 'ADMIN' && (
           <div className="flex items-center justify-between p-3 rounded-2xl border border-blue-200 dark:border-blue-900 bg-blue-50/90 dark:bg-blue-950/60 shadow-md">
-            <span className="text-xs font-bold text-blue-900 dark:text-blue-200 pl-2">
+            <span className="text-xs font-semibold text-blue-900 dark:text-blue-200 pl-2">
               Đang chọn {selected.length} lượt phân công
             </span>
             <div className="flex items-center gap-2">

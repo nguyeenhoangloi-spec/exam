@@ -99,13 +99,13 @@ function TrashPageContent() {
     isOpen: boolean;
     title: string;
     message: string;
-    type: 'danger' | 'warning';
+    type: 'danger' | 'warning' | 'info' | 'success';
     onConfirm: () => void;
   }>({
     isOpen: false,
     title: '',
     message: '',
-    type: 'warning',
+    type: 'info',
     onConfirm: () => { },
   });
 
@@ -198,7 +198,7 @@ function TrashPageContent() {
       isOpen: true,
       title: 'Khôi phục dữ liệu',
       message: `Bạn có chắc chắn muốn khôi phục "${item.title}" trở lại hệ thống?`,
-      type: 'warning',
+      type: 'info',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
@@ -437,7 +437,7 @@ function TrashPageContent() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search ? (
               <button
@@ -450,7 +450,7 @@ function TrashPageContent() {
               </button>
             ) : (
               <kbd
-                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                 onClick={() => searchInputRef.current?.focus()}
                 title="Nhấn phím / để tìm nhanh"
               >
@@ -518,7 +518,7 @@ function TrashPageContent() {
                 <button
                   type="button"
                   onClick={() => setViewMode('list')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                     viewMode === 'list'
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -530,7 +530,7 @@ function TrashPageContent() {
                 <button
                   type="button"
                   onClick={() => setViewMode('grid')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                     viewMode === 'grid'
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -542,7 +542,7 @@ function TrashPageContent() {
                 <button
                   type="button"
                   onClick={() => setViewMode('compact')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                     viewMode === 'compact'
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -668,7 +668,7 @@ function TrashPageContent() {
                       type="checkbox"
                       checked={isSelected}
                       onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer shrink-0"
                     />
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200/80">
                       {typeShort}
@@ -746,7 +746,7 @@ function TrashPageContent() {
                         type="checkbox"
                         checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
                         onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
+                        className="h-4 w-4 rounded-xl border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </th>
                     <th className="px-5 py-3.5">Nội dung / Dữ liệu đã xóa</th>
@@ -771,7 +771,7 @@ function TrashPageContent() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                            className="h-4 w-4 rounded-md border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
+                            className="h-4 w-4 rounded-xl border-slate-300 text-primary-600 focus:ring-blue-500 cursor-pointer"
                           />
                         </td>
                         <td className="px-5 py-4">

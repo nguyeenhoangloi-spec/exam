@@ -61,7 +61,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
-    const isBtnDisabled = disabled || isLoading;
+    const isBtnDisabled = disabled;
     const effectiveLeftIcon = leftIcon || icon;
 
     return (
@@ -70,21 +70,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={isBtnDisabled}
         aria-busy={isLoading || undefined}
-        className={`ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`relative ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none ${isLoading ? 'pointer-events-none' : ''} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...props}
       >
-        {isLoading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin shrink-0 text-current mr-1.5" />
-            <span>{children}</span>
-          </>
-        ) : (
-          <>
-            {effectiveLeftIcon && <span className="shrink-0">{effectiveLeftIcon}</span>}
-            {children && <span>{children}</span>}
-            {rightIcon && <span className="shrink-0">{rightIcon}</span>}
-          </>
+        {/* Spinner overlay — absolute, does NOT affect button width */}
+        {isLoading && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="h-4 w-4 animate-spin text-current" />
+          </span>
         )}
+
+        {/* Content — invisible when loading but keeps button size stable */}
+        <span className={`inline-flex items-center gap-2 ${isLoading ? 'invisible' : ''}`}>
+          {effectiveLeftIcon && <span className="shrink-0">{effectiveLeftIcon}</span>}
+          {children && <span>{children}</span>}
+          {rightIcon && <span className="shrink-0">{rightIcon}</span>}
+        </span>
       </button>
     );
   },

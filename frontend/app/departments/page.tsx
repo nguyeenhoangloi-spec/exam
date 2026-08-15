@@ -427,7 +427,7 @@ export default function DepartmentsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -443,7 +443,7 @@ export default function DepartmentsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -550,7 +550,7 @@ export default function DepartmentsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1">
               Mã Khoa <span className="text-rose-500">*</span>
             </label>
             <input
@@ -559,12 +559,12 @@ export default function DepartmentsPage() {
               placeholder="VD: CNTT, DTVT, QTKD..."
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 text-xs font-semibold text-slate-800 dark:text-slate-100 uppercase focus:border-blue-500 focus:outline-none"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 text-[15px] font-semibold text-slate-800 dark:text-slate-100  focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1">
               Tên Khoa đào tạo <span className="text-rose-500">*</span>
             </label>
             <input
@@ -573,7 +573,7 @@ export default function DepartmentsPage() {
               placeholder="VD: Khoa Công nghệ Thông tin..."
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 text-[15px] font-semibold text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
             />
           </div>
 
@@ -598,7 +598,7 @@ export default function DepartmentsPage() {
           {/* Form thêm môn */}
           {currentUser?.role === 'ADMIN' && (
             <form onSubmit={handleAddCurriculum} className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5 space-y-3">
-              <div className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              <div className="text-xs font-semibold text-slate-800  tracking-wider">
                 Thêm môn vào khung đào tạo
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
@@ -636,7 +636,7 @@ export default function DepartmentsPage() {
           )}
 
           {/* Danh sách môn */}
-          <div className="rounded-xl border border-slate-200 overflow-hidden">
+          <div className="ui-table-wrap rounded-xl border border-slate-200 overflow-hidden">
             {loadingCurriculum ? (
               <div className="p-8 text-center text-xs text-slate-400">Đang tải danh sách học phần...</div>
             ) : curriculumList.length === 0 ? (
@@ -644,8 +644,8 @@ export default function DepartmentsPage() {
                 Chưa có môn học nào trong khung chương trình của khoa này.
               </div>
             ) : (
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
+              <table className="ui-table w-full text-left text-[15px]">
+                <thead className="bg-slate-50 text-[14px] font-medium text-slate-500 border-b border-slate-200">
                   <tr>
                     <th className="p-3">Mã môn</th>
                     <th className="p-3">Tên môn học</th>
@@ -657,11 +657,11 @@ export default function DepartmentsPage() {
                 <tbody className="divide-y divide-slate-100">
                   {curriculumList.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50/50">
-                      <td className="p-3 font-mono font-bold text-slate-800">{item.subject?.subjectCode}</td>
+                      <td className="p-3 font-normal font-semibold text-slate-800">{item.subject?.subjectCode}</td>
                       <td className="p-3 font-medium text-slate-800">{item.subject?.subjectName}</td>
-                      <td className="p-3 text-center font-bold text-blue-600">{item.subject?.credits}</td>
+                      <td className="p-3 text-center font-semibold text-blue-600">{item.subject?.credits}</td>
                       <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
+                        <span className={`px-2 py-0.5 rounded text-[15px] font-semibold ${
                           item.type === 'MANDATORY' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
                         }`}>
                           {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}

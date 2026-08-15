@@ -365,7 +365,7 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
                   <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                     {label}
                   </span>
-                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                  <div className="text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                     {value}
                   </div>
                 </div>
@@ -399,7 +399,7 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
         <div className="flex flex-wrap items-center justify-between gap-3 py-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-              Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{assignments.length.toLocaleString('vi-VN')}</span> ca coi thi
+              Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{assignments.length.toLocaleString('vi-VN')}</span> ca coi thi
             </span>
           </div>
 
@@ -435,9 +435,9 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                     : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
                 title="Dạng thẻ"
@@ -447,9 +447,9 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                   viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                     : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
                 title="Dạng danh sách"
@@ -459,9 +459,9 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
               <button
                 type="button"
                 onClick={() => setViewMode('compact')}
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                   viewMode === 'compact'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                     : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
                 title="Dạng thu gọn"
@@ -513,7 +513,7 @@ new Date(a.examDate).toLocaleDateString('vi-VN'),
             className="flex items-center justify-between rounded-xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition gap-3"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 font-bold text-xs">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 font-semibold text-xs">
                 {item.subjectCode?.slice(0, 3) || 'HP'}
               </div>
               <div className="min-w-0">

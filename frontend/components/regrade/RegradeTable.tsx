@@ -217,7 +217,7 @@ export function RegradeTable({
                 {visibleColumns.student !== false && (
                   <td className="p-3.5 pl-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
-                      <div className="table-avatar flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-medium text-[12px] border border-blue-100 shrink-0">
+                      <div className="table-avatar flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600 font-medium text-[15px] border border-blue-100 shrink-0">
                         {item.student.fullName.slice(0, 1).toUpperCase()}
                       </div>
                       <div>

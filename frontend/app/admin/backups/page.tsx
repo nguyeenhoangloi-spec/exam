@@ -434,7 +434,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Backup Worker
                             </span>
-                            <div className="h-[38px] flex items-center text-[20px] font-bold text-slate-900 dark:text-slate-100 leading-[28px] truncate gap-2">
+                            <div className="h-[38px] flex items-center text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate gap-2">
                                 {overview?.worker?.enabled ? (
                                     <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
                                         <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
@@ -472,7 +472,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Nơi lưu trữ (Storage)
                             </span>
-                            <div className="h-[38px] flex items-center text-[20px] font-bold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
+                            <div className="h-[38px] flex items-center text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
                                 {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa máy chủ (Local)'}
                             </div>
                         </div>
@@ -537,7 +537,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Dung lượng tổng
                             </span>
-                            <div className="h-[38px] flex items-center text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
+                            <div className="h-[38px] flex items-center text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
                                 {formatBytes(overview?.totalBytes)}
                             </div>
                         </div>
@@ -573,7 +573,7 @@ export default function BackupsPage() {
                             placeholder="Tìm theo Snapshot ID, mã lỗi..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
                         />
                         {search ? (
                             <button
@@ -586,7 +586,7 @@ export default function BackupsPage() {
                             </button>
                         ) : (
                             <kbd
-                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                                 onClick={() => searchInputRef.current?.focus()}
                                 title="Nhấn phím / để tìm nhanh"
                             >
@@ -615,7 +615,7 @@ export default function BackupsPage() {
                     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
                         <div className="flex items-center gap-2">
                             <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
+                                Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
                             </span>
                         </div>
 
@@ -649,9 +649,9 @@ export default function BackupsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode('list')}
-                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                    className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'list'
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                                     }`}
                                     title="Xem dạng danh sách"
@@ -661,9 +661,9 @@ export default function BackupsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode('grid')}
-                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                    className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'grid'
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                                     }`}
                                     title="Xem dạng lưới"
@@ -673,9 +673,9 @@ export default function BackupsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode('compact')}
-                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                    className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'compact'
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                                     }`}
                                     title="Xem dạng thẻ gọn"
@@ -879,7 +879,7 @@ export default function BackupsPage() {
                     </div>
                 ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-                    <table className="w-full text-left border-collapse text-slate-700 text-[15px]">
+                    <table className="ui-table w-full text-left border-collapse text-slate-700 text-[15px]">
                         <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
                             <tr>
                                 <th scope="col" className="p-3.5 pl-4 min-w-[200px]">Snapshot ID</th>
@@ -911,7 +911,7 @@ export default function BackupsPage() {
 
                                     <td className="p-3.5 whitespace-nowrap">
                                         <span
-                                            className={`table-badge font-medium text-[12px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
+                                            className={`table-badge font-medium text-[15px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
                                                 ? 'bg-blue-600 text-white shadow-2xs'
                                                 : job.type === 'DATABASE'
                                                     ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
@@ -970,7 +970,7 @@ export default function BackupsPage() {
                                                     <RotateCcw className="h-4 w-4" />
                                                 </button>
                                             ) : (
-                                                <span className="table-badge text-[12px] font-medium text-slate-400">
+                                                <span className="table-badge text-[15px] font-medium text-slate-400">
                                                     {job.status === 'SUCCEEDED' ? 'Hết retention' : 'Không khả dụng'}
                                                 </span>
                                             )}
@@ -1028,12 +1028,12 @@ export default function BackupsPage() {
                                             {/* Environment — flat, no border, no background */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
                                                 {request.target === 'PRODUCTION' ? (
-                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[13px] font-medium text-danger-600">
+                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[15px] font-medium text-danger-600">
                                                         <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
                                                         PRODUCTION
                                                     </span>
                                                 ) : (
-                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[13px] font-medium text-warning-600">
+                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[15px] font-medium text-warning-600">
                                                         <Server className="h-3.5 w-3.5 shrink-0" />
                                                         STAGING
                                                     </span>
@@ -1064,7 +1064,7 @@ export default function BackupsPage() {
                                                     selfBlocked ? (
                                                         <span
                                                             title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
-                                                            className="table-action inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-400 cursor-default select-none"
+                                                            className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-400 cursor-default select-none"
                                                         >
                                                             <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
                                                             Cần Admin khác phê duyệt
@@ -1073,7 +1073,7 @@ export default function BackupsPage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => openCriticalApproveModal(request)}
-                                                            className="table-action inline-flex items-center gap-1.5 text-[13px] font-medium text-amber-600 hover:text-amber-700 transition cursor-pointer"
+                                                            className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-amber-600 hover:text-amber-700 transition cursor-pointer"
                                                         >
                                                             <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
                                                             Phê duyệt an toàn

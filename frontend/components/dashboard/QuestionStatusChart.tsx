@@ -24,7 +24,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'APPROVED',
       label: 'Đã duyệt',
       count: approvedCount,
-      color: '#2563eb', // Blue-600
+      color: 'var(--ui-primary)', // Blue-600
       icon: CheckCircle2,
       iconBg: 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400',
     },
@@ -32,7 +32,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'PENDING',
       label: 'Chờ duyệt',
       count: pendingCount,
-      color: '#60a5fa', // Blue-400
+      color: 'var(--ui-chart-primary-light)', // Blue-400
       icon: Clock,
       iconBg: 'bg-blue-50 text-blue-500 dark:bg-blue-950/60 dark:text-blue-300',
     },
@@ -40,7 +40,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
       status: 'REJECTED',
       label: 'Bị từ chối',
       count: rejectedCount,
-      color: '#94a3b8', // Slate-400
+      color: 'var(--ui-text-disabled)', // Slate-400
       icon: XCircle,
       iconBg: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
     },
@@ -83,7 +83,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={totalCount > 0 ? chartData : [{ label: 'Trống', count: 1, color: '#e2e8f0' }]}
+                  data={totalCount > 0 ? chartData : [{ label: 'Trống', count: 1, color: 'var(--ui-border)' }]}
                   dataKey="count"
                   nameKey="label"
                   innerRadius={42}
@@ -96,15 +96,15 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
                       <Cell key={`cell-${entry.status}`} fill={entry.color} />
                     ))
                   ) : (
-                    <Cell fill="#e2e8f0" />
+                    <Cell fill="var(--ui-border)" />
                   )}
                 </Pie>
                 <Tooltip
                   contentStyle={{
                     borderRadius: '12px',
-                    border: '1px solid #e2e8f0',
-                    backgroundColor: '#ffffff',
-                    color: '#0f172a',
+                    border: '1px solid var(--ui-border)',
+                    backgroundColor: 'var(--ui-surface)',
+                    color: 'var(--ui-text-primary)',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
                     fontSize: '12.5px',
                     fontWeight: 600,
@@ -119,10 +119,10 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
 
           {/* Center Info Text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-[17px] font-bold text-slate-900 dark:text-slate-100 leading-tight">
+            <span className="text-[17px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">
               {new Intl.NumberFormat('vi-VN').format(totalCount)}
             </span>
-            <span className="text-[11px] font-medium text-slate-400">
+            <span className="text-[12px] font-medium text-slate-400">
               Tổng số
             </span>
           </div>
@@ -146,10 +146,10 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[13px] font-bold text-slate-900 dark:text-slate-100">
+                <span className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
                   {new Intl.NumberFormat('vi-VN').format(item.count)}
                 </span>
-                <span className="text-[11.5px] font-semibold text-slate-400 w-10 text-right">
+                <span className="text-[12px] font-semibold text-slate-400 w-10 text-right">
                   {item.percent}
                 </span>
               </div>

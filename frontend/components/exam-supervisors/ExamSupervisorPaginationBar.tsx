@@ -54,7 +54,7 @@ export function ExamSupervisorPaginationBar({
             type="button"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage <= 1}
-            className="h-8 w-8 rounded-lg border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 transition flex items-center justify-center cursor-pointer shadow-2xs"
+            className="h-8 w-8 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 transition flex items-center justify-center cursor-pointer shadow-2xs"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -67,7 +67,7 @@ export function ExamSupervisorPaginationBar({
             type="button"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
-            className="h-8 w-8 rounded-lg border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 transition flex items-center justify-center cursor-pointer shadow-2xs"
+            className="h-8 w-8 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 transition flex items-center justify-center cursor-pointer shadow-2xs"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

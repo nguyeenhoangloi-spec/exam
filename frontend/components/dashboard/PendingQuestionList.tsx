@@ -69,7 +69,7 @@ export function PendingQuestionList({
       {list.length > 0 ? (
         <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/80 dark:border-slate-800">
           <table className="ui-table w-full text-left text-[14px] leading-6 min-w-[760px] text-slate-700 dark:text-slate-300 border-collapse">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-[13px] font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 text-[13px] font-medium text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th className="py-2.5 px-3 whitespace-nowrap">Mã câu</th>
                 <th className="py-2.5 px-3">Nội dung câu hỏi</th>
@@ -81,7 +81,7 @@ export function PendingQuestionList({
                 <th className="py-2.5 px-3 text-center whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-[13.5px]">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-[15px]">
               {list.map((q) => {
                 return (
                   <tr key={q.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition">
@@ -150,7 +150,7 @@ export function PendingQuestionList({
         <div className="py-8 text-center space-y-1 text-slate-400 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/40 dark:bg-slate-800/40">
           <Inbox className="w-6 h-6 mx-auto text-slate-400 dark:text-slate-600 stroke-[1.5]" />
           <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Không có câu hỏi nào đang chờ duyệt</p>
-          <p className="text-[11.5px] text-slate-400 dark:text-slate-500">Toàn bộ câu hỏi trong ngân hàng đã được phê duyệt.</p>
+          <p className="text-[12px] text-slate-400 dark:text-slate-500">Toàn bộ câu hỏi trong ngân hàng đã được phê duyệt.</p>
         </div>
       )}
     </div>

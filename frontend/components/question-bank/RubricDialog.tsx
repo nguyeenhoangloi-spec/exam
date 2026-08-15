@@ -305,20 +305,20 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                        ['acceptedConcepts', 'Ý/khái niệm chấp nhận', 'Các cách diễn đạt tương đương...'],
                        ['commonMistakes', 'Lỗi cần lưu ý', 'Lỗi nghiêm trọng hoặc hay gặp...'],
                      ].map(([field, label, placeholder]) => (
-                       <label key={field} className="space-y-1 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
+                       <label key={field} className="space-y-1 text-[15px] font-medium text-slate-700 dark:text-slate-200">
                          {label}
                          <textarea
                            rows={2}
                            placeholder={placeholder}
                            value={String(c[field as keyof RubricCriterion] || '')}
                            onChange={(e) => handleFieldChange(idx, field as keyof RubricCriterion, e.target.value)}
-                           className="w-full resize-y bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[14px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
+                           className="w-full resize-y bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
                          />
                        </label>
                      ))}
                    </div>
                    <div className="max-w-[12rem] space-y-1">
-                     <label className="block text-[13px] font-semibold text-slate-700 dark:text-slate-200">Bước điểm</label>
+                     <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-200">Bước điểm</label>
                      <input
                        type="number"
                        step={0.05}

@@ -93,7 +93,7 @@ export function ExamReportTable({
  type="checkbox"
  checked={isChecked}
  onChange={(e) => onSelect(c.studentId, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  <IdentifierBadge>{c.studentCode}</IdentifierBadge>
  </div>
@@ -175,7 +175,7 @@ export function ExamReportTable({
                     type="checkbox"
                     checked={isChecked}
                     onChange={(e) => onSelect(c.studentId, e.target.checked)}
-                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                   />
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
                     {c.studentCode?.slice(0, 3) || 'TS'}
@@ -282,7 +282,7 @@ export function ExamReportTable({
  type="checkbox"
  checked={allSelected}
  onChange={(e) => onSelectAll(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </th>
  {visibleColumns.studentCode !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã sinh viên</th>}
@@ -311,7 +311,7 @@ export function ExamReportTable({
  type="checkbox"
  checked={isChecked}
  onChange={(e) => onSelect(c.studentId, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </td>
 
@@ -351,7 +351,7 @@ export function ExamReportTable({
  <StatusBadge status="ABSENT" customLabel="Vắng thi" />
  ) : (
  <span
- className={`text-sm ${c.totalScore >= 5 ? 'text-emerald-600 font-medium' : 'text-rose-600 font-medium'
+ className={`text-[15px] ${c.totalScore >= 5 ? 'text-emerald-600 font-medium' : 'text-rose-600 font-medium'
  }`}
  >
  {c.totalScore}
@@ -376,7 +376,7 @@ export function ExamReportTable({
  {visibleColumns.violationCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {c.violationCount > 0 ? (
- <span className="table-badge inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-0.5 text-[12px] leading-[18px] font-medium text-rose-700 border border-rose-200">
+ <span className="table-badge inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-0.5 text-[15px] leading-[18px] font-medium text-rose-700 border border-rose-200">
  <AlertTriangle className="h-3 w-3 text-rose-600" /> {c.violationCount}
  </span>
  ) : (

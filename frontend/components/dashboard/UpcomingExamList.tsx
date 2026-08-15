@@ -50,7 +50,7 @@ export function UpcomingExamList({
       {list.length > 0 ? (
         <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/80 dark:border-slate-800">
           <table className="ui-table w-full min-w-[580px] text-left text-[14px] text-slate-700 dark:text-slate-300 border-collapse">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-[13px] font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 text-[13px] font-medium text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Mã môn</th>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Tên môn thi</th>
@@ -61,7 +61,7 @@ export function UpcomingExamList({
                 <th className="py-2.5 px-2 text-center whitespace-nowrap">Trạng thái</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-normal">
               {list.map((row) => (
                 <tr
                   key={row.id}

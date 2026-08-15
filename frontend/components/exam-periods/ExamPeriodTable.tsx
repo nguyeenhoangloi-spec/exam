@@ -109,7 +109,7 @@ export function ExamPeriodTable({
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(p.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                     <button
                       type="button"
@@ -204,7 +204,7 @@ export function ExamPeriodTable({
                   type="checkbox"
                   checked={isChecked}
                   onChange={(e) => onSelect(p.id, e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
                 <button
                   type="button"
@@ -264,14 +264,14 @@ export function ExamPeriodTable({
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
       <table className="ui-table w-full text-left text-[14.5px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-semibold text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
-                className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </th>
             {visibleColumns.name !== false && <th scope="col" className="p-3.5 min-w-[250px] whitespace-nowrap">Tên kỳ thi</th>}
@@ -296,7 +296,7 @@ export function ExamPeriodTable({
                     type="checkbox"
                     checked={isChecked}
                     onChange={(e) => onSelect(p.id, e.target.checked)}
-                    className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </td>
 

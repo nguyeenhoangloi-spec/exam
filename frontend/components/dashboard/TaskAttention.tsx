@@ -48,7 +48,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
         <h3 className="edu-card-title">Công việc cần xử lý</h3>
-        <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
           <span>Ưu tiên khảo thí</span>
         </span>
       </div>
@@ -81,7 +81,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
 
               {/* Right count and arrow */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="inline-flex items-center justify-center min-w-[24px] px-2 py-0.5 rounded-lg text-[13px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
+                <span className="inline-flex items-center justify-center min-w-[24px] px-2 py-0.5 rounded-lg text-[13px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
                   {task.count}
                 </span>
                 <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />

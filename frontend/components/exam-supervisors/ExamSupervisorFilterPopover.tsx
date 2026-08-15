@@ -224,7 +224,7 @@ export function ExamSupervisorFilterPopover({
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
         className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
-            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
+            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-semibold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
           }`}
         title="Mở bảng điều khiển bộ lọc giám thị"
@@ -248,7 +248,7 @@ export function ExamSupervisorFilterPopover({
                 onResetAll();
               }}
               title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
-              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[10.5px] font-bold text-white shadow-2xs transition-colors cursor-pointer"
+              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[12px] font-semibold text-white shadow-2xs transition-colors cursor-pointer"
             >
               <span className="group-hover/badge:hidden">{activeFilterCount}</span>
               <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
@@ -279,10 +279,10 @@ export function ExamSupervisorFilterPopover({
                   <Filter className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-none">
+                  <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-none">
                     Bộ lọc giám thị
                   </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Tùy chỉnh tiêu chí tra cứu phân công coi thi
                   </p>
                 </div>
@@ -293,7 +293,7 @@ export function ExamSupervisorFilterPopover({
                   <button
                     type="button"
                     onClick={onResetAll}
-                    className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-xl transition-colors cursor-pointer"
                     title="Xóa tất cả bộ lọc đang áp dụng"
                   >
                     <RotateCcw className="h-3 w-3" />
@@ -303,7 +303,7 @@ export function ExamSupervisorFilterPopover({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="flex h-6 w-6 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -324,7 +324,7 @@ export function ExamSupervisorFilterPopover({
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
                       className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
-                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
+                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                         }`}
                     >
@@ -334,11 +334,11 @@ export function ExamSupervisorFilterPopover({
                       </div>
 
                       {cat.badge ? (
-                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white flex items-center justify-center">
+                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[12px] font-semibold text-white flex items-center justify-center">
                           {cat.badge}
                         </span>
                       ) : (
-                        <span className={`text-[10px] font-mono ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
+                        <span className={`text-[12px] font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
                           {cat.shortcut}
                         </span>
                       )}
@@ -347,9 +347,9 @@ export function ExamSupervisorFilterPopover({
                 })}
 
                 <div className="pt-3 px-2">
-                  <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                  <div className="text-[12px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
                     <span>Phím:</span>
-                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-mono text-[9px] text-slate-600 dark:text-slate-400">1-4</kbd>
+                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-normal text-[12px] text-slate-600 dark:text-slate-400">1-4</kbd>
                   </div>
                 </div>
               </div>
@@ -359,7 +359,7 @@ export function ExamSupervisorFilterPopover({
                 {/* ── TAB 1: LỌC NHANH (PRESETS) ── */}
                 {activeCategory === 'presets' && (
                   <div className="space-y-1.5">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                    <p className="text-[12px] font-semibold  tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
                       Gợi ý bộ lọc phổ biến:
                     </p>
 
@@ -372,16 +372,16 @@ export function ExamSupervisorFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${roleFilter === 'SUPERVISOR_1' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-semibold ${roleFilter === 'SUPERVISOR_1' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Giám thị 1 (Chính)
                         </div>
-                        <div className={`text-[11px] truncate ${roleFilter === 'SUPERVISOR_1' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-[12px] truncate ${roleFilter === 'SUPERVISOR_1' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           Cán bộ phụ trách quản lý phòng thi chính
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${roleFilter === 'SUPERVISOR_1'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${roleFilter === 'SUPERVISOR_1'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
@@ -400,16 +400,16 @@ export function ExamSupervisorFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${statusFilter === 'CONFIRMED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-semibold ${statusFilter === 'CONFIRMED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Đã xác nhận ca thi
                         </div>
-                        <div className={`text-[11px] truncate ${statusFilter === 'CONFIRMED' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-[12px] truncate ${statusFilter === 'CONFIRMED' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           Giảng viên đã đồng ý nhận nhiệm vụ
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${statusFilter === 'CONFIRMED'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${statusFilter === 'CONFIRMED'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
@@ -428,16 +428,16 @@ export function ExamSupervisorFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${statusFilter === 'CHANGE_REQUESTED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-semibold ${statusFilter === 'CHANGE_REQUESTED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Yêu cầu xin đổi ca
                         </div>
-                        <div className={`text-[11px] truncate ${statusFilter === 'CHANGE_REQUESTED' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-[12px] truncate ${statusFilter === 'CHANGE_REQUESTED' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           Cán bộ gửi đơn xin đổi ca thi cần xử lý
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${statusFilter === 'CHANGE_REQUESTED'
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${statusFilter === 'CHANGE_REQUESTED'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
@@ -465,16 +465,16 @@ export function ExamSupervisorFilterPopover({
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                               {item.label}
                             </div>
-                            <div className={`text-[10.5px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className={`text-[12px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                               {item.desc}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                               }`}>
@@ -504,16 +504,16 @@ export function ExamSupervisorFilterPopover({
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                               {item.label}
                             </div>
-                            <div className={`text-[10.5px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className={`text-[12px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                               {item.desc}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                               }`}>
@@ -543,10 +543,10 @@ export function ExamSupervisorFilterPopover({
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                               {item.label}
                             </div>
-                            <div className={`text-[10.5px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className={`text-[12px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                               {item.desc}
                             </div>
                           </div>
@@ -568,7 +568,7 @@ export function ExamSupervisorFilterPopover({
                 <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
                   {totalFilteredCount !== undefined ? (
                     <>
-                      Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
+                      Khớp <strong className="font-semibold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
                       {supervisors.length > 0 && (
                         <span className="text-slate-400 dark:text-slate-500 font-normal"> / {supervisors.length} giám thị ({Math.round((totalFilteredCount / Math.max(1, supervisors.length)) * 100)}%)</span>
                       )}
@@ -590,7 +590,7 @@ export function ExamSupervisorFilterPopover({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 <span>Xem kết quả</span>

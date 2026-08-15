@@ -174,7 +174,7 @@ export default function PracticePage() {
                           name={`question-${question.id}`}
                           checked={(answers[question.id] || []).includes(option.id)}
                           onChange={() => toggleAnswer(question.id, option.id, single)}
-                          className="h-4.5 w-4.5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="h-4.5 w-4.5 rounded-xl border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                         <span>{option.content}</span>
                       </label>

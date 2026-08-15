@@ -62,7 +62,7 @@ export function SubjectTable({
  type="checkbox"
  checked={isChecked}
  onChange={(e) => onSelect(s.id, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  <button
  type="button"
@@ -152,7 +152,7 @@ export function SubjectTable({
                   type="checkbox"
                   checked={isChecked}
                   onChange={(e) => onSelect(s.id, e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                 />
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-100/80">
                   {s.subjectCode?.slice(0, 3) || 'MH'}
@@ -266,7 +266,7 @@ export function SubjectTable({
  type="checkbox"
  checked={allSelected}
  onChange={(e) => onSelectAll(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </th>
  {visibleColumns.subjectCode !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã môn học</th>}
@@ -293,7 +293,7 @@ export function SubjectTable({
  type="checkbox"
  checked={isChecked}
  onChange={(e) => onSelect(s.id, e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  </td>
 

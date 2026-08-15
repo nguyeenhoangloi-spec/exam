@@ -51,7 +51,7 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
                 <span className="font-semibold text-slate-800 dark:text-slate-200 truncate pr-2">
                   <IdentifierBadge tone="neutral">{item.code}</IdentifierBadge> {item.name}
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 dark:text-blue-400 shrink-0">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 shrink-0">
                   <PieChart className="h-3.5 w-3.5 text-blue-500" />
                   {item.progress}%
                 </span>

@@ -590,7 +590,7 @@ function TeacherEssayGradingContent() {
                   <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                     {item.title}
                   </span>
-                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                  <div className="text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                     {item.value.toLocaleString('vi-VN')}
                     {item.unit ? <span className="text-xs font-normal text-slate-500 dark:text-slate-400 ml-1">{item.unit}</span> : ''}
                   </div>
@@ -692,7 +692,7 @@ function TeacherEssayGradingContent() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 border border-slate-200 font-mono text-[9px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 border border-slate-200 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -801,14 +801,14 @@ function TeacherEssayGradingContent() {
                   <button
                     disabled={page <= 1}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="p-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40"
+                    className="p-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
                   </button>
                   <button
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="p-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40"
+                    className="p-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40"
                   >
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>

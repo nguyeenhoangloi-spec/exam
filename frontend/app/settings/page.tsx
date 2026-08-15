@@ -188,7 +188,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={emailNotify}
                   onChange={(e) => setEmailNotify(e.target.checked)}
-                  className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4.5 w-4.5 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </label>
 
@@ -201,7 +201,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={examReminder}
                   onChange={(e) => setExamReminder(e.target.checked)}
-                  className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4.5 w-4.5 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </label>
 
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={soundAlert}
                   onChange={(e) => setSoundAlert(e.target.checked)}
-                  className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4.5 w-4.5 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </label>
             </div>

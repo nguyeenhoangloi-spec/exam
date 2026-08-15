@@ -512,7 +512,7 @@ html.dark {
   .edu-card-title {
     font-size: var(--fs-card-title);
     line-height: var(--lh-card-title);
-    @apply font-semibold;
+    @apply font-bold;
     color: var(--ui-text-primary);
   }
 

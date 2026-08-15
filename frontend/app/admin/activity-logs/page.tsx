@@ -578,7 +578,7 @@ export default function ActivityLogsPage() {
                                 setSearch(e.target.value);
                                 setPage(1);
                             }}
-                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
                         />
                         {search ? (
                             <button
@@ -591,7 +591,7 @@ export default function ActivityLogsPage() {
                             </button>
                         ) : (
                             <kbd
-                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                                 onClick={() => searchInputRef.current?.focus()}
                                 title="Nhấn phím / để tìm nhanh"
                             >
@@ -661,7 +661,7 @@ export default function ActivityLogsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode('list')}
-                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                    className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'list'
                                             ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -673,7 +673,7 @@ export default function ActivityLogsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode('grid')}
-                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                    className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'grid'
                                             ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -685,7 +685,7 @@ export default function ActivityLogsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode('compact')}
-                                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                                    className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'compact'
                                             ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -799,7 +799,7 @@ export default function ActivityLogsPage() {
                                             type="checkbox"
                                             checked={isChecked}
                                             onChange={() => toggleSelect(item.id)}
-                                            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                                         />
                                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-bold text-xs border border-blue-100/80">
                                             {(item.actor?.username || 'HT').slice(0, 2).toUpperCase()}
@@ -880,7 +880,7 @@ export default function ActivityLogsPage() {
                                             type="checkbox"
                                             checked={paginatedLogs.length > 0 && selectedIds.length === paginatedLogs.length}
                                             onChange={toggleSelectAll}
-                                            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                         />
                                     </th>
                                     {visibleColumns.createdAt && <th className="whitespace-nowrap py-3.5 px-4">Thời gian</th>}
@@ -918,7 +918,7 @@ export default function ActivityLogsPage() {
                                                     type="checkbox"
                                                     checked={selectedIds.includes(item.id)}
                                                     onChange={() => toggleSelect(item.id)}
-                                                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                                 />
                                             </td>
 
@@ -944,7 +944,7 @@ export default function ActivityLogsPage() {
                                                         </span>
 
                                                         {/* Floating Tooltip khi Hover */}
-                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-[12px] font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-[15px] font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                                                             <Mail className="h-3 w-3 text-slate-300" />
                                                             <span>{item.actor?.email || "system@exam.edu.vn"}</span>
                                                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />

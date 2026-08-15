@@ -420,10 +420,12 @@ export class OnlineExamsService {
       remainingSeconds,
       startTime: attempt.startTime,
       expectedEndTime: attempt.expectedEndTime,
+      violationCount: await this.prisma.proctoringEvent.count({ where: { attemptId: attempt.id } }),
       config: {
         requireFullscreen: attempt.onlineExamConfig.requireFullscreen,
         preventTabSwitch: attempt.onlineExamConfig.preventTabSwitch,
         preventCopyPaste: attempt.onlineExamConfig.preventCopyPaste,
+        maxAllowedViolations: attempt.onlineExamConfig.maxAllowedViolations || 5,
         essayEnabled: attempt.onlineExamConfig.essayEnabled,
         allowEssayFileUpload: attempt.onlineExamConfig.allowEssayFileUpload,
         maxEssayFileSizeMb: attempt.onlineExamConfig.maxEssayFileSizeMb,
@@ -597,7 +599,18 @@ export class OnlineExamsService {
     }
 
     if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'INVALIDATED', 'TERMINATED'].includes(attempt.status)) {
-      return { success: false, currentRiskScore: attempt.riskScore, isFlagged: attempt.isFlagged, autoSubmitted: true };
+      const violationLimit = Math.max(1, attempt.onlineExamConfig?.maxAllowedViolations || 5);
+      const recordedEvents = await this.prisma.proctoringEvent.count({ where: { attemptId: attempt.id } });
+      return {
+        success: false,
+        currentRiskScore: attempt.riskScore,
+        isFlagged: attempt.isFlagged,
+        autoSubmitted: true,
+        isTerminated: attempt.status === 'TERMINATED',
+        violationCount: recordedEvents || violationLimit,
+        maxAllowedViolations: violationLimit,
+        status: attempt.status,
+      };
     }
 
     const policy = attempt.onlineExamConfig.securityPolicy;
@@ -654,8 +667,10 @@ export class OnlineExamsService {
         isFlagged: true,
         autoSubmitted: true,
         isTerminated: true,
-        violationLimit,
+        violationCount: recordedEvents,
         recordedEvents,
+        maxAllowedViolations: violationLimit,
+        violationLimit,
         status: 'TERMINATED',
       };
     }
@@ -665,8 +680,10 @@ export class OnlineExamsService {
       currentRiskScore: newRiskScore,
       isFlagged: shouldFlag,
       autoSubmitted: false,
-      violationLimit,
+      violationCount: recordedEvents,
       recordedEvents,
+      maxAllowedViolations: violationLimit,
+      violationLimit,
     };
   }
 

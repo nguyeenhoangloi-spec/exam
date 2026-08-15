@@ -44,7 +44,7 @@ export function QuestionCard({
  type="checkbox"
  checked={selected}
  onChange={(e) => onSelect(e.target.checked)}
- className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+ className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
  />
  <IdentifierBadge>{q.code}</IdentifierBadge>
  {q.subject?.subjectName && (

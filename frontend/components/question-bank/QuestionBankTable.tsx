@@ -99,7 +99,7 @@ export function QuestionBankTable({
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(q.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                     />
                     <button
                       type="button"
@@ -257,7 +257,7 @@ export function QuestionBankTable({
                   type="checkbox"
                   checked={isChecked}
                   onChange={(e) => onSelect(q.id, e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                 />
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold text-xs border ${
                   isEssay ? 'bg-amber-50 text-amber-700 border-amber-200/80' : 'bg-blue-50 text-blue-700 border-blue-100/80'
@@ -381,7 +381,7 @@ export function QuestionBankTable({
                   type="checkbox"
                   checked={allSelected}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
               {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã câu hỏi</th>}
@@ -417,7 +417,7 @@ export function QuestionBankTable({
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => onSelect(q.id, e.target.checked)}
-                      className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </td>
 
@@ -449,7 +449,7 @@ export function QuestionBankTable({
 
                         <div className="flex flex-wrap items-center gap-1.5">
                           {q.type === 'ESSAY' ? (
-                            <span className="table-badge inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[12px] font-medium bg-blue-50 text-blue-800 border border-blue-200/80">
+                            <span className="table-badge inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[15px] font-medium bg-blue-50 text-blue-800 border border-blue-200/80">
                               <FileText className="w-3 h-3 text-blue-600 shrink-0" />
                               {q.sampleAnswer || q.explanation ? 'Có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
                             </span>
@@ -457,7 +457,7 @@ export function QuestionBankTable({
                             optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[12px] font-medium text-slate-700"
+                                className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[15px] font-medium text-slate-700"
                               >
                                 <span className="font-medium text-slate-500">{opt.label}.</span>
                                 <span className="truncate max-w-[120px]">{opt.content}</span>
@@ -516,7 +516,7 @@ export function QuestionBankTable({
                                 key={m.id || idx}
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
-                                className="table-badge group inline-flex items-center gap-1 rounded-xl bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[12px] font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
+                                className="table-badge group inline-flex items-center gap-1 rounded-xl bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[15px] font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
                                 title="Bấm để phát âm thanh"
                               >
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3 text-blue-600 group-hover:scale-110 transition"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
@@ -525,7 +525,7 @@ export function QuestionBankTable({
                             );
 
                             return (
-                              <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[12px] font-medium text-slate-500 shrink-0">
+                              <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[15px] font-medium text-slate-500 shrink-0">
                                 <ImageIcon className="h-3 w-3 text-blue-400" />
                                 {cleanMediaFileName(m.fileName, 'Tập tin')}
                               </span>
@@ -548,7 +548,7 @@ export function QuestionBankTable({
                         </span>
 
                         {subjectName.length > 12 && (
-                          <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                          <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-[15px] font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                             <span>{subjectName}</span>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
                           </div>
@@ -589,7 +589,7 @@ export function QuestionBankTable({
                   {visibleColumns.creator !== false && (
                     <td className="p-3.5 whitespace-nowrap align-top pt-4">
                       <div className="flex items-center gap-1.5 text-[15px] font-normal text-slate-700 dark:text-slate-300">
-                        <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-medium text-[13px] border border-slate-200 dark:border-slate-600">
+                        <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-medium text-[15px] border border-slate-200 dark:border-slate-600">
                           {creatorName.charAt(0).toUpperCase()}
                         </div>
                         <span>{creatorName}</span>
@@ -599,7 +599,7 @@ export function QuestionBankTable({
 
                   {/* Ngày tạo */}
                   {visibleColumns.createdAt !== false && (
-                    <td className="table-meta p-3.5 whitespace-nowrap text-[14px] text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
+                    <td className="table-meta p-3.5 whitespace-nowrap text-[15px] text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
                       {formatDate(q.createdAt)}
                     </td>
                   )}

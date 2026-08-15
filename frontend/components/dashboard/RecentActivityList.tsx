@@ -112,7 +112,7 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
                   </div>
                   <div className="min-w-0 leading-tight">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 truncate text-[13px]">
-                      {item.actorName} <span className="font-normal text-slate-500 dark:text-slate-400 text-[11.5px]">• {item.actionTag}</span>
+                      {item.actorName} <span className="font-normal text-slate-500 dark:text-slate-400 text-[12px]">• {item.actionTag}</span>
                     </p>
                     <p className="text-[12px] font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">
                       {item.targetInfo}
@@ -120,7 +120,7 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
                   </div>
                 </div>
 
-                <span className="text-[11.5px] font-medium text-slate-400 dark:text-slate-500 shrink-0 mt-0.5">
+                <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500 shrink-0 mt-0.5">
                   {item.time}
                 </span>
               </div>

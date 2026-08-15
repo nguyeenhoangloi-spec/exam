@@ -58,7 +58,7 @@ export function ClassTableToolbar({
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
       <div className="flex items-center gap-2">
         <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-          Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> lớp học
+          Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> lớp học
         </span>
       </div>
 
@@ -87,9 +87,9 @@ export function ClassTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('list')}
-            className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
               viewMode === 'list'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                 : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
             title="Dạng danh sách"
@@ -99,9 +99,9 @@ export function ClassTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('grid')}
-            className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
               viewMode === 'grid'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                 : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
             title="Dạng thẻ"
@@ -111,9 +111,9 @@ export function ClassTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('compact')}
-            className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
               viewMode === 'compact'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                 : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
             title="Dạng thu gọn"

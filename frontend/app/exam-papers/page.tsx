@@ -102,17 +102,26 @@ const initialForm: ExamPaperMatrixFormData = {
   hardScore: '3',
 };
 
+let _papersCache: {
+  schedules: ExamSchedule[];
+  papers: ExamPaper[];
+  defaultScheduleId: string;
+} | null = null;
+
 export default function ExamPapersPage() {
   usePageTitle('Quản lý đề thi');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
-  const [papers, setPapers] = useState<ExamPaper[]>([]);
-  const [formData, setFormData] = useState<ExamPaperMatrixFormData>(initialForm);
+  const [schedules, setSchedules] = useState<ExamSchedule[]>(_papersCache?.schedules ?? []);
+  const [papers, setPapers] = useState<ExamPaper[]>(_papersCache?.papers ?? []);
+  const [formData, setFormData] = useState<ExamPaperMatrixFormData>(() => ({
+    ...initialForm,
+    examScheduleId: _papersCache?.defaultScheduleId || '',
+  }));
   const [selectedPaper, setSelectedPaper] = useState<ExamPaper | null>(null);
   const [showAnswers, setShowAnswers] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!_papersCache);
   const [creating, setCreating] = useState(false);
   const [busyId, setBusyId] = useState<number | null>(null);
 
@@ -272,8 +281,8 @@ export default function ExamPapersPage() {
     paper: null,
   });
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  const fetchData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [scheduleResponse, paperResponse] = await Promise.all([
         api.get<ExamSchedule[]>('/exam-schedules').catch(() => ({ data: [] })),
@@ -313,15 +322,24 @@ export default function ExamPapersPage() {
       const sortedSchedules = [...allSchedules].sort((a: any, b: any) => (Number(b.id) || 0) - (Number(a.id) || 0));
       const newestPending = sortedSchedules.find((s: any) => !hasPaper(s) && !isScheduleExpired(s));
       const defaultSchedule = newestPending || sortedSchedules[0];
+      const defaultScheduleId = String(defaultSchedule?.id || '');
+
+      _papersCache = {
+        schedules: allSchedules,
+        papers: allPapers,
+        defaultScheduleId,
+      };
 
       setFormData((previous) => ({
         ...previous,
-        examScheduleId: previous.examScheduleId || String(defaultSchedule?.id || ''),
+        examScheduleId: previous.examScheduleId || defaultScheduleId,
       }));
     } catch (error: any) {
-      setToast({ message: error.message || 'Không tải được dữ liệu đề thi.', type: 'error' });
+      if (!silent) {
+        setToast({ message: error.message || 'Không tải được dữ liệu đề thi.', type: 'error' });
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, []);
 
@@ -332,7 +350,11 @@ export default function ExamPapersPage() {
       return void router.replace('/student/exam-schedule');
     }
     setCurrentUser(user);
-    fetchData();
+    if (_papersCache) {
+      void fetchData(true);
+    } else {
+      void fetchData(false);
+    }
   }, [fetchData, router]);
 
   const handleRefresh = async () => {
@@ -749,7 +771,7 @@ export default function ExamPapersPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -765,7 +787,7 @@ export default function ExamPapersPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >

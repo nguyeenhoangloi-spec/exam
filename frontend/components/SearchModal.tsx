@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Search,
@@ -366,6 +366,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
+  const handleSelect = useCallback((href: string) => {
+    router.push(href);
+    onClose();
+  }, [router, onClose]);
+
   const userRole = (user?.role || 'ADMIN') as Role;
 
   // Filter allowed items strictly by user role
@@ -423,7 +428,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex, filteredItems, onClose]);
+  }, [isOpen, selectedIndex, filteredItems, onClose, handleSelect]);
 
   // Auto-scroll selected item into view
   useEffect(() => {
@@ -436,11 +441,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
   }, [selectedIndex]);
 
   if (!isOpen) return null;
-
-  const handleSelect = (href: string) => {
-    router.push(href);
-    onClose();
-  };
 
   return (
     <div
@@ -477,13 +477,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
             <button
               type="button"
               onClick={() => setQuery('')}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              className="flex h-7 w-7 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
               title="Xóa tìm kiếm"
             >
               <X className="h-4 w-4" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
+            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
               ESC
             </kbd>
           )}
@@ -533,7 +533,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
                         {item.title}
                       </span>
                       {item.badge && (
-                        <span className="px-1.5 py-0.5 rounded text-[10.5px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">
+                        <span className="px-1.5 py-0.5 rounded text-[12px] font-semibold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">
                           {item.badge}
                         </span>
                       )}
@@ -545,12 +545,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
 
                   {/* Category Tag & Action Indicator */}
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md text-[11.5px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md text-[12px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                       {item.category}
                     </span>
 
                     {isSelected ? (
-                      <span className="flex items-center gap-1 text-[11.5px] font-bold text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded bg-blue-100/80 dark:bg-blue-900/50">
+                      <span className="flex items-center gap-1 text-[12px] font-semibold text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded bg-blue-100/80 dark:bg-blue-900/50">
                         <span>Mở</span>
                         <CornerDownLeft className="w-3 h-3" />
                       </span>
@@ -578,20 +578,20 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         <div className="px-5 py-3 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[12.5px] text-slate-500">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[11px] font-bold">↑</kbd>
-              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[11px] font-bold">↓</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">↑</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">↓</kbd>
               <span className="text-slate-500 font-medium">Điều hướng</span>
             </span>
             <span className="text-slate-300 dark:text-slate-600">•</span>
             <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[11px] font-bold">↵</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">↵</kbd>
               <span className="text-slate-500 font-medium">Chọn</span>
             </span>
           </div>
 
           <div>
             <span className="text-slate-400 text-[12px]">
-              Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[11px] font-bold">ESC</kbd> để đóng
+              Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">ESC</kbd> để đóng
             </span>
           </div>
         </div>

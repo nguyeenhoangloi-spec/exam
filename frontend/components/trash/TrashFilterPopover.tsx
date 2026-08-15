@@ -166,7 +166,7 @@ export function TrashFilterPopover({
         onClick={() => setIsOpen(!isOpen)}
         className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
           activeFilterCount > 0
-            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
+            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-semibold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
         }`}
         title="Mở bảng điều khiển bộ lọc thùng rác"
@@ -191,7 +191,7 @@ export function TrashFilterPopover({
                 onResetAll();
               }}
               title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
-              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[10.5px] font-bold text-white shadow-2xs transition-colors cursor-pointer"
+              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[12px] font-semibold text-white shadow-2xs transition-colors cursor-pointer"
             >
               <span className="group-hover/badge:hidden">{activeFilterCount}</span>
               <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
@@ -223,10 +223,10 @@ export function TrashFilterPopover({
                   <Filter className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-none">
+                  <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-none">
                     Bộ lọc thùng rác
                   </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Lọc dữ liệu đã xóa theo phân loại & thời hạn
                   </p>
                 </div>
@@ -237,7 +237,7 @@ export function TrashFilterPopover({
                   <button
                     type="button"
                     onClick={onResetAll}
-                    className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-xl transition-colors cursor-pointer"
                     title="Xóa tất cả bộ lọc đang áp dụng"
                   >
                     <RotateCcw className="h-3 w-3" />
@@ -247,7 +247,7 @@ export function TrashFilterPopover({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="flex h-6 w-6 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -269,7 +269,7 @@ export function TrashFilterPopover({
                       onClick={() => setCurrCategoryTab(cat.id)}
                       className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
                         isActive
-                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
+                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                       }`}
                     >
@@ -279,11 +279,11 @@ export function TrashFilterPopover({
                       </div>
 
                       {cat.badge ? (
-                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white flex items-center justify-center">
+                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[12px] font-semibold text-white flex items-center justify-center">
                           {cat.badge}
                         </span>
                       ) : (
-                        <span className={`text-[10px] font-mono ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
+                        <span className={`text-[12px] font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
                           {cat.shortcut}
                         </span>
                       )}
@@ -292,9 +292,9 @@ export function TrashFilterPopover({
                 })}
 
                 <div className="pt-3 px-2">
-                  <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                  <div className="text-[12px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
                     <span>Phím:</span>
-                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-mono text-[9px] text-slate-600 dark:text-slate-400">1-3</kbd>
+                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-normal text-[12px] text-slate-600 dark:text-slate-400">1-3</kbd>
                   </div>
                 </div>
               </div>
@@ -304,7 +304,7 @@ export function TrashFilterPopover({
                 {/* ── TAB 1: LỌC NHANH (PRESETS) ── */}
                 {currCategoryTab === 'presets' && (
                   <div className="space-y-1.5">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                    <p className="text-[12px] font-semibold  tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
                       Gợi ý nhóm đã xóa phổ biến:
                     </p>
 
@@ -321,15 +321,15 @@ export function TrashFilterPopover({
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${activeCategory === 'schedules' && !expiryFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-semibold ${activeCategory === 'schedules' && !expiryFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Lịch thi đã xóa
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        <div className="text-[12px] text-slate-500 dark:text-slate-400 truncate">
                           Các ca thi và phân công phòng thi
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${
                           activeCategory === 'schedules' && !expiryFilter
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
@@ -353,15 +353,15 @@ export function TrashFilterPopover({
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${activeCategory === 'questions' && !expiryFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-semibold ${activeCategory === 'questions' && !expiryFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Câu hỏi đã xóa
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        <div className="text-[12px] text-slate-500 dark:text-slate-400 truncate">
                           Ngân hàng câu hỏi trong thùng rác
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${
                           activeCategory === 'questions' && !expiryFilter
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
@@ -384,10 +384,10 @@ export function TrashFilterPopover({
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-bold ${expiryFilter === 'expiring_soon' ? 'text-rose-700 dark:text-rose-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-xs font-semibold ${expiryFilter === 'expiring_soon' ? 'text-rose-700 dark:text-rose-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Sắp hết hạn lưu trữ (≤ 7 ngày)
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        <div className="text-[12px] text-slate-500 dark:text-slate-400 truncate">
                           Sắp bị xóa vĩnh viễn khỏi CSDL
                         </div>
                       </div>
@@ -420,15 +420,15 @@ export function TrashFilterPopover({
                         }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-bold ${activeCategory === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-xs font-semibold ${activeCategory === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.label}
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          <div className="text-[12px] text-slate-500 dark:text-slate-400 truncate">
                             {item.desc}
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${
                             activeCategory === item.key
                               ? 'bg-blue-600 text-white'
                               : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
@@ -461,10 +461,10 @@ export function TrashFilterPopover({
                         }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-bold ${expiryFilter === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-xs font-semibold ${expiryFilter === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.label}
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          <div className="text-[12px] text-slate-500 dark:text-slate-400 truncate">
                             {item.desc}
                           </div>
                         </div>
@@ -482,7 +482,7 @@ export function TrashFilterPopover({
                 <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
                   {totalFilteredCount !== undefined ? (
                     <>
-                      Khớp <strong className="font-bold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
+                      Khớp <strong className="font-semibold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
                       {stats.total > 0 && (
                         <span className="text-slate-400 dark:text-slate-500 font-normal"> / {stats.total} mục ({Math.round((totalFilteredCount / Math.max(1, stats.total)) * 100)}%)</span>
                       )}
@@ -504,7 +504,7 @@ export function TrashFilterPopover({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 <span>Xem kết quả</span>

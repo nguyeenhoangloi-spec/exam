@@ -57,7 +57,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
           </span>
         </div>
 
-        <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
           <TrendingUp className="w-3 h-3" />
           <span>Theo tiến độ</span>
         </span>
@@ -75,8 +75,8 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
             <AreaChart data={chartData} margin={{ top: 15, right: 15, left: -25, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorExams" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0.0} />
+                  <stop offset="5%" stopColor="var(--ui-primary)" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="var(--ui-primary)" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
@@ -84,21 +84,21 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
                 dataKey="label"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }}
+                tick={{ fill: 'var(--ui-text-disabled)', fontSize: 12, fontWeight: 500 }}
               />
               <YAxis
                 allowDecimals={false}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }}
+                tick={{ fill: 'var(--ui-text-disabled)', fontSize: 12, fontWeight: 500 }}
               />
               <Tooltip
-                cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+                cursor={{ stroke: 'var(--ui-border)', strokeWidth: 1, strokeDasharray: '4 4' }}
                 contentStyle={{
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
-                  backgroundColor: '#ffffff',
-                  color: '#0f172a',
+                  border: '1px solid var(--ui-border)',
+                  backgroundColor: 'var(--ui-surface)',
+                  color: 'var(--ui-text-primary)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
                   fontSize: '12.5px',
                   fontWeight: 600,
@@ -108,12 +108,12 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#2563eb"
+                stroke="var(--ui-primary)"
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorExams)"
-                dot={{ r: 3.5, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
-                activeDot={{ r: 5.5, fill: '#1d4ed8', stroke: '#ffffff', strokeWidth: 2 }}
+                dot={{ r: 3.5, fill: 'var(--ui-primary)', stroke: 'var(--ui-surface)', strokeWidth: 2 }}
+                activeDot={{ r: 5.5, fill: 'var(--ui-primary-hover)', stroke: 'var(--ui-surface)', strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>

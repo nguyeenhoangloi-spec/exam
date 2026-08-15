@@ -5,23 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Button } from '@/components/ui/Button';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
-import {
-  Clock,
-  ShieldCheck,
-  AlertCircle,
-  ArrowRight,
-  Award,
-  Trophy,
-  Lock,
-  Eye,
-  EyeOff,
-  User,
-  ArrowLeft,
-  Sparkles,
-  CheckCircle2,
-  X,
-  FileText,
-} from 'lucide-react';
+import { Eye, EyeOff, X } from 'lucide-react';
 import { Toast } from '@/components/Toast';
 
 export default function StudentExamLobbyPage() {
@@ -146,11 +130,8 @@ export default function StudentExamLobbyPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-4">
-        <div className="relative flex items-center justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/20 border-t-blue-500"></div>
-          <ShieldCheck className="w-6 h-6 text-blue-400 absolute" />
-        </div>
-        <h3 className="mt-4 text-base font-semibold text-slate-200 dark:text-slate-200">Hệ thống giám thị đang xác thực điều kiện...</h3>
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-500/20 border-t-blue-500"></div>
+        <h3 className="mt-4 text-base font-semibold text-slate-200 dark:text-slate-200">Đang kiểm tra điều kiện dự thi...</h3>
         <p className="text-xs text-slate-400 dark:text-slate-400 mt-1">Vui lòng chờ trong giây lát</p>
       </div>
     );
@@ -184,154 +165,123 @@ export default function StudentExamLobbyPage() {
       : 'Thi Trắc Nghiệm Trực Tuyến';
 
   return (
-    <div className="min-h-screen bg-slate-50/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10 px-4 sm:px-6 flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-slate-100/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10 sm:py-16 px-4 sm:px-6 flex flex-col justify-center items-center">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* ── Seamless Single White Card Architecture (Full-Bleed Header) ── */}
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl overflow-hidden">
+      {/* ── Seamless Editorial Minimalist Card ── */}
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none overflow-hidden p-6 sm:p-10 space-y-6">
 
-        {/* Full-Bleed Vivid Blue Gradient Header matching exact screenshot */}
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 p-6 sm:p-7 text-white shrink-0 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-4 min-w-0 flex-1">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
+        {/* ── Section 1: Tiêu đề & Thông số môn thi ── */}
+        <div className="space-y-3 pb-6 border-b border-slate-200/80 dark:border-slate-800">
+          <div className="flex items-center justify-between gap-4 text-xs font-semibold  tracking-wider text-blue-600 dark:text-blue-400">
+            <span>{examTypeBadgeText}</span>
+            <span>{schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức'}</span>
+          </div>
 
-              <div className="space-y-1.5 min-w-0 flex-1">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="edu-page-title text-white tracking-tight leading-snug">
-                    {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}
-                  </h1>
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
-                    <Sparkles className="w-3 h-3 text-blue-200" />
-                    {examTypeBadgeText}
-                  </span>
-                </div>
+          <h1 className="text-xl sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
+            {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}
+          </h1>
 
-                <p className="text-xs sm:text-sm font-medium text-blue-100/90">
-                  Mã môn: <IdentifierBadge tone="inverse">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</IdentifierBadge>
-                  <span className="mx-2">•</span>
-                  Kỳ thi: <strong className="text-white font-semibold">{schedule?.examPeriod?.name || examInfo?.examPeriodName || '---'}</strong>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/25 shrink-0 self-start sm:self-center text-white">
-              <Clock className="w-5 h-5 text-blue-100" />
-              <div className="text-xs font-semibold">
-                <span className="text-blue-100/80 font-medium block text-[12px] tracking-wider">Thời gian</span>
-                <span className="text-sm font-semibold text-white">{durationMinutes} phút</span>
-              </div>
-            </div>
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
+            <div>Mã môn học: <strong className="text-slate-800 dark:text-slate-200 font-semibold">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</strong></div>
+            <div>Thời gian làm bài: <strong className="text-slate-800 dark:text-slate-200 font-semibold">{durationMinutes} phút</strong></div>
           </div>
         </div>
-
-        {/* Card Body Container */}
-        <div className="p-6 sm:p-8 space-y-6">
 
         {/* Completed State */}
         {isCompleted ? (
           <div className="py-8 text-center space-y-4">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600 border border-emerald-100">
-              <Trophy className="w-6 h-6" />
-            </div>
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Bạn Đã Hoàn Thành Bài Thi Này</h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
-                Bài thi của bạn đã được nộp thành công và lưu trữ an toàn trên hệ thống máy chủ khảo thí.
-              </p>
-            </div>
-            <div className="pt-2">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
+              Bài làm đã được nộp thành công và lưu trữ trên hệ thống khảo thí.
+            </p>
+            <div className="pt-3">
               <button
                 type="button"
                 onClick={() => router.push(`/student/online-exam/${existingAttempt.id}/result`)}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition inline-flex items-center gap-2 cursor-pointer shadow-2xs"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition cursor-pointer shadow-sm active:scale-95"
               >
-                <Award className="w-4 h-4" /> Xem Kết Quả & Bảng Điểm
+                Xem kết quả bài thi
               </button>
             </div>
           </div>
         ) : (
           <div className="space-y-6">
-            {/* System Error Alert */}
+            {/* System Error / Waiting Alert */}
             {error && (
-              <div className="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-800 rounded-xl text-rose-800 dark:text-rose-100 space-y-1">
-                <div className="flex items-center gap-2 font-semibold text-xs text-rose-900 dark:text-rose-100">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>Thông báo từ hệ thống khảo thí:</span>
+              <div className="p-4 bg-rose-50/80 dark:bg-rose-950/30 border-l-4 border-rose-500 text-rose-900 dark:text-rose-100 space-y-1">
+                <div className="font-semibold text-xs text-rose-900 dark:text-rose-200">
+                  Thông báo từ hệ thống khảo thí:
                 </div>
-                <p className="text-xs font-medium pl-6 text-rose-700 dark:text-rose-200 leading-relaxed">{error}</p>
+                <p className="text-xs text-rose-700 dark:text-rose-300 font-normal leading-relaxed">{error}</p>
               </div>
             )}
 
-            {/* Section 1: Candidate & Room Information */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-                <User className="w-4 h-4 text-blue-600" />
-                <span>Thông tin Thí sinh & Phòng thi</span>
+            {/* ── Section 2: Thông tin Thí sinh & Phòng thi ── */}
+            <div className="space-y-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
+              <div className="text-[12px] font-bold  tracking-wider text-slate-400 dark:text-slate-500">
+                Thông tin Thí sinh & Phòng thi
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700">
-                <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Thí sinh</span>
-                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block truncate">{fullName}</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="space-y-1">
+                  <span className="text-[12px] text-slate-400 dark:text-slate-400 block">Thí sinh</span>
+                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 block truncate">{fullName}</span>
                 </div>
 
-                <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Mã sinh viên</span>
-                  <IdentifierBadge tone="neutral">{studentCode}</IdentifierBadge>
+                <div className="space-y-1">
+                  <span className="text-[12px] text-slate-400 dark:text-slate-400 block">Mã sinh viên</span>
+                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 block">{studentCode}</span>
                 </div>
 
-                <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Lớp & Số ghế</span>
-                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block truncate">{studentClass} • Ghế {seatNumber}</span>
+                <div className="space-y-1">
+                  <span className="text-[12px] text-slate-400 dark:text-slate-400 block">Lớp & Số ghế</span>
+                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 block truncate">{studentClass} — Ghế {seatNumber}</span>
                 </div>
 
-                <div className="space-y-0.5">
-                  <span className="text-[12px] font-medium text-slate-400 dark:text-slate-400 tracking-wider block">Phòng & Ca thi</span>
-                  <span className="text-xs font-semibold text-blue-600 block truncate">{roomName} ({building})</span>
-                  <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400 block">{timeSlotStr}</span>
+                <div className="space-y-1">
+                  <span className="text-[12px] text-slate-400 dark:text-slate-400 block">Phòng & Ca thi</span>
+                  <span className="text-xs font-bold text-blue-600 dark:text-blue-400 block truncate">{roomName} ({building})</span>
+                  <span className="text-[12px] text-slate-400 dark:text-slate-500 block">{timeSlotStr}</span>
                 </div>
               </div>
             </div>
 
-            {/* Section 2: Monitoring Rules */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-                <ShieldCheck className="w-4 h-4 text-blue-600" />
-                <span>Quy chế & Giám sát an toàn thi</span>
+            {/* ── Section 3: Quy chế & Giám sát an toàn thi ── */}
+            <div className="space-y-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
+              <div className="text-[12px] font-bold  tracking-wider text-slate-400 dark:text-slate-500">
+                Quy chế & Giám sát an toàn
               </div>
 
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Tự động lưu câu trả lời:</strong> Mỗi đáp án bạn chọn sẽ được hệ thống lưu tức thì về máy chủ khảo thí.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Chế độ toàn màn hình:</strong> Trình duyệt sẽ tự động chuyển sang chế độ Fullscreen ngay khi làm bài.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Giám sát chuyển tab:</strong> Mọi hành vi chuyển tab hoặc mở ứng dụng ngoài sẽ bị ghi nhật ký giám thị.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong>Tự động khóa bài:</strong> Vi phạm quá {config?.maxAllowedViolations || 5} lần sẽ tự động khóa và nộp bài thi.</span>
-                </li>
-              </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600 dark:text-slate-300">
+                <div className="space-y-0.5">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 block">01. Tự động lưu đáp án</span>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Hệ thống tự động lưu câu trả lời tức thì về máy chủ khảo thí.</p>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 block">02. Chế độ toàn màn hình</span>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Trình duyệt tự động mở toàn màn hình trong suốt thời gian thi.</p>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 block">03. Giám sát chuyển tab</span>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Hành vi chuyển tab hoặc mở ứng dụng ngoài đều bị ghi nhận.</p>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 block">04. Tự động nộp bài</span>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Hệ thống tự khóa và nộp bài khi hết giờ hoặc vi phạm quá {config?.maxAllowedViolations || 5} lần.</p>
+                </div>
+              </div>
             </div>
 
-            {/* Section 3: Commitment & Submit */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
+            {/* ── Section 4: Cam kết & Bắt đầu làm bài ── */}
+            <div className="space-y-5 pt-1">
               {config?.requireRulesAcceptance !== false && (
-              <label className="flex items-start gap-3 text-[15px] font-medium text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                <label className="flex items-start gap-3 text-[15px] font-medium text-slate-700 dark:text-slate-300 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={rulesAccepted}
                     onChange={(event) => setRulesAccepted(event.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-0 cursor-pointer"
+                    className="mt-0.5 h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
                   />
                   <span className="leading-relaxed">
                     Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
@@ -360,7 +310,6 @@ export default function StudentExamLobbyPage() {
                     (config?.requireRulesAcceptance !== false && !rulesAccepted)
                   }
                   isLoading={starting}
-                  rightIcon={!starting ? <ArrowRight className="w-4 h-4" /> : undefined}
                 >
                   {starting ? 'Đang khởi tạo bài thi...' : 'Bắt đầu Làm bài thi'}
                 </Button>
@@ -368,7 +317,6 @@ export default function StudentExamLobbyPage() {
             </div>
           </div>
         )}
-        </div>
       </div>
 
       {/* Password Modal */}
@@ -384,43 +332,30 @@ export default function StudentExamLobbyPage() {
             className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-700"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Gradient Blue Header matching exact design system standard */}
-            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 p-5 text-white shrink-0 shadow-xs">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
-                    <Lock className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1 pr-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-[18px] font-semibold leading-snug text-white line-clamp-1">
-                        Nhập Mật Khẩu Phòng Thi
-                      </h3>
-                      <span className="text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30">
-                        Xác thực
-                      </span>
-                    </div>
-                    <p className="text-[13px] font-medium text-blue-100/90 mt-1 line-clamp-1">
-                      Xác thực quyền truy cập trước khi làm bài thi trực tuyến
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setShowPasswordModal(false)}
-                  className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
-                  title="Đóng"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+            {/* Clean Header matching design system standard */}
+            <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                  Xác thực Mật khẩu Phòng Thi
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Nhập mật khẩu do giám thị công bố để bắt đầu làm bài
+                </p>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setShowPasswordModal(false)}
+                className="shrink-0 rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 transition cursor-pointer"
+                title="Đóng"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
 
             {/* Content Body */}
             <div className="p-6 space-y-4">
-              <div className="flex items-center gap-2 text-rose-600 text-xs font-medium">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+              <div className="text-rose-600 text-xs font-medium">
                 <span>{error || 'Kỳ thi chính thức yêu cầu nhập mật khẩu thi trước khi vào thi'}</span>
               </div>
 
