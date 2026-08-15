@@ -12,7 +12,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
-import { Search, X, Calendar, Clock, DoorOpen, GraduationCap, ShieldCheck, Trash2 } from 'lucide-react';
+import { Search, X, Calendar, Clock, DoorOpen, GraduationCap, ShieldCheck, Trash2, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 
 import { ExamSupervisorHeader } from '../../components/exam-supervisors/ExamSupervisorHeader';
 import { ExamSupervisorKPICards } from '../../components/exam-supervisors/ExamSupervisorKPICards';
@@ -20,8 +20,8 @@ import { ExamSupervisorFilterPopover } from '../../components/exam-supervisors/E
 import { ExamSupervisorTableToolbar } from '../../components/exam-supervisors/ExamSupervisorTableToolbar';
 import { ExamSupervisorTable } from '../../components/exam-supervisors/ExamSupervisorTable';
 import { ExamSupervisorPaginationBar } from '../../components/exam-supervisors/ExamSupervisorPaginationBar';
-import { CreateAssignmentModal } from '../../components/exam-supervisors/CreateAssignmentModal';
-import { AutoProposalModal } from '../../components/exam-supervisors/AutoProposalModal';
+import { InlineCreateAssignmentPanel } from '../../components/exam-supervisors/InlineCreateAssignmentPanel';
+import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
 
 export default function ExamSupervisorsPage() {
@@ -60,10 +60,9 @@ export default function ExamSupervisorsPage() {
 
   const [selected, setSelected] = useState<number[]>([]);
 
-  // Modals
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  // Inline Panels (In-Place Expandable Panels instead of heavy Popups)
+  const [activeInlinePanel, setActiveInlinePanel] = useState<'create' | 'auto' | null>(null);
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
-  const [showAutoProposalModal, setShowAutoProposalModal] = useState(false);
   const [autoProposal, setAutoProposal] = useState<any | null>(null);
   const [autoLoading, setAutoLoading] = useState(false);
 
@@ -115,6 +114,7 @@ export default function ExamSupervisorsPage() {
         setSelectedScheduleRoomId('ALL');
         setSelected([]);
         setPage(1);
+        setActiveInlinePanel(null);
         await fetchSupervisors(scheduleId);
       } catch (err: any) {
         setToast({ message: err.message || 'Lỗi tải chi tiết ca thi', type: 'error' });
@@ -263,6 +263,7 @@ export default function ExamSupervisorsPage() {
 
       await Promise.all(promises);
       setToast({ message: 'Phân công giám thị cho phòng thi thành công!', type: 'success' });
+      setActiveInlinePanel(null);
       if (selectedSchedule?.id) {
         await fetchSupervisors(selectedSchedule.id);
       }
@@ -319,13 +320,19 @@ export default function ExamSupervisorsPage() {
   // Auto Assign Preview
   const previewAutoAssign = async () => {
     if (!selectedSchedule?.id) return;
+    if (activeInlinePanel === 'auto') {
+      setActiveInlinePanel(null);
+      return;
+    }
+
+    setActiveInlinePanel('auto');
     setAutoLoading(true);
     try {
       const res = await api.post('/exam-supervisors/auto-preview', { examScheduleId: selectedSchedule.id });
       setAutoProposal(res.data);
-      setShowAutoProposalModal(true);
     } catch (err: any) {
       setToast({ message: err.message || 'Không thể tạo phương án tự động', type: 'error' });
+      setActiveInlinePanel(null);
     } finally {
       setAutoLoading(false);
     }
@@ -333,36 +340,44 @@ export default function ExamSupervisorsPage() {
 
   // Auto Assign Accept
   const acceptAutoAssign = async (customProposals: { examScheduleRoomId: number; teacherId: number; role: string }[]) => {
-    if (!customProposals?.length) return;
+    if (!customProposals?.length) {
+      setToast({ message: 'Không có phân công nào để lưu.', type: 'error' });
+      return;
+    }
     setAutoLoading(true);
     try {
       await api.post('/exam-supervisors/auto-assign', { proposals: customProposals });
-      setShowAutoProposalModal(false);
-      setAutoProposal(null);
-      setToast({ message: `Đã lưu thành công ${customProposals.length} lượt phân công!`, type: 'success' });
+      setToast({ message: 'Đã lưu phương án phân công tự động thành công!', type: 'success' });
+      setActiveInlinePanel(null);
       if (selectedSchedule?.id) {
         await fetchSupervisors(selectedSchedule.id);
       }
     } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi khi lưu phương án phân công', type: 'error' });
+      setToast({ message: err?.response?.data?.message || err.message || 'Lỗi khi lưu phân công tự động', type: 'error' });
     } finally {
       setAutoLoading(false);
     }
   };
 
   // Export Excel
-  const handleExportExcel = () => {
-    exportToFormattedExcel({
-      filename: `Phan_Cong_Giam_Thi_${selectedSchedule?.subject?.subjectCode || 'CaThi'}`,
-      title: 'BẢNG PHÂN CÔNG CÁN BỘ COI THI',
-      subtitle: `Môn: ${selectedSchedule?.subject?.subjectName || ''} - Ngày thi: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : ''}`,
+  const handleExportExcel = async () => {
+    if (!filteredSupervisors.length) {
+      setToast({ message: 'Không có dữ liệu phân công để xuất.', type: 'error' });
+      return;
+    }
+
+    await exportToFormattedExcel({
+      filename: `Phan_Cong_Giam_Thi_${selectedSchedule?.subject?.subjectCode || 'CaThi'}_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      title: 'DANH SÁCH PHÂN CÔNG CÁN BỘ COI THI',
+      subtitle: `Ca thi: ${selectedSchedule?.subject?.subjectName || ''} (${selectedSchedule?.subject?.subjectCode || ''}) - Ngày thi: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'} - Khung giờ: ${selectedSchedule?.startTime || ''} - ${selectedSchedule?.endTime || ''}`,
       columns: [
-        { header: 'Mã GV', width: 15 },
-        { header: 'Họ và tên', width: 30 },
-        { header: 'Học vị', width: 15 },
-        { header: 'Phòng thi', width: 20 },
-        { header: 'Vai trò', width: 20 },
-        { header: 'Trạng thái', width: 20 },
+        { header: 'Mã Cán Bộ', width: 14 },
+        { header: 'Họ và Tên Giảng Viên', width: 26 },
+        { header: 'Học Vị', width: 12 },
+        { header: 'Phòng Thi', width: 18 },
+        { header: 'Nhiệm Vụ', width: 18 },
+        { header: 'Trạng Thái Xác Nhận', width: 20 },
+        { header: 'Ghi Chú', width: 24 },
       ],
       rows: filteredSupervisors.map((s) => {
         const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
@@ -373,8 +388,9 @@ export default function ExamSupervisorsPage() {
           s.teacher?.fullName || '',
           s.teacher?.degree || 'TS',
           rName,
-          s.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+          s.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2 (Phụ)',
           statusLabel,
+          s.note || '',
         ];
       }),
     });
@@ -382,23 +398,21 @@ export default function ExamSupervisorsPage() {
 
   // Print Report
   const handlePrintReport = () => {
+    if (!filteredSupervisors.length) {
+      setToast({ message: 'Không có dữ liệu phân công để in.', type: 'error' });
+      return;
+    }
+
     printReport({
-      title: 'BÁO CÁO PHÂN CÔNG GIÁM THỊ VÀ TRẠNG THÁI GÁC THI',
-      subtitle: selectedSchedule
-        ? `Môn thi: ${selectedSchedule.subject?.subjectName} (${selectedSchedule.subject?.subjectCode}) - Ngày thi: ${new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}`
-        : 'Tổng hợp phân công giám thị',
-      metaInfo: [
-        { label: 'Tổng số lượt phân công', value: String(filteredSupervisors.length) },
-        { label: 'Đã xác nhận', value: String(confirmedCount) },
-        { label: 'Yêu cầu đổi ca', value: String(changeRequestedCount) },
-      ],
+      title: 'BÁO CÁO PHÂN CÔNG CÁN BỘ COI THI',
+      subtitle: `Môn: ${selectedSchedule?.subject?.subjectName || ''} (${selectedSchedule?.subject?.subjectCode || ''}) | Ngày: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'} | Giờ: ${selectedSchedule?.startTime} - ${selectedSchedule?.endTime}`,
       columns: [
-        { header: 'Mã GV', width: '80px', align: 'center' },
-        { header: 'Họ và tên', width: '180px' },
-        { header: 'Học vị', width: '80px', align: 'center' },
-        { header: 'Phòng thi', width: '120px', align: 'center' },
-        { header: 'Vai trò', width: '100px', align: 'center' },
-        { header: 'Trạng thái', width: '110px', align: 'center' },
+        { header: 'Mã Cán Bộ', width: '15%' },
+        { header: 'Họ và Tên', width: '25%' },
+        { header: 'Học Vị', width: '15%' },
+        { header: 'Phòng Thi', width: '20%' },
+        { header: 'Vai Trò', width: '15%' },
+        { header: 'Trạng Thái', width: '10%' },
       ],
       rows: filteredSupervisors.map((s) => {
         const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
@@ -431,16 +445,6 @@ export default function ExamSupervisorsPage() {
         onClose={() => setConfirmModal((p) => ({ ...p, isOpen: false }))}
       />
 
-      {/* Create Assignment Modal */}
-      <CreateAssignmentModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSubmit={handleCreateAssignment}
-        rooms={currentRooms}
-        teachers={teachers}
-        defaultRoomId={selectedScheduleRoomId}
-      />
-
       {/* Schedule Picker Modal */}
       <SchedulePickerModal
         isOpen={showSchedulePicker}
@@ -448,17 +452,6 @@ export default function ExamSupervisorsPage() {
         schedules={schedules}
         selectedScheduleId={String(selectedSchedule?.id || '')}
         onSelectSchedule={selectSchedule}
-      />
-
-      {/* Auto Proposal Modal */}
-      <AutoProposalModal
-        isOpen={showAutoProposalModal}
-        onClose={() => setShowAutoProposalModal(false)}
-        autoProposal={autoProposal}
-        teachers={teachers}
-        rooms={currentRooms}
-        onAccept={acceptAutoAssign}
-        loading={autoLoading}
       />
 
       {/* Supervisor Profile Drawer */}
@@ -500,12 +493,8 @@ export default function ExamSupervisorsPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/50 min-h-screen">
         {/* ── 1. Page Header ── */}
         <ExamSupervisorHeader
-          onAdd={() => setShowCreateModal(true)}
-          onAutoAssign={previewAutoAssign}
           onExport={handleExportExcel}
           onPrint={handlePrintReport}
-          isAdmin={currentUser?.role === 'ADMIN'}
-          autoLoading={autoLoading}
         />
 
         {/* ── 2. Standard 4 KPI Cards ── */}
@@ -517,80 +506,157 @@ export default function ExamSupervisorsPage() {
           totalRooms={currentRooms.length}
         />
 
-        {/* ── 3. Active Schedule Shift Banner & Room Selector ── */}
-        <div className="rounded-2xl border border-blue-200/80 dark:border-blue-900/50 bg-gradient-to-r from-blue-50/90 via-slate-50/70 to-blue-50/40 dark:from-blue-950/40 dark:via-slate-900 dark:to-blue-950/20 p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/20">
-              <GraduationCap className="h-6 w-6 stroke-[2]" />
-            </div>
-
-            <div className="space-y-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-600 text-white tracking-wide uppercase">
-                  {selectedSchedule?.type || 'CHÍNH THỨC'}
-                </span>
-                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate">
-                  {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
-                </h3>
-                <span className="text-xs font-mono font-semibold text-slate-500 bg-white dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
-                  {selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
-                </span>
+        {/* ── 3. Active Schedule Shift Banner & Inline Action Panels ── */}
+        <div>
+          {/* Shift Controls Row */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 py-0.5">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+                <GraduationCap className="h-5 w-5 stroke-[2]" />
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-slate-400" />
-                  {selectedSchedule?.startTime} - {selectedSchedule?.endTime}
-                </span>
-                {selectedSchedule?.examDate && (
-                  <>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                      {new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}
-                    </span>
-                  </>
-                )}
-                <span>•</span>
-                <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
-                  {currentRooms.length} phòng thi
-                </span>
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-blue-600 text-white tracking-wide uppercase">
+                    {selectedSchedule?.type || 'CHÍNH THỨC'}
+                  </span>
+                  <h3 className="text-[15px] font-bold text-slate-900 dark:text-slate-100 truncate">
+                    {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
+                  </h3>
+                  <span className="text-xs font-mono font-medium text-slate-400">
+                    #{selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5 text-slate-400" />
+                    {selectedSchedule?.startTime} - {selectedSchedule?.endTime}
+                  </span>
+                  {selectedSchedule?.examDate && (
+                    <>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                        {new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}
+                      </span>
+                    </>
+                  )}
+                  <span>•</span>
+                  <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
+                    <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
+                    {currentRooms.length} phòng thi
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <div className="w-40 sm:w-48">
+                <FilterSelect
+                  containerClassName="w-full"
+                  value={selectedScheduleRoomId}
+                  onChange={(e) => {
+                    setSelectedScheduleRoomId(e.target.value);
+                    setPage(1);
+                  }}
+                  options={[
+                    { value: 'ALL', label: 'Tất cả phòng thi' },
+                    ...currentRooms.map((r: any) => {
+                      const roomObj = r.room || r.examRoom;
+                      const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${r.id}`;
+                      return {
+                        value: String(r.id),
+                        label: `Phòng: ${rName}`,
+                      };
+                    }),
+                  ]}
+                />
+              </div>
+
+              {/* Nút 1: Đổi Ca (Ghost / Borderless nhẹ nhàng, không viền) */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="md"
+                onClick={() => setShowSchedulePicker(true)}
+              >
+                Đổi Ca
+              </Button>
+
+              {currentUser?.role === 'ADMIN' && (
+                <>
+                  {/* Nút 2: Tự Động (Soft Tint Pill) */}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="md"
+                    onClick={previewAutoAssign}
+                    className={
+                      activeInlinePanel === 'auto'
+                        ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80'
+                    }
+                  >
+                    Tự Động
+                  </Button>
+
+                  {/* Nút 3: Phân Công (Primary Solid Blue - Nút đậm duy nhất) */}
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="md"
+                    onClick={() => setActiveInlinePanel((p) => (p === 'create' ? null : 'create'))}
+                  >
+                    Phân Công
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Inline Expandable Panels Container */}
+          <div
+            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+              activeInlinePanel === 'create'
+                ? 'grid-rows-[1fr] opacity-100'
+                : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+            }`}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <div className="pt-2.5">
+                <InlineCreateAssignmentPanel
+                  isOpen={activeInlinePanel === 'create'}
+                  onClose={() => setActiveInlinePanel(null)}
+                  onSubmit={handleCreateAssignment}
+                  rooms={currentRooms}
+                  teachers={teachers}
+                  defaultRoomId={selectedScheduleRoomId}
+                />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-48 sm:w-56">
-              <FilterSelect
-                containerClassName="w-full"
-                value={selectedScheduleRoomId}
-                onChange={(e) => {
-                  setSelectedScheduleRoomId(e.target.value);
-                  setPage(1);
-                }}
-                options={[
-                  { value: 'ALL', label: 'Tất cả phòng thi' },
-                  ...currentRooms.map((r: any) => {
-                    const roomObj = r.room || r.examRoom;
-                    const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${r.id}`;
-                    return {
-                      value: String(r.id),
-                      label: `Phòng: ${rName}`,
-                    };
-                  }),
-                ]}
-              />
+          <div
+            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+              activeInlinePanel === 'auto'
+                ? 'grid-rows-[1fr] opacity-100'
+                : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+            }`}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <div className="pt-2.5">
+                <InlineAutoProposalPanel
+                  isOpen={activeInlinePanel === 'auto'}
+                  onClose={() => setActiveInlinePanel(null)}
+                  autoProposal={autoProposal}
+                  teachers={teachers}
+                  rooms={currentRooms}
+                  onAccept={acceptAutoAssign}
+                  loading={autoLoading}
+                />
+              </div>
             </div>
-
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setShowSchedulePicker(true)}
-            >
-              Đổi Ca Thi
-            </Button>
           </div>
         </div>
 
@@ -651,8 +717,6 @@ export default function ExamSupervisorsPage() {
                 setDegreeFilter(val);
                 setPage(1);
               }}
-              supervisors={allScheduleSupervisors}
-              totalFilteredCount={filteredSupervisors.length}
               onResetAll={() => {
                 setStatusFilter('ALL');
                 setRoleFilter('');
@@ -662,19 +726,19 @@ export default function ExamSupervisorsPage() {
             />
           </div>
 
-          {/* Right: Table Action Controls */}
-          <div className="shrink-0">
+          {/* Right: Table Toolbar Controls */}
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <ExamSupervisorTableToolbar
               totalCount={filteredSupervisors.length}
               sortOrder={sortOrder}
-              onSortChange={setSortOrder}
+              onSortChange={(val) => setSortOrder(val)}
               viewMode={viewMode}
-              onViewModeChange={setViewMode}
+              onViewModeChange={(m) => setViewMode(m)}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
-              onRefresh={() => {
+              onRefresh={async () => {
                 if (selectedSchedule?.id) {
-                  void fetchSupervisors(selectedSchedule.id);
+                  await fetchSupervisors(selectedSchedule.id);
                 }
               }}
               loading={loading}
