@@ -11,11 +11,16 @@ import { verifyUploadSignature } from './common/security/file-signing';
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function rateLimit(req: express.Request, res: express.Response, next: express.NextFunction) {
+  // In development, do not rate-limit requests so testing and fast page reloads never get blocked
+  if (process.env.NODE_ENV !== 'production') {
+    return next();
+  }
+
   const now = Date.now();
   const ip = String(req.ip || req.headers['x-forwarded-for'] || 'unknown').split(',')[0].trim();
-  const isAuthSensitive = /^\/auth\/(login|google|refresh|logout)/.test(req.path) || req.path === '/contact/send';
+  const isAuthSensitive = /^\/auth\/(login|google)/.test(req.path) || req.path === '/contact/send';
   const windowMs = isAuthSensitive ? 15 * 60 * 1000 : 60 * 1000;
-  const max = isAuthSensitive ? 30 : 300;
+  const max = isAuthSensitive ? 100 : 600;
   const key = `${isAuthSensitive ? 'sensitive' : 'api'}:${ip}`;
   const current = rateBuckets.get(key);
   const bucket = !current || current.resetAt <= now
@@ -29,7 +34,7 @@ function rateLimit(req: express.Request, res: express.Response, next: express.Ne
     return res.status(429).json({ statusCode: 429, message: 'Quá nhiều yêu cầu. Vui lòng thử lại sau.' });
   }
 
-  // Prevent unbounded growth in a single-process development instance.
+  // Prevent unbounded growth in a single-process instance.
   if (rateBuckets.size > 10000) {
     for (const [bucketKey, value] of rateBuckets) {
       if (value.resetAt <= now) rateBuckets.delete(bucketKey);
@@ -99,12 +104,13 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      forbidNonWhitelisted: true,
+      transformOptions: { enableImplicitConversion: true },
+      forbidNonWhitelisted: false,
     }),
   );
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log(`Backend Application is running on: http://localhost:${port}`);
+  console.log(`Backend server running on http://localhost:${port}`);
 }
 bootstrap();

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -115,8 +116,13 @@ export default function ExamArrangementPage() {
    roomName: true,
    seatNumber: true,
  });
- const [filterRoomCode, setFilterRoomCode] = useState<string>('ALL');
- const [showSchedulePicker, setShowSchedulePicker] = useState(false);
+  const [filterRoomCode, setFilterRoomCode] = useState<string>('ALL');
+  const [showSchedulePicker, setShowSchedulePicker] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
  const [confirmModal, setConfirmModal] = useState<{
@@ -666,7 +672,7 @@ export default function ExamArrangementPage() {
 
  <form onSubmit={runPreview} className="space-y-4">
  <div>
- <label className="block text-[15px] font-medium text-slate-500 mb-1.5">Ca thi Cần Xếp phòng</label>
+ <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ca thi Cần Xếp phòng</label>
 
  {/* Custom popup trigger */}
  <button
@@ -684,11 +690,10 @@ export default function ExamArrangementPage() {
  </button>
 
  {/* Modal popup */}
- {showSchedulePicker && (
- <>
- <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" onClick={() => setShowSchedulePicker(false)} />
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
- <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
+ {showSchedulePicker && mounted && createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setShowSchedulePicker(false)} />
+      <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
 
  {/* Header */}
  <div className="flex items-center justify-between px-6 py-4 bg-primary-600 text-white">
@@ -843,8 +848,8 @@ export default function ExamArrangementPage() {
  </Button>
  </div>
  </div>
- </div>
- </>
+ </div>,
+ document.body
  )}
 
  {(() => {
@@ -884,10 +889,10 @@ export default function ExamArrangementPage() {
 
  <div>
  <div className="flex items-center justify-between mb-2">
- <label className="block text-[15px] font-medium text-slate-500">Phòng thi Khả dụng (Thời gian thực)</label>
- <button type="button" onClick={selectAvailableOnly} className="text-[13px] font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer">
- Chọn phòng trống ({availableCount})
- </button>
+ <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">Phòng thi khả dụng</label>
+  <button type="button" onClick={selectAvailableOnly} className="shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer whitespace-nowrap">
+  Chọn tất cả trống ({availableCount})
+  </button>
  </div>
 
  <div className="max-h-[380px] overflow-y-auto space-y-1.5 pr-1 no-scrollbar">
