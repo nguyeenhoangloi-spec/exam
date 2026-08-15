@@ -119,7 +119,7 @@ export function ExamScheduleFilterPopover({
     const popoverWidth = Math.min(480, vw - margin * 2);
     const spaceBelow = vh - rect.bottom - margin;
     const spaceAbove = rect.top - margin;
-    const preferUpward = spaceBelow < 370 && spaceAbove > spaceBelow;
+    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
 
     let top: number;
     let availableMaxHeight: number;
@@ -177,23 +177,6 @@ export function ExamScheduleFilterPopover({
     };
   }, [isOpen, updatePosition]);
 
-  // ── Khóa cuộn trang nền khi mở popup CÓ BÙ TRỪ THANH CUỘN (Triệt tiêu 100% hiện tượng đẩy khung/giật màn hình) ──
-  useEffect(() => {
-    if (!isOpen) return;
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = document.body.style.overflow;
-    const prevPaddingRight = document.body.style.paddingRight;
-
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPaddingRight;
-    };
-  }, [isOpen]);
 
   // Đóng popover khi click ra ngoài
   useEffect(() => {

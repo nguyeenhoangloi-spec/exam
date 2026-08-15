@@ -97,7 +97,7 @@ export function QuestionBankFilterPopover({
     const popoverWidth = Math.min(500, vw - margin * 2);
     const spaceBelow = vh - rect.bottom - margin;
     const spaceAbove = rect.top - margin;
-    const preferUpward = spaceBelow < 370 && spaceAbove > spaceBelow;
+    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
 
     let top: number;
     let availableMaxHeight: number;
@@ -153,23 +153,6 @@ export function QuestionBankFilterPopover({
     };
   }, [isOpen, updatePosition]);
 
-  // Khóa cuộn trang nền có bù trừ thanh cuộn (0 layout shift)
-  useEffect(() => {
-    if (!isOpen) return;
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = document.body.style.overflow;
-    const prevPaddingRight = document.body.style.paddingRight;
-
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPaddingRight;
-    };
-  }, [isOpen]);
 
   // Đóng popover khi click ra ngoài
   useEffect(() => {

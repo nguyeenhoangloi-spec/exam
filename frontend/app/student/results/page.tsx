@@ -13,6 +13,7 @@ import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
+import { TabBar } from '../../../components/ui/TabBar';
 import { StudentResultFilterPopover } from '../../../components/student-results/StudentResultFilterPopover';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { downloadCsv } from '../../../lib/export-csv';
@@ -443,6 +444,23 @@ export default function StudentResultsPage() {
 
   const passRate = stats.totalExams > 0 ? Math.round((stats.passedCount / stats.totalExams) * 100) : 0;
 
+  const statusCounts = useMemo(() => {
+    let all = results.length;
+    let passed = 0;
+    let failed = 0;
+    let grading = 0;
+    let unpublished = 0;
+
+    results.forEach((r) => {
+      if (r.status === 'PASSED') passed++;
+      else if (r.status === 'FAILED') failed++;
+      else if (r.status === 'GRADING') grading++;
+      else unpublished++;
+    });
+
+    return { all, passed, failed, grading, unpublished };
+  }, [results]);
+
   // 4 KPI Cards
   const KPI_CARDS = [
     {
@@ -701,7 +719,7 @@ export default function StudentResultsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -756,89 +774,95 @@ export default function StudentResultsPage() {
           </div>
 
           {/* Right: Table Action Controls */}
-          <div className="shrink-0">
-            <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                  Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> kết quả thi
-                </span>
-              </div>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* Sort */}
+            <SortDropdown
+              value={sortOrder}
+              onChange={(val) => setSortOrder(val)}
+              options={[
+                { value: 'date_desc', label: 'Ngày thi: Mới nhất' },
+                { value: 'date_asc', label: 'Ngày thi: Cũ nhất' },
+                { value: 'score_desc', label: 'Điểm số: Cao nhất' },
+                { value: 'score_asc', label: 'Điểm số: Thấp nhất' },
+                { value: 'code_asc', label: 'Mã môn: A - Z' },
+                { value: 'name_asc', label: 'Tên môn: A - Z' },
+              ]}
+            />
 
-              <div className="flex items-center gap-2">
-                {/* Sort */}
-                <SortDropdown
-                  value={sortOrder}
-                  onChange={(val) => setSortOrder(val)}
-                  options={[
-                    { value: 'date_desc', label: 'Ngày thi: Mới nhất' },
-                    { value: 'date_asc', label: 'Ngày thi: Cũ nhất' },
-                    { value: 'score_desc', label: 'Điểm số: Cao nhất' },
-                    { value: 'score_asc', label: 'Điểm số: Thấp nhất' },
-                    { value: 'code_asc', label: 'Mã môn: A - Z' },
-                    { value: 'name_asc', label: 'Tên môn: A - Z' },
-                  ]}
-                />
+            {/* Column Selector */}
+            <ColumnToggleDropdown
+              columns={columnsList}
+              visibleColumns={visibleColumns}
+              onToggle={handleColumnToggle}
+            />
 
-                {/* Column Selector */}
-                <ColumnToggleDropdown
-                  columns={columnsList}
-                  visibleColumns={visibleColumns}
-                  onToggle={handleColumnToggle}
-                />
-
-                {/* View Mode Pills */}
-                <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('list')}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                      viewMode === 'list'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                    title="Dạng danh sách"
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('grid')}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                      viewMode === 'grid'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                    title="Dạng thẻ"
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('compact')}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                      viewMode === 'compact'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                    title="Dạng thu gọn"
-                  >
-                    <Layers className="h-4 w-4" />
-                  </button>
-                </div>
-
-                {/* Refresh Button */}
-                <button
-                  type="button"
-                  onClick={handleRefresh}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-                  title="Làm mới dữ liệu"
-                >
-                  <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-                </button>
-              </div>
+            {/* View Mode Pills */}
+            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'list'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng danh sách"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng thẻ"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('compact')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'compact'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng thu gọn"
+              >
+                <Layers className="h-4 w-4" />
+              </button>
             </div>
+
+            {/* Refresh Button */}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+              title="Làm mới dữ liệu"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+            </button>
           </div>
         </div>
+
+        {/* ── 4. Status TabBar ── */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả kết quả', count: statusCounts.all },
+            { key: 'PASSED', label: 'Đạt', count: statusCounts.passed },
+            { key: 'FAILED', label: 'Chưa đạt', count: statusCounts.failed },
+            { key: 'GRADING', label: 'Đang chấm', count: statusCounts.grading },
+            ...(statusCounts.unpublished > 0 ? [{ key: 'UNPUBLISHED', label: 'Chờ công bố', count: statusCounts.unpublished }] : []),
+          ]}
+          active={filterStatus}
+          onChange={(key) => {
+            setFilterStatus(key);
+            setPage(1);
+          }}
+        />
 
   {/* ── 5. Standard Content (List / Grid / Compact) ── */}
   {loading ? (

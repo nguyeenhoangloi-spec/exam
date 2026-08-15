@@ -82,7 +82,7 @@ export function BackupFilterPopover({
     const popoverWidth = Math.min(500, vw - margin * 2);
     const spaceBelow = vh - rect.bottom - margin;
     const spaceAbove = rect.top - margin;
-    const preferUpward = spaceBelow < 370 && spaceAbove > spaceBelow;
+    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
 
     let top: number;
     let availableMaxHeight: number;

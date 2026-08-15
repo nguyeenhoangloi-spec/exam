@@ -137,23 +137,6 @@ export function ExamReportFilterPopover({
     };
   }, [isOpen, updatePosition]);
 
-  // Khóa cuộn trang nền có bù trừ thanh cuộn (0 layout shift)
-  useEffect(() => {
-    if (!isOpen) return;
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = document.body.style.overflow;
-    const prevPaddingRight = document.body.style.paddingRight;
-
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPaddingRight;
-    };
-  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

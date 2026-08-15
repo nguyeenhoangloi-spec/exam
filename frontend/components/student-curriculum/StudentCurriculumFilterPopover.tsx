@@ -10,10 +10,10 @@ import {
   Check,
   Zap,
   Filter,
-  Layers,
+  CheckCheck,
   BookOpen,
+  Layers,
   CheckCircle2,
-  Clock,
 } from 'lucide-react';
 
 interface StudentCurriculumFilterPopoverProps {
@@ -23,7 +23,7 @@ interface StudentCurriculumFilterPopoverProps {
   onFilterTypeChange: (val: string) => void;
   filterStatus: string;
   onFilterStatusChange: (val: string) => void;
-  semesters: number[];
+  semesters: (string | number)[];
   curriculumList?: any[];
   totalFilteredCount?: number;
   onResetAll: () => void;
@@ -62,14 +62,20 @@ export function StudentCurriculumFilterPopover({
     let completed = 0;
     let incomplete = 0;
 
+    const semesterCounts: Record<string, number> = {};
+
     curriculumList.forEach((c) => {
       if (c.type === 'MANDATORY') mandatory++;
       if (c.type === 'ELECTIVE') elective++;
       if (c.isCompleted) completed++;
       else incomplete++;
+
+      if (c.semester) {
+        semesterCounts[c.semester] = (semesterCounts[c.semester] || 0) + 1;
+      }
     });
 
-    return { all, mandatory, elective, completed, incomplete };
+    return { all, mandatory, elective, completed, incomplete, semesterCounts };
   }, [curriculumList]);
 
   const activeFilterCount = [
@@ -85,136 +91,178 @@ export function StudentCurriculumFilterPopover({
     const vh = window.innerHeight;
     const margin = 12;
 
-    const width = Math.min(680, vw - margin * 2);
-    let left = rect.left;
-    if (left + width > vw - margin) {
-      left = vw - margin - width;
-    }
-    left = Math.max(margin, left);
-
+    const popoverWidth = Math.min(500, vw - margin * 2);
     const spaceBelow = vh - rect.bottom - margin;
     const spaceAbove = rect.top - margin;
-    const maxHeight = Math.min(520, Math.max(spaceBelow, spaceAbove, 300) - 20);
+    const preferUpward = spaceBelow < 260 && spaceAbove > spaceBelow;
 
     let top: number;
-    if (spaceBelow >= 360 || spaceBelow >= spaceAbove) {
-      top = rect.bottom + 8;
+    let availableMaxHeight: number;
+
+    if (preferUpward) {
+      availableMaxHeight = Math.min(460, spaceAbove - 8);
+      top = Math.max(margin, rect.top - availableMaxHeight - 8);
     } else {
-      top = rect.top - 8 - maxHeight;
+      top = rect.bottom + 8;
+      availableMaxHeight = Math.min(460, spaceBelow - 8);
+    }
+
+    let left = rect.left;
+    if (left + popoverWidth > vw - margin) {
+      left = Math.max(margin, vw - popoverWidth - margin);
+    }
+    if (left < margin) {
+      left = margin;
     }
 
     setPopoverStyle({
       position: 'fixed',
-      top: `${top}px`,
+      top: `${Math.max(margin, top)}px`,
       left: `${left}px`,
-      width: `${width}px`,
-      maxHeight: `${maxHeight}px`,
-      zIndex: 9999,
+      width: `${popoverWidth}px`,
+      maxHeight: `${Math.max(280, availableMaxHeight)}px`,
+      maxWidth: `calc(100vw - ${margin * 2}px)`,
+      zIndex: 99999,
     });
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      updatePosition();
-      const handleScroll = () => updatePosition();
-      const handleResize = () => updatePosition();
-      window.addEventListener('scroll', handleScroll, true);
-      window.addEventListener('resize', handleResize);
-      return () => {
-        window.removeEventListener('scroll', handleScroll, true);
-        window.removeEventListener('resize', handleResize);
-      };
-    }
+    if (!isOpen) return;
+    updatePosition();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+      else if (e.key === '1') setActiveCategory('presets');
+      else if (e.key === '2') setActiveCategory('semester');
+      else if (e.key === '3') setActiveCategory('type');
+      else if (e.key === '4') setActiveCategory('status');
+    };
+
+    const handleResize = () => updatePosition();
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen, updatePosition]);
 
   useEffect(() => {
     if (!isOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
       if (
-        popoverRef.current &&
-        !popoverRef.current.contains(e.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target as Node)
+        buttonRef.current && !buttonRef.current.contains(target) &&
+        popoverRef.current && !popoverRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
     };
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
-    };
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEsc);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEsc);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  const categories: { key: FilterCategory; label: string; icon: React.ElementType; badge?: number }[] = [
-    { key: 'presets', label: 'Bộ lọc nhanh', icon: Zap },
+  const categories = [
+    { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap },
     {
-      key: 'semester',
+      id: 'semester' as FilterCategory,
       label: 'Học kỳ',
+      shortcut: '2',
       icon: Layers,
       badge: filterSemester !== 'ALL' ? 1 : undefined,
     },
     {
-      key: 'type',
+      id: 'type' as FilterCategory,
       label: 'Loại môn học',
+      shortcut: '3',
       icon: BookOpen,
       badge: filterType !== 'ALL' ? 1 : undefined,
     },
     {
-      key: 'status',
-      label: 'Trạng thái',
+      id: 'status' as FilterCategory,
+      label: 'Tiến độ',
+      shortcut: '4',
       icon: CheckCircle2,
       badge: filterStatus !== 'ALL' ? 1 : undefined,
     },
   ];
 
   return (
-    <>
+    <div className="relative inline-block">
+      {/* ── Nút kích hoạt Bộ lọc chuẩn w-[116px] ── */}
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`h-10 px-3.5 rounded-xl border font-medium text-xs flex items-center gap-2 transition-all cursor-pointer select-none shrink-0 shadow-2xs ${
-          isOpen || activeFilterCount > 0
-            ? 'bg-blue-50/80 border-blue-400 text-blue-700 dark:bg-blue-950/60 dark:border-blue-700 dark:text-blue-300 font-semibold ring-2 ring-blue-500/15'
-            : 'bg-white border-slate-200/90 text-slate-700 hover:bg-slate-50 hover:border-slate-300 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800'
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
+          activeFilterCount > 0
+            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-bold'
+            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
         }`}
-        title="Mở bộ lọc nâng cao"
+        title="Mở bảng điều khiển bộ lọc khung chương trình"
       >
-        <SlidersHorizontal className={`h-4 w-4 ${activeFilterCount > 0 ? 'text-blue-600' : 'text-slate-500'}`} />
-        <span>Bộ lọc</span>
-        {activeFilterCount > 0 && (
-          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white px-1">
-            {activeFilterCount}
-          </span>
-        )}
-        <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <div className="flex items-center gap-1.5">
+          <SlidersHorizontal
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
+              activeFilterCount > 0
+                ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
+                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
+            }`}
+          />
+          <span>Bộ lọc</span>
+        </div>
+
+        {/* Cột phải kích thước cố định */}
+        <div className="flex h-5 w-5 items-center justify-center shrink-0">
+          {activeFilterCount > 0 ? (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                onResetAll();
+              }}
+              title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
+              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[10.5px] font-bold text-white shadow-2xs transition-colors cursor-pointer"
+            >
+              <span className="group-hover/badge:hidden">{activeFilterCount}</span>
+              <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
+            </div>
+          ) : (
+            <ChevronDown
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
+                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+              }`}
+            />
+          )}
+        </div>
       </button>
 
-      {mounted &&
-        isOpen &&
+      {/* ── Bảng Popover 2 Cột Đồng Bộ Chuẩn Question Bank ── */}
+      {isOpen && mounted &&
         createPortal(
           <div
             ref={popoverRef}
             style={popoverStyle}
-            className="flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+            role="dialog"
+            aria-label="Bảng bộ lọc khung chương trình đào tạo"
+            className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                  Bộ Lọc Khung Chương Trình
-                </span>
-                {activeFilterCount > 0 && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 font-semibold">
-                    Đang bật {activeFilterCount} điều kiện
-                  </span>
-                )}
+            {/* 1. Header chuẩn */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-600/20">
+                  <Filter className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-none">
+                    Bộ lọc chương trình đào tạo
+                  </h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    Lọc danh sách học phần theo học kỳ &amp; điều kiện tích lũy
+                  </p>
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -222,271 +270,423 @@ export function StudentCurriculumFilterPopover({
                   <button
                     type="button"
                     onClick={onResetAll}
-                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition cursor-pointer"
+                    className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                    title="Xóa tất cả bộ lọc đang áp dụng"
                   >
                     <RotateCcw className="h-3 w-3" />
-                    <span>Đặt lại</span>
+                    <span>Đặt lại ({activeFilterCount})</span>
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* Body */}
-            <div className="flex flex-1 min-h-0 overflow-hidden divide-x divide-slate-100 dark:divide-slate-800">
-              {/* Left Navigation */}
-              <div className="w-48 shrink-0 bg-slate-50/40 dark:bg-slate-900/40 p-2 space-y-1 overflow-y-auto">
+            {/* 2. Thân bảng 2 cột */}
+            <div className="grid grid-cols-12 min-h-0 flex-1 overflow-hidden">
+              {/* Cột Trái (Sidebar Tabs) */}
+              <div className="col-span-4 border-r border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-2 space-y-1 overflow-y-auto custom-scrollbar">
                 {categories.map((cat) => {
-                  const Icon = cat.icon;
-                  const isActive = activeCategory === cat.key;
+                  const isActive = activeCategory === cat.id;
+                  const IconComp = cat.icon;
+
                   return (
                     <button
-                      key={cat.key}
+                      key={cat.id}
                       type="button"
-                      onClick={() => setActiveCategory(cat.key)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer text-left ${
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-2xs'
+                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                        <span>{cat.label}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
+                        <span className="truncate">{cat.label}</span>
                       </div>
-                      {cat.badge !== undefined && (
-                        <span
-                          className={`flex h-4 min-w-4 items-center justify-center rounded-full text-[10px] font-bold px-1 ${
-                            isActive ? 'bg-white/30 text-white' : 'bg-blue-600 text-white'
-                          }`}
-                        >
+
+                      {cat.badge ? (
+                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white flex items-center justify-center">
                           {cat.badge}
+                        </span>
+                      ) : (
+                        <span className={`text-[10px] font-mono ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
+                          {cat.shortcut}
                         </span>
                       )}
                     </button>
                   );
                 })}
+
+                <div className="pt-3 px-2">
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                    <span>Phím:</span>
+                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-mono text-[9px] text-slate-600 dark:text-slate-400">1-4</kbd>
+                  </div>
+                </div>
               </div>
 
-              {/* Right Content */}
-              <div className="flex-1 p-4 overflow-y-auto min-h-0 space-y-4">
-                {/* PRESETS TAB */}
+              {/* Cột Phải */}
+              <div className="col-span-8 p-3 overflow-y-auto custom-scrollbar">
+                {/* ── TAB 1: LỌC NHANH (PRESETS) ── */}
                 {activeCategory === 'presets' && (
-                  <div className="space-y-3">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Bộ lọc nhanh môn học
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                      Gợi ý bộ lọc phổ biến:
                     </p>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onFilterSemesterChange('ALL');
-                          onFilterTypeChange('ALL');
-                          onFilterStatusChange('ALL');
-                        }}
-                        className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-                          filterSemester === 'ALL' && filterType === 'ALL' && filterStatus === 'ALL'
-                            ? 'bg-blue-50/60 border-blue-500 text-blue-700 font-semibold'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold">Tất cả môn học</span>
-                          <span className="text-[11px] font-bold text-slate-500">{counts.all} môn</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-1">Toàn bộ chương trình đào tạo</p>
-                      </button>
 
-                      <button
-                        type="button"
-                        onClick={() => onFilterTypeChange('MANDATORY')}
-                        className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-                          filterType === 'MANDATORY'
-                            ? 'bg-blue-50/60 border-blue-500 text-blue-700 font-semibold'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-blue-600">Môn bắt buộc</span>
-                          <span className="text-[11px] font-bold text-blue-600">{counts.mandatory} môn</span>
+                    <button
+                      type="button"
+                      onClick={() => onFilterStatusChange('COMPLETED')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterStatus === 'COMPLETED'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterStatus === 'COMPLETED' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Học phần đã hoàn thành
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">Khối kiến thức bắt buộc tích lũy</p>
-                      </button>
+                        <div className={`text-[10.5px] truncate ${filterStatus === 'COMPLETED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Đã học và đạt điểm tích lũy
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.completed}
+                        </span>
+                        {filterStatus === 'COMPLETED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
 
-                      <button
-                        type="button"
-                        onClick={() => onFilterTypeChange('ELECTIVE')}
-                        className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-                          filterType === 'ELECTIVE'
-                            ? 'bg-purple-50/60 border-purple-500 text-purple-700 font-semibold'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-purple-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-purple-600">Môn tự chọn</span>
-                          <span className="text-[11px] font-bold text-purple-600">{counts.elective} môn</span>
+                    <button
+                      type="button"
+                      onClick={() => onFilterStatusChange('INCOMPLETE')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterStatus === 'INCOMPLETE'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterStatus === 'INCOMPLETE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Học phần chưa hoàn thành
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">Khối kiến thức chuyên ngành tự chọn</p>
-                      </button>
+                        <div className={`text-[10.5px] truncate ${filterStatus === 'INCOMPLETE' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Cần đăng ký học và thi
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.incomplete}
+                        </span>
+                        {filterStatus === 'INCOMPLETE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
 
-                      <button
-                        type="button"
-                        onClick={() => onFilterStatusChange('COMPLETED')}
-                        className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-                          filterStatus === 'COMPLETED'
-                            ? 'bg-emerald-50/60 border-emerald-500 text-emerald-700 font-semibold'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-emerald-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-emerald-600">Đã hoàn thành</span>
-                          <span className="text-[11px] font-bold text-emerald-600">{counts.completed} môn</span>
+                    <button
+                      type="button"
+                      onClick={() => onFilterTypeChange('MANDATORY')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterType === 'MANDATORY'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterType === 'MANDATORY' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Các môn Bắt buộc
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">Các môn đã thi đạt tín chỉ</p>
-                      </button>
-                    </div>
+                        <div className={`text-[10.5px] truncate ${filterType === 'MANDATORY' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Học phần tiên quyết theo chuyên ngành
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.mandatory}
+                        </span>
+                        {filterType === 'MANDATORY' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
                   </div>
                 )}
 
-                {/* SEMESTER TAB */}
+                {/* ── TAB 2: HỌC KỲ ── */}
                 {activeCategory === 'semester' && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Chọn học kỳ đào tạo
-                    </p>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => onFilterSemesterChange('ALL')}
-                        className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
-                          filterSemester === 'ALL'
-                            ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300'
-                        }`}
-                      >
-                        <span>Tất cả học kỳ</span>
-                        {filterSemester === 'ALL' && <Check className="h-3.5 w-3.5 text-blue-600" />}
-                      </button>
-                      {semesters.map((sem) => (
+                  <div className="space-y-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onFilterSemesterChange('ALL')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterSemester === 'ALL'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterSemester === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Tất cả các học kỳ
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterSemester === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Toàn bộ lộ trình đào tạo
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterSemester === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.all}
+                        </span>
+                        {filterSemester === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
+
+                    {semesters.map((sem) => {
+                      const semStr = sem.toString();
+                      const isSelected = filterSemester === semStr;
+                      const c = counts.semesterCounts[semStr] || 0;
+                      return (
                         <button
-                          key={sem}
+                          key={semStr}
                           type="button"
-                          onClick={() => onFilterSemesterChange(String(sem))}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
-                            filterSemester === String(sem)
-                              ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold'
-                              : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                          onClick={() => onFilterSemesterChange(semStr)}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                            isSelected
+                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                           }`}
                         >
-                          <span>Học kỳ {sem}</span>
-                          {filterSemester === String(sem) && <Check className="h-3.5 w-3.5 text-blue-600" />}
+                          <div className="min-w-0 pr-2">
+                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                              Học kỳ {semStr}
+                            </div>
+                            <div className={`text-[10.5px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                              Khối kiến thức kỳ {semStr}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                              isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            }`}>
+                              {c}
+                            </span>
+                            {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                          </div>
                         </button>
-                      ))}
-                    </div>
+                      );
+                    })}
                   </div>
                 )}
 
-                {/* TYPE TAB */}
+                {/* ── TAB 3: LOẠI MÔN HỌC ── */}
                 {activeCategory === 'type' && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Phân loại môn học
-                    </p>
-                    <div className="space-y-1.5">
-                      {[
-                        { key: 'ALL', label: 'Tất cả loại môn', count: counts.all },
-                        { key: 'MANDATORY', label: 'Môn học bắt buộc', count: counts.mandatory },
-                        { key: 'ELECTIVE', label: 'Môn học tự chọn', count: counts.elective },
-                      ].map((t) => {
-                        const isSel = filterType === t.key;
-                        return (
-                          <button
-                            key={t.key}
-                            type="button"
-                            onClick={() => onFilterTypeChange(t.key)}
-                            className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
-                              isSel
-                                ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold'
-                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300'
-                            }`}
-                          >
-                            <span className={isSel ? 'font-semibold text-blue-700' : ''}>{t.label}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[11px] text-slate-400 font-semibold">{t.count}</span>
-                              {isSel && <Check className="h-3.5 w-3.5 text-blue-600" />}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="space-y-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onFilterTypeChange('ALL')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterType === 'ALL'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterType === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Tất cả loại môn học
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterType === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Bắt buộc &amp; Tự chọn
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterType === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.all}
+                        </span>
+                        {filterType === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onFilterTypeChange('MANDATORY')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterType === 'MANDATORY'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterType === 'MANDATORY' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Môn Bắt buộc
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterType === 'MANDATORY' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Bắt buộc phải tích lũy
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.mandatory}
+                        </span>
+                        {filterType === 'MANDATORY' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onFilterTypeChange('ELECTIVE')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterType === 'ELECTIVE'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterType === 'ELECTIVE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Môn Tự chọn
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterType === 'ELECTIVE' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Lựa chọn theo định hướng chuyên sâu
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterType === 'ELECTIVE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.elective}
+                        </span>
+                        {filterType === 'ELECTIVE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
                   </div>
                 )}
 
-                {/* STATUS TAB */}
+                {/* ── TAB 4: TIẾN ĐỘ ── */}
                 {activeCategory === 'status' && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Trạng thái tích lũy
-                    </p>
-                    <div className="space-y-1.5">
-                      {[
-                        { key: 'ALL', label: 'Tất cả trạng thái', count: counts.all },
-                        { key: 'COMPLETED', label: 'Đã hoàn thành', count: counts.completed, color: 'text-emerald-600' },
-                        { key: 'INCOMPLETE', label: 'Chưa tích lũy', count: counts.incomplete, color: 'text-slate-500' },
-                      ].map((st) => {
-                        const isSel = filterStatus === st.key;
-                        return (
-                          <button
-                            key={st.key}
-                            type="button"
-                            onClick={() => onFilterStatusChange(st.key)}
-                            className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
-                              isSel
-                                ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold'
-                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300'
-                            }`}
-                          >
-                            <span className={isSel ? 'font-semibold text-blue-700' : ''}>{st.label}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[11px] text-slate-400 font-semibold">{st.count}</span>
-                              {isSel && <Check className="h-3.5 w-3.5 text-blue-600" />}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="space-y-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onFilterStatusChange('ALL')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterStatus === 'ALL'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterStatus === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Tất cả tiến độ
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterStatus === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Toàn bộ học phần
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterStatus === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.all}
+                        </span>
+                        {filterStatus === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onFilterStatusChange('COMPLETED')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterStatus === 'COMPLETED'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterStatus === 'COMPLETED' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Đã hoàn thành
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterStatus === 'COMPLETED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Đã tích lũy đủ tín chỉ
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.completed}
+                        </span>
+                        {filterStatus === 'COMPLETED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onFilterStatusChange('INCOMPLETE')}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
+                        filterStatus === 'INCOMPLETE'
+                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
+                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className={`text-xs font-semibold ${filterStatus === 'INCOMPLETE' ? 'text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          Chưa hoàn thành
+                        </div>
+                        <div className={`text-[10.5px] truncate ${filterStatus === 'INCOMPLETE' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          Chưa học hoặc chưa đạt điểm tích lũy
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                          filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {counts.incomplete}
+                        </span>
+                        {filterStatus === 'INCOMPLETE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                      </div>
+                    </button>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50">
-              <span className="text-xs font-medium text-slate-500">
-                Tìm thấy{' '}
-                <strong className="text-slate-900 dark:text-slate-100 font-semibold">
-                  {totalFilteredCount ?? curriculumList.length}
-                </strong>{' '}
-                kết quả
-              </span>
+            {/* 3. Footer */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+              <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                {activeFilterCount > 0 ? (
+                  <>Đang áp dụng <strong className="font-bold text-blue-600 dark:text-blue-400">{activeFilterCount}</strong> tiêu chí lọc</>
+                ) : (
+                  'Toàn bộ khung chương trình'
+                )}
+              </div>
 
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition cursor-pointer"
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
               >
-                Áp dụng bộ lọc
+                <CheckCheck className="h-3.5 w-3.5" />
+                <span>Xem kết quả</span>
               </button>
             </div>
           </div>,
           document.body
         )}
-    </>
+    </div>
   );
 }

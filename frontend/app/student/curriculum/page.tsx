@@ -9,6 +9,7 @@ import { Toast } from '../../../components/Toast';
 import { Modal } from '../../../components/Modal';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
+import { TabBar } from '../../../components/ui/TabBar';
 import { Button } from '../../../components/ui/Button';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
@@ -469,7 +470,7 @@ export default function StudentCurriculumPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-xs font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -524,89 +525,93 @@ export default function StudentCurriculumPage() {
           </div>
 
           {/* Right: Table Action Controls */}
-          <div className="shrink-0">
-            <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                  Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> môn học
-                </span>
-              </div>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* Sort */}
+            <SortDropdown
+              value={sortOrder}
+              onChange={(val) => setSortOrder(val)}
+              options={[
+                { value: 'semester_asc', label: 'Học kỳ: Tăng dần' },
+                { value: 'semester_desc', label: 'Học kỳ: Giảm dần' },
+                { value: 'name_asc', label: 'Tên môn: A - Z' },
+                { value: 'name_desc', label: 'Tên môn: Z - A' },
+                { value: 'credits_desc', label: 'Số tín chỉ: Cao nhất' },
+                { value: 'credits_asc', label: 'Số tín chỉ: Thấp nhất' },
+              ]}
+            />
 
-              <div className="flex items-center gap-2">
-                {/* Sort */}
-                <SortDropdown
-                  value={sortOrder}
-                  onChange={(val) => setSortOrder(val)}
-                  options={[
-                    { value: 'semester_asc', label: 'Học kỳ: Tăng dần' },
-                    { value: 'semester_desc', label: 'Học kỳ: Giảm dần' },
-                    { value: 'name_asc', label: 'Tên môn: A - Z' },
-                    { value: 'name_desc', label: 'Tên môn: Z - A' },
-                    { value: 'credits_desc', label: 'Số tín chỉ: Cao nhất' },
-                    { value: 'credits_asc', label: 'Số tín chỉ: Thấp nhất' },
-                  ]}
-                />
+            {/* Column Selector */}
+            <ColumnToggleDropdown
+              columns={columnsList}
+              visibleColumns={visibleColumns}
+              onToggle={handleColumnToggle}
+            />
 
-                {/* Column Selector */}
-                <ColumnToggleDropdown
-                  columns={columnsList}
-                  visibleColumns={visibleColumns}
-                  onToggle={handleColumnToggle}
-                />
-
-                {/* View Mode Pills */}
-                <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('list')}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                      viewMode === 'list'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                    title="Dạng danh sách"
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('grid')}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                      viewMode === 'grid'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                    title="Dạng thẻ"
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('compact')}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
-                      viewMode === 'compact'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
-                    title="Dạng thu gọn"
-                  >
-                    <Layers className="h-4 w-4" />
-                  </button>
-                </div>
-
-                {/* Refresh Button */}
-                <button
-                  type="button"
-                  onClick={handleManualRefresh}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-                  title="Làm mới dữ liệu"
-                >
-                  <RefreshCw className={`h-4 w-4 ${loading || isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
-                </button>
-              </div>
+            {/* View Mode Pills */}
+            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'list'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng danh sách"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng thẻ"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('compact')}
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition cursor-pointer ${
+                  viewMode === 'compact'
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                title="Dạng thu gọn"
+              >
+                <Layers className="h-4 w-4" />
+              </button>
             </div>
+
+            {/* Refresh Button */}
+            <button
+              type="button"
+              onClick={handleManualRefresh}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
+              title="Làm mới dữ liệu"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading || isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+            </button>
           </div>
         </div>
+
+        {/* ── 4. Status TabBar ── */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả học phần', count: curriculumList.length },
+            { key: 'COMPLETED', label: 'Đã hoàn thành', count: curriculumList.filter((c: any) => c.isCompleted).length },
+            { key: 'INCOMPLETE', label: 'Chưa tích lũy', count: curriculumList.filter((c: any) => !c.isCompleted).length },
+          ]}
+          active={filterStatus}
+          onChange={(key) => {
+            setFilterStatus(key);
+            setPage(1);
+          }}
+        />
 
         {/* ── 5. Standard Content (List / Grid / Compact) ── */}
         {loading ? (
