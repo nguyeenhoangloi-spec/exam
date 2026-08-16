@@ -72,8 +72,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
         </div>
 
         <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <button type="button" onClick={close} disabled={loading} className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">Hủy bỏ</button>
-          <button type="submit" disabled={loading} className="h-10 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 text-[13px] font-semibold text-white shadow-md hover:bg-blue-700 transition cursor-pointer disabled:opacity-50"><KeyRound className="h-3.5 w-3.5" />{loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}</button>
+          <button type="button" onClick={close} disabled={loading} className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-[15px] font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">Hủy bỏ</button>
+          <button type="submit" disabled={loading} className="h-10 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 text-[15px] font-semibold text-white shadow-md hover:bg-blue-700 transition cursor-pointer disabled:opacity-50"><KeyRound className="h-3.5 w-3.5" />{loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}</button>
         </div>
       </form>
     </Modal>

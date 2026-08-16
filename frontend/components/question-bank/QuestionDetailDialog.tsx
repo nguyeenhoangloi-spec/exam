@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Question } from '../../types';
 import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
@@ -13,313 +13,338 @@ import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { DynamicImage } from '../ui/DynamicImage';
 
 export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
- const [mounted, setMounted] = useState(false);
- const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
- const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
 
- useEffect(() => {
- setMounted(true);
- }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
- if (!question || !mounted) return null;
+  useEffect(() => {
+    if (question) {
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setVisible(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setVisible(false);
+    }
+  }, [question]);
 
- const rich = question?.contentRich && typeof question.contentRich === 'object' && 'html' in question.contentRich ? String((question.contentRich as { html?: string }).html || '') : '';
- const codeText = question.code || `QH${question.id.slice(-5).toUpperCase()}`;
+  const handleClose = useCallback(() => {
+    setVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  }, [onClose]);
 
- const creatorName =
- question.createdByName ||
- (question.createdBy as any)?.teacher?.fullName ||
- question.createdBy?.fullName ||
- question.createdBy?.username ||
- (question.createdById ? `User #${question.createdById}` : 'Hệ thống');
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !lightboxUrl && !videoLightbox) {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxUrl, videoLightbox, handleClose]);
 
- const getBloomLabel = (level?: string) => {
- if (level === 'REMEMBER') return 'Ghi nhớ';
- if (level === 'UNDERSTAND') return 'Thông hiểu';
- if (level === 'APPLY') return 'Vận dụng';
- if (level === 'ANALYZE') return 'Phân tích';
- return 'Thông hiểu';
- };
+  if (!question || !mounted) return null;
 
- const scoreText = question.score !== undefined && question.score !== null ? `${question.score} điểm` : '1.0 điểm';
- const topicText = (question as any).topic || (question as any).chapter?.chapterName || 'Chưa phân loại';
+  const rich = question?.contentRich && typeof question.contentRich === 'object' && 'html' in question.contentRich ? String((question.contentRich as { html?: string }).html || '') : '';
+  const codeText = question.code || `QH${question.id.slice(-5).toUpperCase()}`;
 
- const content = (
- <div role="dialog" aria-modal="true" aria-label="Chi tiết câu hỏi" className="fixed inset-0 z-[100] overflow-hidden">
- {/* Dark Blur Overlay Backdrop */}
- <div
- className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
- onClick={onClose}
- />
+  const creatorName =
+    question.createdByName ||
+    (question.createdBy as any)?.teacher?.fullName ||
+    question.createdBy?.fullName ||
+    question.createdBy?.username ||
+    (question.createdById ? `User #${question.createdById}` : 'Hệ thống');
 
- {/* Lightbox Modals */}
- {lightboxUrl && (
- <ImageLightboxModal
- imageUrl={lightboxUrl}
- altText={`Hình minh họa câu hỏi mã ${question?.code}`}
- onClose={() => setLightboxUrl(null)}
- />
- )}
- <VideoLightboxModal
- videoUrl={videoLightbox?.url ?? null}
- fileName={videoLightbox?.fileName}
- onClose={() => setVideoLightbox(null)}
- />
+  const getBloomLabel = (level?: string) => {
+    if (level === 'REMEMBER') return 'Ghi nhớ';
+    if (level === 'UNDERSTAND') return 'Thông hiểu';
+    if (level === 'APPLY') return 'Vận dụng';
+    if (level === 'ANALYZE') return 'Phân tích';
+    return 'Thông hiểu';
+  };
 
- {/* Right Drawer Container */}
-  <div className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-[620px] flex-col bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-300 border-l border-slate-200 dark:border-slate-700 animate-slide-left">
- {/* ── 1. Modern Gradient Header (Matching ProfileDrawer & RegradeReviewDrawer) ── */}
-          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
-            <div className="flex items-start justify-between gap-3">
+  const scoreText = question.score !== undefined && question.score !== null ? `${question.score} điểm` : '1.0 điểm';
+  const topicText = (question as any).topic || (question as any).chapter?.chapterName || 'Chưa phân loại';
+
+  const content = (
+    <div role="dialog" aria-modal="true" aria-label="Chi tiết câu hỏi" className="fixed inset-0 z-[100] overflow-hidden">
+      {/* Backdrop mờ nền */}
+      <div
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          visible ? 'opacity-100' : 'opacity-0'
+        }`}
+        onClick={handleClose}
+      />
+
+      {/* Lightbox Modals */}
+      {lightboxUrl && (
+        <ImageLightboxModal
+          imageUrl={lightboxUrl}
+          altText={`Hình minh họa câu hỏi mã ${question?.code}`}
+          onClose={() => setLightboxUrl(null)}
+        />
+      )}
+      {videoLightbox && (
+        <VideoLightboxModal
+          videoUrl={videoLightbox.url}
+          fileName={videoLightbox.fileName}
+          onClose={() => setVideoLightbox(null)}
+        />
+      )}
+
+      {/* Right Drawer Container */}
+      <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
+        <div
+          className={`w-screen max-w-[620px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+            visible ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
+          <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+            <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-white border border-white/25 shadow-2xs">
- <HelpCircle className="h-6 w-6 text-white" />
- </div>
-
- <div className="min-w-0 flex-1 pr-2">
- <div className="flex items-center gap-2.5 flex-wrap">
-                  <h2 className="text-lg font-semibold leading-snug text-white line-clamp-2 break-words">
-                    Chi tiết Câu hỏi
-                  </h2>
-                  <IdentifierBadge tone="inverse">{codeText}</IdentifierBadge>
+                {/* Icon Squircle Thương hiệu */}
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                  <HelpCircle className="h-6 w-6 text-white" />
                 </div>
-                <p className="text-xs font-medium text-blue-100/90 mt-1.5 line-clamp-2">
-                  Môn học: <strong className="font-semibold text-white">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
-                </p>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                      Chi tiết câu hỏi
+                    </h2>
+                    <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
+                  </div>
+                  <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
+                    Môn học: <strong className="font-semibold text-slate-900 dark:text-slate-100">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Nút Đóng */}
+              <button
+                type="button"
+                onClick={handleClose}
+                className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+                title="Đóng chi tiết"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Scrollable Content Body — Black-forward Palette, Phẳng, Không khung lồng */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-900">
+            {/* Section 1: Nội dung câu hỏi */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    Nội dung câu hỏi
+                  </h3>
+                </div>
+                <QuestionStatusBadge status={question.status || 'APPROVED'} />
+              </div>
+
+              <div className="text-[15px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed bg-slate-50/70 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800">
+                {rich ? <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(rich) }} /> : question.content}
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
-              title="Đóng"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+            {/* Section 2: Media Attachments (if available) */}
+            {question.media?.length ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    Media đính kèm
+                  </h3>
+                </div>
 
-        {/* ── 2. Scrollable Content Body ── */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/40 text-xs">
-          {/* Card 1: Trạng thái & Nội dung câu hỏi */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-              <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Nội dung câu hỏi</h3>
-              <QuestionStatusBadge status={question.status || 'APPROVED'} />
+                <div className="flex flex-wrap gap-3">
+                  {question.media.map((media) => {
+                    const fullUrl = getImageUrl(media.url);
+                    const mime: string = (media as any).mimeType || '';
+                    const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
+                    const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
+
+                    if (isVid) {
+                      return (
+                        <button
+                          key={media.id || media.url}
+                          type="button"
+                          onClick={() => setVideoLightbox({ url: media.url, fileName: media.fileName })}
+                          className="group relative h-20 w-32 overflow-hidden rounded-xl border border-slate-200 bg-black shadow-2xs hover:border-blue-400 hover:shadow-md transition cursor-pointer"
+                        >
+                          <video src={fullUrl} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-lg group-hover:scale-110 transition">
+                              <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 text-blue-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    }
+                    if (isAud) {
+                      return (
+                        <div key={media.id || media.url} className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                          <span className="text-xs font-medium text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
+                          <audio src={fullUrl} controls className="h-8 w-44" />
+                        </div>
+                      );
+                    }
+                    return (
+                      <div
+                        key={media.id || media.url}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setLightboxUrl(media.url)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setLightboxUrl(media.url);
+                          }
+                        }}
+                        className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
+                        title="Bấm để xem phóng to"
+                      >
+                        <DynamicImage
+                          src={fullUrl}
+                          alt={media.altText || media.fileName}
+                          className="max-h-48 max-w-full rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
+                          <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-xs">
+                            <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+
+            {/* Section 3: Danh sách đáp án */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  Danh sách đáp án
+                </h3>
+              </div>
+
+              {question.options && question.options.length > 0 ? (
+                <div className="space-y-2.5">
+                  {question.options.map((o) => (
+                    <div
+                      key={o.id || o.order}
+                      className={`rounded-2xl border p-3.5 transition flex items-start gap-3 ${
+                        o.isCorrect
+                          ? 'border-emerald-500/80 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 font-medium'
+                          : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-slate-800 dark:text-slate-200'
+                      }`}
+                    >
+                      <div
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-semibold ${
+                          o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white'
+                        }`}
+                      >
+                        {o.label}
+                      </div>
+                      <div className="flex-1 min-w-0 pt-0.5 text-[14px]">
+                        <p className="font-medium text-slate-900 dark:text-white leading-relaxed">{o.content}</p>
+                        {o.isCorrect && (
+                          <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-emerald-700 dark:text-emerald-400 mt-1.5">
+                            <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" /> Đáp án chính xác
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[14px] text-slate-500 italic">Câu hỏi tự luận (không có đáp án trắc nghiệm chọn trước).</p>
+              )}
+
+              {question.explanation && (
+                <div className="rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/60 p-4 text-[14px] text-slate-800 dark:text-slate-200 space-y-1.5">
+                  <h5 className="font-semibold text-blue-900 dark:text-blue-200">Giải thích đáp án / Hướng dẫn chấm:</h5>
+                  <p className="leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{question.explanation}</p>
+                </div>
+              )}
             </div>
 
-            <div className="text-base font-medium text-slate-900 dark:text-slate-100 leading-relaxed bg-slate-50/80 dark:bg-slate-800/80 rounded-xl p-4 border border-slate-200/70 dark:border-slate-700">
- {rich ? <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(rich) }} /> : question.content}
- </div>
- </div>
+            {/* Section 4: Metadata thông tin chi tiết (Phẳng dạng divide-y) */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  Thông tin thuộc tính
+                </h3>
+              </div>
 
- {/* Card 2: Media Attachments (if available) */}
- {question.media?.length ? (
-  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
- <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Media đính kèm</h3>
- <div className="flex flex-wrap gap-3">
- {question.media.map((media) => {
- const fullUrl = getImageUrl(media.url);
- const mime: string = (media as any).mimeType || '';
- const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
- const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
+              <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                {[
+                  { label: 'Mã câu hỏi', value: <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>, icon: Hash },
+                  { label: 'Môn học', value: question.subject?.subjectName || 'Chưa gán', icon: BookOpen },
+                  { label: 'Điểm số', value: <span className="text-blue-600 font-semibold">{scoreText}</span>, icon: Award },
+                  { label: 'Độ khó', value: <QuestionDifficultyBadge difficulty={question.difficulty || 'MEDIUM'} />, icon: HelpCircle },
+                  { label: 'Loại câu hỏi', value: <QuestionTypeBadge type={question.type || 'SINGLE_CHOICE'} />, icon: FileText },
+                  { label: 'Mức độ tư duy', value: getBloomLabel(question.bloomLevel), icon: Brain },
+                  { label: 'Chủ đề / Chương', value: topicText, icon: Layers },
+                  { label: 'Người tạo', value: creatorName, icon: User },
+                  { label: 'Ngày tạo', value: question.createdAt ? new Date(question.createdAt).toLocaleDateString('vi-VN') : '---', icon: Calendar },
+                ].map((r, idx) => {
+                  const Icon = r.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
+                    >
+                      <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[15px] font-semibold shrink-0">
+                        {Icon && (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <Icon className="h-4 w-4" />
+                          </span>
+                        )}
+                        <span>{r.label}</span>
+                      </span>
 
- if (isVid) {
- return (
- <button
- key={media.id || media.url}
- type="button"
- onClick={() => setVideoLightbox({ url: media.url, fileName: media.fileName })}
- className="group relative h-20 w-32 overflow-hidden rounded-xl border border-slate-200 bg-black shadow-2xs hover:border-blue-400 hover:shadow-md transition cursor-pointer"
- >
- <video src={fullUrl} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
- <div className="absolute inset-0 flex items-center justify-center">
- <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-lg group-hover:scale-110 transition">
- <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 text-primary-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
- </span>
- </div>
- </button>
- );
- }
- if (isAud) {
- return (
- <div key={media.id || media.url} className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
- <span className="text-xs font-medium text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
- <audio src={fullUrl} controls className="h-8 w-44" />
- </div>
- );
- }
- return (
- <div
- key={media.id || media.url}
- role="button"
- tabIndex={0}
- onClick={() => setLightboxUrl(media.url)}
- onKeyDown={(event) => {
- if (event.key === 'Enter' || event.key === ' ') {
- event.preventDefault();
- setLightboxUrl(media.url);
- }
- }}
- className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
- title="Bấm để xem phóng to"
- >
- <DynamicImage
- src={fullUrl}
- alt={media.altText || media.fileName}
- className="max-h-48 max-w-full rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
- />
- <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
- <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-xs">
- <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to
- </span>
- </div>
- </div>
- );
- })}
- </div>
- </div>
- ) : null}
+                      <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+                        {r.value}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
 
- {/* Card 3: Options & Correct Answer / Explanation */}
-  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Danh sách đáp án</h3>
- {question.options && question.options.length > 0 ? (
- <div className="space-y-2.5">
- {question.options.map((o) => (
- <div
- key={o.id || o.order}
- className={`rounded-xl border p-3.5 transition flex items-start gap-3 ${o.isCorrect
- ? 'border-emerald-300 bg-emerald-50/90 text-emerald-950 font-medium'
- : 'border-slate-200 bg-slate-50/80 text-slate-800'
- }`}
- >
- <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-semibold ${o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-900'
- }`}>
- {o.label}
- </div>
- <div className="flex-1 min-w-0 pt-0.5 text-xs font-normal leading-normal">
- <p className="font-medium text-slate-900 text-xs">{o.content}</p>
- {o.isCorrect && (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 mt-1">
- <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đáp án chính xác
- </span>
- )}
- </div>
- </div>
- ))}
- </div>
- ) : (
- <p className="text-xs text-slate-500 italic">Câu hỏi tự luận (không có đáp án trắc nghiệm chọn trước).</p>
- )}
+          {/* Standard Footer */}
+          <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handleClose}
+            >
+              Đóng
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
- {question.explanation && (
- <div className="rounded-xl bg-blue-50/80 border border-blue-200/80 p-4 text-xs text-slate-800 space-y-1">
- <h5 className="font-semibold text-slate-900">Giải thích đáp án / Hướng dẫn chấm:</h5>
- <p className=" tabular-nums text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">{question.explanation}</p>
- </div>
- )}
- </div>
-
- {/* Card 4: Metadata Grid */}
-  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 space-y-3.5 shadow-2xs">
- <h3 className="text-sm leading-5 font-semibold tracking-wider text-slate-500 dark:text-slate-400">Thông tin chi tiết</h3>
- <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
- {/* Mã câu hỏi */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <Hash className="h-3.5 w-3.5 text-blue-600" /> Mã câu hỏi
- </span>
- <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
- </div>
-
- {/* Môn học */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <BookOpen className="h-3.5 w-3.5 text-blue-600" /> Môn học
- </span>
- <p className="font-semibold text-slate-900 truncate" title={question.subject?.subjectName}>
- {question.subject?.subjectName || 'Chưa gán'}
- </p>
- </div>
-
- {/* Điểm số */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <Award className="h-3.5 w-3.5 text-blue-600" /> Điểm số
- </span>
- <p className="font-semibold text-blue-600">{scoreText}</p>
- </div>
-
- {/* Độ khó */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <HelpCircle className="h-3.5 w-3.5 text-blue-600" /> Độ khó
- </span>
- <div className="pt-0.5">
- <QuestionDifficultyBadge difficulty={question.difficulty || 'MEDIUM'} />
- </div>
- </div>
-
- {/* Loại câu hỏi */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <FileText className="h-3.5 w-3.5 text-blue-600" /> Loại câu hỏi
- </span>
- <div className="pt-0.5">
- <QuestionTypeBadge type={question.type || 'SINGLE_CHOICE'} />
- </div>
- </div>
-
- {/* Mức độ tư duy */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <Brain className="h-3.5 w-3.5 text-blue-600" /> Mức độ tư duy
- </span>
- <p className="font-semibold text-slate-900">{getBloomLabel(question.bloomLevel)}</p>
- </div>
-
- {/* Chủ đề */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <Layers className="h-3.5 w-3.5 text-blue-600" /> Chủ đề
- </span>
- <p className="font-semibold text-slate-800 truncate">{topicText}</p>
- </div>
-
- {/* Người tạo */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <User className="h-3.5 w-3.5 text-blue-600" /> Người tạo
- </span>
- <p className="font-semibold text-slate-900 truncate" title={creatorName}>{creatorName}</p>
- </div>
-
- {/* Ngày tạo */}
- <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-3 space-y-1">
- <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
- <Calendar className="h-3.5 w-3.5 text-blue-600" /> Ngày tạo
- </span>
- <p className="font-medium text-slate-900">{question.createdAt ? new Date(question.createdAt).toLocaleDateString('vi-VN') : '10/08/2026'}</p>
- </div>
- </div>
- </div>
- </div>
-
- {/* ── 3. Standard Footer ── */}
-  <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-900 px-6 shrink-0 flex items-center justify-end">
- <Button
- variant="secondary"
- size="md"
- onClick={onClose}
- >
- Đóng
- </Button>
- </div>
- </div>
- </div>
- );
-
- return createPortal(content, document.body);
+  return createPortal(content, document.body);
 }

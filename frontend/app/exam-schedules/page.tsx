@@ -39,7 +39,7 @@ function calculateEndTime(startTime: string, durationMinutes: number): string {
 }
 
 export default function ExamSchedulesPage() {
-  usePageTitle('Xếp lịch thi');
+  usePageTitle('Quản lý lịch thi');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -859,25 +859,26 @@ export default function ExamSchedulesPage() {
       <ProfileDrawer
         isOpen={Boolean(drawerSchedule)}
         onClose={() => setDrawerSchedule(null)}
-        title={drawerSchedule?.periodName || 'Chi tiết ca thi'}
+        title={drawerSchedule?.subjectName || drawerSchedule?.periodName || 'Chi tiết ca thi'}
         subtitle={`Mã ca thi: ${drawerSchedule?.code || ''}`}
-        avatarText="LCT"
+        avatarText={drawerSchedule?.subjectCode?.slice(0, 3) || 'LCT'}
         badge={{
-          label: drawerSchedule?.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : drawerSchedule?.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã diễn ra',
+          label: drawerSchedule?.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : drawerSchedule?.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã hoàn thành',
           className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
-          { label: 'Tên kỳ thi', value: drawerSchedule?.periodName, icon: Calendar },
-          { label: 'Mã lịch thi', value: drawerSchedule?.code },
+          { label: 'Kỳ thi', value: drawerSchedule?.periodName, icon: Calendar },
+          { label: 'Môn thi', value: drawerSchedule?.subjectName ? `${drawerSchedule.subjectName} (${drawerSchedule.subjectCode || ''})` : '---', icon: Calendar },
+          { label: 'Hình thức thi', value: drawerSchedule?.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : drawerSchedule?.examType === 'TU_LUAN' ? 'Tự luận' : drawerSchedule?.examType || 'Trắc nghiệm', icon: Clock },
           { label: 'Ca thi', value: drawerSchedule?.shiftName, icon: Clock },
-          { label: 'Phòng thi', value: drawerSchedule?.roomName, icon: Building },
+          { label: 'Phòng thi', value: drawerSchedule?.roomName || '---', icon: Building },
           {
             label: 'Ngày thi',
             value: drawerSchedule?.examDate ? new Date(drawerSchedule.examDate).toLocaleDateString('vi-VN') : '---',
             icon: Calendar,
           },
-          { label: 'Thời gian', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}` },
-          { label: 'Số thí sinh', value: `${(drawerSchedule as any)?._count?.examRoomStudents ?? drawerSchedule?.studentCount ?? 0} thí sinh`, icon: Users },
+          { label: 'Khung giờ thi', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}`, icon: Clock },
+          { label: 'Số lượng thí sinh', value: `${(drawerSchedule as any)?._count?.examRoomStudents ?? drawerSchedule?.studentCount ?? 0} thí sinh`, icon: Users },
           { label: 'Cán bộ giám thị', value: `${drawerSchedule?.supervisorCount || '2/2'} cán bộ`, icon: Users },
         ]}
       />

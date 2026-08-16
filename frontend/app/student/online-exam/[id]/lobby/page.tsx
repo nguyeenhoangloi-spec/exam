@@ -5,7 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Button } from '@/components/ui/Button';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
-import { Eye, EyeOff, X } from 'lucide-react';
+import { ProfileDrawer } from '@/components/ProfileDrawer';
+import { Eye, EyeOff, X, BookOpen, User, Ticket, MapPin, Clock, ShieldAlert, GraduationCap } from 'lucide-react';
 import { Toast } from '@/components/Toast';
 
 export default function StudentExamLobbyPage() {
@@ -23,6 +24,7 @@ export default function StudentExamLobbyPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [accessCode, setAccessCode] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showProfileDrawer, setShowProfileDrawer] = useState(false);
 
   const loadEligibility = useCallback(async () => {
     try {
@@ -184,7 +186,7 @@ export default function StudentExamLobbyPage() {
             <span>{schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức'}</span>
           </div>
 
-          <h1 className="text-xl sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
+           <h1 className="text-xl sm:text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
             {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}
           </h1>
 
@@ -197,7 +199,7 @@ export default function StudentExamLobbyPage() {
         {/* Completed State */}
         {isCompleted ? (
           <div className="py-8 text-center space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
+             <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
               Bài làm đã được nộp thành công và lưu trữ trên hệ thống khảo thí.
             </p>
@@ -215,14 +217,31 @@ export default function StudentExamLobbyPage() {
           <div className="space-y-6">
             {/* ── Section 2: Thông tin Thí sinh & Phòng thi ── */}
             <div className="space-y-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
-              <div className="text-[12px] font-bold  tracking-wider text-slate-400 dark:text-slate-500">
-                Thông tin Thí sinh & Phòng thi
+              <div className="flex items-center justify-between">
+                <div className="text-[12px] font-semibold tracking-wider text-slate-400 dark:text-slate-500">
+                  Thông tin Thí sinh & Phòng thi
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowProfileDrawer(true)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Chi tiết hồ sơ thí sinh</span>
+                </button>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <span className="text-[12px] text-slate-400 dark:text-slate-400 block">Thí sinh</span>
-                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 block truncate">{fullName}</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowProfileDrawer(true)}
+                    className="text-xs font-semibold text-slate-900 dark:text-slate-100 block truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                    title="Xem chi tiết hồ sơ thí sinh"
+                  >
+                    {fullName}
+                  </button>
                 </div>
 
                 <div className="space-y-1">
@@ -237,7 +256,7 @@ export default function StudentExamLobbyPage() {
 
                 <div className="space-y-1">
                   <span className="text-[12px] text-slate-400 dark:text-slate-400 block">Phòng & Ca thi</span>
-                  <span className="text-xs font-bold text-blue-600 dark:text-blue-400 block truncate">{roomName} ({building})</span>
+                  <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 block truncate">{roomName} ({building})</span>
                   <span className="text-[12px] text-slate-400 dark:text-slate-500 block">{timeSlotStr}</span>
                 </div>
               </div>
@@ -245,7 +264,7 @@ export default function StudentExamLobbyPage() {
 
             {/* ── Section 3: Quy chế & Giám sát an toàn thi ── */}
             <div className="space-y-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
-              <div className="text-[12px] font-bold  tracking-wider text-slate-400 dark:text-slate-500">
+               <div className="text-[12px] font-semibold  tracking-wider text-slate-400 dark:text-slate-500">
                 Quy chế & Giám sát an toàn
               </div>
 
@@ -331,7 +350,7 @@ export default function StudentExamLobbyPage() {
             {/* Clean Header matching design system standard */}
             <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                 <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   Xác thực Mật khẩu Phòng Thi
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -440,6 +459,45 @@ export default function StudentExamLobbyPage() {
           </div>
         </div>
       )}
+      {/* Candidate Profile Drawer */}
+      <ProfileDrawer
+        isOpen={showProfileDrawer}
+        onClose={() => setShowProfileDrawer(false)}
+        title={fullName}
+        subtitle={`MSSV: ${studentCode} • Lớp ${studentClass}`}
+        avatarText={fullName?.slice(0, 2)?.toUpperCase() || 'SV'}
+        badge={{
+          label: schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức',
+          status: 'OFFICIAL',
+        }}
+        details={[
+          { label: 'Họ và tên thí sinh', value: fullName, icon: User },
+          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{studentCode}</IdentifierBadge> },
+          { label: 'Lớp sinh hoạt', value: studentClass, icon: GraduationCap },
+          { label: 'Môn thi', value: schedule?.subject?.subjectName || examInfo?.subjectName || '---', icon: BookOpen },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Phòng thi', value: `${roomName} (${building})`, icon: MapPin },
+          { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{examNumber}</IdentifierBadge>, icon: Ticket },
+          { label: 'Vị trí ghế ngồi', value: `Ghế số ${seatNumber}` },
+          { label: 'Khung giờ thi', value: timeSlotStr, icon: Clock },
+          { label: 'Thời lượng làm bài', value: `${durationMinutes} phút` },
+        ]}
+        extraSections={[
+          {
+            title: 'Quy chế phòng thi trực tuyến',
+            content: (
+              <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+                <p>
+                  • Thí sinh phải bật webcam (nếu có yêu cầu) và duy trì chế độ toàn màn hình trong suốt thời gian làm bài.
+                </p>
+                <p>
+                  • Hệ thống tự động ghi nhận mọi hành vi rời khỏi tab hoặc mở ứng dụng khác để chuyển cho hội đồng khảo thí xem xét.
+                </p>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

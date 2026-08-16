@@ -7,6 +7,8 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { Button } from '../../components/ui/Button';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { ProfileDrawer } from '../../components/ProfileDrawer';
 import {
   Lock,
   KeyRound,
@@ -17,11 +19,16 @@ import {
   AlertCircle,
   Sparkles,
   ShieldAlert,
+  User,
+  Mail,
+  Building2,
+  Clock,
 } from 'lucide-react';
 
 export default function ChangePasswordPage() {
   usePageTitle('Đổi mật khẩu');
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -34,10 +41,15 @@ export default function ChangePasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [showSecurityDrawer, setShowSecurityDrawer] = useState(false);
 
   useEffect(() => {
     const u = getAuthUser();
-    if (!u) router.push('/login');
+    if (!u) {
+      router.push('/login');
+    } else {
+      setCurrentUser(u);
+    }
   }, [router]);
 
   // Calculate password strength rating
@@ -117,6 +129,16 @@ export default function ChangePasswordPage() {
               <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Cập nhật mật khẩu để bảo vệ tài khoản khỏi truy cập trái phép</p>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setShowSecurityDrawer(true)}
+            className="flex items-center gap-2 rounded-xl bg-white/20 hover:bg-white/30 text-white px-4 py-2 text-[15px] font-medium transition active:scale-95 cursor-pointer backdrop-blur-md border border-white/30 shrink-0"
+            title="Xem chi tiết bảo mật hồ sơ tài khoản"
+          >
+            <Eye className="h-4 w-4 text-white" />
+            <span>Xem hồ sơ bảo mật</span>
+          </button>
         </div>
       </div>
 
@@ -281,6 +303,52 @@ export default function ChangePasswordPage() {
           </ul>
         </div>
       </div>
+
+      {/* Security Profile Drawer */}
+      <ProfileDrawer
+        isOpen={showSecurityDrawer}
+        onClose={() => setShowSecurityDrawer(false)}
+        title={currentUser?.teacher?.fullName || currentUser?.student?.fullName || currentUser?.username || 'Hồ sơ tài khoản'}
+        subtitle={`Vai trò: ${currentUser?.role === 'ADMIN' ? 'Quản trị viên' : currentUser?.role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên'}`}
+        avatarText={currentUser?.username?.slice(0, 2)?.toUpperCase() || 'TK'}
+        badge={{
+          label: currentUser?.role || 'USER',
+          status: 'OFFICIAL',
+        }}
+        details={[
+          { label: 'Tên đăng nhập', value: currentUser?.username || '---', icon: User },
+          { label: 'Vai trò hệ thống', value: currentUser?.role === 'ADMIN' ? 'Quản trị viên' : currentUser?.role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên', icon: ShieldCheck },
+          { label: 'Mã định danh', value: <IdentifierBadge tone="blue">{currentUser?.teacher?.teacherCode || currentUser?.student?.studentCode || `ID-${currentUser?.id || 1}`}</IdentifierBadge> },
+          { label: 'Chuẩn mã hóa mật khẩu', value: 'Bcrypt Salted (10 Rounds)', icon: Lock },
+          { label: 'Trạng thái phiên đăng nhập', value: 'JWT 256-bit Token Active', icon: CheckCircle2 },
+        ]}
+        extraSections={[
+          {
+            title: 'Quy chuẩn an toàn khảo thí',
+            content: (
+              <div className="space-y-3">
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  Mật khẩu được lưu trữ dưới dạng băm 1 chiều không thể khôi phục. Đổi mật khẩu ngay nếu nghi ngờ tài khoản bị lộ hoặc sau khi sử dụng trên thiết bị công cộng.
+                </p>
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setShowSecurityDrawer(false);
+                      router.push('/profile');
+                    }}
+                    leftIcon={<User className="w-3.5 h-3.5" />}
+                  >
+                    Xem hồ sơ cá nhân
+                  </Button>
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

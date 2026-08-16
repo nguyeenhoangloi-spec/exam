@@ -89,7 +89,7 @@ interface SummaryStats {
 }
 
 export default function StudentResultsPage() {
- usePageTitle('Kết quả thi Sinh viên');
+ usePageTitle('Kết quả bài thi');
  const router = useRouter();
 
  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
@@ -508,7 +508,7 @@ export default function StudentResultsPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-              Kết quả thi sinh viên
+              Kết quả bài thi
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
@@ -1077,132 +1077,159 @@ export default function StudentResultsPage() {
   onLimit={(l) => { setLimit(l); setPage(1); }}
   limitOptions={[8, 15, 25, 50]}
   />
-  )}
- {/* ── 7. Detail Result Drawer ── */}
- <ProfileDrawer
- isOpen={Boolean(detailItem)}
- onClose={() => setDetailItem(null)}
- title={detailItem?.subjectName || ''}
- subtitle={`Mã môn: ${detailItem?.subjectCode}`}
- avatarText={detailItem?.subjectCode?.slice(0, 2) || 'KQ'}
- badge={{
- label: detailItem?.periodName || '',
- className: 'bg-blue-50 text-blue-700 border border-blue-200',
- }}
- details={[
- { label: 'Môn thi', value: detailItem?.subjectName, icon: BookOpen },
- { label: 'Mã môn', value: detailItem?.subjectCode },
- { label: 'Kỳ thi', value: `${detailItem?.schoolYear} — ${detailItem?.semester}` },
- { label: 'Ngày thi', value: detailItem?.examDate ? new Date(detailItem.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
- { label: 'Hình thức thi', value: detailItem ? formatExamType(detailItem.examType) : '', icon: GraduationCap },
- { label: 'Phòng thi', value: detailItem?.roomName, icon: BookOpen },
- { label: 'Thời gian nộp bài', value: detailItem?.submissionTime ? new Date(detailItem.submissionTime).toLocaleString('vi-VN') : '---', icon: Clock },
- ]}
- extraSections={detailItem ? [
- {
- title: 'Kết quả & Điểm số',
- content: (
- <div className="space-y-3">
- {detailItem.score !== null ? (
- <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2">
- {detailItem.mcqScore !== null && (
- <div className="flex items-center justify-between text-[13px] text-slate-700">
- <span className="font-medium">Trắc nghiệm</span>
- <span className="font-semibold tabular-nums">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
- </div>
- )}
- {detailItem.essayScore !== null && (
- <div className="flex items-center justify-between text-[13px] text-slate-700">
- <span className="font-medium">Tự luận</span>
- <span className="font-semibold tabular-nums">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
- </div>
- )}
- <div className="border-t border-slate-200 pt-2 flex items-center justify-between">
- <span className="text-[13px] font-semibold text-slate-800">Tổng điểm</span>
- <span className={` tabular-nums font-medium text-lg ${detailItem.score >= 4.0 ? 'text-blue-600' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10</span>
- </div>
- </div>
- ) : (
- <div className={`flex items-center gap-2 text-[13px] font-semibold ${detailItem.status === 'GRADING' ? 'text-blue-600' : 'text-amber-600'}`}>
- {detailItem.status === 'GRADING' ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <Clock className="w-4 h-4 shrink-0" />}
- {detailItem.status === 'GRADING' ? 'Bài thi đang trong quá trình chấm điểm.' : 'Điểm số chưa được duyệt công bố.'}
- </div>
- )}
+   )}
 
- <div className="flex items-center justify-between">
- <span className="text-[13px] font-semibold text-slate-500">Trạng thái:</span>
- {renderInlineStatus(detailItem.status)}
- </div>
+      {/* ── 7. Detail Result Drawer ── */}
+      <ProfileDrawer
+        isOpen={Boolean(detailItem)}
+        onClose={() => setDetailItem(null)}
+        title={detailItem?.subjectName || ''}
+        subtitle={`Mã môn: ${detailItem?.subjectCode}`}
+        avatarText={detailItem?.subjectCode?.slice(0, 2)?.toUpperCase() || 'KQ'}
+        badge={{
+          label: detailItem?.periodName || '',
+          className: 'bg-blue-50 text-blue-700 border border-blue-200',
+        }}
+        details={[
+          { label: 'Môn thi', value: detailItem?.subjectName, icon: BookOpen },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Kỳ thi', value: `${detailItem?.schoolYear} — ${detailItem?.semester}` },
+          { label: 'Số tín chỉ', value: `${detailItem?.credits} tín chỉ` },
+          { label: 'Ngày thi', value: detailItem?.examDate ? new Date(detailItem.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
+          { label: 'Hình thức thi', value: detailItem ? formatExamType(detailItem.examType) : '', icon: GraduationCap },
+          { label: 'Phòng thi', value: detailItem?.roomName ? <IdentifierBadge tone="neutral">{detailItem.roomName}</IdentifierBadge> : 'Tự do', icon: BookOpen },
+          { label: 'Thời gian nộp bài', value: detailItem?.submissionTime ? new Date(detailItem.submissionTime).toLocaleString('vi-VN') : '---', icon: Clock },
+        ]}
+        extraSections={detailItem ? [
+          {
+            title: 'Kết quả & Điểm số',
+            content: (
+              <div className="space-y-3">
+                {detailItem.score !== null ? (
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700 p-3.5 space-y-2">
+                    {detailItem.mcqScore !== null && (
+                      <div className="flex items-center justify-between text-[13px] text-slate-700 dark:text-slate-300">
+                        <span className="font-medium">Trắc nghiệm</span>
+                        <span className="font-semibold tabular-nums">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
+                      </div>
+                    )}
+                    {detailItem.essayScore !== null && (
+                      <div className="flex items-center justify-between text-[13px] text-slate-700 dark:text-slate-300">
+                        <span className="font-medium">Tự luận</span>
+                        <span className="font-semibold tabular-nums">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
+                      </div>
+                    )}
+                    <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex items-center justify-between">
+                      <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">Tổng điểm bài thi</span>
+                      <span className={`tabular-nums font-semibold text-lg ${detailItem.score >= 4.0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10 điểm</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`flex items-center gap-2 text-[13px] font-semibold ${detailItem.status === 'GRADING' ? 'text-blue-600' : 'text-amber-600'}`}>
+                    {detailItem.status === 'GRADING' ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <Clock className="w-4 h-4 shrink-0" />}
+                    {detailItem.status === 'GRADING' ? 'Bài thi đang trong quá trình chấm điểm.' : 'Điểm số chưa được duyệt công bố.'}
+                  </div>
+                )}
 
- {detailItem.canAppeal && (
- <Button variant="primary" size="sm" onClick={() => setShowAppealModal(true)} className="w-full">
- Yêu cầu phúc khảo
- </Button>
- )}
- </div>
- ),
- },
- ...(detailItem.lecturerComments ? [{
- title: 'Nhận xét của giảng viên',
- content: (
- <div className="flex items-start gap-2">
- <MessageSquare className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
- <p className="text-[13px] text-slate-700 leading-relaxed font-normal">{detailItem.lecturerComments}</p>
- </div>
- ),
- }] : []),
- ] : undefined}
- />
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
+                  {renderInlineStatus(detailItem.status)}
+                </div>
 
- {/* ── 8. Appeal Modal ── */}
- <Modal
- isOpen={showAppealModal && Boolean(detailItem)}
- onClose={() => setShowAppealModal(false)}
- title="Gửi yêu cầu phúc khảo"
- subtitle={`Môn học: ${detailItem?.subjectName} (${detailItem?.subjectCode})`}
- icon={<MessageSquare className="h-6 w-6 text-white" />}
- badge="Phúc khảo"
- variant="gradient"
- size="md"
- >
- {detailItem && (
- <div className="space-y-4 text-xs -mt-1">
- <p className="text-slate-700 leading-relaxed">
- Môn học: <strong className="text-slate-900">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
- </p>
- <label className="block font-medium text-slate-700">
- Lý do xin phúc khảo:
- </label>
- <textarea
- rows={4}
- value={appealReason}
- onChange={(e) => setAppealReason(e.target.value)}
- placeholder="Nhập chi tiết lý do đề nghị chấm lại bài thi..."
- className="w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-3 text-[15px] font-normal text-slate-900 placeholder:text-slate-400 focus:border-primary-600 focus:outline-none transition"
- />
+                {detailItem.attemptId && (
+                  <div className="pt-1">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        const id = detailItem.attemptId;
+                        setDetailItem(null);
+                        if (id) router.push(`/student/online-exam/${id}/result`);
+                      }}
+                      leftIcon={<Eye className="w-3.5 h-3.5 text-blue-600" />}
+                      className="w-full justify-center"
+                    >
+                      Xem bài thi &amp; Đáp án chi tiết
+                    </Button>
+                  </div>
+                )}
 
- <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
- <Button
- variant="secondary"
- size="md"
- onClick={() => setShowAppealModal(false)}
- disabled={submittingAppeal}
- >
- Hủy
- </Button>
- <Button
- variant="primary"
- size="md"
- onClick={handleSubmitAppeal}
- isLoading={submittingAppeal}
- leftIcon={<CheckCheck className="h-4 w-4" />}
- >
- Gửi yêu cầu
- </Button>
- </div>
- </div>
- )}
- </Modal>
+                {detailItem.canAppeal && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setShowAppealModal(true)}
+                    leftIcon={<MessageSquare className="w-3.5 h-3.5" />}
+                    className="w-full justify-center"
+                  >
+                    Gửi yêu cầu phúc khảo
+                  </Button>
+                )}
+              </div>
+            ),
+          },
+          ...(detailItem.lecturerComments ? [{
+            title: 'Nhận xét của giảng viên',
+            content: (
+              <div className="flex items-start gap-2">
+                <MessageSquare className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                <p className="text-[13px] text-slate-700 dark:text-slate-300 leading-relaxed font-normal">{detailItem.lecturerComments}</p>
+              </div>
+            ),
+          }] : []),
+        ] : undefined}
+      />
+
+      {/* ── 8. Appeal Modal ── */}
+      <Modal
+        isOpen={showAppealModal && Boolean(detailItem)}
+        onClose={() => setShowAppealModal(false)}
+        title="Gửi yêu cầu phúc khảo"
+        subtitle={`Môn học: ${detailItem?.subjectName} (${detailItem?.subjectCode})`}
+        icon={<MessageSquare className="h-6 w-6 text-white" />}
+        badge="Phúc khảo"
+        variant="gradient"
+        size="md"
+      >
+        {detailItem && (
+          <div className="space-y-4 text-xs -mt-1">
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+              Môn học: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
+            </p>
+            <label className="block font-medium text-slate-700 dark:text-slate-300 text-[15px]">
+              Lý do xin phúc khảo:
+            </label>
+            <textarea
+              rows={4}
+              value={appealReason}
+              onChange={(e) => setAppealReason(e.target.value)}
+              placeholder="Nhập chi tiết lý do đề nghị chấm lại bài thi..."
+              className="w-full min-h-[100px] rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
+            />
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setShowAppealModal(false)}
+                disabled={submittingAppeal}
+              >
+                Hủy
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleSubmitAppeal}
+                isLoading={submittingAppeal}
+                leftIcon={<CheckCheck className="h-4 w-4" />}
+              >
+                Gửi yêu cầu
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
 
  {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
  </main>

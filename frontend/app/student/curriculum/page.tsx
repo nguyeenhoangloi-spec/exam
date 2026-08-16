@@ -78,7 +78,7 @@ interface StatsInfo {
 }
 
 export default function StudentCurriculumPage() {
-  usePageTitle('Khung chương trình đào tạo');
+  usePageTitle('Chương trình đào tạo');
   const router = useRouter();
 
   const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
@@ -382,7 +382,7 @@ export default function StudentCurriculumPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-              Khung chương trình đào tạo
+              Chương trình đào tạo
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
@@ -946,36 +946,69 @@ export default function StudentCurriculumPage() {
           onClose={() => setDetailItem(null)}
           title={detailItem?.subjectName || ''}
           subtitle={`Mã môn: ${detailItem?.subjectCode}`}
-          avatarText={detailItem?.subjectCode?.slice(0, 2) || 'CT'}
+          avatarText={detailItem?.subjectCode?.slice(0, 2)?.toUpperCase() || 'CT'}
           badge={{
-            label: `Học kỳ ${detailItem?.recommendedSemester}`,
-            className: 'bg-blue-50 text-blue-700 border border-blue-200',
+            label: detailItem?.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn',
+            status: detailItem?.isCompleted ? 'COMPLETED' : 'PENDING',
           }}
           details={[
-            { label: 'Tên môn học', value: detailItem?.subjectName, icon: BookOpen },
-            { label: 'Mã môn học', value: detailItem?.subjectCode, icon: Info },
+            { label: 'Tên học phần', value: detailItem?.subjectName, icon: BookOpen },
+            { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge>, icon: Info },
             { label: 'Học kỳ đào tạo', value: detailItem ? `Học kỳ ${detailItem.recommendedSemester}` : '', icon: BookMarked },
             { label: 'Số tín chỉ', value: detailItem ? `${detailItem.credits} Tín chỉ` : '', icon: Layers },
-            { label: 'Phân loại môn', value: detailItem?.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn', icon: Award },
-            ...(detailItem?.note ? [{ label: 'Ghi chú', value: detailItem.note }] : []),
+            { label: 'Phân loại học phần', value: detailItem?.type === 'MANDATORY' ? 'Môn học bắt buộc' : 'Môn học tự chọn', icon: Award },
+            ...(detailItem?.note ? [{ label: 'Ghi chú học phần', value: detailItem.note }] : []),
           ]}
           extraSections={detailItem ? [
             {
-              title: 'Trạng thái tích lũy',
-              content: detailItem.isCompleted ? (
-                <div className="flex items-center gap-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-800 p-3">
-                  <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
-                  <div>
-                    <p className="text-[13px] font-semibold text-blue-900 dark:text-blue-100">Đã hoàn thành</p>
-                    <p className="text-[12px] text-blue-600 dark:text-blue-400 font-medium mt-0.5">Sinh viên đã tích lũy đủ tín chỉ môn học này</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
-                  <Clock className="h-5 w-5 text-slate-400 shrink-0" />
-                  <div>
-                    <p className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">Chưa tích lũy</p>
-                    <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo</p>
+              title: 'Trạng thái tích lũy tín chỉ',
+              content: (
+                <div className="space-y-3">
+                  {detailItem.isCompleted ? (
+                    <div className="flex items-center gap-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-800 p-3.5">
+                      <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                      <div>
+                        <p className="text-[13px] font-semibold text-blue-900 dark:text-blue-100">Đã tích lũy thành công</p>
+                        <p className="text-[12px] text-blue-600 dark:text-blue-400 font-medium mt-0.5">Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3.5">
+                      <Clock className="h-5 w-5 text-slate-400 shrink-0" />
+                      <div>
+                        <p className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">Chưa tích lũy</p>
+                        <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo của khoa.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex flex-col gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        setDetailItem(null);
+                        router.push('/student/results');
+                      }}
+                      leftIcon={<Award className="w-3.5 h-3.5 text-blue-600" />}
+                      className="w-full justify-center"
+                    >
+                      Tra cứu điểm thi &amp; Kết quả học tập
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setDetailItem(null);
+                        router.push('/student/practice');
+                      }}
+                      leftIcon={<Sparkles className="w-3.5 h-3.5 text-amber-500" />}
+                      className="w-full justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300"
+                    >
+                      Luyện thi trắc nghiệm môn này
+                    </Button>
                   </div>
                 </div>
               ),

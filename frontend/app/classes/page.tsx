@@ -23,6 +23,7 @@ import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ClassTable } from '../../components/classes/ClassTable';
 import { ClassPaginationBar } from '../../components/classes/ClassPaginationBar';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { ProfileDrawer } from '../../components/ProfileDrawer';
 
 export default function ClassesPage() {
   usePageTitle('Quản lý lớp học');
@@ -554,6 +555,33 @@ export default function ClassesPage() {
         title="Nhập danh sách lớp học từ Excel"
         templateFileName="mau_danh_sach_lop.csv"
         onImportSuccess={fetchData}
+      />
+
+      {/* Class Detail Profile Drawer */}
+      <ProfileDrawer
+        isOpen={Boolean(drawerClass)}
+        onClose={() => setDrawerClass(null)}
+        title={drawerClass?.name || 'Chi tiết Lớp sinh hoạt'}
+        subtitle={`Mã lớp: ${drawerClass?.code || ''}`}
+        avatarText={drawerClass?.code || 'LH'}
+        badge={{
+          label: `${(drawerClass as any)?.studentCount ?? drawerClass?._count?.students ?? 0} Sinh viên`,
+          className: 'bg-blue-50 text-blue-700 border-blue-200',
+        }}
+        details={[
+          { label: 'Mã lớp sinh hoạt', value: drawerClass?.code, icon: School },
+          { label: 'Tên lớp học', value: drawerClass?.name, icon: GraduationCap },
+          {
+            label: 'Khoa trực thuộc',
+            value: drawerClass?.department?.name || 'Chưa gán',
+            icon: Building2,
+          },
+          {
+            label: 'Sĩ số sinh viên',
+            value: `${(drawerClass as any)?.studentCount ?? drawerClass?._count?.students ?? 0} sinh viên`,
+            icon: Users,
+          },
+        ]}
       />
 
       {/* Confirmation Modal */}

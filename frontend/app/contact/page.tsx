@@ -31,6 +31,9 @@ import {
 import { Toast } from '../../components/Toast';
 import { Modal } from '../../components/Modal';
 import { FilterSelect } from '../../components/ui/FilterSelect';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { Eye, Info } from 'lucide-react';
 import api from '../../lib/api';
 
 interface ArticleItem {
@@ -58,6 +61,7 @@ export default function ContactSupportPage() {
   // Modals
   const [isAllArticlesModalOpen, setIsAllArticlesModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
+  const [showSupportDrawer, setShowSupportDrawer] = useState(false);
 
   // Contact Form State
   const [fullName, setFullName] = useState('');
@@ -325,6 +329,17 @@ export default function ContactSupportPage() {
           </Link>
 
           <div className="flex items-center gap-3">
+            {/* Button Xem chi tiết Trung tâm Khảo thí */}
+            <button
+              type="button"
+              onClick={() => setShowSupportDrawer(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[13.5px] font-semibold transition active:scale-95 cursor-pointer"
+              title="Xem thông tin chi tiết Trung tâm Khảo thí & Hotline"
+            >
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span className="hidden sm:inline">Thông tin Trung tâm</span>
+            </button>
+
             {/* Creative Login Action Button with Guaranteed Padding */}
             <button
               type="button"
@@ -635,7 +650,7 @@ export default function ContactSupportPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Ví dụ: Nguyễn Văn A"
-                  className={`w-full h-[44px] rounded-2xl border px-4 text-[15px] outline-none transition ${
+                  className={`w-full h-11 rounded-xl border px-4 text-[15px] outline-none transition ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                       : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -653,7 +668,7 @@ export default function ContactSupportPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nguyenvana@exam.edu.vn"
-                  className={`w-full h-[44px] rounded-2xl border px-4 text-[15px] outline-none transition ${
+                  className={`w-full h-11 rounded-xl border px-4 text-[15px] outline-none transition ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                       : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -666,10 +681,11 @@ export default function ContactSupportPage() {
                   Vai trò hệ thống
                 </label>
                 <FilterSelect
+                  size="lg"
                   containerClassName="w-full"
                   value={role}
                   onChange={(e: any) => setRole(e.target.value)}
-                  className={`w-full h-[44px] rounded-2xl border px-4 text-[14px] outline-none transition cursor-pointer ${
+                  className={`w-full h-11 rounded-xl border px-4 text-[15px] outline-none transition cursor-pointer ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                       : 'border-slate-200/90 bg-white text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -692,7 +708,7 @@ export default function ContactSupportPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Mô tả cụ thể sự cố bạn gặp phải (ví dụ: Không đăng nhập được, thiếu môn thi trong lịch thi, lỗi nộp bài...)"
-                className={`w-full rounded-2xl border p-4 text-[15px] outline-none transition ${
+                className={`w-full rounded-xl border p-4 text-[15px] outline-none transition ${
                   isDark
                     ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                     : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -873,6 +889,42 @@ export default function ContactSupportPage() {
           </div>
         )}
       </div>
+
+      {/* Support Center Detail Drawer */}
+      <ProfileDrawer
+        isOpen={showSupportDrawer}
+        onClose={() => setShowSupportDrawer(false)}
+        title="Trung Tâm Khảo Thí & Đảm Bảo Chất Lượng"
+        subtitle="Bộ phận Tiếp nhận & Hỗ trợ Kỹ thuật"
+        avatarText="TTKT"
+        badge={{
+          label: 'Hỗ trợ 24/7',
+          status: 'OFFICIAL',
+        }}
+        details={[
+          { label: 'Đơn vị phụ trách', value: 'Trung tâm Khảo thí & Đảm bảo Chất lượng', icon: Building2 },
+          { label: 'Hotline khẩn cấp 24/7', value: <IdentifierBadge tone="blue">1800-EXAM-HELP (Miễn phí)</IdentifierBadge>, icon: Phone },
+          { label: 'Email tiếp nhận hỗ trợ', value: 'support@exam.edu.vn', icon: Mail },
+          { label: 'Địa chỉ phòng trực tiếp', value: 'Phòng A1-102, Tòa nhà Khảo thí Trung tâm', icon: MapPin },
+          { label: 'Khung giờ trực hỗ trợ', value: '07:00 – 21:00 (Thứ 2 đến Chủ nhật)', icon: Clock },
+          { label: 'Thời gian xử lý phúc khảo', value: '03 - 05 ngày làm việc' },
+        ]}
+        extraSections={[
+          {
+            title: 'Quy trình xử lý sự cố khẩn cấp',
+            content: (
+              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+                <p>
+                  • Trường hợp mất kết nối mạng hoặc lỗi phần mềm trong phòng thi, thí sinh báo ngay cho Giám thị phòng thi để lập biên bản xử lý kịp thời.
+                </p>
+                <p>
+                  • Mọi yêu cầu hỗ trợ qua form điện tử sẽ được kỹ thuật viên tiếp nhận và phản hồi qua email trong vòng 30 phút.
+                </p>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {/* ── Page Bottom Footer ── */}
       <footer className="mt-auto relative z-10 w-full py-6 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1 border-t border-slate-200/60 dark:border-slate-800/60">

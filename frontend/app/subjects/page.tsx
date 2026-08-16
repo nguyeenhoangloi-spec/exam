@@ -68,6 +68,27 @@ export default function SubjectsPage() {
 
   const [selected, setSelected] = useState<number[]>([]);
   const [drawerSubject, setDrawerSubject] = useState<Subject | null>(null);
+  const [drawerOpenSubject, setDrawerOpenSubject] = useState<Subject | null>(null);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  useEffect(() => {
+    if (drawerSubject) {
+      setDrawerOpenSubject(drawerSubject);
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setDrawerVisible(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setDrawerVisible(false);
+      const timer = setTimeout(() => {
+        setDrawerOpenSubject(null);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [drawerSubject]);
+
   const [drawerTab, setDrawerTab] = useState<'info' | 'classes' | 'students'>('info');
  const [drawerEnrollments, setDrawerEnrollments] = useState<any[]>([]);
  const [drawerClassSummary, setDrawerClassSummary] = useState<any[]>([]);
@@ -646,7 +667,7 @@ export default function SubjectsPage() {
  {/* Preview */}
  {enrollClassData.classId && (
  <div className={`rounded-xl p-4 border ${previewLoading ? 'border-slate-100 bg-slate-50' : enrollClassPreview ? 'border-blue-100 bg-blue-50' : 'border-slate-100 bg-slate-50'}`}>
- {previewLoading ? (
+{previewLoading ? (
  <p className="text-xs text-slate-400 font-semibold animate-pulse">Đang kiểm tra...</p>
  ) : enrollClassPreview ? (
  <div className="space-y-1">
@@ -672,7 +693,7 @@ export default function SubjectsPage() {
  </div>
  )}
 
- <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+ <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
  <Button
  type="button"
  variant="secondary"
@@ -694,52 +715,74 @@ export default function SubjectsPage() {
  </form>
  </Modal>
 
- {/* Subject Detail Drawer */}
- {drawerSubject && (
- <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] flex justify-end">
- <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px]" onClick={() => setDrawerSubject(null)} />
-  <div className="relative z-10 w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full">
- {/* Header - Modern Gradient matching ProfileDrawer */}
-<div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-xs">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3 min-w-0 flex-1">
-<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-semibold text-base text-white border border-white/25 shadow-2xs">
- {drawerSubject.subjectCode.substring(0, 2).toUpperCase()}
+ {/* Subject Detail Drawer — Chuẩn Design System & Hoạt ảnh 60 FPS */}
+ {drawerOpenSubject && (
+ <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] overflow-hidden">
+ {/* Backdrop mờ nền */}
+ <div
+ className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+ drawerVisible ? 'opacity-100' : 'opacity-0'
+ }`}
+ onClick={() => setDrawerSubject(null)}
+ />
+
+ <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
+ <div
+ className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+ drawerVisible ? 'translate-x-0' : 'translate-x-full'
+ }`}
+ >
+ {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
+ <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+ <div className="flex items-start justify-between gap-4">
+ <div className="flex items-start gap-3.5 min-w-0 flex-1">
+ {/* Avatar / Icon Badge thương hiệu */}
+ <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+ {drawerOpenSubject.subjectCode.substring(0, 3).toUpperCase()}
  </div>
- <div className="min-w-0 flex-1 pr-2">
-<h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
- {drawerSubject.subjectName}
+
+ <div className="min-w-0 flex-1">
+ <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenSubject.subjectName}>
+ {drawerOpenSubject.subjectName}
  </h2>
- <p className="text-[13px] font-semibold text-blue-100/90 mt-1.5 tabular-nums">
- Mã môn: {drawerSubject.subjectCode} • {drawerSubject.credits} Tín chỉ
- </p>
+
+ <div className="mt-2 flex items-center gap-2 flex-wrap">
+ <IdentifierBadge tone="neutral" title={drawerOpenSubject.subjectCode}>
+ {drawerOpenSubject.subjectCode}
+ </IdentifierBadge>
+ <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+ {drawerOpenSubject.credits} Tín chỉ
+ </span>
+ </div>
  </div>
  </div>
 
+ {/* Nút Đóng */}
  <button
  type="button"
  onClick={() => setDrawerSubject(null)}
- className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
- title="Đóng"
+ className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+ title="Đóng chi tiết"
  >
  <X className="h-5 w-5" />
  </button>
  </div>
  </div>
 
- {/* Tabs */}
-  <div className="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
+ {/* Tabs Navigation */}
+ <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
  {[
- { key: 'info', label: 'Thông tin', icon: BookOpen },
+ { key: 'info', label: 'Thông tin học phần', icon: BookOpen },
  { key: 'classes', label: 'Lớp đã gán', icon: GraduationCap },
  { key: 'students', label: 'Sinh viên', icon: Users },
  ].map((tab) => (
  <button
  key={tab.key}
  onClick={() => setDrawerTab(tab.key as any)}
- className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${drawerTab === tab.key
+ className={`whitespace-nowrap border-b-2 px-4 py-3 text-[15px] transition cursor-pointer flex items-center gap-2 ${
+ drawerTab === tab.key
  ? 'border-blue-600 text-blue-600 font-semibold'
- : 'border-transparent text-slate-500 hover:text-slate-800'
+ : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
  }`}
  >
  <tab.icon className="h-4 w-4" />
@@ -748,61 +791,92 @@ export default function SubjectsPage() {
  ))}
  </div>
 
- {/* Tab Content */}
-  <div className="flex-1 overflow-y-auto p-5 bg-white dark:bg-slate-900">
+ {/* Tab Content — Black-forward Palette, Không khung lồng */}
+ <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-900">
  {/* --- TAB INFO --- */}
  {drawerTab === 'info' && (
- <div className="space-y-4">
+ <div className="space-y-6">
+ {/* 3 Thẻ thống kê nhanh */}
  <div className="grid grid-cols-3 gap-3">
  {[
- { label: 'Sinh viên', value: (drawerSubject as any)._count?.studentSubjects ?? 0, color: 'blue' },
- { label: 'Câu hỏi', value: (drawerSubject as any)._count?.questions ?? 0, color: 'emerald' },
- { label: 'Lịch thi', value: (drawerSubject as any)._count?.examSchedules ?? 0, color: 'blue' },
+ { label: 'Sinh viên', value: (drawerOpenSubject as any)._count?.studentSubjects ?? 0 },
+ { label: 'Câu hỏi', value: (drawerOpenSubject as any)._count?.questions ?? 0 },
+ { label: 'Lịch thi', value: (drawerOpenSubject as any)._count?.examSchedules ?? 0 },
  ].map((m) => (
- <div key={m.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
- <p className={`text-xl font-semibold text-${m.color}-600`}>{m.value}</p>
- <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{m.label}</p>
+ <div key={m.label} className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3 text-center">
+ <p className="text-[20px] font-semibold text-blue-600 dark:text-blue-400">{m.value}</p>
+ <p className="text-[12px] font-semibold text-slate-600 dark:text-slate-400 mt-0.5">{m.label}</p>
  </div>
  ))}
  </div>
 
- <div className="space-y-2">
- {[
- { label: 'Mã môn học', value: drawerSubject.subjectCode },
- { label: 'Tên môn học', value: drawerSubject.subjectName },
- { label: 'Số tín chỉ', value: `${drawerSubject.credits} tín chỉ` },
- { label: 'Khoa đào tạo', value: (drawerSubject as any).department?.name || 'Chưa gán' },
- ].map((r) => (
- <div key={r.label} className="flex items-start justify-between py-2.5 border-b border-slate-100">
- <span className="text-xs font-semibold text-slate-500">{r.label}</span>
- <span className="text-xs font-semibold text-slate-800 text-right max-w-[60%]">{r.value}</span>
+ {/* Danh sách thông tin chi tiết */}
+ <div>
+ <div className="flex items-center gap-2 mb-3">
+ <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+ <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+ Chi tiết môn học
+ </h3>
  </div>
- ))}
+
+ <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+ {[
+ { label: 'Mã môn học', value: drawerOpenSubject.subjectCode, icon: BookOpen },
+ { label: 'Tên môn học', value: drawerOpenSubject.subjectName, icon: BookMarked },
+ { label: 'Số tín chỉ', value: `${drawerOpenSubject.credits} tín chỉ`, icon: Award },
+ { label: 'Khoa đào tạo', value: (drawerOpenSubject as any).department?.name || 'Chưa gán', icon: Building2 },
+ ].map((r) => {
+ const Icon = r.icon;
+ return (
+ <div
+ key={r.label}
+ className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
+ >
+ <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[15px] font-semibold shrink-0">
+ {Icon && (
+ <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+ <Icon className="h-4 w-4" />
+ </span>
+ )}
+ <span>{r.label}</span>
+ </span>
+
+ <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+ {r.value}
+ </span>
+ </div>
+ );
+ })}
+ </div>
  </div>
 
  {currentUser?.role === 'ADMIN' && (
- <button
- onClick={() => openEnrollClassModal(drawerSubject)}
- className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
+ <div className="pt-2">
+ <Button
+ type="button"
+ variant="primary"
+ size="md"
+ onClick={() => openEnrollClassModal(drawerOpenSubject)}
+ className="w-full flex items-center justify-center gap-2"
  >
  <GraduationCap className="h-4 w-4" />
  Gán Lớp vào Môn học
- </button>
+ </Button>
+ </div>
  )}
  </div>
  )}
 
  {/* --- TAB CLASSES --- */}
  {drawerTab === 'classes' && (
- <div className="space-y-3">
- {/* Filter */}
+ <div className="space-y-4">
  <div className="flex gap-2">
  <input
  type="text"
  placeholder="Lọc theo học kỳ..."
  value={drawerFilterSemester}
  onChange={(e) => setDrawerFilterSemester(e.target.value)}
- className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none"
+ className="h-10 flex-1 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-[15px] font-semibold text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
  />
  </div>
 
@@ -810,23 +884,29 @@ export default function SubjectsPage() {
  <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
  ) : drawerClassSummary.length === 0 ? (
  <div className="py-12 text-center">
- <BookMarked className="h-8 w-8 text-slate-700 mx-auto mb-2" />
- <p className="text-xs font-semibold text-slate-400">Chưa có lớp nào được gán vào môn học này.</p>
+ <BookMarked className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+ <p className="text-[14px] font-semibold text-slate-500">Chưa có lớp nào được gán vào môn học này.</p>
  {currentUser?.role === 'ADMIN' && (
- <button onClick={() => openEnrollClassModal(drawerSubject!)}
- className="mt-3 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition cursor-pointer">
+ <Button
+ type="button"
+ variant="primary"
+ size="md"
+ onClick={() => openEnrollClassModal(drawerOpenSubject!)}
+ className="mt-3"
+ >
  Gán Lớp Ngay
- </button>
+ </Button>
  )}
  </div>
  ) : (
- drawerClassSummary
+ <div className="space-y-2.5">
+ {drawerClassSummary
  .filter((c) => !drawerFilterSemester || c.semesters?.some((s: string) => s.toLowerCase().includes(drawerFilterSemester.toLowerCase())))
  .map((c: any) => (
- <div key={c.classId} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 flex items-center justify-between gap-3">
+ <div key={c.classId} className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 flex items-center justify-between gap-3">
  <div>
- <p className="text-xs font-semibold text-slate-800">{c.classCode} — {c.className}</p>
- <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{c.departmentName}</p>
+ <p className="text-[14px] font-semibold text-slate-900 dark:text-white">{c.classCode} — {c.className}</p>
+ <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{c.departmentName}</p>
  <div className="flex flex-wrap gap-1 mt-1.5">
  {c.semesters?.map((s: string) => (
  <IdentifierBadge key={s}>{s}</IdentifierBadge>
@@ -834,58 +914,57 @@ export default function SubjectsPage() {
  </div>
  </div>
  <div className="text-right shrink-0">
- <p className="text-lg font-semibold text-blue-600">{c.count}</p>
+ <p className="text-[18px] font-semibold text-blue-600 dark:text-blue-400">{c.count}</p>
  <p className="text-[12px] font-semibold text-slate-500">sinh viên</p>
  </div>
  </div>
- ))
+ ))}
+ </div>
  )}
  </div>
  )}
 
  {/* --- TAB STUDENTS --- */}
  {drawerTab === 'students' && (
- <div className="space-y-3">
- {/* Filters */}
+ <div className="space-y-4">
  <div className="flex flex-wrap gap-2">
  <div className="relative w-full sm:w-72 md:w-80">
  <FilterSelect value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-semibold focus:outline-none cursor-pointer">
  <option value="">Tất cả lớp</option>
  {drawerClassesForFilter.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}
  </FilterSelect>
  </div>
  <div className="relative">
  <FilterSelect value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
- className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-normal focus:outline-none cursor-pointer">
+ className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-semibold focus:outline-none cursor-pointer">
  <option value="">Tất cả HK</option>
  {drawerSemesters.map((s) => <option key={s} value={s}>{s}</option>)}
  </FilterSelect>
  </div>
  </div>
 
- {/* Summary */}
- <div className="text-xs font-semibold text-slate-500">
- {drawerLoading ? 'Đang tải...' : `${drawerEnrollments.length} sinh viên`}
+ <div className="text-[13px] font-semibold text-slate-600 dark:text-slate-400">
+ {drawerLoading ? 'Đang tải...' : `${drawerEnrollments.length} sinh viên đã đăng ký`}
  </div>
 
  {drawerLoading ? (
  <div className="space-y-2">{[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-10 animate-pulse rounded-xl bg-slate-100" />)}</div>
  ) : drawerEnrollments.length === 0 ? (
  <div className="py-12 text-center">
- <Users className="h-8 w-8 text-slate-700 mx-auto mb-2" />
- <p className="text-xs font-semibold text-slate-400">Không có sinh viên nào phù hợp.</p>
+ <Users className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+ <p className="text-[14px] font-semibold text-slate-500">Không có sinh viên nào phù hợp.</p>
  </div>
  ) : (
- <div className="space-y-1.5">
+ <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
  {drawerEnrollments.map((e: any) => (
- <div key={e.id} className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+ <div key={e.id} className="py-2.5 px-3 -mx-3 rounded-xl flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
  <div>
- <p className="text-xs font-semibold text-slate-800">{e.student?.fullName}</p>
- <p className="text-[12px] font-semibold text-slate-400">{e.student?.studentCode} · {e.student?.class?.name || 'Chưa có lớp'}</p>
+ <p className="text-[14px] font-semibold text-slate-900 dark:text-white">{e.student?.fullName}</p>
+ <p className="text-[12px] font-semibold text-slate-500">{e.student?.studentCode} · {e.student?.class?.name || 'Chưa có lớp'}</p>
  </div>
  <div className="text-right">
- <span className="text-[12px] font-semibold text-blue-700 bg-blue-50 rounded-md px-1.5 py-0.5">{e.semester}</span>
+ <span className="text-[12px] font-semibold text-blue-700 bg-blue-50 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-lg px-2 py-0.5">{e.semester}</span>
  </div>
  </div>
  ))}
@@ -894,11 +973,23 @@ export default function SubjectsPage() {
  </div>
  )}
  </div>
+
+ {/* Footer — Nút 40px chuẩn Design token */}
+ <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
+ <Button
+ type="button"
+ variant="secondary"
+ size="md"
+ onClick={() => setDrawerSubject(null)}
+ >
+ Đóng
+ </Button>
+ </div>
+ </div>
  </div>
  </div>
  )}
 
- {/* Confirm Modal */}
  <ConfirmModal
  isOpen={confirmModal.isOpen}
  onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}

@@ -9,6 +9,7 @@ import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
 import { TrashFilterPopover } from '../../components/trash/TrashFilterPopover';
 import {
@@ -81,12 +82,36 @@ function TrashPageContent() {
   const [expiryFilter, setExpiryFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
   const [detailItem, setDetailItem] = useState<TrashItem | null>(null);
+  const [drawerOpenItem, setDrawerOpenItem] = useState<TrashItem | null>(null);
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (detailItem) {
+      setDrawerOpenItem(detailItem);
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setDrawerVisible(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setDrawerVisible(false);
+      const timer = setTimeout(() => {
+        setDrawerOpenItem(null);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [detailItem]);
+
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && detailItem) {
+        setDetailItem(null);
+      }
       if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
         e.preventDefault();
         searchInputRef.current?.focus();
@@ -94,7 +119,7 @@ function TrashPageContent() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [detailItem]);
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -521,7 +546,7 @@ function TrashPageContent() {
                   onClick={() => setViewMode('list')}
                   className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                     viewMode === 'list'
-                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                   }`}
                   title="Xem dạng danh sách"
@@ -533,7 +558,7 @@ function TrashPageContent() {
                   onClick={() => setViewMode('grid')}
                   className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                     viewMode === 'grid'
-                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                   }`}
                   title="Xem dạng lưới"
@@ -545,7 +570,7 @@ function TrashPageContent() {
                   onClick={() => setViewMode('compact')}
                   className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                     viewMode === 'compact'
-                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                   }`}
                   title="Xem dạng thu gọn"
@@ -884,98 +909,164 @@ function TrashPageContent() {
           />
         )}
 
-        {/* Modal Xem Chi Tiết Bản Ghi Đã Xóa */}
-        {detailItem && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-[2px]">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-              <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="space-y-1 min-w-0">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
-                    Chi tiết bản ghi trong Thùng rác
-                  </span>
-                  <h3 className="text-[17px] font-semibold text-slate-900 dark:text-slate-100 line-clamp-2">
-                    {detailItem.title}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDetailItem(null)}
-                  className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+        {/* ── TRASH DETAIL DRAWER: Chuẩn Design System & Hoạt ảnh 60 FPS ── */}
+        {drawerOpenItem && (
+          <div role="dialog" aria-modal="true" aria-label="Chi tiết bản ghi đã xóa" className="fixed inset-0 z-[100] overflow-hidden">
+            {/* Backdrop mờ nền */}
+            <div
+              className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                drawerVisible ? 'opacity-100' : 'opacity-0'
+              }`}
+              onClick={() => setDetailItem(null)}
+            />
 
-              <div className="space-y-3 text-[14px]">
-                <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
-                  <span className="text-slate-500 dark:text-slate-400">Danh mục:</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">
-                    {categoryLabelMap[detailItem.type] || detailItem.type}
-                  </span>
-                </div>
-                {detailItem.subTitle && (
-                  <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
-                    <span className="text-slate-500 dark:text-slate-400">Mô tả/Kỳ thi:</span>
-                    <span className="font-medium text-slate-800 dark:text-slate-200 text-right max-w-xs truncate">
-                      {detailItem.subTitle}
-                    </span>
+            {/* Drawer Container */}
+            <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
+              <div
+                className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+                  drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                }`}
+              >
+                {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
+                <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                        <Trash2 className="h-6 w-6 text-white" />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                            {drawerOpenItem.title}
+                          </h2>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2 flex-wrap">
+                          <IdentifierBadge tone="neutral">
+                            {categoryLabelMap[drawerOpenItem.type] || drawerOpenItem.type}
+                          </IdentifierBadge>
+                          <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400 truncate">
+                            Mã #{drawerOpenItem.id}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Nút Đóng */}
+                    <button
+                      type="button"
+                      onClick={() => setDetailItem(null)}
+                      className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+                      title="Đóng chi tiết"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
                   </div>
-                )}
-                <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
-                  <span className="text-slate-500 dark:text-slate-400">Thời điểm xóa:</span>
-                  <span className="font-medium text-slate-900 dark:text-slate-100">
-                    {detailItem.deletedAt ? new Date(detailItem.deletedAt).toLocaleString('vi-VN') : '---'}
-                  </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/50">
-                  <span className="text-slate-500 dark:text-slate-400">Người thực hiện xóa:</span>
-                  <span className="font-medium text-slate-900 dark:text-slate-100">
-                    {detailItem.deletedBy || 'Hệ thống'}
-                  </span>
-                </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-slate-500 dark:text-slate-400">Thời gian tự động hủy:</span>
-                  <span className="font-semibold text-amber-600 dark:text-amber-400">
-                    Còn {getRemainingDays(detailItem.deletedAt)} ngày
-                  </span>
-                </div>
-              </div>
 
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="md"
-                  onClick={() => setDetailItem(null)}
-                >
-                  Đóng
-                </Button>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="md"
-                  onClick={() => {
-                    const item = detailItem;
-                    setDetailItem(null);
-                    handleRestore(item);
-                  }}
-                  leftIcon={<RotateCcw className="w-4 h-4" />}
-                >
-                  Khôi phục
-                </Button>
-                <Button
-                  type="button"
-                  variant="danger"
-                  size="md"
-                  onClick={() => {
-                    const item = detailItem;
-                    setDetailItem(null);
-                    handleHardDelete(item);
-                  }}
-                  leftIcon={<Trash2 className="w-4 h-4" />}
-                >
-                  Xóa vĩnh viễn
-                </Button>
+                {/* Content Body */}
+                <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px]">
+                  {/* Section 1: Thông tin bản ghi */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                      <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                        Thông tin chi tiết bản ghi
+                      </h3>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                      <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                        <span className="text-slate-500 dark:text-slate-400 font-medium">Danh mục dữ liệu:</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">
+                          {categoryLabelMap[drawerOpenItem.type] || drawerOpenItem.type}
+                        </span>
+                      </div>
+
+                      {drawerOpenItem.subTitle && (
+                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                          <span className="text-slate-500 dark:text-slate-400 font-medium">Mô tả / Kỳ thi:</span>
+                          <span className="font-semibold text-slate-900 dark:text-white text-right max-w-xs truncate">
+                            {drawerOpenItem.subTitle}
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                        <span className="text-slate-500 dark:text-slate-400 font-medium">Thời điểm xóa:</span>
+                        <span className="font-semibold text-slate-900 dark:text-white tabular-nums">
+                          {drawerOpenItem.deletedAt ? new Date(drawerOpenItem.deletedAt).toLocaleString('vi-VN') : '---'}
+                        </span>
+                      </div>
+
+                      <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                        <span className="text-slate-500 dark:text-slate-400 font-medium">Người thực hiện xóa:</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">
+                          {drawerOpenItem.deletedBy || 'Hệ thống'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Cảnh báo thời hạn tự động dọn dẹp */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                      <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                        Thời hạn lưu trữ trong Thùng rác
+                      </h3>
+                    </div>
+                    <div className="rounded-xl border border-amber-200/90 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 p-4 text-[14px] leading-relaxed text-amber-950 dark:text-amber-100 flex items-start gap-3">
+                      <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-semibold text-amber-900 dark:text-amber-200">
+                          Tự động hủy vĩnh viễn sau {getRemainingDays(drawerOpenItem.deletedAt)} ngày nữa
+                        </p>
+                        <p className="text-[13px] font-normal text-amber-800/90 dark:text-amber-300/80 mt-0.5">
+                          Sau thời gian trên, bản ghi sẽ bị loại bỏ hoàn toàn khỏi cơ sở dữ liệu và không thể khôi phục lại.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Standard Footer Action Bar */}
+                <div className="border-t border-slate-200/90 dark:border-slate-800 p-4 bg-slate-50/80 dark:bg-slate-900/80 flex flex-wrap items-center justify-end gap-2.5 shrink-0 px-6">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="md"
+                    onClick={() => setDetailItem(null)}
+                  >
+                    Đóng
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="md"
+                    onClick={() => {
+                      const item = drawerOpenItem;
+                      setDetailItem(null);
+                      handleRestore(item);
+                    }}
+                    leftIcon={<RotateCcw className="w-4 h-4" />}
+                  >
+                    Khôi phục
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="danger"
+                    size="md"
+                    onClick={() => {
+                      const item = drawerOpenItem;
+                      setDetailItem(null);
+                      handleHardDelete(item);
+                    }}
+                    leftIcon={<Trash2 className="w-4 h-4" />}
+                  >
+                    Xóa vĩnh viễn
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

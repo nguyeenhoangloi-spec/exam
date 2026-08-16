@@ -45,6 +45,7 @@ import { Toast } from '@/components/Toast';
 import { usePageTitle } from '@/components/PageTitleContext';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { ProctorFilterPopover } from '@/components/proctor/ProctorFilterPopover';
+import { ProfileDrawer } from '@/components/ProfileDrawer';
 
 const EMPTY_STUDENTS: any[] = [];
 
@@ -154,6 +155,9 @@ export default function ProctorDashboardPage() {
   const [multiMinutes, setMultiMinutes] = useState(10);
   const [multiReason, setMultiReason] = useState('');
   const [multiProcessing, setMultiProcessing] = useState(false);
+
+  // Candidate Inspector Drawer state
+  const [inspectStudent, setInspectStudent] = useState<any | null>(null);
 
   // General Confirm & Toast state
   const [confirmModal, setConfirmModal] = useState<{
@@ -893,7 +897,13 @@ export default function ProctorDashboardPage() {
                   {/* Card Body: Student Details */}
                   <div className="py-3 space-y-2.5">
                     <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate flex items-center justify-between gap-1.5" title={s.student.fullName}>
-                      <span>{s.student.fullName}</span>
+                      <button
+                        type="button"
+                        onClick={() => setInspectStudent(s)}
+                        className="truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                      >
+                        {s.student.fullName}
+                      </button>
                       {hasFlagged && (
                         <span title="Có biên bản vi phạm">
                           <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
@@ -1017,9 +1027,14 @@ export default function ProctorDashboardPage() {
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      <button
+                        type="button"
+                        onClick={() => setInspectStudent(s)}
+                        className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        title="Xem chi tiết thí sinh"
+                      >
                         {s.student.fullName}
-                      </h4>
+                      </button>
                       {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
                       <IdentifierBadge tone="blue">{s.student.studentCode}</IdentifierBadge>
                       <span className="text-xs font-semibold text-slate-500 tabular-nums">
@@ -1047,6 +1062,14 @@ export default function ProctorDashboardPage() {
                   />
 
                   <div className="inline-flex items-center gap-1.5 pl-2 border-l border-slate-100 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => setInspectStudent(s)}
+                      title="Xem chi tiết thí sinh"
+                      className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
                     {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
                       <Button
                         variant="secondary"
@@ -1136,7 +1159,7 @@ export default function ProctorDashboardPage() {
               {currentStudents.map((s: any) => {
                 const att = s.attempt;
                 const riskScore = att?.riskScore || 0;
-                const { label: statusLabel, cls: statusCls } = statusMeta(att);
+                const { label: statusLabel } = statusMeta(att);
                 const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
                 const hasFlagged = att?.isFlagged;
                 const isChecked = selectedIds.includes(s.student.id);
@@ -1167,7 +1190,14 @@ export default function ProctorDashboardPage() {
                     {visibleColumns.name !== false && (
                       <td className="p-3.5 min-w-[200px]">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] truncate">{s.student.fullName}</p>
+                          <button
+                            type="button"
+                            onClick={() => setInspectStudent(s)}
+                            className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                            title="Xem chi tiết thí sinh"
+                          >
+                            {s.student.fullName}
+                          </button>
                           {hasFlagged && <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
                         </div>
                       </td>
@@ -1203,6 +1233,14 @@ export default function ProctorDashboardPage() {
                     {visibleColumns.actions !== false && (
                       <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                         <div className="inline-flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setInspectStudent(s)}
+                            title="Xem chi tiết thí sinh"
+                            className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
                           {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
                             <button
                               type="button"
@@ -1838,6 +1876,129 @@ export default function ProctorDashboardPage() {
           </div>
         </div>
       , document.body)}
+
+      {/* Candidate Profile Drawer */}
+      <ProfileDrawer
+        isOpen={!!inspectStudent}
+        onClose={() => setInspectStudent(null)}
+        title="Hồ Sơ Thí Sinh & Phiên Thi"
+        subtitle={inspectStudent?.student?.fullName}
+        avatarText={inspectStudent?.student?.fullName?.slice(0, 2)?.toUpperCase()}
+        badge={{
+          label: statusMeta(inspectStudent?.attempt).label,
+          status: inspectStudent?.attempt?.status || 'NOT_STARTED',
+        }}
+        details={[
+          { label: 'Họ và tên thí sinh', value: inspectStudent?.student?.fullName || '---' },
+          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{inspectStudent?.student?.studentCode || '---'}</IdentifierBadge> },
+          { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{inspectStudent?.examNumber || '---'}</IdentifierBadge> },
+          { label: 'Số thứ tự ghế', value: `Ghế số ${inspectStudent?.seatNumber || '---'}` },
+          { label: 'Phòng thi', value: data?.roomName || '---' },
+          { label: 'Trạng thái phiên thi', value: <StatusBadge status={inspectStudent?.attempt?.status || 'NOT_STARTED'} customLabel={statusMeta(inspectStudent?.attempt).label} /> },
+          {
+            label: 'Mức cảnh báo',
+            value: (
+              <span className={`font-semibold ${riskMeta(inspectStudent?.attempt?.riskScore || 0).cls}`}>
+                {inspectStudent?.attempt?.riskScore || 0} điểm ({riskMeta(inspectStudent?.attempt?.riskScore || 0).level})
+              </span>
+            ),
+          },
+          { label: 'Địa chỉ IP', value: inspectStudent?.attempt?.connectedIp || 'Chưa ghi nhận IP' },
+          {
+            label: 'Thời gian bắt đầu',
+            value: inspectStudent?.attempt?.startedAt
+              ? new Date(inspectStudent.attempt.startedAt).toLocaleString('vi-VN')
+              : 'Chưa bắt đầu',
+          },
+          {
+            label: 'Thời gian gia hạn',
+            value: inspectStudent?.attempt?.extraMinutes ? `+${inspectStudent.attempt.extraMinutes} phút` : 'Không có',
+          },
+          {
+            label: 'Biên bản sự cố',
+            value: inspectStudent?.attempt?.isFlagged ? (
+              <span className="font-semibold text-rose-600">Đã lập biên bản sự cố</span>
+            ) : (
+              'Bình thường (Không có vi phạm)'
+            ),
+          },
+        ]}
+        extraSections={[
+          {
+            title: 'Thao Tác Giám Thị Trực Tiếp',
+            content: (
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {inspectStudent?.attempt && ['IN_PROGRESS', 'DISCONNECTED'].includes(inspectStudent.attempt.status) && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      const target = inspectStudent;
+                      setInspectStudent(null);
+                      setActionError(null);
+                      setSelectedStudent(target);
+                      setActionType('EXTEND');
+                    }}
+                    leftIcon={<Clock className="w-3.5 h-3.5 text-blue-600" />}
+                  >
+                    Gia hạn làm bài
+                  </Button>
+                )}
+                {inspectStudent?.attempt && ['DISCONNECTED', 'UNDER_REVIEW'].includes(inspectStudent.attempt.status) && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      const target = inspectStudent;
+                      setInspectStudent(null);
+                      setActionError(null);
+                      setSelectedStudent(target);
+                      setActionType('REOPEN');
+                    }}
+                    leftIcon={<RotateCcw className="w-3.5 h-3.5 text-amber-600" />}
+                  >
+                    Mở lại phiên thi
+                  </Button>
+                )}
+                {inspectStudent?.attempt?.isFlagged && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      const target = inspectStudent;
+                      setInspectStudent(null);
+                      setActionError(null);
+                      setSelectedStudent(target);
+                      setActionType('RESOLVE');
+                    }}
+                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                  >
+                    Xử lý biên bản
+                  </Button>
+                )}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    const target = inspectStudent;
+                    setInspectStudent(null);
+                    setActionError(null);
+                    setSelectedStudent(target);
+                    setActionType('FLAG');
+                  }}
+                  leftIcon={<FileText className="w-3.5 h-3.5 text-rose-600" />}
+                >
+                  Lập biên bản
+                </Button>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {/* Confirm Popup Modal */}
       <ConfirmModal

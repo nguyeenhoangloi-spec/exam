@@ -147,7 +147,7 @@ function ActionCode({ action }: { action: string }) {
 }
 
 export default function ActivityLogsPage() {
-    usePageTitle('Nhật ký hoạt động hệ thống');
+    usePageTitle('Nhật ký hệ thống');
     const router = useRouter();
 
     const [logs, setLogs] = useState<AuditLogRecord[]>([]);
@@ -191,6 +191,27 @@ export default function ActivityLogsPage() {
 
     // Inspector Drawer State
     const [selectedLog, setSelectedLog] = useState<AuditLogRecord | null>(null);
+    const [drawerOpenLog, setDrawerOpenLog] = useState<AuditLogRecord | null>(null);
+    const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (selectedLog) {
+            setDrawerOpenLog(selectedLog);
+            const raf = requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setDrawerVisible(true);
+                });
+            });
+            return () => cancelAnimationFrame(raf);
+        } else {
+            setDrawerVisible(false);
+            const timer = setTimeout(() => {
+                setDrawerOpenLog(null);
+            }, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [selectedLog]);
+
     const [copied, setCopied] = useState<boolean>(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [isSpinning, setIsSpinning] = useState<boolean>(false);
@@ -406,7 +427,7 @@ export default function ActivityLogsPage() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-0.5">
                     <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-                        Nhật ký hoạt động hệ thống
+                        Nhật ký hệ thống
                     </h1>
                     <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Theo dõi, rà soát và ghi vết chi tiết mọi lịch sử thao tác của Quản trị viên, Giảng viên và Thí sinh
@@ -581,7 +602,7 @@ export default function ActivityLogsPage() {
                                     onClick={() => setViewMode('list')}
                                     className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'list'
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                             ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                                     }`}
                                     title="Dạng danh sách"
@@ -593,7 +614,7 @@ export default function ActivityLogsPage() {
                                     onClick={() => setViewMode('grid')}
                                     className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'grid'
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                             ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                                     }`}
                                     title="Dạng thẻ"
@@ -605,7 +626,7 @@ export default function ActivityLogsPage() {
                                     onClick={() => setViewMode('compact')}
                                     className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
                                         viewMode === 'compact'
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-bold'
+                                             ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                                             : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                                     }`}
                                     title="Dạng thu gọn"
@@ -681,7 +702,7 @@ export default function ActivityLogsPage() {
 
                                 {/* Actor info */}
                                 <div className="flex items-center gap-2.5">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[12px] font-bold text-slate-700 dark:text-slate-300">
+                                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
                                         {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
@@ -1023,41 +1044,51 @@ export default function ActivityLogsPage() {
                 </div>
             )}
 
-            {/* ── 7. Metadata Inspector Drawer (Exact System Drawer Standard Match 1-1) ── */}
-            {selectedLog && (
+            {/* ── 7. Metadata Inspector Drawer (Chuẩn Design System & Hoạt ảnh 60 FPS) ── */}
+            {drawerOpenLog && (
                 <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
-                    {/* Overlay */}
+                    {/* Backdrop mờ nền */}
                     <div
-                        className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity"
+                        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                            drawerVisible ? 'opacity-100' : 'opacity-0'
+                        }`}
                         onClick={() => setSelectedLog(null)}
                     />
 
                     {/* Drawer Container */}
-                    <div className="fixed inset-y-0 right-0 max-w-full flex pl-10 z-[100]">
-                        <div className="relative flex h-full w-full max-w-md flex-col bg-white dark:bg-slate-900 shadow-2xl animate-in slide-in-from-right duration-300">
-
-                            {/* Header - Modern Gradient matching system standard */}
-                            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-start gap-3 min-w-0 flex-1">
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-sm text-white border border-white/20 shadow-xs">
-                                            LOG
+                    <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
+                        <div
+                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+                                drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                            }`}
+                        >
+                            {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
+                            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                                            <Activity className="h-6 w-6 text-white" />
                                         </div>
-                                        <div className="min-w-0 flex-1 pr-2">
-                                            <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
-                                                Chi tiết Nhật ký #{selectedLog.id}
-                                            </h2>
-                                            <p className="mt-1.5 text-[13px] font-medium text-blue-100/90 tabular-nums">
-                                                Thời gian: {new Date(selectedLog.createdAt).toLocaleString('vi-VN')}
+
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                                                    Chi tiết Nhật ký
+                                                </h2>
+                                                <IdentifierBadge tone="neutral">#{drawerOpenLog.id}</IdentifierBadge>
+                                            </div>
+                                            <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400 tabular-nums truncate">
+                                                Thời gian: {new Date(drawerOpenLog.createdAt).toLocaleString('vi-VN')}
                                             </p>
                                         </div>
                                     </div>
 
+                                    {/* Nút Đóng */}
                                     <button
                                         type="button"
                                         onClick={() => setSelectedLog(null)}
-                                        className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
-                                        title="Đóng"
+                                        className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+                                        title="Đóng chi tiết"
                                     >
                                         <X className="h-5 w-5" />
                                     </button>
@@ -1065,84 +1096,78 @@ export default function ActivityLogsPage() {
                             </div>
 
                             {/* Content Body */}
-                            <div className="flex-1 space-y-5 overflow-y-auto bg-slate-50/50 p-6 text-[15px]">
-
-                                {/* Card 1: Thông tin chung */}
-                                <div className="space-y-3.5 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
-                                    <h3 className="border-b border-slate-100 pb-2 text-[13px] font-semibold text-slate-700">
-                                        Thông tin định danh
-                                    </h3>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
-                                                Mã hành động
-                                            </span>
-                                            <span className="font-sans text-[15px] leading-[22px] font-medium text-blue-700">{selectedLog.action}</span>
-                                        </div>
-
-                                        <div>
-                                            <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
-                                                Tài khoản thực hiện
-                                            </span>
-                                            <p className="text-[15px] font-semibold text-slate-900">
-                                                {selectedLog.actor?.username || 'Hệ thống'}
-                                            </p>
-                                            <p className="text-[13px] font-normal text-slate-500">
-                                                {selectedLog.actor?.email || 'N/A'} ({selectedLog.actor?.role || 'SYSTEM'})
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="border-t border-slate-100 pt-3 grid grid-cols-2 gap-4">
-                                        <div>
-                                            <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
-                                                Thực thể tác động
-                                            </span>
-                                            <p className="text-[15px] font-semibold text-slate-800">
-                                                {selectedLog.entityType}
-                                            </p>
-                                        </div>
-
-                                        <div>
-                                            <span className="mb-0.5 block text-[13px] font-medium text-slate-500">
-                                                ID Thực thể
-                                            </span>
-                                            <p className=" text-[14px] font-medium tabular-nums text-slate-700">
-                                                #{selectedLog.entityId || 'N/A'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Card 2: Nội dung mô tả */}
-                                <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
-                                    <h3 className="border-b border-slate-100 pb-2 text-[13px] font-semibold text-slate-700">
-                                        Nội dung thao tác chi tiết
-                                    </h3>
-                                    <div className="rounded-xl border border-slate-200 bg-white p-3.5 text-[15px] font-normal leading-relaxed text-slate-700">
-                                        {selectedLog.description}
-                                    </div>
-                                </div>
-
-                                {/* Card 3: Data Metadata JSON */}
-                                <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
-                                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                                        <h3 className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
-                                            <Code className="h-4 w-4 text-blue-600" />
-                                            <span>Dữ liệu Metadata JSON</span>
+                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px]">
+                                {/* Section 1: Thông tin định danh */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                            Thông tin định danh thao tác
                                         </h3>
+                                    </div>
+
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Mã hành động:</span>
+                                            <span className="font-semibold text-blue-600 dark:text-blue-400">{drawerOpenLog.action}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Tài khoản thực hiện:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white text-right">
+                                                {drawerOpenLog.actor?.username || 'Hệ thống'}
+                                                {drawerOpenLog.actor?.role ? ` (${drawerOpenLog.actor.role})` : ''}
+                                            </span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Thực thể tác động:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white">{drawerOpenLog.entityType}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">ID Thực thể:</span>
+                                            <span className="font-semibold tabular-nums text-slate-900 dark:text-white">
+                                                #{drawerOpenLog.entityId || 'N/A'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 2: Nội dung mô tả */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                            Nội dung thao tác chi tiết
+                                        </h3>
+                                    </div>
+                                    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-[14px] font-normal leading-relaxed text-slate-800 dark:text-slate-200">
+                                        {drawerOpenLog.description}
+                                    </div>
+                                </div>
+
+                                {/* Section 3: Data Metadata JSON */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                                            <h3 className="flex items-center gap-1.5 text-[15px] font-semibold text-slate-900 dark:text-white">
+                                                <Code className="h-4 w-4 text-blue-600" />
+                                                <span>Dữ liệu Metadata JSON</span>
+                                            </h3>
+                                        </div>
 
                                         <button
                                             type="button"
                                             onClick={() => {
-                                                const jsonStr = JSON.stringify(selectedLog.metadata || {}, null, 2);
+                                                const jsonStr = JSON.stringify(drawerOpenLog.metadata || {}, null, 2);
                                                 navigator.clipboard.writeText(jsonStr).then(() => {
                                                     setCopied(true);
                                                     setTimeout(() => setCopied(false), 2000);
                                                 });
                                             }}
-                                            className="flex cursor-pointer items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-[13px] font-medium text-slate-700 transition hover:bg-slate-50"
+                                            className="flex cursor-pointer items-center gap-1 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-[13px] font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
                                         >
                                             {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                             <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>
@@ -1150,19 +1175,17 @@ export default function ActivityLogsPage() {
                                     </div>
 
                                     <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900 p-4 text-[13px] leading-relaxed text-emerald-400 shadow-inner">
-                                        {JSON.stringify(selectedLog.metadata || { note: 'Không có dữ liệu bổ sung' }, null, 2)}
+                                        {JSON.stringify(drawerOpenLog.metadata || { note: 'Không có dữ liệu bổ sung' }, null, 2)}
                                     </pre>
                                 </div>
-
                             </div>
 
-                            {/* Footer */}
-                            <div className="border-t border-slate-200 p-4 bg-white flex justify-end shrink-0">
+                            {/* Standard Footer */}
+                            <div className="border-t border-slate-200/90 dark:border-slate-800 p-4 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end shrink-0 px-6">
                                 <Button variant="secondary" size="md" onClick={() => setSelectedLog(null)}>
                                     Đóng
                                 </Button>
                             </div>
-
                         </div>
                     </div>
                 </div>

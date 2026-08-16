@@ -9,6 +9,9 @@ import { ConfirmModal } from '@/components/ConfirmModal';
 import { Toast } from '@/components/Toast';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/Button';
+import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
+import { ProfileDrawer } from '@/components/ProfileDrawer';
+import { BookOpen, Clock, Shield, Layers } from 'lucide-react';
 
 export default function StudentExamResultPage() {
   const router = useRouter();
@@ -25,6 +28,7 @@ export default function StudentExamResultPage() {
   const [showAppealConfirm, setShowAppealConfirm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showReview, setShowReview] = useState(false);
+  const [showProfileDrawer, setShowProfileDrawer] = useState(false);
 
   const loadResult = useCallback(async () => {
     try {
@@ -231,21 +235,101 @@ export default function StudentExamResultPage() {
                 Về danh sách lịch thi
               </Button>
 
-              {result.allowReview !== false && (
+              <div className="flex items-center gap-2">
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="ghost"
                   size="md"
-                  onClick={() => setShowReview(true)}
-                leftIcon={<Eye className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
+                  onClick={() => setShowProfileDrawer(true)}
+                  leftIcon={<Eye className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
                 >
-                  Xem lại bài làm
+                  Chi tiết kết quả
                 </Button>
-              )}
+
+                {result.allowReview !== false && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="md"
+                    onClick={() => setShowReview(true)}
+                    leftIcon={<FileText className="w-4 h-4 text-blue-600" />}
+                  >
+                    Xem lại bài làm
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Result Profile Drawer */}
+      <ProfileDrawer
+        isOpen={showProfileDrawer}
+        onClose={() => setShowProfileDrawer(false)}
+        title={result?.subjectName || result?.paperTitle || 'Kết Quả Bài Thi'}
+        subtitle={`Môn thi: ${result?.subjectCode || '---'}`}
+        avatarText={result?.subjectCode?.slice(0, 2)?.toUpperCase() || 'KQ'}
+        badge={{
+          label: result?.status === 'UNDER_REVIEW' ? 'Chờ xem xét' : result?.status === 'GRADED' ? 'Đã chấm điểm' : 'Đã nộp bài',
+          status: result?.status || 'SUBMITTED',
+        }}
+        details={[
+          { label: 'Tên bài thi', value: result?.paperTitle || result?.subjectName || '---', icon: BookOpen },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{result?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Trạng thái bài thi', value: <StatusBadge status={result?.status} /> },
+          { label: 'Thời gian nộp bài', value: result?.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Mới đây', icon: Clock },
+          ...(result?.totalScore !== undefined && result?.totalScore !== null ? [{
+            label: 'Điểm số bài thi',
+            value: (
+              <span className="text-[15px] font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                {result.totalScore} / {result.maxScore || 10} điểm
+              </span>
+            ),
+            icon: Award,
+          }] : []),
+        ]}
+        extraSections={[
+          {
+            title: 'Thao tác liên quan',
+            content: (
+              <div className="space-y-3">
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  Kết quả bài thi được lưu trữ an toàn trong hồ sơ khảo thí điện tử của bạn. Bạn có thể xem lại lịch thi hoặc tra cứu bảng điểm tổng hợp.
+                </p>
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setShowProfileDrawer(false);
+                      router.push('/student/results');
+                    }}
+                    leftIcon={<Award className="w-3.5 h-3.5" />}
+                  >
+                    Xem bảng điểm
+                  </Button>
+                  {result?.allowReview !== false && (
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        setShowProfileDrawer(false);
+                        setShowReview(true);
+                      }}
+                      leftIcon={<FileText className="w-3.5 h-3.5" />}
+                    >
+                      Xem bài làm
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {showReview && (
         <ExamAttemptReviewModal

@@ -46,7 +46,7 @@ import {
 } from 'lucide-react';
 
 export default function TeacherAssignmentsPage() {
-  usePageTitle('Lịch coi thi Giảng viên');
+  usePageTitle('Lịch coi thi');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -434,6 +434,10 @@ export default function TeacherAssignmentsPage() {
     }
   };
 
+  const drawerIsExpired = Boolean(
+    drawerDuty?.examDate && new Date(drawerDuty.examDate).getTime() < new Date().setHours(0, 0, 0, 0),
+  );
+
   return (
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
@@ -441,7 +445,7 @@ export default function TeacherAssignmentsPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-              Lịch phân công coi thi
+              Lịch coi thi
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Giảng viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> &nbsp;•&nbsp; Danh sách ca coi thi được phân công trong học kỳ
@@ -1050,7 +1054,17 @@ export default function TeacherAssignmentsPage() {
           { label: 'Môn thi', value: drawerDuty?.subjectName, icon: BookOpen },
           { label: 'Mã môn', value: drawerDuty?.subjectCode },
           { label: 'Vai trò giám thị', value: drawerDuty?.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Cán bộ chính)' : 'Giám thị 2 (Cán bộ hỗ trợ)', icon: ShieldCheck },
-          { label: 'Trạng thái ca coi thi', value: drawerDuty?.status === 'CONFIRMED' ? 'Đã xác nhận ca thi' : drawerDuty?.status === 'CHANGE_REQUESTED' ? 'Đã gửi yêu cầu đổi ca' : 'Chờ xác nhận', icon: CheckCircle2 },
+          {
+            label: 'Trạng thái ca coi thi',
+            value: drawerIsExpired
+              ? 'Quá hạn ca thi'
+              : drawerDuty?.status === 'CONFIRMED'
+                ? 'Đã xác nhận ca thi'
+                : drawerDuty?.status === 'CHANGE_REQUESTED'
+                  ? 'Đã gửi yêu cầu đổi ca'
+                  : 'Chờ xác nhận',
+            icon: CheckCircle2,
+          },
           { label: 'Ngày thi', value: drawerDuty?.examDate ? new Date(drawerDuty.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
           { label: 'Thời gian làm bài', value: `${drawerDuty?.startTime} - ${drawerDuty?.endTime}`, icon: Clock },
           { label: 'Phòng thi phân công', value: drawerDuty?.roomName || drawerDuty?.roomCode, icon: DoorOpen },

@@ -28,7 +28,7 @@ import { SchedulePickerModal } from '../../components/exam-supervisors/ScheduleP
 let _cache: { schedules: any[]; teachers: any[]; selectedSchedule: any; supervisors: any[] } | null = null;
 
 export default function ExamSupervisorsPage() {
-  usePageTitle('Quản lý & Phân công Giám thị');
+  usePageTitle('Phân công coi thi');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -823,6 +823,55 @@ export default function ExamSupervisorsPage() {
           }}
         />
       </main>
+
+      {/* ── Schedule Picker Modal ── */}
+      <SchedulePickerModal
+        isOpen={showSchedulePicker}
+        onClose={() => setShowSchedulePicker(false)}
+        schedules={schedules}
+        selectedScheduleId={String(selectedSchedule?.id || '')}
+        onSelectSchedule={(schedId) => {
+          void selectSchedule(schedId);
+          setShowSchedulePicker(false);
+        }}
+      />
+
+      {/* ── Supervisor Assignment Profile Drawer ── */}
+      <ProfileDrawer
+        isOpen={Boolean(drawerSupervisor)}
+        onClose={() => setDrawerSupervisor(null)}
+        title={drawerSupervisor?.teacher?.fullName || 'Chi tiết phân công giám thị'}
+        subtitle={`Mã cán bộ: ${drawerSupervisor?.teacher?.teacherCode || ''}`}
+        avatarText={drawerSupervisor?.teacher?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'GT'}
+        badge={{
+          label: drawerSupervisor?.role === 'CHINH' || drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ',
+          className: 'bg-blue-50 text-blue-700 border-blue-200',
+        }}
+        details={[
+          { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName, icon: GraduationCap },
+          { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode, icon: GraduationCap },
+          { label: 'Học vị / Học hàm', value: drawerSupervisor?.teacher?.degree || 'Thạc sĩ / Tiến sĩ', icon: GraduationCap },
+          { label: 'Khoa / Bộ môn', value: drawerSupervisor?.teacher?.department?.name || '---', icon: GraduationCap },
+          { label: 'Vai trò coi thi', value: drawerSupervisor?.role === 'CHINH' || drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ', icon: ShieldCheck },
+          { label: 'Phòng coi thi', value: `${drawerSupervisor?.examScheduleRoom?.room?.roomName || drawerSupervisor?.examScheduleRoom?.room?.roomCode || `Phòng #${drawerSupervisor?.examScheduleRoomId}`} ${drawerSupervisor?.examScheduleRoom?.room?.building ? `(${drawerSupervisor?.examScheduleRoom?.room?.building})` : ''}`, icon: DoorOpen },
+          { label: 'Môn thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName || selectedSchedule?.subject?.subjectName || '---', icon: Calendar },
+          { label: 'Ngày thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate ? new Date(drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate).toLocaleDateString('vi-VN') : selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---', icon: Calendar },
+          { label: 'Khung giờ thi', value: `${drawerSupervisor?.examScheduleRoom?.examSchedule?.startTime || selectedSchedule?.startTime || ''} - ${drawerSupervisor?.examScheduleRoom?.examSchedule?.endTime || selectedSchedule?.endTime || ''}`, icon: Clock },
+          { label: 'Trạng thái', value: drawerSupervisor?.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor?.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công', icon: ShieldCheck },
+        ]}
+      />
+
+      {/* ── Confirm Modal ── */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+      />
+
+      {/* ── Toast ── */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
 }

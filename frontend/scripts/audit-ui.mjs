@@ -175,6 +175,19 @@ for (const folder of sourceRoots) {
       report(file, 'Web UI dùng sentence case; không dùng utility uppercase');
     }
 
+    // Export/print templates may intentionally use uppercase headings. The
+    // interactive Web UI must stay within the 400–700 weight range and use
+    // sentence case for labels, controls and table content.
+    if (!printExportFiles.has(relativeFile)) {
+      if (/\bfont-(?:thin|extralight|light|black|extrabold)\b/i.test(content)
+        || /font(?:-weight)?\s*[:=]\s*['"]?(?:100|200|300|800|900)/i.test(content)) {
+        report(file, 'Web UI chỉ dùng font-weight 400–700; không dùng weight quá mỏng hoặc quá đậm');
+      }
+      if (/text-transform\s*:\s*uppercase/i.test(content)) {
+        report(file, 'Web UI dùng sentence case; chữ in hoa chỉ dành cho tiêu đề tài liệu xuất/in');
+      }
+    }
+
     // The compact sidebar brand lockup is the only intentional 10px exception.
     // It is limited to the compact subtitle so the product name remains readable in the fixed-width sidebar header.
     const isCompactBrandSubtitle = file.replaceAll('\\', '/').endsWith('components/Sidebar.tsx')
@@ -368,8 +381,11 @@ if (!/font-family:\s*var\(--font-ui\)/.test(globalCss)) {
   violations.push('app/globals.css: body phải kế thừa font Inter dùng chung');
 }
 
-if (!/\.typography-scale\s+:where\(h1\)\s*\{[\s\S]*?font-weight:\s*700/.test(globalCss)) {
-  violations.push('app/globals.css: page title h1 phải dùng font-weight 700');
+if (!/\.typography-scale\s+:where\(h1\)\s*\{[\s\S]*?font-weight:\s*600/.test(globalCss)
+  || !/\.edu-page-title\s*\{[\s\S]*?font-semibold/.test(globalCss)
+  || !/\.edu-card-title\s*\{[\s\S]*?font-semibold/.test(globalCss)
+  || !/\.edu-kpi\s*\{[\s\S]*?font-bold/.test(globalCss)) {
+  violations.push('app/globals.css: page/card title phải dùng 600 và KPI mới dùng 700');
 }
 
 if (!/html:not\(\.dark\)\s+\.typography-scale\s+:where\(\.text-slate-300,\s*\.text-gray-300\)[\s\S]*?color:\s*var\(--ui-text-muted-soft\)/.test(globalCss)
@@ -400,6 +416,20 @@ if (!/--ui-text-primary:\s*#0f172a/i.test(globalCss)
   violations.push('app/globals.css: neutral text phải theo black-forward palette');
 }
 
+if (!/--fs-page-title:\s*28px/.test(globalCss)
+  || !/--fs-section-title:\s*20px/.test(globalCss)
+  || !/--fs-card-title:\s*18px/.test(globalCss)
+  || !/--fs-body:\s*15px/.test(globalCss)
+  || !/--fs-body-sm:\s*14px/.test(globalCss)
+  || !/--fs-helper:\s*13px/.test(globalCss)
+  || !/--fs-badge:\s*12px/.test(globalCss)
+  || !/--fs-kpi:\s*32px/.test(globalCss)
+  || !/\[class\*='text-\[12\.5px\]'\][\s\S]*?font-size:\s*var\(--fs-helper\)/.test(globalCss)
+  || !/\[class\*='text-\[14\.5px\]'\][\s\S]*?font-size:\s*var\(--fs-body-sm\)/.test(globalCss)
+  || !/\[class\*='text-\[16\.5px\]'\][\s\S]*?font-size:\s*var\(--fs-body\)/.test(globalCss)) {
+  violations.push('app/globals.css: semantic typography scale hoặc các cỡ lẻ chưa được quy đổi đúng token');
+}
+
 if (!/variant\s*=\s*['"]default['"]/.test(modal)
   || !/bg-slate-50 dark:bg-slate-800/.test(modal)
   || !/text-lg font-semibold/.test(modal)
@@ -409,9 +439,9 @@ if (!/variant\s*=\s*['"]default['"]/.test(modal)
 
 if (!/max-w-sm/.test(confirmModal)
   || !/bg-slate-50\/80 dark:bg-slate-800\/80/.test(confirmModal)
-  || !/text-sm font-black/.test(confirmModal)
+  || !/text-sm font-semibold/.test(confirmModal)
   || !/text-xs sm:text-sm/.test(confirmModal)
-  || !/text-xs leading-\[18px\] font-bold text-rose-600/.test(confirmModal)
+  || !/text-xs leading-\[18px\] font-semibold text-rose-600/.test(confirmModal)
   || !/z-\[9999\]/.test(confirmModal)) {
   violations.push('components/ConfirmModal.tsx: ConfirmModal popup specification is incomplete');
 }
@@ -431,8 +461,12 @@ if (!/role="status"/.test(toast)
   violations.push('components/Toast.tsx: Toast specification is incomplete');
 }
 
-if (!/appearance-none rounded-xl/.test(filterSelect) || !/dark:bg-slate-900/.test(filterSelect)) {
-  violations.push('components/ui/FilterSelect.tsx: shared select must use rounded-xl and dark-mode surface');
+if (!/appearance-none rounded-xl/.test(filterSelect)
+  || !/dark:bg-slate-900/.test(filterSelect)
+  || !/size\?: 'sm' \| 'md' \| 'lg'/.test(filterSelect)
+  || !/data-ui-size=\{size\}/.test(filterSelect)
+  || !/data-ui-size='lg'/.test(globalCss)) {
+  violations.push('components/ui/FilterSelect.tsx: shared select must support the standard 40px and form 44px control sizes');
 }
 if (!/rounded-xl/.test(button) || !/rounded-xl/.test(input)) {
   violations.push('components/ui/Button.tsx and Input.tsx: shared controls must use rounded-xl');

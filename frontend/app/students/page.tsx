@@ -72,6 +72,27 @@ export default function StudentsPage() {
 
   // Custom Drawer State
   const [drawerStudent, setDrawerStudent] = useState<Student | null>(null);
+  const [drawerOpenStudent, setDrawerOpenStudent] = useState<Student | null>(null);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  useEffect(() => {
+    if (drawerStudent) {
+      setDrawerOpenStudent(drawerStudent);
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setDrawerVisible(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setDrawerVisible(false);
+      const timer = setTimeout(() => {
+        setDrawerOpenStudent(null);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [drawerStudent]);
+
   const [drawerTab, setDrawerTab] = useState<'info' | 'subjects' | 'schedule'>('info');
   const [drawerSubjects, setDrawerSubjects] = useState<any[] | null>(null);
   const [drawerSchedule, setDrawerSchedule] = useState<any[] | null>(null);
@@ -668,261 +689,284 @@ export default function StudentsPage() {
         }}
       />
 
-      {/* CUSTOM DRAWER: 3 TABS */}
-      {drawerStudent && (
-        <div role="dialog" aria-modal="true" aria-label="Thông tin sinh viên" className="fixed inset-0 z-[100] flex justify-end">
+      {/* CUSTOM DRAWER: 3 TABS — Chuẩn Design System & Hoạt ảnh 60 FPS */}
+      {drawerOpenStudent && (
+        <div role="dialog" aria-modal="true" aria-label="Thông tin sinh viên" className="fixed inset-0 z-[100] overflow-hidden">
+          {/* Backdrop mờ nền */}
           <div
-            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity"
+            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              drawerVisible ? 'opacity-100' : 'opacity-0'
+            }`}
             onClick={closeDrawer}
           />
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-300">
-            {/* Header - Modern Gradient */}
-            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 text-white shrink-0 shadow-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 font-semibold text-base text-white border border-white/20 shadow-xs">
-                    {drawerStudent.fullName.trim().split(' ').pop()?.charAt(0).toUpperCase() || 'SV'}
-                  </div>
-                  <div className="min-w-0 flex-1 pr-2">
-                    <h2 className="text-[18px] font-semibold leading-snug text-white line-clamp-2 break-words">
-                      {drawerStudent.fullName}
-                    </h2>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      <IdentifierBadge tone="inverse">MSSV: {drawerStudent.studentCode}</IdentifierBadge>
-                      <span className="text-[13px] font-semibold text-blue-100/90">Lớp: {drawerStudent.class?.name || 'Chưa xếp lớp'}</span>
+
+          <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
+            <div
+              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+                drawerVisible ? 'translate-x-0' : 'translate-x-full'
+              }`}
+            >
+              {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
+              <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                    {/* Avatar thương hiệu */}
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                      {drawerOpenStudent.fullName.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenStudent.fullName}>
+                        {drawerOpenStudent.fullName}
+                      </h2>
+
+                      <div className="mt-2 flex items-center gap-2 flex-wrap">
+                        <IdentifierBadge tone="neutral" title={drawerOpenStudent.studentCode}>
+                          {drawerOpenStudent.studentCode}
+                        </IdentifierBadge>
+                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                          {drawerOpenStudent.class?.name || 'Chưa xếp lớp'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={() => setDrawerStudent(null)}
-                  className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/15 hover:text-white transition cursor-pointer"
-                  title="Đóng"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
-              {[
-                { id: 'info', label: 'Thông tin', icon: FileText },
-                { id: 'subjects', label: 'Môn đăng ký', icon: BookOpen },
-                { id: 'schedule', label: 'Lịch thi', icon: Clock },
-              ].map((t) => {
-                const Icon = t.icon;
-                const isActive = drawerTab === t.id;
-                return (
+                  {/* Nút Đóng */}
                   <button
-                    key={t.id}
-                    onClick={() => handleTabChange(t.id as any)}
-                    className={`whitespace-nowrap border-b-2 px-4 py-3.5 text-[15px] font-medium transition cursor-pointer flex items-center gap-2 ${
-                      isActive
-                        ? 'border-blue-600 text-blue-600 font-semibold'
-                        : 'border-transparent text-slate-500 hover:text-slate-800'
-                    }`}
+                    type="button"
+                    onClick={closeDrawer}
+                    className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+                    title="Đóng chi tiết"
                   >
-                    <Icon className="h-4 w-4" />
-                    {t.label}
+                    <X className="h-5 w-5" />
                   </button>
-                );
-              })}
-            </div>
+                </div>
+              </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-950/40">
-              {drawerTab === 'info' && (
-                <div className="space-y-6">
-                  <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-4 shadow-sm">
-                    <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">Thông tin cá nhân</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="block text-xs font-semibold text-slate-500 mb-1">Mã sinh viên</span>
-                        <IdentifierBadge tone="neutral">{drawerStudent.studentCode}</IdentifierBadge>
+              {/* Tabs Navigation */}
+              <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
+                {[
+                  { id: 'info', label: 'Thông tin cá nhân', icon: FileText },
+                  { id: 'subjects', label: 'Môn đăng ký', icon: BookOpen },
+                  { id: 'schedule', label: 'Lịch thi', icon: Clock },
+                ].map((t) => {
+                  const Icon = t.icon;
+                  const isActive = drawerTab === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => handleTabChange(t.id as any)}
+                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-[15px] transition cursor-pointer flex items-center gap-2 ${
+                        isActive
+                          ? 'border-blue-600 text-blue-600 font-semibold'
+                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Tab Content — Black-forward Palette, Không khung lồng */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-900">
+                {/* --- TAB INFO --- */}
+                {drawerTab === 'info' && (
+                  <div className="space-y-6">
+                    {/* Thống kê nhanh */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5 text-blue-600 dark:text-blue-400 mb-1">
+                          <BookOpen className="h-4 w-4" />
+                          <span className="text-[12px] font-semibold text-slate-600 dark:text-slate-400">Môn đăng ký</span>
+                        </div>
+                        <p className="text-[20px] font-semibold text-blue-600 dark:text-blue-400">
+                          {drawerSubjects ? `${drawerSubjects.length} môn` : '--'}
+                        </p>
                       </div>
-                      <div>
-                        <span className="block text-xs font-semibold text-slate-500 mb-1">Họ và tên</span>
-                        <p className="text-sm font-medium text-slate-800">{drawerStudent.fullName}</p>
-                      </div>
-                      <div>
-                        <span className="block text-xs font-semibold text-slate-500 mb-1">Giới tính</span>
-                        <p className="text-sm font-medium text-slate-800">{drawerStudent.gender || 'Nam'}</p>
-                      </div>
-                      <div>
-                        <span className="block text-xs font-semibold text-slate-500 mb-1">Ngày sinh</span>
-                        <p className="text-sm font-medium text-slate-800">
-                          {drawerStudent.dateOfBirth ? new Date(drawerStudent.dateOfBirth).toLocaleDateString('vi-VN') : '---'}
+
+                      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5 text-blue-600 dark:text-blue-400 mb-1">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-[12px] font-semibold text-slate-600 dark:text-slate-400">Lịch thi</span>
+                        </div>
+                        <p className="text-[20px] font-semibold text-blue-600 dark:text-blue-400">
+                          {drawerSchedule ? `${drawerSchedule.length} ca` : '--'}
                         </p>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-4 shadow-sm">
-                    <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">Thông tin học tập</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                          <School className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500 font-semibold">Lớp học</p>
-                          <p className="font-medium text-slate-800">{drawerStudent.class?.name || '---'}</p>
-                        </div>
+                    {/* Danh sách thông tin cá nhân & đào tạo */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                          Hồ sơ sinh viên
+                        </h3>
                       </div>
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                          <Mail className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500 font-semibold">Email</p>
-                          <p className="font-medium text-slate-800">{drawerStudent.email || '---'}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                          <Phone className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500 font-semibold">Số điện thoại</p>
-                          <p className="font-medium text-slate-800">{drawerStudent.phone || '---'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* KPI Metrics in Info tab */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl border border-blue-100 p-4">
-                      <div className="flex items-center gap-2 text-blue-600 mb-2">
-                        <BookOpen className="h-4 w-4" />
-                        <span className="text-xs font-semibold ">Môn đăng ký</span>
-                      </div>
-                      <p className="edu-kpi text-blue-900">
-                        {drawerSubjects ? drawerSubjects.length : '--'}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-100 p-4">
-                      <div className="flex items-center gap-2 text-blue-600 mb-2">
-                        <Clock className="h-4 w-4" />
-                        <span className="text-xs font-semibold ">Lịch thi</span>
-                      </div>
-                      <p className="edu-kpi text-blue-900">
-                        {drawerSchedule ? drawerSchedule.length : '--'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {drawerTab === 'subjects' && (
-                <div className="space-y-4">
-                  {loadingTab ? (
-                    <div className="flex items-center justify-center py-10">
-                      <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    </div>
-                  ) : !drawerSubjects || drawerSubjects.length === 0 ? (
-                    <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-slate-200">
-                      <BookOpen className="h-10 w-10 text-slate-700 mx-auto mb-3" />
-                      <p className="text-sm font-semibold text-slate-600">Sinh viên chưa đăng ký môn nào</p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3 border border-blue-100 text-sm">
-                        <span className="font-semibold text-blue-900">Tổng quan:</span>
-                        <span className="font-semibold text-blue-700">
-                          {drawerSubjects.length} môn / {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
-                        </span>
-                      </div>
-                      <div className="space-y-3">
-                        {drawerSubjects.map((item: any, idx: number) => {
-                          const sub = item.subject || item;
+                      <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                        {[
+                          { label: 'Mã sinh viên', value: <IdentifierBadge tone="neutral">{drawerOpenStudent.studentCode}</IdentifierBadge>, icon: UserIcon },
+                          { label: 'Họ và tên', value: drawerOpenStudent.fullName, icon: UserIcon },
+                          { label: 'Giới tính', value: drawerOpenStudent.gender || 'Nam', icon: UserIcon },
+                          {
+                            label: 'Ngày sinh',
+                            value: drawerOpenStudent.dateOfBirth ? new Date(drawerOpenStudent.dateOfBirth).toLocaleDateString('vi-VN') : '---',
+                            icon: Calendar,
+                          },
+                          { label: 'Lớp sinh hoạt', value: drawerOpenStudent.class?.name || '---', icon: School },
+                          { label: 'Email', value: drawerOpenStudent.email || '---', icon: Mail },
+                          { label: 'Số điện thoại', value: drawerOpenStudent.phone || '---', icon: Phone },
+                        ].map((r, idx) => {
+                          const Icon = r.icon;
                           return (
-                            <div key={idx} className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex items-start gap-3 hover:border-blue-300 transition-colors">
-                              <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
-                                <BookOpen className="h-5 w-5 text-blue-600" />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="text-sm font-semibold text-slate-800">{sub.subjectName || sub.name}</h4>
-                                <p className="text-xs text-slate-500 font-medium mt-0.5">Mã môn: <IdentifierBadge tone="neutral">{sub.subjectCode || sub.code}</IdentifierBadge></p>
-                                {sub.department?.name && (
-                                  <p className="text-xs text-slate-400 mt-0.5">{sub.department.name}</p>
+                            <div
+                              key={idx}
+                              className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
+                            >
+                              <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[15px] font-semibold shrink-0">
+                                {Icon && (
+                                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                    <Icon className="h-4 w-4" />
+                                  </span>
                                 )}
-                              </div>
-                              <div className="text-right">
-                                <span className="inline-block px-2.5 py-1 bg-slate-50 text-slate-600 border border-slate-200 rounded-lg text-xs font-semibold">
-                                  {sub.credits} TC
-                                </span>
-                                <p className="text-[12px] font-semibold text-slate-400 mt-1 ">{item.semester} • {item.schoolYear || item.year || ''}</p>
-                              </div>
+                                <span>{r.label}</span>
+                              </span>
+
+                              <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+                                {r.value}
+                              </span>
                             </div>
                           );
                         })}
                       </div>
-                    </>
-                  )}
-                </div>
-              )}
+                    </div>
+                  </div>
+                )}
 
-              {drawerTab === 'schedule' && (
-                <div className="space-y-4">
-                  {loadingTab ? (
-                    <div className="flex items-center justify-center py-10">
-                      <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    </div>
-                  ) : !drawerSchedule || drawerSchedule.length === 0 ? (
-                    <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-slate-200">
-                      <Clock className="h-10 w-10 text-slate-700 mx-auto mb-3" />
-                      <p className="text-sm font-semibold text-slate-600">Chưa có lịch thi nào</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {drawerSchedule.map((sched: any, idx: number) => (
-                        <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden hover:border-blue-300 transition-colors">
-                          <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-blue-600" />
-                              <span className="text-xs font-semibold text-slate-700">
-                                {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
+                {/* --- TAB SUBJECTS --- */}
+                {drawerTab === 'subjects' && (
+                  <div className="space-y-4">
+                    {loadingTab ? (
+                      <div className="flex items-center justify-center py-10">
+                        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                      </div>
+                    ) : !drawerSubjects || drawerSubjects.length === 0 ? (
+                      <div className="text-center py-12">
+                        <BookOpen className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                        <p className="text-[14px] font-semibold text-slate-500">Sinh viên chưa đăng ký môn học nào.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/60 rounded-xl px-4 py-3 border border-blue-200/80 dark:border-blue-800/60 text-[14px]">
+                          <span className="font-semibold text-blue-900 dark:text-blue-200">Tổng cộng:</span>
+                          <span className="font-semibold text-blue-700 dark:text-blue-300">
+                            {drawerSubjects.length} môn • {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
+                          </span>
+                        </div>
+
+                        <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                          {drawerSubjects.map((item: any, idx: number) => {
+                            const sub = item.subject || item;
+                            return (
+                              <div key={idx} className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-3 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="text-[15px] font-semibold text-slate-900 dark:text-white break-words">{sub.subjectName || sub.name}</h4>
+                                  <div className="mt-1 flex items-center gap-2 flex-wrap">
+                                    <IdentifierBadge tone="neutral">{sub.subjectCode || sub.code}</IdentifierBadge>
+                                    <span className="text-[12px] font-semibold text-slate-500">{item.semester} • {item.schoolYear || item.year || ''}</span>
+                                  </div>
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <span className="inline-block px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-lg text-[12px] font-semibold">
+                                    {sub.credits} TC
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* --- TAB SCHEDULE --- */}
+                {drawerTab === 'schedule' && (
+                  <div className="space-y-4">
+                    {loadingTab ? (
+                      <div className="flex items-center justify-center py-10">
+                        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                      </div>
+                    ) : !drawerSchedule || drawerSchedule.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Clock className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                        <p className="text-[14px] font-semibold text-slate-500">Chưa có lịch thi nào cho sinh viên này.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {drawerSchedule.map((sched: any, idx: number) => (
+                          <div key={idx} className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs">
+                            <div className="bg-slate-50/90 dark:bg-slate-800/80 px-4 py-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-blue-600" />
+                                <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">
+                                  {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
+                                </span>
+                              </div>
+                              <span className="px-2.5 py-0.5 rounded-lg text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                                {formatExamType(sched.examType)}
                               </span>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[12px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-                              {formatExamType(sched.examType)}
-                            </span>
-                          </div>
-                          <div className="p-4 space-y-3">
-                            <div>
-                              <h4 className="text-sm font-semibold text-slate-900">{sched.subjectName || 'Môn thi'}</h4>
-                              <p className="text-xs font-medium text-slate-500 mt-0.5">Mã môn: <IdentifierBadge tone="neutral">{sched.subjectCode}</IdentifierBadge></p>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <School className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>Phòng: {sched.roomName || <IdentifierBadge tone="neutral">{sched.roomCode}</IdentifierBadge>} ({sched.building})</span>
-                              </div>
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>SBD: <IdentifierBadge tone="neutral">{sched.examNumber || '---'}</IdentifierBadge></span>
-                              </div>
-                              <div className="flex items-center gap-1.5 text-slate-600">
-                                <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                <span>Số ghế: <span className="font-semibold text-blue-600">{sched.seatNumber || '--'}</span></span>
-                              </div>
-                              {sched.periodName && (
-                                <div className="flex items-center gap-1.5 text-slate-600">
-                                  <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                                  <span className="truncate">{sched.periodName}</span>
+                            <div className="p-4 space-y-3">
+                              <div>
+                                <h4 className="text-[15px] font-semibold text-slate-900 dark:text-white">{sched.subjectName || 'Môn thi'}</h4>
+                                <div className="mt-1">
+                                  <IdentifierBadge tone="neutral">{sched.subjectCode}</IdentifierBadge>
                                 </div>
-                              )}
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-[13px] pt-2 border-t border-slate-100 dark:border-slate-800">
+                                <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
+                                  <School className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                  <span>Phòng: <strong className="font-semibold text-slate-900 dark:text-white">{sched.roomName || sched.roomCode}</strong></span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
+                                  <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                  <span>SBD: <strong className="font-semibold text-blue-600">{sched.examNumber || '---'}</strong></span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
+                                  <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                  <span>Số ghế: <strong className="font-semibold text-blue-600">{sched.seatNumber || '--'}</strong></span>
+                                </div>
+                                {sched.periodName && (
+                                  <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium truncate">
+                                    <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                    <span className="truncate">{sched.periodName}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Footer — Nút 40px chuẩn Design token */}
+              <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="md"
+                  onClick={closeDrawer}
+                >
+                  Đóng
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
+import { ProfileDrawer } from '../../components/ProfileDrawer';
 import {
   DoorOpen,
   Users,
@@ -108,7 +109,7 @@ let _arrangementCache: {
 } | null = null;
 
 export default function ExamArrangementPage() {
-  usePageTitle('Xếp phòng thi tự động');
+  usePageTitle('Xếp phòng thi');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>(_arrangementCache?.schedules ?? []);
@@ -132,6 +133,7 @@ export default function ExamArrangementPage() {
   const [filterClass, setFilterClass] = useState<string>('ALL');
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
   const [showRoomGrid, setShowRoomGrid] = useState(true);
+  const [drawerStudentDetail, setDrawerStudentDetail] = useState<any | null>(null);
   const resultSectionRef = useRef<HTMLDivElement>(null);
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -589,7 +591,7 @@ export default function ExamArrangementPage() {
               )}</td><td style="text-align:center;font-weight:bold;color:#1d4ed8;">Ghế #${st.seatNumber}</td></tr>`
           )
           .join('');
-        return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;"><div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;"><h2 style="margin:0;font-size:18px;color:#0f172a;text-transform:uppercase;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2><h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:900;">PHÒNG THI: ${escapeHtml(
+        return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;"><div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;"><h2 style="margin:0;font-size:18px;color:#0f172a;text-transform:uppercase;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2><h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:700;">PHÒNG THI: ${escapeHtml(
           roomInfo?.roomName || roomCode
         )} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1><p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(
           currentSched?.subject?.subjectName
@@ -1177,10 +1179,12 @@ export default function ExamArrangementPage() {
                                   return (
                                     <div
                                       key={st.id ? `st-${st.id}-${sIdx}` : `st-${st.studentCode}-${st.seatNumber}-${sIdx}`}
-                                      className={`rounded-xl border p-2.5 shadow-2xs transition-all text-left space-y-1.5 hover:-translate-y-0.5 hover:shadow-xs duration-150 ${isMatchingSearch
+                                      onClick={() => setDrawerStudentDetail(st)}
+                                      className={`rounded-xl border p-2.5 shadow-2xs transition-all text-left space-y-1.5 hover:-translate-y-0.5 hover:shadow-xs duration-150 cursor-pointer select-none ${isMatchingSearch
                                         ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/80 ring-2 ring-blue-500 animate-pulse'
-                                        : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-400'
+                                        : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500 hover:bg-slate-50/60 dark:hover:bg-slate-800/60'
                                         }`}
+                                      title="Bấm để xem chi tiết vị trí thi"
                                     >
                                       {/* Top: Ghế & Lớp */}
                                       <div className="flex items-center justify-between text-xs gap-1">
@@ -1236,7 +1240,9 @@ export default function ExamArrangementPage() {
                           {filteredDetails.map((st, dIdx) => (
                             <tr
                               key={st.id ? `tbl-${st.id}-${dIdx}` : `tbl-${st.studentCode}-${st.seatNumber}-${dIdx}`}
-                              className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition"
+                              onClick={() => setDrawerStudentDetail(st)}
+                              className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition cursor-pointer"
+                              title="Bấm để xem chi tiết vị trí thi"
                             >
                               <td className="p-3 font-semibold text-slate-900 dark:text-slate-100">
                                 {st.roomName || st.roomCode}
@@ -1431,6 +1437,28 @@ export default function ExamArrangementPage() {
           void handleScheduleChange(schedId);
           setShowSchedulePicker(false);
         }}
+      />
+
+      {/* ── Student Seat Arrangement Profile Drawer ── */}
+      <ProfileDrawer
+        isOpen={Boolean(drawerStudentDetail)}
+        onClose={() => setDrawerStudentDetail(null)}
+        title={drawerStudentDetail?.fullName || 'Chi tiết vị trí thi'}
+        subtitle={`MSSV: ${drawerStudentDetail?.studentCode || ''}`}
+        avatarText={drawerStudentDetail?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
+        badge={{
+          label: `SBD: ${drawerStudentDetail?.examNumber || '---'}`,
+          className: 'bg-blue-50 text-blue-700 border-blue-200',
+        }}
+        details={[
+          { label: 'Họ và tên thí sinh', value: drawerStudentDetail?.fullName, icon: User },
+          { label: 'Mã số sinh viên', value: drawerStudentDetail?.studentCode, icon: User },
+          { label: 'Số báo danh (SBD)', value: drawerStudentDetail?.examNumber, icon: ShieldCheck },
+          { label: 'Vị trí chỗ ngồi', value: `Ghế #${drawerStudentDetail?.seatNumber || '--'}`, icon: DoorOpen },
+          { label: 'Phòng thi', value: `${drawerStudentDetail?.roomName || drawerStudentDetail?.roomCode || '---'} ${drawerStudentDetail?.building ? `(${drawerStudentDetail.building})` : ''}`, icon: Building2 },
+          { label: 'Lớp sinh hoạt', value: drawerStudentDetail?.className || '---', icon: GraduationCap },
+          { label: 'Khoa / Viện', value: drawerStudentDetail?.departmentName || '---', icon: Building2 },
+        ]}
       />
 
       {/* ── Confirm Modal ── */}

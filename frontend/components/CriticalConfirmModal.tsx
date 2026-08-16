@@ -177,7 +177,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <div className="rounded-xl bg-rose-50/80 border border-rose-200 p-4 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
             <div className="text-xs text-rose-900 space-y-1">
-              <p className="font-bold">CẢNH BÁO HẬU QUẢ:</p>
+              <p className="font-semibold">CẢNH BÁO HẬU QUẢ:</p>
               <p className="leading-relaxed font-medium">{warningMessage}</p>
             </div>
           </div>

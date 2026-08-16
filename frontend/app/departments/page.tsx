@@ -22,6 +22,7 @@ import { DepartmentTableToolbar } from '../../components/departments/DepartmentT
 import { DepartmentTable } from '../../components/departments/DepartmentTable';
 import { DepartmentPaginationBar } from '../../components/departments/DepartmentPaginationBar';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { ProfileDrawer } from '../../components/ProfileDrawer';
 
 interface CurriculumItem {
   id: number;
@@ -40,7 +41,7 @@ interface CurriculumItem {
 }
 
 export default function DepartmentsPage() {
-  usePageTitle('Quản lý khoa & khung chương trình');
+  usePageTitle('Quản lý khoa');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -687,6 +688,38 @@ export default function DepartmentsPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Department Detail Profile Drawer */}
+      <ProfileDrawer
+        isOpen={Boolean(drawerDepartment)}
+        onClose={() => setDrawerDepartment(null)}
+        title={drawerDepartment?.name || 'Chi tiết Khoa đào tạo'}
+        subtitle={`Mã khoa: ${drawerDepartment?.code || ''}`}
+        avatarText={drawerDepartment?.code || 'KH'}
+        badge={{
+          label: `${(drawerDepartment as any)?.subjectsCount ?? drawerDepartment?._count?.subjects ?? 0} Môn học`,
+          className: 'bg-blue-50 text-blue-700 border-blue-200',
+        }}
+        details={[
+          { label: 'Mã khoa', value: drawerDepartment?.code, icon: Building2 },
+          { label: 'Tên khoa đào tạo', value: drawerDepartment?.name, icon: Building2 },
+          {
+            label: 'Số môn học',
+            value: `${(drawerDepartment as any)?.subjectsCount ?? drawerDepartment?._count?.subjects ?? 0} môn học`,
+            icon: BookOpen,
+          },
+          {
+            label: 'Số lớp sinh hoạt',
+            value: `${(drawerDepartment as any)?.classesCount ?? drawerDepartment?._count?.classes ?? 0} lớp`,
+            icon: GraduationCap,
+          },
+          {
+            label: 'Số giảng viên',
+            value: `${(drawerDepartment as any)?.teachersCount ?? drawerDepartment?._count?.teachers ?? 0} giảng viên`,
+            icon: Users,
+          },
+        ]}
+      />
 
       {/* Confirmation Modal */}
       <ConfirmModal

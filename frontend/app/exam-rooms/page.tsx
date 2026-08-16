@@ -612,17 +612,17 @@ export default function ExamRoomsPage() {
         onClose={() => setDrawerRoom(null)}
         title={drawerRoom?.roomName || drawerRoom?.name || 'Chi tiết phòng thi'}
         subtitle={`Mã phòng: ${drawerRoom?.roomCode || drawerRoom?.code || ''}`}
-        avatarText={drawerRoom?.building?.slice(-2) || 'RM'}
+        avatarText={drawerRoom?.roomCode?.slice(0, 3) || 'PT'}
         badge={{
-          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy' : 'Phòng lý thuyết',
+          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết',
           className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
           { label: 'Tên phòng thi', value: drawerRoom?.roomName || drawerRoom?.name, icon: DoorOpen },
-          { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code },
-          { label: 'Sức chứa', value: `${drawerRoom?.capacity ?? 0} chỗ`, icon: Users },
-          { label: 'Tòa nhà / Vị trí', value: drawerRoom?.building || drawerRoom?.location, icon: Building },
-          { label: 'Loại phòng', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết', icon: Monitor },
+          { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code, icon: Building },
+          { label: 'Sức chứa tối đa', value: `${drawerRoom?.capacity ?? 0} chỗ ngồi`, icon: Users },
+          { label: 'Tòa nhà / Khu vực', value: drawerRoom?.building || drawerRoom?.location || '---', icon: Building },
+          { label: 'Loại phòng thi', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng thi lý thuyết', icon: Monitor },
         ]}
       />
 

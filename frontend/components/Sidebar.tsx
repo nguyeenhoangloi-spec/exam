@@ -26,6 +26,7 @@ import {
   DatabaseBackup,
   Activity,
   Headphones,
+  Sparkles,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -82,47 +83,53 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const adminGroups: NavGroup[] = useMemo(
     () => [
       {
-        group: 'Tổ chức kỳ thi',
         items: [
-          { name: 'Kỳ thi & Đợt thi', href: '/exam-periods', icon: CalendarDays },
-          { name: 'Lịch thi & Ca thi', href: '/exam-schedules', icon: CalendarCheck },
-          { name: 'Phòng thi & Sơ đồ', href: '/exam-rooms', icon: Building2 },
-          { name: 'Xếp lịch & Đánh số SBD', href: '/exam-arrangement', icon: Users },
-          { name: 'Phân công giám thị', href: '/exam-supervisors', icon: ShieldCheck },
+          { name: 'Tổng quan', href: '/dashboard', icon: LayoutDashboard },
         ],
       },
       {
-        group: 'Ngân hàng & đề thi',
+        group: 'Tổ chức thi',
+        items: [
+          { name: 'Kỳ thi', href: '/exam-periods', icon: CalendarDays },
+          { name: 'Lịch thi', href: '/exam-schedules', icon: CalendarCheck },
+          { name: 'Phòng thi', href: '/exam-rooms', icon: Building2 },
+          { name: 'Xếp phòng thi', href: '/exam-arrangement', icon: Users },
+          { name: 'Phân công coi thi', href: '/exam-supervisors', icon: ShieldCheck },
+        ],
+      },
+      {
+        group: 'Ngân hàng & Đề thi',
         items: [
           { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
-          { name: 'Đề thi & Ma trận', href: '/exam-papers', icon: FileText },
+          { name: 'Đề thi', href: '/exam-papers', icon: FileText },
         ],
       },
       {
-        group: 'Chấm thi & kết quả',
+        group: 'Chấm thi & Kết quả',
         items: [
-          { name: 'Kết quả & Phúc khảo', href: '/student/results', icon: Award },
-          { name: 'Báo cáo & Thống kê', href: '/exam-reports', icon: BarChart3 },
+          { name: 'Duyệt bài tự luận', href: '/admin/essay-review', icon: FileCheck },
+          { name: 'Xử lý phúc khảo', href: '/admin/grade-appeals', icon: Award },
+          { name: 'Báo cáo thống kê', href: '/exam-reports', icon: BarChart3 },
         ],
       },
       {
         group: 'Danh mục',
         items: [
-          { name: 'Khoa / Viện', href: '/departments', icon: School },
-          { name: 'Môn học & Học phần', href: '/subjects', icon: BookOpen },
+          { name: 'Khoa đào tạo', href: '/departments', icon: School },
+          { name: 'Môn học', href: '/subjects', icon: BookOpen },
           { name: 'Lớp sinh viên', href: '/classes', icon: GraduationCap },
-          { name: 'Hồ sơ sinh viên', href: '/students', icon: Users },
-          { name: 'Cán bộ & Giảng viên', href: '/teachers', icon: ShieldCheck },
+          { name: 'Sinh viên', href: '/students', icon: Users },
+          { name: 'Giảng viên', href: '/teachers', icon: ShieldCheck },
         ],
       },
       {
         group: 'Hệ thống',
         items: [
-          { name: 'Giám sát thi trực tuyến', href: '/proctor', icon: ShieldCheck },
-          { name: 'Sao lưu & Phục hồi dữ liệu', href: '/admin/backups', icon: DatabaseBackup },
-          { name: 'Nhật ký hoạt động', href: '/admin/activity-logs', icon: Activity },
+          { name: 'Giám sát trực tuyến', href: '/teacher/proctor', icon: ShieldCheck },
+          { name: 'Nhật ký hệ thống', href: '/admin/activity-logs', icon: Activity },
+          { name: 'Sao lưu dữ liệu', href: '/admin/backups', icon: DatabaseBackup },
           {
-            name: 'Thùng rác hệ thống',
+            name: 'Thùng rác',
             href: '/trash',
             icon: Trash2,
             children: [
@@ -142,10 +149,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const teacherGroups: NavGroup[] = useMemo(
     () => [
       {
+        group: 'Công tác coi thi & chấm thi',
         items: [
-          { name: 'Lịch coi thi được phân công', href: '/teacher/assignments', icon: CalendarCheck },
-          { name: 'Chấm thi tự luận', href: '/teacher/grading', icon: FileCheck },
-          { name: 'Ngân hàng câu hỏi bộ môn', href: '/question-bank', icon: HelpCircle },
+          { name: 'Lịch coi thi', href: '/teacher/assignments', icon: CalendarCheck },
+          { name: 'Chấm thi tự luận', href: '/teacher/essay-grading', icon: FileCheck },
+          { name: 'Thẩm định phúc khảo', href: '/teacher/regrade', icon: Award },
+          { name: 'Giám sát phòng thi', href: '/teacher/proctor', icon: ShieldCheck },
+        ],
+      },
+      {
+        group: 'Tài liệu chuyên môn',
+        items: [
+          { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
+          { name: 'Kho đề thi', href: '/exam-papers', icon: FileText },
         ],
       },
     ],
@@ -156,11 +172,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const studentGroups: NavGroup[] = useMemo(
     () => [
       {
-        group: 'Dành cho sinh viên',
+        group: 'Khảo thí sinh viên',
         items: [
-          { name: 'Lịch thi của tôi', href: '/student/exam-schedule', icon: CalendarDays },
-          { name: 'Kết quả thi & Điểm số', href: '/student/results', icon: Award },
-          { name: 'Khung đào tạo ngành', href: '/student/curriculum', icon: BookOpen },
+          { name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: CalendarDays },
+          { name: 'Luyện thi trắc nghiệm', href: '/student/practice', icon: Sparkles },
+          { name: 'Kết quả bài thi', href: '/student/results', icon: Award },
+          { name: 'Chương trình đào tạo', href: '/student/curriculum', icon: BookOpen },
         ],
       },
     ],
@@ -170,12 +187,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const rawGroups = role === 'ADMIN' ? adminGroups : role === 'TEACHER' ? teacherGroups : studentGroups;
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    'Tổ chức kỳ thi': true,
-    'Ngân hàng & đề thi': true,
-    'Chấm thi & kết quả': true,
+    'Tổ chức thi': true,
+    'Ngân hàng & Đề thi': true,
+    'Chấm thi & Kết quả': true,
     'Danh mục': true,
     'Hệ thống': true,
-    'Dành cho sinh viên': true,
+    'Công tác coi thi & chấm thi': true,
+    'Tài liệu chuyên môn': true,
+    'Khảo thí sinh viên': true,
   });
 
   const toggleAccordionGroup = (groupName: string) => {

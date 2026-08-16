@@ -11,6 +11,8 @@ import { FillBlankQuestionRenderer } from '@/components/question-bank/FillBlankQ
 import { QuestionMediaPlayer } from '@/components/exam/QuestionMediaPlayer';
 import { DynamicImage } from '@/components/ui/DynamicImage';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
+import { ProfileDrawer } from '@/components/ProfileDrawer';
+import { BookOpen, User, Ticket, FileText, Layers } from 'lucide-react';
 
 export default function StudentExamTakePage() {
   const router = useRouter();
@@ -30,6 +32,7 @@ export default function StudentExamTakePage() {
   const [submitting, setSubmitting] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [showExamProfileDrawer, setShowExamProfileDrawer] = useState(false);
 
   // States báo cáo sự cố khẩn cấp
   const [showIncidentModal, setShowIncidentModal] = useState(false);
@@ -500,12 +503,16 @@ export default function StudentExamTakePage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col select-none">
       {/* Enterprise Dark Navy Header */}
       <header className="bg-primary-800 text-white px-4 sm:px-6 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md border-b border-white/10">
-        <div className="flex items-center space-x-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-semibold text-white text-base shadow-sm">
+        <div
+          onClick={() => setShowExamProfileDrawer(true)}
+          className="flex items-center space-x-3.5 cursor-pointer group"
+          title="Bấm để xem chi tiết thông tin ca thi & quy chế"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-semibold text-white text-base shadow-sm group-hover:bg-white/20 transition">
             {attemptData.paperTitle ? attemptData.paperTitle.charAt(0).toUpperCase() : 'T'}
           </div>
           <div>
-            <span className="font-semibold text-white text-sm sm:text-base tracking-tight block truncate max-w-xs sm:max-w-md">
+            <span className="font-semibold text-white text-sm sm:text-base tracking-tight block truncate max-w-xs sm:max-w-md group-hover:text-blue-200 transition">
               {attemptData.paperTitle}
             </span>
             <div className="flex items-center gap-2 mt-0.5">
@@ -1076,6 +1083,37 @@ export default function StudentExamTakePage() {
       </div>
     </div>
   )}
+
+      {/* Candidate & Paper Profile Drawer */}
+      <ProfileDrawer
+        isOpen={showExamProfileDrawer}
+        onClose={() => setShowExamProfileDrawer(false)}
+        title={attemptData?.paperTitle || 'Bài Thi Trực Tuyến'}
+        subtitle="Hệ thống Khảo thí Trực tuyến"
+        avatarText={attemptData?.paperTitle?.slice(0, 2)?.toUpperCase() || 'BT'}
+        badge={{
+          label: 'Đang làm bài',
+          status: 'IN_PROGRESS',
+        }}
+        details={[
+          { label: 'Tên đề thi', value: attemptData?.paperTitle || '---', icon: BookOpen },
+          { label: 'Tổng số câu hỏi', value: `${questions?.length || 0} câu hỏi`, icon: Layers },
+          { label: 'Tiến độ làm bài', value: `${answeredCount} / ${totalCount} câu đã trả lời` },
+          { label: 'Thời gian còn lại', value: formatTime(remainingSeconds), icon: Clock },
+          { label: 'Số lần cảnh báo vi phạm', value: `${violationCountRef.current} / 5 lần cho phép`, icon: Shield },
+        ]}
+        extraSections={[
+          {
+            title: 'Lưu ý giám sát an toàn thi',
+            content: (
+              <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+                <p>• Mọi thay đổi đáp án được tự động đồng bộ tức thời với máy chủ.</p>
+                <p>• Không bấm F5, không chuyển tab hoặc mở ứng dụng ngoài để tránh bị ghi nhận vi phạm quy chế.</p>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
  </div>

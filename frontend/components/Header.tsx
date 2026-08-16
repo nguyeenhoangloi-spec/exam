@@ -470,16 +470,12 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="absolute -top-1.5 right-7 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
 
                   {/* Header Profile Info Card */}
-                  <div className="relative z-20 flex items-center gap-2 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
+                  <div className="relative z-20 flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-medium text-xs shadow-xs">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-medium text-slate-800 dark:text-slate-100">{displayName}</p>
-                      <p className="truncate text-[12px] text-emerald-600 dark:text-emerald-400 font-normal flex items-center gap-1">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        Đang trực tuyến
-                      </p>
+                      <p className="truncate text-[13.5px] font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
                     </div>
                   </div>
 

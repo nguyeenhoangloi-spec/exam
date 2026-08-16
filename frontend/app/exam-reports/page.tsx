@@ -217,7 +217,7 @@ function getScheduleStatusBadge(s: any) {
 }
 
 export default function ExamReportsPage() {
-  usePageTitle('Báo cáo Điểm thi');
+  usePageTitle('Báo cáo thống kê');
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -1024,26 +1024,25 @@ export default function ExamReportsPage() {
       <ProfileDrawer
         isOpen={Boolean(drawerCandidate)}
         onClose={() => setDrawerCandidate(null)}
-        title={drawerCandidate?.fullName || 'Hồ sơ Thí sinh thi'}
-        subtitle={`Mã SV: ${drawerCandidate?.studentCode || ''}`}
-        avatarText={drawerCandidate?.studentCode?.slice(0, 3) || 'SV'}
+        title={drawerCandidate?.fullName || 'Hồ sơ thí sinh thi'}
+        subtitle={`MSSV: ${drawerCandidate?.studentCode || ''}`}
+        avatarText={drawerCandidate?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
         badge={{
-          label: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : `Điểm thi: ${drawerCandidate?.totalScore} / 10`,
-          className: '',
-          status: drawerCandidate?.status || 'GRADED',
+          label: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : `Điểm số: ${drawerCandidate?.totalScore ?? '--'} / 10`,
+          className: drawerCandidate?.status === 'ABSENT' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
-          { label: 'Họ và Tên', value: drawerCandidate?.fullName },
-          { label: 'Mã sinh viên', value: drawerCandidate?.studentCode },
-          { label: 'Lớp sinh viên', value: drawerCandidate?.className, icon: GraduationCap },
-          { label: 'Trạng thái nộp bài', value: drawerCandidate?.status, icon: FileCheck },
+          { label: 'Họ và tên thí sinh', value: drawerCandidate?.fullName, icon: GraduationCap },
+          { label: 'Mã số sinh viên', value: drawerCandidate?.studentCode, icon: GraduationCap },
+          { label: 'Lớp sinh hoạt', value: drawerCandidate?.className || '---', icon: GraduationCap },
+          { label: 'Trạng thái thi', value: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : drawerCandidate?.status === 'GRADED' ? 'Đã chấm điểm' : drawerCandidate?.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa nộp', icon: FileCheck },
           {
             label: 'Điểm số đạt được',
-            value: drawerCandidate?.status === 'ABSENT' ? 'Không có (Vắng thi)' : `${drawerCandidate?.totalScore} / 10 điểm`,
+            value: drawerCandidate?.status === 'ABSENT' ? '0.0 (Vắng thi)' : `${drawerCandidate?.totalScore ?? 0} / 10 điểm`,
             icon: Award,
           },
           {
-            label: 'Số lượt vi phạm',
+            label: 'Số lần ghi nhận vi phạm',
             value: `${drawerCandidate?.violationCount || 0} lần`,
             icon: AlertTriangle,
           },

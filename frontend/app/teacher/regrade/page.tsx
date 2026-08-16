@@ -20,7 +20,7 @@ import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrad
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 
 export default function RegradeManagementPage() {
-  usePageTitle('Quản lý phúc khảo & khiếu nại điểm');
+  usePageTitle('Thẩm định phúc khảo');
 
   const [appeals, setAppeals] = useState<GradeAppealItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

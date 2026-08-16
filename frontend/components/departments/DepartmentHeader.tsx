@@ -21,7 +21,7 @@ export function DepartmentHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-1">
         <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900">
-          Quản lý khoa & khung chương trình
+          Quản lý khoa
         </h1>
         <p className="text-[15px] font-normal leading-[24px] text-slate-500">
           Quản lý danh mục các khoa đào tạo, số lượng môn học và cấu hình khung chương trình đào tạo

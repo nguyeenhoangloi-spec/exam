@@ -140,7 +140,7 @@ const calculateDuration = (start?: string | null, end?: string | null) => {
 };
 
 export default function BackupsPage() {
-    usePageTitle('Sao lưu & khôi phục');
+    usePageTitle('Sao lưu dữ liệu');
     const router = useRouter();
     const currentUser = getAuthUser();
     // Keep this dependency primitive. getAuthUser() creates a new object on
@@ -191,6 +191,27 @@ export default function BackupsPage() {
 
     // Drawer Detail State
     const [detailJob, setDetailJob] = useState<BackupJob | null>(null);
+    const [drawerOpenJob, setDrawerOpenJob] = useState<BackupJob | null>(null);
+    const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (detailJob) {
+            setDrawerOpenJob(detailJob);
+            const raf = requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setDrawerVisible(true);
+                });
+            });
+            return () => cancelAnimationFrame(raf);
+        } else {
+            setDrawerVisible(false);
+            const timer = setTimeout(() => {
+                setDrawerOpenJob(null);
+            }, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [detailJob]);
+
     const [copiedChecksum, setCopiedChecksum] = useState(false);
 
     // Modal & Policy States
@@ -441,7 +462,7 @@ export default function BackupsPage() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-0.5">
                     <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-                        Sao lưu & khôi phục dữ liệu
+                        Sao lưu dữ liệu
                     </h1>
                     <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Màn hình vận hành an toàn database, file upload và các snapshot hệ thống khảo thí
@@ -1200,93 +1221,179 @@ export default function BackupsPage() {
             )}
 
 
-            {/* Snapshot Details Modal */}
-            {detailJob && (
-                <Modal
-                    isOpen={Boolean(detailJob)}
-                    onClose={() => setDetailJob(null)}
-                    title={`Chi tiết Snapshot (${detailJob.snapshotId})`}
-                    size="lg"
-                >
-                    <div className="space-y-4 text-sm font-medium text-slate-800">
-                        {/* Overview Metadata Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 pb-3 border-b border-slate-100">
-                            <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-slate-500 block">Loại Backup</span>
-                                <span className="text-sm font-semibold text-slate-900 block">{detailJob.type}</span>
-                            </div>
-                            <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-slate-500 block">Dung lượng tổng</span>
-                                <span className="text-sm font-semibold text-slate-900 block">{formatBytes(detailJob.sizeBytes)}</span>
-                            </div>
-                            <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-slate-500 block">Người khởi tạo</span>
-                                <span className="text-sm font-semibold text-slate-900 block">
-                                    {detailJob.initiatedBy ? detailJob.initiatedBy.username : 'Hệ thống (Cron)'}
-                                </span>
-                            </div>
-                            <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-slate-500 block">Thời gian khởi tạo</span>
-                                <span className="text-sm font-semibold text-slate-900 block">{formatDate(detailJob.createdAt)}</span>
-                            </div>
-                            <div className="space-y-0.5 sm:col-span-2">
-                                <span className="text-xs font-semibold text-slate-500 block">Thời gian hoàn thành</span>
-                                <span className="text-sm font-semibold text-slate-900 block">{formatDate(detailJob.completedAt)}</span>
-                            </div>
-                        </div>
+            {/* ── SNAPSHOT DETAIL DRAWER: Chuẩn Design System & Hoạt ảnh 60 FPS ── */}
+            {drawerOpenJob && (
+                <div role="dialog" aria-modal="true" aria-label="Chi tiết bản sao lưu" className="fixed inset-0 z-[100] overflow-hidden">
+                    {/* Backdrop mờ nền */}
+                    <div
+                        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                            drawerVisible ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        onClick={() => setDetailJob(null)}
+                    />
 
-                        {/* Long Technical Identifiers */}
-                        <div className="space-y-3 pb-3 border-b border-slate-100">
-                            <div className="space-y-0.5">
-                                <span className="text-xs font-semibold text-slate-500 block">Mã Snapshot ID</span>
-                                <IdentifierBadge tone="neutral" title={detailJob.snapshotId}>{detailJob.snapshotId}</IdentifierBadge>
-                            </div>
+                    {/* Drawer Container */}
+                    <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
+                        <div
+                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+                                drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                            }`}
+                        >
+                            {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
+                            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                                            <DatabaseBackup className="h-6 w-6 text-white" />
+                                        </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
-                                <div className="space-y-0.5">
-                                    <span className="text-xs font-semibold text-slate-500 block">Prisma Migration Version</span>
-                                    <span className=" tabular-nums text-sm font-semibold text-slate-900 break-all block">{detailJob.migration || 'Không xác định'}</span>
-                                </div>
-                                <div className="space-y-0.5">
-                                    <span className="text-xs font-semibold text-slate-500 block">App Commit Hash</span>
-                                    <span className=" tabular-nums text-xs font-semibold text-slate-900 break-all block">{detailJob.appCommit || 'Latest HEAD'}</span>
-                                </div>
-                            </div>
-                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                                                    Bản sao lưu Snapshot
+                                                </h2>
+                                                <StatusBadge status={drawerOpenJob.status} />
+                                            </div>
+                                            <div className="mt-1 flex items-center gap-2 flex-wrap">
+                                                <IdentifierBadge tone="neutral" title={drawerOpenJob.snapshotId}>
+                                                    {drawerOpenJob.snapshotId}
+                                                </IdentifierBadge>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        {/* SHA-256 Checksum */}
-                        <div className="space-y-1 pt-1">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-slate-500">Mã băm SHA-256 Checksum</span>
-                                {detailJob.checksum && (
+                                    {/* Nút Đóng */}
                                     <button
                                         type="button"
-                                        onClick={() => handleCopyChecksum(detailJob.checksum)}
-                                        className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                                        onClick={() => setDetailJob(null)}
+                                        className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+                                        title="Đóng chi tiết"
                                     >
-                                        <Copy className="h-3.5 w-3.5" /> {copiedChecksum ? 'Đã sao chép!' : 'Sao chép hash'}
+                                        <X className="h-5 w-5" />
                                     </button>
+                                </div>
+                            </div>
+
+                            {/* Content Body */}
+                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px]">
+                                {/* Section 1: Thông số tổng quan */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                            Thông số tổng quan bản sao lưu
+                                        </h3>
+                                    </div>
+
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Loại sao lưu:</span>
+                                            <span className="font-semibold text-blue-600 dark:text-blue-400">{drawerOpenJob.type}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Dung lượng tổng:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{formatBytes(drawerOpenJob.sizeBytes)}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Người khởi tạo:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white">
+                                                {drawerOpenJob.initiatedBy ? drawerOpenJob.initiatedBy.username : 'Hệ thống (Tự động)'}
+                                            </span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Thời gian khởi tạo:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{formatDate(drawerOpenJob.createdAt)}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Thời gian hoàn thành:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{formatDate(drawerOpenJob.completedAt)}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Thời lượng thực thi:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{calculateDuration(drawerOpenJob.startedAt, drawerOpenJob.completedAt)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 2: Phiên bản kỹ thuật & Git */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                            Thông số mã nguồn &amp; Cơ sở dữ liệu
+                                        </h3>
+                                    </div>
+
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Prisma Migration Version:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white tabular-nums break-all text-right">{drawerOpenJob.migration || 'Không xác định'}</span>
+                                        </div>
+
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">App Commit Hash:</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white tabular-nums break-all text-right">{drawerOpenJob.appCommit || 'Latest HEAD'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 3: SHA-256 Checksum */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                                            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                                Mã băm SHA-256 Checksum
+                                            </h3>
+                                        </div>
+
+                                        {drawerOpenJob.checksum && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleCopyChecksum(drawerOpenJob.checksum)}
+                                                className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-[13px] font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
+                                            >
+                                                {copiedChecksum ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
+                                                <span>{copiedChecksum ? 'Đã sao chép!' : 'Sao chép SHA-256'}</span>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-[13px] font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
+                                        {drawerOpenJob.checksum || 'Chưa có checksum cho snapshot này'}
+                                    </div>
+                                </div>
+
+                                {/* Section 4: Chi tiết lỗi (nếu có) */}
+                                {drawerOpenJob.errorMessage && (
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="h-4 w-1 rounded-full bg-rose-600 shrink-0" />
+                                            <h3 className="text-[15px] font-semibold text-rose-700 dark:text-rose-400">
+                                                Chi tiết nhật ký lỗi
+                                            </h3>
+                                        </div>
+                                        <div className="rounded-xl border border-rose-200/90 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 p-4 text-[13px] font-normal leading-relaxed text-rose-900 dark:text-rose-200 whitespace-pre-wrap">
+                                            {drawerOpenJob.errorMessage}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
-                            <p className=" tabular-nums text-xs font-semibold text-slate-800 break-all leading-relaxed pt-0.5">
-                                {detailJob.checksum || 'Chưa có checksum'}
-                            </p>
-                        </div>
 
-                        {detailJob.errorMessage && (
-                            <div className="pt-2 space-y-1 text-rose-700">
-                                <span className="text-xs font-semibold text-rose-900 block">Chi tiết nhật ký lỗi:</span>
-                                <p className=" tabular-nums text-xs leading-relaxed whitespace-pre-wrap">{detailJob.errorMessage}</p>
+                            {/* Standard Footer */}
+                            <div className="border-t border-slate-200/90 dark:border-slate-800 p-4 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end shrink-0 px-6">
+                                <Button variant="secondary" size="md" onClick={() => setDetailJob(null)}>
+                                    Đóng
+                                </Button>
                             </div>
-                        )}
-
-                        <div className="flex justify-end pt-4 border-t border-slate-100">
-                            <Button variant="secondary" size="md" onClick={() => setDetailJob(null)}>
-                                Đóng
-                            </Button>
                         </div>
                     </div>
-                </Modal>
+                </div>
             )}
 
             {/* Initial Restore Creation Modal */}

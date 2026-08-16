@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminEssayReviewPage() {
- usePageTitle('Duyệt bài thi Tự luận');
+ usePageTitle('Duyệt bài tự luận');
  const [rows, setRows] = useState<any[]>([]);
  const [selected, setSelected] = useState<any>(null);
  const [loading, setLoading] = useState(true);
@@ -422,7 +422,7 @@ export default function AdminEssayReviewPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">
           <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-            Duyệt & Quản Lý Bài Thi Tự Luận
+            Duyệt bài tự luận
           </h1>
           <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.

@@ -33,7 +33,7 @@ import {
 import { PersonalScheduleItem } from '../../../types';
 
 export default function StudentExamSchedulePage() {
-  usePageTitle('Lịch thi Cá nhân Sinh viên');
+  usePageTitle('Lịch thi cá nhân');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [schedules, setSchedules] = useState<PersonalScheduleItem[]>([]);
@@ -205,7 +205,7 @@ export default function StudentExamSchedulePage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-              Lịch Thi Cá Nhân Sinh Viên
+              Lịch thi cá nhân
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
@@ -382,7 +382,11 @@ export default function StudentExamSchedulePage() {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition line-clamp-1">
+                  <h3
+                    onClick={() => setDrawerSchedule(item)}
+                    className="text-base font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition line-clamp-1 cursor-pointer"
+                    title="Xem chi tiết ca thi"
+                  >
                     {item.subjectName}
                   </h3>
 
@@ -436,7 +440,12 @@ export default function StudentExamSchedulePage() {
                           Điểm công bố:
                         </span>
                         <span className="tabular-nums font-medium text-xs text-blue-600 dark:text-blue-400">
-                          {(item as any).attempt.totalScore}đ {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
+                          {(item as any).attempt.totalScore !== null &&
+                          (item as any).attempt.totalScore !== undefined &&
+                          (item as any).attempt.totalScore !== ''
+                            ? `${(item as any).attempt.totalScore}đ`
+                            : 'Chưa có điểm'}{' '}
+                          {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
                         </span>
                       </div>
                     )}
@@ -487,21 +496,63 @@ export default function StudentExamSchedulePage() {
         onClose={() => setDrawerSchedule(null)}
         title={drawerSchedule?.subjectName || ''}
         subtitle={`Mã môn: ${drawerSchedule?.subjectCode}`}
-        avatarText="LT"
+        avatarText={drawerSchedule?.subjectCode?.slice(0, 2)?.toUpperCase() || 'LT'}
         badge={{
           label: drawerSchedule?.periodName || 'Kỳ thi',
           className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
           { label: 'Môn thi', value: drawerSchedule?.subjectName, icon: BookOpen },
-          { label: 'Mã môn', value: drawerSchedule?.subjectCode },
-          { label: 'Kỳ thi', value: drawerSchedule?.periodName },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{drawerSchedule?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Kỳ thi khảo thí', value: drawerSchedule?.periodName },
+          { label: 'Hình thức thi', value: drawerSchedule?.mode === 'MOCK' ? 'Thi thử trực tuyến' : 'Thi chính thức' },
           { label: 'Ngày thi', value: drawerSchedule?.examDate ? new Date(drawerSchedule.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
-          { label: 'Thời gian làm bài', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}`, icon: Clock },
-          { label: 'Phòng thi', value: drawerSchedule?.roomName || drawerSchedule?.roomCode, icon: DoorOpen },
+          { label: 'Khung giờ làm bài', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}`, icon: Clock },
+          { label: 'Phòng thi', value: drawerSchedule?.roomName || (drawerSchedule?.roomCode ? <IdentifierBadge tone="neutral">{drawerSchedule.roomCode}</IdentifierBadge> : 'Tự do'), icon: DoorOpen },
           { label: 'Tòa nhà / Địa điểm', value: drawerSchedule?.building || 'Chưa cập nhật', icon: MapPin },
-          { label: 'Số báo danh (SBD)', value: drawerSchedule?.examNumber || drawerSchedule?.registrationNumber || 'Đã cấp tự động', icon: Ticket },
-          { label: 'Vị trí chỗ ngồi', value: drawerSchedule?.seatNumber ? `Ghế số ${drawerSchedule.seatNumber}` : 'Chưa xếp chỗ' },
+          { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{drawerSchedule?.examNumber || drawerSchedule?.registrationNumber || (drawerSchedule?.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}</IdentifierBadge>, icon: Ticket },
+          { label: 'Vị trí ghế ngồi', value: drawerSchedule?.seatNumber ? `Ghế số ${drawerSchedule.seatNumber}` : 'Chưa xếp chỗ' },
+        ]}
+        extraSections={[
+          {
+            title: 'Thao Tác Nhanh Ca Thi',
+            content: (
+              <div className="space-y-3 pt-1">
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  Vui lòng có mặt tại phòng thi hoặc vào phòng chờ trực tuyến trước giờ bắt đầu ít nhất 15 phút để chuẩn bị thiết bị và làm thủ tục điểm danh.
+                </p>
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  {(drawerSchedule as any)?.attempt?.gradingStatus === 'PUBLISHED' ? (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        const id = (drawerSchedule as any)?.attempt?.id;
+                        setDrawerSchedule(null);
+                        if (id) router.push(`/student/online-exam/${id}/result`);
+                      }}
+                      leftIcon={<Award className="w-3.5 h-3.5" />}
+                    >
+                      Xem kết quả & Điểm thi
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={drawerSchedule?.mode === 'MOCK' ? 'secondary' : 'primary'}
+                      size="sm"
+                      onClick={() => {
+                        const targetId = drawerSchedule?.examScheduleId || drawerSchedule?.scheduleId || drawerSchedule?.id;
+                        setDrawerSchedule(null);
+                        if (targetId) router.push(`/student/online-exam/${targetId}/lobby`);
+                      }}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                    >
+                      {drawerSchedule?.mode === 'MOCK' ? 'Vào phòng thi thử' : 'Vào phòng thi online'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ),
+          },
         ]}
       />
 

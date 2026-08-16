@@ -18,7 +18,7 @@ export function ExamSupervisorHeader({
       {/* Title & Description */}
       <div className="space-y-1">
         <h1 className="text-xl sm:text-[28px] font-semibold leading-tight sm:leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-          Quản lý & Phân công Giám thị
+          Phân công coi thi
         </h1>
         <p className="text-sm sm:text-[15px] font-normal leading-relaxed text-slate-500 dark:text-slate-400">
           Theo dõi trạng thái xác nhận, phê duyệt yêu cầu đổi ca và phân công cán bộ coi thi

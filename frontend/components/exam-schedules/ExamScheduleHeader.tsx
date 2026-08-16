@@ -22,7 +22,7 @@ export function ExamScheduleHeader({
       {/* Title & Description */}
       <div className="space-y-0.5">
         <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-          Xếp lịch thi
+          Quản lý lịch thi
         </h1>
         <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Tạo, quản lý và theo dõi lịch thi của các kỳ thi trong hệ thống

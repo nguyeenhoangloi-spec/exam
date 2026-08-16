@@ -27,6 +27,7 @@ import {
   Fingerprint,
 } from 'lucide-react';
 import { Toast } from '../../components/Toast';
+import { Button } from '../../components/ui/Button';
 
 export const dynamic = 'force-dynamic';
 

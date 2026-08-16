@@ -10,6 +10,7 @@ import { Button } from '../../../components/ui/Button';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
+import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import {
   Search,
   X,
@@ -31,12 +32,13 @@ import {
   LayoutGrid,
   Layers,
   Check,
+  Eye,
 } from 'lucide-react';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 
 function TeacherEssayGradingContent() {
-  usePageTitle('Chấm Bài Thi Tự Luận');
+  usePageTitle('Chấm bài tự luận');
   const searchParams = useSearchParams();
   const attemptIdParam = searchParams.get('attemptId');
 
@@ -97,6 +99,7 @@ function TeacherEssayGradingContent() {
   }>({ isOpen: false, title: '', message: '', type: 'info', confirmText: 'Xác nhận', cancelText: 'Hủy bỏ', onConfirm: () => {} });
 
   const [rubricQuestion, setRubricQuestion] = useState<any>(null);
+  const [profileCandidate, setProfileCandidate] = useState<any | null>(null);
 
   const openAttempt = useCallback(async (id: string) => {
     if (!id || id.startsWith('virtual-')) {
@@ -545,7 +548,7 @@ function TeacherEssayGradingContent() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">
           <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-            Chấm Bài Thi Tự Luận
+            Chấm bài tự luận
           </h1>
           <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             Chấm điểm và đánh giá bài làm tự luận của sinh viên theo chuẩn Rubric.
@@ -768,20 +771,41 @@ function TeacherEssayGradingContent() {
                       }`}
                     >
                       <div className="flex justify-between items-start">
-                        <div className="font-semibold text-xs text-slate-900 truncate max-w-[170px]">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setProfileCandidate(r);
+                          }}
+                          className="font-semibold text-xs text-slate-900 dark:text-slate-100 truncate max-w-[170px] hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                          title="Xem chi tiết hồ sơ thí sinh"
+                        >
                           {r.student?.fullName}
+                        </button>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setProfileCandidate(r);
+                            }}
+                            className="p-1 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                            title="Xem chi tiết hồ sơ thí sinh"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          <StatusBadge status={r.gradingStatus} />
                         </div>
-                        <StatusBadge status={r.gradingStatus} />
                       </div>
                       <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
                         <span>MSSV:</span>
                         <IdentifierBadge tone="neutral">{r.student?.studentCode}</IdentifierBadge>
                       </div>
-                      <div className="flex justify-between items-center text-xs text-slate-400 mt-2 pt-1.5 border-t border-slate-100">
+                      <div className="flex justify-between items-center text-xs text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-800">
                         <span className="truncate max-w-[140px]">
                           {r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || 'Môn thi'}
                         </span>
-                        <span className="font-semibold text-slate-700 tabular-nums">
+                        <span className="font-semibold text-slate-700 dark:text-slate-300 tabular-nums">
                           {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
                         </span>
                       </div>
@@ -793,7 +817,7 @@ function TeacherEssayGradingContent() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
                 <span>
                   Trang {page} / {totalPages}
                 </span>
@@ -829,12 +853,24 @@ function TeacherEssayGradingContent() {
               {/* Header Information & Fast Student Navigation */}
               <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4 flex-wrap gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center font-semibold text-sm shrink-0">
+                  <div
+                    onClick={() => setProfileCandidate(selected)}
+                    className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-sm shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+                    title="Xem chi tiết hồ sơ thí sinh"
+                  >
                     {selected.student?.fullName?.charAt(0) || 'S'}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{selected.student?.fullName}</h2>
+                      <button
+                        type="button"
+                        onClick={() => setProfileCandidate(selected)}
+                        className="text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left flex items-center gap-1.5"
+                        title="Xem chi tiết hồ sơ thí sinh"
+                      >
+                        <span>{selected.student?.fullName}</span>
+                        <Eye className="w-4 h-4 text-slate-400 hover:text-blue-600" />
+                      </button>
                       <StatusBadge status={selected.gradingStatus} />
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
@@ -1132,6 +1168,92 @@ function TeacherEssayGradingContent() {
           }}
         />
       )}
+
+      {/* Candidate Profile Drawer */}
+      <ProfileDrawer
+        isOpen={!!profileCandidate}
+        onClose={() => setProfileCandidate(null)}
+        title="Hồ Sơ & Bài Thi Sinh Viên"
+        subtitle={profileCandidate?.student?.fullName}
+        avatarText={profileCandidate?.student?.fullName?.slice(0, 2)?.toUpperCase()}
+        badge={{
+          label: profileCandidate?.gradingStatus === 'PUBLISHED'
+            ? 'Đã công bố'
+            : profileCandidate?.gradingStatus === 'WAITING_APPROVAL'
+            ? 'Chờ duyệt'
+            : profileCandidate?.gradingStatus === 'GRADING'
+            ? 'Đang chấm'
+            : 'Chưa làm',
+          status: profileCandidate?.gradingStatus || 'NOT_SUBMITTED',
+        }}
+        details={[
+          { label: 'Họ và tên thí sinh', value: profileCandidate?.student?.fullName || '---' },
+          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{profileCandidate?.student?.studentCode || '---'}</IdentifierBadge> },
+          { label: 'Email sinh viên', value: profileCandidate?.student?.email || 'Chưa cập nhật' },
+          { label: 'Môn thi', value: profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectName || profileCandidate?.subjectName || '---' },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectCode || profileCandidate?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Trạng thái chấm bài', value: <StatusBadge status={profileCandidate?.gradingStatus || 'NOT_SUBMITTED'} /> },
+          {
+            label: 'Tổng điểm bài thi',
+            value: (
+              <span className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+                {profileCandidate?.totalScore !== undefined && profileCandidate?.totalScore !== null
+                  ? `${profileCandidate.totalScore} / ${profileCandidate.maxScore || 10} điểm`
+                  : 'Chưa có điểm'}
+              </span>
+            ),
+          },
+          {
+            label: 'Điểm phạt vi phạm',
+            value: profileCandidate?.penaltyPoints > 0 ? (
+              <span className="text-[15px] font-semibold text-rose-600">
+                -{profileCandidate.penaltyPoints} điểm ({profileCandidate.penaltyReason || 'Vi phạm quy chế'})
+              </span>
+            ) : (
+              'Không có điểm phạt'
+            ),
+          },
+          {
+            label: 'Thời gian bắt đầu làm',
+            value: profileCandidate?.startedAt
+              ? new Date(profileCandidate.startedAt).toLocaleString('vi-VN')
+              : '---',
+          },
+          {
+            label: 'Thời gian nộp bài',
+            value: profileCandidate?.submittedAt
+              ? new Date(profileCandidate.submittedAt).toLocaleString('vi-VN')
+              : 'Chưa nộp bài',
+          },
+        ]}
+        extraSections={[
+          {
+            title: 'Tóm Tắt Bài Thi Tự Luận',
+            content: (
+              <div className="space-y-2 text-xs font-normal text-slate-600 dark:text-slate-400">
+                <p>
+                  Bài thi được cấu hình trong hệ thống khảo thí trực tuyến. Giảng viên phụ trách chấm các câu hỏi tự luận theo biểu điểm Rubric chuẩn xác.
+                </p>
+                <div className="flex items-center justify-end pt-2">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={() => {
+                      const id = profileCandidate?.id;
+                      setProfileCandidate(null);
+                      if (id) openAttempt(id);
+                    }}
+                    leftIcon={<FileText className="w-3.5 h-3.5" />}
+                  >
+                    Mở không gian chấm bài
+                  </Button>
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
     </main>
   );
 }

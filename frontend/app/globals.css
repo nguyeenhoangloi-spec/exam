@@ -99,6 +99,13 @@ html.dark {
     font-family: var(--font-ui);
   }
 
+  /* The web UI has one font contract. Enforce it at the shell so legacy
+   * component-level styles cannot silently reintroduce another font family. */
+  .typography-scale,
+  .typography-scale :where(*) {
+    font-family: var(--font-ui) !important;
+  }
+
   /* Dark Mode base styles (activates via .dark class on <html>) */
   html.dark {
     color-scheme: dark;
@@ -503,7 +510,7 @@ html.dark {
   .edu-page-title {
     font-size: var(--fs-page-title);
     line-height: var(--lh-page-title);
-    @apply font-bold tracking-tight;
+    @apply font-semibold tracking-tight;
     color: var(--ui-text-primary);
   }
 
@@ -517,7 +524,7 @@ html.dark {
   .edu-card-title {
     font-size: var(--fs-card-title);
     line-height: var(--lh-card-title);
-    @apply font-bold;
+    @apply font-semibold;
     color: var(--ui-text-primary);
   }
 
@@ -626,7 +633,7 @@ html.dark {
  * contract. Keep this rule at the shell level so every route uses the same
  * readable emphasis even when a page still carries font-semibold locally. */
 .typography-scale :where(h1) {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .typography-scale :where(label) {
@@ -635,6 +642,19 @@ html.dark {
 
 .typography-scale :where(button, [role='button']) {
   font-weight: 600;
+}
+
+/* Filter option labels are secondary control content. The option container
+ * communicates selection through color and surface; only the control action
+ * itself remains at 600. */
+.typography-scale :where(button, [role='button']) [class~='text-xs'][class~='font-semibold'] {
+  font-weight: 500;
+}
+
+/* Descriptions inside filter preset buttons are supporting text, not actions.
+ * Keep them at body weight instead of inheriting the button's 600 weight. */
+.typography-scale :where(button, [role='button']) [class*='text-[12px]']:not([class*='font-semibold']):not([class*='font-medium']) {
+  font-weight: 400;
 }
 
 .typography-scale :where(nav a, nav button) {
@@ -1003,6 +1023,11 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
   min-height: 2.5rem !important;
 }
 
+.typography-scale button[data-ui-control='filter-select'][data-ui-size='lg'] {
+  height: 2.75rem !important;
+  min-height: 2.75rem !important;
+}
+
 /* Legacy compact icon/text actions converge on the 36px compact target. */
 .typography-scale button[class~='h-8'] {
   min-height: 2.25rem !important;
@@ -1063,20 +1088,34 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
  * The selector also catches responsive forms such as sm:text-[14px]. */
 .typography-scale :where(
   [class*='text-[12px]'],
-  [class*='text-[13px]']
+  [class*='text-[12.5px]'],
+  [class*='text-[13px]'],
+  [class*='text-[13.5px]']
 ) {
   font-size: var(--fs-helper) !important;
   line-height: var(--lh-helper) !important;
 }
 
-.typography-scale :where([class*='text-[14px]']) {
+.typography-scale :where(
+  [class*='text-[14px]'],
+  [class*='text-[14.5px]']
+) {
   font-size: var(--fs-body-sm) !important;
   line-height: var(--lh-body-sm) !important;
 }
 
-.typography-scale :where([class*='text-[15px]']) {
+.typography-scale :where(
+  [class*='text-[15px]'],
+  [class*='text-[15.5px]'],
+  [class*='text-[16.5px]']
+) {
   font-size: var(--fs-body) !important;
   line-height: var(--lh-body) !important;
+}
+
+.typography-scale :where([class*='text-[17px]']) {
+  font-size: var(--fs-card-title) !important;
+  line-height: var(--lh-card-title) !important;
 }
 
 .typography-scale :where([class*='text-[18px]']) {

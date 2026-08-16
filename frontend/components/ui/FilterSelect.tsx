@@ -11,7 +11,7 @@ export interface FilterSelectOption {
 
 export interface FilterSelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   leftIcon?: React.ReactNode;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   variant?: 'outline' | 'ghost';
   containerClassName?: string;
   options?: FilterSelectOption[];
@@ -169,7 +169,9 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
   const sizeClasses =
     size === 'sm'
       ? `h-10 text-[15px] font-medium ${leftIcon ? 'pl-8 pr-3' : 'px-3'}`
-      : `h-10 text-[15px] font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`;
+      : size === 'lg'
+        ? `h-11 text-[15px] font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`
+        : `h-10 text-[15px] font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`;
 
   const variantClasses =
     variant === 'ghost'
@@ -196,6 +198,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
         type="button"
         disabled={disabled}
         data-ui-control="filter-select"
+        data-ui-size={size}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         onClick={() => setIsOpen((prev) => !prev)}
