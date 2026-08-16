@@ -11,7 +11,6 @@ import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
 import { DynamicImage } from '../../components/ui/DynamicImage';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
 import {
   User,
   Mail,
@@ -30,7 +29,6 @@ import {
   Upload,
   Trash2,
   ImageIcon,
-  Eye,
   Calendar,
 } from 'lucide-react';
 
@@ -63,7 +61,6 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [saving, setSaving] = useState(false);
-  const [showProfileDrawer, setShowProfileDrawer] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -313,16 +310,6 @@ export default function ProfilePage() {
           <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full sm:w-auto justify-center sm:justify-end">
             <button
               type="button"
-              onClick={() => setShowProfileDrawer(true)}
-              className="flex items-center gap-2 rounded-xl bg-white/20 hover:bg-white/30 text-white px-4 py-2 text-[15px] font-medium transition active:scale-95 cursor-pointer backdrop-blur-md border border-white/30"
-              title="Xem chi tiết hồ sơ cá nhân"
-            >
-              <Eye className="h-4 w-4 text-white" />
-              <span>Xem chi tiết hồ sơ</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => router.push('/settings')}
               className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2 text-[15px] font-medium shadow-sm transition active:scale-95 cursor-pointer"
             >
@@ -559,68 +546,6 @@ export default function ProfilePage() {
           </div>
         </form>
       )}
-
-      {/* User Profile Detail Drawer */}
-      <ProfileDrawer
-        isOpen={showProfileDrawer}
-        onClose={() => setShowProfileDrawer(false)}
-        title={displayName}
-        subtitle={`${roleName} • ${deptOrClass}`}
-        avatarText={displayName?.slice(0, 2)?.toUpperCase() || 'AD'}
-        badge={{
-          label: roleName,
-          status: profile?.role === 'STUDENT' ? 'OFFICIAL' : 'PUBLISHED',
-        }}
-        details={[
-          { label: 'Họ và tên đầy đủ', value: displayName, icon: User },
-          { label: 'Mã số định danh', value: <IdentifierBadge tone="blue">{userCode}</IdentifierBadge> },
-          { label: 'Tên đăng nhập', value: profile?.username || '---' },
-          { label: 'Vai trò hệ thống', value: roleName, icon: ShieldCheck },
-          { label: 'Email liên hệ', value: email || '---', icon: Mail },
-          { label: 'Số điện thoại', value: phone || 'Chưa cập nhật', icon: Phone },
-          { label: 'Đơn vị / Lớp', value: deptOrClass, icon: Building2 },
-          { label: 'Trạng thái tài khoản', value: 'Đang hoạt động (Active)', icon: CheckCircle2 },
-          { label: 'Ngày kích hoạt tài khoản', value: profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString('vi-VN') : '---', icon: Calendar },
-        ]}
-        extraSections={[
-          {
-            title: 'Bảo mật & Quản trị tài khoản',
-            content: (
-              <div className="space-y-3">
-                <p className="text-xs text-slate-500 font-normal leading-relaxed">
-                  Tài khoản của bạn được bảo vệ bằng mã hóa 256-bit JWT Token. Bạn có thể cập nhật thông tin liên hệ hoặc đổi mật khẩu định kỳ để nâng cao bảo mật.
-                </p>
-                <div className="flex items-center justify-end gap-2 pt-1">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setShowProfileDrawer(false);
-                      setActiveTab('edit');
-                    }}
-                    leftIcon={<User className="w-3.5 h-3.5" />}
-                  >
-                    Chỉnh sửa hồ sơ
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="sm"
-                    onClick={() => {
-                      setShowProfileDrawer(false);
-                      router.push('/change-password');
-                    }}
-                    leftIcon={<Lock className="w-3.5 h-3.5" />}
-                  >
-                    Đổi mật khẩu
-                  </Button>
-                </div>
-              </div>
-            ),
-          },
-        ]}
-      />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import {
   Sun,
   Moon,
   Home,
+  Shield,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
@@ -428,107 +429,152 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-expanded={openPanel === 'account'}
                 aria-controls="user-account-dropdown"
                 onClick={() => togglePanel('account')}
-                className="flex items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className={`group flex items-center gap-2.5 rounded-xl py-1 px-2 text-left transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                  openPanel === 'account'
+                    ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600'
+                    : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
+                }`}
               >
-                {/* Avatar Circle */}
-                {avatarUrl ? (
-                  <DynamicImage
-                    src={avatarUrl}
-                    alt={displayName}
-                    className="h-9 w-9 shrink-0 rounded-full object-cover border border-slate-200"
-                  />
-                ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 font-semibold text-white text-xs tracking-tight">
-                    {displayName.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                  {avatarUrl ? (
+                    <DynamicImage
+                      src={avatarUrl}
+                      alt={displayName}
+                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover ring-2 ring-blue-500/20"
+                    />
+                  ) : (
+                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-xs sm:text-sm tracking-tight shadow-xs">
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+                </div>
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-tight">
-                  <span className="block text-[13px] font-medium text-slate-800 dark:text-slate-100">{displayName}</span>
-                  <span className="block text-[12px] font-normal text-primary-600">
+                  <span className="block truncate max-w-[130px] text-[14px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {displayName}
+                  </span>
+                  <span className="block text-[12px] font-medium text-blue-600 dark:text-blue-400">
                     {displayRoleLabel}
                   </span>
                 </div>
 
                 {/* Chevron Arrow */}
                 <ChevronDown
-                  className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-primary-600' : ''
-                    }`}
+                  className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${
+                    openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
+                  }`}
                 />
               </button>
 
-              {/* Redesigned Account Dropdown Menu (Đồng bộ chuẩn xác 100% với Sidebar) */}
+              {/* Minimalist Blue & White Account Dropdown with Ultra-smooth Motion & Refined Depth */}
               {openPanel === 'account' && (
                 <div
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+10px)] w-56 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/60 text-xs z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl"
+                  className="absolute right-0 top-[calc(100%+8px)] w-64 origin-top-right rounded-2xl border border-slate-100/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-2xl shadow-blue-900/10 dark:shadow-slate-950/70 ring-1 ring-slate-900/5 dark:ring-white/10 text-xs z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 ease-out backdrop-blur-2xl"
                 >
                   {/* Isometric Top Pointer Tip */}
-                  <div className="absolute -top-1.5 right-7 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 z-10" />
+                  <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-100/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
 
-                  {/* Header Profile Info Card */}
-                  <div className="relative z-20 flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 mb-1 border border-slate-100 dark:border-slate-700/60">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-medium text-xs shadow-xs">
-                      {displayName.charAt(0).toUpperCase()}
+                  {/* Header: Live Account Session Info */}
+                  <div className="relative z-20 overflow-hidden rounded-xl px-3 py-2.5 bg-gradient-to-r from-blue-50/50 via-slate-50/30 to-transparent dark:from-blue-950/30 dark:via-slate-800/30 dark:to-transparent border border-blue-100/40 dark:border-slate-800 mb-1">
+                    {/* Subtle ambient light */}
+                    <div className="absolute -right-4 -top-4 h-12 w-12 rounded-full bg-blue-500/10 dark:bg-blue-400/10 blur-lg pointer-events-none" />
+
+                    <div className="flex items-center justify-between gap-1.5">
+                      <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400">Tài khoản</p>
+                      <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Trực tuyến
+                      </span>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13.5px] font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
-                    </div>
+                    <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
+                      {user?.email || (user?.username ? `@${user.username}` : displayName)}
+                    </p>
                   </div>
 
+                  {/* Navigation Links */}
                   <div className="relative z-20 space-y-0.5">
-                    {/* Item 1: Hồ sơ */}
                     <Link
                       href="/profile"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
-                      <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-[13px] font-normal">Hồ sơ</span>
+                      <div className="flex items-center gap-2.5">
+                        <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
+                        <span>Hồ sơ cá nhân</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-blue-500" />
                     </Link>
 
-                    {/* Item 2: Cài đặt */}
                     <Link
                       href="/settings"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
-                      <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-[13px] font-normal">Cài đặt</span>
+                      <div className="flex items-center gap-2.5">
+                        <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
+                        <span>Cài đặt hệ thống</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-blue-500" />
                     </Link>
 
-                    {/* Item 3: Hỗ trợ */}
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
-                      <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-[13px] font-normal">Hỗ trợ</span>
+                      <div className="flex items-center gap-2.5">
+                        <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
+                        <span>Trung tâm hỗ trợ</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-blue-500" />
                     </Link>
+                  </div>
 
-                    {/* Item 4: Giao diện */}
+                  {/* Divider */}
+                  <div className="relative z-20 my-1 border-t border-slate-100 dark:border-slate-800/80" />
+
+                  {/* Sleek Theme Toggle Switch */}
+                  <div className="relative z-20">
                     <button
                       type="button"
                       role="menuitem"
                       onClick={toggleTheme}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
-                      {isDark ? (
-                        <Sun className="h-4 w-4 text-amber-400" />
-                      ) : (
-                        <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      )}
-                      <span className="text-[13px] font-normal">Giao diện</span>
+                      <div className="flex items-center gap-2.5">
+                        {isDark ? (
+                          <Moon className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform duration-150" />
+                        ) : (
+                          <Sun className="h-4 w-4 text-amber-500 group-hover:scale-110 transition-transform duration-150" />
+                        )}
+                        <span>Chế độ tối</span>
+                      </div>
+                      {/* Toggle Switch */}
+                      <div
+                        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
+                          isDark ? 'bg-blue-600 shadow-xs' : 'bg-slate-200 dark:bg-slate-700'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 ease-in-out ${
+                            isDark ? 'translate-x-4' : 'translate-x-0'
+                          }`}
+                        />
+                      </div>
                     </button>
+                  </div>
 
-                    {/* Divider */}
-                    <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                  {/* Divider */}
+                  <div className="relative z-20 my-1 border-t border-slate-100 dark:border-slate-800/80" />
 
-                    {/* Item 5: Đăng xuất */}
+                  {/* Logout Action */}
+                  <div className="relative z-20">
                     <button
                       type="button"
                       role="menuitem"
@@ -536,10 +582,12 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-rose-600 font-normal hover:bg-rose-50/80 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50/90 dark:hover:bg-rose-950/40 transition-all duration-150 cursor-pointer group"
                     >
-                      <LogOut className="h-4 w-4 text-rose-600" />
-                      <span className="text-[13px] font-normal">Đăng xuất</span>
+                      <div className="flex items-center gap-2.5">
+                        <LogOut className="h-4 w-4 text-rose-600 dark:text-rose-400 group-hover:translate-x-0.5 transition-transform duration-150" />
+                        <span>Đăng xuất</span>
+                      </div>
                     </button>
                   </div>
                 </div>

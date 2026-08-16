@@ -9,7 +9,6 @@ import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
 import {
   Settings,
   Bell,
@@ -25,7 +24,6 @@ import {
   Sliders,
   Sparkles,
   Smartphone,
-  Eye,
   User,
   Clock,
 } from 'lucide-react';
@@ -52,7 +50,6 @@ export default function SettingsPage() {
   const [twoFactor, setTwoFactor] = useState(false);
   const [sessionTimeout, setSessionTimeout] = useState('60');
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [showSettingsDrawer, setShowSettingsDrawer] = useState(false);
 
   useEffect(() => {
     const u = getAuthUser();
@@ -123,26 +120,14 @@ export default function SettingsPage() {
 
       {/* Hero Banner Enterprise SaaS Style */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 p-6 text-white shadow-md">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
-              <Settings className="h-7 w-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">Cài đặt tài khoản</h1>
-              <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Tùy chỉnh thông báo, giao diện theme và bảo mật cá nhân</p>
-            </div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
+            <Settings className="h-7 w-7 text-white" />
           </div>
-
-          <button
-            type="button"
-            onClick={() => setShowSettingsDrawer(true)}
-            className="flex items-center gap-2 rounded-xl bg-white/20 hover:bg-white/30 text-white px-4 py-2 text-[15px] font-medium transition active:scale-95 cursor-pointer backdrop-blur-md border border-white/30 shrink-0"
-            title="Xem chi tiết tổng hợp cấu hình tài khoản"
-          >
-            <Eye className="h-4 w-4 text-white" />
-            <span>Xem chi tiết cấu hình</span>
-          </button>
+          <div>
+            <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">Cài đặt tài khoản</h1>
+            <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Tùy chỉnh thông báo, giao diện theme và bảo mật cá nhân</p>
+          </div>
         </div>
       </div>
 
@@ -334,67 +319,6 @@ export default function SettingsPage() {
           </Button>
         </div>
       </form>
-
-      {/* Settings Profile Detail Drawer */}
-      <ProfileDrawer
-        isOpen={showSettingsDrawer}
-        onClose={() => setShowSettingsDrawer(false)}
-        title="Cấu Hình Hệ Thống & Ứng Dụng"
-        subtitle={`Người dùng: ${currentUser?.teacher?.fullName || currentUser?.student?.fullName || currentUser?.username || 'Tài khoản'}`}
-        avatarText="CFG"
-        badge={{
-          label: isDarkMode ? 'Giao diện Tối' : 'Giao diện Sáng',
-          status: 'OFFICIAL',
-        }}
-        details={[
-          { label: 'Tài khoản áp dụng', value: currentUser?.username || '---', icon: User },
-          { label: 'Mã định danh', value: <IdentifierBadge tone="blue">{currentUser?.teacher?.teacherCode || currentUser?.student?.studentCode || `ID-${currentUser?.id || 1}`}</IdentifierBadge> },
-          { label: 'Giao diện chủ đạo', value: isDarkMode ? 'Chế độ Tối (Dark Mode)' : 'Chế độ Sáng (Light Mode)', icon: isDarkMode ? Moon : Sun },
-          { label: 'Ngôn ngữ hiển thị', value: language === 'vi' ? 'Tiếng Việt (VN)' : 'English (US)', icon: Globe },
-          { label: 'Thông báo Email', value: emailNotify ? 'Bật (Active)' : 'Tắt', icon: Bell },
-          { label: 'Nhắc lịch thi 24h', value: examReminder ? 'Bật (Active)' : 'Tắt', icon: CheckCircle2 },
-          { label: 'Âm thanh thông báo', value: soundAlert ? 'Bật' : 'Tắt', icon: Volume2 },
-          { label: 'Tự động hủy phiên (Timeout)', value: `${sessionTimeout} phút không hoạt động`, icon: Clock },
-        ]}
-        extraSections={[
-          {
-            title: 'Điều hướng quản trị nhanh',
-            content: (
-              <div className="space-y-3">
-                <p className="text-xs text-slate-500 font-normal leading-relaxed">
-                  Tất cả thay đổi cài đặt được lưu trữ đồng bộ cục bộ và áp dụng ngay lập tức cho các phiên làm việc tiếp theo.
-                </p>
-                <div className="flex items-center justify-end gap-2 pt-1">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setShowSettingsDrawer(false);
-                      router.push('/profile');
-                    }}
-                    leftIcon={<User className="w-3.5 h-3.5" />}
-                  >
-                    Xem hồ sơ cá nhân
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="sm"
-                    onClick={() => {
-                      setShowSettingsDrawer(false);
-                      router.push('/change-password');
-                    }}
-                    leftIcon={<Lock className="w-3.5 h-3.5" />}
-                  >
-                    Đổi mật khẩu
-                  </Button>
-                </div>
-              </div>
-            ),
-          },
-        ]}
-      />
     </div>
   );
 }
