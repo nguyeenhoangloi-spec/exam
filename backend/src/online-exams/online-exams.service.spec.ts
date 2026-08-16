@@ -119,3 +119,45 @@ describe('OnlineExamsService review visibility', () => {
     expect(JSON.stringify(result)).not.toContain('isCorrect');
   });
 });
+
+describe('OnlineExamsService report permissions', () => {
+  it('từ chối giảng viên xem báo cáo lịch không được phân công', async () => {
+    const prisma: any = {
+      examScheduleRoom: { findFirst: jest.fn().mockResolvedValue(null) },
+    };
+    const service = new OnlineExamsService(prisma, {} as any, {} as any, {} as any);
+
+    await expect(service.getGradeReport({ id: 501, role: 'TEACHER' }, 99))
+      .rejects
+      .toBeInstanceOf(ForbiddenException);
+  });
+
+  it('cho phép Admin xem báo cáo mà không cần assignment', async () => {
+    const prisma: any = {
+      examSchedule: { findUnique: jest.fn().mockResolvedValue(null) },
+    };
+    const service = new OnlineExamsService(prisma, {} as any, {} as any, {} as any);
+
+    await expect(service.getGradeReport({ id: 1, role: 'ADMIN' }, 99))
+      .rejects
+      .toThrow('Không tìm thấy lịch thi');
+  });
+
+  it('từ chối TEACHER xem bài làm của lịch không được phân công', async () => {
+    const prisma: any = {
+      examAttempt: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'attempt-1',
+          student: { userId: 11 },
+          onlineExamConfig: { examScheduleId: 99 },
+        }),
+      },
+      examScheduleRoom: { findFirst: jest.fn().mockResolvedValue(null) },
+    };
+    const service = new OnlineExamsService(prisma, {} as any, {} as any, {} as any);
+
+    await expect(service.getAttemptReviewDetails({ id: 501, role: 'TEACHER' }, 'attempt-1'))
+      .rejects
+      .toBeInstanceOf(ForbiddenException);
+  });
+});

@@ -82,10 +82,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
 
         {/* Content — invisible when loading but keeps button size stable */}
-        <span className={`inline-flex items-center gap-2 ${isLoading ? 'invisible' : ''}`}>
-          {effectiveLeftIcon && <span className="shrink-0">{effectiveLeftIcon}</span>}
+        <span className={`inline-flex items-center justify-center gap-2 whitespace-nowrap ${isLoading ? 'invisible' : ''}`}>
+          {effectiveLeftIcon && <span className="shrink-0 flex items-center">{effectiveLeftIcon}</span>}
           {children && <span>{children}</span>}
-          {rightIcon && <span className="shrink-0">{rightIcon}</span>}
+          {rightIcon && <span className="shrink-0 flex items-center">{rightIcon}</span>}
         </span>
       </button>
     );

@@ -1074,7 +1074,7 @@ function TeacherEssayGradingContent() {
                               onClick={() => setRubricQuestion({ id: q.questionId, code: `Câu ${idx + 1}`, score: q.score, rubric: [] })}
                               className="px-2.5 py-1 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition cursor-pointer shadow-2xs"
                             >
-                              Cấu hình Rubric ngay
+                              Cấu hình Rubric
                             </button>
                           </div>
                         )}

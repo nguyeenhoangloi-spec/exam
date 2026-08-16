@@ -33,6 +33,24 @@ export class OnlineExamsService {
     private readonly audit: AuditService,
   ) { }
 
+  private async assertTeacherScheduleAccess(actor: any, scheduleId: number) {
+    if (actor?.role !== 'TEACHER') {
+      return;
+    }
+
+    const assignment = await this.prisma.examScheduleRoom.findFirst({
+      where: {
+        examScheduleId: scheduleId,
+        supervisors: { some: { teacher: { userId: actor.id } } },
+      },
+      select: { id: true },
+    });
+
+    if (!assignment) {
+      throw new ForbiddenException('Bạn không được phân công giám thị lịch thi này.');
+    }
+  }
+
   /**
    * Cập nhật cấu hình hiển thị media (Ảnh / Video / Âm thanh) của một ca thi.
    * Chỉ ADMIN hoặc Giảng viên được phân công coi thi lịch đó mới được thao tác.
@@ -877,6 +895,8 @@ export class OnlineExamsService {
       throw new ForbiddenException('Bạn không có quyền xem bài làm của thí sinh này');
     }
 
+    await this.assertTeacherScheduleAccess(user, attempt.onlineExamConfig.examScheduleId);
+
     // Never expose the answer key to students before the review is explicitly
     // released. This is enforced server-side; hiding a UI button is not enough.
     const config = attempt.onlineExamConfig;
@@ -1022,6 +1042,8 @@ export class OnlineExamsService {
    * Báo cáo Tổng hợp Điểm & Kết quả Ca thi cho Giảng viên/Admin
    */
   async getGradeReport(actor: any, scheduleId: number) {
+    await this.assertTeacherScheduleAccess(actor, scheduleId);
+
     const schedule: any = await this.prisma.examSchedule.findUnique({
       where: { id: scheduleId },
       include: {

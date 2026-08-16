@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -11,7 +11,7 @@ export class ExamReportsController {
   constructor(private readonly service: ExamReportsService) {}
 
   @Get('summary')
-  getSummary(@Query() query: Record<string, string>) {
-    return this.service.getSummary(query);
+  getSummary(@Request() req: any, @Query() query: Record<string, string>) {
+    return this.service.getSummary(req.user, query);
   }
 }

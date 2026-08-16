@@ -104,21 +104,22 @@ export default function ClassesPage() {
     setLoading(true);
     try {
       const [resClasses, resDepts] = await Promise.all([
-        api.get('/classes').catch(() => ({ data: [] })),
-        api.get('/departments').catch(() => ({ data: [] })),
+        api.get('/classes'),
+        api.get('/departments'),
       ]);
       setClasses(resClasses.data || []);
       setDepartments(resDepts.data || []);
+      return true;
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải danh sách lớp học', type: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
   }, []);
 
   const handleRefresh = async () => {
-    await fetchData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   useEffect(() => {
@@ -372,7 +373,7 @@ export default function ClassesPage() {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Tìm theo mã lớp, tên lớp học..."
+                placeholder="Tìm mã, tên lớp..."
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -490,8 +491,8 @@ export default function ClassesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingClass ? 'Chỉnh sửa thông tin lớp' : 'Tạo lớp học mới'}
-        subtitle={editingClass ? `Mã lớp: ${editingClass.code}` : 'Thêm mới lớp học vào danh mục quản lý'}
+        title={editingClass ? 'Sửa lớp' : 'Thêm lớp'}
+        subtitle={editingClass ? `Mã lớp: ${editingClass.code}` : 'Thêm lớp học vào danh mục quản lý'}
         icon={<GraduationCap className="h-6 w-6 text-white" />}
         badge={editingClass ? 'Chỉnh sửa' : 'Tạo mới'}
       >
@@ -554,7 +555,7 @@ export default function ClassesPage() {
         onClose={() => setIsImportModalOpen(false)}
         title="Nhập danh sách lớp học từ Excel"
         templateFileName="mau_danh_sach_lop.csv"
-        onImportSuccess={fetchData}
+        onImportSuccess={() => { void fetchData(); }}
       />
 
       {/* Class Detail Profile Drawer */}

@@ -15,6 +15,7 @@ interface ProfileDrawerProps {
   badge?: { label: string; className?: string; status?: string };
   details: { label: string; value: React.ReactNode; icon?: React.ElementType }[];
   extraSections?: { title: string; content: React.ReactNode }[];
+  maxWidth?: 'md' | 'lg';
 }
 
 export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
@@ -26,6 +27,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   badge,
   details,
   extraSections,
+  maxWidth = 'md',
 }) => {
   const [shouldRender, setShouldRender] = React.useState(isOpen);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -76,7 +78,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+          className={`w-screen ${maxWidth === 'lg' ? 'max-w-lg' : 'max-w-md'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
             isVisible ? 'translate-x-0' : 'translate-x-full'
           }`}
         >

@@ -101,8 +101,8 @@ export default function StudentsPage() {
   const openDrawer = (s: Student) => {
     setDrawerStudent(s);
     setDrawerTab('info');
-    setDrawerSubjects(null);
-    setDrawerSchedule(null);
+    fetchDrawerSubjects(s.id);
+    fetchDrawerSchedule(s.id);
   };
 
   const closeDrawer = () => {
@@ -183,13 +183,15 @@ export default function StudentsPage() {
     setLoading(true);
     try {
       const [resStudents, resClasses] = await Promise.all([
-        api.get('/students').catch(() => ({ data: [] })),
-        api.get('/classes').catch(() => ({ data: [] })),
+        api.get('/students'),
+        api.get('/classes'),
       ]);
       setStudents(resStudents.data || []);
       setClasses(resClasses.data || []);
+      return true;
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu sinh viên', type: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -206,8 +208,7 @@ export default function StudentsPage() {
   }, [fetchData, router]);
 
   const handleRefresh = async () => {
-    await fetchData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   // Compute DYNAMIC KPI Metrics from real API data
@@ -560,8 +561,8 @@ export default function StudentsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingStudent ? 'Chỉnh sửa hồ sơ sinh viên' : 'Thêm sinh viên mới'}
-        subtitle={editingStudent ? `MSSV: ${editingStudent.studentCode}` : 'Nhập thông tin cá nhân và xếp lớp đào tạo cho sinh viên'}
+        title={editingStudent ? 'Sửa sinh viên' : 'Thêm sinh viên'}
+        subtitle={editingStudent ? `MSSV: ${editingStudent.studentCode}` : 'Nhập thông tin cá nhân và lớp học'}
         icon={<UserIcon className="h-6 w-6 text-white" />}
         badge={editingStudent ? 'Chỉnh sửa' : 'Tạo mới'}
       >
@@ -746,7 +747,7 @@ export default function StudentsPage() {
               {/* Tabs Navigation */}
               <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
                 {[
-                  { id: 'info', label: 'Thông tin cá nhân', icon: FileText },
+                  { id: 'info', label: 'Hồ sơ', icon: FileText },
                   { id: 'subjects', label: 'Môn đăng ký', icon: BookOpen },
                   { id: 'schedule', label: 'Lịch thi', icon: Clock },
                 ].map((t) => {

@@ -145,21 +145,22 @@ export default function TeachersPage() {
     setLoading(true);
     try {
       const [resTeachers, resDepts] = await Promise.all([
-        api.get('/teachers').catch(() => ({ data: [] })),
-        api.get('/departments').catch(() => ({ data: [] })),
+        api.get('/teachers'),
+        api.get('/departments'),
       ]);
       setTeachers(resTeachers.data || []);
       setDepartments(resDepts.data || []);
+      return true;
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu giảng viên', type: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
   }, []);
 
   const handleRefresh = async () => {
-    await fetchData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   useEffect(() => {
@@ -521,8 +522,8 @@ export default function TeachersPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingTeacher ? 'Chỉnh sửa hồ sơ giảng viên' : 'Thêm giảng viên mới'}
-        subtitle={editingTeacher ? `Mã cán bộ: ${editingTeacher.teacherCode}` : 'Cấu hình thông tin cá nhân và học hàm/học vị giảng viên'}
+        title={editingTeacher ? 'Sửa giảng viên' : 'Thêm giảng viên'}
+        subtitle={editingTeacher ? `Mã cán bộ: ${editingTeacher.teacherCode}` : 'Cấu hình thông tin cá nhân và học vị'}
         icon={<UserCheck className="h-6 w-6 text-white" />}
         badge={editingTeacher ? 'Chỉnh sửa' : 'Tạo mới'}
       >
@@ -715,9 +716,9 @@ export default function TeachersPage() {
               {/* Tabs Navigation */}
               <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
                 {[
-                  { id: 'info', label: 'Hồ sơ cá nhân', icon: UserIcon },
+                  { id: 'info', label: 'Hồ sơ', icon: UserIcon },
                   { id: 'assignments', label: 'Lịch coi thi', icon: GraduationCap },
-                  { id: 'department', label: 'Khoa trực thuộc', icon: Building2 },
+                  { id: 'department', label: 'Khoa', icon: Building2 },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = drawerTab === tab.id;

@@ -484,6 +484,19 @@ export class ExamSchedulesService {
       throw new BadRequestException('Thời gian mở lại phải từ 1 đến 1440 phút.');
     }
     return this.serializable(async (tx) => {
+      if (actor.role === 'TEACHER') {
+        const assignment = await tx.examScheduleRoom.findFirst({
+          where: {
+            examScheduleId: id,
+            supervisors: { some: { teacher: { userId: actor.id } } },
+          },
+          select: { id: true },
+        });
+        if (!assignment) {
+          throw new ForbiddenException('Bạn không được phân công giám thị lịch thi này.');
+        }
+      }
+
       const schedule = await tx.examSchedule.findFirst({
         where: { id, deletedAt: null },
         include: { subject: true, onlineExamConfig: true, examPapers: { where: { deletedAt: null, status: 'PUBLISHED' }, orderBy: { publishedAt: 'desc' }, take: 1 } },

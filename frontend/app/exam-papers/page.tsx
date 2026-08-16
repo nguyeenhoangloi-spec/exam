@@ -307,8 +307,8 @@ export default function ExamPapersPage() {
     if (!silent) setLoading(true);
     try {
       const [scheduleResponse, paperResponse] = await Promise.all([
-        api.get<ExamSchedule[]>('/exam-schedules').catch(() => ({ data: [] })),
-        api.get<ExamPaper[]>('/exam-papers').catch(() => ({ data: [] })),
+        api.get<ExamSchedule[]>('/exam-schedules'),
+        api.get<ExamPaper[]>('/exam-papers'),
       ]);
       const allSchedules = scheduleResponse.data || [];
       const allPapers = paperResponse.data || [];
@@ -356,10 +356,12 @@ export default function ExamPapersPage() {
         ...previous,
         examScheduleId: previous.examScheduleId || defaultScheduleId,
       }));
+      return true;
     } catch (error: any) {
       if (!silent) {
         setToast({ message: error.message || 'Không tải được dữ liệu đề thi.', type: 'error' });
       }
+      return false;
     } finally {
       if (!silent) setLoading(false);
     }
@@ -380,8 +382,7 @@ export default function ExamPapersPage() {
   }, [fetchData, router]);
 
   const handleRefresh = async () => {
-    await fetchData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   const kpiData = useMemo(() => {

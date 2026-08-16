@@ -134,15 +134,17 @@ export default function SubjectsPage() {
  setLoading(true);
  try {
  const [resSubjects, resDepts, resClasses] = await Promise.all([
- api.get('/subjects').catch(() => ({ data: [] })),
- api.get('/departments').catch(() => ({ data: [] })),
- api.get('/classes').catch(() => ({ data: [] })),
+ api.get('/subjects'),
+ api.get('/departments'),
+ api.get('/classes'),
  ]);
  setSubjects(resSubjects.data || []);
  setDepartments(resDepts.data || []);
  setClasses(resClasses.data || []);
+ return true;
  } catch (err: any) {
  setToast({ message: err.message || 'Lỗi tải danh sách môn học', type: 'error' });
+ return false;
  } finally {
  setLoading(false);
  }
@@ -159,8 +161,7 @@ export default function SubjectsPage() {
  }, [fetchData, router]);
 
  const handleRefresh = async () => {
-    await fetchData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
  // Load drawer data when subject or tab changes
@@ -532,8 +533,8 @@ export default function SubjectsPage() {
   <Modal
     isOpen={isModalOpen}
     onClose={() => setIsModalOpen(false)}
-    title={editingSubject ? 'Chỉnh sửa môn học' : 'Tạo môn học mới'}
-    subtitle={editingSubject ? `Mã môn: ${editingSubject.subjectCode}` : 'Cấu hình mã môn, số tín chỉ và khoa quản lý'}
+    title={editingSubject ? 'Sửa môn học' : 'Thêm môn học'}
+    subtitle={editingSubject ? `Mã môn: ${editingSubject.subjectCode}` : 'Cấu hình mã môn, số tín chỉ và khoa'}
     icon={<BookOpen className="h-6 w-6 text-white" />}
     badge={editingSubject ? 'Chỉnh sửa' : 'Tạo mới'}
   >
@@ -772,7 +773,7 @@ export default function SubjectsPage() {
  {/* Tabs Navigation */}
  <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
  {[
- { key: 'info', label: 'Thông tin học phần', icon: BookOpen },
+ { key: 'info', label: 'Thông tin', icon: BookOpen },
  { key: 'classes', label: 'Lớp đã gán', icon: GraduationCap },
  { key: 'students', label: 'Sinh viên', icon: Users },
  ].map((tab) => (
@@ -856,11 +857,11 @@ export default function SubjectsPage() {
  type="button"
  variant="primary"
  size="md"
+ leftIcon={<GraduationCap className="h-4 w-4 shrink-0" />}
  onClick={() => openEnrollClassModal(drawerOpenSubject)}
- className="w-full flex items-center justify-center gap-2"
+ className="w-full justify-center"
  >
- <GraduationCap className="h-4 w-4" />
- Gán Lớp vào Môn học
+ Gán lớp cho môn học
  </Button>
  </div>
  )}
@@ -894,7 +895,7 @@ export default function SubjectsPage() {
  onClick={() => openEnrollClassModal(drawerOpenSubject!)}
  className="mt-3"
  >
- Gán Lớp Ngay
+ Gán lớp
  </Button>
  )}
  </div>
@@ -927,17 +928,25 @@ export default function SubjectsPage() {
  {/* --- TAB STUDENTS --- */}
  {drawerTab === 'students' && (
  <div className="space-y-4">
- <div className="flex flex-wrap gap-2">
- <div className="relative w-full sm:w-72 md:w-80">
- <FilterSelect value={drawerFilterClass} onChange={(e) => setDrawerFilterClass(e.target.value)}
- className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-semibold focus:outline-none cursor-pointer">
+ <div className="grid grid-cols-2 gap-2">
+ <div className="relative min-w-0">
+ <FilterSelect
+ value={drawerFilterClass}
+ onChange={(e) => setDrawerFilterClass(e.target.value)}
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-800/60 dark:border-slate-700 pl-3 pr-7 py-2 text-[14px] font-medium text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer truncate"
+ >
  <option value="">Tất cả lớp</option>
- {drawerClassesForFilter.map((c) => <option key={c.id} value={String(c.id)}>{c.label}</option>)}
+ {drawerClassesForFilter.map((c) => (
+ <option key={c.id} value={String(c.id)}>{c.label}</option>
+ ))}
  </FilterSelect>
  </div>
- <div className="relative">
- <FilterSelect value={drawerFilterSemester} onChange={(e) => setDrawerFilterSemester(e.target.value)}
- className="appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-7 py-2 text-[15px] font-semibold focus:outline-none cursor-pointer">
+ <div className="relative min-w-0">
+ <FilterSelect
+ value={drawerFilterSemester}
+ onChange={(e) => setDrawerFilterSemester(e.target.value)}
+ className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-800/60 dark:border-slate-700 pl-3 pr-7 py-2 text-[14px] font-medium text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer truncate"
+ >
  <option value="">Tất cả HK</option>
  {drawerSemesters.map((s) => <option key={s} value={s}>{s}</option>)}
  </FilterSelect>

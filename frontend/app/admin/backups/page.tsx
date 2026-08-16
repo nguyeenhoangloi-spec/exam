@@ -788,7 +788,7 @@ export default function BackupsPage() {
                             isLoading={actionLoading}
                             leftIcon={<DatabaseBackup className="h-4 w-4" />}
                         >
-                            Tạo bản Backup ngay
+                            Tạo sao lưu
                         </Button>
                     </div>
                 </div>
@@ -1499,7 +1499,7 @@ export default function BackupsPage() {
                     warningMessage={`Thao tác khôi phục sẽ GHI ĐÈ toàn bộ dữ liệu trên môi trường ${activeRestoreRequest.target} bằng bản snapshot ${activeRestoreRequest.backupJob.snapshotId}. Hãy nhập chính xác cụm từ xác nhận động bên dưới!`}
                     confirmPhrase={dynamicPhrase}
                     passwordRequired
-                    actionButtonText="Phê duyệt & Khôi phục ngay"
+                    actionButtonText="Phê duyệt & Khôi phục"
                     reasons={[
                         activeRestoreRequest.reason || 'Khôi phục dữ liệu theo sự cố hệ thống',
                         'Khôi phục dữ liệu theo kiểm tra định kỳ',

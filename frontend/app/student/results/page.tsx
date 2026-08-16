@@ -1150,7 +1150,7 @@ export default function StudentResultsPage() {
                       leftIcon={<Eye className="w-3.5 h-3.5 text-blue-600" />}
                       className="w-full justify-center"
                     >
-                      Xem bài thi &amp; Đáp án chi tiết
+                      Xem bài thi
                     </Button>
                   </div>
                 )}
@@ -1163,7 +1163,7 @@ export default function StudentResultsPage() {
                     leftIcon={<MessageSquare className="w-3.5 h-3.5" />}
                     className="w-full justify-center"
                   >
-                    Gửi yêu cầu phúc khảo
+                    Xin phúc khảo
                   </Button>
                 )}
               </div>

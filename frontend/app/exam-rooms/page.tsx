@@ -476,8 +476,8 @@ export default function ExamRoomsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingRoom ? 'Chỉnh sửa phòng thi' : 'Tạo phòng thi mới'}
-        subtitle={editingRoom ? `Cập nhật thông số phòng: ${editingRoom.code}` : 'Thiết lập sức chứa và thiết bị cho phòng thi mới'}
+        title={editingRoom ? 'Sửa phòng thi' : 'Thêm phòng thi'}
+        subtitle={editingRoom ? `Mã phòng: ${editingRoom.code}` : 'Thiết lập sức chứa và thiết bị phòng thi'}
         icon={<DoorOpen className="h-6 w-6 text-white" />}
         badge={editingRoom ? 'Chỉnh sửa' : 'Tạo mới'}
       >

@@ -702,7 +702,7 @@ export default function ForgotPasswordPage() {
                   onClick={() => router.push('/login')}
                   className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Đăng nhập ngay</span>
+                  <span>Đăng nhập</span>
                   <ArrowRight className="h-4.5 w-4.5" />
                 </button>
               </div>

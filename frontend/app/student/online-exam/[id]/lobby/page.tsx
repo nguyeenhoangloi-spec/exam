@@ -326,7 +326,7 @@ export default function StudentExamLobbyPage() {
                   }
                   isLoading={starting}
                 >
-                  {starting ? 'Đang khởi tạo bài thi...' : 'Bắt đầu Làm bài thi'}
+                  {starting ? 'Đang vào thi...' : 'Bắt đầu làm bài'}
                 </Button>
               </div>
             </div>

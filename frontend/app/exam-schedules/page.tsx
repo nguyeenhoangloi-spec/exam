@@ -132,10 +132,10 @@ export default function ExamSchedulesPage() {
     setLoading(true);
     try {
       const [resPeriods, resRooms, resSubjects, resSchedules] = await Promise.all([
-        api.get('/exam-periods').catch(() => ({ data: [] })),
-        api.get('/exam-rooms').catch(() => ({ data: [] })),
-        api.get('/subjects').catch(() => ({ data: [] })),
-        api.get('/exam-schedules').catch(() => ({ data: [] })),
+        api.get('/exam-periods'),
+        api.get('/exam-rooms'),
+        api.get('/subjects'),
+        api.get('/exam-schedules'),
       ]);
 
       const realPeriods = resPeriods.data || [];
@@ -160,8 +160,10 @@ export default function ExamSchedulesPage() {
         }));
         setSchedules(mappedRealSchedules);
       }
+      return true;
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải dữ liệu lịch thi', type: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -178,8 +180,7 @@ export default function ExamSchedulesPage() {
   }, [fetchInitialData, router]);
 
   const handleRefresh = async () => {
-    await fetchInitialData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchInitialData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   // Compute DYNAMIC KPI Counts from REAL API DATA using Real-time status
@@ -474,7 +475,7 @@ export default function ExamSchedulesPage() {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Tìm theo mã lịch thi, môn học, phòng thi, kỳ thi..."
+                placeholder="Tìm lịch thi, môn học..."
                 value={filterValues.search}
                 onChange={(e) => {
                   setFilterValues({ ...filterValues, search: e.target.value });
@@ -638,7 +639,7 @@ export default function ExamSchedulesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingSchedule ? 'Chỉnh sửa lịch thi' : 'Tạo lịch thi mới'}
+        title={editingSchedule ? 'Sửa lịch thi' : 'Tạo lịch thi'}
         size="2xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -78,8 +78,13 @@ export default function RegradeManagementPage() {
       const res = await api.get('/grade-appeals', { params });
 
       setAppeals(res.data || []);
-    } catch {
-      setAppeals([]);
+      return true;
+    } catch (err: any) {
+      setToast({
+        message: err?.response?.data?.message || err?.message || 'Không thể tải danh sách phúc khảo.',
+        type: 'error',
+      });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -90,8 +95,7 @@ export default function RegradeManagementPage() {
   }, [fetchAppeals]);
 
   const handleRefresh = async () => {
-    await fetchAppeals();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchAppeals()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   const openReviewDrawer = (item: GradeAppealItem) => {
@@ -118,7 +122,7 @@ export default function RegradeManagementPage() {
         status: reviewStatus,
         revisedScore: reviewStatus === 'APPROVED_REGRADE' ? Number(revisedScore) : undefined,
         reviewerNote: reviewerNote.trim() || undefined,
-      }).catch(() => null);
+      });
 
       const newScoreNum = Number(revisedScore);
       setAppeals((prev) =>
@@ -140,10 +144,9 @@ export default function RegradeManagementPage() {
       setSelectedAppeal(null);
     } catch (err: any) {
       setToast({
-        message: err.response?.data?.message || 'Đã lưu và công bố kết quả phúc khảo thành công!',
-        type: 'success',
+        message: err.response?.data?.message || err.message || 'Không thể lưu kết quả phúc khảo. Vui lòng thử lại.',
+        type: 'error',
       });
-      setSelectedAppeal(null);
     } finally {
       setSubmitting(false);
     }

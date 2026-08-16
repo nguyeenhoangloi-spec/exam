@@ -274,7 +274,7 @@ export const Header: React.FC<HeaderProps> = ({
         title="Đăng xuất khỏi hệ thống"
         message="Bạn có chắc chắn muốn đăng xuất phiên làm việc hiện tại không?"
         type="danger"
-        confirmText="Đăng xuất ngay"
+        confirmText="Đăng xuất"
         cancelText="Hủy"
       />
 
@@ -480,37 +480,37 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
 
                   <div className="relative z-20 space-y-0.5">
-                    {/* Item 1: Hồ sơ cá nhân */}
+                    {/* Item 1: Hồ sơ */}
                     <Link
                       href="/profile"
                       onClick={() => setOpenPanel(null)}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-[13px] font-normal">Hồ sơ cá nhân</span>
+                      <span className="text-[13px] font-normal">Hồ sơ</span>
                     </Link>
 
-                    {/* Item 2: Cài đặt hệ thống */}
+                    {/* Item 2: Cài đặt */}
                     <Link
                       href="/settings"
                       onClick={() => setOpenPanel(null)}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-[13px] font-normal">Cài đặt hệ thống</span>
+                      <span className="text-[13px] font-normal">Cài đặt</span>
                     </Link>
 
-                    {/* Item 3: Trung tâm hỗ trợ */}
+                    {/* Item 3: Hỗ trợ */}
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-[13px] text-slate-700 dark:text-slate-300 font-normal hover:bg-slate-100/80 dark:hover:bg-slate-800 transition cursor-pointer group"
                     >
                       <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
-                      <span className="text-[13px] font-normal">Trung tâm hỗ trợ</span>
+                      <span className="text-[13px] font-normal">Hỗ trợ</span>
                     </Link>
 
-                    {/* Item 4: Chủ đề giao diện */}
+                    {/* Item 4: Giao diện */}
                     <button
                       type="button"
                       role="menuitem"
@@ -522,7 +522,7 @@ export const Header: React.FC<HeaderProps> = ({
                       ) : (
                         <Moon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
                       )}
-                      <span className="text-[13px] font-normal">Chủ đề giao diện</span>
+                      <span className="text-[13px] font-normal">Giao diện</span>
                     </button>
 
                     {/* Divider */}

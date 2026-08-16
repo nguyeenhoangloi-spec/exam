@@ -5,6 +5,72 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProctorService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async getAuthorizedAttempt(
+    actorId: number,
+    userRole: string,
+    attemptId: string,
+  ) {
+    const attempt = await this.prisma.examAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        onlineExamConfig: {
+          select: { examScheduleId: true },
+        },
+      },
+    });
+
+    if (!attempt) {
+      throw new NotFoundException('Không tìm thấy phiên thi');
+    }
+
+    if (userRole === 'ADMIN') {
+      return attempt;
+    }
+
+    const assignment = await this.prisma.examScheduleRoom.findFirst({
+      where: {
+        examScheduleId: attempt.onlineExamConfig.examScheduleId,
+        examRoomStudents: {
+          some: { studentId: attempt.studentId },
+        },
+        supervisors: {
+          some: {
+            teacher: { userId: actorId },
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!assignment) {
+      throw new ForbiddenException('Bạn không được phân công giám thị phiên thi này');
+    }
+
+    return attempt;
+  }
+
+  private async assertRoomAccess(actorId: number, userRole: string, scheduleRoomId: number) {
+    if (userRole === 'ADMIN') {
+      return;
+    }
+
+    const assignment = await this.prisma.examScheduleRoom.findFirst({
+      where: {
+        id: scheduleRoomId,
+        supervisors: {
+          some: {
+            teacher: { userId: actorId },
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!assignment) {
+      throw new ForbiddenException('Bạn không được phân công giám thị phòng thi này');
+    }
+  }
+
   /**
    * Lấy dashboard danh sách sinh viên trong phòng thi realtime
    */
@@ -76,7 +142,6 @@ export class ProctorService {
           ? {
               id: att.id,
               status: att.status,
-              attemptToken: att.attemptToken,
               startTime: att.startTime,
               expectedEndTime: att.expectedEndTime,
               extraMinutes: att.extraMinutes,
@@ -118,14 +183,8 @@ export class ProctorService {
   /**
    * Gia hạn thời gian làm bài cho sinh viên
    */
-  async extendTime(teacherUserId: number, attemptId: string, extraMinutes: number, reason: string) {
-    const attempt = await this.prisma.examAttempt.findUnique({
-      where: { id: attemptId },
-    });
-
-    if (!attempt) {
-      throw new NotFoundException('Không tìm thấy phiên thi');
-    }
+  async extendTime(teacherUserId: number, userRole: string, attemptId: string, extraMinutes: number, reason: string) {
+    const attempt = await this.getAuthorizedAttempt(teacherUserId, userRole, attemptId);
 
     if (attempt.status !== 'IN_PROGRESS' && attempt.status !== 'DISCONNECTED') {
       throw new BadRequestException('Chỉ gia hạn thời gian cho bài thi đang làm');
@@ -152,6 +211,7 @@ export class ProctorService {
     // Ghi audit log
     await this.prisma.auditLog.create({
       data: {
+        actorId: teacherUserId,
         action: 'EXTEND_EXAM_TIME',
         entityType: 'ExamAttempt',
         entityId: attemptId,
@@ -169,7 +229,7 @@ export class ProctorService {
   /**
    * Gia hạn bù giờ hàng loạt cho toàn bộ sinh viên trong phòng thi khi gặp sự cố
    */
-  async bulkExtendTime(teacherUserId: number, scheduleRoomId: number, extraMinutes: number, reason: string) {
+  async bulkExtendTime(teacherUserId: number, userRole: string, scheduleRoomId: number, extraMinutes: number, reason: string) {
     if (!reason?.trim()) {
       throw new BadRequestException('Vui lòng nhập lý do gia hạn bù giờ toàn phòng thi');
     }
@@ -188,6 +248,8 @@ export class ProctorService {
     if (!scheduleRoom) {
       throw new NotFoundException('Không tìm thấy phòng thi');
     }
+
+    await this.assertRoomAccess(teacherUserId, userRole, scheduleRoomId);
 
     const configId = scheduleRoom.examSchedule.onlineExamConfig?.id;
     const studentIds = scheduleRoom.examRoomStudents.map((ers) => ers.studentId);
@@ -224,6 +286,7 @@ export class ProctorService {
 
     await this.prisma.auditLog.create({
       data: {
+        actorId: teacherUserId,
         action: 'BULK_EXTEND_EXAM_TIME',
         entityType: 'ExamScheduleRoom',
         entityId: String(scheduleRoomId),
@@ -241,14 +304,8 @@ export class ProctorService {
   /**
    * Cho phép sinh viên mở lại bài khi sự cố / rớt mạng
    */
-  async reopenAttempt(teacherUserId: number, attemptId: string, reason: string, penaltyPoints = 0) {
-    const attempt = await this.prisma.examAttempt.findUnique({
-      where: { id: attemptId },
-    });
-
-    if (!attempt) {
-      throw new NotFoundException('Không tìm thấy phiên thi');
-    }
+  async reopenAttempt(teacherUserId: number, userRole: string, attemptId: string, reason: string, penaltyPoints = 0) {
+    const attempt = await this.getAuthorizedAttempt(teacherUserId, userRole, attemptId);
 
     if (!['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'DISCONNECTED', 'UNDER_REVIEW', 'READY'].includes(attempt.status) && !attempt.isFlagged) {
       throw new BadRequestException('Chỉ có thể mở lại phiên đã nộp, tự động nộp, bị gián đoạn hoặc bị tạm khóa xem xét');
@@ -288,14 +345,8 @@ export class ProctorService {
   /**
    * Lập biên bản vi phạm / Gắn cờ xem xét
    */
-  async flagIncident(teacherUserId: number, attemptId: string, reason: string, decision: string) {
-    const attempt = await this.prisma.examAttempt.findUnique({
-      where: { id: attemptId },
-    });
-
-    if (!attempt) {
-      throw new NotFoundException('Không tìm thấy phiên thi');
-    }
+  async flagIncident(teacherUserId: number, userRole: string, attemptId: string, reason: string, decision: string) {
+    const attempt = await this.getAuthorizedAttempt(teacherUserId, userRole, attemptId);
 
     const incident = await this.prisma.examIncident.create({
       data: {
@@ -323,16 +374,18 @@ export class ProctorService {
 
   async resolveIncident(
     actorId: number,
+    userRole: string,
     attemptId: string,
     decision: 'REOPEN' | 'PENALTY' | 'TERMINATE',
     penaltyPoints: number,
     note: string,
   ) {
+    const authorizedAttempt = await this.getAuthorizedAttempt(actorId, userRole, attemptId);
     const attempt = await this.prisma.examAttempt.findUnique({
       where: { id: attemptId },
       include: { incidents: { orderBy: { createdAt: 'desc' }, take: 1 } },
     });
-    if (!attempt) throw new NotFoundException('Không tìm thấy phiên thi');
+    if (!attempt || attempt.id !== authorizedAttempt.id) throw new NotFoundException('Không tìm thấy phiên thi');
     const incident = attempt.incidents[0];
     if (!incident) throw new BadRequestException('Phiên thi chưa có biên bản vi phạm để xử lý');
 

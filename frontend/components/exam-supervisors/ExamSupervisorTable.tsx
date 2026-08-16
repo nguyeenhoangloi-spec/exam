@@ -131,7 +131,7 @@ export function ExamSupervisorTable({
                       type="button"
                       onClick={() => onView(s)}
                       className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                      title="Chỉnh sửa / Đổi ca"
+                      title="Đổi ca"
                     >
                       <Edit className="h-3.5 w-3.5" />
                     </button>
@@ -206,7 +206,7 @@ export function ExamSupervisorTable({
                         type="button"
                         onClick={() => onView(s)}
                         className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                        title="Chỉnh sửa / Đổi ca"
+                        title="Đổi ca"
                       >
                         <Edit className="h-4 w-4" />
                       </button>

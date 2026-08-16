@@ -533,7 +533,7 @@ export default function StudentExamSchedulePage() {
                       }}
                       leftIcon={<Award className="w-3.5 h-3.5" />}
                     >
-                      Xem kết quả & Điểm thi
+                      Xem kết quả
                     </Button>
                   ) : (
                     <Button
@@ -546,7 +546,7 @@ export default function StudentExamSchedulePage() {
                       }}
                       rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
                     >
-                      {drawerSchedule?.mode === 'MOCK' ? 'Vào phòng thi thử' : 'Vào phòng thi online'}
+                      {drawerSchedule?.mode === 'MOCK' ? 'Vào thi thử' : 'Vào phòng thi'}
                     </Button>
                   )}
                 </div>

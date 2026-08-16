@@ -191,7 +191,7 @@ export function QuestionFormDialog({
       const savedId = question?.id || response.data?.id;
       // Xóa các media đã đánh dấu xóa
       if (removedMediaIds.length) {
-        await Promise.all(removedMediaIds.map((id) => api.delete(`/questions/media/${id}`).catch(() => { })));
+        await Promise.all(removedMediaIds.map((id) => api.delete(`/questions/media/${id}`)));
       }
       // Upload media mới
       if (savedId && mediaFiles.length) {

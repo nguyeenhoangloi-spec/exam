@@ -139,8 +139,10 @@ function TrashPageContent() {
     try {
       const res = await api.get<TrashStats>('/trash/stats');
       setStats(res.data);
-    } catch (e) {
-      console.warn('Failed to fetch trash stats', e);
+      return true;
+    } catch (e: any) {
+      setToast({ message: e?.response?.data?.message || 'Không thể tải thống kê thùng rác', type: 'error' });
+      return false;
     }
   }, []);
 
@@ -152,8 +154,10 @@ function TrashPageContent() {
         params: { type: fetchType, search },
       });
       setItems(res.data || []);
+      return true;
     } catch (err: any) {
       setToast({ message: err?.response?.data?.message || 'Không thể tải danh sách thùng rác', type: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -164,8 +168,8 @@ function TrashPageContent() {
   const handleRefreshClick = async () => {
     setIsSpinning(true);
     try {
-      await Promise.all([fetchStats(), fetchItems()]);
-      setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+      const [statsOk, itemsOk] = await Promise.all([fetchStats(), fetchItems()]);
+      if (statsOk && itemsOk) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
     } catch (err) {
       console.error(err);
     } finally {
@@ -462,7 +466,7 @@ function TrashPageContent() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm theo mã, nội dung, tên dữ liệu đã xóa..."
+              placeholder="Tìm mục đã xóa..."
               className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search ? (

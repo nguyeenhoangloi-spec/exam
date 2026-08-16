@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ExamSchedulesService } from './exam-schedules.service';
 
 const period = {
@@ -85,5 +85,18 @@ describe('ExamSchedulesService conflict rules', () => {
     const result: any = await service.findOne({ id: 7, role: 'TEACHER' }, 5);
 
     expect(result.examScheduleRooms[0]).not.toHaveProperty('examRoomStudents');
+  });
+
+  it('từ chối TEACHER mở lại thời gian của lịch không được phân công', async () => {
+    const prisma: any = {
+      $transaction: jest.fn((callback) => callback({
+        examScheduleRoom: { findFirst: jest.fn().mockResolvedValue(null) },
+      })),
+    };
+    const service = new ExamSchedulesService(prisma, { write: jest.fn() } as any);
+
+    await expect(service.reopenEntry({ id: 7, role: 'TEACHER' }, 99, 30))
+      .rejects
+      .toBeInstanceOf(ForbiddenException);
   });
 });

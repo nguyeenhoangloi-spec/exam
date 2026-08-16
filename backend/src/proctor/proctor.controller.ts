@@ -35,6 +35,7 @@ export class ProctorController {
   ) {
     return this.proctorService.extendTime(
       req.user.id,
+      req.user.role,
       attemptId,
       body.extraMinutes,
       body.reason || 'Sự cố thiết bị / mạng',
@@ -49,6 +50,7 @@ export class ProctorController {
   ) {
     return this.proctorService.bulkExtendTime(
       req.user.id,
+      req.user.role,
       scheduleRoomId,
       body.extraMinutes,
       body.reason || 'Sự cố kỹ thuật hệ thống / mạng diện rộng',
@@ -63,6 +65,7 @@ export class ProctorController {
   ) {
     return this.proctorService.reopenAttempt(
       req.user.id,
+      req.user.role,
       attemptId,
       body.reason || 'Mở lại theo yêu cầu sinh viên',
       Number(body.penaltyPoints) || 0,
@@ -77,6 +80,7 @@ export class ProctorController {
   ) {
     return this.proctorService.flagIncident(
       req.user.id,
+      req.user.role,
       attemptId,
       body.reason,
       body.decision,
@@ -91,6 +95,7 @@ export class ProctorController {
   ) {
     return this.proctorService.resolveIncident(
       req.user.id,
+      req.user.role,
       attemptId,
       body.decision,
       body.penaltyPoints || 0,

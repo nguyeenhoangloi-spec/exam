@@ -1638,7 +1638,7 @@ export default function ProctorDashboardPage() {
                 disabled={multiProcessing}
                 isLoading={multiProcessing}
               >
-                Gia hạn ngay
+                Gia hạn
               </Button>
             </div>
           </div>
@@ -1801,7 +1801,7 @@ export default function ProctorDashboardPage() {
                 disabled={bulkProcessing}
                 isLoading={bulkProcessing}
               >
-                Bù Giờ Ngay
+                Bù giờ
               </Button>
             </div>
           </div>
@@ -1870,7 +1870,7 @@ export default function ProctorDashboardPage() {
                 disabled={reopenEntryProcessing}
                 isLoading={reopenEntryProcessing}
               >
-                Mở Giờ Vào Thi
+                Mở vào thi
               </Button>
             </div>
           </div>

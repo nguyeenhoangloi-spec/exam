@@ -118,7 +118,7 @@ export default function AdminEssayReviewPage() {
  : `Xác nhận duyệt điểm bài thi của thí sinh ${selected.student?.fullName}?`,
  type: publish ? 'info' : 'success',
  requireReason: false,
- confirmText: publish ? 'Công bố ngay' : 'Duyệt điểm',
+ confirmText: publish ? 'Công bố' : 'Duyệt điểm',
  cancelText: 'Hủy bỏ',
  onConfirm: async () => {
  setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -147,7 +147,7 @@ export default function AdminEssayReviewPage() {
  type: 'danger',
  requireReason: true,
  reasonPlaceholder: 'Nhập lý do trả lại bài thi (tối thiểu 3 ký tự)...',
- confirmText: 'Trả lại chấm lại',
+ confirmText: 'Yêu cầu chấm lại',
  cancelText: 'Hủy bỏ',
  onConfirm: async (reasonFromModal) => {
  const finalReason = reasonFromModal?.trim() || actionReason.trim();
@@ -177,7 +177,7 @@ export default function AdminEssayReviewPage() {
  type: 'warning',
  requireReason: true,
  reasonPlaceholder: 'Nhập lý do mở lại bài thi (tối thiểu 3 ký tự)...',
- confirmText: 'Mở lại bài thi',
+ confirmText: 'Mở lại bài',
  cancelText: 'Hủy bỏ',
  onConfirm: async (reasonFromModal) => {
  const finalReason = reasonFromModal?.trim() || actionReason.trim();
@@ -211,7 +211,7 @@ export default function AdminEssayReviewPage() {
  type: 'info',
  requireReason: true,
  reasonPlaceholder: 'Nhập lý do gia hạn thời gian làm bài...',
- confirmText: 'Gia hạn ngay',
+ confirmText: 'Gia hạn',
  cancelText: 'Hủy bỏ',
  onConfirm: async (reasonFromModal) => {
  const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Gia hạn thời gian làm bài';
@@ -248,7 +248,7 @@ export default function AdminEssayReviewPage() {
  type: 'danger',
  requireReason: true,
  reasonPlaceholder: 'Nhập lý do áp dụng điểm phạt...',
- confirmText: 'Trừ điểm ngay',
+ confirmText: 'Trừ điểm',
  cancelText: 'Hủy bỏ',
  onConfirm: async (reasonFromModal) => {
  const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Điểm phạt vi phạm quy chế';

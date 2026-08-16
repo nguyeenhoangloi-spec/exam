@@ -184,9 +184,12 @@ export class GradeAppealsService {
     });
   }
 
-  async findOne(id: string) {
-    const appeal = await this.prisma.gradeAppeal.findUnique({
-      where: { id },
+  async findOne(actor: { id: number; role: string }, id: string) {
+    const appeal = await this.prisma.gradeAppeal.findFirst({
+      where: {
+        id,
+        ...(actor.role === 'STUDENT' ? { student: { userId: actor.id } } : {}),
+      },
       include: {
         student: {
           include: {

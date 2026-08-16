@@ -34,8 +34,9 @@ export class GradeAppealsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.gradeAppealsService.findOne(id);
+  @Roles('STUDENT', 'ADMIN', 'TEACHER')
+  async findOne(@Request() req: any, @Param('id') id: string) {
+    return this.gradeAppealsService.findOne(req.user, id);
   }
 
   @Patch(':id/review')

@@ -414,7 +414,7 @@ export default function PracticePage() {
                     }}
                     leftIcon={<Play className="w-3.5 h-3.5" />}
                   >
-                    Bắt đầu làm ngay
+                    Bắt đầu làm bài
                   </Button>
                 </div>
               </div>

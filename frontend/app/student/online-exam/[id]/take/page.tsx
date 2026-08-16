@@ -1036,7 +1036,7 @@ export default function StudentExamTakePage() {
             }}
             className="w-full h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition active:scale-95 text-center cursor-pointer"
           >
-            Đã hiểu và tiếp tục làm bài
+            Tiếp tục làm bài
           </button>
         </div>
       </div>

@@ -201,7 +201,7 @@ export default function ProfilePage() {
         }
       }
 
-      setToast({ message: 'Đã cập nhật hồ sơ cá nhân và lưu thành công!', type: 'success' });
+      setToast({ message: 'Cập nhật hồ sơ thành công!', type: 'success' });
       setActiveTab('info');
     } catch (err: any) {
       setToast({ message: err?.response?.data?.message || err.message || 'Cập nhật hồ sơ thất bại', type: 'error' });
@@ -374,9 +374,9 @@ export default function ProfilePage() {
       {/* Navigation Tabs */}
       <TabBar
         tabs={[
-          { key: 'info', label: 'Thông tin chi tiết' },
-          { key: 'permissions', label: 'Nhật ký & Phân quyền' },
-          { key: 'edit', label: 'Chỉnh sửa hồ sơ cá nhân' },
+          { key: 'info', label: 'Thông tin' },
+          { key: 'permissions', label: 'Phân quyền' },
+          { key: 'edit', label: 'Chỉnh sửa' },
         ]}
         active={activeTab}
         onChange={(key) => setActiveTab(key as any)}
@@ -554,7 +554,7 @@ export default function ProfilePage() {
               isLoading={saving}
               leftIcon={<Save className="h-4 w-4" />}
             >
-              Lưu hồ sơ cá nhân
+              Lưu hồ sơ
             </Button>
           </div>
         </form>

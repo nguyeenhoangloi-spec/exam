@@ -129,21 +129,22 @@ export default function DepartmentsPage() {
     setLoading(true);
     try {
       const [resDepts, resSubs] = await Promise.all([
-        api.get('/departments').catch(() => ({ data: [] })),
-        api.get('/subjects').catch(() => ({ data: [] })),
+        api.get('/departments'),
+        api.get('/subjects'),
       ]);
       setDepartments(resDepts.data || []);
       setAllSubjects(resSubs.data || []);
+      return true;
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải danh sách khoa', type: 'error' });
+      return false;
     } finally {
       setLoading(false);
     }
   }, []);
 
   const handleRefresh = async () => {
-    await fetchData();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
   useEffect(() => {
@@ -422,7 +423,7 @@ export default function DepartmentsPage() {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Tìm theo mã khoa, tên khoa đào tạo..."
+                placeholder="Tìm mã, tên khoa..."
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -547,7 +548,7 @@ export default function DepartmentsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingDepartment ? 'Chỉnh sửa Khoa đào tạo' : 'Tạo mới Khoa đào tạo'}
+        title={editingDepartment ? 'Sửa khoa' : 'Thêm khoa'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

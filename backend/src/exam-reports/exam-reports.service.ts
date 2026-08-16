@@ -7,7 +7,7 @@ const submittedStatuses = ['SUBMITTED', 'AUTO_SUBMITTED', 'UNDER_REVIEW', 'GRADE
 export class ExamReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getSummary(query: Record<string, string>) {
+  async getSummary(actor: any, query: Record<string, string>) {
     const int = (value?: string) => (value && /^\d+$/.test(value) ? Number(value) : undefined);
     const examPeriodId = int(query.examPeriodId);
     const subjectId = int(query.subjectId);
@@ -21,7 +21,18 @@ export class ExamReportsService {
     if (subjectId) scheduleWhere.subjectId = subjectId;
     if (fromDate || toDate) scheduleWhere.examDate = { ...(fromDate ? { gte: fromDate } : {}), ...(toDate ? { lte: toDate } : {}) };
     if (departmentId) scheduleWhere.subject = { departmentId };
-    if (classId) scheduleWhere.examScheduleRooms = { some: { examRoomStudents: { some: { student: { classId } } } } };
+    if (classId) {
+      scheduleWhere.AND = [
+        ...(scheduleWhere.AND || []),
+        { examScheduleRooms: { some: { examRoomStudents: { some: { student: { classId } } } } } },
+      ];
+    }
+    if (actor?.role === 'TEACHER') {
+      scheduleWhere.AND = [
+        ...(scheduleWhere.AND || []),
+        { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: actor.id } } } } } },
+      ];
+    }
 
     const schedules: any[] = await this.prisma.examSchedule.findMany({
       where: scheduleWhere,

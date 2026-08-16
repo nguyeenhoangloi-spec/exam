@@ -449,8 +449,8 @@ export default function ExamPeriodsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingPeriod ? 'Chỉnh sửa kỳ thi' : 'Tạo kỳ thi mới'}
-        subtitle={editingPeriod ? `Cập nhật cấu hình kỳ thi: ${editingPeriod.name}` : 'Thiết lập thời gian và quy chế cho kỳ thi khảo thí mới'}
+        title={editingPeriod ? 'Sửa kỳ thi' : 'Tạo kỳ thi'}
+        subtitle={editingPeriod ? `Kỳ thi: ${editingPeriod.name}` : 'Thiết lập thời gian và quy chế kỳ thi'}
         icon={<Calendar className="h-6 w-6 text-white" />}
         badge={editingPeriod ? 'Chỉnh sửa' : 'Tạo mới'}
       >
