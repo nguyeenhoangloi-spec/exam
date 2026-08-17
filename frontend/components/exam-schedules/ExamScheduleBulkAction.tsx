@@ -1,18 +1,18 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Users, DoorOpen, Clock, Trash2, Download, X } from 'lucide-react';
+import { FileSpreadsheet, Printer, Users, DoorOpen, Trash2, X } from 'lucide-react';
 
 interface ExamScheduleBulkActionProps {
   selectedCount: number;
   totalCount: number;
   allSelected: boolean;
   onToggleAll: () => void;
+  onExportExcel?: () => void;
+  onPrint?: () => void;
   onAssignSupervisors?: () => void;
-  onChangeRoom?: () => void;
-  onChangeShift?: () => void;
+  onArrangeRooms?: () => void;
   onDelete?: () => void;
-  onExport?: () => void;
   onClear: () => void;
 }
 
@@ -21,11 +21,11 @@ export function ExamScheduleBulkAction({
   totalCount,
   allSelected,
   onToggleAll,
+  onExportExcel,
+  onPrint,
   onAssignSupervisors,
-  onChangeRoom,
-  onChangeShift,
+  onArrangeRooms,
   onDelete,
-  onExport,
   onClear,
 }: ExamScheduleBulkActionProps) {
   // Lắng nghe phím Esc để hủy chọn nhanh (Power-User Feature)
@@ -79,52 +79,52 @@ export function ExamScheduleBulkAction({
 
         {/* Khối bên phải: Chủ đạo Xanh Dương - Trắng + Nút Phẳng (Flat/Ghost) */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-          {/* Phân công giám thị: Primary Blue chủ đạo */}
+          {/* Xuất Excel: Primary Blue chủ đạo */}
+          {onExportExcel && (
+            <button
+              type="button"
+              onClick={onExportExcel}
+              className="group relative overflow-hidden h-9 flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 text-xs font-semibold shadow-xs shadow-blue-500/25 transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <span className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
+              <FileSpreadsheet className="h-4 w-4" />
+              <span>Xuất Excel</span>
+            </button>
+          )}
+
+          {/* In báo cáo: Nút Phẳng (Flat Ghost) */}
+          {onPrint && (
+            <button
+              type="button"
+              onClick={onPrint}
+              className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <Printer className="h-4 w-4 text-slate-500" />
+              <span>In báo cáo</span>
+            </button>
+          )}
+
+          {/* Phân công giám thị: Nút Phẳng (Flat Ghost) điều hướng phân công */}
           {onAssignSupervisors && (
             <button
               type="button"
               onClick={onAssignSupervisors}
-              className="group relative overflow-hidden h-9 flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 text-xs font-semibold shadow-xs shadow-blue-500/25 transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+              className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
             >
-              <span className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
-              <Users className="h-4 w-4" />
-              <span>Phân công giám thị</span>
+              <Users className="h-4 w-4 text-slate-500" />
+              <span>Phân công coi thi</span>
             </button>
           )}
 
-          {/* Đổi phòng: Nút Phẳng (Flat Ghost) */}
-          {onChangeRoom && (
+          {/* Xếp phòng thi: Nút Phẳng (Flat Ghost) điều hướng xếp phòng */}
+          {onArrangeRooms && (
             <button
               type="button"
-              onClick={onChangeRoom}
+              onClick={onArrangeRooms}
               className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
             >
               <DoorOpen className="h-4 w-4 text-slate-500" />
-              <span>Đổi phòng</span>
-            </button>
-          )}
-
-          {/* Đổi ca: Nút Phẳng (Flat Ghost) */}
-          {onChangeShift && (
-            <button
-              type="button"
-              onClick={onChangeShift}
-              className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
-            >
-              <Clock className="h-4 w-4 text-slate-500" />
-              <span>Đổi ca</span>
-            </button>
-          )}
-
-          {/* Xuất danh sách: Nút Phẳng (Flat Ghost) */}
-          {onExport && (
-            <button
-              type="button"
-              onClick={onExport}
-              className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
-            >
-              <Download className="h-4 w-4 text-slate-500" />
-              <span>Xuất danh sách</span>
+              <span>Xếp phòng thi</span>
             </button>
           )}
 

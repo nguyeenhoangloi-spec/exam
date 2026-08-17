@@ -601,9 +601,75 @@ export default function ExamSchedulesPage() {
           onToggleAll={() =>
             setSelected(selected.length === filteredSchedules.length ? [] : filteredSchedules.map((s) => s.id))
           }
-          onAssignSupervisors={() => setToast({ message: `Đã mở phân công cho ${selected.length} ca thi`, type: 'success' })}
-          onChangeRoom={() => setToast({ message: `Đã chọn đổi phòng cho ${selected.length} ca thi`, type: 'success' })}
-          onChangeShift={() => setToast({ message: `Đã chọn đổi ca cho ${selected.length} ca thi`, type: 'success' })}
+          onExportExcel={() => {
+            const selectedItems = filteredSchedules.filter((s) => selected.includes(s.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã lịch', width: 15 },
+              { header: 'Kỳ thi', width: 25 },
+              { header: 'Môn học', width: 25 },
+              { header: 'Ca thi', width: 15 },
+              { header: 'Phòng thi', width: 18 },
+              { header: 'Ngày thi', width: 15, align: 'center' as const },
+              { header: 'Giờ thi', width: 15, align: 'center' as const },
+              { header: 'Số TS', width: 10, align: 'center' as const },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((s, idx) => [
+              idx + 1,
+              s.code || `LCT${String(s.id).padStart(6, '0')}`,
+              s.periodName || s.examPeriod?.name || '',
+              s.subjectName || s.subject?.subjectName || '',
+              s.shiftName || '—',
+              s.roomName || 'Chưa xếp phòng',
+              s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
+              `${s.startTime || '—'} - ${s.endTime || '—'}`,
+              s.studentCount ?? 0,
+              s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : s.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã diễn ra',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Lich_thi_da_chon.xls',
+              title: 'DANH SÁCH LỊCH THI ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} ca thi`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} lịch thi ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = filteredSchedules.filter((s) => selected.includes(s.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH LỊCH THI ĐÃ CHỌN',
+              subtitle: `Tổng số ca thi được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng ca thi', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã lịch', width: '90px' },
+                { header: 'Kỳ thi', width: '160px' },
+                { header: 'Phòng', width: '80px', align: 'center' },
+                { header: 'Ngày thi', width: '100px', align: 'center' },
+                { header: 'Thời gian', width: '110px', align: 'center' },
+                { header: 'Trạng thái', width: '100px', align: 'center' },
+              ],
+              rows: selectedItems.map((s, idx) => [
+                idx + 1,
+                s.code || `LCT${String(s.id).padStart(6, '0')}`,
+                s.periodName || '',
+                s.roomName || '',
+                s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
+                `${s.startTime || '—'} - ${s.endTime || '—'}`,
+                s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : 'Đã diễn ra',
+              ]),
+            });
+          }}
+          onAssignSupervisors={() => {
+            router.push('/exam-supervisors');
+          }}
+          onArrangeRooms={() => {
+            router.push('/exam-arrangement');
+          }}
           onDelete={() => {
             const count = selected.length;
             setConfirmModal({
@@ -630,7 +696,6 @@ export default function ExamSchedulesPage() {
               },
             });
           }}
-          onExport={exportExcel}
           onClear={() => setSelected([])}
         />
       </main>
