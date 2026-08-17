@@ -311,9 +311,9 @@ export function QuestionBankTable({
     <>
       <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
         <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-          <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+          <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
             <tr>
-              <th scope="col" className="p-3.5 pl-4 text-center w-10">
+              <th scope="col" className="py-3.5 pl-3 pr-2 text-center w-8">
                 <input
                   type="checkbox"
                   checked={allSelected}
@@ -321,16 +321,16 @@ export function QuestionBankTable({
                   className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
               </th>
-              {visibleColumns.code !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã câu hỏi</th>}
-              {visibleColumns.content !== false && <th scope="col" className="p-3.5 min-w-[280px]">Nội dung & Các đáp án</th>}
-              {visibleColumns.subject !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Môn học</th>}
-              {visibleColumns.difficulty !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Độ khó</th>}
-              {visibleColumns.type !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Loại</th>}
-              <th scope="col" className="p-3.5 whitespace-nowrap">Điểm</th>
-              {visibleColumns.status !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Trạng thái</th>}
-              {visibleColumns.creator !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Người tạo</th>}
-              {visibleColumns.createdAt !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Ngày tạo</th>}
-              <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
+              {visibleColumns.code !== false && <th scope="col" className="px-2 py-3.5 whitespace-nowrap">Mã câu hỏi</th>}
+              {visibleColumns.content !== false && <th scope="col" className="px-3 py-3.5 min-w-[240px]">Nội dung & Các đáp án</th>}
+              {visibleColumns.subject !== false && <th scope="col" className="px-2.5 py-3.5 whitespace-nowrap">Môn học</th>}
+              {visibleColumns.difficulty !== false && <th scope="col" className="px-2 py-3.5 whitespace-nowrap">Độ khó</th>}
+              {visibleColumns.type !== false && <th scope="col" className="px-2 py-3.5 whitespace-nowrap">Loại</th>}
+              <th scope="col" className="px-2 py-3.5 whitespace-nowrap text-center">Điểm</th>
+              {visibleColumns.status !== false && <th scope="col" className="px-2 py-3.5 whitespace-nowrap">Trạng thái</th>}
+              {visibleColumns.creator !== false && <th scope="col" className="px-2.5 py-3.5 whitespace-nowrap">Người tạo</th>}
+              {visibleColumns.createdAt !== false && <th scope="col" className="px-2.5 py-3.5 whitespace-nowrap">Ngày tạo</th>}
+              <th scope="col" className="py-3.5 pl-2 pr-4 text-right whitespace-nowrap">Thao tác</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 font-normal">
@@ -344,12 +344,12 @@ export function QuestionBankTable({
               return (
                 <tr
                   key={q.id}
-                  className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/70 ${
+                  className={`group transition hover:bg-slate-50/70 dark:hover:bg-slate-800/70 ${
                     isChecked ? 'bg-blue-50/50 dark:bg-blue-950/50' : ''
                   }`}
                 >
                   {/* Checkbox */}
-                  <td className="p-3.5 pl-4 text-center align-top pt-4">
+                  <td className="py-3.5 pl-3 pr-2 text-center align-top pt-4">
                     <input
                       type="checkbox"
                       checked={isChecked}
@@ -360,7 +360,7 @@ export function QuestionBankTable({
 
                   {/* Mã câu hỏi */}
                   {visibleColumns.code !== false && (
-                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <td className="px-2 py-3.5 whitespace-nowrap align-top pt-4">
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
@@ -373,7 +373,7 @@ export function QuestionBankTable({
 
                   {/* Nội dung câu hỏi & Các đáp án */}
                   {visibleColumns.content !== false && (
-                    <td className="p-3.5 min-w-[320px] align-top">
+                    <td className="px-3 py-3.5 min-w-[240px] align-top">
                       <div className="space-y-2">
                         {/* Tầng 1: Nội dung câu hỏi & Indicator đính kèm */}
                         <div className="flex items-start justify-between gap-2">
@@ -468,7 +468,7 @@ export function QuestionBankTable({
 
                   {/* Môn học */}
                   {visibleColumns.subject !== false && (
-                    <td className="p-3.5 align-top pt-4">
+                    <td className="px-2.5 py-3.5 align-top pt-4">
                       <div
                         className="group relative inline-block max-w-[140px] cursor-pointer"
                         title={subjectName}
@@ -489,20 +489,20 @@ export function QuestionBankTable({
 
                   {/* Độ khó */}
                   {visibleColumns.difficulty !== false && (
-                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <td className="px-2 py-3.5 whitespace-nowrap align-top pt-4">
                       <QuestionDifficultyBadge difficulty={q.difficulty || 'MEDIUM'} />
                     </td>
                   )}
 
                   {/* Loại */}
                   {visibleColumns.type !== false && (
-                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <td className="px-2 py-3.5 whitespace-nowrap align-top pt-4">
                       <QuestionTypeBadge type={q.type || 'SINGLE_CHOICE'} />
                     </td>
                   )}
 
                   {/* Điểm số */}
-                  <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                  <td className="px-2 py-3.5 whitespace-nowrap align-top pt-4 text-center">
                     <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100">
                       {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
                     </span>
@@ -510,14 +510,14 @@ export function QuestionBankTable({
 
                   {/* Trạng thái */}
                   {visibleColumns.status !== false && (
-                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <td className="px-2 py-3.5 whitespace-nowrap align-top pt-4">
                       <QuestionStatusBadge status={q.status || 'APPROVED'} />
                     </td>
                   )}
 
                   {/* Người tạo */}
                   {visibleColumns.creator !== false && (
-                    <td className="p-3.5 whitespace-nowrap align-top pt-4">
+                    <td className="px-2.5 py-3.5 whitespace-nowrap align-top pt-4">
                       <div className="flex items-center gap-1.5 text-[15px] font-normal text-slate-700 dark:text-slate-300">
                         <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-medium text-[15px] border border-slate-200 dark:border-slate-600">
                           {creatorName.charAt(0).toUpperCase()}
@@ -529,34 +529,14 @@ export function QuestionBankTable({
 
                   {/* Ngày tạo */}
                   {visibleColumns.createdAt !== false && (
-                    <td className="table-meta p-3.5 whitespace-nowrap text-[15px] text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
+                    <td className="table-meta px-2.5 py-3.5 whitespace-nowrap text-[15px] text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
                       {formatDate(q.createdAt)}
                     </td>
                   )}
 
                   {/* Thao tác */}
-                  <td className="p-3.5 pr-4 text-right whitespace-nowrap relative align-top pt-3.5">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        type="button"
-                        onClick={() => onDetail(q)}
-                        className="table-action flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition cursor-pointer"
-                        title="Xem chi tiết"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-
-                      {q.type === 'ESSAY' && (
-                        <button
-                          type="button"
-                          onClick={() => setRubricQuestion(q)}
-                          className="table-action flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition cursor-pointer"
-                          title="Cấu hình Rubric cho câu hỏi tự luận này"
-                        >
-                          <Sliders className="h-4 w-4" />
-                        </button>
-                      )}
-
+                  <td className="py-3.5 pl-2 pr-4 text-right whitespace-nowrap relative align-top pt-3.5">
+                    <div className="flex items-center justify-end">
                       <ActionDropdownPortal>
                         {(closeMenu) => (
                           <div className="py-1">

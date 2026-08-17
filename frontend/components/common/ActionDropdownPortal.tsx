@@ -27,7 +27,7 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
 
       setCoords({
         top: openUp ? rect.top - 6 : rect.bottom + 6,
-        right: Math.max(8, window.innerWidth - rect.right),
+        right: Math.max(16, window.innerWidth - rect.right + 4),
         openUp,
       });
       setIsOpen(true);
@@ -67,7 +67,7 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
         aria-expanded={isOpen}
         aria-haspopup="menu"
         onClick={toggleMenu}
-        className="ui-pressable inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors duration-150 cursor-pointer"
+        className="ui-pressable inline-flex shrink-0 h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors duration-150 cursor-pointer"
         title="Thao tác khác"
       >
         {trigger || <MoreHorizontal className="h-4 w-4" />}
