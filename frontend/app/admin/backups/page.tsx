@@ -474,10 +474,10 @@ export default function BackupsPage() {
                 <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                     <Button
                         type="button"
-                        variant="secondary"
+                        variant="ghost"
                         size="md"
                         onClick={() => setPolicyOpen(true)}
-                        leftIcon={<BookOpen className="h-4 w-4 text-slate-500" />}
+                        leftIcon={<BookOpen className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
                     >
                         Chính sách & Hướng dẫn
                     </Button>
@@ -1539,18 +1539,21 @@ export default function BackupsPage() {
                 onClose={() => setPolicyOpen(false)}
                 title="Chính sách Sao lưu & Hướng dẫn Vận hành"
             >
-                <div className="space-y-5 py-2 text-slate-700">
+                <div className="space-y-6 py-2 text-slate-700 dark:text-slate-300">
 
                     {/* Section 1: Retention Policy */}
-                    <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-blue-600 shrink-0" />
-                            <span>Thời gian lưu trữ dữ liệu (Retention Policy)</span>
-                        </h4>
-                        <p className="text-xs text-slate-600 leading-relaxed pl-6">
+                    <div className="space-y-2.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                                <Clock className="h-4 w-4 text-blue-600 shrink-0" />
+                                <span>Thời gian lưu trữ dữ liệu (Retention Policy)</span>
+                            </h4>
+                        </div>
+                        <p className="text-[14px] text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
                             Hệ thống tự động thực hiện sao lưu định kỳ và dọn dẹp các bản ghi snapshot cũ theo chính sách:
                         </p>
-                        <ul className="text-xs space-y-1.5 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
+                        <ul className="text-[14px] space-y-1.5 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
                             <li><strong>Bản sao lưu Hàng ngày (Daily):</strong> Lưu trữ <strong>{overview?.retention?.daily || 14} ngày</strong> gần nhất.</li>
                             <li><strong>Bản sao lưu Hàng tuần (Weekly):</strong> Lưu trữ <strong>{overview?.retention?.weekly || 8} tuần</strong> liên tiếp.</li>
                             <li><strong>Bản sao lưu Hàng tháng (Monthly):</strong> Lưu trữ <strong>{overview?.retention?.monthly || 12} tháng</strong> chính thức.</li>
@@ -1558,12 +1561,15 @@ export default function BackupsPage() {
                     </div>
 
                     {/* Section 2: Restore Security Policy */}
-                    <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                            <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
-                            <span>Quy định An toàn & Khôi phục (Security Policy)</span>
-                        </h4>
-                        <ul className="text-sm space-y-2 list-disc pl-11 font-medium text-slate-700 leading-relaxed">
+                    <div className="space-y-2.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                                <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
+                                <span>Quy định An toàn & Khôi phục (Security Policy)</span>
+                            </h4>
+                        </div>
+                        <ul className="text-[14px] space-y-2 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
                             <li>
                                 <strong>Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
                             </li>
@@ -1577,28 +1583,31 @@ export default function BackupsPage() {
                     </div>
 
                     {/* Section 3: Configuration Guide */}
-                    <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                            <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
-                            <span>Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
-                        </h4>
-                        <p className="text-sm text-slate-600 leading-relaxed pl-6">
+                    <div className="space-y-2.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                                <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
+                                <span>Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
+                            </h4>
+                        </div>
+                        <p className="text-[14px] text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
                             Các thông số thiết lập trong tập tin cấu hình môi trường server:
                         </p>
                         <div className="pl-6 pt-1">
-                            <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 tabular-nums text-sm leading-relaxed overflow-x-auto border-l-4 border-blue-500">
-                                {`BACKUP_WORKER_ENABLED="true" # Bật/tắt tiến trình tự động
+                            <pre className="p-4 rounded-xl bg-slate-950 text-emerald-400 border border-slate-800 tabular-nums text-[13px] leading-relaxed overflow-x-auto shadow-inner custom-scrollbar">
+{`BACKUP_WORKER_ENABLED="true" # Bật/tắt tiến trình tự động
 BACKUP_SCHEDULE="02:00" # Khung giờ chạy sao lưu hàng ngày
 BACKUP_TIMEZONE="Asia/Ho_Chi_Minh" # Múi giờ hệ thống
 BACKUP_RETENTION_DAILY="14" # Số ngày lưu trữ
 BACKUP_RETENTION_WEEKLY="8" # Số tuần lưu trữ
- BACKUP_RETENTION_MONTHLY="12" # Số tháng lưu trữ`}
+BACKUP_RETENTION_MONTHLY="12" # Số tháng lưu trữ`}
                             </pre>
                         </div>
                     </div>
 
                     {/* Footer actions */}
-                    <div className="flex justify-end pt-3 border-t border-slate-100">
+                    <div className="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
                         <Button variant="primary" size="md" onClick={() => setPolicyOpen(false)}>
                             Đã hiểu
                         </Button>
