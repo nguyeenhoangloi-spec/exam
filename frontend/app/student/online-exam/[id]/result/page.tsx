@@ -79,14 +79,14 @@ export default function StudentExamResultPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-6">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl max-w-md text-center shadow-xl">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Không Thể Tải Kết Quả</h2>
+          <h2 className="text-xl font-semibold mb-2">Không thể tải kết quả</h2>
           <p className="text-slate-600 dark:text-slate-300 text-sm mb-6">{error}</p>
           <Button
             variant="primary"
             size="md"
             onClick={() => router.push('/student/exam-schedule')}
           >
-            Về Lịch Thi
+            Về lịch thi
           </Button>
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function StudentExamResultPage() {
               <div className="space-y-1 min-w-0 flex-1">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h1 className="edu-page-title text-white tracking-tight leading-snug">
-                    {isUnderReview ? 'Bài Thi Cần Được Xem Xét' : 'Hoàn Thành Bài Thi Trực Tuyến'}
+                    {isUnderReview ? 'Bài thi cần được xem xét' : 'Hoàn thành bài thi trực tuyến'}
                   </h1>
                   <span className="inline-flex items-center gap-1 text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
                     <Sparkles className="w-3 h-3 text-blue-200" />
@@ -189,7 +189,7 @@ export default function StudentExamResultPage() {
             {isUnderReview && (
               <div className="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-5 rounded-xl space-y-3">
                 <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-amber-700" /> Gửi Giải Trình Sự Cố
+                  <FileText className="w-4 h-4 text-amber-700" /> Gửi giải trình sự cố
                 </h3>
                 <p className="text-[13px] text-amber-900 dark:text-amber-100 font-medium leading-[18px]">
                   Nếu bài thi bị gián đoạn do rớt mạng, lỗi trình duyệt hoặc lý do khách quan, bạn có thể gửi giải trình bên dưới.
@@ -267,7 +267,7 @@ export default function StudentExamResultPage() {
       <ProfileDrawer
         isOpen={showProfileDrawer}
         onClose={() => setShowProfileDrawer(false)}
-        title={result?.subjectName || result?.paperTitle || 'Kết Quả Bài Thi'}
+        title={result?.subjectName || result?.paperTitle || 'Kết quả bài thi'}
         subtitle={`Môn thi: ${result?.subjectCode || '---'}`}
         avatarText={result?.subjectCode?.slice(0, 2)?.toUpperCase() || 'KQ'}
         badge={{

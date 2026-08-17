@@ -253,7 +253,7 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
               </div>
               {showAnswer && sel?.teacherComment && (
                 <div className="rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/70 dark:bg-blue-950/40 p-4 space-y-1">
-                  <p className="text-xs font-semibold text-blue-800 dark:text-blue-300 tracking-wider">Nhận xét của Giảng viên:</p>
+                  <p className="text-xs font-semibold text-blue-800 dark:text-blue-300 tracking-wider">Nhận xét của giảng viên:</p>
                   <p className="text-xs text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-wrap">{sel.teacherComment}</p>
                 </div>
               )}
@@ -336,7 +336,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-white truncate">
-                    Xem Lại Chi Tiết Bài Thi
+                    Xem lại chi tiết bài thi
                   </h2>
                   {data?.paper?.paperCode && (
                     <IdentifierBadge tone="blue">Mã đề: {data.paper.paperCode}</IdentifierBadge>
@@ -475,7 +475,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                 <div className="rounded-xl border border-amber-200 bg-amber-50/80 dark:bg-amber-950/30 p-4 space-y-2.5">
                   <h4 className="text-[14.5px] font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-600" />
-                    Sự cố &amp; Vi phạm ghi nhận ({data.incidents.length})
+                    Sự cố &amp; vi phạm ghi nhận ({data.incidents.length})
                   </h4>
                   <div className="space-y-2">
                     {data.incidents.map((inc: any, i: number) => (
@@ -499,7 +499,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           {hasEssay ? (
             <a href={`/teacher/essay-grading?attemptId=${attemptId}`}>
               <Button variant="primary" size="md" leftIcon={<ExternalLink className="w-4 h-4" />}>
-                Chấm / Sửa Điểm Tự Luận
+                Chấm / sửa điểm tự luận
               </Button>
             </a>
           ) : (

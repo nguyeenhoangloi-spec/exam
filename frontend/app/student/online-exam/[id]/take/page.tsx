@@ -7,6 +7,8 @@ import { Clock, Shield, Flag, CheckCircle, AlertTriangle, Wifi, WifiOff, Send, M
 import { fixHtmlImageUrls, getImageUrl } from '@/lib/media-utils';
 import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { Toast } from '@/components/Toast';
+import { Modal } from '@/components/Modal';
+import { Button } from '@/components/ui/Button';
 import { FillBlankQuestionRenderer } from '@/components/question-bank/FillBlankQuestionRenderer';
 import { QuestionMediaPlayer } from '@/components/exam/QuestionMediaPlayer';
 import { DynamicImage } from '@/components/ui/DynamicImage';
@@ -476,16 +478,18 @@ export default function StudentExamTakePage() {
             <AlertTriangle className="w-8 h-8" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Không Thể Truy Cập Bài Thi</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Không thể truy cập bài thi</h2>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-normal leading-relaxed">{error}</p>
           </div>
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
+            className="w-full"
             onClick={() => router.push('/student/exam-schedule')}
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium rounded-xl shadow-sm transition active:scale-95 cursor-pointer"
           >
-            Quay Về Lịch Thi
-          </button>
+            Quay về lịch thi
+          </Button>
         </div>
       </div>
     );
@@ -517,7 +521,7 @@ export default function StudentExamTakePage() {
             </span>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-[13px] font-semibold rounded-md">
-                <Shield className="w-3.5 h-3.5 mr-1 text-emerald-300" /> Giám Sát Gian Lận Active
+                <Shield className="w-3.5 h-3.5 mr-1 text-emerald-300" /> Giám sát trực tuyến kích hoạt
               </span>
             </div>
           </div>
@@ -525,7 +529,7 @@ export default function StudentExamTakePage() {
 
         {/* Header Right Actions */}
         <div className="flex items-center space-x-4 sm:space-x-5">
-          {/* Sync Status Badge - Chỉ hiển thị khi Đang đồng bộ hoặc Mất kết nối (Đã bỏ chữ 'Đã tự động lưu') */}
+          {/* Sync Status Badge - Chỉ hiển thị khi Đang đồng bộ hoặc Mất kết nối */}
           <div className="hidden sm:flex items-center text-[15px] font-medium">
             {syncState === 'SAVING' && (
               <span className="text-amber-300 flex items-center gap-1.5 animate-pulse">
@@ -551,12 +555,12 @@ export default function StudentExamTakePage() {
             <span>{formatTime(remainingSeconds)}</span>
           </div>
 
-          {/* Button Báo cáo sự cố - Nút Ghost phụ không dùng viền khung */}
+          {/* Button Báo cáo sự cố */}
           <button
             type="button"
             onClick={() => setShowIncidentModal(true)}
             className="px-3 py-1.5 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 font-semibold text-xs rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
-            title="Gửi báo cáo sự cố kỹ thuật cho Giám thị"
+            title="Gửi báo cáo sự cố kỹ thuật cho giám thị"
           >
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
             <span>Báo sự cố</span>
@@ -569,7 +573,7 @@ export default function StudentExamTakePage() {
             className="px-4 sm:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-emerald-950/30 transition active:scale-95 cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Nộp Bài</span>
+            <span>Nộp bài</span>
           </button>
         </div>
       </header>
@@ -596,7 +600,7 @@ export default function StudentExamTakePage() {
                   type="button"
                   onClick={() => handleToggleFlag(currentQ.questionId)}
                   className={`flex items-center space-x-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border transition cursor-pointer active:scale-95 ${currentAns.isFlagged
-                    ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
+        ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
                     : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
@@ -605,86 +609,86 @@ export default function StudentExamTakePage() {
                 </button>
               </div>
 
- {/* Lightbox for enlarge images */}
- {lightboxUrl && (
- <ImageLightboxModal
- imageUrl={lightboxUrl}
- altText={`Hình minh họa câu hỏi mã ${currentQ.code}`}
- onClose={() => setLightboxUrl(null)}
- />
- )}
+              {/* Lightbox for enlarge images */}
+                {lightboxUrl && (
+                  <ImageLightboxModal
+                    imageUrl={lightboxUrl}
+                    altText={`Hình minh họa câu hỏi mã ${currentQ.code}`}
+                    onClose={() => setLightboxUrl(null)}
+                  />
+                )}
 
- {/* Question Text / Rich Text Content */}
- <div className="text-slate-900 dark:text-slate-100 text-base sm:text-lg leading-relaxed font-semibold space-y-3">
- {currentQ.type === 'FILL_BLANK' ? (
- <FillBlankQuestionRenderer
- content={currentQ.content}
- contentRich={currentQ.contentRich}
- answers={currentAns.fillBlankAnswers || []}
- onChange={(blankIndex, value) => handleFillBlankChange(currentQ.questionId, blankIndex, value)}
- />
- ) : currentQ.contentRich && typeof currentQ.contentRich === 'object' && 'html' in currentQ.contentRich ? (
- <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(String((currentQ.contentRich as { html?: string }).html || '')) }} />
- ) : (
- currentQ.content
- )}
+                {/* Question Text / Rich Text Content */}
+                <div className="text-slate-900 dark:text-slate-100 text-base sm:text-lg leading-relaxed font-semibold space-y-3">
+                  {currentQ.type === 'FILL_BLANK' ? (
+                    <FillBlankQuestionRenderer
+                      content={currentQ.content}
+                      contentRich={currentQ.contentRich}
+                      answers={currentAns.fillBlankAnswers || []}
+                      onChange={(blankIndex, value) => handleFillBlankChange(currentQ.questionId, blankIndex, value)}
+                    />
+                  ) : currentQ.contentRich && typeof currentQ.contentRich === 'object' && 'html' in currentQ.contentRich ? (
+                    <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(String((currentQ.contentRich as { html?: string }).html || '')) }} />
+                  ) : (
+                    currentQ.content
+                  )}
 
- {/* Media Attachments */}
- {currentQ.media && currentQ.media.length > 0 && (
- <div className="flex flex-wrap items-center gap-3 pt-2">
- {currentQ.media.map((mediaItem: any, idx: number) => {
- const fullUrl = getImageUrl(mediaItem.url);
- const mime: string = mediaItem.mimeType || '';
- if (mime.startsWith('video/')) {
- return (
- <QuestionMediaPlayer
- key={mediaItem.id || idx}
- attemptId={tokenFromUrl}
- questionId={currentQ.questionId}
- src={fullUrl}
- type="video"
- fileName={mediaItem.fileName}
- maxPlays={mediaItem.maxPlays || 2}
- />
- );
- }
- if (mime.startsWith('audio/')) {
- return (
- <QuestionMediaPlayer
- key={mediaItem.id || idx}
- attemptId={tokenFromUrl}
- questionId={currentQ.questionId}
- src={fullUrl}
- type="audio"
- fileName={mediaItem.fileName}
- maxPlays={mediaItem.maxPlays || 2}
- />
- );
- }
- // Default: image
- return (
- <div
- key={mediaItem.id || idx}
- onClick={() => setLightboxUrl(mediaItem.url)}
- className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1.5 transition hover:border-blue-600 hover:shadow-md"
- title="Bấm vào để xem ảnh phóng to"
- >
- <DynamicImage
- src={fullUrl}
- alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
- className="max-h-52 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
- />
- <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
- <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-xs">
- <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to xem rõ ảnh
- </span>
- </div>
- </div>
- );
- })}
- </div>
- )}
- </div>
+                  {/* Media Attachments */}
+                  {currentQ.media && currentQ.media.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                      {currentQ.media.map((mediaItem: any, idx: number) => {
+                        const fullUrl = getImageUrl(mediaItem.url);
+                        const mime: string = mediaItem.mimeType || '';
+                        if (mime.startsWith('video/')) {
+                          return (
+                            <QuestionMediaPlayer
+                              key={mediaItem.id || idx}
+                              attemptId={tokenFromUrl}
+                              questionId={currentQ.questionId}
+                              src={fullUrl}
+                              type="video"
+                              fileName={mediaItem.fileName}
+                              maxPlays={mediaItem.maxPlays || 2}
+                            />
+                          );
+                        }
+                        if (mime.startsWith('audio/')) {
+                          return (
+                            <QuestionMediaPlayer
+                              key={mediaItem.id || idx}
+                              attemptId={tokenFromUrl}
+                              questionId={currentQ.questionId}
+                              src={fullUrl}
+                              type="audio"
+                              fileName={mediaItem.fileName}
+                              maxPlays={mediaItem.maxPlays || 2}
+                            />
+                          );
+                        }
+                        // Default: image
+                        return (
+                          <div
+                            key={mediaItem.id || idx}
+                            onClick={() => setLightboxUrl(mediaItem.url)}
+                            className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1.5 transition hover:border-blue-600 hover:shadow-md"
+                            title="Bấm vào để xem ảnh phóng to"
+                          >
+                            <DynamicImage
+                              src={fullUrl}
+                              alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
+                              className="max-h-52 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
+                              <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-xs">
+                                <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to xem rõ ảnh
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
  {/* Answer area */}
  {currentQ.type === 'ESSAY' ? (
@@ -705,7 +709,9 @@ export default function StudentExamTakePage() {
  </div>
  {(currentAns as any).files && (currentAns as any).files.length > 0 && (
  <div className="space-y-1 rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
- {(currentAns as any).files.map((file: any) => <div key={file.id || file.url}>📎 {file.fileName || 'Tệp bài làm'}</div>)}
+ {(currentAns as any).files.map((file: any) => (
+ <div key={file.id || file.url}>📎 {file.fileName || 'Tệp bài làm'}</div>
+ ))}
  </div>
  )}
  </div>
@@ -772,20 +778,20 @@ export default function StudentExamTakePage() {
  {/* Sidebar Question Navigator */}
  <aside className="w-full lg:w-80 bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-700 p-6 flex flex-col shrink-0 space-y-4">
  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
- <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Danh Sách Câu Hỏi</h3>
- <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} Đã xong</span>
+ <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Danh sách câu hỏi</h3>
+ <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} đã hoàn thành</span>
  </div>
 
- {/* Legend Badges */}
- <div className="flex flex-wrap items-center justify-between text-[13px] font-medium text-slate-500 dark:text-slate-400 gap-1.5 pb-2">
- <span className="flex items-center">
- <span className="w-2.5 h-2.5 rounded bg-blue-600 mr-1.5"></span> Đã làm ({answeredCount})
+ {/* Legend Indicators */}
+ <div className="flex items-center justify-between text-[13px] font-medium text-slate-500 dark:text-slate-400 gap-1 pb-1">
+ <span className="flex items-center gap-1.5">
+ <span className="w-2 h-2 rounded-full bg-blue-600"></span> Đã làm ({answeredCount})
  </span>
- <span className="flex items-center">
- <span className="w-2.5 h-2.5 rounded bg-amber-500 mr-1.5"></span> Xem lại ({flaggedCount})
+ <span className="flex items-center gap-1.5">
+ <span className="w-2 h-2 rounded-full bg-amber-500"></span> Xem lại ({flaggedCount})
  </span>
- <span className="flex items-center">
- <span className="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 mr-1.5"></span> Chưa làm
+ <span className="flex items-center gap-1.5">
+ <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span> Chưa làm
  </span>
  </div>
 
@@ -829,166 +835,129 @@ export default function StudentExamTakePage() {
  </div>
 
  {/* Submit Confirmation Modal */}
- {showSubmitModal && (
- <div role="dialog" aria-modal="true" aria-label="Xác nhận nộp bài" className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150">
- <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-2xl max-w-md w-full my-auto overflow-hidden shadow-2xl space-y-0">
- {/* Header */}
- <div className="bg-gradient-to-r from-primary-600 via-primary-700 to-blue-700 p-5 text-white shrink-0 shadow-xs">
- <div className="flex items-start justify-between gap-3">
- <div className="flex items-start gap-3.5 min-w-0 flex-1">
- <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
- <Send className="h-6 w-6 text-white" />
- </div>
- <div className="min-w-0 flex-1 pr-2">
- <div className="flex items-center gap-2 flex-wrap">
- <h3 className="text-[18px] font-semibold leading-snug text-white line-clamp-1">
- Xác Nhận Nộp Bài Thi
- </h3>
- <span className="text-xs font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30">
- Nộp bài
- </span>
- </div>
- <p className="text-[13px] font-medium text-blue-100/90 mt-1 line-clamp-1">
- Hoàn thành làm bài và chuyển sang màn hình kết quả
- </p>
- </div>
- </div>
+ <Modal
+    isOpen={showSubmitModal}
+    onClose={() => setShowSubmitModal(false)}
+    title="Xác nhận nộp bài thi"
+    size="md"
+  >
+    <div className="space-y-4">
+      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+        Bạn có chắc chắn muốn nộp bài thi? Sau khi nộp bài, hệ thống sẽ khóa bài làm và tính điểm ngay lập tức.
+      </p>
 
- <button
- type="button"
- onClick={() => setShowSubmitModal(false)}
- className="shrink-0 rounded-xl p-1.5 text-blue-100 hover:bg-white/20 hover:text-white transition cursor-pointer"
- title="Đóng"
- >
- <X className="h-5 w-5" />
- </button>
- </div>
- </div>
-
- {/* Statistics Summary */}
- <div className="p-5 space-y-3.5">
- <div className="bg-slate-50/90 dark:bg-slate-800/60 p-4 rounded-xl space-y-2 text-xs font-normal border border-slate-200/70 dark:border-slate-700">
- <div className="flex justify-between text-slate-500 dark:text-slate-400">
- <span>Tổng số câu hỏi:</span>
- <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCount}</span>
- </div>
- <div className="flex justify-between text-primary-600 dark:text-primary-400">
- <span>Số câu đã trả lời:</span>
- <span className="font-semibold">{answeredCount}</span>
- </div>
-             <div className="flex justify-between text-amber-600 dark:text-amber-400">
-              <span>Số câu chưa trả lời:</span>
-              <span className="font-semibold">{totalCount - answeredCount}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-2.5 pt-2">
-            <button
-              type="button"
-              disabled={submitting}
-              onClick={() => setShowSubmitModal(false)}
-              className="h-9 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold shadow-2xs transition active:scale-95 cursor-pointer"
-            >
-              Tiếp tục làm bài
-            </button>
-            <button
-              type="button"
-              disabled={submitting}
-              onClick={handleSubmitExam}
-              className="h-9 px-5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-xl shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
-            >
-              {submitting ? 'Đang nộp bài...' : 'Đồng Ý Nộp Bài'}
-            </button>
-          </div>
+      {/* Statistics Summary - Layout phẳng với đường phân cách thanh mảnh */}
+      <div className="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+        <div className="flex items-center justify-between py-2.5 text-slate-600 dark:text-slate-400">
+          <span>Tổng số câu hỏi</span>
+          <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{totalCount}</span>
+        </div>
+        <div className="flex items-center justify-between py-2.5 text-blue-600 dark:text-blue-400">
+          <span>Số câu đã trả lời</span>
+          <span className="font-semibold tabular-nums">{answeredCount}</span>
+        </div>
+        <div className="flex items-center justify-between py-2.5 text-amber-600 dark:text-amber-400">
+          <span>Số câu chưa trả lời</span>
+          <span className="font-semibold tabular-nums">{totalCount - answeredCount}</span>
         </div>
       </div>
+
+      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <Button
+          variant="secondary"
+          size="md"
+          disabled={submitting}
+          onClick={() => setShowSubmitModal(false)}
+        >
+          Tiếp tục làm bài
+        </Button>
+        <Button
+          variant="primary"
+          size="md"
+          disabled={submitting}
+          isLoading={submitting}
+          onClick={handleSubmitExam}
+        >
+          Đồng ý nộp bài
+        </Button>
+      </div>
     </div>
-  )}
+  </Modal>
 
   {/* Modal Báo cáo Sự cố Kỹ thuật */}
-  {showIncidentModal && (
-    <div role="dialog" aria-modal="true" aria-label="Báo cáo sự cố kỹ thuật" className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-2xl overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
-              <HelpCircle className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Báo cáo sự cố kỹ thuật</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Gửi yêu cầu trợ giúp tới Giám thị phòng thi</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowIncidentModal(false)}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+  <Modal
+    isOpen={showIncidentModal}
+    onClose={() => setShowIncidentModal(false)}
+    title="Báo cáo sự cố kỹ thuật"
+    size="md"
+  >
+    <div className="space-y-4">
+      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+        Gửi yêu cầu trợ giúp tới giám thị phòng thi nếu gặp trục trặc kỹ thuật trong quá trình làm bài.
+      </p>
 
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-2">Chọn loại sự cố gặp phải:</label>
-            <div className="grid grid-cols-2 gap-2">
-              {['Sự cố mất mạng / Wifi', 'Màn hình không phản hồi', 'Không hiển thị ảnh / media', 'Sự cố thiết bị cá nhân'].map((quickMsg) => (
-                <button
-                  key={quickMsg}
-                  type="button"
-                  onClick={() => setIncidentText(quickMsg)}
-                  className={`p-2.5 rounded-xl text-left text-xs font-medium border transition cursor-pointer ${
-                    incidentText === quickMsg
-                      ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500 text-blue-700 dark:text-blue-300'
-                      : 'bg-slate-50/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:bg-blue-50/40 hover:border-blue-300 text-slate-700 dark:text-slate-300'
-                  }`}
-                >
-                  {quickMsg}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">Mô tả chi tiết:</label>
-            <textarea
-              rows={3}
-              value={incidentText}
-              onChange={(e) => setIncidentText(e.target.value)}
-              placeholder="Mô tả cụ thể vấn đề bạn đang gặp phải..."
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-[15px] font-normal text-slate-800 dark:text-slate-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition resize-none"
-            />
-          </div>
-
-          {incidentMsg && (
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs font-semibold text-center">
-              {incidentMsg}
-            </div>
-          )}
-
-          <div className="flex items-center justify-end gap-2.5 pt-1">
+      <div className="space-y-2">
+        <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
+          Chọn loại sự cố gặp phải:
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {['Sự cố mất mạng / Wifi', 'Màn hình không phản hồi', 'Không hiển thị ảnh / media', 'Sự cố thiết bị cá nhân'].map((quickMsg) => (
             <button
+              key={quickMsg}
               type="button"
-              disabled={sendingIncident}
-              onClick={() => setShowIncidentModal(false)}
-              className="h-9 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold shadow-2xs transition cursor-pointer"
+              onClick={() => setIncidentText(quickMsg)}
+              className={`p-2.5 rounded-xl text-left text-xs font-medium border transition cursor-pointer ${
+                incidentText === quickMsg
+                  ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500 text-blue-700 dark:text-blue-300'
+                  : 'bg-slate-50/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:bg-blue-50/40 hover:border-blue-300 text-slate-700 dark:text-slate-300'
+              }`}
             >
-              Hủy bỏ
+              {quickMsg}
             </button>
-            <button
-              type="button"
-              disabled={sendingIncident || !incidentText.trim()}
-              onClick={handleSendIncident}
-              className="h-9 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm transition cursor-pointer disabled:opacity-50 active:scale-95"
-            >
-              {sendingIncident ? 'Đang gửi...' : 'Gửi báo cáo sự cố'}
-            </button>
-          </div>
+          ))}
         </div>
       </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
+          Mô tả chi tiết:
+        </label>
+        <textarea
+          rows={3}
+          value={incidentText}
+          onChange={(e) => setIncidentText(e.target.value)}
+          placeholder="Mô tả cụ thể vấn đề bạn đang gặp phải..."
+          className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition resize-none shadow-2xs"
+        />
+      </div>
+
+      {incidentMsg && (
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs font-semibold text-center">
+          {incidentMsg}
+        </div>
+      )}
+
+      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <Button
+          variant="secondary"
+          size="md"
+          disabled={sendingIncident}
+          onClick={() => setShowIncidentModal(false)}
+        >
+          Hủy bỏ
+        </Button>
+        <Button
+          variant="primary"
+          size="md"
+          disabled={sendingIncident || !incidentText.trim()}
+          isLoading={sendingIncident}
+          onClick={handleSendIncident}
+        >
+          Gửi báo cáo sự cố
+        </Button>
+      </div>
     </div>
-  )}
+  </Modal>
 
   {/* ── MODAL 1: CẢNH BÁO VI PHẠM QUY CHẾ THI ── */}
   {violationModal.isOpen && (
@@ -1024,8 +993,10 @@ export default function StudentExamTakePage() {
             Vui lòng không thoát toàn màn hình hoặc chuyển sang ứng dụng khác. Nếu vi phạm quá {violationModal.maxAllowed} lần, bài thi sẽ tự động khóa và nộp bài.
           </p>
 
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full"
             onClick={() => {
               setViolationModal((prev) => ({ ...prev, isOpen: false }));
               if (attemptData?.config?.requireFullscreen && !document.fullscreenElement) {
@@ -1034,10 +1005,9 @@ export default function StudentExamTakePage() {
                 } catch {}
               }
             }}
-            className="w-full h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition active:scale-95 text-center cursor-pointer"
           >
             Tiếp tục làm bài
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -1068,17 +1038,18 @@ export default function StudentExamTakePage() {
             </p>
           </div>
 
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full"
             onClick={() => {
               sessionStorage.removeItem('attemptToken');
               router.push(`/student/online-exam/${violationSubmittedModal.attemptId || attemptData?.attemptId}/result`);
             }}
-            className="w-full h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition active:scale-95 text-center flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>Xem kết quả bài thi</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+            <ChevronRight className="w-4 h-4 ml-1.5" />
+          </Button>
         </div>
       </div>
     </div>
@@ -1088,8 +1059,8 @@ export default function StudentExamTakePage() {
       <ProfileDrawer
         isOpen={showExamProfileDrawer}
         onClose={() => setShowExamProfileDrawer(false)}
-        title={attemptData?.paperTitle || 'Bài Thi Trực Tuyến'}
-        subtitle="Hệ thống Khảo thí Trực tuyến"
+        title={attemptData?.paperTitle || 'Bài thi trực tuyến'}
+        subtitle="Hệ thống khảo thí trực tuyến"
         avatarText={attemptData?.paperTitle?.slice(0, 2)?.toUpperCase() || 'BT'}
         badge={{
           label: 'Đang làm bài',

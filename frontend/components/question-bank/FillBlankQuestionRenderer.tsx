@@ -45,7 +45,7 @@ export function FillBlankQuestionRenderer({
     : [1];
 
   return (
-    <div className="space-y-4 text-slate-800 font-medium">
+    <div className="space-y-4 text-slate-800 dark:text-slate-100 font-medium">
       <div className="leading-relaxed">
         {tokens.map((token, idx) => {
           const matchNum = token.match(/^[\{\[]?blank_(\d+)[\}\]]?$/i) || token.match(/blank_(\d+)/i);
@@ -58,11 +58,11 @@ export function FillBlankQuestionRenderer({
 
             if (readOnly) {
               return (
-                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 font-semibold text-slate-900">
+                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 h-9 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 font-semibold text-slate-900 dark:text-slate-100">
                   <span className="text-xs text-slate-400">[{blankIndex}]</span>
                   <span>{currentVal || '____'}</span>
                   {showCorrect && correctObj && (
-                    <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                       (Đúng: {correctObj.answer})
                     </span>
                   )}
@@ -78,7 +78,7 @@ export function FillBlankQuestionRenderer({
                   onChange={(e) => onChange?.(blankIndex, e.target.value)}
                   placeholder={`[Ô #${blankIndex}]...`}
                   style={{ width: `${Math.max(120, (currentVal.length + 4) * 11)}px` }}
-                  className="inline-block px-3 py-1.5 text-[15px] font-medium text-slate-900 bg-white border-2 border-blue-400 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
+                  className="inline-block px-3 py-1.5 text-[15px] font-medium text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-2 border-blue-400 dark:border-blue-500 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 transition shadow-xs text-center"
                 />
               </span>
             );
@@ -100,9 +100,9 @@ export function FillBlankQuestionRenderer({
 
       {/* Explicit Input Box List Block Below - Ensures student can ALWAYS see & type answer */}
       {!readOnly && (
-        <div className="mt-4 p-4 rounded-2xl border border-blue-100 bg-blue-50/50 space-y-3">
+        <div className="mt-4 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/30 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-700">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
               Nhập đáp án cho từng chỗ trống ({allIndices.length} ô):
             </span>
           </div>
@@ -110,16 +110,16 @@ export function FillBlankQuestionRenderer({
             {allIndices.map((bIndex) => {
               const val = answers.find((a) => a.blankIndex === bIndex)?.value || '';
               return (
-                <div key={bIndex} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition">
-                  <span className="text-xs font-semibold text-blue-600 px-2 py-1 bg-blue-50 rounded-lg shrink-0">
+                <div key={bIndex} className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 dark:focus-within:ring-blue-900/30 transition">
+                  <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 px-2 py-1 bg-blue-50 dark:bg-blue-950/60 rounded-lg shrink-0">
                     Ô #{bIndex}
                   </span>
                   <input
                     type="text"
                     value={val}
                     onChange={(e) => onChange?.(bIndex, e.target.value)}
-                    placeholder={`Nhập câu trả lời cho Ô #${bIndex}...`}
-                    className="w-full text-[15px] font-normal text-slate-900 bg-transparent outline-none"
+                    placeholder={`Nhập câu trả lời cho ô #${bIndex}...`}
+                    className="w-full text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-transparent outline-none"
                   />
                 </div>
               );
