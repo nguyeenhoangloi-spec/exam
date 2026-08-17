@@ -6,7 +6,8 @@ import { onlineExamService } from '@/lib/services/online-exam.service';
 import { Button } from '@/components/ui/Button';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
-import { Eye, EyeOff, X, BookOpen, User, Ticket, MapPin, Clock, ShieldAlert, GraduationCap } from 'lucide-react';
+import { Modal } from '@/components/Modal';
+import { Eye, EyeOff, X, BookOpen, User, Ticket, MapPin, Clock, ShieldAlert, GraduationCap, KeyRound, Info, AlertCircle } from 'lucide-react';
 import { Toast } from '@/components/Toast';
 
 export default function StudentExamLobbyPage() {
@@ -169,8 +170,8 @@ export default function StudentExamLobbyPage() {
     currentExamType === 'DIEN_LO' || currentExamType === 'FILL_BLANK'
       ? 'Thi Điền Khuyết Trực Tuyến'
       : currentExamType === 'TU_LUAN' || currentExamType === 'ESSAY'
-      ? 'Thi Tự Luận Trực Tuyến'
-      : 'Thi Trắc Nghiệm Trực Tuyến';
+        ? 'Thi Tự Luận Trực Tuyến'
+        : 'Thi Trắc Nghiệm Trực Tuyến';
 
   return (
     <div className="min-h-screen bg-slate-100/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10 sm:py-16 px-4 sm:px-6 flex flex-col justify-center items-center">
@@ -186,7 +187,7 @@ export default function StudentExamLobbyPage() {
             <span>{schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức'}</span>
           </div>
 
-           <h1 className="text-xl sm:text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
+          <h1 className="text-xl sm:text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
             {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài Thi Trực Tuyến'}
           </h1>
 
@@ -199,7 +200,7 @@ export default function StudentExamLobbyPage() {
         {/* Completed State */}
         {isCompleted ? (
           <div className="py-8 text-center space-y-4">
-             <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
               Bài làm đã được nộp thành công và lưu trữ trên hệ thống khảo thí.
             </p>
@@ -264,7 +265,7 @@ export default function StudentExamLobbyPage() {
 
             {/* ── Section 3: Quy chế & Giám sát an toàn thi ── */}
             <div className="space-y-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
-               <div className="text-[12px] font-semibold  tracking-wider text-slate-400 dark:text-slate-500">
+              <div className="text-[12px] font-semibold  tracking-wider text-slate-400 dark:text-slate-500">
                 Quy chế & Giám sát an toàn
               </div>
 
@@ -334,131 +335,111 @@ export default function StudentExamLobbyPage() {
         )}
       </div>
 
-      {/* Password Modal */}
-      {showPasswordModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Xác thực mật khẩu đề thi"
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs animate-in fade-in duration-150"
-          onClick={() => setShowPasswordModal(false)}
-        >
-          <div
-            className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-700"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Clean Header matching design system standard */}
-            <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center justify-between">
-              <div>
-                 <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  Xác thực Mật khẩu Phòng Thi
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Nhập mật khẩu do giám thị công bố để bắt đầu làm bài
-                </p>
-              </div>
+      {/* Password Modal - Sử dụng chuẩn Modal hệ thống */}
+      <Modal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        title="Xác thực mật khẩu phòng thi"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            Nhập mật khẩu do giám thị công bố tại phòng thi để mở đề và bắt đầu tính giờ làm bài.
+          </p>
 
-              <button
-                type="button"
-                onClick={() => setShowPasswordModal(false)}
-                className="shrink-0 rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 transition cursor-pointer"
-                title="Đóng"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Content Body */}
-            <div className="p-6 space-y-4">
-              <div className="text-rose-600 text-xs font-medium">
-                <span>{error || 'Kỳ thi chính thức yêu cầu nhập mật khẩu thi trước khi vào thi'}</span>
-              </div>
-
-              {isPasswordRequired && (
-                <div className="space-y-1.5">
+          {isPasswordRequired && (
+            <div className="space-y-1.5">
               <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
-                    Mật khẩu đề thi <span className="text-rose-500">* (Giám thị đọc tại phòng)</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="off"
-                      autoFocus
-                      placeholder="Nhập mật khẩu đề thi..."
-                      value={examPassword}
-                      onChange={(e) => {
-                        setExamPassword(e.target.value);
-                        if (error) setError(null);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && (!isPasswordRequired || examPassword.trim()) && (!isAccessCodeRequired || accessCode.trim())) {
-                          setShowPasswordModal(false);
-                          void handleStartExam();
-                        }
-                      }}
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 transition cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {isAccessCodeRequired && (
-                <div className="space-y-1.5">
-                  <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
-                    Mã truy cập phòng thi <span className="text-rose-500">* (Bắt buộc)</span>
-                  </label>
-                  <input
-                    type="text"
-                    autoComplete="off"
-                    placeholder="Nhập mã truy cập..."
-                    value={accessCode}
-                    onChange={(e) => {
-                      setAccessCode(e.target.value);
-                      if (error) setError(null);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && (!isPasswordRequired || examPassword.trim()) && (!isAccessCodeRequired || accessCode.trim())) {
-                        setShowPasswordModal(false);
-                        void handleStartExam();
-                      }
-                    }}
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                  />
-                </div>
+                Mật khẩu đề thi <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="off"
+                  autoFocus
+                  placeholder="Nhập mật khẩu đề thi..."
+                  value={examPassword}
+                  onChange={(e) => {
+                    setExamPassword(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (!isPasswordRequired || examPassword.trim()) && (!isAccessCodeRequired || accessCode.trim())) {
+                      setShowPasswordModal(false);
+                      void handleStartExam();
+                    }
+                  }}
+                  className={`w-full rounded-xl border px-3.5 py-2.5 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:outline-none transition shadow-2xs ${
+                    error
+                      ? 'border-rose-300 dark:border-rose-700 focus:border-rose-500 bg-rose-50/20'
+                      : 'border-slate-200 dark:border-slate-700 focus:border-blue-500'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-xl transition cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {error && (
+                <p className="text-xs font-medium text-rose-600 dark:text-rose-400 flex items-center gap-1 mt-1">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{error}</span>
+                </p>
               )}
             </div>
+          )}
 
-            {/* Footer Modal */}
-              <div className="flex items-center justify-end gap-2 px-6 py-3 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/70">
-              <Button variant="secondary" size="md" onClick={() => setShowPasswordModal(false)}>
-                Hủy
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => {
-                  setShowPasswordModal(false);
-                  void handleStartExam();
+          {isAccessCodeRequired && (
+            <div className="space-y-1.5">
+              <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
+                Mã truy cập phòng thi <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                autoComplete="off"
+                placeholder="Nhập mã truy cập..."
+                value={accessCode}
+                onChange={(e) => {
+                  setAccessCode(e.target.value);
+                  if (error) setError(null);
                 }}
-                disabled={
-                  starting ||
-                  (isPasswordRequired && !examPassword.trim()) ||
-                  (isAccessCodeRequired && !accessCode.trim())
-                }
-              >
-                Xác nhận
-              </Button>
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (!isPasswordRequired || examPassword.trim()) && (!isAccessCodeRequired || accessCode.trim())) {
+                    setShowPasswordModal(false);
+                    void handleStartExam();
+                  }
+                }}
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              />
             </div>
+          )}
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <Button variant="secondary" size="md" onClick={() => setShowPasswordModal(false)}>
+              Hủy bỏ
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => {
+                setShowPasswordModal(false);
+                void handleStartExam();
+              }}
+              disabled={
+                starting ||
+                (isPasswordRequired && !examPassword.trim()) ||
+                (isAccessCodeRequired && !accessCode.trim())
+              }
+            >
+              Vào làm bài
+            </Button>
           </div>
         </div>
-      )}
+      </Modal>
       {/* Candidate Profile Drawer */}
       <ProfileDrawer
         isOpen={showProfileDrawer}
