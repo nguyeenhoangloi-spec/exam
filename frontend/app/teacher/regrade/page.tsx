@@ -289,167 +289,166 @@ export default function RegradeManagementPage() {
   };
 
   return (
-    <main className="w-full min-w-0 px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
-      {/* Toast Notification */}
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    <>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+        {/* ── 1. Page Header ── */}
+        <RegradeHeader
+          onRefresh={handleRefresh}
+          onExportExcel={exportExcel}
+          onPrintReport={handlePrintReport}
+          loading={loading}
+        />
 
-      {/* ── 1. Page Header ── */}
-      <RegradeHeader
-        onRefresh={handleRefresh}
-        onExportExcel={exportExcel}
-        onPrintReport={handlePrintReport}
-        loading={loading}
-      />
+        {/* ── 2. Dynamic KPI Summary Grid ── */}
+        <RegradeKPICards
+          all={counts.all}
+          pending={counts.pending}
+          approved={counts.approved}
+          rejected={counts.rejected}
+        />
 
-      {/* ── 2. Dynamic KPI Summary Grid ── */}
-      <RegradeKPICards
-        all={counts.all}
-        pending={counts.pending}
-        approved={counts.approved}
-        rejected={counts.rejected}
-      />
-
-      {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Left: Search input + 1 Unified Filter Popover */}
-        <div className="flex items-center gap-2 flex-1 max-w-xl">
-          <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Tìm theo mã SV, họ tên, lý do..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-            />
-            {search ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
+        {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+          {/* Left: Search input + 1 Unified Filter Popover */}
+          <div className="flex items-center gap-2 flex-1 max-w-xl">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm theo mã SV, họ tên, lý do..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
-                title="Xóa tìm kiếm"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            ) : (
-              <kbd
-                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
-                onClick={() => searchInputRef.current?.focus()}
-                title="Nhấn phím / để tìm nhanh"
-              >
-                /
-              </kbd>
-            )}
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <kbd
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  onClick={() => searchInputRef.current?.focus()}
+                  title="Nhấn phím / để tìm nhanh"
+                >
+                  /
+                </kbd>
+              )}
+            </div>
+
+            <RegradeFilterPopover
+              statusTab={statusTab}
+              onStatusTabChange={(val) => {
+                setStatusTab(val);
+                setPage(1);
+              }}
+              subjectFilter={subjectFilter}
+              onSubjectFilterChange={(val) => {
+                setSubjectFilter(val);
+                setPage(1);
+              }}
+              appeals={appeals}
+              subjectsList={subjectsList}
+              totalFilteredCount={filteredAppeals.length}
+              onResetAll={() => {
+                setSearch('');
+                setStatusTab('ALL');
+                setSubjectFilter('ALL');
+                setPage(1);
+              }}
+            />
           </div>
 
-          <RegradeFilterPopover
-            statusTab={statusTab}
-            onStatusTabChange={(val) => {
-              setStatusTab(val);
-              setPage(1);
-            }}
-            subjectFilter={subjectFilter}
-            onSubjectFilterChange={(val) => {
-              setSubjectFilter(val);
-              setPage(1);
-            }}
-            appeals={appeals}
-            subjectsList={subjectsList}
-            totalFilteredCount={filteredAppeals.length}
-            onResetAll={() => {
-              setSearch('');
-              setStatusTab('ALL');
-              setSubjectFilter('ALL');
-              setPage(1);
-            }}
-          />
+          {/* Right: Table Action Controls */}
+          <div className="shrink-0">
+            <RegradeTableToolbar
+              totalCount={filteredAppeals.length}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+              onRefresh={handleRefresh}
+            />
+          </div>
         </div>
 
-        {/* Right: Table Action Controls */}
-        <div className="shrink-0">
-          <RegradeTableToolbar
-            totalCount={filteredAppeals.length}
-            sortOrder={sortOrder}
-            onSortChange={setSortOrder}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-            visibleColumns={visibleColumns}
-            onColumnToggle={handleColumnToggle}
-            onRefresh={handleRefresh}
-          />
-        </div>
-      </div>
-
-      {/* ── 4. Status Filter TabBar ── */}
-      <div className="border-b border-slate-200/80 dark:border-slate-800">
+        {/* ── 4. Status Filter TabBar ── */}
         <TabBar
           tabs={tabs}
           active={statusTab}
           onChange={(key) => { setStatusTab(key); setPage(1); }}
-          className="border-b-0 pt-0"
-        />
-      </div>
-
-      {/* ── 5. Main Data Table Container ── */}
-      <div>
-        <RegradeTable
-          appeals={paginatedAppeals}
-          loading={loading}
-          viewMode={viewMode}
-          visibleColumns={visibleColumns}
-          onReview={openReviewDrawer}
-          selected={selected}
-          onSelectAll={(checked) => {
-            if (checked) {
-              const pageIds = paginatedAppeals.map((i) => i.id);
-              setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
-            } else {
-              const pageIds = new Set(paginatedAppeals.map((i) => i.id));
-              setSelected((prev) => prev.filter((id) => !pageIds.has(id)));
-            }
-          }}
-          onSelectOne={(id, checked) => {
-            if (checked) setSelected((prev) => [...prev, id]);
-            else setSelected((prev) => prev.filter((item) => item !== id));
-          }}
         />
 
-        {filteredAppeals.length > 0 && (
-          <PaginationBar
-            page={page}
-            totalPages={totalPages}
-            limit={limit}
-            totalItems={filteredAppeals.length}
-            onPage={setPage}
-            onLimit={(l) => {
-              setLimit(l);
-              setPage(1);
+        {/* ── 5. Main Data Table Container ── */}
+        <div>
+          <RegradeTable
+            appeals={paginatedAppeals}
+            loading={loading}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onReview={openReviewDrawer}
+            selected={selected}
+            onSelectAll={(checked) => {
+              if (checked) {
+                const pageIds = paginatedAppeals.map((i) => i.id);
+                setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
+              } else {
+                const pageIds = new Set(paginatedAppeals.map((i) => i.id));
+                setSelected((prev) => prev.filter((id) => !pageIds.has(id)));
+              }
             }}
-            unit="đơn phúc khảo"
+            onSelectOne={(id, checked) => {
+              if (checked) setSelected((prev) => [...prev, id]);
+              else setSelected((prev) => prev.filter((item) => item !== id));
+            }}
           />
-        )}
-      </div>
 
-      {/* ── 6. Review Drawer Modal ── */}
-      <RegradeReviewDrawer
-        selectedAppeal={selectedAppeal}
-        onClose={() => setSelectedAppeal(null)}
-        reviewStatus={reviewStatus}
-        setReviewStatus={setReviewStatus}
-        revisedScore={revisedScore}
-        setRevisedScore={setRevisedScore}
-        reviewerNote={reviewerNote}
-        setReviewerNote={setReviewerNote}
-        handleSaveReview={handleSaveReview}
-        submitting={submitting}
-      />
-    </main>
+          {filteredAppeals.length > 0 && (
+            <PaginationBar
+              page={page}
+              totalPages={totalPages}
+              limit={limit}
+              totalItems={filteredAppeals.length}
+              onPage={setPage}
+              onLimit={(l) => {
+                setLimit(l);
+                setPage(1);
+              }}
+              unit="đơn phúc khảo"
+            />
+          )}
+        </div>
+
+        {/* ── 6. Review Drawer Modal ── */}
+        <RegradeReviewDrawer
+          selectedAppeal={selectedAppeal}
+          onClose={() => setSelectedAppeal(null)}
+          reviewStatus={reviewStatus}
+          setReviewStatus={setReviewStatus}
+          revisedScore={revisedScore}
+          setRevisedScore={setRevisedScore}
+          reviewerNote={reviewerNote}
+          setReviewerNote={setReviewerNote}
+          handleSaveReview={handleSaveReview}
+          submitting={submitting}
+        />
+      </main>
+
+      {/* Toast Notification */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    </>
   );
 }

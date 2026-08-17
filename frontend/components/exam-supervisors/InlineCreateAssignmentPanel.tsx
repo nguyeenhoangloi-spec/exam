@@ -198,7 +198,7 @@ export function InlineCreateAssignmentPanel({
             onClick={onClose}
             disabled={loading}
           >
-            Thu Gọn
+            Hủy
           </Button>
           {/* Tầng 1: Primary Solid Button */}
           <Button
@@ -207,7 +207,7 @@ export function InlineCreateAssignmentPanel({
             size="md"
             disabled={loading || !roomId || (!supervisor1Id && !supervisor2Id)}
           >
-            {loading ? 'Đang lưu...' : 'Lưu Phân Công'}
+            {loading ? 'Đang lưu...' : 'Lưu phân công'}
           </Button>
         </div>
       </div>

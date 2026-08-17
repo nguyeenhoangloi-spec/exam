@@ -224,7 +224,7 @@ export function InlineAutoProposalPanel({
             onClick={onClose}
             disabled={loading}
           >
-            Thu Gọn
+            Hủy
           </Button>
           {/* Tầng 1: Primary Solid Button */}
           <Button
@@ -234,7 +234,7 @@ export function InlineAutoProposalPanel({
             onClick={handleSave}
             disabled={loading || totalAssignedCount === 0}
           >
-            {loading ? 'Đang lưu...' : 'Lưu Phương Án'}
+            {loading ? 'Đang lưu...' : 'Lưu phương án'}
           </Button>
         </div>
       </div>

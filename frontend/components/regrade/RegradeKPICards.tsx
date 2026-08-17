@@ -54,7 +54,7 @@ export function RegradeKPICards({
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => {
         const IconComponent = item.icon;
         return (
@@ -67,9 +67,8 @@ export function RegradeKPICards({
                 <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {item.title}
                 </span>
-                <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                <div className="text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                   {item.value.toLocaleString('vi-VN')}
-                  {item.unit ? <span className="text-xs font-normal text-slate-500 dark:text-slate-400 ml-1">{item.unit}</span> : ''}
                 </div>
               </div>
 

@@ -58,7 +58,7 @@ export function RegradeTableToolbar({
     { key: 'status', label: 'Trạng thái xử lý' },
   ];
 
-    return (
+  return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       <div className="flex items-center gap-2">
         {/* Sort */}
@@ -85,11 +85,10 @@ export function RegradeTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('list')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-              viewMode === 'list'
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list'
                 ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                 : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
+              }`}
             title="Dạng danh sách"
           >
             <List className="h-4 w-4" />
@@ -97,11 +96,10 @@ export function RegradeTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('grid')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-              viewMode === 'grid'
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid'
                 ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                 : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
+              }`}
             title="Dạng thẻ"
           >
             <LayoutGrid className="h-4 w-4" />
@@ -109,11 +107,10 @@ export function RegradeTableToolbar({
           <button
             type="button"
             onClick={() => onViewModeChange?.('compact')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-              viewMode === 'compact'
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact'
                 ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                 : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
+              }`}
             title="Dạng thu gọn"
           >
             <Layers className="h-4 w-4" />

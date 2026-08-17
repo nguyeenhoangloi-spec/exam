@@ -24,7 +24,7 @@ export function RegradeHeader({
           Thẩm định phúc khảo
         </h1>
         <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-          Tiếp nhận đơn khiếu nại từ sinh viên, thẩm định bài thi, điều chỉnh điểm số và công bố kết quả.
+          Tiếp nhận đơn khiếu nại từ sinh viên, thẩm định bài thi và công bố kết quả
         </p>
       </div>
 

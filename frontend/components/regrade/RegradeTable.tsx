@@ -128,15 +128,15 @@ export function RegradeTable({
                 </div>
               </div>
 
-              {/* Card Footer: Nút Thẩm định & Chấm lại duy nhất */}
+              {/* Card Footer: Nút Thẩm định đơn theo trạng thái */}
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end">
                 <Button
-                  variant="primary"
+                  variant={item.status === 'PENDING' ? 'primary' : 'secondary'}
                   size="sm"
                   onClick={() => onReview(item)}
-                  leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                  leftIcon={item.status === 'PENDING' ? <Edit3 className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                 >
-                  Thẩm định & Chấm lại
+                  {item.status === 'PENDING' ? 'Thẩm định đơn' : 'Xem thẩm định'}
                 </Button>
               </div>
             </div>
@@ -209,12 +209,12 @@ export function RegradeTable({
                 <StatusBadge status={badgeStatus} className="table-badge" />
 
                 <Button
-                  variant="primary"
+                  variant={item.status === 'PENDING' ? 'primary' : 'secondary'}
                   size="sm"
                   onClick={() => onReview(item)}
-                  leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                  leftIcon={item.status === 'PENDING' ? <Edit3 className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                 >
-                  Thẩm định
+                  {item.status === 'PENDING' ? 'Thẩm định đơn' : 'Xem thẩm định'}
                 </Button>
               </div>
             </div>
@@ -334,12 +334,12 @@ export function RegradeTable({
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                   <Button
-                    variant="primary"
+                    variant={item.status === 'PENDING' ? 'primary' : 'secondary'}
                     size="sm"
                     onClick={() => onReview(item)}
-                    leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                    leftIcon={item.status === 'PENDING' ? <Edit3 className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                   >
-                    Thẩm định & Chấm lại
+                    {item.status === 'PENDING' ? 'Thẩm định đơn' : 'Xem thẩm định'}
                   </Button>
                 </td>
               </tr>

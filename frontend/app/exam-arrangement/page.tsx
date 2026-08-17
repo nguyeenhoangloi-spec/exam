@@ -972,7 +972,7 @@ export default function ExamArrangementPage() {
                     </div>
 
                     {/* Action Buttons Toolbar Trong Khu Vực Kết Quả */}
-                    <div className="flex items-center gap-2 flex-wrap shrink-0">
+                    <div className="flex items-center gap-2.5 flex-wrap shrink-0">
                       <Button
                         type="button"
                         variant="secondary"
@@ -981,8 +981,11 @@ export default function ExamArrangementPage() {
                         leftIcon={<RotateCcw className="h-3.5 w-3.5 text-rose-500" />}
                         className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/50 hover:border-rose-200 dark:hover:border-rose-800"
                       >
-                        Hủy Phương Án
+                        Hủy phương án
                       </Button>
+
+                      {/* Vách ngăn phân tách thao tác hủy và nhóm lưu/trộn */}
+                      <div className="hidden sm:block h-6 w-px bg-slate-200 dark:bg-slate-700 mx-0.5" />
 
                       <Button
                         type="button"
@@ -991,7 +994,7 @@ export default function ExamArrangementPage() {
                         onClick={handleShuffleSeats}
                         leftIcon={<Shuffle className="h-3.5 w-3.5" />}
                       >
-                        Trộn Ghế Ngẫu Nhiên
+                        Trộn ghế ngẫu nhiên
                       </Button>
 
                       {result.preview && (
@@ -1010,7 +1013,7 @@ export default function ExamArrangementPage() {
                           }
                           leftIcon={<Check className="h-3.5 w-3.5" />}
                         >
-                          Lưu Phân Bổ
+                          Lưu phân bổ
                         </Button>
                       )}
                     </div>
