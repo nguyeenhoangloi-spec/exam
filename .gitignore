@@ -60,6 +60,8 @@ coverage/
 .edge-*/
 .ui-verify*
 .temp*
+backend/load-tests/*.local.json
+backend/load-tests/results/
 
 # ==========================================
 # 6. Database & Local Backups

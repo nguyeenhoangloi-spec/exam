@@ -259,30 +259,26 @@ export class EssayService {
               },
             });
             updatedCount++;
-          } else if (attempt.gradingStatus !== EssayAttemptGradingStatus.PUBLISHED) {
-            // Trường hợp 2: Thí sinh đã tham gia thi nhưng chưa nộp hoặc chưa công bố điểm khi hết giờ ca thi
-            // 1. Tự động chấm bài AI các câu tự luận dở dang
+          } else if (
+            attempt.gradingStatus !== EssayAttemptGradingStatus.PUBLISHED &&
+            attempt.gradingStatus !== EssayAttemptGradingStatus.WAITING_APPROVAL
+          ) {
+            // Trường hợp 2: Thí sinh đã tham gia thi nhưng hết giờ ca thi
+            // 1. Tự động chạy AI gợi ý điểm mẫu cho các câu tự luận nếu chưa có
             try {
               await this.autoGradeAttempt(attempt.id);
             } catch (e) {
               // Background AI fallback
             }
 
-            // 2. Tính tổng điểm thực tế từ các câu đã trả lời
-            const answers = await this.prisma.attemptAnswer.findMany({ where: { attemptId: attempt.id } });
-            const rawScore = answers.reduce((s, a) => s + (a.finalScore || 0), 0);
-            const penalty = attempt.penaltyPoints || 0;
-            const finalScore = Math.max(0, Number((rawScore - penalty).toFixed(2)));
-
-            // 3. Chuyển trạng thái sang AUTO_SUBMITTED và công bố điểm PUBLISHED
+            // 2. Tự động thu bài AUTO_SUBMITTED nếu đang dở dang và chuyển sang hàng đợi GRADING (Đang chấm) cho Giảng viên
+            const isAlreadySubmitted = attempt.status === AttemptStatus.SUBMITTED || attempt.status === AttemptStatus.AUTO_SUBMITTED;
             await this.prisma.examAttempt.update({
               where: { id: attempt.id },
               data: {
-                status: AttemptStatus.AUTO_SUBMITTED,
-                gradingStatus: EssayAttemptGradingStatus.PUBLISHED,
-                totalScore: finalScore,
+                status: isAlreadySubmitted ? attempt.status : AttemptStatus.AUTO_SUBMITTED,
+                gradingStatus: EssayAttemptGradingStatus.UNDER_GRADING,
                 submittedAt: attempt.submittedAt || examEnd,
-                publishedAt: now,
               },
             });
             updatedCount++;
