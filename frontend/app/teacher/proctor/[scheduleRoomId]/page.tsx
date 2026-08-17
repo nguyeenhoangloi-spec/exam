@@ -772,11 +772,10 @@ export default function ProctorDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setViewMode('list')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                    viewMode === 'list'
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'list'
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
+                    }`}
                   title="Dạng danh sách"
                 >
                   <List className="h-4 w-4" />
@@ -784,11 +783,10 @@ export default function ProctorDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setViewMode('grid')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                    viewMode === 'grid'
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'grid'
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
+                    }`}
                   title="Dạng sơ đồ chỗ ngồi"
                 >
                   <LayoutGrid className="h-4 w-4" />
@@ -796,11 +794,10 @@ export default function ProctorDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setViewMode('compact')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                    viewMode === 'compact'
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${viewMode === 'compact'
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
                       : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
+                    }`}
                   title="Dạng thu gọn"
                 >
                   <Layers className="h-4 w-4" />
@@ -865,13 +862,12 @@ export default function ProctorDashboardPage() {
             return (
               <div
                 key={s.student.id}
-                className={`group relative rounded-2xl border bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between ${
-                  isChecked
+                className={`group relative rounded-2xl border bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isChecked
                     ? 'border-blue-500 ring-2 ring-blue-500/20 bg-blue-50/10 dark:border-blue-500'
                     : hasFlagged
-                    ? 'border-rose-300 dark:border-rose-800 bg-rose-50/10'
-                    : 'border-slate-200/90 dark:border-slate-800'
-                }`}
+                      ? 'border-rose-300 dark:border-rose-800 bg-rose-50/10'
+                      : 'border-slate-200/90 dark:border-slate-800'
+                  }`}
               >
                 <div>
                   {/* Card Header: Checkbox + Seat Badge + StatusBadge */}
@@ -928,68 +924,68 @@ export default function ProctorDashboardPage() {
                 </div>
 
                 {/* Card Footer: Action Buttons */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1">
                   {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
-                    <Button
+                    <button
                       type="button"
-                      variant="secondary"
-                      size="sm"
                       onClick={() => {
                         setActionError(null);
                         setSelectedStudent(s);
                         setActionType('EXTEND');
                       }}
-                      leftIcon={<Clock className="w-3.5 h-3.5 text-blue-600" />}
+                      title="Gia hạn thời gian làm bài"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                     >
-                      Gia hạn
-                    </Button>
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Gia hạn</span>
+                    </button>
                   )}
 
                   {att && ['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
-                    <Button
+                    <button
                       type="button"
-                      variant="secondary"
-                      size="sm"
                       onClick={() => {
                         setActionError(null);
                         setSelectedStudent(s);
                         setActionType('REOPEN');
                       }}
-                      leftIcon={<RotateCcw className="w-3.5 h-3.5 text-amber-600" />}
+                      title="Mở lại phiên thi khi có sự cố"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
                     >
-                      Mở lại
-                    </Button>
+                      <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Mở lại</span>
+                    </button>
                   )}
 
-                  {att?.isFlagged && (
-                    <Button
+                  {att?.isFlagged ? (
+                    <button
                       type="button"
-                      variant="secondary"
-                      size="sm"
                       onClick={() => {
                         setActionError(null);
                         setSelectedStudent(s);
                         setActionType('RESOLVE');
                       }}
-                      leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                      title="Xử lý biên bản vi phạm"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
                     >
-                      Xử lý
-                    </Button>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                      <span>Xử lý</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActionError(null);
+                        setSelectedStudent(s);
+                        setActionType('FLAG');
+                      }}
+                      title="Lập biên bản sự cố vi phạm"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
+                    >
+                      <Flag className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Biên bản</span>
+                    </button>
                   )}
-
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setActionError(null);
-                      setSelectedStudent(s);
-                      setActionType('FLAG');
-                    }}
-                    leftIcon={<FileText className="w-3.5 h-3.5 text-rose-600" />}
-                  >
-                    Biên bản
-                  </Button>
                 </div>
               </div>
             );
@@ -1009,9 +1005,8 @@ export default function ProctorDashboardPage() {
             return (
               <div
                 key={s.student.id}
-                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xs transition duration-200 gap-3.5 ${
-                  isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                }`}
+                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                  }`}
               >
                 {/* Left: Checkbox + Seat Badge + Info */}
                 <div className="flex items-center gap-3.5 min-w-0">
@@ -1061,72 +1056,77 @@ export default function ProctorDashboardPage() {
                     customLabel={`${statusLabel}${att?.extraMinutes > 0 ? ` (+${att.extraMinutes}p)` : ''}`}
                   />
 
-                  <div className="inline-flex items-center gap-1.5 pl-2 border-l border-slate-100 dark:border-slate-800">
+                  <div className="inline-flex items-center gap-1 pl-2 border-l border-slate-100 dark:border-slate-800">
                     <button
                       type="button"
                       onClick={() => setInspectStudent(s)}
                       title="Xem chi tiết thí sinh"
-                      className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                      className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
+
                     {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
-                      <Button
-                        variant="secondary"
-                        size="xs"
+                      <button
+                        type="button"
                         onClick={() => {
                           setActionError(null);
                           setSelectedStudent(s);
                           setActionType('EXTEND');
                         }}
-                        leftIcon={<Clock className="w-3.5 h-3.5 text-blue-600" />}
+                        title="Gia hạn thời gian làm bài"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                       >
-                        Gia hạn
-                      </Button>
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Gia hạn</span>
+                      </button>
                     )}
 
                     {att && ['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
-                      <Button
-                        variant="secondary"
-                        size="xs"
+                      <button
+                        type="button"
                         onClick={() => {
                           setActionError(null);
                           setSelectedStudent(s);
                           setActionType('REOPEN');
                         }}
-                        leftIcon={<RotateCcw className="w-3.5 h-3.5 text-amber-600" />}
+                        title="Mở lại phiên thi khi có sự cố"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
                       >
-                        Mở lại
-                      </Button>
+                        <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Mở lại</span>
+                      </button>
                     )}
 
-                    {att?.isFlagged && (
-                      <Button
-                        variant="secondary"
-                        size="xs"
+                    {att?.isFlagged ? (
+                      <button
+                        type="button"
                         onClick={() => {
                           setActionError(null);
                           setSelectedStudent(s);
                           setActionType('RESOLVE');
                         }}
-                        leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                        title="Xử lý biên bản vi phạm"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
                       >
-                        Xử lý
-                      </Button>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                        <span>Xử lý</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActionError(null);
+                          setSelectedStudent(s);
+                          setActionType('FLAG');
+                        }}
+                        title="Lập biên bản sự cố vi phạm"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
+                      >
+                        <Flag className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Biên bản</span>
+                      </button>
                     )}
-
-                    <Button
-                      variant="secondary"
-                      size="xs"
-                      onClick={() => {
-                        setActionError(null);
-                        setSelectedStudent(s);
-                        setActionType('FLAG');
-                      }}
-                      leftIcon={<FileText className="w-3.5 h-3.5 text-rose-600" />}
-                    >
-                      Biên bản
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -1232,15 +1232,18 @@ export default function ProctorDashboardPage() {
                     {/* Actions */}
                     {visibleColumns.actions !== false && (
                       <td className="p-3.5 pr-4 text-right whitespace-nowrap">
-                        <div className="inline-flex items-center gap-1.5">
+                        <div className="table-action inline-flex items-center gap-1">
+                          {/* Xem chi tiết hồ sơ */}
                           <button
                             type="button"
                             onClick={() => setInspectStudent(s)}
-                            title="Xem chi tiết thí sinh"
-                            className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                            title="Xem chi tiết hồ sơ thí sinh"
+                            className="table-action h-8 w-8 inline-flex items-center justify-center rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
+
+                          {/* Gia hạn bài thi */}
                           {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
                             <button
                               type="button"
@@ -1250,12 +1253,14 @@ export default function ProctorDashboardPage() {
                                 setActionType('EXTEND');
                               }}
                               title="Gia hạn thời gian làm bài"
-                              className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-200 hover:text-blue-700 px-3 py-1.5 text-[15px] leading-[22px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                             >
-                              <Clock className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-blue-600 transition-colors" />
+                              <Clock className="w-3.5 h-3.5 text-slate-400" />
                               <span>Gia hạn</span>
                             </button>
                           )}
+
+                          {/* Mở lại phiên thi */}
                           {att && ['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
                             <button
                               type="button"
@@ -1265,13 +1270,15 @@ export default function ProctorDashboardPage() {
                                 setActionType('REOPEN');
                               }}
                               title="Mở lại phiên thi khi có sự cố"
-                              className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950 text-slate-700 dark:text-slate-200 hover:text-amber-700 px-3 py-1.5 text-[15px] leading-[22px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
                             >
-                              <RotateCcw className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-amber-600 transition-colors" />
+                              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
                               <span>Mở lại</span>
                             </button>
                           )}
-                          {att?.isFlagged && (
+
+                          {/* Xử lý biên bản nếu đã bị flag */}
+                          {att?.isFlagged ? (
                             <button
                               type="button"
                               onClick={() => {
@@ -1280,25 +1287,27 @@ export default function ProctorDashboardPage() {
                                 setActionType('RESOLVE');
                               }}
                               title="Xử lý biên bản vi phạm"
-                              className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-200 hover:text-emerald-700 px-3 py-1.5 text-[15px] leading-[22px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
                             >
-                              <CheckCircle2 className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-emerald-600 transition-colors" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                               <span>Xử lý</span>
                             </button>
+                          ) : (
+                            /* Lập biên bản vi phạm */
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActionError(null);
+                                setSelectedStudent(s);
+                                setActionType('FLAG');
+                              }}
+                              title="Lập biên bản sự cố vi phạm"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
+                            >
+                              <Flag className="w-3.5 h-3.5 text-slate-400" />
+                              <span>Biên bản</span>
+                            </button>
                           )}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActionError(null);
-                              setSelectedStudent(s);
-                              setActionType('FLAG');
-                            }}
-                            title="Lập biên bản sự cố"
-                            className="group/btn inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950 text-slate-700 dark:text-slate-200 hover:text-rose-700 px-3 py-1.5 text-[15px] leading-[22px] font-medium shadow-2xs transition active:scale-95 cursor-pointer"
-                          >
-                            <FileText className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-rose-600 transition-colors" />
-                            <span>Biên bản</span>
-                          </button>
                         </div>
                       </td>
                     )}
@@ -1408,15 +1417,14 @@ export default function ProctorDashboardPage() {
               {/* Modal header */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${
-                    actionType === 'FLAG'
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${actionType === 'FLAG'
                       ? 'border-rose-200/80 dark:border-rose-800/60 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
                       : actionType === 'RESOLVE'
-                      ? 'border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
-                      : actionType === 'REOPEN'
-                      ? 'border-amber-200/80 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
-                      : 'border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
-                  } shadow-2xs shrink-0`}>
+                        ? 'border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
+                        : actionType === 'REOPEN'
+                          ? 'border-amber-200/80 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
+                          : 'border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                    } shadow-2xs shrink-0`}>
                     <MetaIcon className="h-4.5 w-4.5" />
                   </div>
                   <div>
@@ -1468,11 +1476,10 @@ export default function ProctorDashboardPage() {
                           key={m}
                           type="button"
                           onClick={() => setExtraMinutes(m)}
-                          className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
-                            extraMinutes === m
+                          className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${extraMinutes === m
                               ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                               : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
-                          }`}
+                            }`}
                         >
                           +{m}p
                         </button>
@@ -1534,15 +1541,13 @@ export default function ProctorDashboardPage() {
                           key={opt.value}
                           type="button"
                           onClick={() => setIncidentDecision(opt.value)}
-                          className={`p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${
-                            incidentDecision === opt.value
+                          className={`p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${incidentDecision === opt.value
                               ? 'border-rose-500 bg-rose-50/90 dark:bg-rose-950/60 ring-1 ring-rose-500/50'
                               : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50/30 dark:hover:bg-rose-950/30'
-                          }`}
+                            }`}
                         >
-                          <div className={`text-[13px] font-semibold ${
-                            incidentDecision === opt.value ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-slate-100'
-                          }`}>
+                          <div className={`text-[13px] font-semibold ${incidentDecision === opt.value ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-slate-100'
+                            }`}>
                             {opt.label}
                           </div>
                           <p className="text-[12px] text-slate-500 dark:text-slate-400 font-normal line-clamp-1 mt-0.5">
@@ -1584,11 +1589,10 @@ export default function ProctorDashboardPage() {
                           key={tpl}
                           type="button"
                           onClick={() => setReason(tpl)}
-                          className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${
-                            reason === tpl
+                          className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${reason === tpl
                               ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300'
                               : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800'
-                          }`}
+                            }`}
                         >
                           {tpl}
                         </button>
@@ -1608,9 +1612,8 @@ export default function ProctorDashboardPage() {
                         handleAction();
                       }
                     }}
-                    className={`w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${
-                      actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
-                    }`}
+                    className={`w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
+                      }`}
                   />
 
                   {/* Meta row */}
@@ -1705,11 +1708,10 @@ export default function ProctorDashboardPage() {
                       key={m}
                       type="button"
                       onClick={() => setMultiMinutes(m)}
-                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
-                        multiMinutes === m
+                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${multiMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                           : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
-                      }`}
+                        }`}
                     >
                       +{m}p
                     </button>
@@ -1772,7 +1774,7 @@ export default function ProctorDashboardPage() {
             </div>
           </div>
         </div>
-      , document.body)}
+        , document.body)}
 
       {/* ═══════ BROADCAST ANNOUNCEMENT MODAL ═══════ */}
       {mounted && showBroadcastModal && typeof document !== 'undefined' && createPortal(
@@ -1860,18 +1862,16 @@ export default function ProctorDashboardPage() {
                         key={preset.id}
                         type="button"
                         onClick={() => setBroadcastMessage(preset.text)}
-                        className={`group flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${
-                          isSelected
+                        className={`group flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${isSelected
                             ? 'border-blue-500 bg-blue-50/90 dark:bg-blue-950/60 ring-1 ring-blue-500/50'
                             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/30 dark:hover:bg-blue-950/30'
-                        }`}
+                          }`}
                       >
                         <span
-                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition ${
-                            isSelected
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition ${isSelected
                               ? 'bg-blue-600 text-white'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/60 group-hover:text-blue-600'
-                          }`}
+                            }`}
                         >
                           <PresetIcon className="h-3.5 w-3.5" />
                         </span>
@@ -1927,9 +1927,8 @@ export default function ProctorDashboardPage() {
                     Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để gửi nhanh
                   </span>
                   <span
-                    className={`ml-auto font-medium tabular-nums ${
-                      broadcastMessage.length >= 450 ? 'text-amber-600 dark:text-amber-400' : ''
-                    }`}
+                    className={`ml-auto font-medium tabular-nums ${broadcastMessage.length >= 450 ? 'text-amber-600 dark:text-amber-400' : ''
+                      }`}
                   >
                     {broadcastMessage.length} / 500 ký tự
                   </span>
@@ -1962,7 +1961,7 @@ export default function ProctorDashboardPage() {
             </div>
           </div>
         </div>
-      , document.body)}
+        , document.body)}
 
       {/* ═══════ BULK EXTEND MODAL ═══════ */}
       {mounted && showBulkModal && typeof document !== 'undefined' && createPortal(
@@ -2016,11 +2015,10 @@ export default function ProctorDashboardPage() {
                       key={m}
                       type="button"
                       onClick={() => setBulkMinutes(m)}
-                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
-                        bulkMinutes === m
+                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${bulkMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                           : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
-                      }`}
+                        }`}
                     >
                       +{m}p
                     </button>
@@ -2046,11 +2044,10 @@ export default function ProctorDashboardPage() {
                       key={r}
                       type="button"
                       onClick={() => setBulkReason(r)}
-                      className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${
-                        bulkReason === r
+                      className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${bulkReason === r
                           ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300'
                           : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800'
-                      }`}
+                        }`}
                     >
                       {r}
                     </button>
@@ -2109,7 +2106,7 @@ export default function ProctorDashboardPage() {
             </div>
           </div>
         </div>
-      , document.body)}
+        , document.body)}
 
       {/* ═══════ REOPEN ENTRY MODAL ═══════ */}
       {mounted && showReopenEntryModal && typeof document !== 'undefined' && createPortal(
@@ -2152,11 +2149,10 @@ export default function ProctorDashboardPage() {
                       key={m}
                       type="button"
                       onClick={() => setLateWindowMinutes(m)}
-                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
-                        lateWindowMinutes === m
+                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${lateWindowMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                           : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
-                      }`}
+                        }`}
                     >
                       +{m}p
                     </button>
@@ -2190,7 +2186,7 @@ export default function ProctorDashboardPage() {
             </div>
           </div>
         </div>
-      , document.body)}
+        , document.body)}
 
       {/* Candidate Profile Drawer */}
       <ProfileDrawer
@@ -2280,7 +2276,7 @@ export default function ProctorDashboardPage() {
                 {inspectStudent?.attempt?.isFlagged && (
                   <Button
                     type="button"
-                    variant="secondary"
+                    variant="danger"
                     size="sm"
                     onClick={() => {
                       const target = inspectStudent;
@@ -2289,7 +2285,7 @@ export default function ProctorDashboardPage() {
                       setSelectedStudent(target);
                       setActionType('RESOLVE');
                     }}
-                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
                   >
                     Xử lý biên bản
                   </Button>
@@ -2305,7 +2301,7 @@ export default function ProctorDashboardPage() {
                     setSelectedStudent(target);
                     setActionType('FLAG');
                   }}
-                  leftIcon={<FileText className="w-3.5 h-3.5 text-rose-600" />}
+                  leftIcon={<Flag className="w-3.5 h-3.5 text-rose-600" />}
                 >
                   Lập biên bản
                 </Button>
