@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { AlertTriangle, Lock, ShieldAlert, KeyRound, X, Eye, EyeOff } from 'lucide-react';
 import { FilterSelect } from './ui/FilterSelect';
 import { Button } from './ui/Button';
+import { getUserErrorMessage } from '../lib/error-message';
 
 export interface CriticalConfirmPayload {
   reason: string;
@@ -144,9 +145,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      setErrorMsg(
-        err?.response?.data?.message || err.message || 'Xác thực thất bại. Vui lòng kiểm tra lại mật khẩu.',
-      );
+      setErrorMsg(getUserErrorMessage(err, 'Xác thực thất bại. Vui lòng kiểm tra lại thông tin.'));
     } finally {
       setLoading(false);
     }

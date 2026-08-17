@@ -45,13 +45,13 @@ import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
 import { Modal } from '../../../components/Modal';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import { Toast } from '../../../components/Toast';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../components/CriticalConfirmModal';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { StatusBadge } from '../../../components/common/StatusBadge';
-import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { BackupFilterPopover } from '../../../components/backups/BackupFilterPopover';
 
 type BackupJobType = 'FULL' | 'DATABASE' | 'UPLOADS' | 'SAFETY';
@@ -347,14 +347,15 @@ export default function BackupsPage() {
         setRejectReason(request.status === 'FAILED' ? 'Đã kiểm tra lỗi restore và xác nhận mở khóa hệ thống.' : '');
     };
 
-    const handleRejectRequest = async () => {
-        if (!rejectRequest || !rejectReason.trim()) {
+    const handleRejectRequest = async (reasonText?: string) => {
+        const finalReason = (reasonText || rejectReason).trim();
+        if (!rejectRequest || !finalReason) {
             setToast({ message: 'Vui lòng nhập lý do từ chối hoặc mở khóa.', type: 'error' });
             return;
         }
         setActionLoading(true);
         try {
-            await api.post(`/backups/restore-requests/${rejectRequest.id}/reject`, { reason: rejectReason.trim() });
+            await api.post(`/backups/restore-requests/${rejectRequest.id}/reject`, { reason: finalReason });
             setToast({
                 message: rejectRequest.status === 'FAILED' ? 'Đã mở khóa maintenance. Hệ thống có thể hoạt động lại.' : 'Đã từ chối yêu cầu khôi phục.',
                 type: 'success',
@@ -816,9 +817,10 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="min-w-0 truncate text-left text-[14px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
+                                                className="min-w-0 truncate text-left text-[14px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer tabular-nums"
+                                                title={job.snapshotId}
                                             >
-                                                <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                                {job.snapshotId}
                                             </button>
                                         </div>
                                         {getBackupStatusBadge(job.status)}
@@ -888,9 +890,10 @@ export default function BackupsPage() {
                                         <button
                                             type="button"
                                             onClick={() => setDetailJob(job)}
-                                            className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                                            className="tabular-nums text-[14px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                                            title={job.snapshotId}
                                         >
-                                            <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                            {job.snapshotId}
                                         </button>
 
                                         <div className="min-w-0">
@@ -1007,9 +1010,10 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="tabular-nums text-[15px] leading-[22px] font-medium text-blue-700 dark:text-blue-400 hover:text-blue-900 transition text-left cursor-pointer"
+                                                className="tabular-nums text-[15px] leading-[22px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition text-left cursor-pointer"
+                                                title={job.snapshotId}
                                             >
-                                                <IdentifierBadge tone="blue" title={job.snapshotId}>{job.snapshotId}</IdentifierBadge>
+                                                {job.snapshotId}
                                             </button>
                                             {job.checksum && (
                                                 <div className="table-meta mt-0.5 text-[13px] leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
@@ -1097,116 +1101,131 @@ export default function BackupsPage() {
             {/* Pending Restore Requests Table */}
             {restoreRequests.length > 0 && (
                 <div className="space-y-3 pt-2">
-                    {/* Section header — edu-section-title với warning indicator */}
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                            <h2 className="edu-section-title text-slate-900">
+                    {/* Section header — Chuẩn Design System */}
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                            <span className="h-4 w-1 rounded-full bg-amber-500 shrink-0" />
+                            <h2 className="text-[18px] font-semibold text-slate-900 dark:text-slate-100">
                                 Yêu cầu khôi phục đang chờ xử lý
                             </h2>
-                            <span className="inline-flex items-center justify-center h-6 min-w-[24px] px-2 rounded-full bg-warning-600 text-white text-[12px] font-semibold leading-none">
+                            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
                                 {restoreRequests.length}
                             </span>
                         </div>
-                        <p className="edu-helper text-slate-500 hidden sm:block shrink-0">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 hidden sm:block shrink-0">
                             Các yêu cầu chờ Admin thứ hai phê duyệt
                         </p>
                     </div>
 
                     {/* Table */}
-                    <div className="ui-table-wrap border-warning-200/80">
-                        <table className="ui-table">
+                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                        <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-[15px]">
                             <thead>
-                                <tr className="bg-warning-50 border-b border-warning-200/70">
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Snapshot ID</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Môi trường</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800">Lý do khôi phục</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Người tạo yêu cầu</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 whitespace-nowrap">Thời hạn</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-800 text-right whitespace-nowrap">Thao tác</th>
+                                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Snapshot ID</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Môi trường</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300">Lý do khôi phục</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Người tạo yêu cầu</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Thời hạn</th>
+                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 text-right whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {restoreRequests.map((request) => {
                                     const selfBlocked = isSelfApprovalBlocked(request);
+                                    const isExpired = request.expiresAt ? new Date(request.expiresAt) < new Date() : false;
+
                                     return (
                                         <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
                                             {/* Snapshot ID */}
-                                            <td className="px-4 py-3.5 tabular-nums text-[15px] font-medium text-slate-900 whitespace-nowrap">
-                                                <IdentifierBadge title={request.backupJob.snapshotId}>{request.backupJob.snapshotId}</IdentifierBadge>
+                                            <td className="px-4 py-3.5 tabular-nums text-[15px] font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap" title={request.backupJob.snapshotId}>
+                                                {request.backupJob.snapshotId}
                                             </td>
 
-                                            {/* Environment — flat, no border, no background */}
+                                            {/* Environment — flat Sentence case */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
                                                 {request.target === 'PRODUCTION' ? (
-                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[15px] font-medium text-danger-600">
-                                                        <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
-                                                        PRODUCTION
+                                                    <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-rose-600 dark:text-rose-400">
+                                                        <ShieldAlert className="h-4 w-4 shrink-0" />
+                                                        Production
                                                     </span>
                                                 ) : (
-                                                    <span className="table-badge inline-flex items-center gap-1.5 text-[15px] font-medium text-warning-600">
-                                                        <Server className="h-3.5 w-3.5 shrink-0" />
-                                                        STAGING
+                                                    <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-amber-600 dark:text-amber-400">
+                                                        <Server className="h-4 w-4 shrink-0" />
+                                                        Staging
                                                     </span>
                                                 )}
                                             </td>
 
                                             {/* Reason */}
                                             <td className="px-4 py-3.5">
-                                                <p className="edu-secondary text-slate-800 max-w-[240px] line-clamp-2">{request.reason}</p>
+                                                <p className="text-[15px] font-normal text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
+                                                    {request.reason || 'Chưa nhập lý do'}
+                                                </p>
                                             </td>
 
                                             {/* Requested by */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
-                                                <span className="inline-flex items-center gap-1.5 edu-secondary font-medium text-slate-800">
-                                                    <UserIcon className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                                                <span className="inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                                                    <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                                     {request.requestedBy?.username || 'admin'}
                                                 </span>
                                             </td>
 
                                             {/* Expires at */}
-                                            <td className="px-4 py-3.5 whitespace-nowrap edu-secondary text-slate-600">
-                                                {formatDate(request.expiresAt)}
+                                            <td className="px-4 py-3.5 whitespace-nowrap text-[15px] text-slate-600 dark:text-slate-400 tabular-nums">
+                                                {isExpired ? (
+                                                    <div className="table-meta flex flex-col">
+                                                        <span className="table-meta text-xs font-semibold text-rose-600 dark:text-rose-400">Đã hết hạn</span>
+                                                        <span className="table-meta text-xs text-slate-400">{formatDate(request.expiresAt)}</span>
+                                                    </div>
+                                                ) : (
+                                                    <span>{formatDate(request.expiresAt)}</span>
+                                                )}
                                             </td>
 
                                             {/* Actions */}
                                             <td className="px-4 py-3.5 text-right whitespace-nowrap">
                                                 {request.status === 'PENDING_APPROVAL' ? (
-                                                    <div className="inline-flex items-center gap-3">
+                                                    <div className="inline-flex items-center justify-end gap-2">
                                                         {selfBlocked ? (
                                                             <span
                                                                 title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
-                                                                className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-400 cursor-default select-none"
+                                                                className="table-meta inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 cursor-default select-none mr-1"
                                                             >
                                                                 <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
-                                                                Cần Admin khác phê duyệt
+                                                                Cần Admin khác duyệt
                                                             </span>
                                                         ) : (
-                                                            <button
+                                                            <Button
                                                                 type="button"
+                                                                variant="primary"
+                                                                size="sm"
                                                                 onClick={() => openCriticalApproveModal(request)}
-                                                                className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-amber-600 hover:text-amber-700 transition cursor-pointer"
+                                                                leftIcon={<LockKeyhole className="h-3.5 w-3.5" />}
                                                             >
-                                                                <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
                                                                 Phê duyệt an toàn
-                                                            </button>
+                                                            </Button>
                                                         )}
-                                                        <button
+                                                        <Button
                                                             type="button"
+                                                            variant="secondary"
+                                                            size="sm"
                                                             onClick={() => openRejectModal(request)}
-                                                            className="table-action text-[15px] font-medium text-danger-600 hover:text-danger-700 transition cursor-pointer"
                                                         >
                                                             Từ chối
-                                                        </button>
+                                                        </Button>
                                                     </div>
                                                 ) : request.status === 'FAILED' && request.errorMessage?.startsWith('[MAINTENANCE_LOCKED]') ? (
-                                                    <button
+                                                    <Button
                                                         type="button"
+                                                        variant="danger"
+                                                        size="sm"
                                                         onClick={() => openRejectModal(request)}
-                                                        className="table-action inline-flex items-center gap-1.5 text-[15px] font-medium text-danger-600 hover:text-danger-700 transition cursor-pointer"
+                                                        leftIcon={<Unlock className="h-3.5 w-3.5" />}
                                                     >
-                                                        <Unlock className="h-3.5 w-3.5 shrink-0" />
                                                         Mở khóa hệ thống
-                                                    </button>
+                                                    </Button>
                                                 ) : (
                                                     getBackupStatusBadge(request.status as any)
                                                 )}
@@ -1254,10 +1273,8 @@ export default function BackupsPage() {
                                                 </h2>
                                                 <StatusBadge status={drawerOpenJob.status} />
                                             </div>
-                                            <div className="mt-1 flex items-center gap-2 flex-wrap">
-                                                <IdentifierBadge tone="neutral" title={drawerOpenJob.snapshotId}>
-                                                    {drawerOpenJob.snapshotId}
-                                                </IdentifierBadge>
+                                            <div className="mt-1 flex items-center gap-2 flex-wrap text-xs font-medium text-slate-500 dark:text-slate-400 tabular-nums">
+                                                <span>Mã: {drawerOpenJob.snapshotId}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1409,8 +1426,9 @@ export default function BackupsPage() {
 
                     {/* Frameless Selected Snapshot Info */}
                     <div className="space-y-0.5 pb-2 border-b border-slate-100">
-                        <span className="text-xs font-semibold text-slate-500 block">Snapshot đã chọn</span>
-                        <IdentifierBadge tone="neutral" title={selectedJob?.snapshotId}>{selectedJob?.snapshotId}</IdentifierBadge>
+                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+                            {selectedJob?.snapshotId}
+                        </p>
                         <p className="text-xs font-semibold text-slate-500 mt-0.5">
                             {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
                         </p>
@@ -1455,40 +1473,24 @@ export default function BackupsPage() {
                 </div>
             </Modal>
 
-            {/* Reject restore / release production maintenance lock */}
-            <Modal
+            {/* Reject restore / release production maintenance lock using shared ConfirmModal */}
+            <ConfirmModal
                 isOpen={Boolean(rejectRequest)}
                 onClose={() => !actionLoading && setRejectRequest(null)}
+                onConfirm={(reasonText) => void handleRejectRequest(reasonText)}
                 title={rejectRequest?.status === 'FAILED' ? 'Mở khóa hệ thống sau restore lỗi' : 'Từ chối yêu cầu khôi phục'}
-                size="md"
-            >
-                <div className="space-y-4 py-1">
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                        {rejectRequest?.status === 'FAILED'
-                            ? 'Restore Production đã thất bại. Hệ thống đang giữ maintenance lock để tránh tiếp tục ghi dữ liệu. Chỉ mở khóa sau khi đã kiểm tra safety snapshot và nguyên nhân lỗi.'
-                            : 'Yêu cầu này sẽ không được worker thực hiện. Hãy nhập lý do để lưu vào audit log.'}
-                    </p>
-                    <label className="block text-[15px] font-medium text-slate-700">
-                        Lý do <span className="text-rose-500">*</span>
-                    </label>
-                    <textarea
-                        rows={3}
-                        maxLength={500}
-                        value={rejectReason}
-                        onChange={(e) => setRejectReason(e.target.value)}
-                        placeholder="Nhập lý do cụ thể..."
-                        className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition"
-                    />
-                    <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
-                        <Button variant="secondary" size="md" onClick={() => setRejectRequest(null)} disabled={actionLoading}>
-                            Hủy bỏ
-                        </Button>
-                        <Button variant="danger" size="md" onClick={() => void handleRejectRequest()} isLoading={actionLoading}>
-                            {rejectRequest?.status === 'FAILED' ? 'Xác nhận mở khóa' : 'Từ chối yêu cầu'}
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
+                message={
+                    rejectRequest?.status === 'FAILED'
+                        ? `Restore Production cho snapshot ${rejectRequest.backupJob.snapshotId} đã thất bại. Hệ thống đang giữ maintenance lock để tránh tiếp tục ghi dữ liệu. Chỉ mở khóa sau khi đã kiểm tra safety snapshot.`
+                        : `Yêu cầu khôi phục bản snapshot "${rejectRequest?.backupJob.snapshotId}" trên môi trường ${rejectRequest?.target === 'PRODUCTION' ? 'Production' : 'Staging'} sẽ bị hủy bỏ và không được thực hiện.`
+                }
+                type="danger"
+                requireReason={true}
+                reasonPlaceholder="Nhập lý do cụ thể (tối thiểu 3 ký tự)..."
+                confirmText={rejectRequest?.status === 'FAILED' ? 'Xác nhận mở khóa' : 'Từ chối yêu cầu'}
+                cancelText="Hủy bỏ"
+                isLoading={actionLoading}
+            />
 
             {/* Critical Confirm Modal for High-Security Restore Approval (GEMINI.md Rule) */}
             {activeRestoreRequest && (

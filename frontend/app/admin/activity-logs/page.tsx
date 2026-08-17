@@ -76,28 +76,101 @@ interface AuditLogRecord {
     } | null;
 }
 
-function EntityTarget({ entityType, entityId }: { entityType: string; entityId?: string | null }) {
-    const typeMap: Record<string, { label: string; Icon: React.ElementType }> = {
-        AUTH: { label: 'Xác thực', Icon: ShieldCheck },
-        User: { label: 'Tài khoản', Icon: UserIcon },
-        BackupJob: { label: 'Job Sao lưu', Icon: Database },
-        BACKUP_JOB: { label: 'Job Sao lưu', Icon: Database },
-        BackupRestoreRequest: { label: 'Khôi phục DB', Icon: HardDrive },
-        BACKUP_RESTORE_REQUEST: { label: 'Khôi phục DB', Icon: HardDrive },
-        GradeAppeal: { label: 'Phúc khảo', Icon: FileCheck },
-        Question: { label: 'Câu hỏi', Icon: HelpCircle },
-        ExamPaper: { label: 'Đề thi', Icon: FileText },
-        ExamPeriod: { label: 'Kỳ thi', Icon: Calendar },
-        ExamRoom: { label: 'Phòng thi', Icon: Building },
-        ExamSchedule: { label: 'Lịch thi', Icon: Clock },
-        Student: { label: 'Sinh viên', Icon: GraduationCap },
-        Teacher: { label: 'Giảng viên', Icon: UserCheck },
-        Class: { label: 'Lớp học', Icon: Building2 },
-        Department: { label: 'Khoa / Phòng', Icon: Building2 },
-        Subject: { label: 'Môn học', Icon: BookOpen },
-    };
+function getActionMeta(action: string) {
+    const normalized = (action || '').toUpperCase().trim();
+    switch (normalized) {
+        case 'LOGIN':
+            return { label: 'Đăng nhập', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
+        case 'LOGOUT':
+            return { label: 'Đăng xuất', Icon: LogIn, className: 'text-slate-600 dark:text-slate-400' };
+        case 'CREATE':
+            return { label: 'Tạo mới', Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
+        case 'UPDATE':
+            return { label: 'Cập nhật', Icon: RefreshCw, className: 'text-blue-700 dark:text-blue-400' };
+        case 'DELETE':
+            return { label: 'Xóa', Icon: Trash2, className: 'text-rose-600 dark:text-rose-400' };
+        case 'PUBLISH':
+            return { label: 'Phát hành đề', Icon: FileCheck, className: 'text-blue-700 dark:text-blue-400' };
+        case 'ARRANGE':
+            return { label: 'Xếp phòng thi', Icon: LayoutGrid, className: 'text-blue-700 dark:text-blue-400' };
+        case 'AUTO_ASSIGN':
+            return { label: 'Phân công tự động', Icon: UserCheck, className: 'text-amber-700 dark:text-amber-400' };
+        case 'RESTORE':
+        case 'RESTORE_REQUEST':
+            return { label: 'Khôi phục', Icon: HardDrive, className: 'text-emerald-700 dark:text-emerald-400' };
+        case 'REJECT':
+            return { label: 'Từ chối', Icon: X, className: 'text-rose-600 dark:text-rose-400' };
+        case 'APPROVE':
+            return { label: 'Phê duyệt', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
+        case 'BACKUP':
+        case 'CREATE_BACKUP':
+            return { label: 'Sao lưu', Icon: Database, className: 'text-slate-700 dark:text-slate-300' };
+        case 'APPEAL':
+        case 'REGRADE':
+            return { label: 'Phúc khảo', Icon: AlertCircle, className: 'text-amber-700 dark:text-amber-400' };
+        default: {
+            if (normalized.includes('LOGIN')) {
+                return { label: 'Đăng nhập', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
+            }
+            if (normalized.includes('BACKUP')) {
+                return { label: 'Sao lưu', Icon: Database, className: 'text-slate-700 dark:text-slate-300' };
+            }
+            if (normalized.includes('DELETE')) {
+                return { label: 'Xóa', Icon: Trash2, className: 'text-rose-600 dark:text-rose-400' };
+            }
+            if (normalized.includes('APPEAL') || normalized.includes('REGRADE')) {
+                return { label: 'Phúc khảo', Icon: AlertCircle, className: 'text-amber-700 dark:text-amber-400' };
+            }
+            const humanized = action
+                .toLowerCase()
+                .replace(/_/g, ' ')
+                .replace(/^\w/, (c) => c.toUpperCase());
+            return { label: humanized, Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
+        }
+    }
+}
 
-    const info = typeMap[entityType] || { label: entityType, Icon: Building };
+const entityTypeMap: Record<string, { label: string; Icon: React.ElementType }> = {
+    AUTH: { label: 'Xác thực', Icon: ShieldCheck },
+    USER: { label: 'Tài khoản', Icon: UserIcon },
+    User: { label: 'Tài khoản', Icon: UserIcon },
+    BACKUP_JOB: { label: 'Sao lưu', Icon: Database },
+    BackupJob: { label: 'Sao lưu', Icon: Database },
+    BACKUP_RESTORE_REQUEST: { label: 'Khôi phục DB', Icon: HardDrive },
+    BackupRestoreRequest: { label: 'Khôi phục DB', Icon: HardDrive },
+    GRADE_APPEAL: { label: 'Phúc khảo', Icon: FileCheck },
+    GradeAppeal: { label: 'Phúc khảo', Icon: FileCheck },
+    QUESTION: { label: 'Câu hỏi', Icon: HelpCircle },
+    Question: { label: 'Câu hỏi', Icon: HelpCircle },
+    EXAM_PAPER: { label: 'Đề thi', Icon: FileText },
+    ExamPaper: { label: 'Đề thi', Icon: FileText },
+    EXAM_PERIOD: { label: 'Kỳ thi', Icon: Calendar },
+    ExamPeriod: { label: 'Kỳ thi', Icon: Calendar },
+    EXAM_ROOM: { label: 'Phòng thi', Icon: Building },
+    ExamRoom: { label: 'Phòng thi', Icon: Building },
+    EXAM_SCHEDULE: { label: 'Lịch thi', Icon: Clock },
+    ExamSchedule: { label: 'Lịch thi', Icon: Clock },
+    EXAM_SUPERVISOR: { label: 'Coi thi', Icon: UserCheck },
+    ExamSupervisor: { label: 'Coi thi', Icon: UserCheck },
+    STUDENT: { label: 'Sinh viên', Icon: GraduationCap },
+    Student: { label: 'Sinh viên', Icon: GraduationCap },
+    TEACHER: { label: 'Giảng viên', Icon: UserCheck },
+    Teacher: { label: 'Giảng viên', Icon: UserCheck },
+    CLASS: { label: 'Lớp học', Icon: Building2 },
+    Class: { label: 'Lớp học', Icon: Building2 },
+    DEPARTMENT: { label: 'Khoa / Viện', Icon: Building2 },
+    Department: { label: 'Khoa / Viện', Icon: Building2 },
+    SUBJECT: { label: 'Môn học', Icon: BookOpen },
+    Subject: { label: 'Môn học', Icon: BookOpen },
+};
+
+function getEntityInfo(entityType: string) {
+    const key = entityType?.trim() || '';
+    return entityTypeMap[key] || entityTypeMap[key.toUpperCase()] || { label: entityType, Icon: Building };
+}
+
+function EntityTarget({ entityType, entityId }: { entityType: string; entityId?: string | null }) {
+    const info = getEntityInfo(entityType);
     const Icon = info.Icon;
 
     const isLongId = entityId && entityId.length > 14;
@@ -128,20 +201,12 @@ function EntityTarget({ entityType, entityId }: { entityType: string; entityId?:
 }
 
 function ActionCode({ action }: { action: string }) {
-    const normalized = action.toUpperCase();
-    const meta = normalized.includes('LOGIN')
-        ? { Icon: CheckCircle2, className: 'text-emerald-700' }
-        : normalized.includes('BACKUP')
-            ? { Icon: Database, className: 'text-slate-700' }
-            : normalized.includes('APPEAL') || normalized.includes('REGRADE')
-                ? { Icon: AlertCircle, className: 'text-amber-700' }
-                : { Icon: ShieldCheck, className: 'text-blue-700' };
-    const Icon = meta.Icon;
+    const { label, Icon, className } = getActionMeta(action);
 
     return (
-        <span className={`table-action inline-flex items-center gap-1.5 font-sans text-[15px] leading-[22px] font-medium ${meta.className}`}>
+        <span className={`table-action inline-flex items-center gap-1.5 font-sans text-[15px] leading-[22px] font-medium ${className}`}>
             <Icon className="h-3.5 w-3.5 shrink-0" />
-            {action}
+            {label}
         </span>
     );
 }
@@ -1108,8 +1173,10 @@ export default function ActivityLogsPage() {
 
                                     <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
-                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Mã hành động:</span>
-                                            <span className="font-semibold text-blue-600 dark:text-blue-400">{drawerOpenLog.action}</span>
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Hành động:</span>
+                                            <span className="font-semibold text-blue-600 dark:text-blue-400">
+                                                {getActionMeta(drawerOpenLog.action).label} ({drawerOpenLog.action})
+                                            </span>
                                         </div>
 
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
@@ -1122,7 +1189,9 @@ export default function ActivityLogsPage() {
 
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Thực thể tác động:</span>
-                                            <span className="font-semibold text-slate-900 dark:text-white">{drawerOpenLog.entityType}</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white">
+                                                {getEntityInfo(drawerOpenLog.entityType).label} ({drawerOpenLog.entityType})
+                                            </span>
                                         </div>
 
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">

@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { CheckCircle2, XCircle, Archive, Trash2, RotateCcw, CheckSquare, X, Send } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { CheckCircle2, XCircle, Archive, Trash2, RotateCcw, X, Send } from 'lucide-react';
 
 interface QuestionBulkActionProps {
   totalCount: number;
@@ -32,100 +32,159 @@ export function QuestionBulkAction({
   onAction,
   onClear,
 }: QuestionBulkActionProps) {
-  // Only display the floating bottom bar when at least 1 item is checked
+  // Lắng nghe phím Esc để hủy chọn nhanh
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedCount > 0) {
+        onClear();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCount, onClear]);
+
+  // Chỉ hiển thị floating bar khi có ít nhất 1 mục được chọn
   if (selectedCount === 0) return null;
 
+  const progressPercent = Math.min(100, Math.round((selectedCount / Math.max(1, totalCount)) * 100));
+
+  // Xác định action đóng vai trò Primary Xanh Dương duy nhất
+  const isApprovePrimary = canApprove;
+  const isSubmitPrimary = !canApprove && canSubmit;
+  const isRestorePrimary = !canApprove && !canSubmit && canRestore;
+
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[95vw] bg-white/95 border border-slate-200/90 shadow-2xl rounded-2xl p-2.5 px-4 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 animate-in slide-in-from-bottom-5 duration-300">
-      {/* Left side counter & clear buttons */}
-      <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3">
-        <span className="flex h-9 items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200/80 px-3 text-xs font-semibold text-blue-600 select-none">
-          <CheckSquare className="h-3.5 w-3.5" />
-          <span>Đã chọn {selectedCount} / {totalCount}</span>
-        </span>
+    <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-50 pointer-events-none px-4 transition-[left] duration-300">
+      <div className="pointer-events-auto max-w-full bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_50px_-12px_rgba(15,23,42,0.2)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6)] rounded-2xl p-2 px-4 sm:px-5 backdrop-blur-xl ring-1 ring-slate-900/5 dark:ring-white/10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-5 duration-300">
+        
+        {/* Khối bên trái: Số lượng tương tác + Thanh tiến độ mini + Chuyển đổi nhanh */}
+        <div className="flex items-center gap-2.5 pr-3.5 border-r border-slate-200 dark:border-slate-800 shrink-0">
+          <div className="inline-flex items-center gap-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 px-3 py-1.5 text-xs text-blue-600 dark:text-blue-400 select-none shadow-2xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600 dark:bg-blue-400"></span>
+            </span>
+            <span className="font-semibold tabular-nums">
+              {selectedCount} <span className="text-slate-400 dark:text-slate-500 font-normal">/ {totalCount}</span>
+            </span>
 
-        <button
-          type="button"
-          onClick={onToggleAll}
-          className="h-10 px-3 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
-        >
-          {allSelected ? 'Bỏ chọn' : 'Chọn tất cả'}
-        </button>
+            {/* Thanh tiến độ mini cho biết tỷ lệ đã chọn */}
+            <div className="w-9 h-1.5 bg-blue-200/70 dark:bg-blue-900/70 rounded-full overflow-hidden hidden sm:block" title={`Đã chọn ${progressPercent}% danh sách`}>
+              <div
+                className="h-full bg-blue-600 dark:bg-blue-400 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
 
-        <button
-          type="button"
-          onClick={onClear}
-          className="h-10 px-3 text-xs font-semibold text-rose-600 hover:text-rose-700 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 cursor-pointer select-none"
-        >
-          <X className="h-3.5 w-3.5" /> Hủy chọn
-        </button>
-      </div>
-
-      {/* Right side bulk action buttons */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-slate-400 text-xs font-semibold tracking-wider mr-1 hidden sm:inline select-none">
-          THAO TÁC:
-        </span>
-
-        {canSubmit && (
           <button
             type="button"
-            onClick={() => onAction('SUBMIT')}
-            className="h-10 flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
+            onClick={onToggleAll}
+            className="h-9 px-3 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer select-none"
           >
-            <Send className="h-3.5 w-3.5" /> Gửi duyệt ({selectedCount})
+            {allSelected ? 'Bỏ chọn' : 'Tất cả'}
           </button>
-        )}
+        </div>
 
-        {canApprove && (
-          <button
-            type="button"
-            onClick={() => onAction('APPROVE')}
-            className="h-10 flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
-          >
-            <CheckCircle2 className="h-3.5 w-3.5" /> Duyệt ({selectedCount})
-          </button>
-        )}
+        {/* Khối bên phải: Chủ đạo Xanh Dương - Trắng + Nút Phẳng (Flat/Ghost) */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          {/* Duyệt: Primary Blue chủ đạo khi có quyền duyệt */}
+          {canApprove && (
+            <button
+              type="button"
+              onClick={() => onAction('APPROVE')}
+              className="group relative overflow-hidden h-9 flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 text-xs font-semibold shadow-xs shadow-blue-500/25 transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <span className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Duyệt</span>
+            </button>
+          )}
 
-        {canRestore && (
-          <button
-            type="button"
-            onClick={() => onAction('RESTORE')}
-            className="h-10 flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
-          >
-            <RotateCcw className="h-3.5 w-3.5" /> Khôi phục ({selectedCount})
-          </button>
-        )}
+          {/* Gửi duyệt: Primary Blue (khi không có Duyệt) hoặc Nút Phẳng (khi đi kèm Duyệt) */}
+          {canSubmit && (
+            <button
+              type="button"
+              onClick={() => onAction('SUBMIT')}
+              className={
+                isSubmitPrimary
+                  ? 'group relative overflow-hidden h-9 flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 text-xs font-semibold shadow-xs shadow-blue-500/25 transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95'
+                  : 'h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95'
+              }
+            >
+              {isSubmitPrimary && (
+                <span className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
+              )}
+              <Send className="h-4 w-4" />
+              <span>Gửi duyệt</span>
+            </button>
+          )}
 
-        {canReject && (
-          <button
-            type="button"
-            onClick={() => onAction('REJECT')}
-            className="h-10 flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
-          >
-            <XCircle className="h-3.5 w-3.5" /> Từ chối ({selectedCount})
-          </button>
-        )}
+          {/* Khôi phục: Primary Blue (khi đứng riêng) hoặc Nút Phẳng */}
+          {canRestore && (
+            <button
+              type="button"
+              onClick={() => onAction('RESTORE')}
+              className={
+                isRestorePrimary
+                  ? 'h-9 flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 text-xs font-semibold shadow-xs shadow-blue-500/25 transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95'
+                  : 'h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95'
+              }
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span>Khôi phục</span>
+            </button>
+          )}
 
-        {canArchive && (
-          <button
-            type="button"
-            onClick={() => onAction('ARCHIVE')}
-            className="h-10 flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
-          >
-            <Archive className="h-3.5 w-3.5 text-blue-600" /> Lưu trữ
-          </button>
-        )}
+          {/* Từ chối: Nút Phẳng (Flat Ghost) thanh lịch */}
+          {canReject && (
+            <button
+              type="button"
+              onClick={() => onAction('REJECT')}
+              className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <XCircle className="h-4 w-4" />
+              <span>Từ chối</span>
+            </button>
+          )}
 
-        {canDelete && (
-          <button
-            type="button"
-            onClick={() => onAction('DELETE')}
-            className="h-10 flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-3.5 text-xs font-semibold shadow-2xs transition cursor-pointer active:scale-95"
-          >
-            <Trash2 className="h-3.5 w-3.5" /> Xóa ({selectedCount})
-          </button>
-        )}
+          {/* Lưu trữ: Nút Phẳng (Flat Ghost) */}
+          {canArchive && (
+            <button
+              type="button"
+              onClick={() => onAction('ARCHIVE')}
+              className="h-9 flex items-center gap-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <Archive className="h-4 w-4 text-slate-500" />
+              <span>Lưu trữ</span>
+            </button>
+          )}
+
+          {/* Xóa: Nút Phẳng Cảnh Báo Đỏ (Flat Danger) */}
+          {canDelete && (
+            <button
+              type="button"
+              onClick={() => onAction('DELETE')}
+              className="h-9 flex items-center gap-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 px-3.5 text-xs font-medium transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Xóa</span>
+            </button>
+          )}
+
+          {/* Nút đóng / hủy chọn nhanh tách biệt bằng vách ngăn mờ */}
+          <div className="pl-2 border-l border-slate-200 dark:border-slate-800 flex items-center">
+            <button
+              type="button"
+              onClick={onClear}
+              className="h-9 flex items-center gap-1.5 px-2.5 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
+              title="Bỏ chọn tất cả (Esc)"
+            >
+              <X className="h-4 w-4" />
+              <kbd className="hidden sm:inline-block text-xs font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700">Esc</kbd>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

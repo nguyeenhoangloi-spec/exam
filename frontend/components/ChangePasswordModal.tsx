@@ -5,6 +5,7 @@ import { Eye, EyeOff, KeyRound } from 'lucide-react';
 import api from '../lib/api';
 import { Modal } from './Modal';
 import { Toast } from './Toast';
+import { getUserErrorMessage } from '../lib/error-message';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -47,8 +48,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
       setSuccessMsg(response.data?.message || 'Đổi mật khẩu thành công.');
       window.setTimeout(close, 1200);
     } catch (error: any) {
-      const raw = error?.response?.data?.message || error?.message;
-      setErrorMsg(Array.isArray(raw) ? raw.join(', ') : (raw || 'Không thể cập nhật mật khẩu.'));
+      setErrorMsg(getUserErrorMessage(error, 'Không thể cập nhật mật khẩu. Vui lòng kiểm tra lại thông tin.'));
     } finally {
       setLoading(false);
     }
