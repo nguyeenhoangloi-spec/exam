@@ -78,7 +78,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${maxWidth === 'lg' ? 'max-w-lg' : 'max-w-md'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+          className={`w-screen ${maxWidth === 'md' ? 'max-w-md' : 'max-w-[540px]'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
             isVisible ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -87,37 +87,42 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Avatar / Icon Badge thương hiệu */}
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
                   {shortAvatar}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={title}>
+                  <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={title}>
                     {title}
                   </h2>
 
-                  {/* Badges & Status */}
-                  {badge && (
-                    <div className="mt-2 flex items-center gap-2 flex-wrap">
-                      {badge.status ? (
-                        <StatusBadge status={badge.status} customLabel={badge.label} />
-                      ) : (
-                        <span className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 ${badge.className || ''}`}>
-                          {badge.label}
-                        </span>
+                  {/* Badges, Status & Subtitle cố định 1 hàng duy nhất (No wrap) */}
+                  {(badge || subtitle) && (
+                    <div className="mt-2 flex items-center gap-2 min-w-0 flex-nowrap overflow-hidden">
+                      {badge && (
+                        <div className="shrink-0 flex items-center">
+                          {badge.status ? (
+                            <StatusBadge status={badge.status} customLabel={badge.label} />
+                          ) : (
+                            <span className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 ${badge.className || ''}`}>
+                              {badge.label}
+                            </span>
+                          )}
+                        </div>
                       )}
-                    </div>
-                  )}
 
-                  {/* Subtitle */}
-                  {subtitle && (
-                    <div className="mt-1.5">
-                      {isIdentifierSubtitle ? (
-                        <IdentifierBadge tone="neutral" title={subtitle}>{subtitle}</IdentifierBadge>
-                      ) : (
-                        <p className="text-[14px] font-semibold text-slate-600 dark:text-slate-300 tabular-nums">
-                          {subtitle}
-                        </p>
+                      {subtitle && (
+                        <div className="min-w-0 flex-1 shrink truncate flex items-center">
+                          {isIdentifierSubtitle ? (
+                            <IdentifierBadge tone="neutral" title={subtitle} className="max-w-full">
+                              {subtitle}
+                            </IdentifierBadge>
+                          ) : (
+                            <p className="text-[14px] font-semibold text-slate-600 dark:text-slate-300 tabular-nums truncate">
+                              {subtitle}
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
