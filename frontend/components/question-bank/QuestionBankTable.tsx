@@ -373,102 +373,95 @@ export function QuestionBankTable({
 
                   {/* Nội dung câu hỏi & Các đáp án */}
                   {visibleColumns.content !== false && (
-                    <td className="p-3.5 min-w-[280px] align-top">
-                      <div className="space-y-1.5">
-                        <button
-                          type="button"
-                          className="block w-full text-left text-[15px] font-normal text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-primary-600 transition line-clamp-2"
-                          onClick={() => onDetail(q)}
-                          title={q.content}
-                        >
-                          {q.content}
-                        </button>
+                    <td className="p-3.5 min-w-[320px] align-top">
+                      <div className="space-y-2">
+                        {/* Tầng 1: Nội dung câu hỏi & Indicator đính kèm */}
+                        <div className="flex items-start justify-between gap-2">
+                          <button
+                            type="button"
+                            className="block text-left text-[15px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-2"
+                            onClick={() => onDetail(q)}
+                            title={q.content}
+                          >
+                            {q.content}
+                          </button>
+                        </div>
 
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          {q.type === 'ESSAY' ? (
-                            <span className="table-badge inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[15px] font-medium bg-blue-50 text-blue-800 border border-blue-200/80">
-                              <FileText className="w-3 h-3 text-blue-600 shrink-0" />
-                              {q.sampleAnswer || q.explanation ? 'Có hướng dẫn chấm' : 'Chưa có hướng dẫn chấm'}
-                            </span>
-                          ) : (
-                            optionsList.map((opt) => (
+                        {/* Tầng 2: Dải Đáp án trắc nghiệm (Chỉ hiển thị khi có đáp án trắc nghiệm) */}
+                        {q.type !== 'ESSAY' && optionsList.length > 0 ? (
+                          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                            {optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[15px] font-medium text-slate-700"
+                                className="table-badge inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 px-2 py-0.5 text-[13px] font-medium text-slate-700 dark:text-slate-300 max-w-[160px] shadow-2xs"
+                                title={`${opt.label}. ${opt.content}`}
                               >
-                                <span className="font-medium text-slate-500">{opt.label}.</span>
-                                <span className="truncate max-w-[120px]">{opt.content}</span>
+                                <span className="table-badge flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-slate-200/80 dark:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                                  {opt.label}
+                                </span>
+                                <span className="truncate">{opt.content}</span>
                               </span>
-                            ))
-                          )}
+                            ))}
+                          </div>
+                        ) : null}
 
-                          {q.media && q.media.length > 0 && q.media.map((m, idx) => {
-                            const mime = m.mimeType || '';
-                            const isImg = mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url));
-                            const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(m.url);
-                            const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(m.url);
+                        {/* Tầng 3: Dải Đa phương tiện đính kèm (Media Attachment Strip) */}
+                        {q.media && q.media.length > 0 && (
+                          <div className="table-action flex flex-wrap items-center gap-1.5 pt-0.5 border-t border-dashed border-slate-100 dark:border-slate-800/80">
+                            {q.media.map((m, idx) => {
+                              const mime = m.mimeType || '';
+                              const isImg = mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url));
+                              const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(m.url);
+                              const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(m.url);
 
-                            if (isImg) return (
-                              <button
-                                key={m.id || idx}
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
-                                className="group relative h-9 w-12 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 hover:border-blue-400 hover:shadow-md transition cursor-zoom-in shrink-0"
-                                title="Bấm để xem ảnh"
-                              >
-                                <DynamicImage
-                                  src={getImageUrl(m.url)}
-                                  alt={m.altText || m.fileName || 'Ảnh'}
-                                  className="h-full w-full object-cover transition group-hover:scale-110"
-                                  onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/30">
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" className="h-3.5 w-3.5"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
-                                </div>
-                              </button>
-                            );
+                              if (isImg) return (
+                                <button
+                                  key={m.id || idx}
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
+                                  className="table-action group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs transition cursor-zoom-in shrink-0 select-none"
+                                  title="Bấm để phóng to xem ảnh"
+                                >
+                                  <ImageIcon className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
+                                  <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Xem hình ảnh')}</span>
+                                </button>
+                              );
 
-                            if (isVid) return (
-                              <button
-                                key={m.id || idx}
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); setVideoLightbox({ url: m.url, fileName: m.fileName }); }}
-                                className="group relative h-9 w-14 overflow-hidden rounded-xl bg-slate-800 hover:bg-slate-700 transition cursor-pointer shrink-0"
-                                title="Bấm để xem video"
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-900" />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="h-3.5 w-3.5 opacity-70"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3V9z" fill="white" stroke="none"/></svg>
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 shadow-lg group-hover:scale-110 transition">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-blue-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
-                                  </span>
-                                </div>
-                              </button>
-                            );
+                              if (isVid) return (
+                                <button
+                                  key={m.id || idx}
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setVideoLightbox({ url: m.url, fileName: m.fileName }); }}
+                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white px-2.5 py-1 text-xs font-medium hover:bg-slate-800 dark:hover:bg-slate-700 shadow-2xs transition cursor-pointer shrink-0 select-none"
+                                  title="Bấm để phát video"
+                                >
+                                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400"><polygon points="5,3 19,12 5,21" /></svg>
+                                  <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Xem video')}</span>
+                                </button>
+                              );
 
-                            if (isAud) return (
-                              <button
-                                key={m.id || idx}
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
-                                className="table-badge group inline-flex items-center gap-1 rounded-xl bg-blue-50 border border-blue-200/60 px-2 py-0.5 text-[15px] font-medium text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition cursor-pointer shrink-0"
-                                title="Bấm để phát âm thanh"
-                              >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3 text-blue-600 group-hover:scale-110 transition"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                                <span>Audio</span>
-                              </button>
-                            );
+                              if (isAud) return (
+                                <button
+                                  key={m.id || idx}
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
+                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 px-2.5 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition cursor-pointer shrink-0 select-none"
+                                  title="Bấm để nghe audio"
+                                >
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                                  <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Nghe audio')}</span>
+                                </button>
+                              );
 
-                            return (
-                              <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[15px] font-medium text-slate-500 shrink-0">
-                                <ImageIcon className="h-3 w-3 text-blue-400" />
-                                {cleanMediaFileName(m.fileName, 'Tập tin')}
-                              </span>
-                            );
-                          })}
-                        </div>
+                              return (
+                                <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-500 shrink-0">
+                                  <FileText className="h-3.5 w-3.5 text-slate-400" />
+                                  {cleanMediaFileName(m.fileName, 'Tập tin')}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </td>
                   )}
